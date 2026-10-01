@@ -1,0 +1,18 @@
+TODO List
+
+Next stories (spec `spec-n-zik-pc-bridge`)
+- Story 11: synced state and playback controls — large UI showing the phone's state (WebSocket snapshot + deltas + snapshot request on a revision gap) and sending the playback commands; screens behind a repository interface (Remote = phone bridge now, Local = standalone later), UI copied and adapted from the phone's Compose screens. Plug the WS `4003` close into `RevocationPolicy`.
+- Story 12: audio playback — vlcj + embedded libvlc (no system VLC), signed URLs with seek, re-forge on `403`, local LRU cache; start with the libvlc packaging spike (VLC 3.x runtime + plugins, vlcj 4.11.0, exact libvlc pin). Implement the audio kick window (contract §8.4) and plug audio `401 DEVICE_REVOKED` into `RevocationPolicy`.
+- Story 13: portable Windows EXE, manual GitHub release, live demo (pair → play → seek → stop → restart → reconnect).
+
+Features
+- Audio output selector "PC" or "Phone": both devices always control playback, the sound comes out of one only (needs contract 1.2 + phone-side mute without pause + a selector on both sides).
+
+Pairing (follow-ups from story 10)
+- Code review of story 10 was skipped: run one before a release.
+- Default gateway detection uses a UDP "connect" that sends nothing (asks the OS which source address it would use) instead of reading the routing table — check it on multi-adapter PCs.
+- Rubik fonts copied from the phone: add the OFL attribution (README / notices).
+- Windows Firewall may prompt for Java on first launch: revisit once the app is packaged as an EXE (the prompt then names the app).
+
+Futur
+- The Compagnon is transitional: it disappears once the standalone N-Zik desktop app exists (Windows first, then Linux and macOS).

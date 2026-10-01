@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="starting">Starting…</string>
+
+    <!-- QR pairing -->
+    <string name="pair_title">Pair with your phone</string>
+    <string name="pair_qr_description">In N-Zik on your phone, open Manage server, start pairing, then tap Scan and point the camera at this code.</string>
+    <string name="pair_device_name">Name of this PC</string>
+    <string name="pair_device_name_invalid">Enter a name of 1 to 64 characters.</string>
+    <string name="pair_qr_waiting">Waiting for your phone…</string>
+    <string name="pair_qr_preparing">Preparing the QR code…</string>
+    <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
+    <string name="pair_qr_renew_hint">The code renews itself every 2 minutes.</string>
+    <string name="pair_manual_entry">Manual entry</string>
+    <string name="pair_manual_entry_text">Type the address and code shown on your phone</string>
+    <string name="pair_show_qr">Show the QR code</string>
+    <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
+    <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
+
+    <!-- Manual pairing -->
+    <string name="manual_title">Manual pairing</string>
+    <string name="manual_description">On your phone, Manage server shows the IP address, the port and a 6-character code.</string>
+    <string name="manual_ip">Phone IP address</string>
+    <string name="manual_port">Port</string>
+    <string name="manual_code">Pairing code</string>
+    <string name="manual_ip_invalid">Enter an IPv4 address, for example 192.168.1.14.</string>
+    <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
+    <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
+    <string name="manual_submit">Pair</string>
+
+    <!-- Validation -->
+    <string name="validating">Pairing with your phone…</string>
+
+    <!-- Errors -->
+    <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
+    <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
+    <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
+    <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
+    <string name="error_storage_failed">The pairing could not be saved in the Windows Credential Manager.</string>
+    <string name="error_listener_failed">The pairing listener could not be opened. Pair manually below.</string>
+    <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
+    <string name="error_unknown_code">no code</string>
+    <string name="dismiss">Dismiss</string>
+
+    <!-- Paired -->
+    <string name="paired_title">Paired</string>
+    <string name="paired_with">Paired with %1$s</string>
+    <string name="paired_as">This PC appears as %1$s on the phone.</string>
+    <string name="paired_checking">Checking the connection…</string>
+    <string name="paired_ok">The phone is reachable.</string>
+    <string name="paired_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
+    <string name="paired_other_active_unknown">another device</string>
+    <string name="paired_incompatible">Phone version incompatible (contract %1$s).</string>
+    <string name="paired_error">The phone answered with an error (HTTP %1$d, %2$s).</string>
+    <string name="retry">Retry</string>
+    <string name="forget_phone">Forget this phone</string>
+    <string name="forget_phone_text">Removes the pairing from this PC</string>
+
+    <!-- Unreachable -->
+    <string name="unreachable_title">Phone unreachable</string>
+    <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
+    <string name="unreachable_edit_ip">Edit IP</string>
+    <string name="unreachable_edit_ip_text">Keep the pairing, change the phone’s IP address only</string>
+    <string name="unreachable_port_kept">Port %1$d (kept)</string>
+    <string name="unreachable_save_ip">Save and retry</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Revoked -->
+    <string name="revoked_title">Pairing revoked</string>
+    <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
+    <string name="revoked_pair_again">Pair again</string>
+</resources>
