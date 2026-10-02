@@ -52,6 +52,12 @@ sealed interface PairedStatus {
     data class Error(val status: Int, val code: String?) : PairedStatus
 }
 
+/**
+ * What the player session of story 11 needs from a healthy pairing: the credential, the address that
+ * answered `meta`, and the phone's `features` (contract §5). Memory only.
+ */
+data class ActivePairing(val pairing: StoredPairing, val address: ServerAddress, val features: Set<String>)
+
 sealed interface PairingState {
     data object Starting : PairingState
 
@@ -115,6 +121,10 @@ class PairingController(
     val revocation = RevocationPolicy(onRevoked = ::onRevoked, confirmDelayMs = revocationConfirmDelayMs)
 
     private var pairing: StoredPairing? = null
+
+    /** Set whenever the state is `Paired(Ok)`, `null` otherwise. */
+    var active: ActivePairing? = null
+        private set
 
     // Last phone address of this session, kept in memory only (never written once the pairing is erased):
     // it prefills the manual form after a revocation or a "Forget".
@@ -252,7 +262,9 @@ class PairingController(
                 val stored = StoredPairing(record, response.deviceToken)
                 if (!store.save(stored)) return enterUnpaired(returnTo, PairingError.StorageFailed)
                 pairing = stored
-                lastAddress = ServerAddress(address.ip, response.serverPort)
+                val reached = ServerAddress(address.ip, response.serverPort)
+                lastAddress = reached
+                active = ActivePairing(stored, reached, meta.meta.features.toSet())
                 _state.value = PairingState.Paired(record, PairedStatus.Ok)
             }
             ValidateResult.Rejected -> enterUnpaired(returnTo, PairingError.CodeRejected)
@@ -284,6 +296,7 @@ class PairingController(
     fun forget() = runOperation {
         store.clear()
         pairing = null
+        active = null
         enterUnpaired()
     }
 
@@ -292,6 +305,7 @@ class PairingController(
 
     private suspend fun checkPairing() {
         val current = pairing ?: return enterUnpaired()
+        active = null
         closeListener()
         _state.value = PairingState.Paired(current.record, PairedStatus.Checking)
         val (address, meta) = reachMeta(current.record.serverIps, current.record.serverPort)
@@ -314,12 +328,16 @@ class PairingController(
                 }
             }
         }
+        if (status == PairedStatus.Ok && meta is MetaResult.Ok) {
+            active = ActivePairing(current, address, meta.meta.features.toSet())
+        }
         _state.value = PairingState.Paired(current.record, status)
     }
 
     private suspend fun onRevoked() {
         store.clear()
         pairing = null
+        active = null
         closeListener()
         _state.value = PairingState.Revoked
     }

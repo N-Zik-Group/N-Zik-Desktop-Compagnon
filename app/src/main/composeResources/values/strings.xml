@@ -70,4 +70,78 @@
     <string name="revoked_title">Pairing revoked</string>
     <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
     <string name="revoked_pair_again">Pair again</string>
+
+    <!-- Main window -->
+    <string name="phone_panel_title">Phone</string>
+    <string name="phone_panel_open">Phone: %1$s</string>
+    <string name="close">Close</string>
+
+    <!-- Connection -->
+    <string name="connection_live">Connected</string>
+    <string name="connection_connecting">Connecting…</string>
+    <string name="connection_reconnecting">Reconnecting…</string>
+    <string name="connection_offline">Disconnected</string>
+    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
+    <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
+    <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
+    <string name="connection_replaced">Another window of this PC took over the session.</string>
+    <string name="connection_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
+    <string name="reconnect">Reconnect</string>
+
+    <!-- Player -->
+    <string name="player_nothing_playing">Nothing is playing</string>
+    <string name="player_unknown_artist">Unknown artist</string>
+    <string name="player_untitled">Untitled</string>
+    <string name="player_play">Play</string>
+    <string name="player_pause">Pause</string>
+    <string name="player_next">Next</string>
+    <string name="player_previous">Previous</string>
+    <string name="player_speed">Playback speed</string>
+    <string name="player_speed_value">%1$sx</string>
+    <string name="player_repeat_off">Repeat: off</string>
+    <string name="player_repeat_all">Repeat: all</string>
+    <string name="player_repeat_one">Repeat: one</string>
+    <string name="player_shuffle_on">Shuffle: on</string>
+    <string name="player_shuffle_off">Shuffle: off</string>
+    <string name="player_open_full">Open the player</string>
+    <string name="player_close_full">Back to the queue</string>
+    <string name="player_waiting_state">Waiting for the phone’s playback state…</string>
+
+    <!-- Queue -->
+    <string name="queue_title">Queue</string>
+    <string name="queue_count">%1$d tracks</string>
+    <string name="queue_empty">The queue is empty. Start playing something on your phone.</string>
+    <string name="queue_track_menu">Track options</string>
+    <string name="queue_play">Play</string>
+    <string name="queue_move_up">Move up</string>
+    <string name="queue_move_down">Move down</string>
+    <string name="queue_remove">Remove</string>
+    <string name="queue_clear">Clear queue</string>
+    <string name="queue_clear_confirm_title">Clear the queue?</string>
+    <string name="queue_clear_confirm_text">Every track is removed from the phone’s queue and playback stops.</string>
+
+    <!-- Command failures -->
+    <string name="command_play">Play</string>
+    <string name="command_pause">Pause</string>
+    <string name="command_seek">Seek</string>
+    <string name="command_next">Next</string>
+    <string name="command_previous">Previous</string>
+    <string name="command_speed">Speed</string>
+    <string name="command_repeat">Repeat</string>
+    <string name="command_shuffle">Shuffle</string>
+    <string name="command_jump">Play from the queue</string>
+    <string name="command_remove">Remove from the queue</string>
+    <string name="command_move">Move in the queue</string>
+    <string name="command_clear">Clear the queue</string>
+    <string name="command_unknown">A command</string>
+    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
+    <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
+    <string name="notice_rejected">%1$s: refused by the phone.</string>
+    <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
+    <string name="notice_server_stopping">%1$s: the phone’s server is stopping.</string>
+    <string name="notice_other_active">%1$s: another PC (%2$s) is connected to the phone.</string>
+    <string name="notice_not_found">%1$s: not found on the phone.</string>
+    <string name="notice_unreachable">%1$s: the phone did not answer.</string>
+    <string name="notice_failed">%1$s failed (HTTP %2$d, %3$s).</string>
+    <string name="notice_late_error">%1$s failed on the phone (%2$s, command %3$s).</string>
 </resources>

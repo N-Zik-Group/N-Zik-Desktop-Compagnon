@@ -7,6 +7,11 @@ Next stories (spec `spec-n-zik-pc-bridge`)
 
 Features
 - Audio output selector "PC" or "Phone": both devices always control playback, the sound comes out of one only (needs contract 1.2 + phone-side mute without pause + a selector on both sides).
+- Synced appearance (option "Use the phone's appearance"): the phone exposes a read-only whitelist of UI preferences (light/dark mode, palette and accent, dynamic color from artwork, roundness, font, player and seek bar styles…) through contract 1.2 (e.g. `GET /api/v1/appearance` + a WS `appearanceChanged` message); the Compagnon applies them live when the option is on and keeps its own local settings when it is off. The PC never writes the phone's preferences, and no secret or non-UI setting is exposed. A preference only matters once the matching UI piece is copied, so it grows with the copied screens. Same batch as the audio output selector (contract 1.2), after the audio story.
+
+Player (follow-ups from story 11)
+- Missing tests: `ServerClock.reset()` on a new session, and the backoff only resetting after a snapshot was received (both fixed in code, not covered).
+- Rejected during review, worth a later pass: reconnect banner countdown, seek bar jumping back during the round trip after a release, "1 tracks" plural, showing the stop reason (manual / auto-stop / timeout), keyboard shortcuts (Space, Escape, media keys).
 
 Pairing (follow-ups from story 10)
 - Code review of story 10 was skipped: run one before a release.

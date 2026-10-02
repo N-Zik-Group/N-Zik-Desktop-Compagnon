@@ -17,8 +17,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,19 +29,45 @@ import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.app_subtitle
 import app.n_zik.compagnon.generated.resources.starting
 import app.n_zik.compagnon.generated.resources.validating
+import app.n_zik.compagnon.pairing.ActivePairing
 import app.n_zik.compagnon.pairing.PairedStatus
 import app.n_zik.compagnon.pairing.PairingController
 import app.n_zik.compagnon.pairing.PairingMode
 import app.n_zik.compagnon.pairing.PairingState
+import app.n_zik.compagnon.player.PlayerRepository
+import app.n_zik.compagnon.ui.MainWindow
 import app.n_zik.compagnon.ui.theme.colorPalette
 import app.n_zik.compagnon.ui.theme.semiBold
 import app.n_zik.compagnon.ui.theme.typography
 import org.jetbrains.compose.resources.stringResource
 
-/** Pairing navigation: one screen per [PairingState]. */
+/**
+ * Top-level navigation: one pairing screen per [PairingState]; `Paired(Ok)` opens the main window with
+ * a player session built by [playerFactory] from the credential, closed as soon as that state is left
+ * (revocation, "Forget this phone", a new check).
+ */
 @Composable
-fun PairingApp(controller: PairingController) {
+fun PairingApp(controller: PairingController, playerFactory: (ActivePairing) -> PlayerRepository) {
     val state by controller.state.collectAsState()
+    val shown = state
+    val active = controller.active
+    if (shown is PairingState.Paired && shown.status == PairedStatus.Ok && active != null) {
+        val repository = remember(active) { playerFactory(active) }
+        DisposableEffect(repository) {
+            repository.start()
+            onDispose { repository.close() }
+        }
+        MainWindow(
+            repository = repository,
+            record = shown.record,
+            onForget = {
+                // The session is closed first, then the pairing is erased and the QR comes back.
+                repository.close()
+                controller.forget()
+            },
+        )
+        return
+    }
     val palette = colorPalette()
     Box(
         modifier = Modifier

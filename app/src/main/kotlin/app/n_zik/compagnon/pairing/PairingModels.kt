@@ -38,7 +38,7 @@ object BridgeContract {
     const val PROBE_PATH = "/library/songs"
 }
 
-/** Error codes of contract §3 / §4.4 the pairing side reacts to. */
+/** Error codes of contract §3 / §4.4 the client reacts to. */
 object BridgeErrorCode {
     const val BAD_REQUEST = "BAD_REQUEST"
     const val NOT_FOUND = "NOT_FOUND"
@@ -48,6 +48,10 @@ object BridgeErrorCode {
     const val DEVICE_REVOKED = "DEVICE_REVOKED"
     const val UNAUTHORIZED = "UNAUTHORIZED"
     const val CONFLICT_ACTIVE_CLIENT = "CONFLICT_ACTIVE_CLIENT"
+    const val QUEUE_MISMATCH = "QUEUE_MISMATCH"
+    const val PLAYER_REJECTED = "PLAYER_REJECTED"
+    const val PLAYER_UNAVAILABLE = "PLAYER_UNAVAILABLE"
+    const val SERVER_STOPPING = "SERVER_STOPPING"
 }
 
 /** JSON settings shared by every pairing exchange: unknown fields ignored (contract §1). */
@@ -121,6 +125,8 @@ data class ApiError(
     val message: String = "",
     val retryAfterMs: Long? = null,
     val activeDevice: ActiveDevice? = null,
+    /** Current revision, carried by `409 QUEUE_MISMATCH` (contract §3). */
+    val revision: Long? = null,
 )
 
 /** Contract-level helpers that are pure functions, kept here so every caller agrees. */

@@ -8,7 +8,9 @@ The phone stays the single source of truth. It runs a local server on your Wi-Fi
 
 ## Status
 
-Pairing is available: scan the QR code shown by the app from N-Zik on your phone (or type the phone's IP address, port and code by hand), and the pairing is remembered across restarts. Synced playback state, the library and audio arrive in upcoming releases.
+Pairing is available: scan the QR code shown by the app from N-Zik on your phone (or type the phone's IP address, port and code by hand), and the pairing is remembered across restarts.
+
+Once paired, the main window shows what your phone is playing and lets you control it: the queue in the middle (jump to a track, move it, remove it, clear the queue), a player bar at the bottom (play/pause, previous/next, seek, speed, repeat, shuffle) and a full player screen. The sound still comes out of the phone. The app reconnects by itself after a network loss; when the phone's server is stopped, or when you disconnect this PC from the phone, use "Reconnect". Browsing the library and listening on the PC arrive in upcoming releases.
 
 The device token is stored in the Windows Credential Manager (generic credential "N-Zik Desktop Compagnon"); the other pairing details live in `%APPDATA%\N-Zik Desktop Compagnon\pairing.json`. "Forget this phone", or revoking this PC from the phone, removes both.
 

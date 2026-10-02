@@ -109,6 +109,7 @@ class PairingControllerTest {
 
     @Test
     fun `QR offer then meta then validate leads to paired and persisted`() = runTest {
+        api.metaAnswer = { MetaResult.Ok(MetaResponse("1.1", "Pixel 8", features = listOf("playback", "artwork"))) }
         val controller = controller()
         controller.start()
         runCurrent()
@@ -123,6 +124,10 @@ class PairingControllerTest {
         assertEquals("Pixel 8", paired.record.serverName)
         assertEquals(token, secrets.secret)
         assertFalse(Files.readString(dir.resolve("pairing.json")).contains(token))
+        val active = controller.active!!
+        assertEquals(token, active.pairing.deviceToken)
+        assertEquals(ServerAddress("192.168.1.14", 42420), active.address)
+        assertEquals(setOf("playback", "artwork"), active.features)
     }
 
     @Test
@@ -133,6 +138,36 @@ class PairingControllerTest {
         runCurrent()
         assertEquals(PairedStatus.Ok, (controller.state.value as PairingState.Paired).status)
         assertTrue(listeners.isEmpty())
+    }
+
+    @Test
+    fun `paired ok exposes the credential, address and features for the player session`() = runTest {
+        savePairing()
+        api.metaAnswer = { MetaResult.Ok(MetaResponse("1.1", "Pixel 8", features = listOf("playback", "queue"))) }
+        val controller = controller()
+        controller.start()
+        runCurrent()
+        val active = controller.active!!
+        assertEquals(token, active.pairing.deviceToken)
+        assertEquals(ServerAddress("192.168.1.14", 42420), active.address)
+        assertEquals(setOf("playback", "queue"), active.features)
+
+        controller.forget()
+        runCurrent()
+        assertNull(controller.active)
+    }
+
+    @Test
+    fun `revocation from the player session clears the active pairing`() = runTest {
+        savePairing()
+        val controller = controller()
+        controller.start()
+        runCurrent()
+        assertNotNull(controller.active)
+        controller.revocation.revokeNow()
+        assertNull(controller.active)
+        assertEquals(PairingState.Revoked, controller.state.value)
+        assertNull(secrets.secret)
     }
 
     @Test
@@ -167,6 +202,9 @@ class PairingControllerTest {
 
     @Test
     fun `manual pairing normalises the code and validates with a null requestId`() = runTest {
+        api.metaAnswer = { MetaResult.Ok(MetaResponse("1.1", "Pixel 8", features = listOf("queue"))) }
+        // The bridge answers with its real port: the session must use it, not the one typed in the form.
+        api.validateAnswer = { ValidateResult.Ok(ValidateResponse(token, "Ab3dE5fG7hI", "Pixel 8", 42421)) }
         val controller = controller()
         controller.start()
         runCurrent()
@@ -177,6 +215,10 @@ class PairingControllerTest {
         assertEquals(ValidateRequest("ABCDEF", null, "PC-SALON"), api.validateRequests.single())
         assertTrue(controller.state.value is PairingState.Paired)
         assertTrue(listeners.single().closed)
+        val active = controller.active!!
+        assertEquals(token, active.pairing.deviceToken)
+        assertEquals(ServerAddress("192.168.1.14", 42421), active.address)
+        assertEquals(setOf("queue"), active.features)
     }
 
     @Test

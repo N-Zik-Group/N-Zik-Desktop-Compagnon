@@ -13,6 +13,8 @@ import app.n_zik.compagnon.pairing.CredentialStore
 import app.n_zik.compagnon.pairing.PairingController
 import app.n_zik.compagnon.pairing.PairingListener
 import app.n_zik.compagnon.pairing.SystemNetworkInterfaceSource
+import app.n_zik.compagnon.player.BridgeSession
+import app.n_zik.compagnon.player.RemotePlayerRepository
 import app.n_zik.compagnon.ui.pairing.PairingApp
 import app.n_zik.compagnon.ui.theme.NZikTheme
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +28,7 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title = AppInfo.NAME,
-        state = rememberWindowState(width = 720.dp, height = 860.dp),
+        state = rememberWindowState(width = 1100.dp, height = 800.dp),
     ) {
         App()
     }
@@ -36,6 +38,7 @@ fun main() = application {
 fun App() {
     val scope = remember { CoroutineScope(SupervisorJob() + Dispatchers.Main) }
     val client = remember { BridgeClient() }
+    val wsClient = remember { BridgeSession.httpClient() }
     val controller = remember {
         PairingController(
             scope = scope,
@@ -52,11 +55,14 @@ fun App() {
             // Leaving the app always closes the pairing listener.
             controller.close()
             client.close()
+            wsClient.close()
             scope.cancel()
         }
     }
     NZikTheme {
-        PairingApp(controller)
+        PairingApp(controller) { active ->
+            RemotePlayerRepository.create(active, client, wsClient, controller.revocation, scope)
+        }
     }
 }
 

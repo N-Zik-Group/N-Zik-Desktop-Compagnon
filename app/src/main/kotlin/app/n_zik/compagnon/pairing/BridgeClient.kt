@@ -4,14 +4,21 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.timeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import app.n_zik.compagnon.player.ArtworkResult
+import app.n_zik.compagnon.player.CommandResponse
+import app.n_zik.compagnon.player.CommandResult
+import app.n_zik.compagnon.player.PlayerApi
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsBytes
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.encodeURLPathPart
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
@@ -67,7 +74,7 @@ interface BridgeApi {
  * Ktor client of the phone's bridge. Errors are mapped from the contract §3 `code`, never from
  * `message`. The device token travels only in the `Authorization` header and is never logged.
  */
-class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, AutoCloseable {
+class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerApi, AutoCloseable {
     private val log = Logger.getLogger("BridgeClient")
 
     private val http = HttpClient(engine) {
@@ -123,6 +130,40 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, AutoClo
         }
     }
 
+    override suspend fun command(address: ServerAddress, deviceToken: String, route: String, body: String): CommandResult {
+        val response = call(address, route) {
+            http.post("${address.apiBase}/$route") {
+                bearerAuth(deviceToken)
+                contentType(ContentType.Application.Json)
+                setBody(body)
+            }
+        } ?: return CommandResult.Unreachable
+        if (response.status == HttpStatusCode.OK) {
+            val decoded = response.decode(CommandResponse.serializer()) ?: return CommandResult.Error(200, null)
+            return CommandResult.Ok(decoded)
+        }
+        return CommandResult.Error(response.status.value, response.errorBody())
+    }
+
+    override suspend fun artwork(address: ServerAddress, deviceToken: String, trackId: String): ArtworkResult {
+        // Contract §1: an id in a URL path is percent-encoded.
+        val response = call(address, "artwork") {
+            http.get("${address.apiBase}/artwork/${trackId.encodeURLPathPart()}") {
+                bearerAuth(deviceToken)
+                // The phone fetches online artwork upstream before answering: allow more than a command
+                timeout {
+                    requestTimeoutMillis = ARTWORK_TIMEOUT_MS
+                    socketTimeoutMillis = ARTWORK_TIMEOUT_MS
+                }
+            }
+        } ?: return ArtworkResult.Unreachable
+        if (response.status == HttpStatusCode.OK) {
+            return runCatching { ArtworkResult.Ok(response.bodyAsBytes()) }.getOrElse { ArtworkResult.Unreachable }
+        }
+        val code = response.errorBody()?.code
+        return if (code == BridgeErrorCode.NOT_FOUND) ArtworkResult.NotFound else ArtworkResult.Failed(response.status.value, code)
+    }
+
     override fun close() = http.close()
 
     /** `null` when the phone could not be reached (refused, timeout, unknown host…). */
@@ -145,5 +186,6 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, AutoClo
     private companion object {
         const val CONNECT_TIMEOUT_MS = 3_000L
         const val REQUEST_TIMEOUT_MS = 8_000L
+        const val ARTWORK_TIMEOUT_MS = 20_000L
     }
 }

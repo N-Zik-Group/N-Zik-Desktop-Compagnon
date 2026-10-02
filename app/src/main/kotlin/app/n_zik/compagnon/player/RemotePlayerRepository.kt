@@ -1,0 +1,237 @@
+package app.n_zik.compagnon.player
+
+import androidx.compose.ui.graphics.ImageBitmap
+import app.n_zik.compagnon.pairing.ActivePairing
+import app.n_zik.compagnon.pairing.BridgeApi
+import app.n_zik.compagnon.pairing.BridgeErrorCode
+import app.n_zik.compagnon.pairing.BridgeJson
+import app.n_zik.compagnon.pairing.ProbeResult
+import app.n_zik.compagnon.pairing.RevocationPolicy
+import app.n_zik.compagnon.pairing.ServerAddress
+import io.ktor.client.HttpClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.serialization.KSerializer
+import java.util.UUID
+import java.util.logging.Logger
+
+/**
+ * [PlayerRepository] backed by the phone's bridge: state from the WebSocket ([StateChannel], rules of
+ * [StateReducer]), commands over REST (contract §9) through story 10's client.
+ *
+ * Every command carries a fresh `commandId`. A `changed: true` answer waits up to [deltaTimeoutMs] for
+ * a revision ≥ the announced one, else shows a failure and requests a snapshot. Errors are decided from
+ * the contract `code`. A REST `401 DEVICE_REVOKED` goes through [RevocationPolicy.confirmRest].
+ *
+ * While a snapshot requested by the revision rules is awaited (every delta ignored), the request is sent
+ * again every [snapshotRetryMs]: a lost `requestSnapshot` must not freeze the state until a reconnection.
+ */
+class RemotePlayerRepository(
+    private val channel: StateChannel,
+    private val api: PlayerApi,
+    private val address: ServerAddress,
+    private val deviceToken: String,
+    override val features: Set<String>,
+    private val revocation: RevocationPolicy,
+    private val scope: CoroutineScope,
+    private val artworkLoader: ArtworkLoader = ArtworkLoader(api, address, deviceToken),
+    private val deltaTimeoutMs: Long = SessionContract.COMMAND_DELTA_TIMEOUT_MS,
+    private val newCommandId: () -> String = { UUID.randomUUID().toString() },
+    private val snapshotRetryMs: Long = SNAPSHOT_RETRY_MS,
+) : PlayerRepository {
+    private val log = Logger.getLogger("RemotePlayerRepository")
+
+    private val sync = MutableStateFlow(SyncState())
+    private val _state = MutableStateFlow<PlayerState?>(null)
+    override val state: StateFlow<PlayerState?> = _state.asStateFlow()
+    override val connection: StateFlow<ConnectionState> get() = channel.connection
+
+    // Never suspends an emitter (the WS receive loop among them): the oldest unseen notice is dropped.
+    private val _notices = MutableSharedFlow<PlayerNotice>(extraBufferCapacity = 16, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    override val notices: SharedFlow<PlayerNotice> = _notices.asSharedFlow()
+
+    /** Last revision applied (contract §7.4), for tests and diagnostics. */
+    val lastRevision: Long? get() = sync.value.last
+
+    /** `commandId` → command, so a late WS `error` names the command that failed. */
+    private val recentCommands = object : LinkedHashMap<String, CommandKind>() {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, CommandKind>?): Boolean = size > RECENT_COMMANDS
+    }
+
+    private var snapshotRetry: Job? = null
+    @Volatile private var closed = false
+
+    override fun start() = channel.start(::onMessage)
+    override fun reconnect() = channel.reconnect()
+
+    override fun close() {
+        if (closed) return
+        closed = true
+        snapshotRetry?.cancel()
+        channel.close()
+        artworkLoader.clear()
+    }
+
+    override fun serverNowMs(): Long = channel.clock.serverNowMs()
+
+    override suspend fun artwork(trackId: String): ImageBitmap? =
+        if (SessionContract.FEATURE_ARTWORK in features) artworkLoader.load(trackId) else null
+
+    override fun cachedArtwork(trackId: String): ImageBitmap? = artworkLoader.cached(trackId)
+
+    // ---- State ------------------------------------------------------------------------------------
+
+    private suspend fun onMessage(message: ServerMessage) {
+        val reduction = StateReducer.reduce(sync.value, message)
+        sync.value = reduction.state
+        _state.value = reduction.state.player
+        if (reduction.requestSnapshot) requestAwaitedSnapshot()
+        if (!reduction.state.awaitingSnapshot) snapshotRetry?.cancel()
+        if (message is ErrorMessage) {
+            val command = message.commandId?.let { id -> synchronized(recentCommands) { recentCommands[id] } }
+            _notices.emit(PlayerNotice.LateError(command, message.code, message.commandId))
+        }
+    }
+
+    private fun requestAwaitedSnapshot() {
+        channel.requestSnapshot()
+        snapshotRetry?.cancel()
+        snapshotRetry = scope.launch {
+            while (true) {
+                delay(snapshotRetryMs)
+                if (!sync.value.awaitingSnapshot) break
+                log.info("Snapshot still awaited after $snapshotRetryMs ms, requesting it again")
+                channel.requestSnapshot()
+            }
+        }
+    }
+
+    // ---- Commands (contract §9) -------------------------------------------------------------------
+
+    override suspend fun play() = send(CommandKind.Play, EmptyCommandBody.serializer()) { EmptyCommandBody(it) }
+    override suspend fun pause() = send(CommandKind.Pause, EmptyCommandBody.serializer()) { EmptyCommandBody(it) }
+    override suspend fun next() = send(CommandKind.Next, EmptyCommandBody.serializer()) { EmptyCommandBody(it) }
+    override suspend fun previous() = send(CommandKind.Previous, EmptyCommandBody.serializer()) { EmptyCommandBody(it) }
+
+    override suspend fun seek(positionMs: Long) =
+        send(CommandKind.Seek, SeekCommandBody.serializer()) { SeekCommandBody(positionMs.coerceAtLeast(0), it) }
+
+    override suspend fun setSpeed(speed: Float) = send(CommandKind.Speed, SpeedCommandBody.serializer()) {
+        SpeedCommandBody(speed.coerceIn(SessionContract.SPEED_MIN, SessionContract.SPEED_MAX), it)
+    }
+
+    override suspend fun setRepeat(mode: RepeatMode) = send(CommandKind.Repeat, RepeatCommandBody.serializer()) { RepeatCommandBody(mode, it) }
+    override suspend fun setShuffle(enabled: Boolean) = send(CommandKind.Shuffle, ShuffleCommandBody.serializer()) { ShuffleCommandBody(enabled, it) }
+
+    override suspend fun jump(index: Int, trackId: String) =
+        send(CommandKind.Jump, QueueItemCommandBody.serializer()) { QueueItemCommandBody(index, trackId, it) }
+
+    override suspend fun remove(index: Int, trackId: String) =
+        send(CommandKind.Remove, QueueItemCommandBody.serializer()) { QueueItemCommandBody(index, trackId, it) }
+
+    override suspend fun move(fromIndex: Int, toIndex: Int, trackId: String) =
+        send(CommandKind.Move, QueueMoveCommandBody.serializer()) { QueueMoveCommandBody(fromIndex, toIndex, trackId, it) }
+
+    override suspend fun clearQueue() = send(CommandKind.Clear, EmptyCommandBody.serializer()) { EmptyCommandBody(it) }
+
+    private suspend fun <T> send(kind: CommandKind, serializer: KSerializer<T>, body: (commandId: String) -> T) {
+        val commandId = newCommandId().take(SessionContract.COMMAND_ID_MAX_LENGTH)
+        synchronized(recentCommands) { recentCommands[commandId] = kind }
+        val json = BridgeJson.encodeToString(serializer, body(commandId))
+        val outcome = revocation.confirmRest(
+            call = { api.command(address, deviceToken, kind.route, json) },
+            isRevoked = { it is CommandResult.Error && it.error?.code == BridgeErrorCode.DEVICE_REVOKED },
+        )
+        if (outcome.revoked) return
+        when (val result = outcome.result) {
+            is CommandResult.Ok -> if (result.response.changed) awaitRevision(kind, result.response.revision)
+            CommandResult.Unreachable -> _notices.emit(PlayerNotice.Unreachable(kind))
+            is CommandResult.Error -> onError(kind, result)
+        }
+    }
+
+    /** Contract §9: no revision ≥ [revision] within [deltaTimeoutMs] → failure message and `requestSnapshot`. */
+    private suspend fun awaitRevision(kind: CommandKind, revision: Long) {
+        val reached = withTimeoutOrNull(deltaTimeoutMs) { sync.first { (it.last ?: Long.MIN_VALUE) >= revision } }
+        if (reached == null) {
+            log.info("$kind: no revision ≥ $revision within $deltaTimeoutMs ms, requesting a snapshot")
+            _notices.emit(PlayerNotice.NoDelta(kind))
+            channel.requestSnapshot()
+        }
+    }
+
+    private suspend fun onError(kind: CommandKind, result: CommandResult.Error) {
+        val code = result.error?.code
+        val notice = when (code) {
+            BridgeErrorCode.QUEUE_MISMATCH -> {
+                channel.requestSnapshot()
+                PlayerNotice.QueueMismatch(kind)
+            }
+            BridgeErrorCode.PLAYER_REJECTED -> PlayerNotice.Rejected(kind)
+            BridgeErrorCode.PLAYER_UNAVAILABLE -> PlayerNotice.Unavailable(kind)
+            BridgeErrorCode.SERVER_STOPPING -> PlayerNotice.ServerStopping(kind)
+            BridgeErrorCode.CONFLICT_ACTIVE_CLIENT -> PlayerNotice.OtherActive(kind, result.error.activeDevice?.deviceName)
+            BridgeErrorCode.NOT_FOUND -> PlayerNotice.NotFound(kind)
+            else -> PlayerNotice.Failed(kind, result.status, code)
+        }
+        _notices.emit(notice)
+    }
+
+    companion object {
+        private const val RECENT_COMMANDS = 64
+        const val SNAPSHOT_RETRY_MS = 3_000L
+
+        /**
+         * Revocation hooks of the session: `4003` revokes at once; an upgrade `401 DEVICE_REVOKED` counts as
+         * the first answer of [RevocationPolicy.confirmRest], confirmed by exactly one [probe] 2 s later.
+         */
+        fun sessionRevocation(revocation: RevocationPolicy, probe: suspend () -> ProbeResult): SessionRevocation =
+            object : SessionRevocation {
+                override suspend fun revokeNow() = revocation.revokeNow()
+                override suspend fun confirmUpgradeRevoked(): Boolean {
+                    var first = true
+                    return revocation.confirmRest(
+                        call = {
+                            if (first) {
+                                first = false
+                                ProbeResult.Revoked
+                            } else {
+                                probe()
+                            }
+                        },
+                        isRevoked = { it is ProbeResult.Revoked },
+                    ).revoked
+                }
+            }
+
+        /**
+         * Production wiring from story 10's credential: a [BridgeSession] on [wsClient] (see
+         * [BridgeSession.httpClient]) and [client] for REST. Upgrade `4003` revokes at once; an upgrade
+         * `401 DEVICE_REVOKED` counts as the first answer and is confirmed by one REST probe 2 s later.
+         */
+        fun <C> create(
+            active: ActivePairing,
+            client: C,
+            wsClient: HttpClient,
+            revocation: RevocationPolicy,
+            scope: CoroutineScope,
+        ): RemotePlayerRepository where C : PlayerApi, C : BridgeApi {
+            val token = active.pairing.deviceToken
+            val address = active.address
+            val hooks = sessionRevocation(revocation) { client.probe(address, token) }
+            val session = BridgeSession(wsClient, address, token, scope, hooks)
+            return RemotePlayerRepository(session, client, address, token, active.features, revocation, scope)
+        }
+    }
+}
