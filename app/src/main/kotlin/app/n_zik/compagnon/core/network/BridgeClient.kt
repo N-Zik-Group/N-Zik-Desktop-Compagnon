@@ -10,18 +10,28 @@ import io.ktor.client.plugins.timeout
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.get
+import io.ktor.client.request.head
+import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.prepareGet
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsBytes
+import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.encodeURLPathPart
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.utils.io.readAvailable
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
 import app.n_zik.compagnon.bridge.library.Album
 import app.n_zik.compagnon.bridge.library.Artist
@@ -90,7 +100,7 @@ interface BridgeApi {
  * Ktor client of the phone's bridge. Errors are mapped from the contract §3 `code`, never from
  * `message`. The device token travels only in the `Authorization` header and is never logged.
  */
-class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerApi, LibraryApi, AutoCloseable {
+class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerApi, LibraryApi, AudioApi, AutoCloseable {
     private val log = Logger.getLogger("BridgeClient")
 
     private val http = HttpClient(engine) {
@@ -187,6 +197,90 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
         return if (code == BridgeErrorCode.NOT_FOUND) ArtworkResult.NotFound else ArtworkResult.Failed(response.status.value, code)
     }
 
+    // ---- Audio (contract §8) ---------------------------------------------------------------------
+    // The signed URL is a transfer credential: it is never logged (the route "audio" stands for it).
+
+    override suspend fun forgeAudioUrl(address: ServerAddress, deviceToken: String, trackId: String, quality: String): ForgeResult {
+        // Contract §1: an id in a URL path is percent-encoded.
+        val response = call(address, "audio/url") {
+            http.post("${address.apiBase}/audio/${trackId.encodeURLPathPart()}/url") {
+                bearerAuth(deviceToken)
+                contentType(ContentType.Application.Json)
+                setBody(BridgeJson.encodeToString(AudioUrlRequest.serializer(), AudioUrlRequest(quality)))
+            }
+        } ?: return ForgeResult.Unreachable
+        if (response.status == HttpStatusCode.OK) {
+            val body = response.decode(AudioUrlResponse.serializer()) ?: return ForgeResult.Error(200, null)
+            return ForgeResult.Ok(body)
+        }
+        return ForgeResult.Error(response.status.value, response.errorBody())
+    }
+
+    override suspend fun probeAudioUrl(url: String): AudioProbe {
+        val head = audioCall { http.head(url) } ?: return AudioProbe.Unreachable
+        return when (head.status.value) {
+            in 200..299 -> AudioProbe.Ok
+            401 -> AudioProbe.Revoked
+            404 -> AudioProbe.NotFound
+            502 -> AudioProbe.UpstreamFailed
+            // A HEAD answer has no body: the code of a 403 is read from a one-byte GET.
+            403 -> {
+                val get = audioCall { http.get(url) { header(HttpHeaders.Range, "bytes=0-0") } } ?: return AudioProbe.Unreachable
+                when (get.errorBody()?.code) {
+                    BridgeErrorCode.AUDIO_URL_EXPIRED -> AudioProbe.Expired
+                    BridgeErrorCode.DEVICE_REVOKED -> AudioProbe.Revoked
+                    else -> if (get.status.value in 200..299) AudioProbe.Ok else AudioProbe.Invalid
+                }
+            }
+            else -> AudioProbe.Failed(head.status.value)
+        }
+    }
+
+    override suspend fun downloadAudio(url: String, target: Path): DownloadResult = try {
+        http.prepareGet(url) {
+            // A whole track: no overall deadline, only a stalled socket ends it.
+            timeout {
+                requestTimeoutMillis = Long.MAX_VALUE
+                socketTimeoutMillis = DOWNLOAD_SOCKET_TIMEOUT_MS
+            }
+        }.execute { response ->
+            if (response.status != HttpStatusCode.OK) return@execute DownloadResult.Failed(response.status.value)
+            val channel = response.bodyAsChannel()
+            var total = 0L
+            withContext(Dispatchers.IO) {
+                Files.newOutputStream(target).use { out ->
+                    val buffer = ByteArray(DOWNLOAD_BUFFER_BYTES)
+                    while (true) {
+                        val read = channel.readAvailable(buffer, 0, buffer.size)
+                        if (read < 0) break
+                        if (read > 0) {
+                            out.write(buffer, 0, read)
+                            total += read
+                        }
+                    }
+                }
+            }
+            val expected = response.headers[HttpHeaders.ContentLength]?.toLongOrNull()
+            if (expected != null && expected != total) DownloadResult.Failed(null) else DownloadResult.Done(total)
+        }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        log.info("audio download failed: ${e::class.simpleName}")
+        DownloadResult.Failed(null)
+    }
+
+    /** `null` when the phone could not be reached; logged without the URL. */
+    private suspend fun audioCall(block: suspend () -> HttpResponse): HttpResponse? =
+        try {
+            block()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            log.info("audio unreachable: ${e::class.simpleName}")
+            null
+        }
+
     // ---- Library (contract §10.1) ----------------------------------------------------------------
 
     override suspend fun songs(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track> =
@@ -272,5 +366,7 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
         const val CONNECT_TIMEOUT_MS = 3_000L
         const val REQUEST_TIMEOUT_MS = 8_000L
         const val ARTWORK_TIMEOUT_MS = 20_000L
+        const val DOWNLOAD_SOCKET_TIMEOUT_MS = 30_000L
+        const val DOWNLOAD_BUFFER_BYTES = 64 * 1_024
     }
 }

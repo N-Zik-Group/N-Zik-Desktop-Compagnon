@@ -49,6 +49,15 @@ object SessionContract {
     const val FEATURE_QUEUE = "queue"
     const val FEATURE_ARTWORK = "artwork"
 
+    /** §5 / §8: signed audio URLs. */
+    const val FEATURE_AUDIO = "audio"
+
+    /** §5 / §8.5 (since 1.2): the audio output (`audioOutput`, `outputChanged`, `player/output`). */
+    const val FEATURE_AUDIO_OUTPUT = "audio.output"
+
+    /** §8.4 / §14: an audio `401 DEVICE_REVOKED` this soon after a `4001` close keeps the pairing. */
+    const val KICK_AUDIO_WINDOW_MS = 2_000L
+
     /** §5 `features` of the library screens (contract §10): a missing one hides its screen. */
     const val FEATURE_LIBRARY_SONGS = "library.songs"
     const val FEATURE_LIBRARY_PLAYLISTS = "library.playlists"
@@ -72,6 +81,23 @@ object RepeatModeSerializer : KSerializer<RepeatMode> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("RepeatMode", PrimitiveKind.STRING)
     override fun serialize(encoder: Encoder, value: RepeatMode) = encoder.encodeString(value.wire)
     override fun deserialize(decoder: Decoder): RepeatMode = RepeatMode.fromWire(decoder.decodeString())
+}
+
+/** `AudioOutput` (contract §1.1, since 1.2): the device the phone's playback sounds on; an unknown value reads as [Phone]. */
+@Serializable(with = AudioOutputSerializer::class)
+enum class AudioOutput(val wire: String) {
+    Phone("phone"),
+    Pc("pc");
+
+    companion object {
+        fun fromWire(value: String?): AudioOutput = entries.firstOrNull { it.wire == value } ?: Phone
+    }
+}
+
+object AudioOutputSerializer : KSerializer<AudioOutput> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("AudioOutput", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: AudioOutput) = encoder.encodeString(value.wire)
+    override fun deserialize(decoder: Decoder): AudioOutput = AudioOutput.fromWire(decoder.decodeString())
 }
 
 /** `Track.source` (contract §1.1); an unknown value reads as [Online]. */
@@ -146,6 +172,8 @@ data class SnapshotMessage(
     val positionMs: Long = 0,
     val repeatMode: RepeatMode = RepeatMode.Off,
     val shuffle: Boolean = false,
+    /** Since 1.2; a 1.1 phone does not send it. */
+    val audioOutput: AudioOutput = AudioOutput.Phone,
 ) : ServerMessage
 
 @Serializable
@@ -182,6 +210,14 @@ data class ModesChangedMessage(
     override val serverTimeMs: Long,
     val repeatMode: RepeatMode = RepeatMode.Off,
     val shuffle: Boolean = false,
+) : DeltaMessage
+
+/** §7.2 (since 1.2): the audio output changed. */
+@Serializable
+data class OutputChangedMessage(
+    override val revision: Long,
+    override val serverTimeMs: Long,
+    val audioOutput: AudioOutput = AudioOutput.Phone,
 ) : DeltaMessage
 
 /** §7.3: light, non-revised snapshot. */
@@ -234,6 +270,7 @@ object ServerMessages {
             "trackChanged" -> TrackChangedMessage.serializer()
             "queueChanged" -> QueueChangedMessage.serializer()
             "modesChanged" -> ModesChangedMessage.serializer()
+            "outputChanged" -> OutputChangedMessage.serializer()
             "heartbeat" -> HeartbeatMessage.serializer()
             "pong" -> PongMessage.serializer()
             "error" -> ErrorMessage.serializer()
@@ -283,6 +320,10 @@ data class RepeatCommandBody(val mode: RepeatMode, val commandId: String?)
 @Serializable
 data class ShuffleCommandBody(val enabled: Boolean, val commandId: String?)
 
+/** `/player/output` (since 1.2). */
+@Serializable
+data class OutputCommandBody(val output: AudioOutput, val commandId: String?)
+
 /** `/queue/remove` and `/queue/jump`. */
 @Serializable
 data class QueueItemCommandBody(val index: Int, val trackId: String, val commandId: String?)
@@ -323,6 +364,7 @@ enum class CommandKind(val route: String) {
     Speed("player/speed"),
     Repeat("player/repeat"),
     Shuffle("player/shuffle"),
+    Output("player/output"),
     Jump("queue/jump"),
     Remove("queue/remove"),
     Move("queue/move"),

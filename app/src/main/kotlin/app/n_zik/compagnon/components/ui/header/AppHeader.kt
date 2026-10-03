@@ -18,12 +18,12 @@ import app.n_zik.compagnon.components.navigation.header.ActionBar
 /**
  * Port of `AppHeader.Draw` (phone's `app/it/fast4x/rimusic/ui/components/navigation/header/AppHeader.kt`) on
  * the home: 64 dp on `background0`, 12 dp before the logo and 4 dp after the actions, the
- * [CollapsingAppTitle] taking the remaining width, then the [ActionBar] (connection and "Phone").
+ * [CollapsingAppTitle] taking the remaining width, then the [ActionBar] (connection, "Phone", settings).
  * Dropped: the back button (the opened playlist / album / artist has its own, ported with its screen), the
  * voice-search overlay and the scroll-hide offset (phone features), the system bar insets.
  */
 @Composable
-fun AppHeader(connection: ConnectionState, onPhone: () -> Unit) {
+fun AppHeader(connection: ConnectionState, onPhone: () -> Unit, onSettings: () -> Unit) {
     val themeBackground = colorPalette().background0
     // isHome
     val startPadding = 12.dp
@@ -44,7 +44,7 @@ fun AppHeader(connection: ConnectionState, onPhone: () -> Unit) {
             CollapsingAppTitle(Modifier.weight(1f))
 
             // Action icons
-            ActionBar(connection, onPhone)
+            ActionBar(connection, onPhone, onSettings)
         }
     }
 }

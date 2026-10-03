@@ -124,9 +124,12 @@ class CredentialStore(
         const val FILE_NAME = "pairing.json"
 
         /** `%APPDATA%\N-Zik Desktop Compagnon\pairing.json`. */
-        fun defaultPairingFile(): Path {
+        fun defaultPairingFile(): Path = appDirectory().resolve(FILE_NAME)
+
+        /** `%APPDATA%\N-Zik Desktop Compagnon\`: pairing, settings (`settings.json`) and audio cache (`cache\audio\`). */
+        fun appDirectory(): Path {
             val base = System.getenv("APPDATA")?.takeIf { it.isNotBlank() } ?: System.getProperty("user.home")
-            return Paths.get(base, AppInfo.NAME, FILE_NAME)
+            return Paths.get(base, AppInfo.NAME)
         }
 
         fun defaultSecretStore(): SecretStore =

@@ -68,6 +68,20 @@ import app.n_zik.compagnon.core.palette.toPaletteBitmap
 import app.n_zik.compagnon.enums.ColorPaletteMode
 import app.n_zik.compagnon.enums.ColorPaletteName
 import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.components.ui.screens.settings.SettingsScreen
+import app.n_zik.compagnon.playback.cache.AudioCache
+import app.n_zik.compagnon.playback.services.LocalPlayback
+import app.n_zik.compagnon.playback.services.LocalPlaybackNotice
+import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.generated.resources.Res
+import app.n_zik.compagnon.generated.resources.local_playback_failed
+import app.n_zik.compagnon.generated.resources.local_playback_invalid_url
+import app.n_zik.compagnon.generated.resources.local_playback_not_found
+import app.n_zik.compagnon.generated.resources.local_playback_other_active
+import app.n_zik.compagnon.generated.resources.local_playback_unreachable
+import app.n_zik.compagnon.generated.resources.local_playback_upstream_failed
+import app.n_zik.compagnon.generated.resources.paired_other_active_unknown
+import org.jetbrains.compose.resources.getString
 
 /**
  * The phone's `appearance` / `fadeFromAppearance` state of `MainActivity.setContent`
@@ -136,8 +150,9 @@ fun computeAppearance(fontFamily: FontFamily): Appearance {
  * The phone's `MainActivity` content once paired (`app/n_zik/android/MainActivity.kt` `setContent`): the
  * [AppHeader], the home ([HomeScreen]: library tabs and floating navigation bar), the player sheet in its
  * palette fade (the [MiniPlayer] floating above the navigation bar, the full [Player] opened from it), the
- * mini-player's queue overlay, the menu sheet, the toasts. PC only: the connection banners and the "Phone"
- * panel (opened from the header).
+ * mini-player's queue overlay, the menu sheet, the toasts. PC only: the connection banners, the "Phone"
+ * panel (opened from the header), the settings overlay ([SettingsScreen], from the header's settings icon)
+ * and the toasts of the PC's own player ([localPlayback], story 12).
  *
  * The dynamic palette follows the current track's cover (`setDynamicPalette` on each track change).
  * Dropped: navigation routes other than home, the player sheet's drag (the full player opens and closes with
@@ -147,6 +162,8 @@ fun computeAppearance(fontFamily: FontFamily): Appearance {
 fun MainActivity(
     repository: PlayerRepository,
     library: LibraryRepository,
+    localPlayback: LocalPlayback?,
+    audioCache: AudioCache?,
     record: PairingRecord,
     appearanceState: AppearanceState,
     onForget: () -> Unit,
@@ -157,6 +174,8 @@ fun MainActivity(
     var showPlayer by remember { mutableStateOf(false) }
     var showQueueOverlay by remember { mutableStateOf(false) }
     var phonePanel by remember { mutableStateOf(false) }
+    var settingsPanel by remember { mutableStateOf(false) }
+    val preferences = LocalPreferences.current
     var navBarVisible by remember { mutableStateOf(false) }
     val menuState = remember { MenuState() }
     val onCommand: CommandLauncher = { command -> scope.launch { repository.command() } }
@@ -169,6 +188,10 @@ fun MainActivity(
             val text = noticeText(notice)
             if (notice is PlayerNotice.Truncated) Toaster.w(text) else Toaster.e(text)
         }
+    }
+
+    LaunchedEffect(localPlayback) {
+        localPlayback?.notices?.collect { notice -> Toaster.e(localPlaybackNoticeText(notice)) }
     }
 
     val track = state?.currentTrack
@@ -189,7 +212,7 @@ fun MainActivity(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.fillMaxSize()) {
-                AppHeader(connection, onPhone = { phonePanel = true })
+                AppHeader(connection, onPhone = { phonePanel = true }, onSettings = { settingsPanel = true })
                 ConnectionBanner(connection, onReconnect = repository::reconnect)
                 HomeScreen(
                     lists = lists,
@@ -228,6 +251,7 @@ fun MainActivity(
                                 showPlayer = { showPlayer = true },
                                 hidePlayer = { showPlayer = false },
                                 onShowQueue = { showQueueOverlay = true },
+                                phoneName = record.serverName,
                             )
                         }
                     }
@@ -249,7 +273,21 @@ fun MainActivity(
             if (phonePanel) {
                 PhonePanel(record, connection, onClose = { phonePanel = false }, onForget = onForget)
             }
+            if (settingsPanel && preferences != null) {
+                SettingsScreen(preferences, audioCache, onClose = { settingsPanel = false })
+            }
             with(Toaster) { Host() }
         }
     }
+}
+
+/** Text of a failure of the PC's own player (story 12), decided from its kind; shown as a toast. */
+private suspend fun localPlaybackNoticeText(notice: LocalPlaybackNotice): String = when (notice) {
+    LocalPlaybackNotice.NotFound -> getString(Res.string.local_playback_not_found)
+    LocalPlaybackNotice.UpstreamFailed -> getString(Res.string.local_playback_upstream_failed)
+    LocalPlaybackNotice.InvalidUrl -> getString(Res.string.local_playback_invalid_url)
+    is LocalPlaybackNotice.OtherActive ->
+        getString(Res.string.local_playback_other_active, notice.deviceName ?: getString(Res.string.paired_other_active_unknown))
+    LocalPlaybackNotice.Unreachable -> getString(Res.string.local_playback_unreachable)
+    LocalPlaybackNotice.Failed -> getString(Res.string.local_playback_failed)
 }

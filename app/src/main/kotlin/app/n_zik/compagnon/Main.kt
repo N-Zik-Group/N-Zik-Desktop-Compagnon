@@ -36,6 +36,11 @@ import app.n_zik.compagnon.components.ui.screens.bridge.BridgeScreen
 import app.n_zik.compagnon.core.network.BridgeClient
 import app.n_zik.compagnon.core.network.CandidateAddresses
 import app.n_zik.compagnon.core.network.SystemNetworkInterfaceSource
+import app.n_zik.compagnon.playback.cache.AudioCache
+import app.n_zik.compagnon.playback.services.LocalPlayback
+import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.Preferences
+import androidx.compose.runtime.CompositionLocalProvider
 
 fun main() = application {
     Window(
@@ -52,6 +57,9 @@ fun App() {
     val scope = remember { CoroutineScope(SupervisorJob() + Dispatchers.Main) }
     val client = remember { BridgeClient() }
     val wsClient = remember { BridgeSession.httpClient() }
+    // Story 12: user settings (`settings.json`) and the local audio cache, both next to `pairing.json`
+    val preferences = remember { Preferences() }
+    val audioCache = remember { AudioCache(maxBytes = { preferences.settings.value.songCacheMaxBytes }) }
     val controller = remember {
         PairingController(
             scope = scope,
@@ -87,12 +95,28 @@ fun App() {
                 label = "rootBackground",
             )
             Box(modifier = Modifier.fillMaxSize().background(rootBackgroundColor)) {
-                BridgeScreen(
-                    controller = controller,
-                    playerFactory = { active -> RemotePlayerRepository.create(active, client, wsClient, controller.revocation, scope) },
-                    libraryFactory = { active -> RemoteLibraryRepository.create(active, client, controller.revocation) },
-                    appearanceState = appearanceState,
-                )
+                CompositionLocalProvider(LocalPreferences provides preferences) {
+                    BridgeScreen(
+                        controller = controller,
+                        playerFactory = { active -> RemotePlayerRepository.create(active, client, wsClient, controller.revocation, scope) },
+                        libraryFactory = { active -> RemoteLibraryRepository.create(active, client, controller.revocation) },
+                        localPlaybackFactory = { active, repository, engine, playbackScope ->
+                            LocalPlayback(
+                                repository = repository,
+                                engine = engine,
+                                audio = client,
+                                address = active.address,
+                                deviceToken = active.pairing.deviceToken,
+                                cache = audioCache,
+                                settings = preferences.settings,
+                                revocation = controller.revocation,
+                                scope = playbackScope,
+                            )
+                        },
+                        audioCache = audioCache,
+                        appearanceState = appearanceState,
+                    )
+                }
             }
         }
     }

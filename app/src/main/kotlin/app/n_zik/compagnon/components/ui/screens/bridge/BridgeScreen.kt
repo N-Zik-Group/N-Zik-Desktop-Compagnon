@@ -33,6 +33,16 @@ import app.n_zik.compagnon.bridge.pairing.PairedStatus
 import app.n_zik.compagnon.bridge.pairing.PairingController
 import app.n_zik.compagnon.bridge.pairing.PairingState
 import app.n_zik.compagnon.bridge.state.PlayerRepository
+import app.n_zik.compagnon.playback.cache.AudioCache
+import app.n_zik.compagnon.playback.services.LocalPlayback
+import app.n_zik.compagnon.playback.vlc.AudioEngine
+import app.n_zik.compagnon.playback.vlc.VlcAudioEngine
+import app.n_zik.compagnon.playback.vlc.VlcRuntime
+import java.util.logging.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
@@ -52,12 +62,18 @@ import org.jetbrains.compose.resources.stringResource
  * a player session built by [playerFactory] and a library reader built by [libraryFactory] from the
  * credential, the session closed as soon as that state is left
  * (revocation, "Forget this phone", a new check).
+ *
+ * Story 12: with the session comes the PC's own player ([localPlaybackFactory], on the embedded libvlc
+ * when it loads, else without engine), started with it and released with it: the player stopped, then
+ * the vlcj media player and factory released, then its scope cancelled.
  */
 @Composable
 fun BridgeScreen(
     controller: PairingController,
     playerFactory: (ActivePairing) -> PlayerRepository,
     libraryFactory: (ActivePairing) -> LibraryRepository,
+    localPlaybackFactory: (ActivePairing, PlayerRepository, AudioEngine?, CoroutineScope) -> LocalPlayback,
+    audioCache: AudioCache?,
     appearanceState: AppearanceState,
 ) {
     val state by controller.state.collectAsState()
@@ -66,13 +82,24 @@ fun BridgeScreen(
     if (shown is PairingState.Paired && shown.status == PairedStatus.Ok && active != null) {
         val repository = remember(active) { playerFactory(active) }
         val library = remember(active) { libraryFactory(active) }
+        val playbackScope = remember(repository) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+        val engine = remember(repository) { createEngine() }
+        val localPlayback = remember(repository) { localPlaybackFactory(active, repository, engine, playbackScope) }
         DisposableEffect(repository) {
             repository.start()
-            onDispose { repository.close() }
+            localPlayback.start()
+            onDispose {
+                localPlayback.close()
+                repository.close()
+                engine?.release()
+                playbackScope.cancel()
+            }
         }
         MainActivity(
             repository = repository,
             library = library,
+            localPlayback = localPlayback,
+            audioCache = audioCache,
             record = shown.record,
             appearanceState = appearanceState,
             onForget = {
@@ -104,6 +131,14 @@ fun BridgeScreen(
             ) { shown -> Screen(shown, controller) }
         }
     }
+}
+
+/** The vlcj engine on the embedded libvlc, or `null` when libvlc is not available (the app keeps working). */
+private fun createEngine(): AudioEngine? {
+    if (!VlcRuntime.isAvailable) return null
+    return runCatching { VlcAudioEngine() }
+        .onFailure { Logger.getLogger("BridgeScreen").warning("Audio engine unavailable: ${it::class.simpleName}") }
+        .getOrNull()
 }
 
 /** Screens only animate when the screen itself changes, not on every field update. */

@@ -135,6 +135,7 @@
     <string name="command_clear">Clear the queue</string>
     <string name="command_queue_play">Play</string>
     <string name="command_queue_add">Add to queue</string>
+    <string name="command_output">Audio output</string>
     <string name="command_unknown">A command</string>
     <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
     <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
@@ -210,4 +211,40 @@
     <string name="info_reorder_is_possible_only_in_ascending_sort">Reorder is possible only in ascending sorting</string>
     <string name="repeat">Repeat</string>
     <string name="bridge_server">PC server</string>
+
+    <!-- Story 12: audio output, local playback and settings (phone keys and English labels) -->
+    <string name="audio_devices">Audio devices</string>
+    <string name="audio_output_title">Audio output</string>
+    <string name="volume">Volume</string>
+    <string name="controls_title_playback_volume">Playback volume</string>
+    <string name="audio_quality_format">Audio Quality</string>
+    <string name="audio_quality_automatic">Automatic</string>
+    <string name="audio_quality_format_high">High</string>
+    <string name="audio_quality_format_low">Low</string>
+    <string name="quality">Quality</string>
+    <string name="settings">Settings</string>
+    <string name="tab_data">Data</string>
+    <string name="data_settings_description">The data section contains settings that modify how the app handles data locally and remotely</string>
+    <string name="cache">Cache</string>
+    <string name="cache_cleared">When the cache runs out of space, the resources that haven\'t been accessed for the longest time are cleared</string>
+    <string name="song_cache_max_size">Song cache max size</string>
+    <string name="turn_off">Turn off</string>
+    <string name="unlimited">Unlimited</string>
+    <string name="custom">Custom</string>
+    <string name="used">used</string>
+    <string name="set_custom_cache">Set custom cache</string>
+    <string name="enter_value_in_mb">Enter value in MB</string>
+    <string name="do_you_really_want_to_delete_cache">Do you really want to delete cache?</string>
+    <string name="value_cannot_be_empty">Value cannot be empty</string>
+    <string name="value_must_be_greater_than">Value must be greater than</string>
+
+    <!-- Compagnon only: the PC as an audio output -->
+    <string name="this_pc">This PC</string>
+    <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
+    <string name="local_playback_not_found">This song is no longer on your phone.</string>
+    <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
+    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
+    <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
+    <string name="local_playback_unreachable">Your phone did not answer.</string>
+    <string name="local_playback_failed">This song could not be played on this PC.</string>
 </resources>

@@ -236,6 +236,16 @@ class BridgeSessionTest {
     }
 
     @Test
+    fun `4001 records its instant, the start of the audio kick window`() = runBlocking {
+        script = closeWith(4001, "KICKED")
+        val session = session()
+        session.awaitState { it == ConnectionState.Kicked }
+        val kickedAt = session.lastKickAtMs
+        assertTrue(kickedAt != null && session.clock.nowMonotonicMs() - kickedAt in 0..2_000)
+        session.close()
+    }
+
+    @Test
     fun `4000 is replaced without reconnection`() = runBlocking {
         script = closeWith(4000, "SESSION_REPLACED")
         val session = session()

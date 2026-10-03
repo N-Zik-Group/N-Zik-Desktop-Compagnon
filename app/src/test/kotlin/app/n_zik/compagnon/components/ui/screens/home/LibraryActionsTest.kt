@@ -15,6 +15,7 @@ import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.state.PlayerNotice
 import app.n_zik.compagnon.bridge.state.PlayerRepository
 import app.n_zik.compagnon.bridge.state.PlayerState
+import app.n_zik.compagnon.bridge.state.AudioOutput
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.RepeatMode
 import app.n_zik.compagnon.bridge.state.Track
@@ -58,6 +59,8 @@ class LibraryActionsTest {
         override suspend fun setSpeed(speed: Float) = Unit
         override suspend fun setRepeat(mode: RepeatMode) = Unit
         override suspend fun setShuffle(enabled: Boolean) = Unit
+        override suspend fun setAudioOutput(output: AudioOutput) = Unit
+        override fun inKickWindow(): Boolean = false
         override suspend fun jump(index: Int, trackId: String) = Unit
         override suspend fun remove(index: Int, trackId: String) = Unit
         override suspend fun move(fromIndex: Int, toIndex: Int, trackId: String) = Unit

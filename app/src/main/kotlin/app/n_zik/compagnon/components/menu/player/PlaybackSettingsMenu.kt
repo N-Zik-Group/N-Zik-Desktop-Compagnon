@@ -32,6 +32,10 @@ import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.ui.sliders.SliderControl
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.controls_header_customize
+import app.n_zik.compagnon.generated.resources.controls_title_playback_volume
+import app.n_zik.compagnon.generated.resources.volume
+import app.n_zik.compagnon.generated.resources.volume_up
+import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.generated.resources.controls_title_playback_speed
 import app.n_zik.compagnon.generated.resources.playback
 import app.n_zik.compagnon.generated.resources.slow_motion
@@ -46,9 +50,11 @@ import org.jetbrains.compose.resources.stringResource
  * Port of `PlaybackSettingsMenu` (phone's `app/n_zik/android/components/menu/player/PlaybackSettingsMenu.kt`),
  * opened by a long press (a right click on the PC) on the player's play button, in its default list style.
  *
- * Kept: the "Customize" list menu, the "Playback" section and its "Playback speed" slider (`player/speed`).
- * Dropped (contract v1 has no such command, or the sound never plays on the PC): pitch, medley duration,
- * volumes, blur, bass boost, loudness and their sections, and the grid style.
+ * Kept: the "Customize" list menu, the "Playback" section and its "Playback speed" slider (`player/speed`),
+ * the "Volume" section with its "Playback volume" slider (story 12: the PC's own player, local and persisted,
+ * contract §8.5).
+ * Dropped (contract v1 has no such command, or nothing to apply it to on the PC): pitch, medley duration,
+ * the device volume (Windows' volume), blur, bass boost, loudness and their sections, and the grid style.
  * PC only: the range is the contract's (0.25–4.0, the phone allows 0.1–10), and the speed is sent when the
  * slider is released (the phone applies each step to its own player); while dragging, the slider shows the
  * dragged value, then follows the phone again.
@@ -68,6 +74,10 @@ class PlaybackSettingsMenu private constructor(
         val enabled = repository?.connection?.collectAsState()?.value == ConnectionState.Live
         var dragged by remember { mutableStateOf<Float?>(null) }
         val playbackSpeed = dragged ?: state?.speed ?: 1f
+        val preferences = LocalPreferences.current
+        val settings = preferences?.settings?.collectAsState()?.value
+        var draggedVolume by remember { mutableStateOf<Float?>(null) }
+        val playbackVolume = draggedVolume ?: settings?.playbackVolume ?: 1f
 
         ListMenu.Menu(title = stringResource(Res.string.controls_header_customize)) {
             // Section: Playback
@@ -95,6 +105,31 @@ class PlaybackSettingsMenu private constructor(
                 drawValuePoints = true,
                 isEnabled = enabled,
                 onReset = { onSpeed(1f) },
+            )
+
+            // Section: Volume
+            SectionTitle(stringResource(Res.string.volume))
+
+            // Playback Volume (written when the slider is released)
+            ListSliderMenuItem(
+                icon = Res.drawable.volume_up,
+                title = stringResource(Res.string.controls_title_playback_volume),
+                value = playbackVolume,
+                onValueChange = {
+                    val rounded = kotlin.math.round(it * 100f) / 100f
+                    draggedVolume = rounded
+                },
+                onSlideComplete = {
+                    draggedVolume?.let { value -> preferences?.update { it.copy(playbackVolume = value.coerceIn(0f, 1f)) } }
+                    draggedVolume = null
+                },
+                valueRange = 0f..1f,
+                displayValue = { "${(it * 100).toInt()}%" },
+                stepSize = 0f,
+                defaultValue = 1f,
+                drawValuePoints = true,
+                isEnabled = preferences != null,
+                onReset = { preferences?.update { it.copy(playbackVolume = 1f) } },
             )
         }
     }

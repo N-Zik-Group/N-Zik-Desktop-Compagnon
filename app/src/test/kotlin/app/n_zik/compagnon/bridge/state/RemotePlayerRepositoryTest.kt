@@ -69,6 +69,7 @@ class RemotePlayerRepositoryTest {
         override fun close() {
             closes++
         }
+        override var lastKickAtMs: Long? = null
     }
 
     private val channel = FakeChannel()
@@ -347,6 +348,28 @@ class RemotePlayerRepositoryTest {
             notices,
         )
         assertEquals(0, channel.snapshotRequests)
+    }
+
+    @Test
+    fun `the audio output is a command, a 422 becomes a notice`() = runTest {
+        val repository = repository { json("""{"code":"PLAYER_REJECTED","message":"no session"}""", HttpStatusCode.UnprocessableEntity) }
+        repository.setAudioOutput(AudioOutput.Pc)
+        val request = requests.single()
+        assertEquals("http://192.168.1.14:42420/api/v1/player/output", request.url.toString())
+        assertEquals("""{"output":"pc","commandId":"cmd-1"}""", bodies.single())
+        assertEquals(listOf<PlayerNotice>(PlayerNotice.Rejected(CommandKind.Output)), notices)
+    }
+
+    @Test
+    fun `the kick window holds while kicked and 2 s after the 4001 close`() = runTest {
+        val repository = repository { json(applied(1)) }
+        assertTrue(!repository.inKickWindow())
+        channel.lastKickAtMs = channel.clock.nowMonotonicMs()
+        assertTrue(repository.inKickWindow())
+        channel.lastKickAtMs = channel.clock.nowMonotonicMs() - 2_001
+        assertTrue(!repository.inKickWindow())
+        channel.connection.value = ConnectionState.Kicked
+        assertTrue(repository.inKickWindow())
     }
 
     @Test

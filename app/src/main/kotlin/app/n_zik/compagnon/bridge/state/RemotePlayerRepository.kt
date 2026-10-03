@@ -144,6 +144,15 @@ class RemotePlayerRepository(
     override suspend fun setRepeat(mode: RepeatMode) = send(CommandKind.Repeat, RepeatCommandBody.serializer()) { RepeatCommandBody(mode, it) }
     override suspend fun setShuffle(enabled: Boolean) = send(CommandKind.Shuffle, ShuffleCommandBody.serializer()) { ShuffleCommandBody(enabled, it) }
 
+    override suspend fun setAudioOutput(output: AudioOutput) =
+        send(CommandKind.Output, OutputCommandBody.serializer()) { OutputCommandBody(output, it) }
+
+    override fun inKickWindow(): Boolean {
+        if (channel.connection.value == ConnectionState.Kicked) return true
+        val kickedAt = channel.lastKickAtMs ?: return false
+        return channel.clock.nowMonotonicMs() - kickedAt <= SessionContract.KICK_AUDIO_WINDOW_MS
+    }
+
     override suspend fun jump(index: Int, trackId: String) =
         send(CommandKind.Jump, QueueItemCommandBody.serializer()) { QueueItemCommandBody(index, trackId, it) }
 

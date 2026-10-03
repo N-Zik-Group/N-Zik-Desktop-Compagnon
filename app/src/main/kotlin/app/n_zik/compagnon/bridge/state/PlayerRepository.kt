@@ -75,6 +75,15 @@ interface PlayerRepository {
     suspend fun setRepeat(mode: RepeatMode)
     suspend fun setShuffle(enabled: Boolean)
 
+    /** `/player/output` (contract §8.5, since 1.2): where the phone's playback sounds. */
+    suspend fun setAudioOutput(output: AudioOutput)
+
+    /**
+     * Contract §8.4: `true` while kicked, or within 2 s of a `4001` close. An audio `401 DEVICE_REVOKED`
+     * then keeps the pairing.
+     */
+    fun inKickWindow(): Boolean
+
     /** Queue items are designated by their index in the effective order **and** their `trackId` (contract §9). */
     suspend fun jump(index: Int, trackId: String)
     suspend fun remove(index: Int, trackId: String)

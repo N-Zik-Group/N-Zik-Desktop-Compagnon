@@ -52,6 +52,12 @@ object BridgeErrorCode {
     const val PLAYER_REJECTED = "PLAYER_REJECTED"
     const val PLAYER_UNAVAILABLE = "PLAYER_UNAVAILABLE"
     const val SERVER_STOPPING = "SERVER_STOPPING"
+
+    /** Audio delivery (contract §3, §8). */
+    const val AUDIO_URL_EXPIRED = "AUDIO_URL_EXPIRED"
+    const val AUDIO_URL_INVALID = "AUDIO_URL_INVALID"
+    const val AUDIO_UPSTREAM_FAILED = "AUDIO_UPSTREAM_FAILED"
+    const val RANGE_NOT_SATISFIABLE = "RANGE_NOT_SATISFIABLE"
 }
 
 /** JSON settings shared by every pairing exchange: unknown fields ignored (contract §1). */

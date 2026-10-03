@@ -79,5 +79,6 @@ object StateReducer {
             currentTrackId = delta.currentTrackId,
         )
         is ModesChangedMessage -> player.copy(repeatMode = delta.repeatMode, shuffle = delta.shuffle)
+        is OutputChangedMessage -> player.copy(audioOutput = delta.audioOutput)
     }
 }

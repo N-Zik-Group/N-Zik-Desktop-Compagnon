@@ -99,6 +99,9 @@ interface StateChannel {
 
     /** Closes the session (`1000 NORMAL`) and stops every reconnection. */
     fun close()
+
+    /** Monotonic instant ([ServerClock.nowMonotonicMs]) of the last `4001 KICKED` close, `null` if none (contract §8.4). */
+    val lastKickAtMs: Long?
 }
 
 /** The phone refused the WebSocket upgrade (contract §6.1): [status] and the §3 error body when readable. */
@@ -153,6 +156,8 @@ class BridgeSession(
     private var onMessage: suspend (ServerMessage) -> Unit = {}
     private var loop: Job? = null
     @Volatile private var current: DefaultClientWebSocketSession? = null
+    @Volatile override var lastKickAtMs: Long? = null
+        private set
     @Volatile private var closed = false
     private val cleanupScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -282,7 +287,11 @@ class BridgeSession(
         return when (code) {
             SessionContract.CLOSE_SERVER_STOPPED -> Outcome.Terminal(ConnectionState.ServerStopped(null))
             SessionContract.CLOSE_SESSION_REPLACED -> Outcome.Terminal(ConnectionState.Replaced)
-            SessionContract.CLOSE_KICKED -> Outcome.Terminal(ConnectionState.Kicked)
+            SessionContract.CLOSE_KICKED -> {
+                // Contract §8.4: the window of an audio `401` starts at the close itself.
+                lastKickAtMs = clock.nowMonotonicMs()
+                Outcome.Terminal(ConnectionState.Kicked)
+            }
             SessionContract.CLOSE_DEVICE_REVOKED -> {
                 revocation.revokeNow()
                 Outcome.Terminal(ConnectionState.Revoked)

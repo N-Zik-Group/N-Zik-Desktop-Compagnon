@@ -15,6 +15,8 @@ data class PlayerState(
     val serverTimeMs: Long = 0,
     val repeatMode: RepeatMode = RepeatMode.Off,
     val shuffle: Boolean = false,
+    /** Where the phone's playback sounds (contract §8.5, since 1.2); [AudioOutput.Pc] = this PC's local player. */
+    val audioOutput: AudioOutput = AudioOutput.Phone,
 ) {
     /** The current track: the one at [currentIndex] when its id matches, else the first one with [currentTrackId]. */
     val currentTrack: Track?
@@ -45,6 +47,7 @@ data class PlayerState(
             serverTimeMs = snapshot.serverTimeMs,
             repeatMode = snapshot.repeatMode,
             shuffle = snapshot.shuffle,
+            audioOutput = snapshot.audioOutput,
         )
     }
 }

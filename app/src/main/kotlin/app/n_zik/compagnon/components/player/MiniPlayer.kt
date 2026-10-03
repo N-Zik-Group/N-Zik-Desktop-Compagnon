@@ -42,8 +42,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalCommandLauncher
 import app.n_zik.compagnon.LocalPlayerRepository
+import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.bridge.ConnectionState
+import app.n_zik.compagnon.bridge.state.AudioOutput
 import app.n_zik.compagnon.bridge.state.SessionContract
+import app.n_zik.compagnon.components.menu.player.AudioDeviceMenu
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.SONG_THUMBNAIL_SIZE_PX
 import app.n_zik.compagnon.components.styling.Dimensions
@@ -55,6 +58,8 @@ import app.n_zik.compagnon.components.themed.NowPlayingSongIndicator
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.Res
+import app.n_zik.compagnon.generated.resources.computer
+import app.n_zik.compagnon.generated.resources.devices
 import app.n_zik.compagnon.generated.resources.heart
 import app.n_zik.compagnon.generated.resources.pause
 import app.n_zik.compagnon.generated.resources.play
@@ -85,9 +90,13 @@ import kotlin.math.absoluteValue
  * xxs.semiBold. A click opens the player ([showPlayer]); a long press (a right click on the PC) opens the
  * queue ([onShowQueue], the phone's queue route intercepted into its overlay).
  * Dropped: the swipe actions (like / previous / next: no swipe on the PC, no like in contract v1), the
- * explicit badge (not in the contract), the buffering ring (no buffering state), the "audio output" button
- * (the sound stays on the phone), the other optional buttons (off by default), the rotation effect (off by
- * default), the mini-player's own cover palette (only used by the non-default `Cover` controls colour).
+ * explicit badge (not in the contract), the buffering ring (no buffering state), the other optional buttons
+ * (off by default), the rotation effect (off by default), the mini-player's own cover palette (only used by
+ * the non-default `Cover` controls colour).
+ * The "audio output" button (`MiniPlayerButton.AudioOutput`, on by default, phone's 997-1040) opens the
+ * clone of `AudioDeviceMenu` (this PC / [phoneName], story 12). Like the phone's, it is accented with the
+ * device's icon when the sound leaves its default output: here when it plays on this PC. Hidden without the
+ * phone's `audio.output` feature (a 1.1 phone).
  * Outside a `Live` session the buttons are dimmed and do nothing.
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -96,6 +105,7 @@ fun MiniPlayer(
     showPlayer: () -> Unit,
     hidePlayer: () -> Unit,
     onShowQueue: (() -> Unit)? = null,
+    phoneName: String = "",
 ) {
     val repository = LocalPlayerRepository.current ?: return
     val onCommand = LocalCommandLauncher.current
@@ -103,6 +113,9 @@ fun MiniPlayer(
     val connection by repository.connection.collectAsState()
     val live = connection == ConnectionState.Live
     val playback = SessionContract.FEATURE_PLAYBACK in repository.features
+    val audioOutputFeature = SessionContract.FEATURE_AUDIO in repository.features &&
+        SessionContract.FEATURE_AUDIO_OUTPUT in repository.features
+    val menuState = LocalMenuState.current
 
     val currentState = state ?: return
     val mediaItem = currentState.currentTrack ?: return
@@ -279,6 +292,24 @@ fun MiniPlayer(
                         onClick = { onCommand { next() } },
                         modifier = buttonModifier,
                     )
+
+                    // MiniPlayerButton.AudioOutput
+                    if (audioOutputFeature) {
+                        val isExternal = currentState.audioOutput == AudioOutput.Pc
+                        val finalColor = if (isExternal) colorPalette().accent else controlsColorText
+                        val finalIcon = if (isExternal) Res.drawable.computer else Res.drawable.devices
+                        IconButton(
+                            icon = finalIcon,
+                            color = finalColor,
+                            enabled = true,
+                            onClick = {
+                                menuState.display {
+                                    AudioDeviceMenu(onDismiss = menuState::hide, phoneName = phoneName)
+                                }
+                            },
+                            modifier = buttonModifier,
+                        )
+                    }
                 }
             }
 

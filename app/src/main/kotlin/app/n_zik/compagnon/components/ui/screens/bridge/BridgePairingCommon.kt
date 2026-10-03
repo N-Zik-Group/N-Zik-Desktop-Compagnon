@@ -44,6 +44,7 @@ import app.n_zik.compagnon.generated.resources.command_pause
 import app.n_zik.compagnon.generated.resources.command_play
 import app.n_zik.compagnon.generated.resources.command_previous
 import app.n_zik.compagnon.generated.resources.command_queue_add
+import app.n_zik.compagnon.generated.resources.command_output
 import app.n_zik.compagnon.generated.resources.command_queue_play
 import app.n_zik.compagnon.generated.resources.command_remove
 import app.n_zik.compagnon.generated.resources.command_repeat
@@ -177,6 +178,7 @@ suspend fun commandName(command: CommandKind?): String = getString(
         CommandKind.Clear -> Res.string.command_clear
         CommandKind.QueuePlay -> Res.string.command_queue_play
         CommandKind.QueueAdd -> Res.string.command_queue_add
+        CommandKind.Output -> Res.string.command_output
         null -> Res.string.command_unknown
     },
 )
