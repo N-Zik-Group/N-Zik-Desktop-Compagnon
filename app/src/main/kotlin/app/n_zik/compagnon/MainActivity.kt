@@ -1,19 +1,11 @@
 package app.n_zik.compagnon
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -26,12 +18,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import app.n_zik.compagnon.bridge.ConnectionState
@@ -47,6 +39,7 @@ import app.n_zik.compagnon.components.player.MiniPlayerQueueOverlay
 import app.n_zik.compagnon.components.player.PLAYER_ARTWORK_SIZE_PX
 import app.n_zik.compagnon.components.player.PaletteFade
 import app.n_zik.compagnon.components.player.Player
+import app.n_zik.compagnon.components.player.PlayerSheet
 import app.n_zik.compagnon.components.player.VIOLET_ACCENT
 import app.n_zik.compagnon.components.player.m3eDynamicColorPaletteOf
 import app.n_zik.compagnon.components.styling.Dimensions
@@ -155,8 +148,8 @@ fun computeAppearance(fontFamily: FontFamily): Appearance {
  * and the toasts of the PC's own player ([localPlayback], story 12).
  *
  * The dynamic palette follows the current track's cover (`setDynamicPalette` on each track change).
- * Dropped: navigation routes other than home, the player sheet's drag (the full player opens and closes with
- * a slide), the system bars, the scroll-hide of the bars.
+ * Dropped: navigation routes other than home, the player sheet's drag / fling (the full player deploys from
+ * the mini-player in a 400 ms slide; no touch on the PC), the system bars, the scroll-hide of the bars.
  */
 @Composable
 fun MainActivity(
@@ -205,6 +198,18 @@ fun MainActivity(
         appearanceState.setDynamicPalette(bitmap)
     }
 
+    // Media presence grace: a transient null between two track changes must not drop the sheet
+    // (port of the phone's 400 ms grace, phone's `MainActivity.kt` 2198-2223)
+    var mediaPresent by remember { mutableStateOf(repository.state.value?.currentTrack != null) }
+    LaunchedEffect(track?.id) {
+        if (track == null) {
+            delay(400)
+            if (repository.state.value?.currentTrack == null) mediaPresent = false
+        } else {
+            mediaPresent = true
+        }
+    }
+
     CompositionLocalProvider(
         LocalPlayerRepository provides repository,
         LocalCommandLauncher provides onCommand,
@@ -227,41 +232,26 @@ fun MainActivity(
 
             // Palette fade scope: the global palette switches in one step, only the mini-player and the
             // full player animate the transition
+            // PlayerPosition.Bottom with the floating bar: the sheet sits above the bar when it is shown
+            val playerPadBottom by animateDpAsState(
+                targetValue = if (navBarVisible) {
+                    Dimensions.floatingNavBarIconOnlyHeight + Dimensions.navBarBottomPadding + 4.dp
+                } else {
+                    Dimensions.navBarBottomPadding
+                },
+                animationSpec = tween(250, easing = FastOutSlowInEasing),
+                label = "playerPadBottom",
+            )
+
             PaletteFade {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    if (track != null) {
-                        // PlayerPosition.Bottom with the floating bar: above the bar when it is shown
-                        val playerPadBottom by animateDpAsState(
-                            targetValue = if (navBarVisible) {
-                                Dimensions.floatingNavBarIconOnlyHeight + Dimensions.navBarBottomPadding + 4.dp
-                            } else {
-                                Dimensions.navBarBottomPadding
-                            },
-                            animationSpec = tween(250, easing = FastOutSlowInEasing),
-                            label = "playerPadBottom",
-                        )
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(bottom = playerPadBottom)
-                                .fillMaxWidth()
-                                .height(Dimensions.collapsedPlayer),
-                        ) {
-                            MiniPlayer(
-                                showPlayer = { showPlayer = true },
-                                hidePlayer = { showPlayer = false },
-                                onShowQueue = { showQueueOverlay = true },
-                                phoneName = record.serverName,
-                            )
-                        }
-                    }
-                    AnimatedVisibility(
-                        visible = showPlayer && track != null,
-                        enter = slideInVertically { it } + fadeIn(),
-                        exit = slideOutVertically { it } + fadeOut(),
-                    ) {
-                        Player(onDismiss = { showPlayer = false })
-                    }
+                if (mediaPresent) {
+                    PlayerSheet(
+                        showPlayer = showPlayer,
+                        onShowPlayer = { showPlayer = it },
+                        onShowQueue = { showQueueOverlay = true },
+                        phoneName = record.serverName,
+                        bottomPadding = playerPadBottom,
+                    )
                 }
             }
 
