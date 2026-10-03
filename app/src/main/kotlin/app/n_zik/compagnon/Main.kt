@@ -1,28 +1,41 @@
 package app.n_zik.compagnon
 
+import java.net.InetAddress
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import app.n_zik.compagnon.pairing.BridgeClient
-import app.n_zik.compagnon.pairing.CandidateAddresses
-import app.n_zik.compagnon.pairing.CredentialStore
-import app.n_zik.compagnon.pairing.PairingController
-import app.n_zik.compagnon.pairing.PairingListener
-import app.n_zik.compagnon.pairing.SystemNetworkInterfaceSource
-import app.n_zik.compagnon.player.BridgeSession
-import app.n_zik.compagnon.player.RemotePlayerRepository
-import app.n_zik.compagnon.ui.pairing.PairingApp
-import app.n_zik.compagnon.ui.theme.NZikTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
-import java.net.InetAddress
+import app.n_zik.compagnon.bridge.BridgeSession
+import app.n_zik.compagnon.bridge.library.RemoteLibraryRepository
+import app.n_zik.compagnon.bridge.pairing.CredentialStore
+import app.n_zik.compagnon.bridge.pairing.PairingController
+import app.n_zik.compagnon.bridge.pairing.PairingListener
+import app.n_zik.compagnon.bridge.state.RemotePlayerRepository
+import app.n_zik.compagnon.components.theme.AnimatedAppearance
+import app.n_zik.compagnon.components.theme.ColorPalette
+import app.n_zik.compagnon.components.theme.rubikFontFamily
+import app.n_zik.compagnon.components.ui.screens.bridge.BridgeScreen
+import app.n_zik.compagnon.core.network.BridgeClient
+import app.n_zik.compagnon.core.network.CandidateAddresses
+import app.n_zik.compagnon.core.network.SystemNetworkInterfaceSource
 
 fun main() = application {
     Window(
@@ -59,12 +72,50 @@ fun App() {
             scope.cancel()
         }
     }
-    NZikTheme {
-        PairingApp(controller) { active ->
-            RemotePlayerRepository.create(active, client, wsClient, controller.revocation, scope)
+    // The phone's `MainActivity.setContent` root: its appearance, faded by `AnimatedAppearance`
+    val fontFamily = rubikFontFamily()
+    val appearanceState = remember(fontFamily) { AppearanceState(computeAppearance(fontFamily)) }
+    AnimatedAppearance(
+        target = appearanceState.appearance,
+        fadeFrom = appearanceState.fadeFromAppearance,
+        onFadeComplete = { appearanceState.fadeFromAppearance = null },
+    ) { appearance ->
+        MaterialTheme(colorScheme = materialColorSchemeOf(appearance.colorPalette)) {
+            val rootBackgroundColor by animateColorAsState(
+                targetValue = appearanceState.appearance.colorPalette.background0,
+                animationSpec = tween(350, easing = FastOutSlowInEasing),
+                label = "rootBackground",
+            )
+            Box(modifier = Modifier.fillMaxSize().background(rootBackgroundColor)) {
+                BridgeScreen(
+                    controller = controller,
+                    playerFactory = { active -> RemotePlayerRepository.create(active, client, wsClient, controller.revocation, scope) },
+                    libraryFactory = { active -> RemoteLibraryRepository.create(active, client, controller.revocation) },
+                    appearanceState = appearanceState,
+                )
+            }
         }
     }
 }
+
+/**
+ * Compagnon only: the Material 3 colours of the few Material components the ported screens use (cards,
+ * text fields, progress indicators), mirrored from the N-Zik palette.
+ */
+private fun materialColorSchemeOf(palette: ColorPalette) = darkColorScheme(
+    primary = palette.accent,
+    onPrimary = palette.onAccent,
+    secondary = palette.accent,
+    onSecondary = palette.onAccent,
+    background = palette.background0,
+    onBackground = palette.text,
+    surface = palette.background1,
+    onSurface = palette.text,
+    surfaceVariant = palette.background2,
+    onSurfaceVariant = palette.textSecondary,
+    outline = palette.background3,
+    error = palette.red,
+)
 
 /** The Windows computer name, editable by the user before pairing (contract §4.3). */
 private fun defaultDeviceName(): String {

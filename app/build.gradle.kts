@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.swing)
     implementation(libs.zxing.core)
     implementation(libs.jna.platform)
+    implementation(libs.androidx.graphics.shapes)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)

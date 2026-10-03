@@ -9,6 +9,15 @@ Features
 - Audio output selector "PC" or "Phone": both devices always control playback, the sound comes out of one only (needs contract 1.2 + phone-side mute without pause + a selector on both sides).
 - Synced appearance (option "Use the phone's appearance"): the phone exposes a read-only whitelist of UI preferences (light/dark mode, palette and accent, dynamic color from artwork, roundness, font, player and seek bar styles…) through contract 1.2 (e.g. `GET /api/v1/appearance` + a WS `appearanceChanged` message); the Compagnon applies them live when the option is on and keeps its own local settings when it is off. The PC never writes the phone's preferences, and no secret or non-UI setting is exposed. A preference only matters once the matching UI piece is copied, so it grows with the copied screens. Same batch as the audio output selector (contract 1.2), after the audio story.
 
+Library (follow-ups from story 11b)
+- Device test of story 11b (Xiaomi): Albums → album → Play, Songs search + scroll to the total, Add to queue without a cut, 409 / unreachable / revoked paths.
+- Code review of story 11b not run yet.
+- Detail duration only shows once every track of the collection is loaded (the contract gives no total duration).
+- Lists are reloaded only by "Refresh": no automatic refresh when the phone's library changes (no library delta in contract v1).
+- Detail screens follow the phone's `DynamicOrientationLayout`: in a landscape window (the usual PC case) the cover sits on the left half and the 4:3 header is hidden; decide whether the PC should force the portrait header.
+- Albums / Artists / Playlists have no search: the phone filters its whole local list, the contract has no `query` for them.
+- An album has no explicit "Play" button (as on the phone): click its first track, or "Play all local songs" in an artist's menu.
+
 Player (follow-ups from story 11)
 - Missing tests: `ServerClock.reset()` on a new session, and the backoff only resetting after a snapshot was received (both fixed in code, not covered).
 - Rejected during review, worth a later pass: reconnect banner countdown, seek bar jumping back during the round trip after a release, "1 tracks" plural, showing the stop reason (manual / auto-stop / timeout), keyboard shortcuts (Space, Escape, media keys).

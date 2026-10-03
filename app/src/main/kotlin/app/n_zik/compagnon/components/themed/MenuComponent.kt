@@ -1,0 +1,81 @@
+package app.n_zik.compagnon.components.themed
+
+import androidx.compose.runtime.Composable
+import app.n_zik.compagnon.components.LocalMenuState
+import app.n_zik.compagnon.components.MenuState
+import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
+import app.n_zik.compagnon.generated.resources.Res
+import app.n_zik.compagnon.generated.resources.enqueue
+import app.n_zik.compagnon.generated.resources.play_next
+import app.n_zik.compagnon.generated.resources.play_skip_forward
+import app.n_zik.compagnon.generated.resources.remove_from_queue
+import app.n_zik.compagnon.generated.resources.trash
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.stringResource
+
+/*
+ * Port of `PlayNext` and `Enqueue` (phone's `app/it/fast4x/rimusic/ui/components/themed/MenuComponent.kt` 16, 35).
+ * [enabled] is the Compagnon's live-session rule (actions disabled outside a `Live` session).
+ */
+
+@Composable
+fun PlayNext(
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+): MenuIcon = object : MenuIcon {
+
+    val menuState: MenuState = LocalMenuState.current
+    override val iconId: DrawableResource = Res.drawable.play_skip_forward
+    override val isEnabled: Boolean = enabled
+    override val menuIconTitle: String
+        @Composable
+        get() = stringResource(Res.string.play_next)
+
+    override fun onShortClick() {
+        onClick()
+        menuState.hide()
+    }
+}
+
+@Composable
+fun Enqueue(
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+): MenuIcon = object : MenuIcon {
+
+    val menuState: MenuState = LocalMenuState.current
+    override val iconId: DrawableResource = Res.drawable.enqueue
+    override val isEnabled: Boolean = enabled
+    override val menuIconTitle: String
+        @Composable
+        get() = stringResource(Res.string.enqueue)
+
+    override fun onShortClick() {
+        onClick()
+        menuState.hide()
+    }
+}
+
+/**
+ * Compagnon only: "Remove from queue" (`queue/remove`) in the menu of a queue item. The phone removes a queue
+ * item with a swipe, which the PC does not have; the entry reuses the phone's label and trash icon (its
+ * `DeleteFromQueue` button).
+ */
+@Composable
+fun RemoveFromQueue(
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+): MenuIcon = object : MenuIcon {
+
+    val menuState: MenuState = LocalMenuState.current
+    override val iconId: DrawableResource = Res.drawable.trash
+    override val isEnabled: Boolean = enabled
+    override val menuIconTitle: String
+        @Composable
+        get() = stringResource(Res.string.remove_from_queue)
+
+    override fun onShortClick() {
+        onClick()
+        menuState.hide()
+    }
+}

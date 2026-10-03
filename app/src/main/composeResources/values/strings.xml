@@ -104,7 +104,7 @@
     <string name="player_shuffle_on">Shuffle: on</string>
     <string name="player_shuffle_off">Shuffle: off</string>
     <string name="player_open_full">Open the player</string>
-    <string name="player_close_full">Back to the queue</string>
+    <string name="player_close_full">Close the player</string>
     <string name="player_waiting_state">Waiting for the phone’s playback state…</string>
 
     <!-- Queue -->
@@ -133,6 +133,8 @@
     <string name="command_remove">Remove from the queue</string>
     <string name="command_move">Move in the queue</string>
     <string name="command_clear">Clear the queue</string>
+    <string name="command_queue_play">Play</string>
+    <string name="command_queue_add">Add to queue</string>
     <string name="command_unknown">A command</string>
     <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
     <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
@@ -142,6 +144,70 @@
     <string name="notice_other_active">%1$s: another PC (%2$s) is connected to the phone.</string>
     <string name="notice_not_found">%1$s: not found on the phone.</string>
     <string name="notice_unreachable">%1$s: the phone did not answer.</string>
+    <string name="notice_truncated">%1$s: only %2$d of %3$d tracks were sent.</string>
     <string name="notice_failed">%1$s failed (HTTP %2$d, %3$s).</string>
     <string name="notice_late_error">%1$s failed on the phone (%2$s, command %3$s).</string>
+
+    <!-- Library: keys and texts of the phone (N-Zik strings.xml) -->
+    <string name="songs">Songs</string>
+    <string name="artists">Artists</string>
+    <string name="albums">Albums</string>
+    <string name="playlists">Playlists</string>
+    <string name="all">All</string>
+    <string name="favorites">Favorites</string>
+    <string name="on_device">On device</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="search">Search</string>
+    <string name="clear">Clear</string>
+    <string name="sorting_order">Sorting order</string>
+    <string name="sort_title">Title</string>
+    <string name="sort_artist">Artist</string>
+    <string name="sort_listening_time">Listening Time</string>
+    <string name="no_items">No items</string>
+    <string name="unknown_title">Unknown Title</string>
+    <string name="unknown_artist">Unknown Artist</string>
+    <string name="playback">Playback</string>
+    <string name="management">Management</string>
+    <string name="play_next">Play next</string>
+    <string name="enqueue">Enqueue</string>
+    <string name="shuffle">Shuffle</string>
+    <string name="play_all_local_songs">Play all local songs</string>
+    <string name="info_find_the_song_that_is_playing">Show currently playing song</string>
+    <string name="playing_song_not_found_on_current_list">Could not find playing song on current list</string>
+    <string name="no_songs_playing">No song is playing at the moment</string>
+    <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
+    <string name="no_song_found">No song found</string>
+    <string name="no_song_to_shuffle">No song to shuffle</string>
+    <string name="info_no_songs_yet">No songs available</string>
+
+    <!-- Library: Compagnon only (no phone equivalent) -->
+    <string name="library_none">The phone shares no library with this PC.</string>
+    <string name="library_refresh">Refresh</string>
+    <string name="library_back">Back</string>
+    <string name="library_empty">Nothing here.</string>
+    <string name="library_error_unreachable">The phone could not be reached.</string>
+    <string name="library_not_found">Not found on the phone. It may have been deleted.</string>
+    <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
+    <string name="queue_open">Queue</string>
+    <!-- Player, queue, header and theme (phase 3): keys and texts of the phone (N-Zik strings.xml) -->
+    <string name="confirm">Confirm</string>
+    <string name="value_copied">Copied</string>
+    <string name="controls_header_customize">Customize</string>
+    <string name="controls_title_playback_speed">Playback speed</string>
+    <string name="cd_background_image">Background Image</string>
+    <string name="cd_app_icon_in_player">app icon in player</string>
+    <string name="cd_number_of_songs_in_queue">Number of songs in queue</string>
+    <string name="cd_app_s_icon">App\'s icon</string>
+    <string name="rewind">Rewind</string>
+    <string name="rewind_5_seconds">Rewind 5 seconds</string>
+    <string name="rewind_30_seconds">Rewinds 30 seconds</string>
+    <string name="forward">Forward</string>
+    <string name="forward_5_seconds">Forward 5 seconds</string>
+    <string name="forward_30_seconds">Forward 30 seconds</string>
+    <string name="remove_from_queue">Remove from queue</string>
+    <string name="clean_queue_confirm">Do you really want to clean queue?</string>
+    <string name="info_lock_unlock_reorder_songs">Lock/Unlock reorder songs</string>
+    <string name="info_reorder_is_possible_only_in_ascending_sort">Reorder is possible only in ascending sorting</string>
+    <string name="repeat">Repeat</string>
+    <string name="bridge_server">PC server</string>
 </resources>
