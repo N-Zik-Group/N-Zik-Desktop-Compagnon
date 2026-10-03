@@ -68,6 +68,7 @@ import app.n_zik.compagnon.generated.resources.repeat
 import app.n_zik.compagnon.generated.resources.shuffle
 import app.n_zik.compagnon.generated.resources.trash
 import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.cleanPrefix
 import app.n_zik.compagnon.utils.smoothScrollToTop
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -86,7 +87,8 @@ import org.jetbrains.compose.resources.stringResource
  * Kept: a click on an item plays it (`queue/jump`), or plays / pauses it when it is the current one; the
  * long press (a right click on the PC) opens `SongItemMenu`; the reorder lock and, once unlocked, the drag
  * handles (`queue/move` on release: the dragged row follows the pointer, nothing else moves until the phone
- * confirms, no optimistic UI); the toolbar's Locator, Search (local filter on title / artists), reorder lock,
+ * confirms, no optimistic UI); the toolbar's Locator, Search (local filter on the cleaned title / artists,
+ * like the phone), reorder lock,
  * Repeat, Shuffle and "Remove from queue" (empties the queue after the phone's confirmation, `queue/clear`).
  * Dropped: the swipe actions (no swipe on the PC: "Remove from queue" moves to the item's menu, PC only), the
  * multi-selection, Discover, the download buttons, "Add to playlist" and the CSV export (not in contract v1),
@@ -127,8 +129,10 @@ fun Queue(
                 indexed
             } else {
                 indexed.filter { (_, song) ->
-                    val containsTitle = song.title.contains(searchText, true)
-                    val containsArtist = song.artists.orEmpty().contains(searchText, true)
+                    // Filter on the cleaned metadata like the phone (`cleanTitle()` / `cleanArtistsText()`):
+                    // without cleaning, a user could search explicit songs with "e:"
+                    val containsTitle = cleanPrefix(song.title).contains(searchText, true)
+                    val containsArtist = cleanPrefix(song.artists.orEmpty()).contains(searchText, true)
 
                     containsTitle || containsArtist
                 }
