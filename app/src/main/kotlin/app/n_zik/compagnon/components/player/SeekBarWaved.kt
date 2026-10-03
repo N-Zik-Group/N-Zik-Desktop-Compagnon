@@ -47,6 +47,9 @@ import kotlin.math.sin
  * player timeline: a sine wave over the played part (2 dp of amplitude while playing, flat while dragging or
  * paused), a 10 px wide pill scrubber growing from 15 to 20 dp while dragged. PC: the try / catch of a
  * detached Android view are dropped, and an empty duration draws an empty bar instead of failing.
+ * PC: the wave stroke, sine and sampling step are expressed in dp (`WAVE_STROKE`, `WAVE_LENGTH`,
+ * `WAVE_PATH_STEP`) rather than the phone's hardcoded physical px, so the port keeps the phone's
+ * proportions at any desktop scale.
  */
 @Composable
 fun SeekBarWaved(
@@ -210,10 +213,15 @@ private fun SeekBarContent(
                 bottom = size.height + 50f,
             ) {
                 drawPath(
-                    wavePath(size.copy(height = size.height * 2), progress),
+                    wavePath(
+                        size.copy(height = size.height * 2),
+                        progress,
+                        WAVE_LENGTH.toPx(),
+                        WAVE_PATH_STEP.toPx(),
+                    ),
                     color,
                     style = Stroke(
-                        width = 15f,
+                        width = WAVE_STROKE.toPx(),
                         cap = StrokeCap.Round,
                     ),
                 )
@@ -222,11 +230,17 @@ private fun SeekBarContent(
     }
 }
 
-/** Sampling step of [wavePath]: 3 px (the phone's gh-606 value). */
-internal const val WAVE_PATH_STEP_PX = 3f
+/** The wave stroke width, in dp — the phone hardcodes 15 physical px, which is ~5 dp at its ~3× density. */
+internal val WAVE_STROKE = 5.dp
 
-/** The x coordinates [wavePath] samples: from 0, by [step], while strictly less than [width]. */
-internal fun waveSampleXs(width: Float, step: Float = WAVE_PATH_STEP_PX): List<Float> {
+/** The wave's wavelength, in dp (period = 2π × this value) — the phone hardcodes 15 physical px, which is ~5 dp at its ~3× density. */
+internal val WAVE_LENGTH = 5.dp
+
+/** The sampling step of [wavePath], in dp — the phone hardcodes 3 physical px, which is 1 dp at its ~3× density. */
+internal val WAVE_PATH_STEP = 1.dp
+
+/** The x coordinates [wavePath] samples: from 0, by [step] (px), while strictly less than [width]. */
+internal fun waveSampleXs(width: Float, step: Float): List<Float> {
     val xs = mutableListOf<Float>()
     var currentX = 0f
     while (currentX < width) {
@@ -236,12 +250,18 @@ internal fun waveSampleXs(width: Float, step: Float = WAVE_PATH_STEP_PX): List<F
     return xs
 }
 
-private fun wavePath(size: Size, progress: Float): Path {
-    fun yFromX(x: Float) = (sin(x / 15f + progress * 2 * PI.toFloat()) + 1) * size.height / 2
+/**
+ * The wave y for an x (px): a sine of wavelength [lengthPx] (px) shifted by [progress], scaled to
+ * [heightPx]. [lengthPx] must be positive (a zero-density `toPx()` would make the whole path NaN).
+ */
+internal fun waveYFromX(x: Float, lengthPx: Float, progress: Float, heightPx: Float): Float =
+    (sin(x / lengthPx + progress * 2 * PI.toFloat()) + 1) * heightPx / 2
+
+private fun wavePath(size: Size, progress: Float, wavelength: Float, stepPx: Float): Path {
     return Path().apply {
-        moveTo(0f, yFromX(0f))
-        for (currentX in waveSampleXs(size.width)) {
-            lineTo(currentX, yFromX(currentX))
+        moveTo(0f, waveYFromX(0f, wavelength, progress, size.height))
+        for (currentX in waveSampleXs(size.width, stepPx)) {
+            lineTo(currentX, waveYFromX(currentX, wavelength, progress, size.height))
         }
     }
 }
