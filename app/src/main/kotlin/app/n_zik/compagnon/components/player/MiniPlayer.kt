@@ -60,6 +60,7 @@ import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.computer
 import app.n_zik.compagnon.generated.resources.devices
+import app.n_zik.compagnon.generated.resources.explicit
 import app.n_zik.compagnon.generated.resources.heart
 import app.n_zik.compagnon.generated.resources.pause
 import app.n_zik.compagnon.generated.resources.play
@@ -71,6 +72,8 @@ import app.n_zik.compagnon.thumbnailShape
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.TIME_UNSET
+import app.n_zik.compagnon.utils.cleanPrefix
+import app.n_zik.compagnon.utils.hasExplicitPrefix
 import app.n_zik.compagnon.utils.onSecondaryClick
 import app.n_zik.compagnon.utils.positionAndDurationState
 import app.n_zik.compagnon.utils.semiBold
@@ -86,11 +89,12 @@ import kotlin.math.absoluteValue
  * (previous, play / pause in its 42 dp box, next).
  *
  * Kept: the 48 dp cover in the thumbnail shape with the now-playing animation and the liked heart (10 dp,
- * -5 dp at the bottom left: `Track.isLiked` is only a boolean, so no disliked heart), title and artists in
- * xxs.semiBold. A click opens the player ([showPlayer]); a long press (a right click on the PC) opens the
- * queue ([onShowQueue], the phone's queue route intercepted into its overlay).
+ * -5 dp at the bottom left: `Track.isLiked` is only a boolean, so no disliked heart), the 14 dp explicit
+ * badge before the title (the title's `e:` prefix), title and artists in xxs.semiBold. A click opens the
+ * player ([showPlayer]); a long press (a right click on the PC) opens the queue ([onShowQueue], the
+ * phone's queue route intercepted into its overlay).
  * Dropped: the swipe actions (like / previous / next: no swipe on the PC, no like in contract v1), the
- * explicit badge (not in the contract), the buffering ring (no buffering state), the other optional buttons
+ * buffering ring (no buffering state), the other optional buttons
  * (off by default), the rotation effect (off by default), the mini-player's own cover palette (only used by
  * the non-default `Cover` controls colour).
  * The "audio output" button (`MiniPlayerButton.AudioOutput`, on by default, phone's 997-1040) opens the
@@ -215,8 +219,17 @@ fun MiniPlayer(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    if (mediaItem.title.hasExplicitPrefix()) {
+                        // The explicit badge (phone's 14 dp icon, text colour), before the title
+                        IconButton(
+                            icon = Res.drawable.explicit,
+                            color = colorPalette().text,
+                            onClick = {},
+                            modifier = Modifier.size(14.dp),
+                        )
+                    }
                     BasicText(
-                        text = mediaItem.title.ifBlank { stringResource(Res.string.unknown_title) },
+                        text = cleanPrefix(mediaItem.title.ifBlank { stringResource(Res.string.unknown_title) }),
                         style = typography().xxs.semiBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -225,7 +238,7 @@ fun MiniPlayer(
                 }
 
                 BasicText(
-                    text = mediaItem.artists?.takeIf { it.isNotBlank() } ?: stringResource(Res.string.unknown_artist),
+                    text = cleanPrefix(mediaItem.artists?.takeIf { it.isNotBlank() } ?: stringResource(Res.string.unknown_artist)),
                     style = typography().xxs.semiBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

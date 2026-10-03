@@ -48,3 +48,47 @@ fun formatAsDuration(ms: Long): String {
     val seconds = totalSeconds % 60
     return if (hours > 0) "%d:%02d:%02d".format(hours, minutes, seconds) else "%d:%02d".format(minutes, seconds)
 }
+
+/** Port of the title prefixes (phone's `app/it/fast4x/rimusic/Utils.kt` 3-10). */
+const val PINNED_PREFIX = "pinned:"
+const val MODIFIED_PREFIX = "modified:"
+const val MONTHLY_PREFIX = "monthly:"
+const val EXPLICIT_PREFIX = "e:"
+const val LOCAL_KEY_PREFIX = "local:"
+const val YTP_PREFIX = "account:"
+
+/**
+ * Port of `cleanPrefix` (phone's `app/it/fast4x/rimusic/Utils.kt` 17): assumption: all prefixes end with
+ * ":" and have at least 1 (other) character. Removes a "prefix of prefixes" including multiple times the
+ * same prefix (at different locations).
+ */
+fun cleanPrefix(text: String): String {
+    val splitText = text.split(":")
+    var i = 0
+    while (i < splitText.size - 1) {
+        if ("${splitText[i]}:" !in listOf(PINNED_PREFIX, MODIFIED_PREFIX, MONTHLY_PREFIX,
+                EXPLICIT_PREFIX, LOCAL_KEY_PREFIX, YTP_PREFIX)) {
+            break
+        }
+        i++
+    }
+    if (i >= splitText.size) return ""
+    return splitText.subList(i, splitText.size).joinToString(":")
+        .removePrefix("\uD83C\uDD74 ")
+}
+
+/** Port of `String.hasExplicitPrefix` (phone's `app/it/fast4x/rimusic/Utils.kt` 32). */
+fun String.hasExplicitPrefix(): Boolean {
+    val splitText = this.split(":")
+    var i = 0
+    while (i < splitText.size - 1) {
+        val prefix = "${splitText[i]}:"
+        if (prefix == EXPLICIT_PREFIX) return true
+        if (prefix !in listOf(PINNED_PREFIX, MODIFIED_PREFIX, MONTHLY_PREFIX,
+                EXPLICIT_PREFIX, LOCAL_KEY_PREFIX, YTP_PREFIX)) {
+            break
+        }
+        i++
+    }
+    return false
+}

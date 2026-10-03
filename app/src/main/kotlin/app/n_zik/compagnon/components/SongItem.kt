@@ -47,10 +47,13 @@ import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.download
 import app.n_zik.compagnon.generated.resources.downloaded
+import app.n_zik.compagnon.generated.resources.explicit
 import app.n_zik.compagnon.generated.resources.heart
 import app.n_zik.compagnon.generated.resources.unknown_artist
 import app.n_zik.compagnon.generated.resources.unknown_title
+import app.n_zik.compagnon.utils.cleanPrefix
 import app.n_zik.compagnon.utils.formatAsDuration
+import app.n_zik.compagnon.utils.hasExplicitPrefix
 import app.n_zik.compagnon.utils.onSecondaryClick
 import app.n_zik.compagnon.utils.secondary
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -79,10 +82,11 @@ fun SongText(
  *
  * Kept: the 54 dp thumbnail, the now-playing animation and highlight, the 12 dp "liked" heart at
  * -8 dp bottom-left, title / artists with marquee, the duration or `--:--`, the download icon of an online
- * track (filled when the phone has it offline).
+ * track (filled when the phone has it offline), the 18 dp explicit badge before the title (accent, the
+ * title's `e:` prefix).
  * Dropped (contract v1 or PC): the disliked heart (`Track.isLiked` is a boolean), the download action and
- * its progress ring (no download in v1: the icon is information only), the "recommended", "in a
- * playlist" and explicit indicators (not exposed by the contract), the multi-selection checkbox, the
+ * its progress ring (no download in v1: the icon is information only), the "recommended" and "in a
+ * playlist" indicators (not exposed by the contract), the multi-selection checkbox, the
  * haptic feedback. [onLongClick] opens the item's menu (a right click too, desktop stand-in for the long press).
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -159,8 +163,18 @@ fun SongItem(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 val safeTitle = if (song.title.isBlank() || song.title == "null") stringResource(Res.string.unknown_title) else song.title
+                if (song.title.hasExplicitPrefix()) {
+                    // The explicit badge (phone's `SongIndicator` in the title row, 18 dp, accent)
+                    IconButton(
+                        icon = Res.drawable.explicit,
+                        color = colorPalette().accent,
+                        enabled = false,
+                        onClick = {},
+                        modifier = Modifier.size(18.dp),
+                    )
+                }
                 SongText(
-                    text = safeTitle,
+                    text = cleanPrefix(safeTitle),
                     style = typography().xs.semiBold,
                     modifier = Modifier.weight(1f)
                         .basicMarquee(iterations = Int.MAX_VALUE),
@@ -168,7 +182,8 @@ fun SongItem(
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                val artistsText = song.artists.orEmpty()
+                // Cleaned like the phone's `cleanArtistsText()`: the queue's bridge metadata can carry prefixes
+                val artistsText = cleanPrefix(song.artists.orEmpty())
                 val safeArtists = if (artistsText.isBlank() || artistsText == "null") stringResource(Res.string.unknown_artist) else artistsText
                 SongText(
                     text = safeArtists,
