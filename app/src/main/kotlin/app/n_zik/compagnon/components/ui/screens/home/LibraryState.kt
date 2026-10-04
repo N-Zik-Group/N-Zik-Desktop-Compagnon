@@ -1,8 +1,8 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import app.n_zik.compagnon.utils.Toaster
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -53,13 +53,11 @@ import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.components.themed.HeaderIconButton
 import app.n_zik.compagnon.core.network.LibraryResult
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.album
 import app.n_zik.compagnon.generated.resources.albums
 import app.n_zik.compagnon.generated.resources.artists
-import app.n_zik.compagnon.generated.resources.chevron_back
 import app.n_zik.compagnon.generated.resources.error_unknown_code
 import app.n_zik.compagnon.generated.resources.library
 import app.n_zik.compagnon.generated.resources.library_error_unreachable
@@ -197,6 +195,9 @@ class LibraryActions(
     val player: PlayerRepository,
     val library: LibraryRepository,
     private val scope: CoroutineScope,
+    /** The phone's information messages (`Toaster.i`, e.g. "No song to shuffle"); [message] when `null`. */
+    private val info: ((String) -> Unit)? = null,
+    /** The phone's error messages (`Toaster.e`: no song found, failures). */
     private val message: (String) -> Unit,
 ) {
     /** Without the `queue` feature, playback actions are hidden. */
@@ -231,7 +232,7 @@ class LibraryActions(
     fun playShuffled(tracks: List<Track>, total: Int = tracks.size) {
         scope.launch {
             if (tracks.isEmpty()) {
-                message(getString(Res.string.no_song_to_shuffle))
+                (info ?: message)(getString(Res.string.no_song_to_shuffle))
                 return@launch
             }
             val selection = PlayWindow.shuffled(tracks.map { it.id })
@@ -386,7 +387,6 @@ fun NoItems(text: String, modifier: Modifier = Modifier) {
 fun rememberCollectionSongs(
     library: LibraryRepository,
     ref: CollectionRef,
-    onMessage: (String) -> Unit,
     onBack: () -> Unit,
 ): PagedList<Unit, Track> {
     val scope = rememberCoroutineScope()
@@ -396,25 +396,11 @@ fun rememberCollectionSongs(
     val state by list.state.collectAsState()
     LaunchedEffect(state.notFound) {
         if (state.notFound) {
-            onMessage(getString(Res.string.library_not_found))
+            // An error toast, like the phone's "not found" ones
+            Toaster.e(getString(Res.string.library_not_found))
             onBack()
         }
     }
     return list
 }
 
-/**
- * Compagnon only (the phone goes back with its system back button): the back arrow over the top start of
- * an opened playlist, album or artist.
- */
-@Composable
-fun BoxScope.BackButton(onBack: () -> Unit) {
-    HeaderIconButton(
-        icon = Res.drawable.chevron_back,
-        color = colorPalette().text,
-        iconSize = 24.dp,
-        modifier = Modifier.align(Alignment.TopStart)
-            .padding(top = 5.dp, start = 5.dp),
-        onClick = onBack,
-    )
-}

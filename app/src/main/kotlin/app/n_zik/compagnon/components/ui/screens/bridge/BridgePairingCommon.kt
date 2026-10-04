@@ -1,22 +1,18 @@
 package app.n_zik.compagnon.components.ui.screens.bridge
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.pairing.PairingError
@@ -24,9 +20,7 @@ import app.n_zik.compagnon.bridge.state.CommandKind
 import app.n_zik.compagnon.bridge.state.PlayerNotice
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.typography
-import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.alert_circle
 import app.n_zik.compagnon.generated.resources.dismiss
 import app.n_zik.compagnon.generated.resources.error_code_rejected
 import app.n_zik.compagnon.generated.resources.error_incompatible_version
@@ -65,7 +59,6 @@ import app.n_zik.compagnon.generated.resources.notice_unavailable
 import app.n_zik.compagnon.generated.resources.notice_unreachable
 import app.n_zik.compagnon.generated.resources.paired_other_active_unknown
 import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /** UI text of a [PairingError]; decided from the error kind (itself from the contract `code`). */
@@ -84,33 +77,46 @@ fun pairingErrorText(error: PairingError): String = when (error) {
     )
 }
 
-/** Tinted message box with an alert icon; [color] is the palette's red for errors, the accent for notices. */
+/**
+ * An inline message, as the phone's pairing card shows its result line (`BridgePairingCards.kt` 203-212): `xs`
+ * text, centred, in the palette's red for an error ([isError]) or in the text colour otherwise. [onDismiss]
+ * adds a "Dismiss" [PairingButton] under it (`background2` / text, the phone's secondary buttons).
+ */
 @Composable
-fun MessageBanner(text: String, color: Color, modifier: Modifier = Modifier, onDismiss: (() -> Unit)? = null) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(color.copy(alpha = 0.12f), uiRoundnessShape())
-            .padding(horizontal = 12.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+fun MessageBanner(text: String, isError: Boolean, modifier: Modifier = Modifier, onDismiss: (() -> Unit)? = null) {
+    val palette = colorPalette()
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Icon(painterResource(Res.drawable.alert_circle), contentDescription = null, tint = color, modifier = Modifier.size(18.dp))
-        Text(text, style = typography().xs, color = colorPalette().text, modifier = Modifier.weight(1f))
+        Text(
+            text = text,
+            style = typography().xs,
+            color = if (isError) palette.red else palette.text,
+            textAlign = TextAlign.Center,
+        )
         if (onDismiss != null) {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(Res.string.dismiss), style = typography().xs, color = color)
-            }
+            Spacer(modifier = Modifier.height(8.dp))
+            PairingButton(
+                text = stringResource(Res.string.dismiss),
+                onClick = onDismiss,
+                containerColor = palette.background2,
+                contentColor = palette.text,
+            )
         }
     }
 }
 
 @Composable
 fun ErrorBanner(error: PairingError?, onDismiss: (() -> Unit)? = null, modifier: Modifier = Modifier) {
-    if (error != null) MessageBanner(pairingErrorText(error), colorPalette().red, modifier = modifier, onDismiss = onDismiss)
+    if (error != null) MessageBanner(pairingErrorText(error), isError = true, modifier = modifier, onDismiss = onDismiss)
 }
 
-/** Outlined text field in the N-Zik palette, with an optional error line. */
+/**
+ * Outlined text field aligned on the phone's (`AccountsSettings.kt` 1989-2002): single line, full width, the
+ * hint as a placeholder in `s` `textSecondary`, text in `text`, cursor and focused border in `accent`,
+ * unfocused border in `textSecondary`. PC only: the error line under it (`xxs` red) and the red error border.
+ */
 @Composable
 fun NZikTextField(
     value: String,
@@ -126,24 +132,18 @@ fun NZikTextField(
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            label = { Text(label) },
+            placeholder = { Text(label, style = typography().s.copy(color = palette.textSecondary)) },
             singleLine = true,
             enabled = enabled,
             isError = errorText != null,
-            shape = uiRoundnessShape(),
-            textStyle = typography().s,
             keyboardOptions = KeyboardOptions(keyboardType = if (numeric) KeyboardType.Number else KeyboardType.Text),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = palette.accent,
-                unfocusedBorderColor = palette.background3,
-                focusedLabelColor = palette.accent,
-                unfocusedLabelColor = palette.textSecondary,
-                cursorColor = palette.accent,
                 focusedTextColor = palette.text,
                 unfocusedTextColor = palette.text,
-                disabledTextColor = palette.textDisabled,
+                cursorColor = palette.accent,
+                focusedBorderColor = palette.accent,
+                unfocusedBorderColor = palette.textSecondary,
                 errorBorderColor = palette.red,
-                errorLabelColor = palette.red,
             ),
             modifier = Modifier.fillMaxWidth(),
         )

@@ -39,6 +39,8 @@ import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import app.n_zik.compagnon.utils.PHONE_REFERENCE_DENSITY
+import app.n_zik.compagnon.utils.phonePx
 import kotlin.math.PI
 import kotlin.math.sin
 
@@ -47,9 +49,10 @@ import kotlin.math.sin
  * player timeline: a sine wave over the played part (2 dp of amplitude while playing, flat while dragging or
  * paused), a 10 px wide pill scrubber growing from 15 to 20 dp while dragged. PC: the try / catch of a
  * detached Android view are dropped, and an empty duration draws an empty bar instead of failing.
- * PC: the wave stroke, sine and sampling step are expressed in dp (`WAVE_STROKE`, `WAVE_LENGTH`,
- * `WAVE_PATH_STEP`) rather than the phone's hardcoded physical px, so the port keeps the phone's
- * proportions at any desktop scale.
+ * The phone's hardcoded physical px (`SeekBarWaved.kt` 175-179 scrubber, 218-222 clip, 228 stroke, 241 step,
+ * 261 wavelength) are converted with [PHONE_REFERENCE_DENSITY] (story 11c): stroke 15 px → 5 dp, wavelength
+ * 15 px → 5 dp, step 3 px → 1 dp, scrubber 10 px → 3.33 dp wide with a 5 px → 1.67 dp radius and offset,
+ * clip margin 50 px → 16.67 dp.
  */
 @Composable
 fun SeekBarWaved(
@@ -163,9 +166,9 @@ private fun ContentDrawScope.drawScrubber(
     }
 
     drawRoundRect(
-        color, topLeft = Offset(scrubberPosition - 5f, (size.height - height.toPx()) / 2),
-        size = Size(10f, height.toPx()),
-        cornerRadius = CornerRadius(5f),
+        color, topLeft = Offset(scrubberPosition - SCRUBBER_HALF_WIDTH.toPx(), (size.height - height.toPx()) / 2),
+        size = Size(SCRUBBER_WIDTH.toPx(), height.toPx()),
+        cornerRadius = CornerRadius(SCRUBBER_HALF_WIDTH.toPx()),
     )
 }
 
@@ -207,10 +210,10 @@ private fun SeekBarContent(
                 .align(Alignment.CenterStart),
         ) {
             clipRect(
-                left = -50f,
+                left = -WAVE_CLIP_MARGIN.toPx(),
                 right = size.width,
-                top = -50f,
-                bottom = size.height + 50f,
+                top = -WAVE_CLIP_MARGIN.toPx(),
+                bottom = size.height + WAVE_CLIP_MARGIN.toPx(),
             ) {
                 drawPath(
                     wavePath(
@@ -230,14 +233,23 @@ private fun SeekBarContent(
     }
 }
 
-/** The wave stroke width, in dp — the phone hardcodes 15 physical px, which is ~5 dp at its ~3× density. */
-internal val WAVE_STROKE = 5.dp
+/** The wave stroke width: the phone's 15 px (`SeekBarWaved.kt` 228). */
+internal val WAVE_STROKE = phonePx(15f)
 
-/** The wave's wavelength, in dp (period = 2π × this value) — the phone hardcodes 15 physical px, which is ~5 dp at its ~3× density. */
-internal val WAVE_LENGTH = 5.dp
+/** The wave's wavelength (period = 2π × this value): the phone's `x / 15f` (`SeekBarWaved.kt` 261). */
+internal val WAVE_LENGTH = phonePx(15f)
 
-/** The sampling step of [wavePath], in dp — the phone hardcodes 3 physical px, which is 1 dp at its ~3× density. */
-internal val WAVE_PATH_STEP = 1.dp
+/** The sampling step of [wavePath]: the phone's `WAVE_PATH_STEP_PX = 3f` (`SeekBarWaved.kt` 241). */
+internal val WAVE_PATH_STEP = phonePx(3f)
+
+/** The margin of the wave's clip: the phone's 50 px (`SeekBarWaved.kt` 218-222). */
+internal val WAVE_CLIP_MARGIN = phonePx(50f)
+
+/** The scrubber's width: the phone's 10 px (`SeekBarWaved.kt` 177). */
+internal val SCRUBBER_WIDTH = phonePx(10f)
+
+/** The scrubber's corner radius and its offset from the position: the phone's 5 px (`SeekBarWaved.kt` 176-178). */
+internal val SCRUBBER_HALF_WIDTH = phonePx(5f)
 
 /** The x coordinates [wavePath] samples: from 0, by [step] (px), while strictly less than [width]. */
 internal fun waveSampleXs(width: Float, step: Float): List<Float> {

@@ -1,5 +1,16 @@
 package app.n_zik.compagnon.components.menu.artist
 
+import app.n_zik.compagnon.generated.resources.update_artist_browse_id
+import app.n_zik.compagnon.generated.resources.update_cover
+import app.n_zik.compagnon.generated.resources.update_title
+import app.n_zik.compagnon.generated.resources.cover_edit
+import app.n_zik.compagnon.generated.resources.title_edit
+import app.n_zik.compagnon.generated.resources.management
+import app.n_zik.compagnon.components.menu.InertMenuItem
+import app.n_zik.compagnon.generated.resources.share_social
+import app.n_zik.compagnon.generated.resources.bookmark_outline
+import app.n_zik.compagnon.components.themed.IconButton
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -50,10 +61,10 @@ import org.jetbrains.compose.resources.stringResource
  * Port of `LocalArtistItemMenu` (phone's `app/n_zik/android/components/menu/artist/LocalArtistItemMenu.kt`),
  * list style.
  *
- * Kept: the header (`ArtistItemDisplay`: drag handle, 64 dp round thumbnail, name, "N Songs", divider) and
- * the "Playback" section ("Play all local songs" = `queue/play` from the first track, Shuffle).
- * Dropped (contract v1): the bookmark / share buttons of the header and the Management section (edit
- * title, cover, id).
+ * Kept: the header (`ArtistItemDisplay`: drag handle, 64 dp round thumbnail, name, "N Songs", the 48 dp
+ * column of the bookmark and share icons, divider), the Playback section ("Play all local songs" =
+ * `queue/play` from the first track, Shuffle) and the Management section (change title, cover, artist
+ * browse id: no contract route, shown without action; 94-105). Bookmark and share have no action.
  */
 class LocalArtistItemMenu(
     private val artist: Artist,
@@ -78,6 +89,12 @@ class LocalArtistItemMenu(
         ListMenu.SectionTitle(stringResource(Res.string.playback))
         playAll.ListMenuItem()
         actions.onShuffle?.let { SongShuffler(enabled = actions.enabled, onShuffle = it).ListMenuItem() }
+
+        // Section: Management
+        ListMenu.SectionTitle(stringResource(Res.string.management))
+        InertMenuItem(Res.drawable.title_edit, Res.string.update_title).ListMenuItem()
+        InertMenuItem(Res.drawable.cover_edit, Res.string.update_cover).ListMenuItem()
+        InertMenuItem(Res.drawable.title_edit, Res.string.update_artist_browse_id).ListMenuItem()
     }
 
     @Composable
@@ -159,7 +176,32 @@ class LocalArtistItemMenu(
                         )
                     }
                 }
+
+                Column(
+                    Modifier.width(48.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    // Contract 1.3 `isBookmarked`; no bookmark route: shown, without action
+                    IconButton(
+                        icon = if (bookmarked) Res.drawable.bookmark else Res.drawable.bookmark_outline,
+                        color = if (bookmarked) colorPalette().favoritesIcon else colorPalette().text,
+                        onClick = {},
+                        modifier = Modifier
+                            .padding(all = 4.dp)
+                            .size(20.dp),
+                    )
+
+                    IconButton(
+                        icon = Res.drawable.share_social,
+                        color = colorPalette().text,
+                        onClick = {},
+                        modifier = Modifier
+                            .padding(all = 4.dp)
+                            .size(20.dp),
+                    )
+                }
             }
+
             HorizontalDivider(Modifier.height(1.dp))
         }
     }

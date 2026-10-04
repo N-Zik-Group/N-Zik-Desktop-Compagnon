@@ -1,5 +1,8 @@
 package app.n_zik.compagnon.components.player
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -71,6 +74,7 @@ import app.n_zik.compagnon.generated.resources.ic_launcher_monochrome
 import app.n_zik.compagnon.generated.resources.time
 import app.n_zik.compagnon.generated.resources.unknown_artist
 import app.n_zik.compagnon.generated.resources.unknown_title
+import app.n_zik.compagnon.utils.hasExplicitPrefix
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.formatAsTime
@@ -86,8 +90,8 @@ import org.jetbrains.compose.resources.stringResource
 internal val VIOLET_ACCENT = Color(0.54509807f, 0.36078432f, 0.9647059f)
 
 /**
- * Port of the full `Player` (phone's `app/it/fast4x/rimusic/ui/screens/player/Player.kt` 390-2523) in its
- * portrait layout with the default preferences: `PlayerType.Essential`, `PlayerBackgroundColors.AnimatedGradient`
+ * Port of the full `Player` (phone's `app/it/fast4x/rimusic/ui/screens/player/Player.kt` 390-2523) with the
+ * default preferences: `PlayerType.Essential`, `PlayerBackgroundColors.AnimatedGradient`
  * with `AnimatedGradient.M3EMorphingCover`, top actions bar shown, cover shown, total queue time shown, the
  * `Modern` queue opened in its inline panel.
  *
@@ -97,9 +101,12 @@ internal val VIOLET_ACCENT = Color(0.54509807f, 0.36078432f, 0.9647059f)
  *   then goes home), the ⋮ menu (`SongItemMenu` of the current track).
  * - The cover ([Thumbnail]) shrinking while paused, the total queue time, [Controls], the [ActionBar].
  * - The queue: [QueuePanel] at 65 % of the window, opened from the action bar.
+ * - The [BlurredCover] under the background (`Player.kt` 1418, 1967).
+ * - Landscape when the window is wider than tall ([isPlayerLandscape], the phone's orientation test): the
+ *   cover in the left half (30 % thumbnail size), the controls bottom-aligned and the action bar on the right,
+ *   no top bar (`Player.kt` 1300-1737).
  *
- * Dropped (contract v1 or PC): the landscape and `Modern` layouts and the expanded player (not the default),
- * the blurred cover under the background (hidden by the opaque gradients by default), lyrics, visualizer,
+ * Dropped (contract v1 or PC): the `Modern` layout and the expanded player (not the default), lyrics, visualizer,
  * stats for nerds, sleep timer, the video search sheet, the horizontal swipe on the cover (no swipe on the PC),
  * the system bar insets, `BackHandler`. The phone's `PlayerMenu` is replaced by the song menu the Compagnon
  * has (`SongItemMenu`: play next, enqueue).
@@ -245,151 +252,218 @@ fun Player(
         val screenWidth = maxWidth
         val screenHeight = maxHeight
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = containerModifier,
-        ) {
-            // showTopActionsBar
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .height(30.dp),
-            ) {
+        val isLandscape = isPlayerLandscape(screenWidth, screenHeight)
 
-                Image(
-                    painter = painterResource(Res.drawable.chevron_down),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(colorPalette().collapsedPlayerProgressBar),
-                    modifier = Modifier
-                        .clip(uiRoundnessShape()).clickable {
-                            onDismiss()
-                        }
-                        .rotate(rotationAngle)
-                        .size(24.dp),
-                )
+        @Composable
+        fun Controller(modifier: Modifier) = Controls(
+            state = state,
+            title = title,
+            isExplicit = mediaItem.isExplicit || mediaItem.title.hasExplicitPrefix(),
+            artist = artist,
+            position = { positionAndDurationState.value.first },
+            duration = { durationState },
+            live = live,
+            dynamicColorPalette = dynamicColorPalette,
+            modifier = modifier,
+            isLandscape = isLandscape,
+        )
 
-                Image(
-                    painter = painterResource(Res.drawable.ic_launcher_monochrome),
-                    colorFilter = ColorFilter.tint(colorPalette().collapsedPlayerProgressBar),
-                    contentDescription = stringResource(Res.string.cd_app_icon_in_player),
-                    modifier = Modifier.size(24.dp)
-                        .clip(uiRoundnessShape()).clickable {
-                            onDismiss()
-                        },
-                )
-
-                // !showButtonPlayerMenu
-                Image(
-                    painter = painterResource(Res.drawable.ellipsis_vertical),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(colorPalette().collapsedPlayerProgressBar),
-                    modifier = Modifier
-                        .clip(uiRoundnessShape()).clickable(enabled = queueFeature) {
-                            menuState.display {
-                                SongItemMenu(
-                                    song = mediaItem,
-                                    actions = ItemActions(
-                                        onPlay = {},
-                                        onPlayNext = { onCommand { addTracks(listOf(mediaItem.id), QueuePosition.Next) } },
-                                        onEnqueue = { onCommand { addTracks(listOf(mediaItem.id), QueuePosition.End) } },
-                                        enabled = live,
-                                    ),
-                                ).MenuComponent()
-                            }
-                        }
-                        .rotate(rotationAngle)
-                        .size(24.dp),
-                )
-            }
-            Spacer(
-                modifier = Modifier
-                    .height(5.dp),
+        Box {
+            BlurredCover(
+                key = if (mediaItem.hasArtwork) ArtworkKey.track(mediaItem.id, PLAYER_ARTWORK_SIZE_PX) else null,
+                contentScale = ContentScale.FillHeight,
             )
 
-            BoxWithConstraints(
-                contentAlignment = Alignment.Center,
-                modifier = if (screenWidth <= (screenHeight / 2)) {
-                    Modifier.height(screenWidth)
-                } else {
-                    Modifier.weight(1f)
-                },
-            ) {
-                // showthumbnail, PlayerType.Essential: thumbnailContent()
-                Thumbnail(
-                    state = state,
-                    modifier = Modifier
-                        // thumbnailSizeDp = 90 (the default)
-                        .padding(all = ((100f - 90f) * 1.5f).dp)
-                        .thumbnailpause(
-                            shouldBePlaying = state.isPlaying,
-                        ),
-                )
-            }
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.weight(1f),
-            ) {
-                // showTotalTimeQueue
+            if (isLandscape) {
+                // The phone's landscape `PlayerType.Essential` layout (`Player.kt` 1418-1737): the cover in the
+                // left half, then the controls and the action bar
                 Row(
-                    horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier,
+                    modifier = containerModifier,
                 ) {
-                    Image(
-                        painter = painterResource(Res.drawable.time),
-                        colorFilter = ColorFilter.tint(colorPalette().accent),
+                    Column(
+                        verticalArrangement = Arrangement.Center,
                         modifier = Modifier
-                            .size(20.dp)
-                            .padding(horizontal = 5.dp),
-                        contentDescription = stringResource(Res.string.cd_background_image),
-                        contentScale = ContentScale.Fit,
+                            .fillMaxHeight()
+                            .animateContentSize(),
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxWidth(0.5f),
+                        ) {
+                            Thumbnail(
+                                state = state,
+                                modifier = Modifier
+                                    // thumbnailSizeLDp = 30 (the default)
+                                    .padding(all = ((100f - 30f) * 0.5f).dp)
+                                    .thumbnailpause(
+                                        shouldBePlaying = state.isPlaying,
+                                    ),
+                            )
+                        }
+                    }
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(top = 40.dp),
+                    ) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            if (playback) {
+                                Controller(
+                                    Modifier.padding(vertical = 8.dp)
+                                        .fillMaxHeight(),
+                                )
+                            }
+                        }
+                        ActionBar(
+                            state = state,
+                            showQueueState = showQueueState,
+                            live = live && queueFeature,
+                            showShuffle = playback,
+                        )
+                    }
+                }
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = containerModifier,
+                ) {
+                    // showTopActionsBar
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth(0.9f)
+                            .height(30.dp),
+                    ) {
+
+                        Image(
+                            painter = painterResource(Res.drawable.chevron_down),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(colorPalette().collapsedPlayerProgressBar),
+                            modifier = Modifier
+                                .clip(uiRoundnessShape()).clickable {
+                                    onDismiss()
+                                }
+                                .rotate(rotationAngle)
+                                .size(24.dp),
+                        )
+
+                        Image(
+                            painter = painterResource(Res.drawable.ic_launcher_monochrome),
+                            colorFilter = ColorFilter.tint(colorPalette().collapsedPlayerProgressBar),
+                            contentDescription = stringResource(Res.string.cd_app_icon_in_player),
+                            modifier = Modifier.size(24.dp)
+                                .clip(uiRoundnessShape()).clickable {
+                                    onDismiss()
+                                },
+                        )
+
+                        // !showButtonPlayerMenu
+                        Image(
+                            painter = painterResource(Res.drawable.ellipsis_vertical),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(colorPalette().collapsedPlayerProgressBar),
+                            modifier = Modifier
+                                .clip(uiRoundnessShape()).clickable(enabled = queueFeature) {
+                                    menuState.display {
+                                        SongItemMenu(
+                                            song = mediaItem,
+                                            actions = ItemActions(
+                                                onPlay = {},
+                                                onPlayNext = { onCommand { addTracks(listOf(mediaItem.id), QueuePosition.Next) } },
+                                                onEnqueue = { onCommand { addTracks(listOf(mediaItem.id), QueuePosition.End) } },
+                                                enabled = live,
+                                            ),
+                                        ).MenuComponent()
+                                    }
+                                }
+                                .rotate(rotationAngle)
+                                .size(24.dp),
+                        )
+                    }
+                    Spacer(
+                        modifier = Modifier
+                            .height(5.dp),
                     )
 
-                    Box {
-                        BasicText(
-                            text = " ${formatAsTime(totalPlayTimes)}",
-                            style = typography().xxs.semiBold.merge(
-                                TextStyle(
-                                    textAlign = TextAlign.Center,
-                                    color = colorPalette().text,
-                                ),
-                            ),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-
-                Spacer(
-                    modifier = Modifier
-                        .height(10.dp),
-                )
-
-                Box(modifier = Modifier.weight(1f)) {
-                    if (playback) {
-                        Controls(
+                    BoxWithConstraints(
+                        contentAlignment = Alignment.Center,
+                        modifier = if (screenWidth <= (screenHeight / 2)) {
+                            Modifier.height(screenWidth)
+                        } else {
+                            Modifier.weight(1f)
+                        },
+                    ) {
+                        // showthumbnail, PlayerType.Essential: thumbnailContent()
+                        Thumbnail(
                             state = state,
-                            title = title,
-                            artist = artist,
-                            position = { positionAndDurationState.value.first },
-                            duration = { durationState },
-                            live = live,
-                            dynamicColorPalette = dynamicColorPalette,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                                .fillMaxWidth(),
+                            modifier = Modifier
+                                // thumbnailSizeDp = 90 (the default)
+                                .padding(all = ((100f - 90f) * 1.5f).dp)
+                                .thumbnailpause(
+                                    shouldBePlaying = state.isPlaying,
+                                ),
+                        )
+                    }
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        // showTotalTimeQueue
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier,
+                        ) {
+                            Image(
+                                painter = painterResource(Res.drawable.time),
+                                colorFilter = ColorFilter.tint(colorPalette().accent),
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .padding(horizontal = 5.dp),
+                                contentDescription = stringResource(Res.string.cd_background_image),
+                                contentScale = ContentScale.Fit,
+                            )
+
+                            Box {
+                                BasicText(
+                                    text = " ${formatAsTime(totalPlayTimes)}",
+                                    style = typography().xxs.semiBold.merge(
+                                        TextStyle(
+                                            textAlign = TextAlign.Center,
+                                            color = colorPalette().text,
+                                        ),
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+
+                        Spacer(
+                            modifier = Modifier
+                                .height(10.dp),
+                        )
+
+                        Box(modifier = Modifier.weight(1f)) {
+                            if (playback) {
+                                Controller(
+                                    Modifier.padding(vertical = 4.dp)
+                                        .fillMaxWidth(),
+                                )
+                            }
+                        }
+
+                        ActionBar(
+                            state = state,
+                            showQueueState = showQueueState,
+                            live = live && queueFeature,
+                            showShuffle = playback,
                         )
                     }
                 }
-
-                ActionBar(
-                    state = state,
-                    showQueueState = showQueueState,
-                    live = live && queueFeature,
-                    showShuffle = playback,
-                )
             }
         }
 
@@ -418,8 +492,8 @@ fun Player(
         if (isQueuePanelVisible) {
             val density = LocalDensity.current
             val screenHeightPx = with(density) { screenHeight.roundToPx() }
-            // A desktop window has no status bar: the panel may take the whole height
-            val maxFraction = 1f
+            // The phone's status-bar exclusion: on the PC, the header's height (story 11c)
+            val maxFraction = queuePanelMaxFraction(screenHeightPx, with(density) { APP_HEADER_HEIGHT.roundToPx() })
 
             QueuePanel(
                 queuePanelHeightFraction = queuePanelHeightFraction,
@@ -432,3 +506,9 @@ fun Player(
         }
     }
 }
+
+/**
+ * Whether the full player takes the phone's landscape layout: the window is wider than tall, the phone's
+ * orientation test (`Configuration.ORIENTATION_LANDSCAPE`).
+ */
+internal fun isPlayerLandscape(width: Dp, height: Dp): Boolean = width > height

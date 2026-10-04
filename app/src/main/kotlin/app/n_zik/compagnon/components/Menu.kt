@@ -1,5 +1,11 @@
 package app.n_zik.compagnon.components
 
+import androidx.compose.foundation.layout.height
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -12,7 +18,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
@@ -62,7 +67,10 @@ val LocalMenuState = staticCompositionLocalOf { MenuState() }
  * The menu sheet, after the phone's `CustomModalBottomSheet` of `MainActivity.kt` (2268-2300): a Material 3
  * modal bottom sheet with its defaults (scrim black at 32 %, at most 640 dp wide), transparent container,
  * top corners at the UI roundness, no drag handle of its own (each menu draws its own). A click on the
- * scrim or Escape closes it. The phone's swipe-down to close has no desktop equivalent.
+ * scrim or Escape closes it. The phone's sheet opens partially expanded (`skipPartiallyExpanded = false`):
+ * half of the window's height, the menu's content filling it and scrolling (`ListMenu`'s `weight(1f)`); the
+ * phone's drag up to full height and swipe-down to close have no desktop equivalent. A new content slides in
+ * horizontally (`AnimatedContent`, 300 ms, `MainActivity.kt` 2423-2438).
  */
 @Composable
 fun BottomSheetMenu(state: MenuState, modifier: Modifier = Modifier) {
@@ -86,7 +94,7 @@ fun BottomSheetMenu(state: MenuState, modifier: Modifier = Modifier) {
                     .widthIn(max = 640.dp)
                     .fillMaxWidth()
                     .padding(top = 24.dp)
-                    .heightIn(max = maxSheetHeight)
+                    .height(maxSheetHeight / 2)
                     .clip(topUiRoundnessShape())
                     .onPreviewKeyEvent { event ->
                         if (event.type == KeyEventType.KeyDown && event.key == Key.Escape) {
@@ -99,7 +107,18 @@ fun BottomSheetMenu(state: MenuState, modifier: Modifier = Modifier) {
                     // Clicks inside the sheet never reach the scrim
                     .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {},
             ) {
-                state.content?.invoke()
+                AnimatedContent(
+                    targetState = state.content,
+                    transitionSpec = {
+                        slideInHorizontally(animationSpec = tween(300)) { width -> width / 2 } + fadeIn(animationSpec = tween(300)) togetherWith
+                            slideOutHorizontally(animationSpec = tween(300)) { width -> -width / 2 } + fadeOut(animationSpec = tween(300))
+                    },
+                    label = "MenuContentTransition",
+                ) { target ->
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        target?.invoke()
+                    }
+                }
             }
         }
     }

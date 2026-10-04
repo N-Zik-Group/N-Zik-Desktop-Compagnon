@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.player
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -28,24 +29,25 @@ import app.n_zik.compagnon.utils.GetControls
 import app.n_zik.compagnon.utils.GetSeekBar
 
 /**
- * Port of `Controls` (phone's `app/it/fast4x/rimusic/ui/screens/player/Controls.kt` 130-384), its portrait
- * branch with the default preferences: `PlayerInfoType.Modern`, timeline size `Biggest` (20 dp of side
- * padding), controls under the timeline. The info, then 25 dp, the seek bar, a 0.4 weight, the controls,
- * a 0.5 weight.
+ * Port of `Controls` (phone's `app/it/fast4x/rimusic/ui/screens/player/Controls.kt` 130-500) with the default
+ * preferences: `PlayerInfoType.Modern`, timeline size `Biggest` (20 dp of side padding), controls under the
+ * timeline. The info, then 25 dp, the seek bar, a 0.4 weight, the controls, a 0.5 weight. In landscape
+ * ([isLandscape], 394-500) the same column is aligned to the bottom (`PlayerType.Essential`: not expanded).
  *
- * Dropped: the expanded-player / lyrics branch and the landscape branch (not the default layout), the
- * `Essential` info type (not the default).
+ * Dropped: the expanded-player / lyrics branch (not the default), the `Essential` info type (not the default).
  */
 @Composable
 fun Controls(
     state: PlayerState,
     title: String?,
     artist: String?,
+    isExplicit: Boolean,
     position: () -> Long,
     duration: () -> Long,
     live: Boolean,
     dynamicColorPalette: ColorPalette,
     modifier: Modifier = Modifier,
+    isLandscape: Boolean = false,
 ) {
     // PlayerTimelineSize.Biggest
     val playerTimelineSize = 20
@@ -56,6 +58,7 @@ fun Controls(
     ) {
         Column(
             horizontalAlignment = Alignment.Start,
+            verticalArrangement = if (isLandscape) Arrangement.Bottom else Arrangement.Top,
             modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = playerTimelineSize.dp),
@@ -64,6 +67,7 @@ fun Controls(
             InfoAlbumAndArtistModern(
                 title = title,
                 artist = artist,
+                isExplicit = isExplicit,
             )
 
             Spacer(

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -26,35 +27,45 @@ import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.generated.resources.Res
+import app.n_zik.compagnon.generated.resources.album
 import app.n_zik.compagnon.generated.resources.explicit
+import app.n_zik.compagnon.generated.resources.people
+import app.n_zik.compagnon.generated.resources.person
+import app.n_zik.compagnon.generated.resources.unknown
+import app.n_zik.compagnon.generated.resources.unknown_artist
+import app.n_zik.compagnon.generated.resources.unknown_title
 import app.n_zik.compagnon.generated.resources.value_copied
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.bold
 import app.n_zik.compagnon.utils.cleanPrefix
-import app.n_zik.compagnon.utils.hasExplicitPrefix
 import app.n_zik.compagnon.utils.onSecondaryClick
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Port of `InfoAlbumAndArtistModern` (phone's `app/it/fast4x/rimusic/ui/screens/player/components/controls/
- * Modern.kt` 110-398), the default player info: the title (l.bold, with the 18 dp explicit badge before it
- * when the title carries the `e:` prefix) then, 10 dp below, the artists (m.bold), aligned left, scrolling
- * when too long. A long press (a right click on the PC) copies the text, with the phone's "copied" toast.
+ * Modern.kt` 110-398), the default player info (`playerInfoShowIcon` on by default):
+ * - the 26 dp album icon then an 8 dp spacer (`Modern.kt` 149-170), the 18 dp explicit badge (`isExplicit`,
+ *   contract 1.3 `Track.isExplicit`, 197-205), the title in l.bold;
+ * - 10 dp below, the 24 dp artist icon (2 dp start padding) then a 12 dp spacer (310-333), the artists in
+ *   m.bold (`person` for one artist, `people` otherwise, `unknown` without a text).
+ * A long press (a right click on the PC) copies the text, with the phone's "copied" toast.
  *
- * Dropped: the album / artist icons and their navigation, and the title / artist click (the contract gives no
- * album or artist id for a track); the like button (`Modern` controls only, not the default); the text
- * outline, transparent by default. Without an album id the phone
- * dims the texts as "not navigable": navigation does not exist on the PC, so they keep the text colour.
+ * The icons are shown like the phone's navigable case (text colour) but have no action: the contract gives
+ * no album or artist id for a track. Dropped: the like button (`Modern` controls only, not the default); the
+ * text outline, transparent by default.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun InfoAlbumAndArtistModern(
     title: String?,
     artist: String?,
+    isExplicit: Boolean,
     disableScrollingText: Boolean = false,
 ) {
-    val isExplicit = (title ?: "").hasExplicitPrefix()
+    val unknownTitle = stringResource(Res.string.unknown_title)
+    val unknownArtist = stringResource(Res.string.unknown_artist)
     val clipboard = LocalClipboardManager.current
     fun copy(text: String) {
         clipboard.setText(AnnotatedString(text))
@@ -75,6 +86,19 @@ fun InfoAlbumAndArtistModern(
             modifier = Modifier.fillMaxWidth(),
         ) {
 
+            IconButton(
+                icon = if (title.isNullOrBlank() || title == unknownTitle || title == "Unknown Title") Res.drawable.unknown else Res.drawable.album,
+                color = colorPalette().text,
+                onClick = {},
+                modifier = Modifier
+                    .size(26.dp),
+            )
+
+            Spacer(
+                modifier = Modifier
+                    .width(8.dp),
+            )
+
             var modifierTitle = Modifier
                 .clip(uiRoundnessShape())
                 .onSecondaryClick { copy(cleanPrefix(title ?: "")) }
@@ -93,7 +117,6 @@ fun InfoAlbumAndArtistModern(
                     .weight(1f),
             ) {
                 if (isExplicit) {
-                    // The explicit badge (phone's 18 dp icon, text colour), before the title
                     IconButton(
                         icon = Res.drawable.explicit,
                         color = colorPalette().text,
@@ -131,6 +154,24 @@ fun InfoAlbumAndArtistModern(
             .padding(horizontal = 10.dp)
             .fillMaxWidth(),
     ) {
+
+        IconButton(
+            icon = when {
+                artist.isNullOrBlank() || artist == unknownArtist || artist == "Unknown Artist" -> Res.drawable.unknown
+                artist.contains(",") -> Res.drawable.people
+                else -> Res.drawable.person
+            },
+            color = colorPalette().text,
+            onClick = {},
+            modifier = Modifier
+                .size(24.dp)
+                .padding(start = 2.dp),
+        )
+
+        Spacer(
+            modifier = Modifier
+                .width(12.dp),
+        )
 
         var modifierArtist = Modifier
             .clip(uiRoundnessShape())

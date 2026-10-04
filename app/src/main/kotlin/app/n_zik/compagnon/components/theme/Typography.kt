@@ -1,5 +1,7 @@
 package app.n_zik.compagnon.components.theme
 
+import app.n_zik.compagnon.generated.resources.roboto_w500
+import app.n_zik.compagnon.generated.resources.roboto_w400
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -58,6 +60,39 @@ fun rubikFontFamily(): FontFamily = FontFamily(
     Font(Res.font.rubik_w600, FontWeight.SemiBold),
     Font(Res.font.rubik_w700, FontWeight.Bold),
 )
+
+/**
+ * Roboto, the font Android gives the Material components the phone draws without its own style (menus,
+ * dialogs, buttons…): regular and medium, the weights the Material 3 type scale uses. Bundled with the app
+ * (Apache 2.0, see the README); not a dependency.
+ */
+@Composable
+fun robotoFontFamily(): FontFamily = FontFamily(
+    Font(Res.font.roboto_w400, FontWeight.Normal),
+    Font(Res.font.roboto_w500, FontWeight.Medium),
+)
+
+/** The Material 3 default type scale with [fontFamily] as its family: the phone's Roboto default. */
+fun materialTypographyOf(fontFamily: FontFamily): androidx.compose.material3.Typography {
+    val base = androidx.compose.material3.Typography()
+    return base.copy(
+        displayLarge = base.displayLarge.copy(fontFamily = fontFamily),
+        displayMedium = base.displayMedium.copy(fontFamily = fontFamily),
+        displaySmall = base.displaySmall.copy(fontFamily = fontFamily),
+        headlineLarge = base.headlineLarge.copy(fontFamily = fontFamily),
+        headlineMedium = base.headlineMedium.copy(fontFamily = fontFamily),
+        headlineSmall = base.headlineSmall.copy(fontFamily = fontFamily),
+        titleLarge = base.titleLarge.copy(fontFamily = fontFamily),
+        titleMedium = base.titleMedium.copy(fontFamily = fontFamily),
+        titleSmall = base.titleSmall.copy(fontFamily = fontFamily),
+        bodyLarge = base.bodyLarge.copy(fontFamily = fontFamily),
+        bodyMedium = base.bodyMedium.copy(fontFamily = fontFamily),
+        bodySmall = base.bodySmall.copy(fontFamily = fontFamily),
+        labelLarge = base.labelLarge.copy(fontFamily = fontFamily),
+        labelMedium = base.labelMedium.copy(fontFamily = fontFamily),
+        labelSmall = base.labelSmall.copy(fontFamily = fontFamily),
+    )
+}
 
 fun typographyOf(color: Color, fontFamily: FontFamily): Typography {
     val textStyle = TextStyle(

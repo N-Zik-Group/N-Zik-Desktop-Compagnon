@@ -223,7 +223,13 @@
     <string name="audio_quality_format_low">Low</string>
     <string name="quality">Quality</string>
     <string name="settings">Settings</string>
-    <string name="tab_data">Data</string>
+    <string name="profile_base_name">N-Zik Fan</string>
+    <string name="cd_blurred_background">blurred_background</string>
+    <string name="cd_origin_indicator">origin_indicator</string>
+    <string name="bridge_audio_output_pc_subtitle">Sound on the PC (N-Zik Desktop Compagnon)</string>
+    <string name="pinned_playlists">Pinned</string>
+    <string name="yt_playlists">YT/YTM</string>
+    <string name="information">Information</string>\n    <string name="navigation">Navigation</string>\n    <string name="listen_together">Listen Together</string>\n    <string name="update_title">Change Title</string>\n    <string name="update_authors">Change Authors</string>\n    <string name="update_cover">Change Cover</string>\n    <string name="start_radio">Start radio</string>\n    <string name="add_to_favorites">Add to favorites</string>\n    <string name="add_to_playlist">Add to playlist</string>\n    <string name="go_to_album">Go to album</string>\n    <string name="more_of">More of</string>\n    <string name="update_album_browse_id">Change Album Browse ID</string>\n    <string name="update_artist_browse_id">Change Artist Browse ID</string>\n    <string name="update">Update</string>\n    <string name="delete">Delete</string>\n    <string name="export_cached">Export cached</string>\n    <string name="edit_metadata">Edit Metadata</string>\n    <string name="rename_playlist">Rename playlist</string>\n    <string name="download">Download</string>\n    <string name="info_remove_all_downloaded_songs">Remove all downloaded songs</string>\n    <string name="tab_data">Data</string>
     <string name="data_settings_description">The data section contains settings that modify how the app handles data locally and remotely</string>
     <string name="cache">Cache</string>
     <string name="cache_cleared">When the cache runs out of space, the resources that haven\'t been accessed for the longest time are cleared</string>

@@ -137,9 +137,9 @@ fun ManualPairingCard(
     val form = state.manual
     Column {
         if (state.noCandidates) {
-            MessageBanner(stringResource(Res.string.pair_no_address), palette.accent, modifier = BANNER_MODIFIER)
+            MessageBanner(stringResource(Res.string.pair_no_address), isError = false, modifier = BANNER_MODIFIER)
         } else if (state.listenerUnreachable) {
-            MessageBanner(stringResource(Res.string.pair_listener_unreachable), palette.accent, modifier = BANNER_MODIFIER)
+            MessageBanner(stringResource(Res.string.pair_listener_unreachable), isError = false, modifier = BANNER_MODIFIER)
         }
         ErrorBanner(state.error, onDismiss = onDismissError, modifier = BANNER_MODIFIER)
         SettingsSectionCard(

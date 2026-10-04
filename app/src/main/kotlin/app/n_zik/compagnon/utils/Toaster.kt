@@ -1,5 +1,8 @@
 package app.n_zik.compagnon.utils
 
+import androidx.compose.ui.text.platform.SystemFont
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -50,8 +53,15 @@ import org.jetbrains.compose.resources.painterResource
  * The phone draws them with the `Toasty` library (`toast_layout.xml`, `toast_frame.9.png`): a pill tinted
  * with the type's colour at 90 % (the frame's alpha), 25 × 11 dp of padding, a 24 dp icon tinted with the
  * text colour and 8 dp from the text (no icon for [Type.NORMAL]), the text at 16 sp. A desktop window has
- * no system toast: [Host] draws them inside the window. Toasty's `sans-serif-condensed` face is not
- * available on the PC: the default font is used.
+ * no system toast: [Host] draws them inside the window. Toasty's `sans-serif-condensed` face is Roboto
+ * Condensed: it is used when Windows has it installed (no bundled font, no dependency), the default font
+ * otherwise.
+ *
+ * Types, as the phone's equivalent calls (story 11c): "copied" `s` (`ClipBoard.kt` 28); the locator's
+ * messages and "No song to shuffle" `i` (`Locator.kt` 79/88, `SongShuffler.kt` 52); a toolbar button's
+ * description on long press `i` (`Descriptive.kt` 16); "No song found" and the failures `e`; the position
+ * lock refusal `e` (`PositionLock.kt` 49). PC only: the command notices `e` (a truncated queue `w`) and the
+ * local player's failures `e`.
  */
 object Toaster {
 
@@ -148,11 +158,23 @@ object Toaster {
             Box {
                 BasicText(
                     text = toast.message,
-                    style = TextStyle(color = toast.type.foreground, fontSize = 16.sp),
+                    style = TextStyle(color = toast.type.foreground, fontSize = 16.sp, fontFamily = TOAST_FONT_FAMILY),
                 )
             }
         }
     }
 
     private const val TOAST_FADE_MS = 300L
+
+    /** Toasty's `sans-serif-condensed`, Roboto Condensed, read from the system when installed. */
+    @OptIn(ExperimentalTextApi::class)
+    private val TOAST_FONT_FAMILY: FontFamily by lazy {
+        val installed = runCatching {
+            java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().availableFontFamilyNames
+                .any { it.equals(CONDENSED_FAMILY, ignoreCase = true) }
+        }.getOrDefault(false)
+        if (installed) FontFamily(SystemFont(CONDENSED_FAMILY)) else FontFamily.Default
+    }
+
+    private const val CONDENSED_FAMILY = "Roboto Condensed"
 }

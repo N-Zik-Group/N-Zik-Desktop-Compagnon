@@ -26,13 +26,24 @@ Library (follow-ups from story 11b)
 
 Player (follow-ups from story 11)
 - Missing tests: `ServerClock.reset()` on a new session, and the backoff only resetting after a snapshot was received (both fixed in code, not covered).
-- Rejected during review, worth a later pass: reconnect banner countdown, seek bar jumping back during the round trip after a release, "1 tracks" plural, showing the stop reason (manual / auto-stop / timeout), keyboard shortcuts (Space, Escape, media keys).
+- Rejected during review, worth a later pass: reconnect banner countdown, "1 tracks" plural, showing the stop reason (manual / auto-stop / timeout), keyboard shortcuts (Space, media keys). (Seek target held after a release and Escape as back: done in story 11c.)
 
 Pairing (follow-ups from story 10)
 - Code review of story 10 was skipped: run one before a release.
 - Default gateway detection uses a UDP "connect" that sends nothing (asks the OS which source address it would use) instead of reading the routing table — check it on multi-adapter PCs.
-- Rubik fonts copied from the phone: add the OFL attribution (README / notices).
+- Rubik fonts copied from the phone: add the OFL attribution (README / notices; Roboto's Apache 2.0 notice is in the README).
 - Windows Firewall may prompt for Java on first launch: revisit once the app is packaged as an EXE (the prompt then names the app).
+
+UI fidelity (follow-ups from story 11c)
+- Phase B: the N-Zik server must send contract 1.3 `Track.isExplicit` (cleaned title) and `Album` / `Artist` `isBookmarked`; until then the E badge and the bookmark badges only show what a 1.2 phone gives (bookmark badges through the "Favorites" filter, E badge never).
+- Manual check side by side with the phone, surface by surface (home, pages, header, mini-player, queue, player portrait and landscape, menus, settings, pairing, toasts), not done yet.
+- Scroll-hide: the bars snap 150 ms after the last scroll (no fling from a wheel) and an upward wheel step also shows them over a list at its top; mid-list, an upward wheel step moves them through both paths (a bit faster than a drag).
+- Buttons and menu entries without a contract route (like, download, add to playlist, lyrics, video, share, bookmark, radio, edit title / authors / cover, home-tab toolbars…) are shown without action; the home-tab toolbars have no ellipsis menu (they fit at desktop widths).
+- The local-playlist toolbar still shows only play next / enqueue: the phone's other default buttons (pin, search, renumber, download, item selector, add to favorites / playlist, import / export, rename, delete, thumbnail, update) are not ported yet.
+- Playlist mosaic: the phone shows the 4 most-listened tracks; the contract gives no per-playlist listening time, so the first 4 tracks are kept.
+- The loader of an album page is a graphics-shapes rebuild of the Material 3 Expressive `LoadingIndicator` (absent from Compose Desktop Material 3 1.9): close, not pixel-identical.
+- The "This PC" output subtitle shows the reason instead of the phone's subtitle when libvlc is missing.
+- `PairingListenerTest` "real listener renews the requestId…" is flaky under the full suite (passes alone): a race between the real listener thread and the test dispatcher.
 
 Futur
 - The Compagnon is transitional: it disappears once the standalone N-Zik desktop app exists (Windows first, then Linux and macOS).

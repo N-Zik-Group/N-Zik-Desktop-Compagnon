@@ -46,6 +46,8 @@ data class Album(
     val year: String? = null,
     val trackCount: Int = 0,
     val hasArtwork: Boolean = false,
+    /** Since 1.3: the album is bookmarked on the phone; a 1.2 phone does not send it (→ `false`). */
+    val isBookmarked: Boolean = false,
 )
 
 /** `Artist` (contract §1.1, since 1.1). */
@@ -55,6 +57,8 @@ data class Artist(
     val name: String = "",
     val trackCount: Int = 0,
     val hasArtwork: Boolean = false,
+    /** Since 1.3: the artist is followed (bookmarked) on the phone; a 1.2 phone does not send it (→ `false`). */
+    val isBookmarked: Boolean = false,
 )
 
 /** `filter` of `GET /library/songs` (contract §10.1). */

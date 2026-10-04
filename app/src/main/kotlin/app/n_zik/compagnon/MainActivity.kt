@@ -1,5 +1,34 @@
 package app.n_zik.compagnon
 
+import app.n_zik.compagnon.components.navigation.BarsScrollHide
+import androidx.compose.ui.ExperimentalComposeUiApi
+import app.n_zik.compagnon.core.navigation.backStep
+import app.n_zik.compagnon.core.navigation.LocalBackDispatcher
+import app.n_zik.compagnon.core.navigation.BackStep
+import app.n_zik.compagnon.components.ui.screens.home.CollectionHeader
+import app.n_zik.compagnon.components.player.APP_HEADER_HEIGHT
+import kotlinx.coroutines.Job
+import kotlin.math.roundToInt
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerButton
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.State
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.foundation.layout.offset
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -148,9 +177,17 @@ fun computeAppearance(fontFamily: FontFamily): Appearance {
  * and the toasts of the PC's own player ([localPlayback], story 12).
  *
  * The dynamic palette follows the current track's cover (`setDynamicPalette` on each track change).
- * Dropped: navigation routes other than home, the player sheet's drag / fling (the full player deploys from
- * the mini-player in a 400 ms slide; no touch on the PC), the system bars, the scroll-hide of the bars.
+ * The open page ([CollectionHeader], the phone's album / artist / playlist route) lives here so the header
+ * shows its back button. The back (story 11c): the window's Escape key ([LocalBackDispatcher]) and the
+ * mouse's back button close, in order, the menu, the panels, the queue, the player, the page ([backStep]).
+ * The scroll-hide of the bars (phone's `MainActivity.kt` 1660-1785): a scroll moves the header up to 64 dp
+ * out ([LocalTopBarOffset], the content following it) and the floating bar and mini-player up to 240 dp down
+ * ([LocalBottomBarOffset]); on release they snap in 150 ms to shown or hidden. Off while the player or the
+ * queue is open; opening the player brings them back in 800 ms.
+ * Dropped: the navigation routes the contract has no data for, the player sheet's drag / fling (the full
+ * player deploys from the mini-player in a 400 ms slide; no touch on the PC), the system bars.
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MainActivity(
     repository: PlayerRepository,
@@ -168,13 +205,15 @@ fun MainActivity(
     var showQueueOverlay by remember { mutableStateOf(false) }
     var phonePanel by remember { mutableStateOf(false) }
     var settingsPanel by remember { mutableStateOf(false) }
+    var detail by remember { mutableStateOf<CollectionHeader?>(null) }
     val preferences = LocalPreferences.current
     var navBarVisible by remember { mutableStateOf(false) }
     val menuState = remember { MenuState() }
     val onCommand: CommandLauncher = { command -> scope.launch { repository.command() } }
-    val showMessage: (String) -> Unit = { text -> Toaster.n(text) }
+    // The screens' messages are the locator's, an information toast on the phone (`Locator.kt` 79, 88)
+    val showMessage: (String) -> Unit = { text -> Toaster.i(text) }
     val lists = remember(library) { LibraryLists(library, scope) }
-    val actions = remember(repository, library) { LibraryActions(repository, library, scope) { showMessage(it) } }
+    val actions = remember(repository, library) { LibraryActions(repository, library, scope, info = { Toaster.i(it) }) { Toaster.e(it) } }
 
     LaunchedEffect(repository) {
         repository.notices.collect { notice ->
@@ -199,25 +238,146 @@ fun MainActivity(
     }
 
     // Media presence grace: a transient null between two track changes must not drop the sheet
-    // (port of the phone's 400 ms grace, phone's `MainActivity.kt` 2198-2223)
+    // (port of the phone's 400 ms grace, phone's `MainActivity.kt` 2198-2223). Once the absence persists,
+    // the player is dismissed and the queue overlay closed (`showQueueOverlay = false`, phone's 2215).
     var mediaPresent by remember { mutableStateOf(repository.state.value?.currentTrack != null) }
     LaunchedEffect(track?.id) {
         if (track == null) {
-            delay(400)
-            if (repository.state.value?.currentTrack == null) mediaPresent = false
+            if (mediaAbsencePersists { repository.state.value?.currentTrack }) {
+                mediaPresent = false
+                showPlayer = false
+                showQueueOverlay = false
+            }
         } else {
             mediaPresent = true
         }
     }
 
+    // Back: one step per press, in the phone's order (menu, panels, queue, player, page)
+    val onBackPress: () -> Boolean = {
+        val step = backStep(menuState.isDisplayed, phonePanel || settingsPanel, showQueueOverlay, showPlayer, detail != null)
+        when (step) {
+            BackStep.Menu -> menuState.hide()
+            BackStep.Panel -> if (settingsPanel) settingsPanel = false else phonePanel = false
+            BackStep.Queue -> showQueueOverlay = false
+            BackStep.Player -> showPlayer = false
+            BackStep.Page -> detail = null
+            null -> Unit
+        }
+        step != null
+    }
+    val currentOnBackPress by rememberUpdatedState(onBackPress)
+    val backDispatcher = LocalBackDispatcher.current
+    DisposableEffect(backDispatcher) {
+        val handler: () -> Boolean = { currentOnBackPress() }
+        backDispatcher?.handler = handler
+        onDispose { if (backDispatcher?.handler === handler) backDispatcher.handler = null }
+    }
+
+    // Scroll-hide of the header and of the floating bar / mini-player (phone's `MainActivity.kt` 1660-1785)
+    val density = LocalDensity.current
+    val topBarHeightPx = with(density) { APP_HEADER_HEIGHT.roundToPx().toFloat() }
+    val bottomBarHeightPx = with(density) { 240.dp.roundToPx().toFloat() } // Enough to hide floating bar + miniplayer
+    var topBarOffset by remember { mutableFloatStateOf(0f) }
+    var bottomBarOffset by remember { mutableFloatStateOf(0f) }
+    val offsetAnimationJob = remember { mutableStateOf<Job?>(null) }
+    val scrollHideOff by rememberUpdatedState(showPlayer || showQueueOverlay)
+
+    // Opening the player must restore the hidden bars (phone's `restoreHiddenBars`, 800 ms)
+    LaunchedEffect(showPlayer) {
+        if (!showPlayer || (topBarOffset == 0f && bottomBarOffset == 0f)) return@LaunchedEffect
+        offsetAnimationJob.value?.cancel()
+        offsetAnimationJob.value = scope.launch {
+            launch { Animatable(topBarOffset).animateTo(0f, tween(800, easing = FastOutSlowInEasing)) { topBarOffset = value } }
+            launch { Animatable(bottomBarOffset).animateTo(0f, tween(800, easing = FastOutSlowInEasing)) { bottomBarOffset = value } }
+        }
+    }
+
+    val barsHide = remember(topBarHeightPx, bottomBarHeightPx) { BarsScrollHide(topBarHeightPx, bottomBarHeightPx) }
+
+    fun snapBars() {
+        offsetAnimationJob.value?.cancel()
+        offsetAnimationJob.value = scope.launch {
+            // No fling from a mouse wheel: snap once the scroll pauses (the phone snaps after its fling)
+            delay(BARS_SNAP_DELAY_MS)
+            val shown = barsHide.snapShown()
+            val targetTop = if (shown) 0f else -topBarHeightPx
+            val targetBottom = if (shown) 0f else bottomBarHeightPx
+            launch { Animatable(topBarOffset).animateTo(targetTop, tween(150, easing = LinearEasing)) { topBarOffset = value; barsHide.set(topBarOffset, bottomBarOffset) } }
+            launch { Animatable(bottomBarOffset).animateTo(targetBottom, tween(150, easing = LinearEasing)) { bottomBarOffset = value; barsHide.set(topBarOffset, bottomBarOffset) } }
+        }
+    }
+
+    fun applyBars() {
+        topBarOffset = barsHide.top
+        bottomBarOffset = barsHide.bottom
+    }
+
+    val nestedScrollConnection = remember(barsHide) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                // Disable scroll-hide while the full player is on screen or the queue is open
+                if (scrollHideOff || available.y == 0f) return Offset.Zero
+                offsetAnimationJob.value?.cancel()
+                barsHide.set(topBarOffset, bottomBarOffset)
+                val consumedY = barsHide.scroll(available.y)
+                applyBars()
+                snapBars()
+                return Offset(0f, consumedY)
+            }
+        }
+    }
+    val topBarOffsetState = remember { derivedStateOf { topBarOffset } }
+    val bottomBarOffsetState = remember { derivedStateOf { bottomBarOffset } }
+
     CompositionLocalProvider(
         LocalPlayerRepository provides repository,
         LocalCommandLauncher provides onCommand,
         LocalMenuState provides menuState,
+        LocalTopBarOffset provides topBarOffsetState,
+        LocalBottomBarOffset provides bottomBarOffsetState,
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(nestedScrollConnection)
+                // A wheel step up shows the bars again even over a list already at its top (no nested scroll)
+                .onPointerEvent(PointerEventType.Scroll, PointerEventPass.Initial) { event ->
+                    val notches = event.changes.firstOrNull()?.scrollDelta?.y ?: 0f
+                    if (!scrollHideOff && notches < 0f && (topBarOffset != 0f || bottomBarOffset != 0f)) {
+                        offsetAnimationJob.value?.cancel()
+                        barsHide.set(topBarOffset, bottomBarOffset)
+                        barsHide.wheel(-notches * topBarHeightPx)
+                        applyBars()
+                        snapBars()
+                    }
+                }
+                // The mouse's back button: the phone's system back
+                .onPointerEvent(PointerEventType.Press, PointerEventPass.Initial) { event ->
+                    if (event.button == PointerButton.Back) currentOnBackPress()
+                },
+        ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                AppHeader(connection, onPhone = { phonePanel = true }, onSettings = { settingsPanel = true })
+                // The header slides out with the scroll and the content follows it (phone's
+                // `AppNavigation.kt` 303-345: the content's top padding is the header plus its offset)
+                Box(
+                    modifier = Modifier.layout { measurable, constraints ->
+                        val placeable = measurable.measure(constraints)
+                        val offsetPx = topBarOffsetState.value.roundToInt()
+                        val height = (placeable.height + offsetPx).coerceAtLeast(0)
+                        layout(placeable.width, height) {
+                            placeable.place(0, offsetPx)
+                        }
+                    },
+                ) {
+                    AppHeader(
+                        isHome = detail == null,
+                        onBack = { detail = null },
+                        onHome = { detail = null },
+                        onPhone = { phonePanel = true },
+                        onSettings = { settingsPanel = true },
+                    )
+                }
                 ConnectionBanner(connection, onReconnect = repository::reconnect)
                 HomeScreen(
                     lists = lists,
@@ -225,13 +385,13 @@ fun MainActivity(
                     actions = actions,
                     live = connection == ConnectionState.Live,
                     onMessage = showMessage,
+                    detail = detail,
+                    onDetail = { detail = it },
                     onNavBarVisible = { navBarVisible = it },
                     modifier = Modifier.weight(1f),
                 )
             }
 
-            // Palette fade scope: the global palette switches in one step, only the mini-player and the
-            // full player animate the transition
             // PlayerPosition.Bottom with the floating bar: the sheet sits above the bar when it is shown
             val playerPadBottom by animateDpAsState(
                 targetValue = if (navBarVisible) {
@@ -243,18 +403,26 @@ fun MainActivity(
                 label = "playerPadBottom",
             )
 
+            // Palette fade scope: the global palette switches in one step, only the mini-player and the
+            // full player animate the transition
             PaletteFade {
                 if (mediaPresent) {
-                    PlayerSheet(
-                        showPlayer = showPlayer,
-                        onShowPlayer = { showPlayer = it },
-                        onShowQueue = { showQueueOverlay = true },
-                        phoneName = record.serverName,
-                        bottomPadding = playerPadBottom,
-                    )
+                    // The mini-player leaves with the floating bar on scroll (phone's `MainActivity.kt` 2289)
+                    Box(Modifier.fillMaxSize().offset { IntOffset(0, bottomBarOffsetState.value.roundToInt()) }) {
+                        PlayerSheet(
+                            showPlayer = showPlayer,
+                            onShowPlayer = { showPlayer = it },
+                            onShowQueue = { showQueueOverlay = true },
+                            phoneName = record.serverName,
+                            bottomPadding = playerPadBottom,
+                        )
+                    }
                 }
             }
 
+            // The queue overlay is drawn ABOVE the sheet so its panel (65 % height) is not
+            // hidden by the PlayerSheet's full-size box; the menu, the panels and the toasters
+            // (composed after the overlay) stay above all
             MiniPlayerQueueOverlay(
                 showSheet = showQueueOverlay,
                 onDismiss = { showQueueOverlay = false },
@@ -281,3 +449,24 @@ private suspend fun localPlaybackNoticeText(notice: LocalPlaybackNotice): String
     LocalPlaybackNotice.Unreachable -> getString(Res.string.local_playback_unreachable)
     LocalPlaybackNotice.Failed -> getString(Res.string.local_playback_failed)
 }
+
+/** The phone's grace before "no media" is accepted (`MainActivity.kt` 2205). */
+internal const val MEDIA_ABSENCE_GRACE_MS = 400L
+
+/**
+ * Waits [MEDIA_ABSENCE_GRACE_MS] then tells whether the media is still absent (phone's `MainActivity.kt`
+ * 2204-2215): `true` closes the player and the queue overlay, `false` was a transient null between two tracks.
+ */
+internal suspend fun mediaAbsencePersists(currentTrack: () -> Any?): Boolean {
+    delay(MEDIA_ABSENCE_GRACE_MS)
+    return currentTrack() == null
+}
+
+/** The scroll-hide offset of the header, in px (0 shown, −64 dp hidden): phone's `LocalTopBarOffset`. */
+val LocalTopBarOffset = staticCompositionLocalOf<State<Float>> { mutableStateOf(0f) }
+
+/** The scroll-hide offset of the floating bar and mini-player, in px (0 shown, 240 dp hidden). */
+val LocalBottomBarOffset = staticCompositionLocalOf<State<Float>> { mutableStateOf(0f) }
+
+/** Pause after the last scroll before the bars snap shown or hidden. */
+internal const val BARS_SNAP_DELAY_MS = 150L

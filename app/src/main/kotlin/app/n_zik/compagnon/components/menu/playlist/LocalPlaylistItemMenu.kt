@@ -1,5 +1,16 @@
 package app.n_zik.compagnon.components.menu.playlist
 
+import app.n_zik.compagnon.generated.resources.delete
+import app.n_zik.compagnon.generated.resources.trash
+import app.n_zik.compagnon.generated.resources.rename_playlist
+import app.n_zik.compagnon.generated.resources.title_edit
+import app.n_zik.compagnon.generated.resources.info_remove_all_downloaded_songs
+import app.n_zik.compagnon.generated.resources.download
+import app.n_zik.compagnon.generated.resources.downloaded
+import app.n_zik.compagnon.generated.resources.open
+import app.n_zik.compagnon.components.menu.InertMenuItem
+import app.n_zik.compagnon.components.themed.IconButton
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -51,10 +62,11 @@ import org.jetbrains.compose.resources.stringResource
  * list style.
  *
  * Kept: the header (`PlaylistItemDisplay`: drag handle, 64 dp thumbnail — library icon, single image or
- * 2×2 grid —, name, "N Songs", divider), "Playback" (Shuffle, Play next) and, as on the phone, "Enqueue"
- * first in "Management".
- * Dropped (contract v1): the bookmark / open buttons of the header, download all, delete downloads,
- * rename, change id, pin, delete, and the Navigation section.
+ * 2×2 grid —, name, "N Songs", the 48 dp trailing column with the "open" icon — a local playlist cannot be
+ * bookmarked —, divider), "Playback" (Shuffle, Play next) and "Management" in the phone's order (115-133):
+ * Enqueue, download, remove all downloaded songs, rename, delete. Wired to the contract: shuffle, play next,
+ * enqueue; the other entries and "open" have no contract route: shown, without action.
+ * Dropped: change id, listen on YouTube, auto-sync and the Navigation section (YouTube playlists only).
  */
 class LocalPlaylistItemMenu(
     private val playlist: Playlist,
@@ -70,6 +82,10 @@ class LocalPlaylistItemMenu(
 
         ListMenu.SectionTitle(stringResource(Res.string.management))
         Enqueue(enabled = actions.enabled, onClick = actions.onEnqueue).ListMenuItem()
+        InertMenuItem(Res.drawable.downloaded, Res.string.download).ListMenuItem()
+        InertMenuItem(Res.drawable.download, Res.string.info_remove_all_downloaded_songs).ListMenuItem()
+        InertMenuItem(Res.drawable.title_edit, Res.string.rename_playlist).ListMenuItem()
+        InertMenuItem(Res.drawable.trash, Res.string.delete).ListMenuItem()
     }
 
     @Composable
@@ -157,6 +173,21 @@ class LocalPlaylistItemMenu(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+                    )
+                }
+
+                // Trailing content (Bookmark & Open): a local playlist cannot be bookmarked
+                Column(
+                    Modifier.width(48.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    IconButton(
+                        icon = Res.drawable.open,
+                        color = colorPalette().text,
+                        onClick = {},
+                        modifier = Modifier
+                            .padding(all = 4.dp)
+                            .size(20.dp),
                     )
                 }
             }

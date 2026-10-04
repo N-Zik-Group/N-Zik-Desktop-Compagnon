@@ -58,7 +58,7 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun RowScope.SkipTimeButton(
-    position: Long,
+    seekBasePosition: () -> Long,
     operation: Long.(Long) -> Long,
     valueSelector: (Long, Long) -> Long,
     comparedValue: Long,
@@ -70,11 +70,15 @@ private fun RowScope.SkipTimeButton(
     tapAdjustment: Long = 5_000L,
     doubleTapAdjustment: Long = 10_000L,
     longTapAdjustment: Long = 30_000L,
+    onSeekIssued: (Long) -> Unit = {},
 ) {
     val onCommand = LocalCommandLauncher.current
     fun seekTo(adjustment: Long) {
-        val adjustedPosition = position.operation(adjustment)
+        // Phone's `DurationIndicator.kt` 93-113 (issue #881): the base is read at tap time, and the target
+        // is held on the label / bar until the phone confirms it
+        val adjustedPosition = seekBasePosition().operation(adjustment)
         val newPosition = valueSelector(adjustedPosition, comparedValue)
+        if (enabled) onSeekIssued(newPosition)
         onCommand { seek(newPosition) }
     }
 
@@ -142,8 +146,9 @@ internal fun displayedTimeRemainingOf(durationMs: Long, positionMs: Long): Long 
     else ((durationMs / 1000) - (positionMs / 1000)).coerceAtLeast(0) * 1000
 
 /**
- * The times under the seek bar: rewind button, position (or the dragged one), remaining time, duration,
- * forward button. [live] `false`: the skip buttons do nothing.
+ * The times under the seek bar: rewind button, position (or the dragged / held one), remaining time,
+ * duration, forward button. [live] `false`: the skip buttons do nothing. [onSeekIssued] holds a skip target
+ * (phone's `DurationIndicator.kt` 198-201); [seekBasePosition] is the skip base read at tap time.
  */
 @Composable
 fun DurationIndicator(
@@ -151,6 +156,8 @@ fun DurationIndicator(
     position: Long,
     duration: Long,
     live: Boolean,
+    onSeekIssued: (Long) -> Unit = {},
+    seekBasePosition: () -> Long = { position },
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -161,8 +168,8 @@ fun DurationIndicator(
         val showSkipTimeButtons = true
         if (showSkipTimeButtons) {
             SkipTimeButton(
-                position, Long::minus, ::maxOf, 0, stringResource(Res.string.rewind), stringResource(Res.string.rewind_5_seconds),
-                stringResource(Res.string.rewind_30_seconds), live, Modifier.rotate(180f),
+                seekBasePosition, Long::minus, ::maxOf, 0, stringResource(Res.string.rewind), stringResource(Res.string.rewind_5_seconds),
+                stringResource(Res.string.rewind_30_seconds), live, Modifier.rotate(180f), onSeekIssued = onSeekIssued,
             )
 
             Spacer(Modifier.width(5.dp))
@@ -207,8 +214,8 @@ fun DurationIndicator(
 
             SkipTimeButton(
                 // An unknown duration (`TIME_UNSET`) puts no upper bound: the phone bounds the seek itself
-                position, Long::plus, ::minOf, if (duration > 0) duration else Long.MAX_VALUE, stringResource(Res.string.forward), stringResource(Res.string.forward_5_seconds),
-                stringResource(Res.string.forward_30_seconds), live,
+                seekBasePosition, Long::plus, ::minOf, if (duration > 0) duration else Long.MAX_VALUE, stringResource(Res.string.forward), stringResource(Res.string.forward_5_seconds),
+                stringResource(Res.string.forward_30_seconds), live, onSeekIssued = onSeekIssued,
             )
         }
     }

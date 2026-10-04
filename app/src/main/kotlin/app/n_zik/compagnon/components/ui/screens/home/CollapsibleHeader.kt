@@ -148,11 +148,14 @@ fun rememberCollapsibleHeaderConnection(
  * The layout every home tab repeats on the phone (`HomeSongsScreen.kt` 789-827, `HomeAlbum.kt` 605-773,
  * `HomeArtist.kt` 587-…, `HomeLibrary.kt` 764-952): the list fills the screen behind a header that slides
  * away with the scroll (offset, then `background0`, then the alpha of the header content).
- * [content] gets the measured header height as its top padding.
+ * [content] gets the measured header height as its top padding. [scrollOverHeader] puts the scroll
+ * connection on the outer box, header included, as the phone's Songs tab (`HomeSongsScreen.kt` 804-807);
+ * the other tabs keep it on the list's box.
  */
 @Composable
 fun CollapsibleHeaderScreen(
     enabled: Boolean,
+    scrollOverHeader: Boolean = false,
     header: @Composable (MutableFloatState, MutableIntState) -> Unit,
     content: @Composable BoxScope.(headerPadding: Dp) -> Unit,
 ) {
@@ -169,8 +172,8 @@ fun CollapsibleHeaderScreen(
 
     val nestedScrollConnection = rememberCollapsibleHeaderConnection(headerHeight, headerOffsetState, enabled)
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection)) {
+    Box(modifier = Modifier.fillMaxSize().then(if (scrollOverHeader) Modifier.nestedScroll(nestedScrollConnection) else Modifier)) {
+        Box(modifier = Modifier.fillMaxSize().then(if (scrollOverHeader) Modifier else Modifier.nestedScroll(nestedScrollConnection))) {
             val headerPadding = with(LocalDensity.current) { headerHeight.toDp() }
             content(headerPadding)
         }

@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.menu.player
 
+import app.n_zik.compagnon.generated.resources.bridge_audio_output_pc_subtitle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -47,7 +48,6 @@ import app.n_zik.compagnon.generated.resources.audio_quality_format
 import app.n_zik.compagnon.generated.resources.audio_quality_format_high
 import app.n_zik.compagnon.generated.resources.audio_quality_format_low
 import app.n_zik.compagnon.generated.resources.computer
-import app.n_zik.compagnon.generated.resources.controls_title_playback_volume
 import app.n_zik.compagnon.generated.resources.local_playback_unavailable
 import app.n_zik.compagnon.generated.resources.music_note
 import app.n_zik.compagnon.generated.resources.phone_android
@@ -114,6 +114,7 @@ fun AudioDeviceMenu(onDismiss: () -> Unit, phoneName: String) {
         AudioQualityFormat.Low to stringResource(Res.string.audio_quality_format_low),
     )
     val unavailableText = stringResource(Res.string.local_playback_unavailable)
+    val pcSubtitle = stringResource(Res.string.bridge_audio_output_pc_subtitle)
 
     ListMenu.Menu(title = stringResource(Res.string.audio_devices), showDragHandle = true) {
         SectionTitle(stringResource(Res.string.audio_output_title))
@@ -141,7 +142,12 @@ fun AudioDeviceMenu(onDismiss: () -> Unit, phoneName: String) {
                     }
                 },
                 modifier = if (dev.isActive) Modifier.background(colorPalette().accent.copy(alpha = 0.1f), uiRoundnessShape()) else Modifier,
-                subtitle = if (!dev.isConnected) unavailableText else null,
+                // The phone's PC subtitle (`AudioDeviceMenu.kt` 486), always shown; the reason when libvlc is missing
+                subtitle = when {
+                    dev.type != AudioDeviceType.PC -> null
+                    !dev.isConnected -> unavailableText
+                    else -> pcSubtitle
+                },
                 trailingContent = {
                     AnimatedVisibility(
                         visible = dev.isActive,
@@ -258,7 +264,7 @@ private fun VolumeRow(
         }
 
         BasicText(
-            text = stringResource(Res.string.controls_title_playback_volume),
+            text = stringResource(Res.string.volume),
             style = typography().s.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = colorPalette().text,

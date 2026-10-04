@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import app.n_zik.compagnon.components.tab.toolbar.HomeToolbars
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -60,10 +61,12 @@ const val GRID_THUMBNAIL_SIZE_PX = 256
  * `AlbumItem` (alternative, with authors) at the default `HomeItemSize.SMALL` (100 dp), "No items", the
  * scroll-to-top button. Chips: "All" (`library`) and "Favorites" (`bookmarked`), the phone's order.
  * A click opens the album, a long press (right click) opens `AlbumItemMenu`.
- * Toolbar: only the Compagnon's "Refresh". Dropped (contract v1): sort (the contract fixes title A→Z),
- * search, randomizer, shuffle / play next / enqueue / add to playlist of a selection, multi-selection,
- * export, item size (default kept), position lock, YouTube sync and its filter chip and progress, the
- * "Disliked" chip, pull-to-refresh, drag to reorder, the play-count / listening-time overlays.
+ * Toolbar: the phone's default buttons ([app.n_zik.compagnon.components.tab.toolbar.HomeToolbars]: sort,
+ * search, randomizer, shuffle, item selector, play next, enqueue, add to playlist, export, item size; no
+ * contract route, shown without action), then the Compagnon's "Refresh". The bookmark badge comes from
+ * contract 1.3 `isBookmarked`, in every filter.
+ * Dropped (contract v1): position lock, YouTube sync and its filter chip and progress, the "Disliked" chip,
+ * pull-to-refresh, drag to reorder, the play-count / listening-time overlays.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -101,7 +104,8 @@ fun HomeAlbums(
                                     HeaderInfo((state.total ?: state.items.size).toString(), Res.drawable.album)
                                 }
                             }
-                            TabToolBar.Buttons(listOf(Refresh(lists.albums::reload)))
+                            // The phone's default toolbar (no contract route: shown, without action), then the Compagnon's refresh
+                            TabToolBar.Buttons(HomeToolbars.albumsOrArtists() + Refresh(lists.albums::reload), disableAnimation = true)
                         }
 
                         Column {
@@ -139,7 +143,7 @@ fun HomeAlbums(
                             val openMenu = menu?.let {
                                 {
                                     menuState.display {
-                                        AlbumItemMenu(album, it, bookmarked = albumType == CollectionFilter.Bookmarked).MenuComponent()
+                                        AlbumItemMenu(album, it, bookmarked = album.isBookmarked || albumType == CollectionFilter.Bookmarked).MenuComponent()
                                     }
                                 }
                             }
@@ -149,7 +153,8 @@ fun HomeAlbums(
                                 album = album,
                                 thumbnailSizeDp = HOME_ITEM_SIZE_SMALL,
                                 thumbnailSizePx = GRID_THUMBNAIL_SIZE_PX,
-                                likeState = if (albumType == CollectionFilter.Bookmarked) true else null,
+                                // Contract 1.3 `isBookmarked`, in every filter (a 1.2 phone only gives it through the filter)
+                                likeState = if (album.isBookmarked || albumType == CollectionFilter.Bookmarked) true else null,
                                 modifier = Modifier
                                     .clip(uiRoundnessShape())
                                     .onSecondaryClick(openMenu)

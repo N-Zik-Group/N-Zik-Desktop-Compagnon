@@ -69,8 +69,10 @@ fun HomeSongs(
                         .zIndex(2f),
                 ) {
                     val menu = actions.trackActions({ list.state.value.items }, index, song.id, live)
+                    // Phone's `HomeSongs.kt` 587: the rows animate their placement
                     SongItem(
                         song = song,
+                        modifier = Modifier.animateItem(),
                         onLongClick = menu?.let { { menuState.display { SongItemMenu(song, it).MenuComponent() } } },
                         onClick = {
                             search.hideIfEmpty()

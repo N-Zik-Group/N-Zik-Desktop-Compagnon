@@ -128,6 +128,11 @@ data class Track(
     val isDownloaded: Boolean = false,
     val isLiked: Boolean = false,
     val hasArtwork: Boolean = false,
+    /**
+     * Since 1.3: the track carries the phone's explicit mark (`e:` title prefix); [title] never carries it.
+     * A 1.2 phone does not send it (→ `false`).
+     */
+    val isExplicit: Boolean = false,
 )
 
 /** Why the server stopped (contract §7.7); an unknown value reads as [StopUser]. */

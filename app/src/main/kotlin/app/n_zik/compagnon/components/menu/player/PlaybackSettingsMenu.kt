@@ -55,9 +55,10 @@ import org.jetbrains.compose.resources.stringResource
  * contract §8.5).
  * Dropped (contract v1 has no such command, or nothing to apply it to on the PC): pitch, medley duration,
  * the device volume (Windows' volume), blur, bass boost, loudness and their sections, and the grid style.
- * PC only: the range is the contract's (0.25–4.0, the phone allows 0.1–10), and the speed is sent when the
- * slider is released (the phone applies each step to its own player); while dragging, the slider shows the
- * dragged value, then follows the phone again.
+ * The speed slider has the phone's range (0.1–10, story 11c); the command stays bounded to the contract's
+ * 0.25–4.0 (§9), so a value outside is sent at the nearest bound. PC only: the speed is sent when the slider
+ * is released (the phone applies each step to its own player); while dragging, the slider shows the dragged
+ * value, then follows the phone again.
  */
 class PlaybackSettingsMenu private constructor(
     private val onSpeed: (Float) -> Unit,
@@ -98,7 +99,7 @@ class PlaybackSettingsMenu private constructor(
                     }
                     dragged = null
                 },
-                valueRange = SessionContract.SPEED_MIN..SessionContract.SPEED_MAX,
+                valueRange = PHONE_SPEED_MIN..PHONE_SPEED_MAX,
                 displayValue = { "%.1fx".format(it).replace(",", ".") },
                 stepSize = 0f,
                 defaultValue = 1f,
@@ -229,3 +230,7 @@ class PlaybackSettingsMenu private constructor(
         }
     }
 }
+
+/** The phone's playback-speed slider range (`PlaybackSettingsMenu.kt`: 0.1–10). */
+internal const val PHONE_SPEED_MIN = 0.1f
+internal const val PHONE_SPEED_MAX = 10f

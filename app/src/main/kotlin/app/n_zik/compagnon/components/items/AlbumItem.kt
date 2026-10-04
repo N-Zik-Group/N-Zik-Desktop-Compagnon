@@ -33,8 +33,8 @@ import app.n_zik.compagnon.utils.secondary
 /**
  * Port of `AlbumItem` (phone's `app/it/fast4x/rimusic/ui/items/AlbumItem.kt` 66 and 153).
  *
- * [likeState] is only known when the list is filtered on `bookmarked` (`true`); the contract gives no
- * bookmark state otherwise, nor the disliked state (`bookmark_slash`). Dropped: the YouTube Music origin
+ * [likeState] is `true` when the album is bookmarked (contract 1.3 `isBookmarked`, or the `bookmarked`
+ * filter for a 1.2 phone); the contract gives no disliked state (`bookmark_slash`). Dropped: the YouTube Music origin
  * badge (`isYoutubeAlbum`, not in the contract).
  */
 @Composable

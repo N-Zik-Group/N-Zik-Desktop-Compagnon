@@ -4,6 +4,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ripple
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -57,10 +60,50 @@ import app.n_zik.compagnon.utils.hasExplicitPrefix
 import app.n_zik.compagnon.utils.onSecondaryClick
 import app.n_zik.compagnon.utils.secondary
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /** Song thumbnails are 54 dp: `size` ≈ 2× in px (contract §10.1). */
 const val SONG_THUMBNAIL_SIZE_PX = 128
+
+/**
+ * Port of `SongIndicator.ToolBarButton` (phone's `app/n_zik/android/components/SongItem.kt` 108-150): an
+ * 18 dp accent icon in a clickable box (unbounded 20 dp ripple, no action), then a `padding(horizontal = 3.dp)`
+ * spacer (6 dp) before the title.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SongIndicator(
+    icon: DrawableResource,
+    modifier: Modifier = Modifier,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    Box(
+        modifier = modifier
+            .size(18.dp)
+            .clip(uiRoundnessShape())
+            .combinedClickable(
+                interactionSource = interactionSource,
+                indication = ripple(
+                    bounded = false,
+                    radius = 20.dp,
+                ),
+                onClick = {},
+                onLongClick = {},
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = null,
+            modifier = Modifier.size(18.dp),
+            tint = colorPalette().accent,
+        )
+    }
+
+    Spacer(Modifier.padding(horizontal = 3.dp))
+}
 
 /** Port of `SongText` (phone's `app/n_zik/android/components/SongItem.kt` 153). */
 @Composable
@@ -82,8 +125,8 @@ fun SongText(
  *
  * Kept: the 54 dp thumbnail, the now-playing animation and highlight, the 12 dp "liked" heart at
  * -8 dp bottom-left, title / artists with marquee, the duration or `--:--`, the download icon of an online
- * track (filled when the phone has it offline), the 18 dp explicit badge before the title (accent, the
- * title's `e:` prefix).
+ * track (filled when the phone has it offline), the 18 dp explicit [SongIndicator] before the title (accent,
+ * `Track.isExplicit` of contract 1.3), followed by its 6 dp spacer.
  * Dropped (contract v1 or PC): the disliked heart (`Track.isLiked` is a boolean), the download action and
  * its progress ring (no download in v1: the icon is information only), the "recommended" and "in a
  * playlist" indicators (not exposed by the contract), the multi-selection checkbox, the
@@ -162,17 +205,12 @@ fun SongItem(
             modifier = Modifier.weight(1f),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                val safeTitle = if (song.title.isBlank() || song.title == "null") stringResource(Res.string.unknown_title) else song.title
-                if (song.title.hasExplicitPrefix()) {
-                    // The explicit badge (phone's `SongIndicator` in the title row, 18 dp, accent)
-                    IconButton(
-                        icon = Res.drawable.explicit,
-                        color = colorPalette().accent,
-                        enabled = false,
-                        onClick = {},
-                        modifier = Modifier.size(18.dp),
-                    )
+                // Contract 1.3 `Track.isExplicit` (the phone sends the cleaned title); the prefix test keeps
+                // the phone's own check (`SongItem.kt` 327) for a title that still carries `e:`
+                if (song.isExplicit || song.title.hasExplicitPrefix()) {
+                    SongIndicator(icon = Res.drawable.explicit)
                 }
+                val safeTitle = if (song.title.isBlank() || song.title == "null") stringResource(Res.string.unknown_title) else song.title
                 SongText(
                     text = cleanPrefix(safeTitle),
                     style = typography().xs.semiBold,

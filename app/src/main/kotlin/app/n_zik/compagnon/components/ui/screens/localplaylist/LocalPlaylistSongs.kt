@@ -1,5 +1,11 @@
 package app.n_zik.compagnon.components.ui.screens.localplaylist
 
+import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
+import app.n_zik.compagnon.uiRoundnessShape
+import app.n_zik.compagnon.generated.resources.smart_shuffle
+import app.n_zik.compagnon.components.themed.HeaderIconButton
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,7 +49,6 @@ import app.n_zik.compagnon.components.themed.HeaderWithIcon
 import app.n_zik.compagnon.components.themed.IconInfo
 import app.n_zik.compagnon.components.themed.PlayNext
 import app.n_zik.compagnon.components.themed.Playlist
-import app.n_zik.compagnon.components.ui.screens.home.BackButton
 import app.n_zik.compagnon.components.ui.screens.home.CollectionHeader
 import app.n_zik.compagnon.components.ui.screens.home.LibraryActions
 import app.n_zik.compagnon.components.ui.screens.home.LoadMoreEffect
@@ -71,15 +76,18 @@ private const val PLAYLIST_CARD_SIZE_PX = 256
  * Kept: the `HeaderWithIcon` title (no icon); the `background1` card in thumbnail shape (16 dp sides) with
  * the `Playlist` cover of 128 dp (14 dp above, mosaic of the first four tracks or the artwork of
  * `artworkTrackId`, count pill), the info column (track count with the note icon, duration with the clock
- * icon, 10 / 5 / 30 dp spacers, 80 % or 90 % in landscape) and the column of buttons reduced to Shuffle;
- * the `TabToolBar` (play next, enqueue); the row with the locator at its end; the `SongItem` list.
- * Dropped (contract v1 or PC): smart recommendations (button, counter, related songs), bookmark, the
+ * icon, 10 / 5 / 30 dp spacers, 80 % or 90 % in landscape) and the column of buttons: the smart-shuffle
+ * button in its 48 dp box (recommendations off: `textDisabled`, no contract route so no action), 10 dp,
+ * Shuffle (`LocalPlaylistSongs.kt` 1290-1320); the `TabToolBar` (play next, enqueue); the row with the
+ * locator at its end; the `SongItem` list, its `Dimensions.bottomSpacer` footer and the scroll-to-top button
+ * (`FloatingActionsContainerWithScrollToTop`, 1575-1583).
+ * Dropped (contract v1 or PC): smart recommendations (counter, related songs), bookmark, the
  * sort button (the contract fixes the playlist order), position lock and drag to reorder, renumber, pin,
  * search, match, download all / delete downloads, multi-selection, add to favorites / to a playlist, sync,
  * listen on YouTube, import / export, rename, delete, thumbnail picker / reset, update, swipe actions,
  * the play-time overlays.
- * Added by the Compagnon: the back arrow, the paging row, "Nothing here." for an empty playlist. The
- * duration shows once all tracks are loaded.
+ * Added by the Compagnon: the paging row, "Nothing here." for an empty playlist. The duration shows once
+ * all tracks are loaded.
  */
 @Composable
 fun LocalPlaylistSongs(
@@ -94,7 +102,7 @@ fun LocalPlaylistSongs(
     val lazyListState = rememberLazyListState()
     val menuState = LocalMenuState.current
     val scope = rememberCoroutineScope()
-    val list = rememberCollectionSongs(library, header.ref, onMessage, onBack)
+    val list = rememberCollectionSongs(library, header.ref, onBack)
     val state by list.state.collectAsState()
     val items = state.items
     LoadMoreEffect(list, state, { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 })
@@ -199,6 +207,20 @@ fun LocalPlaylistSongs(
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
+                                    Box(
+                                        modifier = Modifier.size(48.dp), // Standard IconButton size
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        // isRecommendationEnabled = false (the default)
+                                        HeaderIconButton(
+                                            icon = Res.drawable.smart_shuffle,
+                                            enabled = true,
+                                            color = colorPalette().textDisabled,
+                                            modifier = Modifier.clip(uiRoundnessShape()),
+                                            onClick = {},
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(10.dp))
                                     shuffle.ToolBarButton()
                                 }
                             }
@@ -257,8 +279,16 @@ fun LocalPlaylistSongs(
                     }
                     PagedStatus(state, onRetry = list::retry)
                 }
+
+                item(
+                    key = "footer",
+                    contentType = 0,
+                ) {
+                    Spacer(modifier = Modifier.height(Dimensions.bottomSpacer))
+                }
             }
         }
-        BackButton(onBack)
+
+        FloatingActionsContainerWithScrollToTop(lazyListState = lazyListState)
     }
 }

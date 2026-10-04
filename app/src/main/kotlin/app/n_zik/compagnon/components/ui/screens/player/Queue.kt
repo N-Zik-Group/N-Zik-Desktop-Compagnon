@@ -41,7 +41,6 @@ import app.n_zik.compagnon.bridge.ConnectionState
 import app.n_zik.compagnon.bridge.state.PlayerState
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SessionContract
-import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.SongItem
@@ -201,6 +200,8 @@ fun Queue(
 
                     Box(
                         modifier = Modifier.fillMaxWidth()
+                            // Phone's `Queue.kt` 435-437
+                            .animateItem()
                             .zIndex(if (isDraggingItem) 1f else 0f)
                             .graphicsLayer { translationY = if (isDraggingItem) dragOffset else 0f },
                     ) {

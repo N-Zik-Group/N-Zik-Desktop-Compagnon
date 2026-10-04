@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.player
 
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.spring
@@ -43,7 +44,9 @@ import kotlinx.coroutines.launch
  * 65 % of the window with a spring (damping 0.8, stiffness 300) over a black scrim (50 % at full height), its
  * 48 dp drag handle (`background0` at 50 %, 40 × 4 dp bar) resizes it (above 85 %: full height, below 40 %:
  * closed), the [QueueToolBar] slides in at its bottom. A click on the scrim closes it.
- * Dropped: the system back (Android only; the toolbar's arrow closes it) and the navigation-bar strip (a
+ * Pulled up, it stops under the [APP_HEADER_HEIGHT] header: the PC's equivalent of the phone's status bar
+ * exclusion (`MiniPlayerQueueOverlay.kt` 107-115, [queuePanelMaxFraction]).
+ * Dropped: the system back (handled by the window's back key, `MainActivity`) and the navigation-bar strip (a
  * desktop window has no navigation bar).
  */
 @Composable
@@ -77,8 +80,7 @@ fun MiniPlayerQueueOverlay(
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val density = LocalDensity.current
             val screenHeightPx = with(density) { maxHeight.roundToPx() }
-            // A desktop window has no status bar: the panel may take the whole height
-            val maxFraction = 1f
+            val maxFraction = queuePanelMaxFraction(screenHeightPx, with(density) { APP_HEADER_HEIGHT.roundToPx() })
 
             QueuePanel(
                 queuePanelHeightFraction = queuePanelHeightFraction,
@@ -90,6 +92,27 @@ fun MiniPlayerQueueOverlay(
             )
         }
     }
+}
+
+/** Height of the [app.n_zik.compagnon.components.ui.header.AppHeader] (phone's `AppHeader.kt`: 64 dp). */
+internal val APP_HEADER_HEIGHT = 64.dp
+
+/**
+ * The highest fraction of the window the queue panel may take: the window minus the header, as the phone's
+ * window minus its status bar (`MiniPlayerQueueOverlay.kt` 115, `Player.kt` 2378-2390).
+ */
+internal fun queuePanelMaxFraction(windowHeightPx: Int, headerHeightPx: Int): Float =
+    if (windowHeightPx <= 0) 1f
+    else ((windowHeightPx - headerHeightPx).toFloat() / windowHeightPx).coerceIn(0.1f, 1f)
+
+/**
+ * The [QueueToolBar]'s slide / fade progress for a panel fraction: the phone's `(f − 0.55) / 0.1`
+ * (`MiniPlayerQueueOverlay.kt` 228). In float, 0.65 (the panel's rest height) gives 0.9999996 and not 1:
+ * the value is snapped to 1 within 1e-4, so the toolbar is fully shown at rest.
+ */
+internal fun queueToolBarProgress(fraction: Float): Float {
+    val progress = ((fraction - 0.55f) / 0.1f).coerceIn(0f, 1f)
+    return if (progress > 1f - 1e-4f) 1f else progress
 }
 
 /**
@@ -201,15 +224,20 @@ internal fun androidx.compose.foundation.layout.BoxScope.QueuePanel(
             )
         }
 
-        // QueueToolBar at bottom of panel — slides down and fades out when closing
+        // QueueToolBar at bottom of panel — slides down and fades out when closing.
+        // PC (story 11c, the mini-player hidden at 65 %): on the desktop an alpha below 1 renders the layer
+        // offscreen, clipped to the toolbar's 60 dp, and the mini-player it draws 72 dp above was cut away
+        // until the panel was pulled higher (alpha 0.9999996 at rest). The alpha is applied per draw instead
+        // (`ModulateAlpha`, no offscreen clip), and the rest progress is snapped to 1 ([queueToolBarProgress]).
         QueueToolBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .graphicsLayer {
-                    val toolbarProgress = ((queuePanelHeightFraction.value - 0.55f) / 0.1f).coerceIn(0f, 1f)
+                    val toolbarProgress = queueToolBarProgress(queuePanelHeightFraction.value)
                     translationY = with(density) { (1f - toolbarProgress) * 100.dp.toPx() }
                     alpha = toolbarProgress
+                    compositingStrategy = CompositingStrategy.ModulateAlpha
                 },
         )
     }

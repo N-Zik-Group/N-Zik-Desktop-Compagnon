@@ -37,8 +37,8 @@ import app.n_zik.compagnon.topUiRoundnessShape
 
 /**
  * Port of the phone's `app/n_zik/android/components/menu/ListMenu.kt` (with `MenuConstants.kt`).
- * `CONTENT_HEIGHT_FRACTION` = 1: the sheet host bounds the height. The optional `headerTrailing` slot is
- * not ported (no library menu uses it).
+ * `CONTENT_HEIGHT_FRACTION` = 1: the sheet host bounds the height, and the content fills it (`weight(1f)`,
+ * phone's 138). The optional `headerTrailing` slot is not ported (no library menu uses it).
  */
 object ListMenu {
 
@@ -81,7 +81,7 @@ object ListMenu {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f, fill = false)
+                        .weight(1f)
                         .background(colorPalette().background0)
                         .then(if (!hasHeader) Modifier.clip(topShape) else Modifier)
                         .verticalScroll(rememberScrollState())

@@ -1,5 +1,7 @@
 package app.n_zik.compagnon.components.ui.screens.artist
 
+import app.n_zik.compagnon.generated.resources.share_social
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,7 +44,6 @@ import app.n_zik.compagnon.components.themed.AutoResizeText
 import app.n_zik.compagnon.components.themed.FontSizeRange
 import app.n_zik.compagnon.components.themed.HeaderIconButton
 import app.n_zik.compagnon.components.ui.screens.album.DETAIL_COVER_SIZE_PX
-import app.n_zik.compagnon.components.ui.screens.home.BackButton
 import app.n_zik.compagnon.components.ui.screens.home.CollectionHeader
 import app.n_zik.compagnon.components.ui.screens.home.LibraryActions
 import app.n_zik.compagnon.components.ui.screens.home.LoadMoreEffect
@@ -80,7 +81,7 @@ fun ArtistLocalSongs(
 ) {
     val lazyListState = rememberLazyListState()
     val menuState = LocalMenuState.current
-    val list = rememberCollectionSongs(library, header.ref, onMessage, onBack)
+    val list = rememberCollectionSongs(library, header.ref, onBack)
     val state by list.state.collectAsState()
     val songs = state.items
     LoadMoreEffect(list, state, { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 })
@@ -185,7 +186,6 @@ fun ArtistLocalSongs(
                 }
             }
         }
-        BackButton(onBack)
     }
 }
 
@@ -225,6 +225,22 @@ fun ArtistHeader(artist: Artist, isLandscape: Boolean) {
                     .basicMarquee(iterations = Int.MAX_VALUE)
                     .align(Alignment.CenterHorizontally),
             )
+            // `artistPage?.subscribers`: no artist page for a local artist (phone's 744-748)
+            BasicText(
+                text = "",
+                style = typography().s.copy(colorPalette().textSecondary),
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+            )
         }
+
+        HeaderIconButton(
+            icon = Res.drawable.share_social,
+            color = colorPalette().text,
+            iconSize = 24.dp,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 5.dp, end = 5.dp),
+            onClick = {},
+        )
     }
 }

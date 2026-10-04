@@ -1,5 +1,12 @@
 package app.n_zik.compagnon.components.items
 
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.painterResource
+import app.n_zik.compagnon.generated.resources.cd_origin_indicator
+import app.n_zik.compagnon.generated.resources.ic_launcher
+import app.n_zik.compagnon.generated.resources.Res
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
@@ -79,8 +86,10 @@ fun BoxWithConstraintsScope.ThumbnailRenderer(
  * Port of `PlaylistItem` (`PlaylistItem.kt` 159 and 259): `background4` square, thumbnail, track count in a
  * pill at the bottom end, name under it.
  *
- * Dropped: the origin icon (pinned, monthly, YouTube Music, Spotify, app…) and the bookmark: the contract
- * gives neither the playlist's origin nor its bookmark state.
+ * The origin icon at the top start, 40 dp with 5 dp of padding (`PlaylistItem.kt` 301-339): the contract
+ * sends the cleaned name and no browse id, so every playlist shows the phone's local-playlist origin,
+ * `ic_launcher` in its own colours. Dropped: the other origins (pinned, monthly, Rewind, YouTube Music,
+ * Spotify, RiPlay: not given by the contract) and the bookmark state.
  */
 @Composable
 fun PlaylistItem(
@@ -118,6 +127,14 @@ fun PlaylistItem(
                     }
 
                     if (name != null) {
+                        // browseId.isNullOrEmpty(): a local playlist
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_launcher),
+                            contentDescription = stringResource(Res.string.cd_origin_indicator),
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(40.dp).padding(all = 5.dp),
+                        )
+
                         songCount?.let {
                             if (showSongsCount) {
                                 BasicText(

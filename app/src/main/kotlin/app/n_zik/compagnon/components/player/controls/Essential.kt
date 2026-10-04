@@ -1,5 +1,8 @@
 package app.n_zik.compagnon.components.player.controls
 
+import app.n_zik.compagnon.components.theme.favoritesIcon
+import app.n_zik.compagnon.generated.resources.heart_outline
+import app.n_zik.compagnon.generated.resources.heart
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloatAsState
@@ -65,8 +68,10 @@ import org.jetbrains.compose.resources.stringResource
  * Kept: previous (`player/previous`: the phone applies its own "back to 0 after 3 s" rule), play / pause, its
  * long press (a right click too) opening [onShowSpeedPlayerDialog], the speed shown in the button when it is not
  * 1.0x, next, the repeat button (`off` → `one` → `all`, `player/repeat`).
- * Dropped: the like button in front (no like in contract v1), the buffering ring (the contract has no
- * buffering state), the rotation effect (off by default), the Listen Together lock.
+ * The 26 dp like button comes first (phone's 442-470: `heart` in `favoritesIcon` when the track is liked,
+ * `heart_outline` otherwise); contract v1 has no like route, so it is shown without action.
+ * Dropped: the buffering ring (the contract has no buffering state), the rotation effect (off by default),
+ * the Listen Together lock. The play / pause icon keeps full opacity (the phone never locks it).
  * PC: a right click is the long press (speed menu); outside a `Live` session the buttons are dimmed like the
  * phone's locked ones.
  * [enabled] is `false` outside a `Live` session: the buttons then do nothing.
@@ -76,6 +81,7 @@ import org.jetbrains.compose.resources.stringResource
 fun ControlsEssential(
     playbackSpeed: Float,
     shouldBePlaying: Boolean,
+    isLiked: Boolean,
     repeatMode: RepeatMode,
     playerPlayButtonType: PlayerPlayButtonType,
     isGradientBackgroundEnabled: Boolean,
@@ -101,6 +107,16 @@ fun ControlsEssential(
     )
 
     val queueLoopType = QueueLoopType.from(repeatMode)
+
+    Box {
+        IconButton(
+            color = colorPalette().favoritesIcon,
+            icon = if (isLiked) Res.drawable.heart else Res.drawable.heart_outline,
+            onClick = {},
+            modifier = Modifier
+                .size(26.dp),
+        )
+    }
 
     Image(
         painter = painterResource(Res.drawable.play_skip_back),
@@ -176,8 +192,7 @@ fun ControlsEssential(
                 .rotate(rotationAngle)
                 .align(Alignment.Center)
                 .size(if (playerPlayButtonType == PlayerPlayButtonType.Disabled) 40.dp else 30.dp)
-                .bounceClick()
-                .alpha(disabledAlpha),
+                .bounceClick(),
         )
 
         val fmtSpeed = "%.1fx".format(playbackSpeed).replace(",", ".")

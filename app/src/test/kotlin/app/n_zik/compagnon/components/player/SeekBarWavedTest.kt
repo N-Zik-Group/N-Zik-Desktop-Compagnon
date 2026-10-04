@@ -97,4 +97,15 @@ class SeekBarWavedTest {
         assertEquals(listOf(0f, 1f, 2f), waveSampleXs(3f, 1f))
         assertEquals(listOf(0f, 3f, 6f, 9f), waveSampleXs(10f, 3f))
     }
+
+    @Test
+    fun `the scrubber and the clip keep the phone's px at its 3x density`() {
+        with(Density(3f, 1f)) {
+            assertEquals(10f, SCRUBBER_WIDTH.toPx(), 1e-3f)
+            assertEquals(5f, SCRUBBER_HALF_WIDTH.toPx(), 1e-3f)
+            assertEquals(50f, WAVE_CLIP_MARGIN.toPx(), 1e-3f)
+        }
+        // Same proportion against the 15 dp scrubber height as on the phone (10 px / 45 px)
+        assertEquals(10f / 45f, SCRUBBER_WIDTH.value / 15f, 1e-4f)
+    }
 }

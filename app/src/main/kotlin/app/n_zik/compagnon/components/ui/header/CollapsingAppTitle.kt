@@ -1,5 +1,7 @@
 package app.n_zik.compagnon.components.ui.header
 
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -55,11 +57,13 @@ internal fun shouldCollapseTitle(availablePx: Int, idealPx: Int, tolerancePx: In
 /**
  * Port of `CollapsingAppTitle` (phone's `app/n_zik/android/components/ui/header/CollapsingAppTitle.kt`): the
  * 36 dp app logo then "N-ZIK" in xl.semiBold, which slides behind the logo when the header runs out of width.
- * Dropped: the logo's easter eggs and the title's "go home" click (games and routes of the phone), the version
- * badge (none for a release build), the parental-control shield and the debug badge (phone settings).
+ * The title goes home ([onHome], phone's `AppLogoText` 245-266); the logo stays clickable without action
+ * (its easter eggs are phone games). Dropped: the version badge (none for a release build), the
+ * parental-control shield and the debug badge (phone settings).
  */
 @Composable
 fun CollapsingAppTitle(
+    onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
@@ -110,6 +114,7 @@ fun CollapsingAppTitle(
                 .clip(RectangleShape),
         ) {
             AppTitleExtras(
+                onHome = onHome,
                 modifier = Modifier
                     .layout { measurable, constraints ->
                         // Always measure at natural width: the animated Box width above only clips and slides it
@@ -128,6 +133,7 @@ fun CollapsingAppTitle(
 
 @Composable
 private fun AppTitleExtras(
+    onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -135,7 +141,7 @@ private fun AppTitleExtras(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier,
     ) {
-        AppLogoText()
+        AppLogoText(onHome)
     }
 }
 
@@ -148,12 +154,13 @@ private fun AppLogo(
         contentDescription = stringResource(Res.string.cd_app_s_icon),
         modifier = modifier
             .clip(uiRoundnessShape())
+            .combinedClickable(onClick = {}, onLongClick = {})
             .size(36.dp),
     )
 }
 
 @Composable
-private fun AppLogoText() {
+private fun AppLogoText(onHome: () -> Unit) {
     BasicText(
         text = "N-ZIK",
         style = TextStyle(
@@ -164,6 +171,7 @@ private fun AppLogoText() {
         ),
         modifier = Modifier
             .clip(uiRoundnessShape())
+            .clickable { onHome() }
             .padding(horizontal = 8.dp),
     )
 }

@@ -107,6 +107,7 @@ fun HomeSongsScreen(
     ) {
         CollapsibleHeaderScreen(
             enabled = state.items.isNotEmpty(),
+            scrollOverHeader = true,
             header = { titleOffsetState, titleHeightState ->
                 Column {
                     CollapsibleTitleRow(titleOffsetState, titleHeightState) {
@@ -119,7 +120,7 @@ fun HomeSongsScreen(
                         }
                     }
 
-                    TabToolBar.Buttons(buttons)
+                    TabToolBar.Buttons(buttons, disableAnimation = true)
 
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,

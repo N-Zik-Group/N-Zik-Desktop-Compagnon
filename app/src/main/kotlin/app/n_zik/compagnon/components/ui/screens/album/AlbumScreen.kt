@@ -1,5 +1,13 @@
 package app.n_zik.compagnon.components.ui.screens.album
 
+import app.n_zik.compagnon.components.tab.toolbar.InertButton
+import app.n_zik.compagnon.generated.resources.bookmark_outline
+import app.n_zik.compagnon.generated.resources.bookmark
+import app.n_zik.compagnon.generated.resources.share_social
+import app.n_zik.compagnon.components.themed.HeaderIconButton
+import app.n_zik.compagnon.components.themed.Loader
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -44,7 +52,6 @@ import app.n_zik.compagnon.components.themed.Enqueue
 import app.n_zik.compagnon.components.themed.FontSizeRange
 import app.n_zik.compagnon.components.themed.PlayNext
 import app.n_zik.compagnon.components.ui.screens.DynamicOrientationLayout
-import app.n_zik.compagnon.components.ui.screens.home.BackButton
 import app.n_zik.compagnon.components.ui.screens.home.CollectionHeader
 import app.n_zik.compagnon.components.ui.screens.home.LibraryActions
 import app.n_zik.compagnon.components.ui.screens.home.LoadMoreEffect
@@ -76,12 +83,16 @@ const val DETAIL_COVER_SIZE_PX = 1200
  * actions (`TabToolBar` at 80 % of the width), the "Songs" section title (`m` semi-bold, 16 dp sides,
  * 24 dp above, 8 dp below) and `SongItem` without thumbnail, numbered `index + 1` (`s` semi-bold
  * `textDisabled`, centred on 54 dp).
- * Actions kept from the phone's toolbar: shuffle, locator, play next, enqueue (whole album).
- * Dropped (contract v1 or PC): bookmark, share, download all / delete downloads, radio, multi-selection,
+ * Actions kept from the phone's toolbar: shuffle, locator, play next, enqueue (whole album). The bookmark
+ * button then 15 dp before the toolbar (`AlbumScreen.kt` 676-678: `bookmark` in accent when the album is
+ * bookmarked, contract 1.3 `isBookmarked`, `bookmark_outline` in text otherwise; no contract route, no
+ * action) and the share icon at the top end of the cover (no action). While the first page is loading the
+ * centred [Loader] replaces the list (`AlbumScreen.kt` 589-603).
+ * Dropped (contract v1 or PC): download all / delete downloads, radio, multi-selection,
  * edit title / authors / cover, add to playlist, the MusicBrainz "Info and community" block with
  * translation, the alternative versions, swipe actions, the floating shuffle icon.
- * Added by the Compagnon: the back arrow, the paging row (loading, error + "Retry"), "Nothing here." for
- * an empty album. The duration shows once all tracks are loaded (the contract gives no total duration).
+ * Added by the Compagnon: the paging row (loading, error + "Retry"), "Nothing here." for an empty album.
+ * The duration shows once all tracks are loaded (the contract gives no total duration).
  */
 @Composable
 fun AlbumDetails(
@@ -96,7 +107,7 @@ fun AlbumDetails(
     val lazyListState = rememberLazyListState()
     val menuState = LocalMenuState.current
     val scope = rememberCoroutineScope()
-    val list = rememberCollectionSongs(library, header.ref, onMessage, onBack)
+    val list = rememberCollectionSongs(library, header.ref, onBack)
     val state by list.state.collectAsState()
     val items = state.items
     LoadMoreEffect(list, state, { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 })
@@ -112,6 +123,10 @@ fun AlbumDetails(
     }
     val playNext = PlayNext(enabled = playbackEnabled) { collection?.onPlayNext?.invoke() }
     val enqueue = Enqueue(enabled = playbackEnabled) { collection?.onEnqueue?.invoke() }
+    val bookmark = InertButton(
+        iconId = if (album.isBookmarked) Res.drawable.bookmark else Res.drawable.bookmark_outline,
+        tint = if (album.isBookmarked) colorPalette().accent else colorPalette().text,
+    )
     val toolbar = buildList<Button> {
         if (collection != null) add(shuffle)
         add(locator)
@@ -132,6 +147,13 @@ fun AlbumDetails(
                     .background(colorPalette().background0),
                 contentAlignment = Alignment.Center,
             ) {
+              if (items.isEmpty() && !state.endReached && state.error == null) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Loader()
+                }
+              } else {
                 LazyColumn(
                     state = lazyListState,
                     contentPadding = PaddingValues(bottom = Dimensions.bottomSpacer),
@@ -169,6 +191,15 @@ fun AlbumDetails(
                                     .padding(horizontal = 30.dp)
                                     .basicMarquee(iterations = Int.MAX_VALUE),
                             )
+
+                            HeaderIconButton(
+                                icon = Res.drawable.share_social,
+                                color = colorPalette().text,
+                                iconSize = 24.dp,
+                                modifier = Modifier.align(Alignment.TopEnd)
+                                    .padding(top = 5.dp, end = 5.dp),
+                                onClick = {},
+                            )
                         }
                     }
 
@@ -195,6 +226,10 @@ fun AlbumDetails(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
+                            bookmark.ToolBarButton()
+
+                            Spacer(Modifier.width(15.dp))
+
                             TabToolBar.Buttons(toolbar, modifier = Modifier.fillMaxWidth(.8f))
                         }
                     }
@@ -250,9 +285,9 @@ fun AlbumDetails(
                         PagedStatus(state, onRetry = list::retry)
                     }
                 }
+              }
             }
         }
-        BackButton(onBack)
     }
 }
 

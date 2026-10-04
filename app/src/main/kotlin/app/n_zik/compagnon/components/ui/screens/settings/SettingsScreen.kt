@@ -1,17 +1,9 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import app.n_zik.compagnon.components.ui.screens.bridge.OverlayPanel
+import app.n_zik.compagnon.components.themed.CacheSpaceIndicator
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,7 +13,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -61,7 +52,6 @@ import app.n_zik.compagnon.generated.resources.turn_off
 import app.n_zik.compagnon.generated.resources.unlimited
 import app.n_zik.compagnon.generated.resources.used
 import app.n_zik.compagnon.playback.cache.AudioCache
-import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.Preferences
 import java.util.Locale
 import kotlinx.coroutines.Dispatchers
@@ -77,8 +67,11 @@ import org.jetbrains.compose.resources.stringResource
  *   `ValueSelectorDialog`, the custom size dialog and the "used" line), here the local audio cache;
  * - "Quality" with "Audio Quality" (phone's `NetworkSettings.kt` 248-266 and its dialog 294-310), the
  *   quality asked when the PC forges an audio URL.
- * Dropped: the phone's other settings (image cache, downloads, other qualities, search…), the cache space
- * bar (`CacheSpaceIndicator`, drawn from the phone's own caches) and the player service restart.
+ * The song cache shows the phone's `CacheSpaceIndicator` (`DataSettings.kt` 410, 20 dp sides, no info line)
+ * of the local audio cache, then the "used" line. The cards follow each other without extra spacing (the
+ * phone's settings column).
+ * Dropped: the phone's other settings (image cache, downloads, other qualities, search…) and the player
+ * service restart.
  */
 @Composable
 fun SettingsScreen(
@@ -124,24 +117,8 @@ fun SettingsScreen(
         )
     }
 
-    val palette = colorPalette()
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(palette.background0.copy(alpha = 0.7f))
-            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onClose),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            modifier = Modifier
-                .widthIn(max = 560.dp)
-                .padding(24.dp)
-                .background(palette.background0, shape = uiRoundnessShape())
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {}
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+    OverlayPanel(onClose = onClose) {
+        run {
             HeaderWithIcon(
                 title = stringResource(Res.string.settings),
                 iconId = Res.drawable.server,
@@ -207,6 +184,14 @@ fun SettingsScreen(
                     }
 
                     val maxBytes = settings.songCacheMaxBytes
+                    CacheSpaceIndicator(
+                        usedBytes = diskCacheSize,
+                        maxBytes = maxBytes,
+                        maxText = exoPlayerDiskCacheMaxSize.text,
+                        horizontalPadding = 20.dp,
+                        showCacheInfo = false,
+                    )
+
                     SettingsDescription(
                         text = "${formatShortFileSize(diskCacheSize)} ${stringResource(Res.string.used)} (${
                             if (maxBytes != null && maxBytes > 0) "${diskCacheSize * 100 / maxBytes}%" else stringResource(Res.string.unlimited)

@@ -1,5 +1,16 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import androidx.compose.ui.Alignment
+import app.n_zik.compagnon.generated.resources.yt_playlists
+import app.n_zik.compagnon.generated.resources.rewind
+import app.n_zik.compagnon.generated.resources.pinned_playlists
+import app.n_zik.compagnon.generated.resources.all
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
+import app.n_zik.compagnon.components.ButtonsRow
+import app.n_zik.compagnon.components.tab.toolbar.HomeToolbars
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -51,10 +62,13 @@ import org.jetbrains.compose.resources.stringResource
  * `PlaylistItem` (2×2 mosaic of the first four tracks, read with `/songs?limit=4`, else the artwork of
  * `artworkTrackId`; `background4`; count pill), "No items", the scroll-to-top button. A click opens the
  * playlist, a long press (right click) opens `LocalPlaylistItemMenu`.
- * Toolbar: only the Compagnon's "Refresh". Dropped (contract v1): the playlist-type chips (playlists,
- * pinned, monthly / rewind, YouTube…: the contract has no type), sort, search, new playlist, import /
- * export, multi-selection, delete, item size, sync and its progress, drag to reorder, the overlays of the
- * count / play-count / listening-time sorts, the origin icons.
+ * Toolbar: the phone's default buttons (sort, search, shuffle, item selector, play next, enqueue, add to
+ * playlist, import, export, delete, item size: no contract route, shown without action), then the
+ * Compagnon's "Refresh". The phone's `ButtonsRow` of playlist types (All, Pinned, Rewind, YT/YTM, its
+ * default order, `HomeLibrary.kt` 403-440 and 643-657) is shown with "All" selected: the contract has no
+ * playlist type, so the other chips have no effect.
+ * Dropped (contract v1): sync and its progress, drag to reorder, the overlays of the count / play-count /
+ * listening-time sorts, the Rewind month / year row (only under the Rewind chip).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -68,6 +82,13 @@ fun HomeLibrary(
     val menuState = LocalMenuState.current
     val state by lists.playlists.state.collectAsState()
     val firstTracks by lists.playlistFirstTracks.collectAsState()
+    // The phone's playlist types in their default order; only "All" exists in the contract
+    val playlistTypeChips = listOf(
+        PLAYLIST_TYPE_ALL to stringResource(Res.string.all),
+        "pinned_playlists" to stringResource(Res.string.pinned_playlists),
+        "rewind" to stringResource(Res.string.rewind),
+        "yt_playlists" to stringResource(Res.string.yt_playlists),
+    )
     LoadMoreEffect(lists.playlists, state, { lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 })
 
     Box(
@@ -87,7 +108,28 @@ fun HomeLibrary(
                                     HeaderInfo((state.total ?: state.items.size).toString(), Res.drawable.playlist)
                                 }
                             }
-                            TabToolBar.Buttons(listOf(Refresh(lists::reloadPlaylists)))
+                            // The phone's default toolbar (no contract route: shown, without action), then the Compagnon's refresh
+                            TabToolBar.Buttons(HomeToolbars.playlists() + Refresh(lists::reloadPlaylists), disableAnimation = true)
+                        }
+
+                        Column {
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .padding(bottom = 8.dp)
+                                    .fillMaxWidth(),
+                            ) {
+                                Box {
+                                    ButtonsRow(
+                                        chips = playlistTypeChips,
+                                        currentValue = PLAYLIST_TYPE_ALL,
+                                        onValueUpdate = {},
+                                        modifier = Modifier.padding(end = 12.dp),
+                                    )
+                                }
+                            }
                         }
                     }
                 },
@@ -144,3 +186,6 @@ fun HomeLibrary(
         FloatingActionsContainerWithScrollToTop(lazyGridState = lazyGridState)
     }
 }
+
+/** The "All" chip of the playlist types, the only one the contract can list. */
+private const val PLAYLIST_TYPE_ALL = "all"

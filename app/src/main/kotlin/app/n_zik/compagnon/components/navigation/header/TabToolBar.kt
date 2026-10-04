@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.navigation.header
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -35,6 +36,8 @@ import app.n_zik.compagnon.utils.onSecondaryClick
 /**
  * Port of the phone's `app/it/fast4x/rimusic/ui/components/navigation/header/TabToolBar.kt`.
  *
+ * The buttons change through an `AnimatedContent` (its default fade and size transform, phone's 86-98),
+ * unless [disableAnimation] (the phone's home tabs).
  * Dropped: the ellipsis menu that groups the buttons that do not fit (the Compagnon's toolbars hold 4
  * buttons at most, which always fit at the window's minimum width); the buttons are only drawn once
  * their row has been measured, as on the phone.
@@ -51,20 +54,21 @@ object TabToolBar {
         horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceEvenly,
         verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
         modifier: Modifier = Modifier,
+        disableAnimation: Boolean = false,
     ) {
         val density = LocalDensity.current.density
         var availableWidth by remember { mutableStateOf(0.dp) }
         val sizeWithSpacing = TOOLBAR_ICON_SIZE + 15.dp
         val canDisplay = (availableWidth / sizeWithSpacing).toInt()
 
-        Box(
-            modifier = modifier.fillMaxWidth()
-                .padding(HORIZONTAL_PADDING, VERTICAL_PADDING)
-                .onGloballyPositioned {
-                    val widthDp = it.size.width / density
-                    availableWidth = widthDp.dp - (HORIZONTAL_PADDING * 2)
-                },
-        ) {
+        val baseModifier = modifier.fillMaxWidth()
+            .padding(HORIZONTAL_PADDING, VERTICAL_PADDING)
+            .onGloballyPositioned {
+                val widthDp = it.size.width / density
+                availableWidth = widthDp.dp - (HORIZONTAL_PADDING * 2)
+            }
+
+        val content = @Composable { targetButtons: List<Button> ->
             if (canDisplay == 0) {
                 Spacer(modifier = Modifier.fillMaxWidth())
             } else {
@@ -73,8 +77,22 @@ object TabToolBar {
                     verticalAlignment = verticalAlignment,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    buttons.forEach { it.ToolBarButton() }
+                    targetButtons.forEach { it.ToolBarButton() }
                 }
+            }
+        }
+
+        if (disableAnimation) {
+            Box(modifier = baseModifier) {
+                content(buttons)
+            }
+        } else {
+            AnimatedContent(
+                targetState = buttons,
+                label = "ToolbarButtonsAnimation",
+                modifier = baseModifier,
+            ) { targetButtons ->
+                content(targetButtons)
             }
         }
     }
@@ -85,7 +103,8 @@ object TabToolBar {
         horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceEvenly,
         verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
         modifier: Modifier = Modifier,
-    ) = Buttons(listOf(*buttons), horizontalArrangement, verticalAlignment, modifier)
+        disableAnimation: Boolean = false,
+    ) = Buttons(listOf(*buttons), horizontalArrangement, verticalAlignment, modifier, disableAnimation)
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable

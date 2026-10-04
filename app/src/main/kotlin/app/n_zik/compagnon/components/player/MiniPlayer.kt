@@ -90,7 +90,7 @@ import kotlin.math.absoluteValue
  *
  * Kept: the 48 dp cover in the thumbnail shape with the now-playing animation and the liked heart (10 dp,
  * -5 dp at the bottom left: `Track.isLiked` is only a boolean, so no disliked heart), the 14 dp explicit
- * badge before the title (the title's `e:` prefix), title and artists in xxs.semiBold. A click opens the
+ * badge before the title (`Track.isExplicit`, contract 1.3), title and artists in xxs.semiBold. A click opens the
  * player ([showPlayer]); a long press (a right click on the PC) opens the queue ([onShowQueue], the
  * phone's queue route intercepted into its overlay).
  * Dropped: the swipe actions (like / previous / next: no swipe on the PC, no like in contract v1), the
@@ -219,8 +219,9 @@ fun MiniPlayer(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (mediaItem.title.hasExplicitPrefix()) {
-                        // The explicit badge (phone's 14 dp icon, text colour), before the title
+                    if (mediaItem.isExplicit || mediaItem.title.hasExplicitPrefix()) {
+                        // The explicit badge (phone's 14 dp icon, text colour), before the title (contract 1.3
+                        // `Track.isExplicit`: the phone sends the cleaned title)
                         IconButton(
                             icon = Res.drawable.explicit,
                             color = colorPalette().text,

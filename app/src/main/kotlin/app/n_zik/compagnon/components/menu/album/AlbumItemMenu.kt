@@ -1,5 +1,28 @@
 package app.n_zik.compagnon.components.menu.album
 
+import app.n_zik.compagnon.generated.resources.more_of
+import app.n_zik.compagnon.generated.resources.people
+import app.n_zik.compagnon.generated.resources.navigation
+import app.n_zik.compagnon.generated.resources.update_artist_browse_id
+import app.n_zik.compagnon.generated.resources.update_album_browse_id
+import app.n_zik.compagnon.generated.resources.update_authors
+import app.n_zik.compagnon.generated.resources.artists_edit
+import app.n_zik.compagnon.generated.resources.info_remove_all_downloaded_songs
+import app.n_zik.compagnon.generated.resources.download
+import app.n_zik.compagnon.generated.resources.downloaded
+import app.n_zik.compagnon.generated.resources.add_to_playlist
+import app.n_zik.compagnon.generated.resources.add_in_playlist
+import app.n_zik.compagnon.components.menu.splitArtistNames
+import app.n_zik.compagnon.generated.resources.update_cover
+import app.n_zik.compagnon.generated.resources.update_title
+import app.n_zik.compagnon.generated.resources.cover_edit
+import app.n_zik.compagnon.generated.resources.title_edit
+import app.n_zik.compagnon.generated.resources.management
+import app.n_zik.compagnon.components.menu.InertMenuItem
+import app.n_zik.compagnon.generated.resources.share_social
+import app.n_zik.compagnon.generated.resources.bookmark_outline
+import app.n_zik.compagnon.components.themed.IconButton
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -47,11 +70,12 @@ const val MENU_THUMBNAIL_SIZE_PX = 128
 /**
  * Port of `AlbumItemMenu` (phone's `app/n_zik/android/components/menu/album/AlbumItemMenu.kt`), list style.
  *
- * Kept: the header (`AlbumItemDisplay`: drag handle, 64 dp thumbnail, title, artists, year, divider) and
- * the "Playback" section (Shuffle, Play next, Enqueue).
- * Dropped (contract v1): the bookmark / share buttons of the header, "Add to playlist", download all,
- * delete downloads, the Management section (edit title, artists, cover, ids) and the Navigation section
- * ("More of" the artists).
+ * Kept: the header (`AlbumItemDisplay`: drag handle, 64 dp thumbnail, title, artists, year, the 48 dp
+ * column of the bookmark and share icons, 332-415, divider) and the sections in the phone's order (147-171):
+ * Playback (Shuffle, Play next, Enqueue: wired to the contract), Management (add to playlist, download,
+ * remove all downloaded songs, change authors / cover, album / artist browse ids), Navigation ("More of" each
+ * artist, then "Change Title": the phone's index ranges put it there). Entries without a contract route,
+ * bookmark and share are shown without action.
  */
 class AlbumItemMenu(
     private val album: Album,
@@ -65,6 +89,26 @@ class AlbumItemMenu(
         actions.onShuffle?.let { SongShuffler(enabled = actions.enabled, onShuffle = it).ListMenuItem() }
         PlayNext(enabled = actions.enabled, onClick = actions.onPlayNext).ListMenuItem()
         Enqueue(enabled = actions.enabled, onClick = actions.onEnqueue).ListMenuItem()
+
+        // Section: Management
+        ListMenu.SectionTitle(stringResource(Res.string.management))
+        InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist).ListMenuItem()
+        InertMenuItem(Res.drawable.downloaded, Res.string.download).ListMenuItem()
+        InertMenuItem(Res.drawable.download, Res.string.info_remove_all_downloaded_songs).ListMenuItem()
+        InertMenuItem(Res.drawable.artists_edit, Res.string.update_authors).ListMenuItem()
+        InertMenuItem(Res.drawable.cover_edit, Res.string.update_cover).ListMenuItem()
+        InertMenuItem(Res.drawable.title_edit, Res.string.update_album_browse_id).ListMenuItem()
+        InertMenuItem(Res.drawable.title_edit, Res.string.update_artist_browse_id).ListMenuItem()
+
+        // Section: Navigation
+        ListMenu.SectionTitle(stringResource(Res.string.navigation))
+        val artistNames = splitArtistNames(album.artists)
+        if (artistNames.size <= 1) {
+            InertMenuItem(Res.drawable.people, Res.string.more_of, " ${album.artists.orEmpty()}").ListMenuItem()
+        } else {
+            artistNames.forEach { InertMenuItem(Res.drawable.people, Res.string.more_of, " $it").ListMenuItem() }
+        }
+        InertMenuItem(Res.drawable.title_edit, Res.string.update_title).ListMenuItem()
     }
 
     @Composable
@@ -156,6 +200,30 @@ class AlbumItemMenu(
                             overflow = TextOverflow.Ellipsis,
                         )
                     }
+                }
+
+                Column(
+                    Modifier.width(48.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    // Contract 1.3 `isBookmarked`; no bookmark route: shown, without action
+                    IconButton(
+                        icon = if (bookmarked) Res.drawable.bookmark else Res.drawable.bookmark_outline,
+                        color = if (bookmarked) colorPalette().favoritesIcon else colorPalette().text,
+                        onClick = {},
+                        modifier = Modifier
+                            .padding(all = 4.dp)
+                            .size(20.dp),
+                    )
+
+                    IconButton(
+                        icon = Res.drawable.share_social,
+                        color = colorPalette().text,
+                        onClick = {},
+                        modifier = Modifier
+                            .padding(all = 4.dp)
+                            .size(20.dp),
+                    )
                 }
             }
 

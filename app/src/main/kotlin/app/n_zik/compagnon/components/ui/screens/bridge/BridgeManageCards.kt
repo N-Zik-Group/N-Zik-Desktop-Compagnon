@@ -1,5 +1,10 @@
 package app.n_zik.compagnon.components.ui.screens.bridge
 
+import app.n_zik.compagnon.uiRoundnessShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.ColumnScope
+import app.n_zik.compagnon.components.themed.ConfirmationDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -83,7 +88,7 @@ fun PairedScreen(state: PairingState.Paired, onRetry: () -> Unit, onForget: () -
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     stringResource(Res.string.paired_with, record.serverName),
-                    style = typography().l.semiBold,
+                    style = typography().s.semiBold,
                     color = palette.text,
                 )
                 Text(stringResource(Res.string.paired_as, record.deviceName), style = typography().xs, color = palette.textSecondary)
@@ -122,7 +127,7 @@ fun PairedScreen(state: PairingState.Paired, onRetry: () -> Unit, onForget: () -
 @Composable
 private fun StatusWithRetry(text: String, onRetry: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        MessageBanner(text, colorPalette().red)
+        MessageBanner(text, isError = true)
         PairingButton(text = stringResource(Res.string.retry), onClick = onRetry, containerColor = colorPalette().background2, contentColor = colorPalette().text)
     }
 }
@@ -130,13 +135,30 @@ private fun StatusWithRetry(text: String, onRetry: () -> Unit) {
 @Composable
 private fun ForgetCard(onForget: () -> Unit) {
     SettingsSectionCard(title = stringResource(Res.string.forget_phone), icon = Res.drawable.trash, content = {
-        OtherSettingsEntry(
-            title = stringResource(Res.string.forget_phone),
-            text = stringResource(Res.string.forget_phone_text),
-            icon = Res.drawable.trash,
-            onClick = onForget,
-        )
+        ForgetEntry(onForget)
     })
+}
+
+/** "Forget this phone", confirmed first by the phone's `ConfirmationDialog` (a destructive action). */
+@Composable
+private fun ForgetEntry(onForget: () -> Unit) {
+    var confirmForget by remember { mutableStateOf(false) }
+    if (confirmForget) {
+        ConfirmationDialog(
+            text = stringResource(Res.string.forget_phone_text),
+            onDismiss = { confirmForget = false },
+            onConfirm = {
+                confirmForget = false
+                onForget()
+            },
+        )
+    }
+    OtherSettingsEntry(
+        title = stringResource(Res.string.forget_phone),
+        text = stringResource(Res.string.forget_phone_text),
+        icon = Res.drawable.trash,
+        onClick = { confirmForget = true },
+    )
 }
 
 /**
@@ -239,16 +261,47 @@ fun ConnectionBanner(connection: ConnectionState, onReconnect: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        MessageBanner(text, if (button == null) palette.accent else palette.red, modifier = Modifier.weight(1f))
+        MessageBanner(text, isError = button != null, modifier = Modifier.weight(1f))
         if (button != null) {
             TextButton(onClick = onReconnect) { Text(stringResource(button), style = typography().xs.semiBold, color = palette.accent) }
         }
     }
 }
 
-/** The "Paired" content of story 10, now a panel of the main window: phone name, "Forget this phone". */
+/**
+ * The "Paired" content of story 10, now a panel of the main window ("PC server" in the header menu): phone
+ * name, connection, "Forget this phone" (confirmed). Shown in the same [OverlayPanel] as the settings.
+ */
 @Composable
 fun PhonePanel(record: PairingRecord, connection: ConnectionState, onClose: () -> Unit, onForget: () -> Unit) {
+    val palette = colorPalette()
+    OverlayPanel(onClose = onClose) {
+        SettingsSectionCard(title = stringResource(Res.string.phone_panel_title), icon = Res.drawable.devices, content = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(Res.string.paired_with, record.serverName), style = typography().s.semiBold, color = palette.text)
+                Text(stringResource(Res.string.paired_as, record.deviceName), style = typography().xs, color = palette.textSecondary)
+                ConnectionIndicator(connection)
+                ForgetEntry(onForget)
+            }
+        })
+        PairingButton(
+            text = stringResource(Res.string.close),
+            onClick = onClose,
+            containerColor = colorPalette().background2,
+            contentColor = colorPalette().text,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
+    }
+}
+
+/**
+ * Compagnon only (the phone navigates to its pages): the overlay that holds the "Phone" panel and the
+ * settings, one container for both: `background0` at 70 % over the window (a click closes it), a column at
+ * most 560 dp wide, 24 dp from the edges, on `background0` in the UI roundness, scrolling, 16 dp above and
+ * below its content.
+ */
+@Composable
+fun OverlayPanel(onClose: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
     val palette = colorPalette()
     Box(
         modifier = Modifier
@@ -259,25 +312,13 @@ fun PhonePanel(record: PairingRecord, connection: ConnectionState, onClose: () -
     ) {
         Column(
             modifier = Modifier
-                .widthIn(max = 520.dp)
+                .widthIn(max = 560.dp)
                 .padding(24.dp)
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {},
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            SettingsSectionCard(title = stringResource(Res.string.phone_panel_title), icon = Res.drawable.devices, content = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(stringResource(Res.string.paired_with, record.serverName), style = typography().l.semiBold, color = palette.text)
-                    Text(stringResource(Res.string.paired_as, record.deviceName), style = typography().xs, color = palette.textSecondary)
-                    ConnectionIndicator(connection)
-                    OtherSettingsEntry(
-                        title = stringResource(Res.string.forget_phone),
-                        text = stringResource(Res.string.forget_phone_text),
-                        icon = Res.drawable.trash,
-                        onClick = onForget,
-                    )
-                }
-            })
-            PairingButton(text = stringResource(Res.string.close), onClick = onClose, containerColor = colorPalette().background2, contentColor = colorPalette().text)
-        }
+                .background(palette.background0, shape = uiRoundnessShape())
+                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {}
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = 16.dp),
+            content = content,
+        )
     }
 }

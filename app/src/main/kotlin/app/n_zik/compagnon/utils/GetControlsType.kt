@@ -50,6 +50,7 @@ fun GetControls(
         ControlsEssential(
             playbackSpeed = state.speed,
             shouldBePlaying = state.isPlaying,
+            isLiked = state.currentTrack?.isLiked == true,
             repeatMode = state.repeatMode,
             playerPlayButtonType = playerPlayButtonType,
             isGradientBackgroundEnabled = isGradientBackgroundEnabled,

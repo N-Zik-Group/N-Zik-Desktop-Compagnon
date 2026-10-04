@@ -1,5 +1,14 @@
 package app.n_zik.compagnon
 
+import app.n_zik.compagnon.components.theme.robotoFontFamily
+import app.n_zik.compagnon.components.theme.materialTypographyOf
+import androidx.compose.material3.ripple
+import androidx.compose.material3.RippleConfiguration
+import androidx.compose.material3.LocalRippleConfiguration
+import androidx.compose.foundation.LocalIndication
+import app.n_zik.compagnon.core.navigation.isBackKey
+import app.n_zik.compagnon.core.navigation.LocalBackDispatcher
+import app.n_zik.compagnon.core.navigation.BackDispatcher
 import java.net.InetAddress
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -8,7 +17,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -30,7 +39,6 @@ import app.n_zik.compagnon.bridge.pairing.PairingController
 import app.n_zik.compagnon.bridge.pairing.PairingListener
 import app.n_zik.compagnon.bridge.state.RemotePlayerRepository
 import app.n_zik.compagnon.components.theme.AnimatedAppearance
-import app.n_zik.compagnon.components.theme.ColorPalette
 import app.n_zik.compagnon.components.theme.rubikFontFamily
 import app.n_zik.compagnon.components.ui.screens.bridge.BridgeScreen
 import app.n_zik.compagnon.core.network.BridgeClient
@@ -43,12 +51,17 @@ import app.n_zik.compagnon.utils.Preferences
 import androidx.compose.runtime.CompositionLocalProvider
 
 fun main() = application {
+    // The window's Escape key is the phone's system back (story 11c), routed to the paired screen
+    val backDispatcher = remember { BackDispatcher() }
     Window(
         onCloseRequest = ::exitApplication,
         title = AppInfo.NAME,
         state = rememberWindowState(width = 1100.dp, height = 800.dp),
+        onPreviewKeyEvent = { event -> isBackKey(event) && backDispatcher.dispatch() },
     ) {
-        App()
+        CompositionLocalProvider(LocalBackDispatcher provides backDispatcher) {
+            App()
+        }
     }
 }
 
@@ -82,13 +95,24 @@ fun App() {
     }
     // The phone's `MainActivity.setContent` root: its appearance, faded by `AnimatedAppearance`
     val fontFamily = rubikFontFamily()
+    val materialTypography = materialTypographyOf(robotoFontFamily())
     val appearanceState = remember(fontFamily) { AppearanceState(computeAppearance(fontFamily)) }
     AnimatedAppearance(
         target = appearanceState.appearance,
         fadeFrom = appearanceState.fadeFromAppearance,
         onFadeComplete = { appearanceState.fadeFromAppearance = null },
     ) { appearance ->
-        MaterialTheme(colorScheme = materialColorSchemeOf(appearance.colorPalette)) {
+        // The phone draws its Material components without a `MaterialTheme`: the default light scheme, with
+        // Android's Roboto (story 11c); the app ripple is bounded, in the palette's text colour
+        // (phone's `MainActivity.kt` 1595-1598, 2072-2074)
+        val rippleConfiguration = remember(appearance.colorPalette.text) {
+            RippleConfiguration(color = appearance.colorPalette.text)
+        }
+        MaterialTheme(colorScheme = lightColorScheme(), typography = materialTypography) {
+          CompositionLocalProvider(
+            LocalIndication provides ripple(bounded = true),
+            LocalRippleConfiguration provides rippleConfiguration,
+          ) {
             val rootBackgroundColor by animateColorAsState(
                 targetValue = appearanceState.appearance.colorPalette.background0,
                 animationSpec = tween(350, easing = FastOutSlowInEasing),
@@ -118,28 +142,10 @@ fun App() {
                     )
                 }
             }
+          }
         }
     }
 }
-
-/**
- * Compagnon only: the Material 3 colours of the few Material components the ported screens use (cards,
- * text fields, progress indicators), mirrored from the N-Zik palette.
- */
-private fun materialColorSchemeOf(palette: ColorPalette) = darkColorScheme(
-    primary = palette.accent,
-    onPrimary = palette.onAccent,
-    secondary = palette.accent,
-    onSecondary = palette.onAccent,
-    background = palette.background0,
-    onBackground = palette.text,
-    surface = palette.background1,
-    onSurface = palette.text,
-    surfaceVariant = palette.background2,
-    onSurfaceVariant = palette.textSecondary,
-    outline = palette.background3,
-    error = palette.red,
-)
 
 /** The Windows computer name, editable by the user before pairing (contract §4.3). */
 private fun defaultDeviceName(): String {

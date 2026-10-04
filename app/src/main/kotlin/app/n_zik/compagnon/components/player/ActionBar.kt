@@ -1,5 +1,12 @@
 package app.n_zik.compagnon.components.player
 
+import app.n_zik.compagnon.generated.resources.song_lyrics
+import app.n_zik.compagnon.generated.resources.add_in_playlist
+import app.n_zik.compagnon.generated.resources.downloaded
+import app.n_zik.compagnon.generated.resources.download
+import app.n_zik.compagnon.generated.resources.video
+import app.n_zik.compagnon.bridge.state.TrackSource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -35,11 +42,15 @@ import app.n_zik.compagnon.uiRoundnessShape
  * 165-805) with its default preferences: 50 dp high, transparent background, a tap or an upward drag opens
  * the queue, the buttons spread evenly.
  *
- * Kept (contract v1 actions): shuffle (`player/shuffle`; the phone shuffles the queue, the contract turns the
- * shuffle mode on or off, so the button toggles it) and the arrow that opens the queue.
- * Dropped: video, download, add to playlist, lyrics (shown by default on the phone, not in the contract),
- * and discover, loop, expanded player, sleep timer, visualizer, equalizer, radio, menu (hidden by default);
- * the "next songs" strip (off by default); the Listen Together lock. [live] `false` makes shuffle do nothing.
+ * The phone's default buttons, in its default order, 24 dp (`ActionBar.kt` 479-756): video (accent),
+ * download (`downloaded` in accent when the phone has the track offline, `download` in gray otherwise), add to
+ * playlist (accent), shuffle (accent), lyrics (gray: lyrics are not shown), the arrow that opens the queue
+ * (accent). Wired to the contract: shuffle (`player/shuffle`; the phone shuffles the queue, the contract
+ * turns the shuffle mode on or off, so the button toggles it) and the arrow. Video, download, add to playlist
+ * and lyrics have no contract route: shown, without action.
+ * Dropped: discover, loop, expanded player, sleep timer, visualizer, equalizer, radio, menu (hidden by
+ * default); the "next songs" strip (off by default); the Listen Together lock. [live] `false` makes shuffle
+ * do nothing.
  */
 @Composable
 fun ActionBar(
@@ -92,6 +103,28 @@ fun ActionBar(
                     .padding(horizontal = 12.dp)
                     .fillMaxWidth(),
             ) {
+                // "video"
+                IconButton(
+                    icon = Res.drawable.video,
+                    color = colorPalette().accent,
+                    onClick = {},
+                    modifier = Modifier.size(24.dp),
+                )
+                // "download"
+                val isDownloaded = state.currentTrack?.let { it.isDownloaded || it.source == TrackSource.Local } == true
+                IconButton(
+                    icon = if (isDownloaded) Res.drawable.downloaded else Res.drawable.download,
+                    color = if (isDownloaded) colorPalette().accent else Color.Gray,
+                    onClick = {},
+                    modifier = Modifier.size(24.dp),
+                )
+                // "add_to_playlist"
+                IconButton(
+                    icon = Res.drawable.add_in_playlist,
+                    color = colorPalette().accent,
+                    onClick = {},
+                    modifier = Modifier.size(24.dp),
+                )
                 // "shuffle"
                 if (showShuffle) {
                     IconButton(
@@ -107,6 +140,14 @@ fun ActionBar(
                             .alpha(if (live) 1f else 0.5f),
                     )
                 }
+                // "lyrics"
+                IconButton(
+                    icon = Res.drawable.song_lyrics,
+                    color = Color.Gray,
+                    enabled = true,
+                    onClick = {},
+                    modifier = Modifier.size(24.dp),
+                )
                 // "arrow"
                 IconButton(
                     icon = Res.drawable.chevron_up,

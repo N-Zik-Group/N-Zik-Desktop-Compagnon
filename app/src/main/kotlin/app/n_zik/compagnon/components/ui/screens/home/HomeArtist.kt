@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import app.n_zik.compagnon.components.tab.toolbar.HomeToolbars
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -89,7 +90,8 @@ fun HomeArtists(
                                     HeaderInfo((state.total ?: state.items.size).toString(), Res.drawable.people)
                                 }
                             }
-                            TabToolBar.Buttons(listOf(Refresh(lists.artists::reload)))
+                            // The phone's default toolbar (no contract route: shown, without action), then the Compagnon's refresh
+                            TabToolBar.Buttons(HomeToolbars.albumsOrArtists() + Refresh(lists.artists::reload), disableAnimation = true)
                         }
 
                         Column {
@@ -127,7 +129,7 @@ fun HomeArtists(
                             val openMenu = menu?.let {
                                 {
                                     menuState.display {
-                                        LocalArtistItemMenu(artist, it, bookmarked = artistType == CollectionFilter.Bookmarked).MenuComponent()
+                                        LocalArtistItemMenu(artist, it, bookmarked = artist.isBookmarked || artistType == CollectionFilter.Bookmarked).MenuComponent()
                                     }
                                 }
                             }
@@ -136,7 +138,8 @@ fun HomeArtists(
                                 thumbnailSizeDp = HOME_ITEM_SIZE_SMALL,
                                 thumbnailSizePx = GRID_THUMBNAIL_SIZE_PX,
                                 alternative = true,
-                                likeState = if (artistType == CollectionFilter.Bookmarked) true else null,
+                                // Contract 1.3 `isBookmarked`, in every filter (a 1.2 phone only gives it through the filter)
+                                likeState = if (artist.isBookmarked || artistType == CollectionFilter.Bookmarked) true else null,
                                 modifier = Modifier.clip(uiRoundnessShape())
                                     .onSecondaryClick(openMenu)
                                     .combinedClickable(

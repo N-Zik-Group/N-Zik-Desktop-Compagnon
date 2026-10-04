@@ -58,6 +58,11 @@ gradlew.bat :app:run
 
 N-Zik Desktop Compagnon is free software, released under the [GNU General Public License v3.0](LICENSE).
 
+### Bundled fonts
+
+- **Roboto** Regular and Medium (`app/src/main/composeResources/font/roboto_w400.ttf`, `roboto_w500.ttf`), from [googlefonts/roboto](https://github.com/googlefonts/roboto) v2.138: the font Android gives the Material components, used for the same components here so they look like the phone's. Roboto is © Google and licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+- **Rubik** (`rubik_w*.ttf`), the phone's app font.
+
 ## Acknowledgements
 
 This project may reuse code from [Cubic Music Desktop](https://github.com/cybruGhost/DESKTOP-CUBIC-MUSIC) by cybruGhost, under the GPL-3.0. Its author granted explicit permission, as recorded in the Cubic Music Desktop notice:
