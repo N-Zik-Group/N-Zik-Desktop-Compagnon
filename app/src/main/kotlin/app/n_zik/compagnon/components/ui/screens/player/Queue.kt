@@ -62,7 +62,7 @@ import app.n_zik.compagnon.enums.QueueLoopType
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.add_in_playlist
 import app.n_zik.compagnon.generated.resources.add_to_playlist
-import app.n_zik.compagnon.generated.resources.checked_filled
+import app.n_zik.compagnon.generated.resources.unchecked_outline
 import app.n_zik.compagnon.generated.resources.chevron_down
 import app.n_zik.compagnon.generated.resources.clean_queue_confirm
 import app.n_zik.compagnon.generated.resources.download
@@ -176,7 +176,7 @@ fun Queue(
                 add(repeat)
                 add(shuffle)
             }
-            add(InertButton(Res.drawable.checked_filled, Res.string.item_select))
+            add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
             if (queueFeature) {
                 add(deleteDialog)
             }

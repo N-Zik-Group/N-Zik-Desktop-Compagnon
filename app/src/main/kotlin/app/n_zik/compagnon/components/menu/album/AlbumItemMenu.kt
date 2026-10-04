@@ -10,6 +10,7 @@ import app.n_zik.compagnon.generated.resources.artists_edit
 import app.n_zik.compagnon.generated.resources.info_remove_all_downloaded_songs
 import app.n_zik.compagnon.generated.resources.download
 import app.n_zik.compagnon.generated.resources.downloaded
+import app.n_zik.compagnon.generated.resources.info_download_all_songs
 import app.n_zik.compagnon.generated.resources.add_to_playlist
 import app.n_zik.compagnon.generated.resources.add_in_playlist
 import app.n_zik.compagnon.components.menu.splitArtistNames
@@ -93,7 +94,7 @@ class AlbumItemMenu(
         // Section: Management
         ListMenu.SectionTitle(stringResource(Res.string.management))
         InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist).ListMenuItem()
-        InertMenuItem(Res.drawable.downloaded, Res.string.download).ListMenuItem()
+        InertMenuItem(Res.drawable.downloaded, Res.string.info_download_all_songs).ListMenuItem()
         InertMenuItem(Res.drawable.download, Res.string.info_remove_all_downloaded_songs).ListMenuItem()
         InertMenuItem(Res.drawable.artists_edit, Res.string.update_authors).ListMenuItem()
         InertMenuItem(Res.drawable.cover_edit, Res.string.update_cover).ListMenuItem()

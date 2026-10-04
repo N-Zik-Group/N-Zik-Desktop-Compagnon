@@ -31,10 +31,12 @@ import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalCommandLauncher
 import app.n_zik.compagnon.bridge.state.PlayerState
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.tab.ShuffleOkFlash
 import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.chevron_up
 import app.n_zik.compagnon.generated.resources.shuffle
+import app.n_zik.compagnon.generated.resources.shuffle_ok
 import app.n_zik.compagnon.uiRoundnessShape
 
 /**
@@ -128,10 +130,12 @@ fun ActionBar(
                 // "shuffle"
                 if (showShuffle) {
                     IconButton(
-                        icon = Res.drawable.shuffle,
+                        // Issue #866: the app-wide shuffle confirmation flash
+                        icon = if (ShuffleOkFlash.active) Res.drawable.shuffle_ok else Res.drawable.shuffle,
                         color = colorPalette().accent,
                         enabled = live,
                         onClick = {
+                            ShuffleOkFlash.trigger()
                             val enabled = !state.shuffle
                             onCommand { setShuffle(enabled) }
                         },

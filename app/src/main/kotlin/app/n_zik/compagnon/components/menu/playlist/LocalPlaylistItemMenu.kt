@@ -7,6 +7,7 @@ import app.n_zik.compagnon.generated.resources.title_edit
 import app.n_zik.compagnon.generated.resources.info_remove_all_downloaded_songs
 import app.n_zik.compagnon.generated.resources.download
 import app.n_zik.compagnon.generated.resources.downloaded
+import app.n_zik.compagnon.generated.resources.info_download_all_songs
 import app.n_zik.compagnon.generated.resources.open
 import app.n_zik.compagnon.components.menu.InertMenuItem
 import app.n_zik.compagnon.components.themed.IconButton
@@ -82,7 +83,7 @@ class LocalPlaylistItemMenu(
 
         ListMenu.SectionTitle(stringResource(Res.string.management))
         Enqueue(enabled = actions.enabled, onClick = actions.onEnqueue).ListMenuItem()
-        InertMenuItem(Res.drawable.downloaded, Res.string.download).ListMenuItem()
+        InertMenuItem(Res.drawable.downloaded, Res.string.info_download_all_songs).ListMenuItem()
         InertMenuItem(Res.drawable.download, Res.string.info_remove_all_downloaded_songs).ListMenuItem()
         InertMenuItem(Res.drawable.title_edit, Res.string.rename_playlist).ListMenuItem()
         InertMenuItem(Res.drawable.trash, Res.string.delete).ListMenuItem()

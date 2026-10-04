@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,7 +41,8 @@ import app.n_zik.compagnon.components.items.AlbumItem
 import app.n_zik.compagnon.components.menu.album.AlbumItemMenu
 import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.styling.Dimensions
-import app.n_zik.compagnon.components.styling.HOME_ITEM_SIZE_SMALL
+import app.n_zik.compagnon.components.styling.HomeItemSize
+import app.n_zik.compagnon.components.tab.ItemSize
 import app.n_zik.compagnon.components.tab.Refresh
 import app.n_zik.compagnon.components.tab.TabHeader
 import app.n_zik.compagnon.components.tab.toolbar.Button
@@ -70,11 +72,9 @@ import app.n_zik.compagnon.generated.resources.no_items
 import app.n_zik.compagnon.generated.resources.play_next
 import app.n_zik.compagnon.generated.resources.play_skip_forward
 import app.n_zik.compagnon.generated.resources.randomizer
-import app.n_zik.compagnon.generated.resources.resize
 import app.n_zik.compagnon.generated.resources.search
 import app.n_zik.compagnon.generated.resources.search_circle
 import app.n_zik.compagnon.generated.resources.shuffle
-import app.n_zik.compagnon.generated.resources.size
 import app.n_zik.compagnon.generated.resources.unchecked_outline
 import app.n_zik.compagnon.thumbnailShape
 import app.n_zik.compagnon.utils.ChipSort
@@ -98,14 +98,16 @@ const val GRID_THUMBNAIL_SIZE_PX = 256
  * Toolbar: the phone's toolbar of the active tab — the same twelve buttons for the three chips, in the
  * phone's order (`HomeAlbumsToolbarSettingsDialog.allButtonIds`), with the phone's show conditions
  * (position lock only while the chip's sort is `Custom`, no YouTube sync on the PC) — then the
- * Compagnon's "Refresh". Wired: sort and refresh; the rest (search, randomizer, shuffle, item selector,
- * play next, enqueue, add to playlist, export, item size) are placeholders without a contract route —
+ * Compagnon's "Refresh". Wired: sort, refresh and item size (the per-tab grid size, a Compagnon-local
+ * setting); the rest (search, randomizer, shuffle, item selector, play next, enqueue, add to playlist,
+ * export) are placeholders without a contract route —
  * the phone's search, shuffle, play next and enqueue act on the album's own songs, which the contract
  * does not serve, and a click does nothing.
  *
  * Sort: the phone keeps one sort per tab — the chip's sort and direction live in the user settings
- * (`chipSorts`, key `albums:<chip>`), applied to the list on every change. On a phone without
- * `library.sort` (contract < 1.6) the arrow is inert (the phone sorts its tabs itself).
+ * (`chipSorts`, key `albums:<chip>`), applied to the list on every change and on the first composition
+ * (a cold start opens in the chip's own sort). On a phone without `library.sort` (contract < 1.6) the
+ * arrow is inert (the phone sorts its tabs itself).
  *
  * Dropped (contract v1): position lock (no client-side reorder on the PC), YouTube sync and its filter
  * chip and progress, pull-to-refresh, drag to reorder, the play-count / listening-time overlays, the
@@ -131,6 +133,10 @@ fun HomeAlbums(
     val state by activeList.state.collectAsState()
     val albumQuery by activeList.query.collectAsState()
     val sortsOnPhone = SessionContract.FEATURE_LIBRARY_SORT in lists.features
+
+    // The page's grid item size (the phone's `HomeItemSize`, a per-tab Compagnon-local setting)
+    val itemSize = remember { mutableStateOf(HomeItemSize.fromWire(settings?.itemSizes?.get("albums"))) }
+    LaunchedEffect(settings?.itemSizes) { itemSize.value = HomeItemSize.fromWire(settings?.itemSizes?.get("albums")) }
 
     /** The chip's list query: its own sort (the persisted [sort]) and its `filter`. */
     fun applyChipQuery(target: AlbumsChip, sort: ChipSort) {
@@ -184,7 +190,11 @@ fun HomeAlbums(
                 "enqueue" -> add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
                 "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
                 "export_dialog" -> add(InertButton(Res.drawable.export_outline, Res.string.export_playlist))
-                "item_size" -> add(InertButton(Res.drawable.resize, Res.string.size))
+                "item_size" -> add(
+                    ItemSize.init(itemSize) { size ->
+                        preferences?.update { s -> s.copy(itemSizes = s.itemSizes + ("albums" to size.wire)) }
+                    },
+                )
             }
         }
         add(Refresh(lists::reloadActiveAlbums))
@@ -192,6 +202,10 @@ fun HomeAlbums(
 
     // The user's chip order (the phone's `AlbumsType` labels)
     val chips = AlbumsChip.entries.map { it to stringResource(chipLabel(it)) }
+
+    // The persisted sort of the visible chip, applied on the first composition (a cold start opens in
+    // the chip's own sort, not the list's default query)
+    LaunchedEffect(lists) { applyChipQuery(chip, settings?.chipSorts?.get(chip.key) ?: ChipSort()) }
 
     LoadMoreEffect(activeList, state, { lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 })
 
@@ -237,7 +251,7 @@ fun HomeAlbums(
             ) { headerPadding ->
                 LazyVerticalGrid(
                     state = lazyGridState,
-                    columns = GridCells.Adaptive(HOME_ITEM_SIZE_SMALL),
+                    columns = GridCells.Adaptive(itemSize.value.dp),
                     contentPadding = PaddingValues(top = headerPadding, bottom = Dimensions.bottomSpacer),
                     modifier = Modifier.background(colorPalette().background0).fillMaxSize(),
                 ) {
@@ -258,7 +272,7 @@ fun HomeAlbums(
                                 alternative = true,
                                 showAuthors = true,
                                 album = album,
-                                thumbnailSizeDp = HOME_ITEM_SIZE_SMALL,
+                                thumbnailSizeDp = itemSize.value.dp,
                                 thumbnailSizePx = GRID_THUMBNAIL_SIZE_PX,
                                 // Contract 1.3 `isBookmarked`, in every filter (a 1.2 phone only gives it through the filter)
                                 likeState = if (album.isBookmarked || albumQuery.filter == CollectionFilter.Bookmarked) true else null,

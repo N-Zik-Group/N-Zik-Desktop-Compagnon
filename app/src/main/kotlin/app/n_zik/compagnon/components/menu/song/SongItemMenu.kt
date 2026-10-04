@@ -35,7 +35,7 @@ import app.n_zik.compagnon.generated.resources.album
 import app.n_zik.compagnon.generated.resources.artists_edit
 import app.n_zik.compagnon.generated.resources.cover_edit
 import app.n_zik.compagnon.generated.resources.edit_metadata
-import app.n_zik.compagnon.generated.resources.export_cached
+import app.n_zik.compagnon.generated.resources.info_export_cached_or_downloaded_song
 import app.n_zik.compagnon.generated.resources.export_outline
 import app.n_zik.compagnon.generated.resources.go_to_album
 import app.n_zik.compagnon.generated.resources.heart
@@ -54,7 +54,7 @@ import app.n_zik.compagnon.generated.resources.start_radio
 import app.n_zik.compagnon.generated.resources.title_edit
 import app.n_zik.compagnon.generated.resources.trash
 import app.n_zik.compagnon.generated.resources.delete
-import app.n_zik.compagnon.generated.resources.update
+import app.n_zik.compagnon.generated.resources.info_open_update_dialog
 import app.n_zik.compagnon.generated.resources.update_album_browse_id
 import app.n_zik.compagnon.generated.resources.update_artist_browse_id
 import app.n_zik.compagnon.generated.resources.update_authors
@@ -97,7 +97,7 @@ class SongItemMenu(
         val startRadio = InertMenuItem(Res.drawable.radio, Res.string.start_radio)
         val addToFavorite = InertMenuItem(Res.drawable.heart, Res.string.add_to_favorites)
         val addToPlaylist = InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist)
-        val exportCache = InertMenuItem(Res.drawable.export_outline, Res.string.export_cached)
+        val exportCache = InertMenuItem(Res.drawable.export_outline, Res.string.info_export_cached_or_downloaded_song)
 
         // Section: Info
         ListMenu.SectionTitle(stringResource(Res.string.information))
@@ -139,7 +139,7 @@ class SongItemMenu(
             InertMenuItem(Res.drawable.title_edit, Res.string.update_artist_browse_id).ListMenuItem()
             addToFavorite.ListMenuItem()
             addToPlaylist.ListMenuItem()
-            InertMenuItem(Res.drawable.refresh, Res.string.update).ListMenuItem()
+            InertMenuItem(Res.drawable.refresh, Res.string.info_open_update_dialog).ListMenuItem()
             InertMenuItem(Res.drawable.trash, Res.string.delete).ListMenuItem()
             exportCache.ListMenuItem()
 

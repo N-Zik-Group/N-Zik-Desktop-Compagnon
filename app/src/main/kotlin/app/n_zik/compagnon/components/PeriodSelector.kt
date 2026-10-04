@@ -1,16 +1,9 @@
 package app.n_zik.compagnon.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,13 +21,13 @@ import app.n_zik.compagnon.generated.resources._3_month
 import app.n_zik.compagnon.generated.resources._6_month
 import app.n_zik.compagnon.generated.resources.all
 import app.n_zik.compagnon.generated.resources.calendar_clear
+import app.n_zik.compagnon.generated.resources.header_view_top_of
 import app.n_zik.compagnon.generated.resources.stat_3months
 import app.n_zik.compagnon.generated.resources.stat_6months
 import app.n_zik.compagnon.generated.resources.stat_month
 import app.n_zik.compagnon.generated.resources.stat_today
 import app.n_zik.compagnon.generated.resources.stat_week
 import app.n_zik.compagnon.generated.resources.stat_year
-import app.n_zik.compagnon.generated.resources.statistics
 import app.n_zik.compagnon.generated.resources.today
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
@@ -68,10 +61,12 @@ val TopPeriod.labelId: StringResource
 /**
  * Port of the phone's `PeriodSelector` (`app/n_zik/android/components/song/PeriodSelector.kt`): the sort
  * slot of the Songs "Top" chip — a menu of the phone's `StatisticsType` periods (contract §10, since
- * 1.6: the chosen period travels as `period` of `/library/songs?filter=top`). [period] `null` keeps the
+ * 1.6: the chosen period travels as `period` of `/library/songs?filter=top`), its "Top N of ." title
+ * (the phone's `header_view_top_of`, with the phone's default max items — its setting is phone-side
+ * only, the PC cannot read it) and no selected highlight, as on the phone. [period] `null` keeps the
  * phone's own period (its default is `All`) and shows the `calendar_clear` icon. A click opens the menu
- * (the phone's selector has no direction arrow). Dropped: the phone's "Top N of …" menu title (its
- * max-items setting is phone-side only) and its menu order / visibility preferences.
+ * (the phone's selector has no direction arrow). Dropped: the phone's menu order / visibility
+ * preferences.
  */
 class PeriodSelector(
     private val menuState: MenuState,
@@ -83,7 +78,7 @@ class PeriodSelector(
 
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.statistics)
+        get() = stringResource(Res.string.header_view_top_of, "10")
 
     override fun onShortClick() = openMenu()
 
@@ -93,7 +88,6 @@ class PeriodSelector(
     fun ListMenu() {
         ListMenu.Menu(title = menuIconTitle) {
             TopPeriod.entries.forEach { entry ->
-                val isSelected = entry == period
                 ListMenu.Entry(
                     text = stringResource(entry.labelId),
                     icon = {
@@ -101,7 +95,7 @@ class PeriodSelector(
                             modifier = Modifier
                                 .size(32.dp)
                                 .background(
-                                    color = if (isSelected) colorPalette().accent.copy(alpha = 0.2f) else colorPalette().accent.copy(alpha = 0.1f),
+                                    color = colorPalette().accent.copy(alpha = 0.1f),
                                     shape = uiRoundnessShape(),
                                 ),
                             contentAlignment = Alignment.Center,
@@ -111,23 +105,6 @@ class PeriodSelector(
                                 contentDescription = stringResource(entry.labelId),
                                 tint = colorPalette().accent,
                                 modifier = Modifier.size(18.dp),
-                            )
-                        }
-                    },
-                    modifier = if (isSelected) Modifier.background(colorPalette().accent.copy(alpha = 0.1f), uiRoundnessShape()) else Modifier,
-                    trailingContent = {
-                        AnimatedVisibility(
-                            visible = isSelected,
-                            enter = fadeIn() + scaleIn(),
-                            exit = fadeOut() + scaleOut(),
-                        ) {
-                            RadioButton(
-                                selected = true,
-                                onClick = null,
-                                colors = RadioButtonDefaults.colors(
-                                    selectedColor = colorPalette().accent,
-                                    unselectedColor = colorPalette().textSecondary,
-                                ),
                             )
                         }
                     },

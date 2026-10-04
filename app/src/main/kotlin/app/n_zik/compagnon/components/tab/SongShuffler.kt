@@ -6,14 +6,15 @@ import app.n_zik.compagnon.components.MenuState
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.shuffle
+import app.n_zik.compagnon.generated.resources.shuffle_ok
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
  * Port of `SongShuffler` (phone's `app/n_zik/android/components/tab/SongShuffler.kt`): plays the
  * collection shuffled. Here [onShuffle] sends `queue/play` with the ids shuffled on the PC
- * (`LibraryActions`). Dropped: the 1 s `shuffle_ok` confirmation icon (it follows the phone's local
- * player binder).
+ * (`LibraryActions`). As on the phone (issue #866, its `shuffleButtonIcon()`), any shuffle press
+ * lights the app-wide [ShuffleOkFlash] for a second.
  */
 class SongShuffler private constructor(
     private val menuState: MenuState,
@@ -23,11 +24,16 @@ class SongShuffler private constructor(
 
     companion object {
         @Composable
-        operator fun invoke(enabled: Boolean = true, onShuffle: () -> Unit) =
-            SongShuffler(LocalMenuState.current, enabled, onShuffle)
+        operator fun invoke(enabled: Boolean = true, onShuffle: () -> Unit): SongShuffler {
+            return SongShuffler(LocalMenuState.current, enabled) {
+                ShuffleOkFlash.trigger()
+                onShuffle()
+            }
+        }
     }
 
-    override val iconId: DrawableResource = Res.drawable.shuffle
+    override val iconId: DrawableResource
+        get() = if (ShuffleOkFlash.active) Res.drawable.shuffle_ok else Res.drawable.shuffle
     override val isEnabled: Boolean get() = enabled
     override val menuIconTitle: String
         @Composable

@@ -22,12 +22,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -35,6 +38,7 @@ import androidx.compose.ui.zIndex
 import app.n_zik.compagnon.bridge.library.LibraryRepository
 import app.n_zik.compagnon.bridge.library.PlaylistSongsQuery
 import app.n_zik.compagnon.bridge.state.SessionContract
+import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.SongItem
 import app.n_zik.compagnon.components.Sort
@@ -49,6 +53,7 @@ import app.n_zik.compagnon.components.tab.SongShuffler
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.components.themed.Enqueue
@@ -88,6 +93,7 @@ import app.n_zik.compagnon.generated.resources.locked
 import app.n_zik.compagnon.generated.resources.match_album_audio_version
 import app.n_zik.compagnon.generated.resources.musical_notes
 import app.n_zik.compagnon.generated.resources.pin_filled
+import app.n_zik.compagnon.generated.resources.playback_blocked_match_first
 import app.n_zik.compagnon.generated.resources.play_next
 import app.n_zik.compagnon.generated.resources.play_skip_forward
 import app.n_zik.compagnon.generated.resources.playlist
@@ -114,6 +120,7 @@ import app.n_zik.compagnon.generated.resources.sort_listening_time
 import app.n_zik.compagnon.generated.resources.sort_play_count
 import app.n_zik.compagnon.generated.resources.sort_title
 import app.n_zik.compagnon.generated.resources.title_edit
+import app.n_zik.compagnon.generated.resources.unmatched_song
 import app.n_zik.compagnon.generated.resources.trash
 import app.n_zik.compagnon.generated.resources.time
 import app.n_zik.compagnon.generated.resources.unchecked_outline
@@ -146,7 +153,8 @@ private const val PLAYLIST_CARD_SIZE_PX = 256
  * the `SongItem` list, its `Dimensions.bottomSpacer` footer and the scroll-to-top button
  * (`FloatingActionsContainerWithScrollToTop`, 1575-1583).
  * Sort: the phone's per-playlist sort (`rememberPreference("PlaylistSongsSortBy_<id>")`, default `Title`),
- * persisted in the user settings (key `playlistsongs:<id>`). As on the phone (its `PlaylistSongsSort`),
+ * persisted in the user settings (key `playlistsongs:<id>`), applied on the first composition (a cold
+ * open shows the arrow's sort, not the phone's position order). As on the phone (its `PlaylistSongsSort`),
  * the arrow carries the current sort's name, and the generated `rewind-*` playlists (detected by name,
  * the phone's `RewindPlaylists.isRewind`) default to their top order — the phone's rewind-only "Rewind Top"
  * option, sent as the phone's position order (a live sort never rewrites it).
@@ -161,7 +169,9 @@ private const val PLAYLIST_CARD_SIZE_PX = 256
  * Dropped (contract v1 or PC): smart recommendations (counter, related songs), bookmark, swipe actions
  * (drag to reorder), the play-time overlays, the phone's auto-sync on open.
  * Added by the Compagnon: the paging row, "Nothing here." for an empty playlist. The duration shows once
- * all tracks are loaded.
+ * all tracks are loaded. As on the phone, a track not matched to the phone's library carries its orange
+ * 18 dp alert icon, and a click on it is blocked with the phone's `playback_blocked_match_first` toast.
+ * The card's right column (smart-shuffle + shuffle) renders always, as on the phone.
  */
 @Composable
 fun LocalPlaylistSongs(
@@ -181,7 +191,6 @@ fun LocalPlaylistSongs(
     val list = rememberPlaylistSongs(library, header.ref, onBack)
     val state by list.state.collectAsState()
     val items = state.items
-    LoadMoreEffect(list, state, { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 })
     // The phone's rewind playlists keep their top order in the database: the name carries it (the
     // phone's `RewindPlaylists.isRewind`), which gates their toolbar buttons and their sort default
     val isRewind = isRewindPlaylist(playlist.name)
@@ -191,18 +200,24 @@ fun LocalPlaylistSongs(
     val sortKey = "playlistsongs:${playlist.id}"
     val chipSort = settings?.chipSorts?.get(sortKey) ?: if (isRewind) ChipSort(sort = "rewindTop") else ChipSort()
 
-    /** The phone's sort menu: the 14 wire values, plus the rewind-only "Rewind Top" (the phone's
-     *  `PlaylistSongsSort.getEnumConstants`); the names are the phone's local sort names. */
-    val sortOptions: List<SortOption<String>> = playlistSongSortOptions.map {
-        SortOption(it.labelId, it.iconId, it.value?.wire)
-    } + if (isRewind) listOf(SortOption(Res.string.rewind_top_sort, Res.drawable.position, "rewindTop")) else emptyList()
-
     /** The sort changed: persisted per playlist (the phone keeps one sort per playlist), then sent —
      *  "Rewind Top" asks the phone's position order (the rewind playlists' top order, never rewritten). */
     fun applySort(sort: ChipSort) {
         preferences?.update { it.copy(chipSorts = it.chipSorts + (sortKey to sort)) }
         list.setQuery(PlaylistSongsQuery(sort.playlistSongSort, sort.reverse))
     }
+
+    // The persisted sort, applied on the first composition: a cold open shows the arrow's sort, not the
+    // phone's position order (a no-op while the persisted sort is the list's default)
+    LaunchedEffect(list) { applySort(chipSort) }
+
+    LoadMoreEffect(list, state, { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 })
+
+    /** The phone's sort menu: the 14 wire values, plus the rewind-only "Rewind Top" (the phone's
+     *  `PlaylistSongsSort.getEnumConstants`); the names are the phone's local sort names. */
+    val sortOptions: List<SortOption<String>> = playlistSongSortOptions.map {
+        SortOption(it.labelId, it.iconId, it.value?.wire)
+    } + if (isRewind) listOf(SortOption(Res.string.rewind_top_sort, Res.drawable.position, "rewindTop")) else emptyList()
 
     // The phone's own sort (contract §10.1, since 1.6 `library.sort`): `sort` and `reverse` are sent
     // to the phone, which re-sorts. As on the phone, the arrow carries the current sort's name
@@ -240,7 +255,7 @@ fun LocalPlaylistSongs(
     // The phone's "match" button appears while some track is not matched to the phone's library: the
     // phone checks its 11-digit database ids and a zero-duration sentinel the contract carries no
     // play-time for, so only the id check (the phone's `local:` on-device files stay excluded)
-    val hasUnmatchedSongs = items.any { it.id.length != 11 && !it.id.startsWith("local:") }
+    val hasUnmatchedSongs = items.any { it.unmatched() }
 
     // The phone's toolbar in the phone's order (`LocalPlaylistToolbarSettingsDialog.allButtonIds`),
     // with the phone's show conditions (pin / position lock / renumber / rename off on the rewind
@@ -362,27 +377,27 @@ fun LocalPlaylistSongs(
                                 Spacer(modifier = Modifier.height(30.dp))
                             }
 
-                            if (collection != null) {
-                                Column(
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally,
+                            // The phone renders the column always (the smart-shuffle box greyed without
+                            // recommendations; here the shuffle button greys without a live session)
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Box(
+                                    modifier = Modifier.size(48.dp), // Standard IconButton size
+                                    contentAlignment = Alignment.Center,
                                 ) {
-                                    Box(
-                                        modifier = Modifier.size(48.dp), // Standard IconButton size
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        // isRecommendationEnabled = false (the default)
-                                        HeaderIconButton(
-                                            icon = Res.drawable.smart_shuffle,
-                                            enabled = true,
-                                            color = colorPalette().textDisabled,
-                                            modifier = Modifier.clip(uiRoundnessShape()),
-                                            onClick = {},
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(10.dp))
-                                    shuffle.ToolBarButton()
+                                    // isRecommendationEnabled = false (the default)
+                                    HeaderIconButton(
+                                        icon = Res.drawable.smart_shuffle,
+                                        enabled = true,
+                                        color = colorPalette().textDisabled,
+                                        modifier = Modifier.clip(uiRoundnessShape()),
+                                        onClick = {},
+                                    )
                                 }
+                                Spacer(modifier = Modifier.height(10.dp))
+                                shuffle.ToolBarButton()
                             }
                         }
 
@@ -424,8 +439,28 @@ fun LocalPlaylistSongs(
                             song = song,
                             modifier = Modifier,
                             onLongClick = menu?.let { { menuState.display { SongItemMenu(song, it).MenuComponent() } } },
+                            // The phone's orange alert icon of a track not matched to the phone's library
+                            // (LocalPlaylistSongs.kt 1512-1519)
+                            trailingContent = {
+                                if (song.unmatched()) {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.alert),
+                                        contentDescription = stringResource(Res.string.unmatched_song),
+                                        tint = Color(0xFFFF9800),
+                                        modifier = Modifier
+                                            .padding(start = 8.dp)
+                                            .size(18.dp),
+                                    )
+                                }
+                            },
                             onClick = {
-                                if (live && actions.available) actions.playFrom(list.state.value.items, index, song.id)
+                                // As on the phone (LocalPlaylistSongs.kt 1557-1558): a track not matched to
+                                // the phone's library cannot be played (its toast)
+                                if (song.unmatched()) {
+                                    Toaster.w(Res.string.playback_blocked_match_first)
+                                } else if (live && actions.available) {
+                                    actions.playFrom(list.state.value.items, index, song.id)
+                                }
                             },
                         )
                     }
@@ -464,6 +499,13 @@ private fun isRewindPlaylist(name: String): Boolean =
     name.startsWith("rewind-monthly:", ignoreCase = true) ||
         name.startsWith("rewind-yearly:", ignoreCase = true) ||
         name.equals("rewind-alltime", ignoreCase = true)
+
+/**
+ * A track not matched to the phone's library (the phone's 11-digit database ids, its `local:`
+ * on-device files excluded; the phone's zero-duration sentinel needs a play-time the contract does
+ * not carry). Gates the orange alert icon and the playback block, and the toolbar's "match" button.
+ */
+private fun Track.unmatched(): Boolean = id.length != 11 && !id.startsWith("local:")
 
 /** The phone's `PlaylistSongSortBy.text` of the stored sort name (its menu label). */
 private fun sortLabel(name: String): StringResource = when (name) {

@@ -54,6 +54,8 @@ import app.n_zik.compagnon.generated.resources.explicit
 import app.n_zik.compagnon.generated.resources.heart
 import app.n_zik.compagnon.generated.resources.unknown_artist
 import app.n_zik.compagnon.generated.resources.unknown_title
+import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.cleanPrefix
 import app.n_zik.compagnon.utils.formatAsDuration
 import app.n_zik.compagnon.utils.hasExplicitPrefix
@@ -148,6 +150,11 @@ fun SongItem(
     val repository = LocalPlayerRepository.current
     val playerState by (repository?.state ?: remember { MutableStateFlow(null) }).collectAsState()
     val isPlaying = playerState?.currentTrackId == song.id
+    // The PC's "Disable scrolling text" (the phone's `disableScrollingTextKey`, its `SongItem.kt` 204, 338-354):
+    // the title / artists marquee is dropped when set
+    val preferences = LocalPreferences.current
+    val settings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
+    val marquee: Modifier = if (settings.disableScrollingText) Modifier else Modifier.basicMarquee(iterations = Int.MAX_VALUE)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -215,7 +222,7 @@ fun SongItem(
                     text = cleanPrefix(safeTitle),
                     style = typography().xs.semiBold,
                     modifier = Modifier.weight(1f)
-                        .basicMarquee(iterations = Int.MAX_VALUE),
+                        .then(marquee),
                 )
             }
 
@@ -228,7 +235,7 @@ fun SongItem(
                     style = typography().xs.semiBold.secondary,
                     overflow = TextOverflow.Clip,
                     modifier = Modifier.weight(1f)
-                        .basicMarquee(iterations = Int.MAX_VALUE),
+                        .then(marquee),
                 )
 
                 SongText(

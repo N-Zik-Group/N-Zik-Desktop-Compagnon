@@ -103,21 +103,21 @@ enum class LibraryTab(val feature: String, val textId: StringResource, val iconI
 }
 
 /**
- * The chips of the Songs tab (contract §10.1), in the user's order: the phone's chips read the phone
- * through the contract's `filter`, "Cached PC" keeps the tracks of the phone's whole list that sit in
- * the Compagnon's local audio cache (no phone round trip per page), "Download PC" is a placeholder
- * (no PC download store yet) and "On device phone" is empty (the PC reads nothing from the phone's
- * storage, faithful to the phone whose "On device" tab lists its local files).
+ * The chips of the Songs tab (contract §10.1), in the phone's order around the PC-only ones: the phone's
+ * chips read the phone through the contract's `filter`, "Cached PC" keeps the tracks of the phone's whole
+ * list that sit in the Compagnon's local audio cache (no phone round trip per page), "Download PC" is a
+ * placeholder (no PC download store yet) and "On device phone" is empty (the PC reads nothing from the
+ * phone's storage, faithful to the phone whose "On device" tab lists its local files).
  */
 enum class SongsChip(val key: String, val wireFilter: SongFilter?) {
     All("songs:all", SongFilter.All),
     Liked("songs:liked", SongFilter.Liked),
     Disliked("songs:disliked", SongFilter.Disliked),
-    Top("songs:top", SongFilter.Top),
-    DownloadTel("songs:download_tel", SongFilter.Downloaded),
-    DownloadPc("songs:download_pc", null),
     CachedTel("songs:cached_tel", SongFilter.Offline),
     CachedPc("songs:cached_pc", null),
+    DownloadTel("songs:download_tel", SongFilter.Downloaded),
+    DownloadPc("songs:download_pc", null),
+    Top("songs:top", SongFilter.Top),
     OnDevice("songs:on_device", null),
 }
 

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.settings.CacheSettingsEntry
 import app.n_zik.compagnon.components.settings.OtherSettingsEntry
+import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
 import app.n_zik.compagnon.components.settings.SettingsDescription
 import app.n_zik.compagnon.components.settings.SettingsSectionCard
 import app.n_zik.compagnon.components.themed.ConfirmationDialog
@@ -39,15 +40,19 @@ import app.n_zik.compagnon.generated.resources.cache_cleared
 import app.n_zik.compagnon.generated.resources.close
 import app.n_zik.compagnon.generated.resources.custom
 import app.n_zik.compagnon.generated.resources.data_settings_description
+import app.n_zik.compagnon.generated.resources.disable_scrolling_text
 import app.n_zik.compagnon.generated.resources.do_you_really_want_to_delete_cache
 import app.n_zik.compagnon.generated.resources.enter_value_in_mb
 import app.n_zik.compagnon.generated.resources.music_file
+import app.n_zik.compagnon.generated.resources.other
 import app.n_zik.compagnon.generated.resources.quality
+import app.n_zik.compagnon.generated.resources.scrolling_text_is_used_for_long_texts
 import app.n_zik.compagnon.generated.resources.server
 import app.n_zik.compagnon.generated.resources.set_custom_cache
 import app.n_zik.compagnon.generated.resources.settings
 import app.n_zik.compagnon.generated.resources.song_cache_max_size
 import app.n_zik.compagnon.generated.resources.speaker
+import app.n_zik.compagnon.generated.resources.text
 import app.n_zik.compagnon.generated.resources.turn_off
 import app.n_zik.compagnon.generated.resources.unlimited
 import app.n_zik.compagnon.generated.resources.used
@@ -66,7 +71,10 @@ import org.jetbrains.compose.resources.stringResource
  * - "Cache" with "Song cache max size" (phone's `DataSettings.kt` 364-412: `CacheSettingsEntry`,
  *   `ValueSelectorDialog`, the custom size dialog and the "used" line), here the local audio cache;
  * - "Quality" with "Audio Quality" (phone's `NetworkSettings.kt` 248-266 and its dialog 294-310), the
- *   quality asked when the PC forges an audio URL.
+ *   quality asked when the PC forges an audio URL;
+ * - "Others" with "Disable scrolling text" (phone's `OtherSwitchSettingEntry`, its
+ *   `ui/screens/settings/SettingsScreen.kt` 277-367), a Compagnon-local setting: it drops the `SongItem`
+ *   title / artists marquee.
  * The song cache shows the phone's `CacheSpaceIndicator` (`DataSettings.kt` 410, 20 dp sides, no info line)
  * of the local audio cache, then the "used" line. The cards follow each other without extra spacing (the
  * phone's settings column).
@@ -214,6 +222,23 @@ fun SettingsScreen(
                         },
                         icon = Res.drawable.speaker,
                         onClick = { showAudioQualityDialog = true },
+                    )
+                },
+            )
+
+            // Others Section (the PC's "Disable scrolling text" — a Compagnon-local setting, not in the contract)
+            SettingsSectionCard(
+                title = stringResource(Res.string.other),
+                icon = Res.drawable.text,
+                content = {
+                    ToggleSettingsEntry(
+                        title = stringResource(Res.string.disable_scrolling_text),
+                        text = stringResource(Res.string.scrolling_text_is_used_for_long_texts),
+                        icon = Res.drawable.text,
+                        isChecked = settings.disableScrollingText,
+                        onCheckedChange = { enable ->
+                            preferences.update { s -> s.copy(disableScrollingText = enable) }
+                        },
                     )
                 },
             )

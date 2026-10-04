@@ -63,7 +63,7 @@ import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.add_in_playlist
 import app.n_zik.compagnon.generated.resources.add_to_playlist
 import app.n_zik.compagnon.generated.resources.artists_edit
-import app.n_zik.compagnon.generated.resources.checked_filled
+import app.n_zik.compagnon.generated.resources.unchecked_outline
 import app.n_zik.compagnon.generated.resources.cover_edit
 import app.n_zik.compagnon.generated.resources.download
 import app.n_zik.compagnon.generated.resources.downloaded
@@ -158,7 +158,7 @@ fun AlbumDetails(
         if (collection != null) add(shuffle) else add(InertButton(Res.drawable.shuffle, Res.string.info_shuffle))
         add(InertButton(Res.drawable.radio, Res.string.start_radio))
         add(locator)
-        add(InertButton(Res.drawable.checked_filled, Res.string.item_select))
+        add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
         add(InertButton(Res.drawable.title_edit, Res.string.update_title))
         add(InertButton(Res.drawable.artists_edit, Res.string.update_authors))
         add(InertButton(Res.drawable.cover_edit, Res.string.update_cover))

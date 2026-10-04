@@ -188,6 +188,7 @@
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Bookmark</string>
     <string name="follow">Follow</string>
+    <string name="following">Following</string>
     <string name="item_select">Select</string>
     <string name="info_download_all_songs">Download all songs</string>
     <string name="info_smart_recommendation">Smart recommendations</string>
@@ -197,10 +198,15 @@
     <string name="smart_trash">Smart trash</string>
     <string name="info_shuffle">Shuffle</string>
     <string name="info_pin_unpin_playlist">Pin/Unpin playlist</string>
+    <string name="info_enqueue_songs">Enqueue songs</string>
+    <string name="info_export_cached_or_downloaded_song">Export cached or downloaded song</string>
     <string name="edit_thumbnail">Edit Thumbnail</string>
     <string name="reset_thumbnail">Reset Thumbnail</string>
     <string name="randomizer">Randomizer</string>
     <string name="size">Size</string>
+    <string name="small">Small</string>
+    <string name="medium">Medium</string>
+    <string name="big">Big</string>
     <string name="sort_name">Name</string>
     <string name="sort_album">Album</string>
     <string name="sort_duration">Duration</string>
@@ -216,6 +222,7 @@
     <string name="match_album_audio_version">Match Album/Audio version</string>
     <string name="autosync_likes">Auto Sync Liked Songs</string>
     <string name="statistics">Statistics</string>
+    <string name="header_view_top_of">Top %s of …</string>
     <string name="today">Today</string>
     <string name="_1_week">1 Week</string>
     <string name="_1_month">1 Month</string>
@@ -267,6 +274,9 @@
     <string name="audio_quality_format_high">High</string>
     <string name="audio_quality_format_low">Low</string>
     <string name="quality">Quality</string>
+    <string name="other">Others</string>
+    <string name="disable_scrolling_text">Disable scrolling text</string>
+    <string name="scrolling_text_is_used_for_long_texts">Scrolling text is used for long texts</string>
     <string name="settings">Settings</string>
     <string name="profile_base_name">N-Zik Fan</string>
     <string name="cd_blurred_background">blurred_background</string>
@@ -277,7 +287,27 @@
     <string name="delete_playlists_label">Delete playlists</string>
     <string name="rewind_top_sort">Rewind Top</string>
     <string name="renumber_songs_positions">Shuffle song positions</string>
-    <string name="information">Information</string>\n    <string name="navigation">Navigation</string>\n    <string name="listen_together">Listen Together</string>\n    <string name="update_title">Change Title</string>\n    <string name="update_authors">Change Authors</string>\n    <string name="update_cover">Change Cover</string>\n    <string name="start_radio">Start radio</string>\n    <string name="add_to_favorites">Add to favorites</string>\n    <string name="add_to_playlist">Add to playlist</string>\n    <string name="go_to_album">Go to album</string>\n    <string name="more_of">More of</string>\n    <string name="update_album_browse_id">Change Album Browse ID</string>\n    <string name="update_artist_browse_id">Change Artist Browse ID</string>\n    <string name="update">Update</string>\n    <string name="delete">Delete</string>\n    <string name="export_cached">Export cached</string>\n    <string name="edit_metadata">Edit Metadata</string>\n    <string name="rename_playlist">Rename playlist</string>\n    <string name="download">Download</string>\n    <string name="info_remove_all_downloaded_songs">Remove all downloaded songs</string>\n    <string name="tab_data">Data</string>
+    <string name="information">Information</string>
+    <string name="navigation">Navigation</string>
+    <string name="listen_together">Listen Together</string>
+    <string name="update_title">Change Title</string>
+    <string name="update_authors">Change Authors</string>
+    <string name="update_cover">Change Cover</string>
+    <string name="start_radio">Start radio</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="add_to_playlist">Add to playlist</string>
+    <string name="go_to_album">Go to album</string>
+    <string name="more_of">More of</string>
+    <string name="update_album_browse_id">Change Album Browse ID</string>
+    <string name="update_artist_browse_id">Change Artist Browse ID</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
+    <string name="export_cached">Export cached</string>
+    <string name="edit_metadata">Edit Metadata</string>
+    <string name="rename_playlist">Rename playlist</string>
+    <string name="download">Download</string>
+    <string name="info_remove_all_downloaded_songs">Remove all downloaded songs</string>
+    <string name="tab_data">Data</string>
     <string name="data_settings_description">The data section contains settings that modify how the app handles data locally and remotely</string>
     <string name="cache">Cache</string>
     <string name="cache_cleared">When the cache runs out of space, the resources that haven\'t been accessed for the longest time are cleared</string>
@@ -289,6 +319,8 @@
     <string name="set_custom_cache">Set custom cache</string>
     <string name="enter_value_in_mb">Enter value in MB</string>
     <string name="do_you_really_want_to_delete_cache">Do you really want to delete cache?</string>
+    <string name="playback_blocked_match_first">Playback blocked, please match first</string>
+    <string name="unmatched_song">Unmatched song</string>
     <string name="value_cannot_be_empty">Value cannot be empty</string>
     <string name="value_must_be_greater_than">Value must be greater than</string>
 

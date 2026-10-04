@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -99,12 +100,12 @@ import org.jetbrains.compose.resources.stringResource
  * Port of `HomeSongsScreen` (phone's `app/n_zik/android/components/ui/screens/home/HomeSongsScreen.kt`,
  * header 448-571 + 573-844).
  *
- * Chips: the phone's `BuiltInPlaylist` chips in the user's order — All, Favorites, Disliked, Top
- * Playlist, Downloaded, Download PC, Cached, Cached PC, "On device phone" ([SongsChip]). The phone's
- * chips read the phone through the contract's `filter` (since 1.6); "Download PC" is a placeholder
- * (no PC download store yet) and "On device phone" is empty (the PC reads nothing from the phone's
- * storage); "Cached PC" keeps the tracks of the phone's list that sit in the Compagnon's local audio
- * cache ([LibraryLists.songsPcCached]).
+ * Chips: the phone's `BuiltInPlaylist` chips in the phone's order, around the PC-only ones (the phone's
+ * all, favorites, disliked, cached, downloaded, top, on_device) — All, Liked, Disliked, Cached, Cached
+ * PC, Download, Download PC, Top, "On device phone" ([SongsChip]). The phone's chips read the phone
+ * through the contract's `filter` (since 1.6); "Download PC" is a placeholder (no PC download store yet)
+ * and "On device phone" is empty (the PC reads nothing from the phone's storage); "Cached PC" keeps the
+ * tracks of the phone's list that sit in the Compagnon's local audio cache ([LibraryLists.songsPcCached]).
  *
  * Toolbar: the phone's default buttons of the active chip in the phone's order
  * ([HomeSongsToolbarSettingsDialog] `allButtonIds` / `tabAvailableIds`), with the phone's show
@@ -116,12 +117,15 @@ import org.jetbrains.compose.resources.stringResource
  * nothing; the buttons that do not fit the row go behind the "…" menu.
  *
  * Sort: the phone keeps one sort per tab — the chip's sort and direction live in the user settings
- * (`chipSorts`, key `songs:<chip>`), applied to the chip's list on every change; the Top chip replaces
- * the sort with the phone's period selector (`period`, the phone's own period when unset); the
- * "Downloaded" option is hidden on the downloaded / cached chips, as on the phone. On a phone without
- * `library.sort` (contract < 1.6) the options without a route are shown without effect, the direction
- * is applied client-side, and the Disliked / Cached / Top chips are inert (they are filtered on the
- * phone's own database, which the contract cannot reach before 1.6).
+ * (`chipSorts`, key `songs:<chip>`), applied to the chip's list on every change and on the first
+ * composition (a cold start opens in the chip's own sort, not the list's default); the Liked / Disliked
+ * chips default to the phone's `DateLiked` (its `HOME_SONGS_FAVORITES_SORT_BY` /
+ * `HOME_SONGS_DISLIKED_SORT_BY`); the Top chip replaces the sort with the phone's period selector
+ * (`period`, the phone's own period when unset); the "Downloaded" option is hidden on the downloaded /
+ * cached chips, as on the phone. On a phone without `library.sort` (contract < 1.6) the options without
+ * a route are shown without effect, the direction is applied client-side, and the Disliked / Cached / Top
+ * chips are inert (they are filtered on the phone's own database, which the contract cannot reach before
+ * 1.6). The header's count is hidden while a search is active (the phone keeps its pre-search total).
  *
  * Dropped (contract v1): position lock, match, YouTube likes sync, the chip visibility / order and
  * toolbar order / visibility preferences, the YouTube filter row, the cache space indicator, the
@@ -140,7 +144,7 @@ fun HomeSongsScreen(
     val preferences = LocalPreferences.current
     val settings = preferences?.settings?.collectAsState()?.value
     var chip by remember { mutableStateOf(SongsChip.All) }
-    val chipSort = settings?.chipSorts?.get(chip.key) ?: ChipSort()
+    val chipSort = settings?.chipSorts?.get(chip.key) ?: chip.defaultSort()
     val activeList = lists.activeSongsList()
     val state by activeList.state.collectAsState()
     val searchText by lists.songsSearch.collectAsState()
@@ -177,7 +181,7 @@ fun HomeSongsScreen(
         if (!sortsOnPhone && target in INERT_CHIPS_WITHOUT_LIBRARY_SORT) return
         chip = target
         lists.setActiveSongsChip(target)
-        applyChipQuery(target, settings?.chipSorts?.get(target.key) ?: ChipSort())
+        applyChipQuery(target, settings?.chipSorts?.get(target.key) ?: target.defaultSort())
     }
 
     /** The chip's sort changed: persisted (the phone keeps one sort per tab), then applied. */
@@ -186,11 +190,15 @@ fun HomeSongsScreen(
         applyChipQuery(chip, sort)
     }
 
+    // The persisted sort of the visible chip, applied on the first composition: a cold start opens in
+    // the chip's own sort, not the list's default query (a no-op while the persisted sort is the default)
+    LaunchedEffect(lists) { applyChipQuery(chip, settings?.chipSorts?.get(chip.key) ?: chip.defaultSort()) }
+
     // The phone's `hasUnmatchedSongs` (HomeSongsScreen.kt 463) with the PC's `Track` in hand: a
-    // non-YT id or a zero duration, and not a local song — the match button is shown when one is loaded
-    val hasUnmatched = state.items.any {
-        (it.id.length != 11 || it.durationMs == null || it.durationMs == 0L) && it.source != TrackSource.Local
-    }
+    // non-YT id (11 digits) and not a local song — the match button is shown when one is loaded (the
+    // phone's zero-duration sentinel needs a play-time the contract does not carry). Equivalent to the
+    // playlist detail's `Track.unmatched()` (`local:` id prefix) under the wire invariant (BridgeStateMessages)
+    val hasUnmatched = state.items.any { it.id.length != 11 && it.source != TrackSource.Local }
 
     // The chip's sort button (the phone's per-tab sort). Top replaces it with the period selector;
     // Disliked keeps the arrow like on the phone (the phone's provider ignores the sort there)
@@ -278,9 +286,12 @@ fun HomeSongsScreen(
                 Column {
                     CollapsibleTitleRow(titleOffsetState, titleHeightState) {
                         TabHeader(stringResource(Res.string.songs)) {
-                            Column {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    HeaderInfo((state.total ?: state.items.size).toString(), Res.drawable.musical_notes)
+                            // The phone keeps its pre-search total: the count is hidden while a search is active
+                            if (searchText.isEmpty()) {
+                                Column {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        HeaderInfo((state.total ?: state.items.size).toString(), Res.drawable.musical_notes)
+                                    }
                                 }
                             }
                         }
@@ -364,6 +375,16 @@ private fun songsToolbarButtonIds(chip: SongsChip): List<String> = when (chip) {
 
 /** The chips that are filtered on the phone's own database and need `library.sort` (contract 1.6). */
 private val INERT_CHIPS_WITHOUT_LIBRARY_SORT = setOf(SongsChip.Disliked, SongsChip.CachedTel, SongsChip.Top)
+
+/**
+ * The [chip]'s own default sort (used while it has no persisted sort yet): the phone's favorites and
+ * disliked tabs are sorted by `DateLiked` (its `HOME_SONGS_FAVORITES_SORT_BY` /
+ * `HOME_SONGS_DISLIKED_SORT_BY`), the others by the list's default (`Title`).
+ */
+private fun SongsChip.defaultSort(): ChipSort = when (this) {
+    SongsChip.Liked, SongsChip.Disliked -> ChipSort(sort = SongSort.DateLiked.wire)
+    else -> ChipSort()
+}
 
 /**
  * The [chip]'s sort options, as on the phone: "Downloaded" is hidden on the downloaded / cached chips

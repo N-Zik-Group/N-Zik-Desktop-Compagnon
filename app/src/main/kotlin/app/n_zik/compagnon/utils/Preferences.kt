@@ -24,7 +24,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 /*
- * The phone's preference keys (`app/it/fast4x/rimusic/utils/Preferences.kt`), same names, same defaults.
+ * The phone's preference keys (`app/it/fast4x/rimusic/utils/Preferences.kt`), same names, same defaults —
+ * except the `chipSorts` / `itemSizes` maps, which are Compagnon-local: the phone keeps one preference per
+ * tab (its `Preference.kt`), the PC bundles them in two maps.
  * The Compagnon keeps them in `settings.json`, next to `pairing.json` (contract §12: user settings only).
  */
 const val exoPlayerDiskCacheMaxSizeKey = "exoPlayerDiskCacheMaxSize"
@@ -32,6 +34,8 @@ const val exoPlayerCustomCacheKey = "exoPlayerCustomCache"
 const val audioQualityFormatKey = "audioQualityFormat"
 const val playbackVolumeKey = "playbackVolume"
 const val chipSortsKey = "chipSorts"
+const val itemSizesKey = "itemSizes"
+const val disableScrollingTextKey = "disableScrollingText"
 
 /**
  * The sort state of one library chip (contract §10, since 1.6): as on the phone, every chip of a
@@ -72,6 +76,14 @@ data class UserSettings(
     @SerialName(playbackVolumeKey) val playbackVolume: Float = 1f,
     /** The per-chip sort of the library pages, keyed `page:chip` (the phone keeps one sort per tab). */
     @SerialName(chipSortsKey) val chipSorts: Map<String, ChipSort> = emptyMap(),
+    /**
+     * The home grid item size per page, keyed by the page name (`albums`, `artists`, `playlists`), the
+     * phone's `HomeItemSize` wire names (`small` / `medium` / `big`). A Compagnon-local setting: the
+     * phone's per-tab sizes are not in the contract.
+     */
+    @SerialName(itemSizesKey) val itemSizes: Map<String, String> = emptyMap(),
+    /** The phone's "Disable scrolling text" (its `disableScrollingTextKey`, not in the contract). */
+    @SerialName(disableScrollingTextKey) val disableScrollingText: Boolean = false,
 ) {
     /** Ceiling of the audio cache: `0` disabled, `null` unlimited. */
     val songCacheMaxBytes: Long? get() = exoPlayerDiskCacheMaxSize.cacheBytes(exoPlayerCustomCache)
