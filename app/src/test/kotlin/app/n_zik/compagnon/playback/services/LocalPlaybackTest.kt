@@ -168,7 +168,16 @@ class LocalPlaybackTest {
         position: Long = 10_000,
         at: Long = 1_000,
         speed: Float = 1f,
-    ) = PlayerState(listOf(a, b), listOf(a, b).indexOf(track), track.id, playing, speed, position, at, audioOutput = output)
+    ) = PlayerState(
+        queue = listOf(a, b),
+        currentIndex = listOf(a, b).indexOf(track),
+        currentTrackId = track.id,
+        isPlaying = playing,
+        speed = speed,
+        positionMs = position,
+        serverTimeMs = at,
+        audioOutput = output,
+    )
 
     private fun TestScope.set(state: PlayerState?) {
         repo.state.value = state

@@ -173,6 +173,10 @@ data class SnapshotMessage(
     val currentIndex: Int = -1,
     val currentTrackId: String? = null,
     val isPlaying: Boolean = false,
+    /** Since 1.4 (contract §7.1); a ≤ 1.3 phone does not send it. */
+    val isBuffering: Boolean = false,
+    /** Since 1.5 (contract §7.1), the player's live duration; a ≤ 1.4 phone does not send it. */
+    val durationMs: Long = PlayerState.DURATION_UNREPORTED,
     val speed: Float = 1f,
     val positionMs: Long = 0,
     val repeatMode: RepeatMode = RepeatMode.Off,
@@ -186,6 +190,10 @@ data class PlaybackChangedMessage(
     override val revision: Long,
     override val serverTimeMs: Long,
     val isPlaying: Boolean,
+    /** Since 1.4 (contract §7.2); a ≤ 1.3 phone does not send it. */
+    val isBuffering: Boolean = false,
+    /** Since 1.5 (contract §7.2), the player's live duration; a ≤ 1.4 phone does not send it. */
+    val durationMs: Long = PlayerState.DURATION_UNREPORTED,
     val speed: Float,
     val positionMs: Long,
 ) : DeltaMessage
@@ -198,6 +206,10 @@ data class TrackChangedMessage(
     val currentTrackId: String? = null,
     val positionMs: Long,
     val isPlaying: Boolean,
+    /** Since 1.4 (contract §7.2); a ≤ 1.3 phone does not send it. */
+    val isBuffering: Boolean = false,
+    /** Since 1.5 (contract §7.2), the player's live duration (reset on a new track); a ≤ 1.4 phone does not send it. */
+    val durationMs: Long = PlayerState.DURATION_UNREPORTED,
 ) : DeltaMessage
 
 @Serializable

@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,7 +38,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalCommandLauncher
@@ -93,10 +96,12 @@ import kotlin.math.absoluteValue
  * badge before the title (`Track.isExplicit`, contract 1.3), title and artists in xxs.semiBold. A click opens the
  * player ([showPlayer]); a long press (a right click on the PC) opens the queue ([onShowQueue], the
  * phone's queue route intercepted into its overlay).
+ * The buffering ring (contract 1.4: `currentState.isBuffering`) replaces the play / pause icon while the
+ * phone buffers (phone's 727-737: `CircularWavyProgressIndicator` in accent over the text track, 24 dp,
+ * stroke 2 dp; the phone's `&& shouldBePlaying` is implied — `STATE_BUFFERING` only happens while it plays).
  * Dropped: the swipe actions (like / previous / next: no swipe on the PC, no like in contract v1), the
- * buffering ring (no buffering state), the other optional buttons
- * (off by default), the rotation effect (off by default), the mini-player's own cover palette (only used by
- * the non-default `Cover` controls colour).
+ * other optional buttons (off by default), the rotation effect (off by default), the mini-player's own
+ * cover palette (only used by the non-default `Cover` controls colour).
  * The "audio output" button (`MiniPlayerButton.AudioOutput`, on by default, phone's 997-1040) opens the
  * clone of `AudioDeviceMenu` (this PC / [phoneName], story 12). Like the phone's, it is accented with the
  * device's icon when the sound leaves its default output: here when it plays on this PC. Hidden without the
@@ -123,7 +128,9 @@ fun MiniPlayer(
 
     val currentState = state ?: return
     val mediaItem = currentState.currentTrack ?: return
-    val shouldBePlaying = currentState.isPlaying
+    // The phone's `Player.shouldBePlaying` (utils/Player.kt 69): true while buffering too
+    // (`STATE_BUFFERING` implies `playWhenReady`) — contract 1.4 `isBuffering`.
+    val shouldBePlaying = currentState.isPlaying || currentState.isBuffering
 
     // PlayerControlsColors.Monochrome follows the effective palette tone
     val controlsColorText = monochromeControlsColor(colorPalette())
@@ -287,15 +294,29 @@ fun MiniPlayer(
                             .background(colorPalette().background2)
                             .size(42.dp),
                     ) {
-                        Image(
-                            painter = painterResource(if (shouldBePlaying) Res.drawable.pause else Res.drawable.play),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(controlsColorText),
-                            modifier = Modifier
-                                .rotate(rotationAngle)
-                                .align(Alignment.Center)
-                                .size(24.dp),
-                        )
+                        if (currentState.isBuffering) {
+                            // The phone's buffering ring (phone's 727-737, contract 1.4)
+                            CircularWavyProgressIndicator(
+                                color = colorPalette().accent,
+                                trackColor = colorPalette().text,
+                                modifier = Modifier
+                                    .rotate(rotationAngle)
+                                    .align(Alignment.Center)
+                                    .size(24.dp),
+                                stroke = Stroke(width = with(LocalDensity.current) { 2.dp.toPx() }),
+                                trackStroke = Stroke(width = with(LocalDensity.current) { 2.dp.toPx() }),
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(if (shouldBePlaying) Res.drawable.pause else Res.drawable.play),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(controlsColorText),
+                                modifier = Modifier
+                                    .rotate(rotationAngle)
+                                    .align(Alignment.Center)
+                                    .size(24.dp),
+                            )
+                        }
                     }
 
                     // MiniPlayerButton.SkipForward

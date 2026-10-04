@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,7 +35,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalCommandLauncher
@@ -70,8 +73,10 @@ import org.jetbrains.compose.resources.stringResource
  * 1.0x, next, the repeat button (`off` → `one` → `all`, `player/repeat`).
  * The 26 dp like button comes first (phone's 442-470: `heart` in `favoritesIcon` when the track is liked,
  * `heart_outline` otherwise); contract v1 has no like route, so it is shown without action.
- * Dropped: the buffering ring (the contract has no buffering state), the rotation effect (off by default),
- * the Listen Together lock. The play / pause icon keeps full opacity (the phone never locks it).
+ * The buffering ring (contract 1.4: `isBuffering`) replaces the play / pause icon while the phone buffers
+ * (phone's 567-576: `CircularWavyProgressIndicator` in accent over the text track, 30 dp, stroke 4 dp).
+ * Dropped: the rotation effect (off by default), the Listen Together lock. The play / pause icon keeps full
+ * opacity (the phone never locks it).
  * PC: a right click is the long press (speed menu); outside a `Live` session the buttons are dimmed like the
  * phone's locked ones.
  * [enabled] is `false` outside a `Live` session: the buttons then do nothing.
@@ -81,6 +86,7 @@ import org.jetbrains.compose.resources.stringResource
 fun ControlsEssential(
     playbackSpeed: Float,
     shouldBePlaying: Boolean,
+    isBuffering: Boolean,
     isLiked: Boolean,
     repeatMode: RepeatMode,
     playerPlayButtonType: PlayerPlayButtonType,
@@ -184,16 +190,30 @@ fun ControlsEssential(
             )
         }
 
-        Image(
-            painter = painterResource(if (shouldBePlaying) Res.drawable.pause else Res.drawable.play),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(if (playerPlayButtonType == PlayerPlayButtonType.Disabled) colorPalette().accent else controlsColor),
-            modifier = Modifier
-                .rotate(rotationAngle)
-                .align(Alignment.Center)
-                .size(if (playerPlayButtonType == PlayerPlayButtonType.Disabled) 40.dp else 30.dp)
-                .bounceClick(),
-        )
+        if (isBuffering) {
+            // The phone's buffering ring (phone's 567-576, contract 1.4)
+            CircularWavyProgressIndicator(
+                color = colorPalette().accent,
+                trackColor = colorPalette().text,
+                modifier = Modifier
+                    .rotate(rotationAngle)
+                    .align(Alignment.Center)
+                    .size(if (playerPlayButtonType == PlayerPlayButtonType.Disabled) 40.dp else 30.dp),
+                stroke = Stroke(width = with(LocalDensity.current) { 4.dp.toPx() }),
+                trackStroke = Stroke(width = with(LocalDensity.current) { 4.dp.toPx() }),
+            )
+        } else {
+            Image(
+                painter = painterResource(if (shouldBePlaying) Res.drawable.pause else Res.drawable.play),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(if (playerPlayButtonType == PlayerPlayButtonType.Disabled) colorPalette().accent else controlsColor),
+                modifier = Modifier
+                    .rotate(rotationAngle)
+                    .align(Alignment.Center)
+                    .size(if (playerPlayButtonType == PlayerPlayButtonType.Disabled) 40.dp else 30.dp)
+                    .bounceClick(),
+            )
+        }
 
         val fmtSpeed = "%.1fx".format(playbackSpeed).replace(",", ".")
         if (fmtSpeed != "1.0x") {

@@ -1,6 +1,8 @@
 package app.n_zik.compagnon.bridge.library
 
+import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.platform.registerSkikoComposeImplementation
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.core.network.BridgeClient
 import app.n_zik.compagnon.core.network.ServerAddress
@@ -27,9 +29,15 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class ArtworkLoaderTest {
+
+    /** Headless: the skiko graphics backend registers itself only when a window opens. */
+    @OptIn(InternalComposeUiApi::class)
+    @BeforeEach
+    fun registerSkiko() = registerSkikoComposeImplementation()
 
     private val token = "T".repeat(43)
     private val address = ServerAddress("192.168.1.14", 42420)

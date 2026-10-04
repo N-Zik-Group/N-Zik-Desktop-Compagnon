@@ -164,6 +164,78 @@ class StateReducerTest {
     }
 
     @Test
+    fun `snapshot carries the buffering state and a missing field defaults to false`() {
+        // A 1.4 phone sends the field...
+        val message = ServerMessages.decode(
+            """{"type":"snapshot","revision":57,"serverTimeMs":1,"queue":[],"currentIndex":-1,"currentTrackId":null,
+               "isPlaying":false,"isBuffering":true,"speed":1.0,"positionMs":0,"repeatMode":"off","shuffle":false}""",
+        ) as SnapshotMessage
+        assertTrue(message.isBuffering)
+        val buffered = StateReducer.reduce(SyncState(), message).state
+        assertTrue(buffered.player!!.isBuffering)
+
+        // A ≤ 1.3 phone never sends it: the client reads `false` (contract §13)
+        val legacy = StateReducer.reduce(SyncState(), snapshot(57)).state
+        assertFalse(legacy.player!!.isBuffering)
+    }
+
+    @Test
+    fun `playback and track deltas update the buffering state`() {
+        var state = synced(57)
+
+        // A play after a pause enters buffering with isPlaying still false (contract 1.4)
+        state = StateReducer.reduce(state, PlaybackChangedMessage(58, 2_000, isPlaying = false, isBuffering = true, speed = 1f, positionMs = 83_000)).state
+        assertFalse(state.player!!.isPlaying)
+        assertTrue(state.player!!.isBuffering)
+
+        state = StateReducer.reduce(state, TrackChangedMessage(59, 3_000, currentIndex = 1, currentTrackId = b.id, positionMs = 0, isPlaying = false, isBuffering = true)).state
+        assertEquals(b, state.player!!.currentTrack)
+        assertTrue(state.player!!.isBuffering)
+
+        state = StateReducer.reduce(state, PlaybackChangedMessage(60, 4_000, isPlaying = true, isBuffering = false, speed = 1f, positionMs = 0)).state
+        assertFalse(state.player!!.isBuffering)
+    }
+
+    @Test
+    fun `snapshot carries the player's live duration and a missing field falls back to the track's`() {
+        // A 1.5 phone sends the field: while loading, the player reports its C.TIME_UNSET (the phone shows --:--)
+        val message = ServerMessages.decode(
+            """{"type":"snapshot","revision":57,"serverTimeMs":1,
+               "queue":[{"id":"dQw4w9WgXcQ","title":"A","durationMs":212000,"source":"online","isDownloaded":false,"isLiked":false,"hasArtwork":true}],
+               "currentIndex":0,"currentTrackId":"dQw4w9WgXcQ","isPlaying":false,"isBuffering":true,
+               "durationMs":-9223372036854775807,"speed":1.0,"positionMs":0}""",
+        ) as SnapshotMessage
+        assertEquals(PlayerState.DURATION_TIME_UNSET, message.durationMs)
+        val loading = StateReducer.reduce(SyncState(), message).state
+        assertNull(loading.player!!.playerDurationMs, "the bar must show --:-- while the player does not know the duration")
+
+        // ...and once the stream is loaded, the player reports its duration (contract 1.5)
+        val loaded = StateReducer.reduce(
+            loading,
+            PlaybackChangedMessage(58, 2_000, isPlaying = true, isBuffering = false, durationMs = 212_000, speed = 1f, positionMs = 0),
+        ).state
+        assertEquals(212_000L, loaded.player!!.playerDurationMs)
+
+        // A ≤ 1.4 phone never sends it: the track's metadata duration stands in (contract §13)
+        val legacy = StateReducer.reduce(SyncState(), snapshot(57)).state
+        assertEquals(a.durationMs, legacy.player!!.playerDurationMs)
+    }
+
+    @Test
+    fun `track and playback deltas update the player's live duration`() {
+        // A new track loads: its duration is reset to C.TIME_UNSET until the stream is loaded
+        var state = StateReducer.reduce(
+            synced(57),
+            TrackChangedMessage(58, 2_000, currentIndex = 1, currentTrackId = b.id, positionMs = 0, isPlaying = false, durationMs = PlayerState.DURATION_TIME_UNSET),
+        ).state
+        assertEquals(PlayerState.DURATION_TIME_UNSET, state.player!!.durationMs)
+        assertNull(state.player!!.playerDurationMs)
+
+        state = StateReducer.reduce(state, PlaybackChangedMessage(59, 3_000, isPlaying = true, isBuffering = false, durationMs = 100_000, speed = 1f, positionMs = 0)).state
+        assertEquals(100_000L, state.player!!.playerDurationMs)
+    }
+
+    @Test
     fun `pong, error and serverStopped leave the state untouched`() {
         val state = synced(5)
         assertSame(state, StateReducer.reduce(state, PongMessage(1, 2, 3)).state)

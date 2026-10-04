@@ -14,7 +14,10 @@ import app.n_zik.compagnon.colorPalette
 
 /**
  * Port of `NowPlayingSongIndicator` (phone's `app/it/fast4x/rimusic/ui/components/themed/NowPlaying.kt` 21).
- * The caller only shows it for the phone's current track; [isPlaying] is the phone's playback state.
+ * The caller only shows it for the phone's current track; [isPlaying] is the phone's `shouldBePlaying`
+ * (`playWhenReady && state != ENDED`, phone's `utils/Player.kt` 69 — true while buffering, contract 1.4).
+ * The phone's indicator itself is not gated at all (it animates whenever it is the phone's current track);
+ * the PC keeps the gate, so it is off while the phone is paused.
  */
 @Composable
 fun NowPlayingSongIndicator(

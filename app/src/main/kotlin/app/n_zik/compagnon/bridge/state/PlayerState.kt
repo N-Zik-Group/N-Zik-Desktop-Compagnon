@@ -10,6 +10,10 @@ data class PlayerState(
     val currentIndex: Int = -1,
     val currentTrackId: String? = null,
     val isPlaying: Boolean = false,
+    /** Since 1.4 (contract §7.1): the phone's player is loading or rebuffering; a ≤ 1.3 phone reports `false`. */
+    val isBuffering: Boolean = false,
+    /** Since 1.5 (contract §7.1): the phone's player's live duration; [DURATION_UNREPORTED] when a ≤ 1.4 phone does not report it. */
+    val durationMs: Long = DURATION_UNREPORTED,
     val speed: Float = 1f,
     val positionMs: Long = 0,
     val serverTimeMs: Long = 0,
@@ -36,12 +40,32 @@ data class PlayerState(
         return if (duration != null && duration > 0) raw.coerceIn(0, duration) else raw.coerceAtLeast(0)
     }
 
+    /**
+     * The duration the phone's player reports for the current track (contract 1.5) — the source of the progress bar
+     * and the time labels, like the phone's own bar: `null` while the player does not know it yet (the phone shows
+     * `--:--`). A ≤ 1.4 phone never reports it: the track's metadata duration stands in (pre-1.5 behaviour).
+     */
+    val playerDurationMs: Long?
+        get() = when (durationMs) {
+            DURATION_UNREPORTED -> currentTrack?.durationMs
+            DURATION_TIME_UNSET -> null
+            else -> durationMs
+        }
+
     companion object {
+        /** The wire `durationMs` of a ≤ 1.4 phone, which never reports it: the track's metadata duration stands in. */
+        const val DURATION_UNREPORTED: Long = Long.MIN_VALUE
+
+        /** The phone's `C.TIME_UNSET` (media3): the player does not know the current track's duration yet. */
+        const val DURATION_TIME_UNSET: Long = Long.MIN_VALUE + 1
+
         fun of(snapshot: SnapshotMessage) = PlayerState(
             queue = snapshot.queue,
             currentIndex = snapshot.currentIndex,
             currentTrackId = snapshot.currentTrackId,
             isPlaying = snapshot.isPlaying,
+            isBuffering = snapshot.isBuffering,
+            durationMs = snapshot.durationMs,
             speed = snapshot.speed,
             positionMs = snapshot.positionMs,
             serverTimeMs = snapshot.serverTimeMs,

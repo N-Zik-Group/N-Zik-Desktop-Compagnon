@@ -61,6 +61,8 @@ object StateReducer {
     private fun apply(player: PlayerState, delta: DeltaMessage): PlayerState = when (delta) {
         is PlaybackChangedMessage -> player.copy(
             isPlaying = delta.isPlaying,
+            isBuffering = delta.isBuffering,
+            durationMs = delta.durationMs,
             speed = delta.speed,
             positionMs = delta.positionMs,
             serverTimeMs = delta.serverTimeMs,
@@ -70,6 +72,8 @@ object StateReducer {
             currentTrackId = delta.currentTrackId,
             positionMs = delta.positionMs,
             isPlaying = delta.isPlaying,
+            isBuffering = delta.isBuffering,
+            durationMs = delta.durationMs,
             serverTimeMs = delta.serverTimeMs,
         )
         // No position in this delta: the position anchor (positionMs at serverTimeMs) stays as it was.

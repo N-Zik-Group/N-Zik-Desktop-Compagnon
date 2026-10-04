@@ -34,8 +34,11 @@ const val DURATION_INDICATOR_HEIGHT = 20
 /**
  * Port of `GetSeekBar` (phone's `app/it/fast4x/rimusic/utils/GetSeekBarType.kt` 78-342) with its default
  * preferences: `PlayerTimelineType.Wavy`, transparent bar background. While the duration is unknown, a
- * progress line (indeterminate while playing). The scrubber follows the pointer while dragging (the one local
- * value of the player, as on the phone); `player/seek` is sent on release.
+ * progress line (indeterminate while the phone should be playing — the phone's `shouldBePlaying`,
+ * `playWhenReady && state != ENDED`, phone's `utils/Player.kt` 69, true while buffering; derived from the
+ * wire, contract 1.4, as `isPlaying || isBuffering`). The wave bar's `isActive` stays the phone's
+ * `binder.player.isPlaying` (phone's 374): the wire's `isPlaying`. The scrubber follows the pointer while
+ * dragging (the one local value of the player, as on the phone); `player/seek` is sent on release.
  * Port of the phone's held seek target (`GetSeekBarType.kt` 102-153, 332-366, 500-519, issue #881): on
  * release (drag or tap) and on a skip button, the target stays on the bar and the label until the phone's
  * position converges on it (or 10 s pass), so the bar never flashes back to the old position while the
@@ -49,6 +52,7 @@ fun GetSeekBar(
     position: () -> Long,
     duration: () -> Long,
     mediaId: String,
+    shouldBePlaying: Boolean,
     isPlaying: Boolean,
     live: Boolean,
 ) {
@@ -91,7 +95,7 @@ fun GetSeekBar(
     ) {
 
         if (duration() == TIME_UNSET) {
-            if (isPlaying) {
+            if (shouldBePlaying) {
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth(),
                     color = colorPalette().collapsedPlayerProgressBar,

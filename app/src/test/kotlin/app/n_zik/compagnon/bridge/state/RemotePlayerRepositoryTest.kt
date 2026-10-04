@@ -1,6 +1,8 @@
 package app.n_zik.compagnon.bridge.state
 
+import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.platform.registerSkikoComposeImplementation
 import app.n_zik.compagnon.bridge.ConnectionState
 import app.n_zik.compagnon.bridge.StateChannel
 import app.n_zik.compagnon.bridge.library.ArtworkLoader
@@ -36,9 +38,15 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class RemotePlayerRepositoryTest {
+
+    /** Headless: the skiko graphics backend registers itself only when a window opens. */
+    @OptIn(InternalComposeUiApi::class)
+    @BeforeEach
+    fun registerSkiko() = registerSkikoComposeImplementation()
 
     private val token = "T".repeat(43)
     private val address = ServerAddress("192.168.1.14", 42420)
