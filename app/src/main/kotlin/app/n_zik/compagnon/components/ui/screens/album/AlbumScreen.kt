@@ -1,8 +1,10 @@
 package app.n_zik.compagnon.components.ui.screens.album
 
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
+import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.generated.resources.bookmark_outline
 import app.n_zik.compagnon.generated.resources.bookmark
+import app.n_zik.compagnon.generated.resources.bookmark_slash
 import app.n_zik.compagnon.generated.resources.share_social
 import app.n_zik.compagnon.components.themed.HeaderIconButton
 import app.n_zik.compagnon.components.themed.Loader
@@ -24,17 +26,26 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.n_zik.compagnon.bridge.library.AlbumLike
+import app.n_zik.compagnon.bridge.library.DislikeMode
 import app.n_zik.compagnon.bridge.library.LibraryRepository
+import app.n_zik.compagnon.bridge.library.nextRotation
+import app.n_zik.compagnon.bridge.library.nextToggle
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.SongItem
 import app.n_zik.compagnon.components.menu.song.SongItemMenu
@@ -59,8 +70,12 @@ import app.n_zik.compagnon.components.ui.screens.home.PagedStatus
 import app.n_zik.compagnon.components.ui.screens.home.rememberCollectionSongs
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
+import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.add_in_playlist
+import app.n_zik.compagnon.generated.resources.added_to_dislikes
+import app.n_zik.compagnon.generated.resources.added_to_favorites
+import app.n_zik.compagnon.generated.resources.removed_from_favorites
 import app.n_zik.compagnon.generated.resources.add_to_playlist
 import app.n_zik.compagnon.generated.resources.artists_edit
 import app.n_zik.compagnon.generated.resources.unchecked_outline
@@ -68,7 +83,7 @@ import app.n_zik.compagnon.generated.resources.cover_edit
 import app.n_zik.compagnon.generated.resources.download
 import app.n_zik.compagnon.generated.resources.downloaded
 import app.n_zik.compagnon.generated.resources.enqueue
-import app.n_zik.compagnon.generated.resources.info_download_all_songs
+import app.n_zik.compagnon.generated.resources.info_bookmark_album
 import app.n_zik.compagnon.generated.resources.info_remove_all_downloaded_songs
 import app.n_zik.compagnon.generated.resources.info_shuffle
 import app.n_zik.compagnon.generated.resources.item_select
@@ -88,7 +103,9 @@ import app.n_zik.compagnon.utils.center
 import app.n_zik.compagnon.utils.color
 import app.n_zik.compagnon.utils.fadingEdge
 import app.n_zik.compagnon.utils.formatAsTime
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
@@ -107,9 +124,13 @@ const val DETAIL_COVER_SIZE_PX = 1200
  * Toolbar: the phone's full order — shuffle, locator, play next and enqueue (whole album) are wired to the
  * contract, the rest (download all / delete downloads, radio, item selector, edit title / authors / cover,
  * add to playlist) are placeholders without a contract route, a click does nothing. The bookmark button
- * then 15 dp before the toolbar (`AlbumScreen.kt` 676-678: `bookmark` in accent when the album is
- * bookmarked, contract 1.3 `isBookmarked`, `bookmark_outline` in text otherwise; no contract route, no
- * action) and the share icon at the top end of the cover (no action). While the first page is loading the
+ * then 15 dp before the toolbar (phone's `AlbumDetails.kt` 89-175): the phone's tri-state — `bookmark`
+ * in accent, `bookmark_slash` in red for a disliked album, `bookmark_outline` in text — since 1.7.2
+ * written with its `POST /library/albums/{id}/like`: the phone's "disliked" mode on (feature
+ * `library.dislikeMode`) rotating (its `rotateLikeState`), off toggling (its `toggleBookmark`), toasting
+ * the phone's `added_to_favorites` / `added_to_dislikes` / `removed_from_favorites` (its
+ * `AlbumDetails.kt` 155-172); a phone before 1.7.2 keeps its 1.7 binary route; inert outside a `Live`
+ * session, and the share icon at the top end of the cover (no action). While the first page is loading the
  * centred [Loader] replaces the list (`AlbumScreen.kt` 589-603).
  * Dropped (contract v1 or PC): the MusicBrainz "Info and community" block with
  * translation, the alternative versions, swipe actions, the floating shuffle icon.
@@ -145,15 +166,78 @@ fun AlbumDetails(
     }
     val playNext = PlayNext(enabled = playbackEnabled) { collection?.onPlayNext?.invoke() }
     val enqueue = Enqueue(enabled = playbackEnabled) { collection?.onEnqueue?.invoke() }
-    val bookmark = InertButton(
-        iconId = if (album.isBookmarked) Res.drawable.bookmark else Res.drawable.bookmark_outline,
-        titleId = Res.string.bookmark,
-        tint = if (album.isBookmarked) colorPalette().accent else colorPalette().text,
-    )
+    // The phone's header bookmark (phone's `AlbumDetails.kt` 89-175): the phone's tri-state —
+    // `bookmark` in accent, `bookmark_slash` in red for a disliked album, `bookmark_outline` in text —
+    // since 1.7.2 written with its `POST /library/albums/{id}/like`, the phone's "disliked" mode on
+    // (feature `library.dislikeMode`) rotating (its `rotateLikeState`), off toggling (its `toggleBookmark`);
+    // a phone before 1.7.2 keeps its 1.7 binary route — labelled `info_bookmark_album`; inert outside
+    // a `Live` session
+    var likeState by remember(album.id) {
+        mutableStateOf(
+            when {
+                album.isDisliked -> AlbumLike.Disliked
+                album.isBookmarked -> AlbumLike.Bookmarked
+                else -> AlbumLike.Neutral
+            },
+        )
+    }
+    LaunchedEffect(album.id, album.isBookmarked, album.isDisliked) {
+        likeState = when {
+            album.isDisliked -> AlbumLike.Disliked
+            album.isBookmarked -> AlbumLike.Bookmarked
+            else -> AlbumLike.Neutral
+        }
+    }
+    val dislikeMode by (actions.lists?.dislikeMode ?: remember { MutableStateFlow<DislikeMode?>(null) })
+        .collectAsState()
+    val bookmark = object : MenuIcon {
+        override val iconId: DrawableResource = when (likeState) {
+            AlbumLike.Bookmarked -> Res.drawable.bookmark
+            AlbumLike.Disliked -> Res.drawable.bookmark_slash
+            AlbumLike.Neutral -> Res.drawable.bookmark_outline
+        }
+        override val color: Color
+            @Composable
+            get() = when (likeState) {
+                AlbumLike.Bookmarked -> colorPalette().accent
+                AlbumLike.Disliked -> colorPalette().red
+                AlbumLike.Neutral -> colorPalette().text
+            }
+        override val menuIconTitle: String
+            @Composable
+            get() = stringResource(Res.string.info_bookmark_album)
+        override fun onShortClick() {
+            if (live && actions.canWrite) {
+                // Since 1.7.2: the tri-state write, rotation or toggle per the phone's "disliked" mode;
+                // a phone before 1.7.2 keeps its binary route
+                val mode = dislikeMode
+                val target = if (mode == null) {
+                    likeState.nextToggle()
+                } else if (mode.albums) {
+                    likeState.nextRotation()
+                } else {
+                    likeState.nextToggle()
+                }
+                likeState = target
+                if (mode == null) {
+                    actions.bookmarkAlbum(album.id, target == AlbumLike.Bookmarked)
+                } else {
+                    actions.likeAlbum(album.id, target)
+                }
+                // The phone's toast (its `AlbumDetails.kt` 155-172)
+                val messageId = when (target) {
+                    AlbumLike.Bookmarked -> Res.string.added_to_favorites
+                    AlbumLike.Disliked -> Res.string.added_to_dislikes
+                    AlbumLike.Neutral -> Res.string.removed_from_favorites
+                }
+                if (album.title.isNotBlank()) Toaster.s(messageId, "\"${album.title}\"") else Toaster.s(messageId)
+            }
+        }
+    }
     // The phone's toolbar order; shuffle, locator, play next and enqueue are wired to the contract,
     // the rest are placeholders without a contract route (no action)
     val toolbar = buildList<Button> {
-        add(InertButton(Res.drawable.downloaded, Res.string.info_download_all_songs))
+        add(InertButton(Res.drawable.downloaded, Res.string.download))
         add(InertButton(Res.drawable.download, Res.string.info_remove_all_downloaded_songs))
         if (collection != null) add(shuffle) else add(InertButton(Res.drawable.shuffle, Res.string.info_shuffle))
         add(InertButton(Res.drawable.radio, Res.string.start_radio))
@@ -282,7 +366,7 @@ fun AlbumDetails(
                         items = items,
                         key = { index, song -> "$index:${song.id}" },
                     ) { index, song ->
-                        val menu = actions.trackActions({ list.state.value.items }, index, song.id, live)
+                        val menu = actions.trackActions(list.state, index, song.id, live)
                         SongItem(
                             song = song,
                             showThumbnail = false,

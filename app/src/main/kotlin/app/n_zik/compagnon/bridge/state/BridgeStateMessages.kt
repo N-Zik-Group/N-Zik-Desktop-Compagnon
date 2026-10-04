@@ -70,6 +70,27 @@ object SessionContract {
     const val FEATURE_LIBRARY_PLAYLISTS = "library.playlists"
     const val FEATURE_LIBRARY_ALBUMS = "library.albums"
     const val FEATURE_LIBRARY_ARTISTS = "library.artists"
+
+    /** §5 / §10.2 (since 1.7): the explicit library writes (like, bookmark, follow, pin), local Room only. */
+    const val FEATURE_LIBRARY_WRITE = "library.write"
+
+    /** §5 / §10 (since 1.7.1): `GET /library/cache`, the phone's disk caches behind the cache bar. */
+    const val FEATURE_LIBRARY_CACHE = "library.cache"
+
+    /**
+     * §5 (since 1.7.2): the `rewind` parameter of `GET /library/playlists` (applied and persisted by
+     * the phone) and `GET /library/rewind`, the state of the phone's Month / Year / All row.
+     */
+    const val FEATURE_LIBRARY_REWIND = "library.rewind"
+
+    /**
+     * §5 (since 1.7.2): `GET /library/dislikeMode`, the phone's "disliked" mode per collection —
+     * the Disliked chips' visibility and the like rotation / toggle of the menus.
+     */
+    const val FEATURE_LIBRARY_DISLIKE_MODE = "library.dislikeMode"
+
+    /** §5 (since 1.7.2): the phone's build ships FFmpeg — its "export cache" and "edit metadata" entries. */
+    const val FEATURE_LIBRARY_FFMPEG = "library.ffmpeg"
 }
 
 /** `RepeatMode` (contract §1.1); an unknown value reads as [Off]. */
@@ -124,6 +145,65 @@ object TrackSourceSerializer : KSerializer<TrackSource> {
     override fun deserialize(decoder: Decoder): TrackSource = TrackSource.fromWire(decoder.decodeString())
 }
 
+/** `Track.like` (contract §1.1, since 1.7): the tri-state like; an unknown value reads as [Neutral]. */
+@Serializable(with = TrackLikeSerializer::class)
+enum class TrackLike(val wire: String) {
+    Liked("liked"),
+    Neutral("neutral"),
+    Disliked("disliked");
+
+    companion object {
+        fun fromWire(value: String?): TrackLike = entries.firstOrNull { it.wire == value } ?: Neutral
+    }
+}
+
+/**
+ * The phone's like rotation (its `rotateSongLikeState`, default `excludeDislikedSongs`):
+ * neutral → liked → disliked → neutral.
+ */
+fun TrackLike.nextRotation(): TrackLike = when (this) {
+    TrackLike.Neutral -> TrackLike.Liked
+    TrackLike.Liked -> TrackLike.Disliked
+    TrackLike.Disliked -> TrackLike.Neutral
+}
+
+/**
+ * The phone's binary like toggle (its `toggleSongLikeState`, used when its "disliked" mode is off —
+ * contract 1.7.2 `library.dislikeMode`): neutral → liked, liked → neutral, disliked → liked.
+ */
+fun TrackLike.nextToggle(): TrackLike = when (this) {
+    TrackLike.Neutral -> TrackLike.Liked
+    TrackLike.Liked -> TrackLike.Neutral
+    TrackLike.Disliked -> TrackLike.Liked
+}
+
+object TrackLikeSerializer : KSerializer<TrackLike> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("TrackLike", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: TrackLike) = encoder.encodeString(value.wire)
+    override fun deserialize(decoder: Decoder): TrackLike = TrackLike.fromWire(decoder.decodeString())
+}
+
+/** `Track.downloadState` (contract §1.1, since 1.7.1): the phone's active download states; an unknown value reads as [None]. */
+@Serializable(with = TrackDownloadStateSerializer::class)
+enum class TrackDownloadState(val wire: String) {
+    /** No active download: the row icon derives from [Track.isDownloaded] (and [Track.isCached] for its color). */
+    None("none"),
+    /** Queued or restarting: the phone's `download_progress` icon. */
+    Queued("queued"),
+    /** Downloading: the phone's progress ring, [Track.downloadProgress] in 0..1. */
+    Downloading("downloading");
+
+    companion object {
+        fun fromWire(value: String?): TrackDownloadState = entries.firstOrNull { it.wire == value } ?: None
+    }
+}
+
+object TrackDownloadStateSerializer : KSerializer<TrackDownloadState> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("TrackDownloadState", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: TrackDownloadState) = encoder.encodeString(value.wire)
+    override fun deserialize(decoder: Decoder): TrackDownloadState = TrackDownloadState.fromWire(decoder.decodeString())
+}
+
 /** `Track` (contract §1.1). */
 @Serializable
 data class Track(
@@ -134,13 +214,72 @@ data class Track(
     val source: TrackSource = TrackSource.Online,
     val isDownloaded: Boolean = false,
     val isLiked: Boolean = false,
+    /**
+     * Since 1.7: the tri-state like, [isLiked] being its `liked` projection. A ≤ 1.6 phone does not
+     * send it (→ [TrackLike.Neutral]): with no `library.write` the UI reads [isLiked] instead.
+     */
+    val like: TrackLike = TrackLike.Neutral,
     val hasArtwork: Boolean = false,
     /**
      * Since 1.3: the track carries the phone's explicit mark (`e:` title prefix); [title] never carries it.
      * A 1.2 phone does not send it (→ `false`).
      */
     val isExplicit: Boolean = false,
+    /** Since 1.7.1: the song's total play time in ms (the phone's `totalPlayTimeMs` column); the library rows only. */
+    val totalPlayTimeMs: Long = 0L,
+    /** Since 1.7.1: the song's play count (the phone's `playCount` column); the library rows only. */
+    val playCount: Int = 0,
+    /**
+     * Since 1.7.1: the phone's active download state, [None] when settled (the row icon then derives
+     * from [isDownloaded]); a ≤ 1.7 phone does not send it (→ [None]).
+     */
+    val downloadState: TrackDownloadState = TrackDownloadState.None,
+    /** Since 1.7.1: the download progress, 0..1, only while [downloadState] is [TrackDownloadState.Downloading]. */
+    val downloadProgress: Float? = null,
+    /** Since 1.7.1: in the phone's streaming cache (the phone's row icon color, apart from its state). */
+    val isCached: Boolean = false,
+    /**
+     * Since 1.7.2: the track's artwork is one of the phone's local custom images — the phone's
+     * `isCustomImage` predicate (its `SongItem.kt` 251-253, its `MiniPlayer.kt` 631): the
+     * `file://` prefix, the `app_covers` covers directory or the `modified:` prefix of its
+     * thumbnail url. The phone shows it with `Crop` and every other artwork with `FillHeight`.
+     * A ≤ 1.7.1 phone does not send it (→ `false`).
+     */
+    val isCustomArtwork: Boolean = false,
 )
+
+/**
+ * The tri-state like to display (contract 1.7): a ≤ 1.6 phone sends only [Track.isLiked] (no
+ * [Track.like]), so a liked track whose `like` is still the default still shows as liked. With
+ * `library.write` the phone sends the full tri-state and it is used as is.
+ */
+val Track.displayedLike: TrackLike
+    get() = if (like == TrackLike.Neutral && isLiked) TrackLike.Liked else like
+
+/**
+ * The phone's "unmatched" mark (phone's `HomeSongs.kt` 589): a track not matched to the phone's
+ * library — an id that is not a YouTube one (11 chars), or the phone's `match all` sentinel (00:00
+ * and `totalPlayTimeMs == 1L`), and not a local file. Its row shows the phone's orange alert and it
+ * cannot be played (the phone's toast).
+ */
+fun Track.unmatched(): Boolean =
+    (id.length != 11 || (durationMs == 0L && totalPlayTimeMs == 1L)) && !id.startsWith("local:")
+
+/**
+ * Port of the phone's `Song.formattedTotalPlayTime` (phone's `models/Song.kt` 39-50): `« 45m »`,
+ * `« 2h »` or `« 3d »` — the format of the phone's row overlay of the play-time sorts (the phone's
+ * `formatAsTime` is not used there).
+ */
+val Track.formattedTotalPlayTime: String
+    get() {
+        val seconds = totalPlayTimeMs / 1000
+        val hours = seconds / 3600
+        return when {
+            hours == 0L -> "${seconds / 60}m"
+            hours < 24L -> "${hours}h"
+            else -> "${hours / 24}d"
+        }
+    }
 
 /** Why the server stopped (contract §7.7); an unknown value reads as [StopUser]. */
 @Serializable(with = StopCodeSerializer::class)

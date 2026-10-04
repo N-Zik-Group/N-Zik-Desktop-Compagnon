@@ -7,6 +7,9 @@ import app.n_zik.compagnon.core.navigation.LocalBackDispatcher
 import app.n_zik.compagnon.core.navigation.BackStep
 import app.n_zik.compagnon.components.ui.screens.home.CollectionHeader
 import app.n_zik.compagnon.components.player.APP_HEADER_HEIGHT
+import app.n_zik.compagnon.components.player.MINIPLAYER_APPEAR_FADE_MS
+import app.n_zik.compagnon.components.player.MINIPLAYER_APPEAR_FADE_SKIPPED_FRAMES
+import app.n_zik.compagnon.components.player.MINIPLAYER_POP_ANIMATION_MS
 import kotlinx.coroutines.Job
 import kotlin.math.roundToInt
 import androidx.compose.ui.unit.IntOffset
@@ -31,6 +34,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,8 +51,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
@@ -90,6 +97,7 @@ import app.n_zik.compagnon.core.palette.toPaletteBitmap
 import app.n_zik.compagnon.enums.ColorPaletteMode
 import app.n_zik.compagnon.enums.ColorPaletteName
 import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.formatMessage
 import app.n_zik.compagnon.components.ui.screens.settings.SettingsScreen
 import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.playback.services.LocalPlayback
@@ -121,7 +129,7 @@ class AppearanceState(initial: Appearance) {
     }
 
     /**
-     * Port of `setDynamicPalette` (`MainActivity.kt` 1067-1196) with the default preferences (`Dynamic`
+     * Port of `setDynamicPalette` (`MainActivity.kt` 1170-1300) with the default preferences (`Dynamic`
      * palette, `Dark` mode): the palette of the current track's cover ([bitmap], read through the phone), or
      * the dynamic palette of N-Zik's violet when there is no cover. The global palette changes in one step;
      * the player's [PaletteFade] fades it.
@@ -146,7 +154,7 @@ class AppearanceState(initial: Appearance) {
 }
 
 /**
- * Port of `computeAppearance` (`MainActivity.kt` 988-1025) with the phone's default preferences: `Dynamic`
+ * Port of `computeAppearance` (`MainActivity.kt` 1085-1125) with the phone's default preferences: `Dynamic`
  * palette in `Dark` mode (its static start, `DefaultDarkColorPalette`, until the first cover), Rubik without
  * font padding, thumbnails at 12 dp (at most 25 %), artists in a circle (48 dp), UI at 25 dp (at most 40 %).
  */
@@ -213,7 +221,9 @@ fun MainActivity(
     // The screens' messages are the locator's, an information toast on the phone (`Locator.kt` 79, 88)
     val showMessage: (String) -> Unit = { text -> Toaster.i(text) }
     val lists = remember(library, audioCache) { LibraryLists(library, scope, audioCache) }
-    val actions = remember(repository, library) { LibraryActions(repository, library, scope, info = { Toaster.i(it) }) { Toaster.e(it) } }
+    val actions = remember(repository, library, lists) {
+        LibraryActions(repository, library, scope, info = { Toaster.i(it) }, lists = lists) { Toaster.e(it) }
+    }
 
     LaunchedEffect(repository) {
         repository.notices.collect { notice ->
@@ -250,6 +260,43 @@ fun MainActivity(
             }
         } else {
             mediaPresent = true
+        }
+    }
+
+    // The phone's mini-player pop/depop port (its commit 765d811, its `MainActivity.kt` 2112-2155): the
+    // sheet subtree stays composed until the animated leave has settled (its `shouldComposePlayerSheet`),
+    // each presentation fades in with the 300 ms appear fade (its `appearAlpha`, the 2 heavy frames
+    // skipped first — the mini-player keeps its last track so the whole slide + fade stays visible), and
+    // the leave is the phone's animated `dismiss()` — the sheet slides below the screen while the
+    // dismissed-zone alpha fades it (its `miniPlayerDismissAlpha`, linear across the travel) — instead
+    // of vanishing in place. A presentation after an in-flight leave resumes the pop from wherever it
+    // stopped (the phone's race fix). No AnimatedVisibility: it would add a second full-screen layer
+    // with the default Auto compositing strategy (the phone's note: lag).
+    val sheetDismiss = remember { Animatable(0f) } // 0 = presented, 1 = dismissed (below the screen)
+    val appearAlpha = remember { Animatable(0f) }  // the phone's `appearAlpha`: 0 hidden → 1 shown
+    var sheetComposed by remember { mutableStateOf(repository.state.value?.currentTrack != null) }
+    LaunchedEffect(sheetComposed) {
+        if (sheetComposed) {
+            // The phone's `appearAlpha`: replayed each time the subtree presents, the 2 heavy frames
+            // skipped before the 300 ms fade starts
+            appearAlpha.snapTo(0f)
+            repeat(MINIPLAYER_APPEAR_FADE_SKIPPED_FRAMES) { withFrameNanos { } }
+            appearAlpha.animateTo(1f, tween(MINIPLAYER_APPEAR_FADE_MS.toInt()))
+            if (sheetDismiss.value > 0f) {
+                // The phone's pop (its `showMiniplayerIfDismissed`): from wherever the leave stopped,
+                // back to rest with the 250 ms tween, the dismissed-zone alpha fading the bar in with it
+                sheetDismiss.animateTo(0f, tween(MINIPLAYER_POP_ANIMATION_MS.toInt()))
+            }
+        }
+    }
+    LaunchedEffect(mediaPresent) {
+        if (mediaPresent) {
+            sheetComposed = true
+        } else {
+            // The leave: the phone's animated `dismiss()` (its default spring) — the sheet slides
+            // below the screen while the alpha fades it; the subtree is removed once settled
+            sheetDismiss.animateTo(1f, spring())
+            sheetComposed = false
         }
     }
 
@@ -332,6 +379,7 @@ fun MainActivity(
 
     CompositionLocalProvider(
         LocalPlayerRepository provides repository,
+        LocalLibraryActions provides actions,
         LocalCommandLauncher provides onCommand,
         LocalMenuState provides menuState,
         LocalTopBarOffset provides topBarOffsetState,
@@ -413,9 +461,28 @@ fun MainActivity(
             // Palette fade scope: the global palette switches in one step, only the mini-player and the
             // full player animate the transition
             PaletteFade {
-                if (mediaPresent) {
+                if (sheetComposed) {
                     // The mini-player leaves with the floating bar on scroll (phone's `MainActivity.kt` 2289)
-                    Box(Modifier.fillMaxSize().offset { IntOffset(0, bottomBarOffsetState.value.roundToInt()) }) {
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .graphicsLayer {
+                                // The phone's sheet alpha (its commit 765d811): the 300 ms appear fade x
+                                // the dismissed-zone fade — the linear fade across the dismissed travel
+                                // (its `miniPlayerDismissAlpha`) that follows the leave's spring and the
+                                // pop's tween
+                                alpha = appearAlpha.value * (1f - sheetDismiss.value)
+                                // The leave slides the sheet below the screen (its animated `dismiss()`);
+                                // at rest there is no translation
+                                translationY = sheetDismiss.value * size.height
+                                // The phone's performance fix: with the default Auto strategy, an alpha
+                                // below 1 renders the whole full-screen sheet subtree into a full-screen
+                                // offscreen buffer on every frame; ModulateAlpha applies the alpha per
+                                // draw op (the phone's trade-off note)
+                                compositingStrategy = CompositingStrategy.ModulateAlpha
+                            }
+                            .offset { IntOffset(0, bottomBarOffsetState.value.roundToInt()) },
+                    ) {
                         PlayerSheet(
                             showPlayer = showPlayer,
                             onShowPlayer = { showPlayer = it },
@@ -452,7 +519,7 @@ private suspend fun localPlaybackNoticeText(notice: LocalPlaybackNotice): String
     LocalPlaybackNotice.UpstreamFailed -> getString(Res.string.local_playback_upstream_failed)
     LocalPlaybackNotice.InvalidUrl -> getString(Res.string.local_playback_invalid_url)
     is LocalPlaybackNotice.OtherActive ->
-        getString(Res.string.local_playback_other_active, notice.deviceName ?: getString(Res.string.paired_other_active_unknown))
+        formatMessage(Res.string.local_playback_other_active, notice.deviceName ?: getString(Res.string.paired_other_active_unknown))
     LocalPlaybackNotice.Unreachable -> getString(Res.string.local_playback_unreachable)
     LocalPlaybackNotice.Failed -> getString(Res.string.local_playback_failed)
 }

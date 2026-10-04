@@ -1,6 +1,7 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -27,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.library.Artist
 import app.n_zik.compagnon.bridge.library.ArtistSort
@@ -48,7 +51,15 @@ import app.n_zik.compagnon.components.tab.TabHeader
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
 import app.n_zik.compagnon.components.tab.toolbar.InertSort
+import app.n_zik.compagnon.artistThumbnailShape
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.theme.onOverlay
+import app.n_zik.compagnon.components.theme.overlay
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.utils.center
+import app.n_zik.compagnon.utils.color
+import app.n_zik.compagnon.utils.formatAsTime
+import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
 import app.n_zik.compagnon.components.themed.HeaderInfo
 import app.n_zik.compagnon.generated.resources.Res
@@ -105,6 +116,10 @@ import org.jetbrains.compose.resources.stringResource
  * (a cold start opens in the chip's own sort). On a phone without `library.sort` (contract < 1.6) the
  * arrow is inert (the phone sorts its tabs itself).
  *
+ * The sort overlays (contract 1.7.1, the phone's `HomeArtist.kt` 687-711): while the chip's sort is
+ * the play count / listening time, the sorted value is shown over the thumbnail, like on the phone
+ * (the multi-select check overlay is dropped — no contract route for the item selector).
+ *
  * Dropped (contract v1): as `HomeAlbums`.
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -129,6 +144,12 @@ fun HomeArtists(
     // The page's grid item size (the phone's `HomeItemSize`, a per-tab Compagnon-local setting)
     val itemSize = remember { mutableStateOf(HomeItemSize.fromWire(settings?.itemSizes?.get("artists"))) }
     LaunchedEffect(settings?.itemSizes) { itemSize.value = HomeItemSize.fromWire(settings?.itemSizes?.get("artists")) }
+
+    // Since 1.7.2 (feature `library.dislikeMode`): the phone's "disliked" mode (its `DislikeMode.Enabled`
+    // per collection, read once per session by the lists) — `false` hides the Disliked chip, like on
+    // the phone; `null` keeps the pre-1.7.2 display (the phone's own default: the mode enabled, the
+    // chip shown)
+    val dislikeMode by lists.dislikeMode.collectAsState()
 
     /** The chip's list query: its own sort (the persisted [sort]) and its `filter`. */
     fun applyChipQuery(target: ArtistsChip, sort: ChipSort) {
@@ -192,8 +213,11 @@ fun HomeArtists(
         add(Refresh(lists::reloadActiveArtists))
     }
 
-    // The user's chip order (the phone's `ArtistsType` labels)
-    val chips = ArtistsChip.entries.map { it to stringResource(chipLabel(it)) }
+    // The user's chip order (the phone's `ArtistsType` labels); since 1.7.2 the phone's "disliked" mode
+    // hides its Disliked chip when off (its `HomeArtist.kt` 295)
+    val chips = ArtistsChip.entries
+        .filter { it != ArtistsChip.Disliked || dislikeMode?.artists != false }
+        .map { it to stringResource(chipLabel(it)) }
 
     // The persisted sort of the visible chip, applied on the first composition (a cold start opens in
     // the chip's own sort, not the list's default query)
@@ -256,7 +280,7 @@ fun HomeArtists(
                             val openMenu = menu?.let {
                                 {
                                     menuState.display {
-                                        LocalArtistItemMenu(artist, it, bookmarked = artist.isBookmarked || artistQuery.filter == CollectionFilter.Bookmarked).MenuComponent()
+                                        LocalArtistItemMenu(artist, it).MenuComponent()
                                     }
                                 }
                             }
@@ -265,8 +289,16 @@ fun HomeArtists(
                                 thumbnailSizeDp = itemSize.value.dp,
                                 thumbnailSizePx = GRID_THUMBNAIL_SIZE_PX,
                                 alternative = true,
-                                // Contract 1.3 `isBookmarked`, in every filter (a 1.2 phone only gives it through the filter)
-                                likeState = if (artist.isBookmarked || artistQuery.filter == CollectionFilter.Bookmarked) true else null,
+                                thumbnailOverlay = {
+                                    artistSortOverlay(artistQuery.sort, artist)
+                                },
+                                // Contract 1.3 `isBookmarked`, in every filter (a 1.2 phone only gives it through the
+                                // filter); since 1.7.1 the contract's `isDisliked` gives the phone's `bookmark_slash`
+                                likeState = when {
+                                    artist.isDisliked -> false
+                                    artist.isBookmarked || artistQuery.filter == CollectionFilter.Bookmarked -> true
+                                    else -> null
+                                },
                                 modifier = Modifier.clip(uiRoundnessShape())
                                     .onSecondaryClick(openMenu)
                                     .combinedClickable(
@@ -288,6 +320,36 @@ fun HomeArtists(
         }
 
         FloatingActionsContainerWithScrollToTop(lazyGridState = lazyGridState)
+    }
+}
+
+/**
+ * The phone's sort overlay of the Artists grid (`HomeArtist.kt` 687-711, since 1.7.1): the sorted value
+ * over the thumbnail — the play count for [ArtistSort.PlayCount], the listening time for
+ * [ArtistSort.ListeningTime] — clipped to the phone's `artistThumbnailShape`, like on the phone.
+ */
+@Composable
+private fun artistSortOverlay(sort: ArtistSort, artist: Artist) {
+    val text = when (sort) {
+        ArtistSort.PlayCount -> artist.playCount.toString()
+        ArtistSort.ListeningTime -> formatAsTime(artist.totalPlayTimeMs)
+        else -> null
+    } ?: return
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clip(artistThumbnailShape())
+            .background(colorPalette().overlay),
+    ) {
+        BasicText(
+            text = text,
+            style = typography().s.semiBold.center.color(colorPalette().onOverlay),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .basicMarquee(iterations = Int.MAX_VALUE),
+        )
     }
 }
 

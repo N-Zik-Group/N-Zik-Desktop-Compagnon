@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Shape
 import app.n_zik.compagnon.bridge.state.PlayerRepository
 import app.n_zik.compagnon.components.theme.BoundedCornerSize
 import app.n_zik.compagnon.components.theme.LocalAppearance
+import app.n_zik.compagnon.components.ui.screens.home.LibraryActions
 
 /*
  * Port of the phone's `app/n_zik/android/GlobalVars.kt` (26-88): the accessors of the `Appearance`.
@@ -69,6 +70,19 @@ fun topUiRoundnessShape(): Shape {
  * phone). `null` outside the main window.
  */
 val LocalPlayerRepository = staticCompositionLocalOf<PlayerRepository?> { null }
+
+/**
+ * The library's actions (playback and the §10.2 writes, since 1.7), for the screens that do not receive
+ * them as a parameter (the player, the queue). `null` outside the main window.
+ */
+val LocalLibraryActions = staticCompositionLocalOf<LibraryActions?> { null }
+
+/**
+ * The §10.2 write actions (since 1.7): [LibraryActions] when the phone has the `library.write` feature,
+ * `null` otherwise (or outside the main window) — the write actions stay inert then.
+ */
+@Composable
+fun libraryWrites(): LibraryActions? = LocalLibraryActions.current?.takeIf { it.canWrite }
 
 /** Runs a command of the remote player (launched in the main window's scope, so closing a panel never cancels it). */
 typealias CommandLauncher = (suspend PlayerRepository.() -> Unit) -> Unit

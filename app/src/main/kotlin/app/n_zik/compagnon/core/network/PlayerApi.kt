@@ -26,6 +26,9 @@ enum class ArtworkKind {
 
     /** `GET /api/v1/library/artists/{artistId}/artwork`. */
     Artist,
+
+    /** `GET /api/v1/library/playlists/{playlistId}/artwork` (since 1.7.2): the phone's custom cover. */
+    Playlist,
 }
 
 /**
@@ -37,6 +40,7 @@ data class ArtworkKey(val kind: ArtworkKind, val id: String, val size: Int = Lib
         fun track(trackId: String, size: Int = LibraryContract.ARTWORK_SIZE_PX) = ArtworkKey(ArtworkKind.Track, trackId, bounded(size))
         fun album(albumId: String, size: Int = LibraryContract.ARTWORK_SIZE_PX) = ArtworkKey(ArtworkKind.Album, albumId, bounded(size))
         fun artist(artistId: String, size: Int = LibraryContract.ARTWORK_SIZE_PX) = ArtworkKey(ArtworkKind.Artist, artistId, bounded(size))
+        fun playlist(playlistId: String, size: Int = LibraryContract.ARTWORK_SIZE_PX) = ArtworkKey(ArtworkKind.Playlist, playlistId, bounded(size))
 
         /** Contract §10.1: 64–1200 px. */
         fun bounded(size: Int): Int = size.coerceIn(LibraryContract.ARTWORK_SIZE_MIN_PX, LibraryContract.ARTWORK_SIZE_MAX_PX)

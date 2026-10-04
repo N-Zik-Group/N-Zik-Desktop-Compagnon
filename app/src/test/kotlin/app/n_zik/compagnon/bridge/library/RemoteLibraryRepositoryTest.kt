@@ -4,6 +4,8 @@ import app.n_zik.compagnon.bridge.pairing.RevocationPolicy
 import app.n_zik.compagnon.core.network.BridgeClient
 import app.n_zik.compagnon.core.network.LibraryResult
 import app.n_zik.compagnon.core.network.ServerAddress
+import app.n_zik.compagnon.core.network.WriteResult
+import app.n_zik.compagnon.bridge.state.TrackLike
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockRequestHandleScope
 import io.ktor.client.engine.mock.respond
@@ -83,6 +85,37 @@ class RemoteLibraryRepositoryTest {
         }
         val result = repository.songs(0, 100, SongsQuery())
         assertEquals(LibraryResult.Ok(Page<app.n_zik.compagnon.bridge.state.Track>(emptyList(), 0, 0, 100)), result)
+        assertEquals(0, revoked)
+    }
+
+    @Test
+    fun `a 401 DEVICE_REVOKED confirmed 2 s later revokes the pairing on a write too`() = runTest {
+        val repository = repository { revokedAnswer() }
+        val result = async { repository.songLike("dQw4w9WgXcQ", TrackLike.Liked) }
+        runCurrent()
+        assertEquals(1, requests.size)
+        advanceTimeBy(1_900)
+        runCurrent()
+        assertEquals(1, requests.size, "no retry before 2 s")
+        advanceUntilIdle()
+        assertEquals(WriteResult.Revoked, result.await())
+        assertEquals(2, requests.size)
+        assertEquals(1, revoked)
+    }
+
+    @Test
+    fun `an unconfirmed 401 on a write gives back the second answer and erases nothing`() = runTest {
+        var first = true
+        val repository = repository {
+            if (first) {
+                first = false
+                revokedAnswer()
+            } else {
+                json("""{"state":"liked"}""")
+            }
+        }
+        val result = repository.songLike("dQw4w9WgXcQ", TrackLike.Liked)
+        assertEquals(WriteResult.SongLike(TrackLike.Liked), result)
         assertEquals(0, revoked)
     }
 

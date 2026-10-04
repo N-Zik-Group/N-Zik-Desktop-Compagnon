@@ -34,14 +34,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
 import app.n_zik.compagnon.bridge.library.Album
+import app.n_zik.compagnon.bridge.library.AlbumLike
 import app.n_zik.compagnon.bridge.library.AlbumsQuery
 import app.n_zik.compagnon.bridge.library.Artist
 import app.n_zik.compagnon.bridge.library.ArtistsQuery
+import app.n_zik.compagnon.bridge.library.ArtistFollow
 import app.n_zik.compagnon.bridge.library.CollectionRef
+import app.n_zik.compagnon.bridge.library.DislikeMode
+import app.n_zik.compagnon.bridge.library.LibraryCache
 import app.n_zik.compagnon.bridge.library.Page
 import app.n_zik.compagnon.bridge.library.Playlist
 import app.n_zik.compagnon.bridge.library.PlaylistSongsQuery
+import app.n_zik.compagnon.bridge.library.PlaylistsFilter
 import app.n_zik.compagnon.bridge.library.PlaylistsQuery
+import app.n_zik.compagnon.bridge.library.RewindState
 import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.pairing.ApiError
 import app.n_zik.compagnon.bridge.pairing.BridgeContract
@@ -54,6 +60,7 @@ import app.n_zik.compagnon.bridge.pairing.ValidateRequest
 import app.n_zik.compagnon.bridge.pairing.ValidateResponse
 import app.n_zik.compagnon.bridge.state.CommandResponse
 import app.n_zik.compagnon.bridge.state.Track
+import app.n_zik.compagnon.bridge.state.TrackLike
 
 /** Phone address received by pairing (contract §1: never a hard-coded port). */
 data class ServerAddress(val ip: String, val port: Int) {
@@ -181,6 +188,7 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
             ArtworkKind.Track -> "artwork/$id"
             ArtworkKind.Album -> "library/albums/$id/artwork"
             ArtworkKind.Artist -> "library/artists/$id/artwork"
+            ArtworkKind.Playlist -> "library/playlists/$id/artwork"
         }
         val response = call(address, "artwork") {
             http.get("${address.apiBase}/$path") {
@@ -302,6 +310,11 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
             parameter("filter", query.filter.wire)
             parameter("sort", query.sort.wire)
             parameter("reverse", query.reverse.toString())
+            // Since 1.7.2 (feature `library.rewind`): the phone's Month / Year / All row, applied and
+            // persisted by the phone; only sent on the Rewind chip
+            if (query.rewind != null && query.filter == PlaylistsFilter.Rewind) parameter("rewind", query.rewind.wire)
+            // Since 1.7.2: the phone's search (`total` stays pre-`text`)
+            query.text?.let { parameter("text", it) }
         }
 
     override suspend fun albums(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album> =
@@ -334,7 +347,94 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
             query?.let {
                 parameter("sort", it.sort.wire)
                 parameter("reverse", it.reverse.toString())
+                // Since 1.7.2: the phone's search (`total` stays pre-`text`)
+                it.text?.let { text -> parameter("text", text) }
             }
+        }
+    }
+
+    /** `GET /library/cache` (contract §10, since 1.7.1): `null` on any non-`200` answer (the UI hides its bar). */
+    override suspend fun cacheSpace(address: ServerAddress, deviceToken: String): LibraryCache? {
+        val response = call(address, "library/cache") {
+            http.get("${address.apiBase}/library/cache") { bearerAuth(deviceToken) }
+        } ?: return null
+        if (response.status != HttpStatusCode.OK) return null
+        return response.decode(LibraryCache.serializer())
+    }
+
+    /** `GET /library/rewind` (contract §10, since 1.7.2): `null` on any non-`200` answer (the UI hides its row). */
+    override suspend fun rewindState(address: ServerAddress, deviceToken: String): RewindState? {
+        val response = call(address, "library/rewind") {
+            http.get("${address.apiBase}/library/rewind") { bearerAuth(deviceToken) }
+        } ?: return null
+        if (response.status != HttpStatusCode.OK) return null
+        return response.decode(RewindState.serializer())
+    }
+
+    /** `GET /library/dislikeMode` (contract §10, since 1.7.2): `null` on any non-`200` answer (the UI keeps its pre-1.7.2 display). */
+    override suspend fun dislikeMode(address: ServerAddress, deviceToken: String): DislikeMode? {
+        val response = call(address, "library/dislikeMode") {
+            http.get("${address.apiBase}/library/dislikeMode") { bearerAuth(deviceToken) }
+        } ?: return null
+        if (response.status != HttpStatusCode.OK) return null
+        return response.decode(DislikeMode.serializer())
+    }
+
+    // ---- Library writes (contract §10.2, since 1.7): the explicit state, local Room only ----
+
+    override suspend fun songLike(address: ServerAddress, deviceToken: String, songId: String, state: TrackLike): WriteResult =
+        write(address, deviceToken, "library/songs/${songId.encodeURLPathPart()}/like", SongLikeAnswer.serializer(),
+            """{"state":"${state.wire}"}""") { WriteResult.SongLike(it.state) }
+
+    override suspend fun albumBookmark(address: ServerAddress, deviceToken: String, albumId: String, bookmarked: Boolean): WriteResult =
+        write(address, deviceToken, "library/albums/${albumId.encodeURLPathPart()}/bookmark", AlbumBookmarkAnswer.serializer(),
+            """{"bookmarked":$bookmarked}""") { WriteResult.AlbumBookmark(it.bookmarked) }
+
+    override suspend fun artistFollow(address: ServerAddress, deviceToken: String, artistId: String, state: ArtistFollow): WriteResult =
+        write(address, deviceToken, "library/artists/${artistId.encodeURLPathPart()}/follow", ArtistFollowAnswer.serializer(),
+            """{"state":"${state.wire}"}""") { WriteResult.ArtistFollow(it.state) }
+
+    override suspend fun playlistPin(address: ServerAddress, deviceToken: String, playlistId: String, pinned: Boolean): WriteResult =
+        write(address, deviceToken, "library/playlists/${playlistId.encodeURLPathPart()}/pin", PlaylistPinAnswer.serializer(),
+            """{"pinned":$pinned}""") { WriteResult.PlaylistPin(it.pinned) }
+
+    override suspend fun albumLike(address: ServerAddress, deviceToken: String, albumId: String, state: AlbumLike): WriteResult =
+        write(address, deviceToken, "library/albums/${albumId.encodeURLPathPart()}/like", AlbumLikeAnswer.serializer(),
+            """{"state":"${state.wire}"}""") { WriteResult.AlbumLike(it.state) }
+
+    override suspend fun playlistBookmark(address: ServerAddress, deviceToken: String, playlistId: String, bookmarked: Boolean): WriteResult =
+        write(address, deviceToken, "library/playlists/${playlistId.encodeURLPathPart()}/bookmark", PlaylistBookmarkAnswer.serializer(),
+            """{"bookmarked":$bookmarked}""") { WriteResult.PlaylistBookmark(it.bookmarked) }
+
+    /**
+     * A §10.2 Bearer `POST`: the `200` body decoded into [WriteResult] by [onAnswer], its errors
+     * decided from the contract `code`. The body is built from fixed wire values: nothing user-provided
+     * travels in it.
+     */
+    private suspend fun <A> write(
+        address: ServerAddress,
+        deviceToken: String,
+        route: String,
+        answer: KSerializer<A>,
+        body: String,
+        onAnswer: (A) -> WriteResult,
+    ): WriteResult {
+        val response = call(address, route.split('/').take(2).joinToString("/")) {
+            http.post("${address.apiBase}/$route") {
+                bearerAuth(deviceToken)
+                contentType(ContentType.Application.Json)
+                setBody(body)
+            }
+        } ?: return WriteResult.Unreachable
+        if (response.status == HttpStatusCode.OK) {
+            return response.decode(answer)?.let(onAnswer) ?: WriteResult.Failed(200, null)
+        }
+        val error = response.errorBody()
+        return when (error?.code) {
+            BridgeErrorCode.NOT_FOUND -> WriteResult.NotFound
+            BridgeErrorCode.DEVICE_REVOKED -> WriteResult.Revoked
+            BridgeErrorCode.CONFLICT_ACTIVE_CLIENT -> WriteResult.OtherActive(error.activeDevice?.deviceName)
+            else -> WriteResult.Failed(response.status.value, error?.code)
         }
     }
 

@@ -2,6 +2,7 @@ package app.n_zik.compagnon.core.network
 
 import app.n_zik.compagnon.bridge.library.Album
 import app.n_zik.compagnon.bridge.library.Artist
+import app.n_zik.compagnon.bridge.library.ArtistFollow
 import app.n_zik.compagnon.bridge.library.CollectionFilter
 import app.n_zik.compagnon.bridge.library.CollectionKind
 import app.n_zik.compagnon.bridge.library.AlbumsQuery
@@ -17,10 +18,12 @@ import app.n_zik.compagnon.bridge.library.SongSort
 import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.library.TopPeriod
 import app.n_zik.compagnon.bridge.state.Track
+import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.bridge.state.TrackSource
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockRequestHandleScope
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.toByteArray
 import io.ktor.client.request.HttpRequestData
 import io.ktor.client.request.HttpResponseData
 import io.ktor.http.HttpHeaders
@@ -54,12 +57,12 @@ class BridgeClientLibraryTest {
         val result = client {
             json(
                 """{"items":[{"id":"dQw4w9WgXcQ","title":"T","artists":null,"durationMs":212000,"source":"weird",
-                   "isDownloaded":false,"isLiked":true,"hasArtwork":true,"extra":1}],"total":230,"offset":100,"limit":100}""",
+                   "isDownloaded":false,"isLiked":true,"like":"liked","hasArtwork":true,"extra":1}],"total":230,"offset":100,"limit":100}""",
             )
         }.songs(address, token, 100, 100, SongsQuery("a b&c", SongFilter.Downloaded, SongSort.PlayTime))
         val page = (result as LibraryResult.Ok).page
         assertEquals(230, page.total)
-        assertEquals(Track("dQw4w9WgXcQ", "T", null, 212_000, TrackSource.Online, false, true, true), page.items.single())
+        assertEquals(Track("dQw4w9WgXcQ", "T", null, 212_000, TrackSource.Online, false, true, TrackLike.Liked, true), page.items.single())
         assertEquals(HttpMethod.Get, request.method)
         assertEquals("/api/v1/library/songs", request.url.encodedPath)
         assertEquals("100", request.url.parameters["offset"])
@@ -178,5 +181,55 @@ class BridgeClientLibraryTest {
         assertEquals(LibraryResult.Failed(500, null), answer("not json", HttpStatusCode.InternalServerError))
         assertEquals(LibraryResult.Failed(200, null), answer("not json", HttpStatusCode.OK))
         assertEquals(LibraryResult.Unreachable, client { throw IOException("refused") }.playlists(address, token, 0, 100, PlaylistsQuery()))
+    }
+
+    // ---- Writes (contract §10.2, since 1.7): the explicit state, answered with the resulting state ----
+
+    @Test
+    fun `the four writes POST the explicit state with the Bearer`() = runTest {
+        val api = client { req ->
+            when {
+                req.url.encodedPath.endsWith("/like") -> json("""{"state":"disliked"}""")
+                req.url.encodedPath.endsWith("/bookmark") -> json("""{"bookmarked":true}""")
+                req.url.encodedPath.endsWith("/follow") -> json("""{"state":"followed"}""")
+                else -> json("""{"pinned":false}""")
+            }
+        }
+        assertEquals(WriteResult.SongLike(TrackLike.Disliked), api.songLike(address, token, "dQw4w9WgXcQ", TrackLike.Disliked))
+        assertEquals(WriteResult.AlbumBookmark(true), api.albumBookmark(address, token, "MPREb_x", true))
+        assertEquals(WriteResult.ArtistFollow(ArtistFollow.Followed), api.artistFollow(address, token, "UC x?#", ArtistFollow.Followed))
+        assertEquals(WriteResult.PlaylistPin(false), api.playlistPin(address, token, "12", false))
+        assertEquals(
+            listOf(
+                "/api/v1/library/songs/dQw4w9WgXcQ/like",
+                "/api/v1/library/albums/MPREb_x/bookmark",
+                "/api/v1/library/artists/UC%20x%3F%23/follow",
+                "/api/v1/library/playlists/12/pin",
+            ),
+            requests.map { it.url.encodedPath },
+        )
+        assertEquals(listOf(HttpMethod.Post, HttpMethod.Post, HttpMethod.Post, HttpMethod.Post), requests.map { it.method })
+        // The explicit target state travels in the body: the client never sends a toggle
+        assertEquals(
+            listOf("""{"state":"disliked"}""", """{"bookmarked":true}""", """{"state":"followed"}""", """{"pinned":false}"""),
+            requests.map { String(it.body.toByteArray(), Charsets.UTF_8) },
+        )
+        assertEquals(List(4) { "Bearer $token" }, requests.map { it.headers[HttpHeaders.Authorization] })
+    }
+
+    @Test
+    fun `write errors are mapped from the code`() = runTest {
+        suspend fun answer(body: String, status: HttpStatusCode): WriteResult =
+            client { json(body, status) }.songLike(address, token, "dQw4w9WgXcQ", TrackLike.Liked)
+
+        assertEquals(WriteResult.NotFound, answer("""{"code":"NOT_FOUND","message":"x"}""", HttpStatusCode.NotFound))
+        assertEquals(WriteResult.Revoked, answer("""{"code":"DEVICE_REVOKED","message":"x"}""", HttpStatusCode.Unauthorized))
+        assertEquals(
+            WriteResult.OtherActive("PC-BUREAU"),
+            answer("""{"code":"CONFLICT_ACTIVE_CLIENT","message":"x","activeDevice":{"deviceId":"d","deviceName":"PC-BUREAU"}}""", HttpStatusCode.Conflict),
+        )
+        assertEquals(WriteResult.Failed(400, "BAD_REQUEST"), answer("""{"code":"BAD_REQUEST","message":"x"}""", HttpStatusCode.BadRequest))
+        assertEquals(WriteResult.Failed(200, null), answer("not json", HttpStatusCode.OK))
+        assertEquals(WriteResult.Unreachable, client { throw IOException("refused") }.albumBookmark(address, token, "MPREb_x", true))
     }
 }

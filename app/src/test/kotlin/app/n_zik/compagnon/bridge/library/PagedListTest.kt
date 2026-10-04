@@ -197,6 +197,28 @@ class PagedListTest {
     }
 
     @Test
+    fun `patchItems rewrites the loaded items and shrinks the total by the dropped ones`() = runTest {
+        val paged = list()
+        paged.loadMore()
+        runCurrent()
+        assertEquals(100, paged.state.value.items.size)
+        assertEquals(230, paged.state.value.total)
+
+        // Rewrites every item, drops the ":1" one (the §10.2 optimistic update, since 1.7)
+        paged.patchItems { item -> if (item == ":1") null else item.uppercase() }
+        assertEquals(99, paged.state.value.items.size)
+        assertEquals(229, paged.state.value.total)
+        assertTrue(paged.state.value.items.none { it == ":1" })
+        assertTrue(paged.state.value.items.all { it == it.uppercase() })
+
+        // A patch on an empty list is a no-op
+        val empty = list(total = 0)
+        empty.patchItems { null }
+        assertNull(empty.state.value.total)
+        assertTrue(empty.state.value.items.isEmpty())
+    }
+
+    @Test
     fun `songs query text is trimmed and bounded`() {
         assertNull(SongsQuery.normalizeText("   "))
         assertEquals("abc", SongsQuery.normalizeText("  abc "))

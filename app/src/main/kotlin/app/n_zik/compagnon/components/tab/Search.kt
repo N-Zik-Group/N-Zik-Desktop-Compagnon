@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -63,6 +64,7 @@ class Search private constructor(
     visibleState: MutableState<Boolean>,
     focusState: MutableState<Boolean>,
     private val lazyListState: LazyListState?,
+    private val lazyGridState: LazyGridState?,
 ) : MenuIcon {
 
     companion object {
@@ -73,6 +75,18 @@ class Search private constructor(
             remember { mutableStateOf(inputText.isNotEmpty()) },
             remember { mutableStateOf(false) },
             lazyListState,
+            null,
+        )
+
+        /** The grid variant (the phone's `Search(lazyGridState)`, its `HomeLibrary.kt` 243). */
+        @Composable
+        operator fun invoke(inputText: String, onInput: (String) -> Unit, lazyGridState: LazyGridState? = null) = Search(
+            inputText,
+            onInput,
+            remember { mutableStateOf(inputText.isNotEmpty()) },
+            remember { mutableStateOf(false) },
+            null,
+            lazyGridState,
         )
     }
 
@@ -119,6 +133,7 @@ class Search private constructor(
                 return@LaunchedEffect
             }
             lazyListState?.scrollToItem(0, 0)
+            lazyGridState?.scrollToItem(0, 0)
         }
         // [TextFieldValue] keeps the cursor where the user put it
         var input by remember { mutableStateOf(TextFieldValue(inputText, TextRange(inputText.length))) }

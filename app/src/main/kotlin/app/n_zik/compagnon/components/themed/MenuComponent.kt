@@ -5,7 +5,13 @@ import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.MenuState
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.generated.resources.Res
+import app.n_zik.compagnon.generated.resources.add_to_favorites
+import app.n_zik.compagnon.generated.resources.bookmark
+import app.n_zik.compagnon.generated.resources.bookmark_outline
 import app.n_zik.compagnon.generated.resources.enqueue
+import app.n_zik.compagnon.generated.resources.heart
+import app.n_zik.compagnon.generated.resources.info_pin_unpin_playlist
+import app.n_zik.compagnon.generated.resources.pin_filled
 import app.n_zik.compagnon.generated.resources.play_next
 import app.n_zik.compagnon.generated.resources.play_skip_forward
 import app.n_zik.compagnon.generated.resources.remove_from_queue
@@ -49,6 +55,76 @@ fun Enqueue(
     override val menuIconTitle: String
         @Composable
         get() = stringResource(Res.string.enqueue)
+
+    override fun onShortClick() {
+        onClick()
+        menuState.hide()
+    }
+}
+
+/**
+ * "Add to favorites" (contract §10.2, since 1.7): the phone's `LikeComponent` — an explicit like
+ * (`state = liked`), not a rotation; it keeps the phone's label and heart icon.
+ */
+@Composable
+fun AddToFavorites(
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+): MenuIcon = object : MenuIcon {
+
+    val menuState: MenuState = LocalMenuState.current
+    override val iconId: DrawableResource = Res.drawable.heart
+    override val isEnabled: Boolean = enabled
+    override val menuIconTitle: String
+        @Composable
+        get() = stringResource(Res.string.add_to_favorites)
+
+    override fun onShortClick() {
+        onClick()
+        menuState.hide()
+    }
+}
+
+/**
+ * "Bookmark" (the phone's `Bookmark`, its `MenuComponent.kt` 112): `bookmark` in its state,
+ * `bookmark_outline` otherwise; the PC shows it in a local playlist's header (the phone's right column),
+ * and the toggle is the 1.7.2 write `POST /library/playlists/{id}/bookmark`.
+ */
+@Composable
+fun Bookmark(
+    isBookmarked: Boolean,
+    onClick: () -> Unit,
+): MenuIcon = object : MenuIcon {
+
+    val menuState: MenuState = LocalMenuState.current
+    override val iconId: DrawableResource = if (isBookmarked) Res.drawable.bookmark else Res.drawable.bookmark_outline
+    override val menuIconTitle: String
+        @Composable
+        get() = stringResource(Res.string.bookmark)
+
+    override fun onShortClick() {
+        onClick()
+        menuState.hide()
+    }
+}
+
+/**
+ * "Pin/Unpin playlist" (contract §10.2, since 1.7): the phone's `PinPlaylist` (its
+ * `components/playlist/PinPlaylist.kt`, the `pinned:` name prefix) — a binary toggle; the PC shows it in
+ * the playlist's item menu (the phone's toolbar) and keeps its label and pin icon.
+ */
+@Composable
+fun PinPlaylist(
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+): MenuIcon = object : MenuIcon {
+
+    val menuState: MenuState = LocalMenuState.current
+    override val iconId: DrawableResource = Res.drawable.pin_filled
+    override val isEnabled: Boolean = enabled
+    override val menuIconTitle: String
+        @Composable
+        get() = stringResource(Res.string.info_pin_unpin_playlist)
 
     override fun onShortClick() {
         onClick()

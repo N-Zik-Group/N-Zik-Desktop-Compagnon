@@ -4,17 +4,25 @@ import androidx.compose.ui.graphics.ImageBitmap
 import app.n_zik.compagnon.bridge.ConnectionState
 import app.n_zik.compagnon.bridge.command.PlayWindow
 import app.n_zik.compagnon.bridge.library.Album
+import app.n_zik.compagnon.bridge.library.AlbumLike
 import app.n_zik.compagnon.bridge.library.Artist
+import app.n_zik.compagnon.bridge.library.ArtistFollow
 import app.n_zik.compagnon.bridge.library.CollectionFilter
 import app.n_zik.compagnon.bridge.library.CollectionKind
 import app.n_zik.compagnon.bridge.library.CollectionRef
+import app.n_zik.compagnon.bridge.library.DislikeMode
+import app.n_zik.compagnon.bridge.library.LibraryCache
 import app.n_zik.compagnon.bridge.library.LibraryRepository
 import app.n_zik.compagnon.bridge.library.AlbumsQuery
 import app.n_zik.compagnon.bridge.library.ArtistsQuery
 import app.n_zik.compagnon.bridge.library.Page
+import app.n_zik.compagnon.bridge.library.PagedList
+import app.n_zik.compagnon.bridge.library.PagedState
 import app.n_zik.compagnon.bridge.library.Playlist
 import app.n_zik.compagnon.bridge.library.PlaylistSongsQuery
 import app.n_zik.compagnon.bridge.library.PlaylistsQuery
+import app.n_zik.compagnon.bridge.library.RewindState
+import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.state.PlayerNotice
 import app.n_zik.compagnon.bridge.state.PlayerRepository
@@ -23,8 +31,10 @@ import app.n_zik.compagnon.bridge.state.AudioOutput
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.RepeatMode
 import app.n_zik.compagnon.bridge.state.Track
+import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.core.network.LibraryResult
+import app.n_zik.compagnon.core.network.WriteResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,7 +46,9 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class LibraryActionsTest {
@@ -83,7 +95,8 @@ class LibraryActionsTest {
     /** A collection of [size] tracks "t0", "t1"…, served by pages; or always [failure] when set. */
     private class FakeLibrary(private val size: Int, private val failure: LibraryResult<Track>? = null) : LibraryRepository {
         override val features: Set<String> = setOf("library.albums")
-        override suspend fun songs(offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track> = error("unused")
+        override suspend fun songs(offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track> =
+            failure ?: LibraryResult.Ok(Page((offset until minOf(offset + limit, size)).map { Track("t$it") }, size, offset, limit))
         override suspend fun playlists(offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist> = error("unused")
         override suspend fun albums(offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album> = error("unused")
         override suspend fun artists(offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist> = error("unused")
@@ -94,6 +107,51 @@ class LibraryActionsTest {
             query: PlaylistSongsQuery?,
         ): LibraryResult<Track> =
             failure ?: LibraryResult.Ok(Page((offset until minOf(offset + limit, size)).map { Track("t$it") }, size, offset, limit))
+
+        // §10.2 writes (since 1.7): the requested state is recorded, the answer is configurable
+        val songLikes = mutableListOf<Pair<String, TrackLike>>()
+        var songLikeAnswer: WriteResult = WriteResult.SongLike(TrackLike.Liked)
+        override suspend fun songLike(songId: String, state: TrackLike): WriteResult {
+            songLikes += songId to state
+            return songLikeAnswer
+        }
+
+        val albumBookmarks = mutableListOf<Pair<String, Boolean>>()
+        override suspend fun albumBookmark(albumId: String, bookmarked: Boolean): WriteResult {
+            albumBookmarks += albumId to bookmarked
+            return WriteResult.AlbumBookmark(bookmarked)
+        }
+
+        val artistFollows = mutableListOf<Pair<String, ArtistFollow>>()
+        override suspend fun artistFollow(artistId: String, state: ArtistFollow): WriteResult {
+            artistFollows += artistId to state
+            return WriteResult.ArtistFollow(state)
+        }
+
+        val playlistPins = mutableListOf<Pair<String, Boolean>>()
+        override suspend fun playlistPin(playlistId: String, pinned: Boolean): WriteResult {
+            playlistPins += playlistId to pinned
+            return WriteResult.PlaylistPin(pinned)
+        }
+
+        val albumLikes = mutableListOf<Pair<String, AlbumLike>>()
+        override suspend fun albumLike(albumId: String, state: AlbumLike): WriteResult {
+            albumLikes += albumId to state
+            return WriteResult.AlbumLike(state)
+        }
+
+        val playlistBookmarks = mutableListOf<Pair<String, Boolean>>()
+        override suspend fun playlistBookmark(playlistId: String, bookmarked: Boolean): WriteResult {
+            playlistBookmarks += playlistId to bookmarked
+            return WriteResult.PlaylistBookmark(bookmarked)
+        }
+
+        // §10 (since 1.7.1): the cache bar is not exercised by these actions
+        override suspend fun cacheSpace(): LibraryCache? = null
+
+        // §10 (since 1.7.2): the rewind / "disliked" mode reads are not exercised by these actions
+        override suspend fun rewindState(): RewindState? = null
+        override suspend fun dislikeMode(): DislikeMode? = null
     }
 
     private val album = CollectionRef(CollectionKind.Album, "MPREb_x")
@@ -137,7 +195,7 @@ class LibraryActionsTest {
         val player = FakePlayer()
         val actions = LibraryActions(player, FakeLibrary(0), this) {}
         val tracks = listOf(Track("a"), Track("b"))
-        val menu = actions.trackActions({ tracks }, 1, "b", live = true)!!
+        val menu = actions.trackActions(MutableStateFlow(PagedState(items = tracks)), 1, "b", live = true)!!
         menu.onPlayNext()
         menu.onEnqueue()
         advanceUntilIdle()
@@ -148,10 +206,10 @@ class LibraryActionsTest {
     fun `a track menu sends nothing once the list changed under it`() = runTest {
         val player = FakePlayer()
         val actions = LibraryActions(player, FakeLibrary(0), this) {}
-        var tracks = listOf(Track("a"), Track("b"))
-        val menu = actions.trackActions({ tracks }, 1, "b", live = true)!!
+        val tracks = MutableStateFlow(PagedState(items = listOf(Track("a"), Track("b"))))
+        val menu = actions.trackActions(tracks, 1, "b", live = true)!!
         // A reload put another track at index 1
-        tracks = listOf(Track("a"), Track("x"))
+        tracks.value = PagedState(items = listOf(Track("a"), Track("x")))
         menu.onPlay()
         menu.onPlayNext()
         menu.onEnqueue()
@@ -163,7 +221,7 @@ class LibraryActionsTest {
     fun `without the queue feature there is no menu`() = runTest {
         val actions = LibraryActions(FakePlayer(features = setOf("playback")), FakeLibrary(12), this) {}
         assertNull(actions.collectionActions(album, live = true))
-        assertNull(actions.trackActions({ emptyList() }, 0, "a", live = true))
+        assertNull(actions.trackActions(MutableStateFlow(PagedState(items = emptyList())), 0, "a", live = true))
     }
 
     @Test
@@ -251,5 +309,124 @@ class LibraryActionsTest {
         assertEquals(Sent.Add(List(3) { "t$it" }, QueuePosition.Next, 3), player.sent[1])
         assertEquals(2, player.sent.size)
         assertEquals(1, messages.size)
+    }
+
+    // ---- §10.2 writes (since 1.7): the explicit state, the confirmed `200` patches the lists ----
+
+    @Test
+    fun `a confirmed dislike on the All chip drops the row from the list`() = runTest {
+        val fake = FakeLibrary(12)
+        fake.songLikeAnswer = WriteResult.SongLike(TrackLike.Disliked)
+        val lists = LibraryLists(fake, this)
+        val actions = LibraryActions(FakePlayer(), fake, this, lists = lists) {}
+        lists.songs.loadMore()
+        advanceUntilIdle()
+
+        // The phone's home tabs hide their disliked rows in every chip but the Disliked one
+        actions.likeSong("t5", TrackLike.Disliked)
+        advanceUntilIdle()
+        assertEquals(listOf("t5" to TrackLike.Disliked), fake.songLikes)
+        assertEquals(11, lists.songs.state.value.items.size)
+        assertEquals(11, lists.songs.state.value.total)
+        assertTrue(lists.songs.state.value.items.none { it.id == "t5" })
+    }
+
+    @Test
+    fun `the Disliked chip keeps its row, flipping the state to red`() = runTest {
+        val fake = FakeLibrary(12)
+        fake.songLikeAnswer = WriteResult.SongLike(TrackLike.Disliked)
+        val lists = LibraryLists(fake, this)
+        val actions = LibraryActions(FakePlayer(), fake, this, lists = lists) {}
+        lists.songs.setQuery(SongsQuery(filter = SongFilter.Disliked))
+        lists.songs.loadMore()
+        advanceUntilIdle()
+
+        actions.likeSong("t5", TrackLike.Disliked)
+        advanceUntilIdle()
+        val disliked = lists.songs.state.value.items.first { it.id == "t5" }
+        assertEquals(TrackLike.Disliked, disliked.like)
+        assertFalse(disliked.isLiked)
+        assertEquals(12, lists.songs.state.value.items.size)
+    }
+
+    @Test
+    fun `a confirmed like write drops the row from the membership chip its state no longer matches`() = runTest {
+        val fake = FakeLibrary(12)
+        fake.songLikeAnswer = WriteResult.SongLike(TrackLike.Disliked)
+        val lists = LibraryLists(fake, this)
+        val actions = LibraryActions(FakePlayer(), fake, this, lists = lists) {}
+        lists.songs.setQuery(SongsQuery(filter = SongFilter.Liked))
+        lists.songs.loadMore()
+        advanceUntilIdle()
+
+        actions.likeSong("t5", TrackLike.Disliked)
+        advanceUntilIdle()
+        assertEquals(11, lists.songs.state.value.items.size)
+        assertEquals(11, lists.songs.state.value.total)
+        assertTrue(lists.songs.state.value.items.none { it.id == "t5" })
+    }
+
+    @Test
+    fun `a registered detail list keeps its rows, flipping the state`() = runTest {
+        val fake = FakeLibrary(12)
+        fake.songLikeAnswer = WriteResult.SongLike(TrackLike.Disliked)
+        val lists = LibraryLists(fake, this)
+        val actions = LibraryActions(FakePlayer(), fake, this, lists = lists) {}
+        // A detail screen's track list, registered as rememberCollectionSongs does
+        val detail = PagedList(Unit, this) { _, offset, limit ->
+            fake.collectionSongs(album, offset, limit, null)
+        }
+        lists.registerTrackList(detail)
+        detail.loadMore()
+        advanceUntilIdle()
+
+        actions.likeSong("t5", TrackLike.Disliked)
+        advanceUntilIdle()
+        // The phone's detail screens keep their disliked rows (only the flag flips, in red)
+        val row = detail.state.value.items.first { it.id == "t5" }
+        assertEquals(TrackLike.Disliked, row.like)
+        assertEquals(12, detail.state.value.items.size)
+        assertEquals(12, detail.state.value.total)
+    }
+
+    @Test
+    fun `a confirmed bookmark, follow and pin write sends its target state`() = runTest {
+        val fake = FakeLibrary(12)
+        val lists = LibraryLists(fake, this)
+        val actions = LibraryActions(FakePlayer(), fake, this, lists = lists) {}
+
+        actions.bookmarkAlbum("MPREb_x", true)
+        actions.followArtist("UC1", ArtistFollow.Followed)
+        actions.pinPlaylist("7", true)
+        advanceUntilIdle()
+        assertEquals(listOf("MPREb_x" to true), fake.albumBookmarks)
+        assertEquals(listOf("UC1" to ArtistFollow.Followed), fake.artistFollows)
+        assertEquals(listOf("7" to true), fake.playlistPins)
+    }
+
+    @Test
+    fun `write failures say so and leave the list untouched`() = runTest {
+        val failures = listOf(
+            WriteResult.NotFound,
+            WriteResult.Unreachable,
+            WriteResult.OtherActive("PC-2"),
+            WriteResult.Failed(503, "SERVER_STOPPING"),
+        )
+        for (failure in failures) {
+            val fake = FakeLibrary(12)
+            fake.songLikeAnswer = failure
+            val lists = LibraryLists(fake, this)
+            val messages = mutableListOf<String>()
+            val actions = LibraryActions(FakePlayer(), fake, this, lists = lists) { messages += it }
+            lists.songs.loadMore()
+            advanceUntilIdle()
+
+            actions.likeSong("t5", TrackLike.Liked)
+            advanceUntilIdle()
+            awaitMessages(messages)
+            assertEquals(12, lists.songs.state.value.items.size, "$failure")
+            assertEquals(1, messages.size, "$failure")
+            messages.clear()
+        }
     }
 }

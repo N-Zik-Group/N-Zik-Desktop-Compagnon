@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
+import app.n_zik.compagnon.components.ui.toggles.Switch
 import app.n_zik.compagnon.utils.semiBold
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -121,7 +121,7 @@ fun ToggleSettingsEntry(
                     }
                 }
 
-                // Switch, themed like the phone's
+                // The phone's themed switch (the phone's `OtherSwitchSettingEntry`)
                 Switch(
                     checked = isChecked,
                     onCheckedChange = onCheckedChange,

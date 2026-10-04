@@ -90,7 +90,7 @@ object Toaster {
     }
 
     private fun toast(messageId: StringResource, type: Type, duration: Long, vararg formatArgs: Any) {
-        scope.launch { toast(getString(messageId, *formatArgs), type, duration) }
+        scope.launch { toast(formatMessage(messageId, *formatArgs), type, duration) }
     }
 
     fun n(message: String, duration: Long = LENGTH_SHORT) = toast(message, Type.NORMAL, duration)
@@ -178,3 +178,18 @@ object Toaster {
 
     private const val CONDENSED_FAMILY = "Roboto Condensed"
 }
+
+/**
+ * Applies the format arguments of a desktop message, as the phone's own `Resources.getString(id, args)`
+ * does. This compose version applies them in neither its non-composable `getString` nor its composable
+ * `stringResource` (both return the raw message, its `%s` / `%d` staying visible), so they are applied
+ * at the call site. An argument that does not match (wrong count / type) leaves the raw message, which
+ * is what the phone's own `String.format` would not do either — a visible, unformatted line is safer
+ * than a crash.
+ */
+internal fun formatText(message: String, vararg formatArgs: Any): String =
+    if (formatArgs.isEmpty()) message else runCatching { String.format(message, *formatArgs) }.getOrDefault(message)
+
+/** The [formatText] over the non-composable [getString] (the call sites are all suspend). */
+internal suspend fun formatMessage(messageId: StringResource, vararg formatArgs: Any): String =
+    formatText(getString(messageId), *formatArgs)

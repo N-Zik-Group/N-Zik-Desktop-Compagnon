@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ripple
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,20 +29,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalPlayerRepository
 import app.n_zik.compagnon.bridge.state.Track
+import app.n_zik.compagnon.bridge.state.TrackDownloadState
+import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.bridge.state.TrackSource
+import app.n_zik.compagnon.bridge.state.displayedLike
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.theme.favoritesOverlay
+import app.n_zik.compagnon.components.theme.onOverlay
+import app.n_zik.compagnon.components.theme.overlay
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.utils.center
+import app.n_zik.compagnon.utils.color
 import app.n_zik.compagnon.utils.medium
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.thumbnailShape
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.components.themed.HeaderIconButton
 import app.n_zik.compagnon.components.themed.IconButton
@@ -49,9 +61,11 @@ import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.download
+import app.n_zik.compagnon.generated.resources.download_progress
 import app.n_zik.compagnon.generated.resources.downloaded
 import app.n_zik.compagnon.generated.resources.explicit
 import app.n_zik.compagnon.generated.resources.heart
+import app.n_zik.compagnon.generated.resources.heart_dislike
 import app.n_zik.compagnon.generated.resources.unknown_artist
 import app.n_zik.compagnon.generated.resources.unknown_title
 import app.n_zik.compagnon.utils.LocalPreferences
@@ -125,14 +139,18 @@ fun SongText(
 /**
  * Port of `SongItem` (phone's `app/n_zik/android/components/SongItem.kt` 186).
  *
- * Kept: the 54 dp thumbnail, the now-playing animation and highlight, the 12 dp "liked" heart at
- * -8 dp bottom-left, title / artists with marquee, the duration or `--:--`, the download icon of an online
- * track (filled when the phone has it offline), the 18 dp explicit [SongIndicator] before the title (accent,
- * `Track.isExplicit` of contract 1.3), followed by its 6 dp spacer.
- * Dropped (contract v1 or PC): the disliked heart (`Track.isLiked` is a boolean), the download action and
- * its progress ring (no download in v1: the icon is information only), the "recommended" and "in a
- * playlist" indicators (not exposed by the contract), the multi-selection checkbox, the
- * haptic feedback. [onLongClick] opens the item's menu (a right click too, desktop stand-in for the long press).
+ * Kept: the 54 dp thumbnail, the now-playing animation and highlight, the 12 dp heart at -8 dp
+ * bottom-left — the like state since contract 1.7: `heart` in `favoritesIcon` when liked, the
+ * phone's `heart_dislike` in red when disliked, nothing when neutral (the phone's row heart is a
+ * two-state indicator) —, title /
+ * artists with marquee, the duration or `--:--`, the download state of an online track since 1.7.1
+ * (`downloaded` in `text`, `download` in `textDisabled`, the phone's `download_progress` while queued,
+ * the phone's 18 dp wavy ring with its progress while downloading), the 18 dp explicit [SongIndicator]
+ * before the title (accent, `Track.isExplicit` of contract 1.3), followed by its 6 dp spacer.
+ * Dropped (contract v1 or PC): the download action (no download in the PC: the icon is information
+ * only), the "recommended" and "in a playlist" indicators (not exposed by the contract), the
+ * multi-selection checkbox, the haptic feedback. [onLongClick] opens the item's menu (a right click
+ * too, desktop stand-in for the long press).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -179,9 +197,12 @@ fun SongItem(
             Modifier.size(Dimensions.thumbnails.song),
         ) {
             if (showThumbnail) {
+                // The phone's `isCustomImage` (its `SongItem.kt` 251-257): the local custom artworks
+                // (`file://`, `app_covers`, `modified:`) are shown with Crop, every other artwork
+                // with FillHeight
                 ImageCacheFactory.Thumbnail(
                     key = if (song.hasArtwork) ArtworkKey.track(song.id, SONG_THUMBNAIL_SIZE_PX) else null,
-                    contentScale = ContentScale.FillHeight,
+                    contentScale = if (song.isCustomArtwork) ContentScale.Crop else ContentScale.FillHeight,
                 )
             }
 
@@ -191,12 +212,16 @@ fun SongItem(
 
             thumbnailOverlay()
 
-            // Only the liked state exists in contract v1
-            if (song.isLiked) {
+            // The like tri-state (contract 1.7): a liked heart in `favoritesIcon`, the phone's
+            // `heart_dislike` in red for a disliked song, nothing for neutral (the phone's other heart
+            // styles are dropped — the contract carries no style). The row's heart is an indicator
+            // only (as on the phone): the action lives in the menu and the player.
+            val like = song.displayedLike
+            if (like != TrackLike.Neutral) {
                 HeaderIconButton(
                     onClick = {},
-                    icon = Res.drawable.heart,
-                    color = colorPalette().favoritesIcon,
+                    icon = if (like == TrackLike.Disliked) Res.drawable.heart_dislike else Res.drawable.heart,
+                    color = if (like == TrackLike.Disliked) colorPalette().red else colorPalette().favoritesIcon,
                     iconSize = 12.dp,
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -246,20 +271,96 @@ fun SongItem(
 
                 Spacer(Modifier.padding(horizontal = 4.dp))
 
-                // Download icon when the song is NOT local: information only (no download in v1)
+                // Download icon when the song is NOT local, with the phone's active download state
+                // (contract 1.7.1, phone's `SongItem.kt` 370-434): information only (no download in v1)
                 if (song.source != TrackSource.Local) {
-                    val color = if (song.isDownloaded) colorPalette().text else colorPalette().textDisabled
-                    IconButton(
-                        icon = if (song.isDownloaded) Res.drawable.downloaded else Res.drawable.download,
-                        color = color,
-                        enabled = false,
-                        modifier = Modifier.size(20.dp),
-                        onClick = {},
-                    )
+                    // The phone's `DownloadedStateMedia` color: `text` once cached or downloaded, `textDisabled` otherwise
+                    val color = if (song.isDownloaded || song.isCached) colorPalette().text else colorPalette().textDisabled
+                    when (song.downloadState) {
+                        // The phone's wavy progress ring (18 dp, stroke 2 dp), the progress once it advances
+                        TrackDownloadState.Downloading -> {
+                            val progress = song.downloadProgress
+                            Box(
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clip(uiRoundnessShape()),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                if (progress != null && progress > 0.01f) {
+                                    CircularWavyProgressIndicator(
+                                        progress = { progress },
+                                        color = colorPalette().accent,
+                                        trackColor = colorPalette().textDisabled,
+                                        modifier = Modifier.size(18.dp),
+                                        stroke = Stroke(width = with(LocalDensity.current) { 2.dp.toPx() }),
+                                        trackStroke = Stroke(width = with(LocalDensity.current) { 2.dp.toPx() }),
+                                    )
+                                } else {
+                                    CircularWavyProgressIndicator(
+                                        color = colorPalette().accent,
+                                        trackColor = colorPalette().textDisabled,
+                                        modifier = Modifier.size(18.dp),
+                                        stroke = Stroke(width = with(LocalDensity.current) { 2.dp.toPx() }),
+                                        trackStroke = Stroke(width = with(LocalDensity.current) { 2.dp.toPx() }),
+                                    )
+                                }
+                            }
+                        }
+                        // The phone's `download_progress` icon, while the download is queued or restarting
+                        TrackDownloadState.Queued ->
+                            IconButton(
+                                icon = Res.drawable.download_progress,
+                                color = color,
+                                enabled = false,
+                                modifier = Modifier.size(20.dp),
+                                onClick = {},
+                            )
+                        TrackDownloadState.None ->
+                            IconButton(
+                                icon = if (song.isDownloaded) Res.drawable.downloaded else Res.drawable.download,
+                                color = color,
+                                enabled = false,
+                                modifier = Modifier.size(20.dp),
+                                onClick = {},
+                            )
+                    }
                 }
             }
         }
 
         trailingContent?.invoke(this)
+    }
+}
+
+/**
+ * The phone's song-row overlay of the listening sorts (phone's `HomeSongs.kt` 600-632 and
+ * `LocalPlaylistSongs.kt` 1524-1551, since 1.7.1): [text] at the bottom center in `xxs` — the play
+ * count of the `PlayCount` sort, the total play time of the `PlayTime` / `RelativePlayTime` sorts —
+ * or the phone's [rank] of the Top chip, in `m` at the center; over the thumbnail, in the phone's
+ * overlay. Neither given: no overlay.
+ */
+@Composable
+fun songSortOverlay(text: String?, rank: Int?) {
+    if (text == null && rank == null) return
+    // [text] is non-null when [rank] is null (early return above); `orEmpty` only makes that explicit
+    val content: String = rank?.toString() ?: text.orEmpty()
+    val style = if (rank != null) typography().m.semiBold.center else typography().xxs.semiBold.center
+    val alignment = if (rank != null) Alignment.Center else Alignment.BottomCenter
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clip(thumbnailShape())
+            .background(colorPalette().overlay),
+    ) {
+        BasicText(
+            text = content,
+            style = style.color(colorPalette().onOverlay),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .align(alignment),
+        )
     }
 }

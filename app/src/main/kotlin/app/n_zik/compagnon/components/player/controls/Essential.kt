@@ -3,6 +3,7 @@ package app.n_zik.compagnon.components.player.controls
 import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.generated.resources.heart_outline
 import app.n_zik.compagnon.generated.resources.heart
+import app.n_zik.compagnon.generated.resources.heart_dislike
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloatAsState
@@ -23,6 +24,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +43,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalCommandLauncher
+import app.n_zik.compagnon.LocalLibraryActions
+import app.n_zik.compagnon.bridge.library.DislikeMode
 import app.n_zik.compagnon.bridge.state.RepeatMode
+import app.n_zik.compagnon.bridge.state.Track
+import app.n_zik.compagnon.bridge.state.TrackLike
+import app.n_zik.compagnon.bridge.state.displayedLike
+import app.n_zik.compagnon.bridge.state.nextRotation
+import app.n_zik.compagnon.bridge.state.nextToggle
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.player.bounceClick
 import app.n_zik.compagnon.components.player.monochromeControlsColor
@@ -51,15 +60,21 @@ import app.n_zik.compagnon.enums.PlayerPlayButtonType
 import app.n_zik.compagnon.enums.QueueLoopType
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.a13shape
+import app.n_zik.compagnon.generated.resources.added_to_dislikes
+import app.n_zik.compagnon.generated.resources.added_to_favorites
 import app.n_zik.compagnon.generated.resources.cd_background_image
 import app.n_zik.compagnon.generated.resources.pause
 import app.n_zik.compagnon.generated.resources.play
 import app.n_zik.compagnon.generated.resources.play_skip_back
 import app.n_zik.compagnon.generated.resources.play_skip_forward
+import app.n_zik.compagnon.generated.resources.removed_from_dislikes
+import app.n_zik.compagnon.generated.resources.removed_from_favorites
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
+import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.onSecondaryClick
 import app.n_zik.compagnon.utils.semiBold
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -72,7 +87,10 @@ import org.jetbrains.compose.resources.stringResource
  * long press (a right click too) opening [onShowSpeedPlayerDialog], the speed shown in the button when it is not
  * 1.0x, next, the repeat button (`off` → `one` → `all`, `player/repeat`).
  * The 26 dp like button comes first (phone's 442-470: `heart` in `favoritesIcon` when the track is liked,
- * `heart_outline` otherwise); contract v1 has no like route, so it is shown without action.
+ * `heart_outline` otherwise). Since contract 1.7 it shows the tri-state — the phone's `heart_dislike` in
+ * red when disliked — and writes the phone's rotation (`library.write`): without the feature it stays an
+ * inert indicator, as in contract v1. Since 1.7.2 (`library.dislikeMode`): the phone's "disliked" mode off
+ * makes the tap a binary toggle, as its own player button does, with the phone's toast of the result.
  * The buffering ring (contract 1.4: `isBuffering`) replaces the play / pause icon while the phone buffers
  * (phone's 567-576: `CircularWavyProgressIndicator` in accent over the text track, 30 dp, stroke 4 dp).
  * Dropped: the rotation effect (off by default), the Listen Together lock. The play / pause icon keeps full
@@ -87,7 +105,7 @@ fun ControlsEssential(
     playbackSpeed: Float,
     shouldBePlaying: Boolean,
     isBuffering: Boolean,
-    isLiked: Boolean,
+    mediaItem: Track?,
     repeatMode: RepeatMode,
     playerPlayButtonType: PlayerPlayButtonType,
     isGradientBackgroundEnabled: Boolean,
@@ -114,11 +132,47 @@ fun ControlsEssential(
 
     val queueLoopType = QueueLoopType.from(repeatMode)
 
+    // The like button (contract 1.7): the phone's tri-state indicator (`heart_outline` in text, `heart`
+    // in `favoritesIcon`, the phone's `heart_dislike` in red), and the phone's rotation when the phone
+    // has `library.write` (otherwise an inert indicator, as in contract v1). Since 1.7.2 (feature
+    // `library.dislikeMode`): the phone's "disliked" mode off makes the tap a binary toggle, as its own
+    // player button does (its `YouTubeSync.kt` 51-58, the rotation's or the toggle's toast with it)
+    val like = mediaItem?.displayedLike ?: TrackLike.Neutral
+    val likeWrites = LocalLibraryActions.current?.takeIf { it.canWrite }
+    val dislikeMode by (LocalLibraryActions.current?.lists?.dislikeMode
+        ?: remember { MutableStateFlow<DislikeMode?>(null) }).collectAsState()
+    val rotationEnabled = dislikeMode?.songs != false
     Box {
         IconButton(
-            color = colorPalette().favoritesIcon,
-            icon = if (isLiked) Res.drawable.heart else Res.drawable.heart_outline,
-            onClick = {},
+            color = if (like == TrackLike.Disliked) colorPalette().red else colorPalette().favoritesIcon,
+            icon = when (like) {
+                TrackLike.Neutral -> Res.drawable.heart_outline
+                TrackLike.Disliked -> Res.drawable.heart_dislike
+                TrackLike.Liked -> Res.drawable.heart
+            },
+            onClick = {
+                if (enabled) mediaItem?.let { mediaItem ->
+                    val next = if (rotationEnabled) like.nextRotation() else like.nextToggle()
+                    likeWrites?.likeSong(mediaItem.id, next)
+                    // The phone's toast of the resulting state (its `YouTubeSync.kt` 106-116, 174-183)
+                    val messageId = when {
+                        rotationEnabled -> when (next) {
+                            TrackLike.Liked -> Res.string.added_to_favorites
+                            TrackLike.Disliked -> Res.string.added_to_dislikes
+                            TrackLike.Neutral -> Res.string.removed_from_dislikes
+                        }
+                        next == TrackLike.Liked -> Res.string.added_to_favorites
+                        else -> Res.string.removed_from_favorites
+                    }
+                    if (mediaItem.title.isNotBlank()) {
+                        val label = mediaItem.artists?.takeIf { it.isNotBlank() }
+                            ?.let { "\"${mediaItem.title} - $it\"" } ?: "\"${mediaItem.title}\""
+                        Toaster.s(messageId, label)
+                    } else {
+                        Toaster.s(messageId)
+                    }
+                }
+            },
             modifier = Modifier
                 .size(26.dp),
         )

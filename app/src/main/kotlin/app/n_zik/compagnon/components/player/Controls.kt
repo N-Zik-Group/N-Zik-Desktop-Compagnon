@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,9 @@ import app.n_zik.compagnon.components.player.controls.InfoAlbumAndArtistModern
 import app.n_zik.compagnon.components.theme.ColorPalette
 import app.n_zik.compagnon.utils.GetControls
 import app.n_zik.compagnon.utils.GetSeekBar
+import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.UserSettings
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Port of `Controls` (phone's `app/it/fast4x/rimusic/ui/screens/player/Controls.kt` 130-500) with the default
@@ -51,6 +55,10 @@ fun Controls(
 ) {
     // PlayerTimelineSize.Biggest
     val playerTimelineSize = 20
+    // The phone's "Disable scrolling text" (the phone's `Controls.kt` 170, 225/307/412): the Modern
+    // info marquee is dropped when set
+    val preferences = LocalPreferences.current
+    val settings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
 
     Box(
         modifier = Modifier
@@ -68,6 +76,7 @@ fun Controls(
                 title = title,
                 artist = artist,
                 isExplicit = isExplicit,
+                disableScrollingText = settings.disableScrollingText,
             )
 
             Spacer(

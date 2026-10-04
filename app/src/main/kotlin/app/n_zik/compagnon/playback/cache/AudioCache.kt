@@ -48,6 +48,9 @@ class AudioCache(
     /** Whether new entries may be written (the ceiling is not "Disabled"). */
     val isEnabled: Boolean get() = maxBytes() != 0L
 
+    /** The configured ceiling in bytes (`null` = unlimited, `0` = "Disabled"). */
+    val ceiling: Long? get() = maxBytes()
+
     /** Path of the complete entry of [trackId], its access time refreshed; `null` on a miss. */
     @Synchronized
     fun lookup(trackId: String): Path? {

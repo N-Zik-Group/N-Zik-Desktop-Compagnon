@@ -58,6 +58,8 @@ import app.n_zik.compagnon.generated.resources.notice_truncated
 import app.n_zik.compagnon.generated.resources.notice_unavailable
 import app.n_zik.compagnon.generated.resources.notice_unreachable
 import app.n_zik.compagnon.generated.resources.paired_other_active_unknown
+import app.n_zik.compagnon.utils.formatMessage
+import app.n_zik.compagnon.utils.formatText
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
@@ -65,13 +67,13 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun pairingErrorText(error: PairingError): String = when (error) {
     PairingError.CodeRejected -> stringResource(Res.string.error_code_rejected)
-    is PairingError.RateLimited -> stringResource(Res.string.error_rate_limited, ((error.retryAfterMs + 999) / 1_000).toInt())
-    is PairingError.IncompatibleVersion -> stringResource(Res.string.error_incompatible_version, error.contractVersion)
+    is PairingError.RateLimited -> formatText(stringResource(Res.string.error_rate_limited), ((error.retryAfterMs + 999) / 1_000).toInt())
+    is PairingError.IncompatibleVersion -> formatText(stringResource(Res.string.error_incompatible_version), error.contractVersion)
     PairingError.PhoneUnreachable -> stringResource(Res.string.error_phone_unreachable)
     PairingError.StorageFailed -> stringResource(Res.string.error_storage_failed)
     PairingError.ListenerFailed -> stringResource(Res.string.error_listener_failed)
-    is PairingError.Unexpected -> stringResource(
-        Res.string.error_unexpected,
+    is PairingError.Unexpected -> formatText(
+        stringResource(Res.string.error_unexpected),
         error.status,
         error.code ?: stringResource(Res.string.error_unknown_code),
     )
@@ -187,19 +189,19 @@ suspend fun commandName(command: CommandKind?): String = getString(
 suspend fun noticeText(notice: PlayerNotice): String {
     val name = commandName(notice.command)
     return when (notice) {
-        is PlayerNotice.NoDelta -> getString(Res.string.notice_no_delta, name)
-        is PlayerNotice.QueueMismatch -> getString(Res.string.notice_queue_mismatch, name)
-        is PlayerNotice.Rejected -> getString(Res.string.notice_rejected, name)
-        is PlayerNotice.Unavailable -> getString(Res.string.notice_unavailable, name)
-        is PlayerNotice.ServerStopping -> getString(Res.string.notice_server_stopping, name)
+        is PlayerNotice.NoDelta -> formatMessage(Res.string.notice_no_delta, name)
+        is PlayerNotice.QueueMismatch -> formatMessage(Res.string.notice_queue_mismatch, name)
+        is PlayerNotice.Rejected -> formatMessage(Res.string.notice_rejected, name)
+        is PlayerNotice.Unavailable -> formatMessage(Res.string.notice_unavailable, name)
+        is PlayerNotice.ServerStopping -> formatMessage(Res.string.notice_server_stopping, name)
         is PlayerNotice.OtherActive ->
-            getString(Res.string.notice_other_active, name, notice.deviceName ?: getString(Res.string.paired_other_active_unknown))
-        is PlayerNotice.NotFound -> getString(Res.string.notice_not_found, name)
-        is PlayerNotice.Truncated -> getString(Res.string.notice_truncated, name, notice.sent, notice.total)
-        is PlayerNotice.Unreachable -> getString(Res.string.notice_unreachable, name)
+            formatMessage(Res.string.notice_other_active, name, notice.deviceName ?: getString(Res.string.paired_other_active_unknown))
+        is PlayerNotice.NotFound -> formatMessage(Res.string.notice_not_found, name)
+        is PlayerNotice.Truncated -> formatMessage(Res.string.notice_truncated, name, notice.sent, notice.total)
+        is PlayerNotice.Unreachable -> formatMessage(Res.string.notice_unreachable, name)
         is PlayerNotice.Failed ->
-            getString(Res.string.notice_failed, name, notice.status, notice.code ?: getString(Res.string.error_unknown_code))
+            formatMessage(Res.string.notice_failed, name, notice.status, notice.code ?: getString(Res.string.error_unknown_code))
         is PlayerNotice.LateError ->
-            getString(Res.string.notice_late_error, name, notice.code, notice.commandId?.take(8) ?: getString(Res.string.error_unknown_code))
+            formatMessage(Res.string.notice_late_error, name, notice.code, notice.commandId?.take(8) ?: getString(Res.string.error_unknown_code))
     }
 }

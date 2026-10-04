@@ -159,6 +159,7 @@
     <string name="cached">Cached</string>
     <!-- "On device" on the phone; here the label says where the files are, to be told apart from "Cached" -->
     <string name="on_device">On device phone</string>
+    <string name="done">Done</string>
     <string name="downloaded">Downloaded</string>
     <string name="playlist_top">Top Playlist</string>
     <string name="disliked">Disliked</string>
@@ -187,6 +188,7 @@
     <string name="info_no_songs_yet">No songs available</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Bookmark</string>
+    <string name="info_bookmark_album">Bookmark album</string>
     <string name="follow">Follow</string>
     <string name="following">Following</string>
     <string name="item_select">Select</string>
@@ -323,6 +325,15 @@
     <string name="unmatched_song">Unmatched song</string>
     <string name="value_cannot_be_empty">Value cannot be empty</string>
     <string name="value_must_be_greater_than">Value must be greater than</string>
+    <string name="filter_by">Filter By</string>
+    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_year">Year</string>
+    <string name="added_to_favorites">Added to favorites</string>
+    <string name="added_to_dislikes">Disliked %s</string>
+    <string name="removed_from_dislikes">Removed %s from dislikes</string>
+    <string name="removed_from_favorites">Removed from favorites</string>
+    <string name="update_playlist_browse_id">Change Playlist Browse ID</string>
+    <string name="cannot_bookmark_special_playlist">Cannot bookmark Liked Songs or Episodes playlist</string>
 
     <!-- Compagnon only: the PC as an audio output -->
     <string name="this_pc">This PC</string>

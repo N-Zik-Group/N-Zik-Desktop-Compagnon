@@ -36,6 +36,8 @@ import app.n_zik.compagnon.generated.resources.controls_title_playback_volume
 import app.n_zik.compagnon.generated.resources.volume
 import app.n_zik.compagnon.generated.resources.volume_up
 import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.UserSettings
+import kotlinx.coroutines.flow.MutableStateFlow
 import app.n_zik.compagnon.generated.resources.controls_title_playback_speed
 import app.n_zik.compagnon.generated.resources.playback
 import app.n_zik.compagnon.generated.resources.slow_motion
@@ -168,6 +170,11 @@ class PlaybackSettingsMenu private constructor(
         defaultValue: Float? = null,
         drawValuePoints: Boolean = false,
     ) {
+        // The PC's "Disable scrolling text" (the phone's `disableScrollingTextKey`, its
+        // `PlaybackSettingsMenu.kt` 645, 764): the title's marquee is dropped when set
+        val preferences = LocalPreferences.current
+        val settings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
+
         Row(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -203,10 +210,12 @@ class PlaybackSettingsMenu private constructor(
                 text = title,
                 maxLines = 1,
                 style = typography().s.semiBold.copy(color = colorPalette().text),
+                // The phone's `disableScrollingTextKey` (its `PlaybackSettingsMenu.kt` 645, 764):
+                // the marquee is dropped when set
                 modifier = Modifier
                     .weight(1f, fill = false)
                     .padding(end = 8.dp)
-                    .basicMarquee(iterations = Int.MAX_VALUE),
+                    .then(if (settings.disableScrollingText) Modifier else Modifier.basicMarquee(iterations = Int.MAX_VALUE)),
             )
 
             BasicText(

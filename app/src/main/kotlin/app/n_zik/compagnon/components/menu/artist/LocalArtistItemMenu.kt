@@ -25,14 +25,26 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.n_zik.compagnon.LocalLibraryActions
 import app.n_zik.compagnon.artistThumbnailShape
 import app.n_zik.compagnon.bridge.library.Artist
+import app.n_zik.compagnon.bridge.library.ArtistFollow
+import app.n_zik.compagnon.bridge.library.DislikeMode
+import app.n_zik.compagnon.bridge.library.PagedState
+import app.n_zik.compagnon.bridge.library.nextRotation
+import app.n_zik.compagnon.bridge.library.nextToggle
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.menu.album.MENU_THUMBNAIL_SIZE_PX
@@ -41,19 +53,24 @@ import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.tab.SongShuffler
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.semiBold
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.components.themed.HeaderIconButton
+import app.n_zik.compagnon.components.ui.screens.artist.followToast
 import app.n_zik.compagnon.components.ui.screens.home.ItemActions
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.bookmark
+import app.n_zik.compagnon.generated.resources.bookmark_slash
 import app.n_zik.compagnon.generated.resources.play
 import app.n_zik.compagnon.generated.resources.play_all_local_songs
 import app.n_zik.compagnon.generated.resources.playback
 import app.n_zik.compagnon.generated.resources.songs
 import app.n_zik.compagnon.utils.secondary
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -64,12 +81,18 @@ import org.jetbrains.compose.resources.stringResource
  * Kept: the header (`ArtistItemDisplay`: drag handle, 64 dp round thumbnail, name, "N Songs", the 48 dp
  * column of the bookmark and share icons, divider), the Playback section ("Play all local songs" =
  * `queue/play` from the first track, Shuffle) and the Management section (change title, cover, artist
- * browse id: no contract route, shown without action; 94-105). Bookmark and share have no action.
+ * browse id: no contract route, shown without action; 94-105). Since 1.7, the bookmark icon (and its
+ * thumbnail badge) show the like tri-state (the phone's `likeState`, its 182-196 and 242-252) —
+ * `bookmark` in favoritesIcon when followed, the phone's `bookmark_slash` in red when disliked,
+ * `bookmark_outline` in text when neutral — and a tap rotates it (neutral → followed → disliked →
+ * neutral, the phone's `rotateLikeState`) and writes the phone's target state (`library.write`);
+ * without the feature it stays an inert indicator, as before. Since 1.7.2 (the lists' `dislikeMode`):
+ * the phone's "disliked" mode off makes the tap a binary toggle (followed → neutral, otherwise →
+ * followed, the phone's `toggleBookmark`, its `LocalArtistItemMenu.kt` 255-272). Share has no action.
  */
 class LocalArtistItemMenu(
     private val artist: Artist,
     private val actions: ItemActions,
-    private val bookmarked: Boolean,
 ) {
 
     @Composable
@@ -103,6 +126,44 @@ class LocalArtistItemMenu(
         subscribersCount: String,
         modifier: Modifier = Modifier,
     ) {
+        // The phone's "Disable scrolling text" (the phone's `LocalArtistItemMenu.kt` 134, 212, 225): the
+        // title / subscribers marquee is dropped when set
+        val preferences = LocalPreferences.current
+        val settings by (preferences?.settings
+            ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
+        val marquee: Modifier = if (settings.disableScrollingText) Modifier else Modifier.basicMarquee(iterations = Int.MAX_VALUE)
+        // The follow state, since 1.7: the phone reads it live from the DB (its `likeState` flow); here
+        // it is seeded from the artist and re-synced from the Artists list (the confirmed §10.2 writes
+        // patch it), so the icon follows the write while the menu is open
+        val library = LocalLibraryActions.current
+        var followState by remember(artist.id) {
+            mutableStateOf(
+                when {
+                    artist.isBookmarked -> ArtistFollow.Followed
+                    artist.isDisliked -> ArtistFollow.Disliked
+                    else -> ArtistFollow.Neutral
+                },
+            )
+        }
+        val artistsState by (library?.lists?.artists?.state ?: remember { MutableStateFlow(PagedState<Artist>()) })
+            .collectAsState()
+        val listedArtist = artistsState.items.firstOrNull { it.id == artist.id }
+        LaunchedEffect(listedArtist) {
+            if (listedArtist != null) {
+                followState = when {
+                    listedArtist.isBookmarked -> ArtistFollow.Followed
+                    listedArtist.isDisliked -> ArtistFollow.Disliked
+                    else -> ArtistFollow.Neutral
+                }
+            }
+        }
+        val writes = library?.takeIf { it.canWrite }
+        // Since 1.7.2 (feature `library.dislikeMode`): the phone's "disliked" mode off makes the tap a
+        // binary toggle (the phone's `toggleBookmark`); `null` keeps the rotation (the phone's default)
+        val dislikeMode by (library?.lists?.dislikeMode ?: remember { MutableStateFlow<DislikeMode?>(null) })
+            .collectAsState()
+        val rotationEnabled = dislikeMode?.artists != false
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
@@ -136,11 +197,19 @@ class LocalArtistItemMenu(
                         )
                     }
 
-                    if (bookmarked) {
+                    // The like tri-state badge (contract 1.7, phone's 182-196): `bookmark` in
+                    // favoritesIcon when followed, the phone's `bookmark_slash` in red when disliked,
+                    // nothing when neutral
+                    val badge = when (followState) {
+                        ArtistFollow.Followed -> colorPalette().favoritesIcon
+                        ArtistFollow.Disliked -> colorPalette().red
+                        ArtistFollow.Neutral -> null
+                    }
+                    if (badge != null) {
                         HeaderIconButton(
                             onClick = {},
-                            icon = Res.drawable.bookmark,
-                            color = colorPalette().favoritesIcon,
+                            icon = if (followState == ArtistFollow.Disliked) Res.drawable.bookmark_slash else Res.drawable.bookmark,
+                            color = badge,
                             iconSize = 12.dp,
                             modifier = Modifier.align(Alignment.BottomStart)
                                 .absoluteOffset(x = (-8).dp),
@@ -160,8 +229,7 @@ class LocalArtistItemMenu(
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .basicMarquee(iterations = Int.MAX_VALUE),
+                        modifier = marquee,
                     )
                     if (subscribersCount.isNotBlank()) {
                         BasicText(
@@ -171,8 +239,7 @@ class LocalArtistItemMenu(
                             ),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .basicMarquee(iterations = Int.MAX_VALUE),
+                            modifier = marquee,
                         )
                     }
                 }
@@ -181,11 +248,32 @@ class LocalArtistItemMenu(
                     Modifier.width(48.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    // Contract 1.3 `isBookmarked`; no bookmark route: shown, without action
+                    // The like tri-state (contract 1.7, phone's 242-297): a tap rotates the state
+                    // (neutral → followed → disliked → neutral, the phone's `rotateLikeState`) or, with
+                    // the phone's "disliked" mode off (since 1.7.2), toggles it (the phone's
+                    // `toggleBookmark`) and writes the phone's target state (`library.write`); without
+                    // the feature it stays inert
                     IconButton(
-                        icon = if (bookmarked) Res.drawable.bookmark else Res.drawable.bookmark_outline,
-                        color = if (bookmarked) colorPalette().favoritesIcon else colorPalette().text,
-                        onClick = {},
+                        // The phone's icon (its 242-247): `bookmark_slash` in red when disliked
+                        icon = when (followState) {
+                            ArtistFollow.Neutral -> Res.drawable.bookmark_outline
+                            ArtistFollow.Disliked -> Res.drawable.bookmark_slash
+                            else -> Res.drawable.bookmark
+                        },
+                        color = when (followState) {
+                            ArtistFollow.Followed -> colorPalette().favoritesIcon
+                            ArtistFollow.Disliked -> colorPalette().red
+                            ArtistFollow.Neutral -> colorPalette().text
+                        },
+                        onClick = {
+                            if (actions.enabled) {
+                                val target = if (rotationEnabled) followState.nextRotation() else followState.nextToggle()
+                                followState = target
+                                writes?.followArtist(artist.id, target)
+                                // The phone's toast (its `LocalArtistItemMenu.kt` 274-292)
+                                followToast(target, artist.name.orEmpty())
+                            }
+                        },
                         modifier = Modifier
                             .padding(all = 4.dp)
                             .size(20.dp),

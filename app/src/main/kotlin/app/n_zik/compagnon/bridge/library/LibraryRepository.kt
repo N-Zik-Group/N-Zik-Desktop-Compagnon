@@ -1,11 +1,14 @@
 package app.n_zik.compagnon.bridge.library
 
 import app.n_zik.compagnon.bridge.state.Track
+import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.core.network.LibraryResult
+import app.n_zik.compagnon.core.network.WriteResult
 
 /**
  * What the library screens read, whatever serves it. [RemoteLibraryRepository] reads the phone's
- * bridge (contract §10); nothing is ever written to the phone's library, nor kept on disk (§12).
+ * bridge (contract §10) and, since 1.7 (`library.write`), writes its explicit states (contract
+ * §10.2); nothing is ever kept on disk (§12).
  */
 interface LibraryRepository {
     /** The phone's `features` (contract §5): a missing `library.*` hides its screen. */
@@ -15,6 +18,45 @@ interface LibraryRepository {
     suspend fun playlists(offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist>
     suspend fun albums(offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album>
     suspend fun artists(offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist>
+
+    // ---- Writes (contract §10.2, since 1.7): the explicit state, local Room only ----
+
+    /** `POST /library/songs/{id}/like`. */
+    suspend fun songLike(songId: String, state: TrackLike): WriteResult
+
+    /** `POST /library/albums/{id}/bookmark`. */
+    suspend fun albumBookmark(albumId: String, bookmarked: Boolean): WriteResult
+
+    /** `POST /library/artists/{id}/follow`. */
+    suspend fun artistFollow(artistId: String, state: ArtistFollow): WriteResult
+
+    /** `POST /library/playlists/{id}/pin`. */
+    suspend fun playlistPin(playlistId: String, pinned: Boolean): WriteResult
+
+    /** `POST /library/albums/{id}/like` (contract §10.2, since 1.7.2): the phone's album tri-state. */
+    suspend fun albumLike(albumId: String, state: AlbumLike): WriteResult
+
+    /** `POST /library/playlists/{id}/bookmark` (contract §10.2, since 1.7.2): the phone's header bookmark. */
+    suspend fun playlistBookmark(playlistId: String, bookmarked: Boolean): WriteResult
+
+    /**
+     * `GET /library/cache` (contract §10, since 1.7.1): the phone's disk caches, used vs configured
+     * cap. Shown only with the phone's `library.cache` feature; `null` hides the bar.
+     */
+    suspend fun cacheSpace(): LibraryCache?
+
+    /**
+     * `GET /library/rewind` (contract §10, since 1.7.2): the phone's Month / Year / All row state.
+     * Shown only with the phone's `library.rewind` feature; `null` hides the row.
+     */
+    suspend fun rewindState(): RewindState?
+
+    /**
+     * `GET /library/dislikeMode` (contract §10, since 1.7.2): the phone's "disliked" mode per
+     * collection. `null` (feature absent or a failed read) keeps the pre-1.7.2 display: the phone's
+     * own default is the mode enabled.
+     */
+    suspend fun dislikeMode(): DislikeMode?
 
     /**
      * The tracks of [collection], paginated. [query] (a local playlist's `sort` and `reverse`, contract

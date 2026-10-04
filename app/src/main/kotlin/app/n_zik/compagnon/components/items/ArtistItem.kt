@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.items
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.absoluteOffset
@@ -7,19 +8,29 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.artistThumbnailShape
 import app.n_zik.compagnon.bridge.library.Artist
+import app.n_zik.compagnon.bridge.library.PlaylistOrigin
 import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.components.themed.HeaderIconButton
@@ -27,11 +38,20 @@ import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.bookmark
+import app.n_zik.compagnon.generated.resources.bookmark_slash
+import app.n_zik.compagnon.generated.resources.cd_origin_indicator
+import app.n_zik.compagnon.generated.resources.ytmusic
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Port of `ArtistItem` (phone's `app/it/fast4x/rimusic/ui/items/ArtistItem.kt` 61 and 141). The phone's
- * local artists pass `subscribersCount = null`, so no second line. [likeState] as in `AlbumItem`.
- * Dropped: the YouTube Music origin badge (`isYoutubeArtist`, not in the contract).
+ * local artists pass `subscribersCount = null`, so no second line. [likeState] as in `AlbumItem`
+ * (`bookmark` / `bookmark_slash` / none). The YouTube Music origin badge (the phone's
+ * `isYoutubeArtist`, since 1.7.1 the contract's [PlaylistOrigin.Ytmusic]): `ytmusic` 40 dp in red over
+ * white at the top start of the thumbnail clip (the phone's `smallThumbnail` 30 dp variant is not
+ * used by the screens ported here).
  */
 @Composable
 fun ArtistItem(
@@ -44,6 +64,12 @@ fun ArtistItem(
     likeState: Boolean? = null,
     thumbnailOverlay: @Composable () -> Unit = {},
 ) {
+    // The PC's "Disable scrolling text" (the phone's `disableScrollingTextKey`, its `ArtistItem.kt`
+    // 119): the name's marquee is dropped when set
+    val preferences = LocalPreferences.current
+    val settings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
+    val marquee: Modifier = if (settings.disableScrollingText) Modifier else Modifier.basicMarquee(iterations = Int.MAX_VALUE)
+
     ItemContainer(
         alternative = alternative,
         thumbnailSizeDp = thumbnailSizeDp,
@@ -64,13 +90,27 @@ fun ArtistItem(
                     contentScale = if (alternative) ContentScale.FillWidth else ContentScale.Crop,
                 )
                 thumbnailOverlay()
+
+                // The phone's `isYoutubeArtist` badge (since 1.7.1 the contract's Ytmusic origin): red over
+                // white, 40 dp, top start inside the thumbnail clip
+                if (artist.origin == PlaylistOrigin.Ytmusic) {
+                    Image(
+                        painter = painterResource(Res.drawable.ytmusic),
+                        colorFilter = ColorFilter.tint(Color.Red.copy(alpha = 0.75f).compositeOver(Color.White)),
+                        contentDescription = stringResource(Res.string.cd_origin_indicator),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(all = 5.dp),
+                    )
+                }
             }
 
-            if (likeState == true) {
+            if (likeState != null) {
                 HeaderIconButton(
                     onClick = {},
-                    icon = Res.drawable.bookmark,
-                    color = colorPalette().favoritesIcon,
+                    icon = if (likeState) Res.drawable.bookmark else Res.drawable.bookmark_slash,
+                    color = if (likeState) colorPalette().favoritesIcon else colorPalette().red,
                     iconSize = 12.dp,
                     modifier = Modifier.align(Alignment.BottomStart)
                         .absoluteOffset(x = (-8).dp),
@@ -87,8 +127,7 @@ fun ArtistItem(
                     style = typography().xs.semiBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .basicMarquee(iterations = Int.MAX_VALUE),
+                    modifier = marquee,
                 )
             }
         }

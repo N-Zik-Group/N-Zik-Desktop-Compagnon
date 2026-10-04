@@ -22,6 +22,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,15 +33,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.topUiRoundnessShape
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Port of the phone's `app/n_zik/android/components/menu/ListMenu.kt` (with `MenuConstants.kt`).
  * `CONTENT_HEIGHT_FRACTION` = 1: the sheet host bounds the height, and the content fills it (`weight(1f)`,
  * phone's 138). The optional `headerTrailing` slot is not ported (no library menu uses it).
+ * Dropped: the phone's menu style setting (`menuStyleKey`) and its grid variant (`GridMenu.kt`,
+ * `MenuStyle.Menu`) — the PC menus are always in the phone's default list style.
  */
 object ListMenu {
 
@@ -108,6 +116,12 @@ object ListMenu {
         trailingContent: @Composable () -> Unit = {},
     ) {
         val alpha = if (enabled) 1f else 0.5f
+        // The PC's "Disable scrolling text" (the phone's `disableScrollingTextKey`, its `ListMenu.kt`
+        // 166, 193-196, 208-211): the text / subtitle marquees are dropped when set
+        val preferences = LocalPreferences.current
+        val settings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
+        val textModifier = Modifier.fillMaxWidth()
+            .then(if (settings.disableScrollingText) Modifier else Modifier.basicMarquee(iterations = Int.MAX_VALUE))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -134,8 +148,7 @@ object ListMenu {
                     textAlign = TextAlign.Start,
                     style = typography().s.semiBold,
                     maxLines = 1,
-                    modifier = Modifier.fillMaxWidth()
-                        .basicMarquee(iterations = Int.MAX_VALUE),
+                    modifier = textModifier,
                 )
 
                 subtitle?.let {
@@ -147,8 +160,7 @@ object ListMenu {
                         textAlign = TextAlign.Start,
                         style = typography().xs,
                         maxLines = 1,
-                        modifier = Modifier.fillMaxWidth()
-                            .basicMarquee(iterations = Int.MAX_VALUE),
+                        modifier = textModifier,
                     )
                 }
             }

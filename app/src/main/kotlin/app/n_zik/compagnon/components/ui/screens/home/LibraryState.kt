@@ -1,6 +1,9 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import app.n_zik.compagnon.LocalLibraryActions
 import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.formatMessage
+import app.n_zik.compagnon.utils.formatText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,12 +42,16 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import app.n_zik.compagnon.bridge.command.PlayWindow
 import app.n_zik.compagnon.bridge.library.Album
+import app.n_zik.compagnon.bridge.library.AlbumLike
 import app.n_zik.compagnon.bridge.library.AlbumsQuery
 import app.n_zik.compagnon.bridge.library.Artist
+import app.n_zik.compagnon.bridge.library.ArtistFollow
 import app.n_zik.compagnon.bridge.library.ArtistsQuery
 import app.n_zik.compagnon.bridge.library.CollectionFilter
 import app.n_zik.compagnon.bridge.library.CollectionKind
 import app.n_zik.compagnon.bridge.library.CollectionRef
+import app.n_zik.compagnon.bridge.library.DislikeMode
+import app.n_zik.compagnon.bridge.library.LibraryCache
 import app.n_zik.compagnon.bridge.library.LibraryContract
 import app.n_zik.compagnon.bridge.library.LibraryError
 import app.n_zik.compagnon.bridge.library.LibraryRepository
@@ -54,6 +62,7 @@ import app.n_zik.compagnon.bridge.library.Playlist
 import app.n_zik.compagnon.bridge.library.PlaylistSongsQuery
 import app.n_zik.compagnon.bridge.library.PlaylistsFilter
 import app.n_zik.compagnon.bridge.library.PlaylistsQuery
+import app.n_zik.compagnon.bridge.library.RewindState
 import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.playback.cache.AudioCache
@@ -61,8 +70,10 @@ import app.n_zik.compagnon.bridge.state.PlayerRepository
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.Track
+import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.core.network.LibraryResult
+import app.n_zik.compagnon.core.network.WriteResult
 import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.album
 import app.n_zik.compagnon.generated.resources.albums
@@ -183,7 +194,10 @@ sealed interface CollectionHeader {
 
 /**
  * Playback actions of a track or a collection. [enabled] is `false` outside a `Live` session.
- * [onShuffle] is `null` for a track.
+ * [onShuffle] is `null` for a track. Since 1.7.1 [currentTrackList] is the live list the track's menu
+ * came from: the song menu collects it, so its heart follows a confirmed like write while the menu is
+ * open (as on the phone, where the menu reads the track's own row live); `null` for a collection or a
+ * track outside a list (the queue, the player's own menu).
  */
 data class ItemActions(
     val onPlay: () -> Unit,
@@ -191,6 +205,7 @@ data class ItemActions(
     val onEnqueue: () -> Unit,
     val enabled: Boolean,
     val onShuffle: (() -> Unit)? = null,
+    val currentTrackList: StateFlow<PagedState<Track>>? = null,
 )
 
 /**
@@ -201,11 +216,17 @@ data class ItemActions(
  *
  * The Songs search text lives here (it survives a change of tab); it reaches the phone as `query` after a
  * short pause of typing ([SEARCH_DEBOUNCE_MS]).
+ *
+ * Real-time gap (vs the phone): the phone's lists observe its own database and update while the tab is
+ * open; the contract exposes no library push, so a PC list only moves on its reload, or in place when a
+ * confirmed write of this window patches it (a like / bookmark performed here). The song menu's heart
+ * sidesteps the gap with [ItemActions.currentTrack].
  */
 class LibraryLists(
     private val library: LibraryRepository,
     private val scope: CoroutineScope,
-    private val audioCache: AudioCache? = null,
+    /** The Compagnon's own audio cache (contract §8.3): the "Cached PC" chip's list and cache bar. */
+    val audioCache: AudioCache? = null,
 ) {
     /**
      * The phone sorts its songs in its own database (`library.sort`, contract 1.6): `reverse` is sent
@@ -232,6 +253,64 @@ class LibraryLists(
     val playlists = PagedList(PlaylistsQuery(), scope) { query, offset, limit -> library.playlists(offset, limit, query) }
     val albums = PagedList(AlbumsQuery(), scope) { query, offset, limit -> library.albums(offset, limit, query) }
     val artists = PagedList(ArtistsQuery(), scope) { query, offset, limit -> library.artists(offset, limit, query) }
+
+    /**
+     * The open detail screens' track lists (album / artist / local playlist), registered by their
+     * `rememberCollectionSongs` / `rememberPlaylistSongs`: the §10.2 writes patch them with the tab
+     * lists, so an open screen updates in place as the phone's own screens do.
+     */
+    private val _detailTrackLists = mutableSetOf<PagedList<*, Track>>()
+
+    fun registerTrackList(list: PagedList<*, Track>) {
+        synchronized(_detailTrackLists) { _detailTrackLists.add(list) }
+    }
+
+    fun unregisterTrackList(list: PagedList<*, Track>) {
+        synchronized(_detailTrackLists) { _detailTrackLists.remove(list) }
+    }
+
+    /** The registered detail lists, snapshotted (a screen may unregister mid-iteration). */
+    private fun detailTrackLists(): List<PagedList<*, Track>> =
+        synchronized(_detailTrackLists) { _detailTrackLists.toList() }
+
+    /**
+     * Re-reads the lists that show [trackId] after a failed §10.2 write left them holding a state
+     * the phone never wrote (the optimistic update is undone by the phone's own pages).
+     */
+    fun reloadTrackLists(trackId: String) {
+        songs.reload()
+        songsPcCached.reload()
+        detailTrackLists().forEach { list ->
+            if (list.state.value.items.any { it.id == trackId }) list.reload()
+        }
+    }
+
+    /**
+     * The phone's disk caches (contract §10, since 1.7.1), read on a tab switch: the Songs tab's cache
+     * bar. `null` hides the bar (unreachable or a phone without the `library.cache` feature).
+     */
+    suspend fun cacheSpace(): LibraryCache? = library.cacheSpace()
+
+    /**
+     * The phone's Month / Year / All row (contract §10, since 1.7.2), read on the Rewind chip:
+     * `null` hides the row (feature absent or a failed read).
+     */
+    suspend fun rewindState(): RewindState? = library.rewindState()
+
+    /**
+     * The phone's "disliked" mode per collection (contract §10, since 1.7.2), read once per session
+     * (its `GET /library/dislikeMode`): the Disliked chips' visibility and the menus' like rotation /
+     * binary toggle (the phone's `DislikeMode.Enabled`). `null` keeps the pre-1.7.2 display (the
+     * phone's own default: the mode enabled, the chips shown).
+     */
+    private val _dislikeMode = MutableStateFlow<DislikeMode?>(null)
+    val dislikeMode: StateFlow<DislikeMode?> = _dislikeMode.asStateFlow()
+
+    init {
+        if (SessionContract.FEATURE_LIBRARY_DISLIKE_MODE in library.features) {
+            scope.launch { _dislikeMode.value = library.dislikeMode() }
+        }
+    }
 
     /** The chip shown on the Songs tab (the screen keeps it in sync); its list is re-read on a tab switch. */
     var activeSongsChip: SongsChip = SongsChip.All
@@ -304,6 +383,116 @@ class LibraryLists(
     /** The phone's `features` (contract §5): the tabs gate their sort on `library.sort` (1.6). */
     val features: Set<String> get() = library.features
 
+    /**
+     * The §10.2 writes (since 1.7): the confirmed `200` (the phone's resulting state) applied to the
+     * lists already loaded, as the only local mutation — a later reload re-syncs with the phone. The
+     * rows follow the phone's per-chip list semantics (its Room queries): the Liked / Bookmarked,
+     * Disliked and Pinned chips are membership lists — a row stays only while its state matches the
+     * chip, so those writes drop it (and shrink `total`). The phone's home tabs also hide their
+     * disliked rows in every chip but the Disliked one (its `HomeSongs.kt` 342-344: the `likedAt`
+     * filter is on every tab except Disliked), so a dislike drops the row from the chips except
+     * Disliked, where the row stays and only flips its flag (in red). A row that *enters* a chip (a
+     * like while on the Liked chip) is not inserted: the phone's page order is unknown to the PC, so
+     * it appears on the next reload.
+     */
+    fun patchSongLike(trackId: String, state: TrackLike) {
+        val filter = songs.query.value.filter
+        songs.patchItems { track ->
+            if (track.id != trackId) track
+            else when {
+                // The phone's per-chip membership: the row leaves a chip its state no longer matches
+                filter == SongFilter.Liked && state != TrackLike.Liked -> null
+                filter == SongFilter.Disliked && state != TrackLike.Disliked -> null
+                // The phone's home tabs hide their disliked rows in every chip but the Disliked one
+                // (its `HomeSongs.kt` 342-344): disliking a row leaves its chip
+                state == TrackLike.Disliked && filter != SongFilter.Disliked -> null
+                else -> track.copy(like = state, isLiked = state == TrackLike.Liked)
+            }
+        }
+        // The "Cached PC" chip hides its disliked rows like the phone's cached tab; the open detail
+        // screens' lists keep every row (the phone's detail screens show their disliked rows)
+        songsPcCached.patchItems { track ->
+            when {
+                track.id != trackId -> track
+                state == TrackLike.Disliked -> null
+                else -> track.copy(like = state, isLiked = state == TrackLike.Liked)
+            }
+        }
+        detailTrackLists().forEach { list ->
+            list.patchItems { track ->
+                if (track.id != trackId) track else track.copy(like = state, isLiked = state == TrackLike.Liked)
+            }
+        }
+    }
+
+    fun patchAlbumBookmark(albumId: String, bookmarked: Boolean) {
+        val filter = albums.query.value.filter
+        albums.patchItems { album ->
+            if (album.id != albumId) album
+            else when {
+                // The phone's per-chip membership: unbooking leaves the Bookmarked chip; the phone's
+                // `bookmarkState` clears the album's dislike, so a bookmark leaves the Disliked chip
+                filter == CollectionFilter.Bookmarked && !bookmarked -> null
+                filter == CollectionFilter.Disliked && bookmarked -> null
+                else -> album.copy(isBookmarked = bookmarked)
+            }
+        }
+    }
+
+    fun patchArtistFollow(artistId: String, state: ArtistFollow) {
+        val filter = artists.query.value.filter
+        artists.patchItems { artist ->
+            if (artist.id != artistId) artist
+            else when {
+                // The phone's per-chip membership: the row leaves a chip its state no longer matches
+                // (the Library list keeps its disliked artists, shown in red)
+                filter == CollectionFilter.Bookmarked && state != ArtistFollow.Followed -> null
+                filter == CollectionFilter.Disliked && state != ArtistFollow.Disliked -> null
+                else -> artist.copy(
+                    isBookmarked = state == ArtistFollow.Followed,
+                    isDisliked = state == ArtistFollow.Disliked,
+                )
+            }
+        }
+    }
+
+    fun patchPlaylistPin(playlistId: String, pinned: Boolean) {
+        val filter = playlists.query.value.filter
+        playlists.patchItems { playlist ->
+            if (playlist.id != playlistId) playlist
+            else when {
+                // The phone's per-chip membership: unpinning leaves the Pinned chip
+                filter == PlaylistsFilter.Pinned && !pinned -> null
+                else -> playlist.copy(isPinned = pinned)
+            }
+        }
+    }
+
+    fun patchAlbumLike(albumId: String, state: AlbumLike) {
+        val filter = albums.query.value.filter
+        albums.patchItems { album ->
+            if (album.id != albumId) album
+            else when {
+                // The phone's per-chip membership: the row leaves a chip its state no longer matches
+                filter == CollectionFilter.Bookmarked && state != AlbumLike.Bookmarked -> null
+                filter == CollectionFilter.Disliked && state != AlbumLike.Disliked -> null
+                else -> album.copy(isBookmarked = state == AlbumLike.Bookmarked, isDisliked = state == AlbumLike.Disliked)
+            }
+        }
+    }
+
+    fun patchPlaylistBookmark(playlistId: String, bookmarked: Boolean) {
+        val filter = playlists.query.value.filter
+        playlists.patchItems { playlist ->
+            if (playlist.id != playlistId) playlist
+            else when {
+                // The phone's per-chip membership: unbookmarking leaves the YouTube chip
+                filter == PlaylistsFilter.Youtube && !bookmarked -> null
+                else -> playlist.copy(isBookmarked = bookmarked)
+            }
+        }
+    }
+
     /** The phone's total of the current reverse read: re-probed for every list generation (offset 0). */
     private var reverseTotal: Int? = null
 
@@ -369,6 +558,23 @@ class LibraryLists(
         }
     }
 
+    /**
+     * The Playlists tab's search text (contract 1.7.2, the phone's `text`), surviving a change of tab;
+     * it reaches the phone after a short pause of typing ([SEARCH_DEBOUNCE_MS]).
+     */
+    private val _playlistsSearch = MutableStateFlow("")
+    val playlistsSearch: StateFlow<String> = _playlistsSearch.asStateFlow()
+    private var playlistsSearchJob: Job? = null
+
+    fun onPlaylistsSearch(text: String) {
+        _playlistsSearch.value = text
+        playlistsSearchJob?.cancel()
+        playlistsSearchJob = scope.launch {
+            delay(SEARCH_DEBOUNCE_MS)
+            playlists.setQuery(playlists.query.value.copy(text = SongsQuery.normalizeText(text)))
+        }
+    }
+
     /** First tracks of each playlist (`/songs?limit=4`, for the grid mosaic), memory only. */
     private val _playlistFirstTracks = MutableStateFlow<Map<String, List<Track>>>(emptyMap())
     val playlistFirstTracks: StateFlow<Map<String, List<Track>>> = _playlistFirstTracks.asStateFlow()
@@ -420,11 +626,115 @@ class LibraryActions(
     private val scope: CoroutineScope,
     /** The phone's information messages (`Toaster.i`, e.g. "No song to shuffle"); [message] when `null`. */
     private val info: ((String) -> Unit)? = null,
+    /** The loaded lists, patched by the confirmed §10.2 writes (the optimistic update, since 1.7). */
+    val lists: LibraryLists? = null,
     /** The phone's error messages (`Toaster.e`: no song found, failures). */
     private val message: (String) -> Unit,
 ) {
     /** Without the `queue` feature, playback actions are hidden. */
     val available: Boolean get() = SessionContract.FEATURE_QUEUE in player.features
+
+    /** The §10.2 writes (since 1.7) need the phone's `library.write` feature: without it the actions stay inert. */
+    val canWrite: Boolean get() = SessionContract.FEATURE_LIBRARY_WRITE in library.features
+
+    // ---- §10.2 writes (since 1.7): the explicit state, local Room only ----
+    //
+    // Optimistic (the phone's own write is local and instant): the loaded lists are patched at the
+    // click, so the menus and rows react at once as on the phone; the confirmed `200` re-patches with
+    // the phone's resulting state (a no-op when it agrees) and a failure re-reads the lists the
+    // optimistic update touched (they hold a state the phone never wrote).
+
+    /** `POST /library/songs/{id}/like`; the optimistic state patches every loaded list of the track. */
+    fun likeSong(trackId: String, state: TrackLike) {
+        lists?.patchSongLike(trackId, state)
+        scope.launch {
+            write(library.songLike(trackId, state), { if (it is WriteResult.SongLike) lists?.patchSongLike(trackId, it.state) }) {
+                lists?.reloadTrackLists(trackId)
+            }
+        }
+    }
+
+    /** `POST /library/albums/{id}/bookmark`; the optimistic state patches the Albums list. */
+    fun bookmarkAlbum(albumId: String, bookmarked: Boolean) {
+        lists?.patchAlbumBookmark(albumId, bookmarked)
+        scope.launch {
+            write(library.albumBookmark(albumId, bookmarked), {
+                if (it is WriteResult.AlbumBookmark) lists?.patchAlbumBookmark(albumId, it.bookmarked)
+            }, { lists?.albums?.reload() })
+        }
+    }
+
+    /** `POST /library/artists/{id}/follow`; the optimistic state patches the Artists list. */
+    fun followArtist(artistId: String, state: ArtistFollow) {
+        lists?.patchArtistFollow(artistId, state)
+        scope.launch {
+            write(library.artistFollow(artistId, state), {
+                if (it is WriteResult.ArtistFollow) lists?.patchArtistFollow(artistId, it.state)
+            }, { lists?.artists?.reload() })
+        }
+    }
+
+    /** `POST /library/playlists/{id}/pin`; the optimistic state patches the Playlists list. */
+    fun pinPlaylist(playlistId: String, pinned: Boolean) {
+        lists?.patchPlaylistPin(playlistId, pinned)
+        scope.launch {
+            write(library.playlistPin(playlistId, pinned), {
+                if (it is WriteResult.PlaylistPin) lists?.patchPlaylistPin(playlistId, it.pinned)
+            }, { lists?.playlists?.reload() })
+        }
+    }
+
+    /** `POST /library/albums/{id}/like` (since 1.7.2); the optimistic state patches the Albums list. */
+    fun likeAlbum(albumId: String, state: AlbumLike) {
+        lists?.patchAlbumLike(albumId, state)
+        scope.launch {
+            write(library.albumLike(albumId, state), {
+                if (it is WriteResult.AlbumLike) lists?.patchAlbumLike(albumId, it.state)
+            }, { lists?.albums?.reload() })
+        }
+    }
+
+    /** `POST /library/playlists/{id}/bookmark` (since 1.7.2); the optimistic state patches the Playlists list. */
+    fun bookmarkPlaylist(playlistId: String, bookmarked: Boolean) {
+        lists?.patchPlaylistBookmark(playlistId, bookmarked)
+        scope.launch {
+            write(library.playlistBookmark(playlistId, bookmarked), {
+                if (it is WriteResult.PlaylistBookmark) lists?.patchPlaylistBookmark(playlistId, it.bookmarked)
+            }, { lists?.playlists?.reload() })
+        }
+    }
+
+    /**
+     * The common §10.2 write: on a confirmed `200` [apply] runs with the resulting state; a failure
+     * answers with the contract `code`'s message and [onFail] re-reads the touched lists. A confirmed
+     * revocation erases the pairing on its own: nothing to say, nothing to re-read.
+     */
+    private suspend fun write(
+        result: WriteResult,
+        apply: suspend (WriteResult) -> Unit,
+        onFail: () -> Unit = {},
+    ) {
+        when (result) {
+            is WriteResult.NotFound -> {
+                message(getString(Res.string.library_not_found))
+                onFail()
+            }
+            is WriteResult.OtherActive -> {
+                message(formatMessage(Res.string.paired_other_active, result.deviceName ?: getString(Res.string.paired_other_active_unknown)))
+                onFail()
+            }
+            is WriteResult.Failed -> {
+                message(formatMessage(Res.string.paired_error, result.status, result.code ?: getString(Res.string.error_unknown_code)))
+                onFail()
+            }
+            WriteResult.Revoked -> Unit
+            WriteResult.Unreachable -> {
+                message(getString(Res.string.library_error_unreachable))
+                onFail()
+            }
+            else -> apply(result)
+        }
+    }
 
     /**
      * A click on a track, as on the phone: the loaded list becomes the queue, from that track. All the
@@ -468,14 +778,19 @@ class LibraryActions(
      * the `queue` feature. A list that changed meanwhile (reload) never adds another track: the entries act
      * only while the item at [index] still has [expectedId].
      */
-    fun trackActions(tracks: () -> List<Track>, index: Int, expectedId: String, live: Boolean): ItemActions? {
+    fun trackActions(tracks: StateFlow<PagedState<Track>>, index: Int, expectedId: String, live: Boolean): ItemActions? {
         if (!available) return null
-        fun shown(): Track? = tracks().getOrNull(index)?.takeIf { it.id == expectedId }
+        fun shown(): Track? = tracks.value.items.getOrNull(index)?.takeIf { it.id == expectedId }
         return ItemActions(
-            onPlay = { if (shown() != null) playFrom(tracks(), index, expectedId) },
+            onPlay = { if (shown() != null) playFrom(tracks.value.items, index, expectedId) },
             onPlayNext = { shown()?.let { add(it, QueuePosition.Next) } },
             onEnqueue = { shown()?.let { add(it, QueuePosition.End) } },
             enabled = live,
+            // Since 1.7.1: the menu's heart follows the track's live state — the menu collects this
+            // list (a confirmed like write patches it, recomposing the menu, as on the phone); the menu
+            // also keeps the state of the tap itself, so a row the write drops (a chip its new state no
+            // longer matches) still shows the written state on its heart
+            currentTrackList = tracks,
         )
     }
 
@@ -516,23 +831,23 @@ class LibraryActions(
         }
     }
 
-    private suspend fun fail(error: LibraryError) = message(getString(Res.string.library_tracks_failed, libraryErrorMessage(error)))
+    private suspend fun fail(error: LibraryError) = message(formatMessage(Res.string.library_tracks_failed, libraryErrorMessage(error)))
 }
 
 /** Readable text of a library read failure, decided from the contract `code`. */
 suspend fun libraryErrorMessage(error: LibraryError): String = when (error) {
     LibraryError.Unreachable -> getString(Res.string.library_error_unreachable)
     is LibraryError.OtherActive ->
-        getString(Res.string.paired_other_active, error.deviceName ?: getString(Res.string.paired_other_active_unknown))
-    is LibraryError.Failed -> getString(Res.string.paired_error, error.status, error.code ?: getString(Res.string.error_unknown_code))
+        formatMessage(Res.string.paired_other_active, error.deviceName ?: getString(Res.string.paired_other_active_unknown))
+    is LibraryError.Failed -> formatMessage(Res.string.paired_error, error.status, error.code ?: getString(Res.string.error_unknown_code))
 }
 
 @Composable
 private fun libraryErrorText(error: LibraryError): String = when (error) {
     LibraryError.Unreachable -> stringResource(Res.string.library_error_unreachable)
     is LibraryError.OtherActive ->
-        stringResource(Res.string.paired_other_active, error.deviceName ?: stringResource(Res.string.paired_other_active_unknown))
-    is LibraryError.Failed -> stringResource(Res.string.paired_error, error.status, error.code ?: stringResource(Res.string.error_unknown_code))
+        formatText(stringResource(Res.string.paired_other_active), error.deviceName ?: stringResource(Res.string.paired_other_active_unknown))
+    is LibraryError.Failed -> formatText(stringResource(Res.string.paired_error), error.status, error.code ?: stringResource(Res.string.error_unknown_code))
 }
 
 /**
@@ -617,6 +932,13 @@ fun rememberCollectionSongs(
     val list = remember(ref) {
         PagedList(Unit, scope) { _, offset, limit -> library.collectionSongs(ref, offset, limit) }
     }
+    // The list joins the library's patch scope: the §10.2 writes update it in place (the phone's own
+    // detail screens update through its database)
+    val lists = LocalLibraryActions.current?.lists
+    DisposableEffect(list) {
+        lists?.registerTrackList(list)
+        onDispose { lists?.unregisterTrackList(list) }
+    }
     val state by list.state.collectAsState()
     LaunchedEffect(state.notFound) {
         if (state.notFound) {
@@ -643,6 +965,12 @@ fun rememberPlaylistSongs(
     val scope = rememberCoroutineScope()
     val list = remember(ref) {
         PagedList(PlaylistSongsQuery(), scope) { query, offset, limit -> library.collectionSongs(ref, offset, limit, query) }
+    }
+    // The list joins the library's patch scope, as [rememberCollectionSongs']
+    val lists = LocalLibraryActions.current?.lists
+    DisposableEffect(list) {
+        lists?.registerTrackList(list)
+        onDispose { lists?.unregisterTrackList(list) }
     }
     val state by list.state.collectAsState()
     LaunchedEffect(state.notFound) {

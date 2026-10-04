@@ -29,6 +29,7 @@ import app.n_zik.compagnon.generated.resources.stat_today
 import app.n_zik.compagnon.generated.resources.stat_week
 import app.n_zik.compagnon.generated.resources.stat_year
 import app.n_zik.compagnon.generated.resources.today
+import app.n_zik.compagnon.utils.formatText
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -78,7 +79,7 @@ class PeriodSelector(
 
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.header_view_top_of, "10")
+        get() = formatText(stringResource(Res.string.header_view_top_of), "10")
 
     override fun onShortClick() = openMenu()
 

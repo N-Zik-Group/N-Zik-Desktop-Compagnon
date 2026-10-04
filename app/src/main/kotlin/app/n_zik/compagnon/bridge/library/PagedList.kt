@@ -27,6 +27,9 @@ data class PagedState<T>(
     val error: LibraryError? = null,
     val notFound: Boolean = false,
     val revoked: Boolean = false,
+    /** Since 1.7.2: the total duration in ms of the FULL list, before pagination and before `text`
+     *  (the phone's `GET /library/playlists/{id}/songs`, its header duration); `0` on every other route. */
+    val totalDurationMs: Long = 0L,
 ) {
     val endReached: Boolean get() = total != null && items.size >= total
 }
@@ -100,6 +103,26 @@ class PagedList<Q, T>(
         loadMore()
     }
 
+    /**
+     * An in-memory rewrite of the loaded items (the contract §10.2 writes, since 1.7): [transform] gives
+     * each loaded item its replacement, or `null` to drop it (the phone hides it from its list, so
+     * [PagedState.total] shrinks by the number of dropped items). Only the loaded items are patched:
+     * not-yet-loaded pages are read from the phone anyway and already carry the new state. A later
+     * [reload] re-syncs the list with the phone.
+     */
+    fun patchItems(transform: (T) -> T?) {
+        synchronized(lock) {
+            val current = _state.value
+            if (current.items.isEmpty()) return
+            val items = current.items.mapNotNull(transform)
+            val dropped = current.items.size - items.size
+            _state.value = current.copy(
+                items = items,
+                total = current.total?.minus(dropped)?.coerceAtLeast(0),
+            )
+        }
+    }
+
     private fun apply(requestGeneration: Long, offset: Int, result: LibraryResult<T>) = synchronized(lock) {
         // An answer to an older query or before a reload never overwrites the current list
         if (requestGeneration != generation) return@synchronized
@@ -110,6 +133,8 @@ class PagedList<Q, T>(
                 items = current.items + result.page.items,
                 // An empty page ends the list even if `total` says otherwise (library changed meanwhile)
                 total = if (result.page.items.isEmpty()) current.items.size else result.page.total,
+                // Since 1.7.2: the full list's duration (a later page carries the same value)
+                totalDurationMs = result.page.totalDurationMs,
                 loading = false,
                 error = null,
             )

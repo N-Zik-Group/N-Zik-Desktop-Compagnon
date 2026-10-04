@@ -2,6 +2,7 @@ package app.n_zik.compagnon.components.ui.screens.artist
 
 import app.n_zik.compagnon.generated.resources.share_social
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -22,8 +23,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,13 +38,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.n_zik.compagnon.bridge.library.Artist
+import app.n_zik.compagnon.bridge.library.ArtistFollow
+import app.n_zik.compagnon.bridge.library.DislikeMode
 import app.n_zik.compagnon.bridge.library.LibraryRepository
+import app.n_zik.compagnon.bridge.library.PagedState
+import app.n_zik.compagnon.bridge.library.nextRotation
+import app.n_zik.compagnon.bridge.library.nextToggle
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.SongItem
 import app.n_zik.compagnon.components.menu.song.SongItemMenu
 import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
@@ -57,7 +69,10 @@ import app.n_zik.compagnon.components.ui.screens.home.rememberCollectionSongs
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.Res
+import app.n_zik.compagnon.generated.resources.added_to_dislikes
+import app.n_zik.compagnon.generated.resources.added_to_favorites
 import app.n_zik.compagnon.generated.resources.artist_songs_count_duration
+import app.n_zik.compagnon.generated.resources.disliked
 import app.n_zik.compagnon.generated.resources.download
 import app.n_zik.compagnon.generated.resources.downloaded
 import app.n_zik.compagnon.generated.resources.enqueue
@@ -66,9 +81,12 @@ import app.n_zik.compagnon.generated.resources.following
 import app.n_zik.compagnon.generated.resources.info_download_all_songs
 import app.n_zik.compagnon.generated.resources.info_no_songs_yet
 import app.n_zik.compagnon.generated.resources.info_remove_all_downloaded_songs
+import app.n_zik.compagnon.generated.resources.removed_from_favorites
 import app.n_zik.compagnon.generated.resources.shuffle
 import app.n_zik.compagnon.generated.resources.shuffle_ok
 import app.n_zik.compagnon.utils.fadingEdge
+import app.n_zik.compagnon.utils.formatText
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -79,8 +97,11 @@ import org.jetbrains.compose.resources.stringResource
  * 32–38 sp), "N Songs • duration" (`bodyLarge`), the `SongItem` list and "No songs available".
  * Action row: the phone's Library-tab row (`ArtistLocalSongs.kt` 209-273) in a SpaceEvenly row (12/12/12/8 dp
  * of padding): the follow pill (100 × 32 dp, `FollowButton.kt` 139-181 — "Following" in accent / onAccent
- * when followed, "Follow" in background2 / text otherwise; contract 1.3 `isBookmarked`, inert: wire 1.7
- * adds the follow toggle and the phone's third, red, "Disliked" state) and, in the phone's order, the
+ * when followed, "Disliked" in red / onAccent when disliked, "Follow" in background2 / text otherwise;
+ * since 1.7 a tap rotates the state — neutral → followed → disliked → neutral — and writes the phone's
+ * target (`library.write`), toasting the phone's `added_to_favorites` / `added_to_dislikes` /
+ * `removed_from_favorites` (its `FollowButton.kt` 97-115), while without the feature it stays inert) and,
+ * in the phone's order, the
  * download-all and remove-downloads placeholders (their toasts are the phone's long-press hints, on click
  * here) and the enqueue and shuffle buttons wired to the contract (greyed without the `queue` feature or
  * while the list is empty; the app-wide `shuffle_ok` flash, issue #866).
@@ -115,10 +136,42 @@ fun ArtistLocalSongs(
         ""
     }
     val collection = actions.collectionActions(header.ref, live)
-    // The phone's Library-tab action row (`ArtistLocalSongs.kt` 209-273): the follow pill is inert (no
-    // contract route yet — wire 1.7), download all / remove downloads are placeholders (their toasts are
-    // the phone's long-press hints, on click here), enqueue / shuffle are wired to the contract
+    // The phone's Library-tab action row (`ArtistLocalSongs.kt` 209-273): the follow pill rotates and
+    // writes its target state (since 1.7), download all / remove downloads are placeholders (their toasts
+    // are the phone's long-press hints, on click here), enqueue / shuffle are wired to the contract
     val playbackEnabled = live && collection != null && songs.isNotEmpty()
+
+    // The follow pill's state, since 1.7: the phone reads its artist live from the DB (`FollowButton.kt`
+    // 140-143); here it is seeded from the header and re-synced from the Artists list (the confirmed
+    // §10.2 writes patch it), so it tracks the phone's state across the write
+    var followState by remember(header.artist.id) {
+        mutableStateOf(
+            when {
+                header.artist.isBookmarked -> ArtistFollow.Followed
+                header.artist.isDisliked -> ArtistFollow.Disliked
+                else -> ArtistFollow.Neutral
+            },
+        )
+    }
+    val artistsState by (actions.lists?.artists?.state ?: remember { MutableStateFlow(PagedState<Artist>()) })
+        .collectAsState()
+    val listedArtist = artistsState.items.firstOrNull { it.id == header.artist.id }
+    LaunchedEffect(listedArtist) {
+        listedArtist?.let {
+            followState = when {
+                it.isBookmarked -> ArtistFollow.Followed
+                it.isDisliked -> ArtistFollow.Disliked
+                else -> ArtistFollow.Neutral
+            }
+        }
+    }
+    val writeEnabled = live && actions.canWrite
+    // Since 1.7.2 (feature `library.dislikeMode`): the phone's "disliked" mode off makes the follow a
+    // binary toggle (the phone's `toggleBookmark`, its `FollowButton.kt` 74-81); `null` keeps the
+    // rotation (the phone's default)
+    val dislikeMode by (actions.lists?.dislikeMode ?: remember { MutableStateFlow<DislikeMode?>(null) })
+        .collectAsState()
+    val followRotationEnabled = dislikeMode?.artists != false
 
     Box(Modifier.fillMaxSize()) {
         BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -140,26 +193,45 @@ fun ArtistLocalSongs(
                             .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 8.dp),
                     ) {
                         // The phone's `FollowButton.ToolBarButton()` (`FollowButton.kt` 139-181): the 100 × 32 dp
-                        // pill, "Following" (accent / onAccent) when followed, "Follow" (background2 / text)
-                        // otherwise — inert: no contract route (wire 1.7 adds the toggle and the phone's third,
-                        // red, "Disliked" state)
+                        // pill, "Following" (accent / onAccent) when followed, "Disliked" (red / onAccent) when
+                        // disliked, "Follow" (background2 / text) otherwise. A tap rotates the state (neutral →
+                        // followed → disliked → neutral, the phone's `rotateLikeState`) or, with the phone's
+                        // "disliked" mode off (since 1.7.2), toggles it (the phone's `toggleBookmark`) and
+                        // writes the phone's target state (`library.write`, since 1.7); without the feature it
+                        // stays inert
                         Box(
                             modifier = Modifier
                                 .requiredSize(100.dp, TabToolBar.TOOLBAR_ICON_SIZE)
                                 .clip(uiRoundnessShape())
                                 .background(
-                                    if (header.artist.isBookmarked) colorPalette().accent
-                                    else colorPalette().background2,
-                                ),
+                                    when (followState) {
+                                        ArtistFollow.Followed -> colorPalette().accent
+                                        ArtistFollow.Disliked -> colorPalette().red
+                                        ArtistFollow.Neutral -> colorPalette().background2
+                                    },
+                                )
+                                .clickable(enabled = writeEnabled) {
+                                    val target = if (followRotationEnabled) followState.nextRotation() else followState.nextToggle()
+                                    followState = target
+                                    actions.followArtist(header.artist.id, target)
+                                    // The phone's toast (its `FollowButton.kt` 97-115)
+                                    followToast(target, header.artist.name)
+                                },
                             contentAlignment = Alignment.Center,
                         ) {
                             BasicText(
                                 text = stringResource(
-                                    if (header.artist.isBookmarked) Res.string.following else Res.string.follow,
+                                    when (followState) {
+                                        ArtistFollow.Followed -> Res.string.following
+                                        ArtistFollow.Disliked -> Res.string.disliked
+                                        ArtistFollow.Neutral -> Res.string.follow
+                                    },
                                 ),
                                 style = typography().s.copy(
-                                    color = if (header.artist.isBookmarked) colorPalette().onAccent
-                                            else colorPalette().text,
+                                    color = when (followState) {
+                                        ArtistFollow.Neutral -> colorPalette().text
+                                        else -> colorPalette().onAccent
+                                    },
                                 ),
                             )
                         }
@@ -200,7 +272,7 @@ fun ArtistLocalSongs(
                 item {
                     if (songCount > 0) {
                         Text(
-                            text = stringResource(Res.string.artist_songs_count_duration, songCount, totalDurationText),
+                            text = formatText(stringResource(Res.string.artist_songs_count_duration), songCount, totalDurationText),
                             style = MaterialTheme.typography.bodyLarge,
                             color = colorPalette().text,
                             modifier = Modifier
@@ -230,7 +302,7 @@ fun ArtistLocalSongs(
                             Modifier
                                 .fillMaxWidth(),
                         ) {
-                            val menu = actions.trackActions({ list.state.value.items }, index, song.id, live)
+                            val menu = actions.trackActions(list.state, index, song.id, live)
                             SongItem(
                                 song = song,
                                 modifier = Modifier,
@@ -253,6 +325,11 @@ fun ArtistLocalSongs(
 /** Port of `ArtistHeader` (`ArtistLocalSongs.kt` 703). */
 @Composable
 fun ArtistHeader(artist: Artist, isLandscape: Boolean) {
+    // The PC's "Disable scrolling text" (the phone's `disableScrollingTextKey`, its
+    // `ArtistLocalSongs.kt` 709, 741): the name's marquee is dropped when set
+    val preferences = LocalPreferences.current
+    val settings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
+
     Box(Modifier.fillMaxWidth()) {
         if (!isLandscape) {
             ImageCacheFactory.Thumbnail(
@@ -283,7 +360,7 @@ fun ArtistHeader(artist: Artist, isLandscape: Boolean) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(horizontal = 30.dp)
-                    .basicMarquee(iterations = Int.MAX_VALUE)
+                    .then(if (settings.disableScrollingText) Modifier else Modifier.basicMarquee(iterations = Int.MAX_VALUE))
                     .align(Alignment.CenterHorizontally),
             )
             // `artistPage?.subscribers`: no artist page for a local artist (phone's 744-748)
@@ -304,4 +381,18 @@ fun ArtistHeader(artist: Artist, isLandscape: Boolean) {
             onClick = {},
         )
     }
+}
+
+/**
+ * The phone's toast of a follow/like state change (its `FollowButton.kt` 97-115, the same messages as
+ * the artist menu's bookmark, its `LocalArtistItemMenu.kt` 274-292): the artist's name, when it has
+ * one, in the phone's quoted-argument form.
+ */
+internal fun followToast(target: ArtistFollow, name: String) {
+    val messageId = when (target) {
+        ArtistFollow.Followed -> Res.string.added_to_favorites
+        ArtistFollow.Disliked -> Res.string.added_to_dislikes
+        ArtistFollow.Neutral -> Res.string.removed_from_favorites
+    }
+    if (name.isNotBlank()) Toaster.s(messageId, "\"$name\"") else Toaster.s(messageId)
 }

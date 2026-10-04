@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,12 +21,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import app.n_zik.compagnon.bridge.library.LibraryCache
 import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongSort
 import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SessionContract
-import app.n_zik.compagnon.bridge.state.TrackSource
+import app.n_zik.compagnon.bridge.state.unmatched
 import app.n_zik.compagnon.components.ButtonsRow
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.PeriodSelector
@@ -42,7 +44,9 @@ import app.n_zik.compagnon.components.tab.SongShuffler
 import app.n_zik.compagnon.components.tab.TabHeader
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
+import app.n_zik.compagnon.components.ui.screens.settings.formatShortFileSize
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.themed.CacheSpaceIndicator
 import app.n_zik.compagnon.components.themed.Enqueue
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
 import app.n_zik.compagnon.components.themed.HeaderInfo
@@ -67,9 +71,7 @@ import app.n_zik.compagnon.generated.resources.favorites
 import app.n_zik.compagnon.generated.resources.heart
 import app.n_zik.compagnon.generated.resources.import_outline
 import app.n_zik.compagnon.generated.resources.import_playlist
-import app.n_zik.compagnon.generated.resources.info_download_all_songs
 import app.n_zik.compagnon.generated.resources.info_lock_unlock_reorder_songs
-import app.n_zik.compagnon.generated.resources.info_open_update_dialog
 import app.n_zik.compagnon.generated.resources.info_remove_all_downloaded_songs
 import app.n_zik.compagnon.generated.resources.info_shuffle
 import app.n_zik.compagnon.generated.resources.info_smart_recommendation
@@ -88,6 +90,7 @@ import app.n_zik.compagnon.generated.resources.smart_trash
 import app.n_zik.compagnon.generated.resources.songs
 import app.n_zik.compagnon.generated.resources.trash
 import app.n_zik.compagnon.generated.resources.unchecked_outline
+import app.n_zik.compagnon.generated.resources.update
 import app.n_zik.compagnon.utils.ChipSort
 import app.n_zik.compagnon.utils.LocalPreferences
 import kotlinx.coroutines.CoroutineScope
@@ -112,9 +115,9 @@ import org.jetbrains.compose.resources.stringResource
  * conditions (position lock only while the chip's sort is `Custom`, match only while unmatched tracks
  * are loaded, no YouTube sync on the PC), plus the Compagnon's "Refresh". Wired: sort (or the period
  * selector on Top), search, locator, shuffle, play next and enqueue (on the loaded tracks); the rest
- * (download all / delete downloads, smart shuffle, item selector, add to favorites / to a playlist,
- * import / export, update, smart trash) are placeholders without a contract route, a click does
- * nothing; the buttons that do not fit the row go behind the "…" menu.
+ * (position lock, match, download all / delete downloads, smart shuffle, item selector, add to
+ * favorites / to a playlist, import / export, update, smart trash) are placeholders without a contract
+ * route, a click does nothing; the buttons that do not fit the row go behind the "…" menu.
  *
  * Sort: the phone keeps one sort per tab — the chip's sort and direction live in the user settings
  * (`chipSorts`, key `songs:<chip>`), applied to the chip's list on every change and on the first
@@ -125,11 +128,17 @@ import org.jetbrains.compose.resources.stringResource
  * cached chips, as on the phone. On a phone without `library.sort` (contract < 1.6) the options without
  * a route are shown without effect, the direction is applied client-side, and the Disliked / Cached / Top
  * chips are inert (they are filtered on the phone's own database, which the contract cannot reach before
- * 1.6). The header's count is hidden while a search is active (the phone keeps its pre-search total).
+ * 1.6). The header's count is live: the wire's `total` is the post-search count while a search is
+ * active, as on the phone (its `itemsOnDisplayState.size`).
  *
- * Dropped (contract v1): position lock, match, YouTube likes sync, the chip visibility / order and
- * toolbar order / visibility preferences, the YouTube filter row, the cache space indicator, the
- * smart-recommendation counter, the floating search / settings icon.
+ * Since 1.7.1: the phone's storage bar of the cached / downloaded chips (contract §10 `library.cache`,
+ * the phone's `HomeSongsScreen.kt` 763-782; hidden while the phone's limit is `Unlimited`), the
+ * `playCount` / `playTime` row overlays, and the sentinel alert of a track not matched to the phone's
+ * library (a click is blocked with the phone's toast).
+ *
+ * Dropped (contract v1 or PC): YouTube likes sync, the chip visibility / order and toolbar order /
+ * visibility preferences, the YouTube filter row, the smart-recommendation counter, the floating
+ * search / settings icon.
  */
 @Composable
 fun HomeSongsScreen(
@@ -148,6 +157,19 @@ fun HomeSongsScreen(
     val activeList = lists.activeSongsList()
     val state by activeList.state.collectAsState()
     val searchText by lists.songsSearch.collectAsState()
+
+    // Since 1.7.1: the phone's disk caches (contract §10 `library.cache`), read on a tab switch;
+    // `null` hides the cache bar
+    var libraryCache by remember { mutableStateOf<LibraryCache?>(null) }
+    LaunchedEffect(lists) {
+        libraryCache = if (SessionContract.FEATURE_LIBRARY_CACHE in lists.features) lists.cacheSpace() else null
+    }
+
+    // Since 1.7.2 (feature `library.dislikeMode`): the phone's "disliked" mode (its `DislikeMode.Enabled`
+    // per collection, read once per session by the lists) — `false` hides the Disliked chip, like on
+    // the phone; `null` keeps the pre-1.7.2 display (the phone's own default: the mode enabled, the
+    // chip shown)
+    val dislikeMode by lists.dislikeMode.collectAsState()
 
     val showText: (StringResource) -> Unit = { id -> scope.launch { onMessage(getString(id)) } }
     val search = Search(searchText, lists::onSongsSearch, lazyListState)
@@ -194,11 +216,10 @@ fun HomeSongsScreen(
     // the chip's own sort, not the list's default query (a no-op while the persisted sort is the default)
     LaunchedEffect(lists) { applyChipQuery(chip, settings?.chipSorts?.get(chip.key) ?: chip.defaultSort()) }
 
-    // The phone's `hasUnmatchedSongs` (HomeSongsScreen.kt 463) with the PC's `Track` in hand: a
-    // non-YT id (11 digits) and not a local song — the match button is shown when one is loaded (the
-    // phone's zero-duration sentinel needs a play-time the contract does not carry). Equivalent to the
-    // playlist detail's `Track.unmatched()` (`local:` id prefix) under the wire invariant (BridgeStateMessages)
-    val hasUnmatched = state.items.any { it.id.length != 11 && it.source != TrackSource.Local }
+    // The phone's `hasUnmatchedSongs` (HomeSongsScreen.kt 463, the phone's full check — `Track.unmatched`,
+    // contract 1.7.1): a non-YT id or the zero-duration sentinel, the phone's `local:` files excluded —
+    // the match button is shown when one is loaded
+    val hasUnmatched = state.items.any { it.unmatched() }
 
     // The chip's sort button (the phone's per-tab sort). Top replaces it with the period selector;
     // Disliked keeps the arrow like on the phone (the phone's provider ignores the sort there)
@@ -240,7 +261,7 @@ fun HomeSongsScreen(
                 "match" -> if (hasUnmatched) add(InertButton(Res.drawable.alert, Res.string.match_album_audio_version))
                 "search" -> add(search)
                 "locator" -> add(locator)
-                "download_all" -> add(InertButton(Res.drawable.downloaded, Res.string.info_download_all_songs))
+                "download_all" -> add(InertButton(Res.drawable.downloaded, Res.string.download))
                 "delete_downloads" -> add(InertButton(Res.drawable.download, Res.string.info_remove_all_downloaded_songs))
                 "shuffle" -> if (actions.available) {
                     add(SongShuffler(enabled = playbackEnabled) { activeList.state.value.let { items -> actions.playShuffled(items.items, items.total ?: items.items.size) } })
@@ -263,16 +284,23 @@ fun HomeSongsScreen(
                 "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
                 "import_menu" -> add(InertButton(Res.drawable.import_outline, Res.string.import_playlist))
                 "export_dialog" -> add(InertButton(Res.drawable.export_outline, Res.string.export_playlist))
-                "export_cache" -> add(InertButton(Res.drawable.export_outline, Res.string.export_cached))
-                "update" -> add(InertButton(Res.drawable.refresh, Res.string.info_open_update_dialog))
+                // Since 1.7.2 (feature `library.ffmpeg`): shown only when the phone's build ships FFmpeg,
+                // as on the phone (its `HomeSongsScreen.kt` 555)
+                "export_cache" -> if (SessionContract.FEATURE_LIBRARY_FFMPEG in lists.features) {
+                    add(InertButton(Res.drawable.export_outline, Res.string.export_cached))
+                }
+                "update" -> add(InertButton(Res.drawable.refresh, Res.string.update))
                 "smart_trash" -> add(InertButton(Res.drawable.trash, Res.string.smart_trash))
             }
         }
         add(Refresh(lists::reloadActiveSongs))
     }
 
-    // The user's chip order (the phone's `BuiltInPlaylist` labels)
-    val chips = SongsChip.entries.map { it to stringResource(chipLabel(it)) }
+    // The user's chip order (the phone's `BuiltInPlaylist` labels); since 1.7.2 the phone's "disliked"
+    // mode hides its Disliked chip when off (its `HomeSongsScreen.kt` 690)
+    val chips = SongsChip.entries
+        .filter { it != SongsChip.Disliked || dislikeMode?.songs != false }
+        .map { it to stringResource(chipLabel(it)) }
 
     Box(
         modifier = Modifier.background(colorPalette().background0)
@@ -286,12 +314,11 @@ fun HomeSongsScreen(
                 Column {
                     CollapsibleTitleRow(titleOffsetState, titleHeightState) {
                         TabHeader(stringResource(Res.string.songs)) {
-                            // The phone keeps its pre-search total: the count is hidden while a search is active
-                            if (searchText.isEmpty()) {
-                                Column {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        HeaderInfo((state.total ?: state.items.size).toString(), Res.drawable.musical_notes)
-                                    }
+                            // The phone's live count (its `itemsOnDisplayState.size`): the wire's `total` is
+                            // the post-search count while a search is active, as on the phone
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    HeaderInfo((state.total ?: state.items.size).toString(), Res.drawable.musical_notes)
                                 }
                             }
                         }
@@ -315,6 +342,34 @@ fun HomeSongsScreen(
                             )
                         }
                     }
+
+                    // The cache space bar (contract 1.7.1, phone's `HomeSongsScreen.kt` 763-782): on the
+                    // cached / downloaded chips, the phone's cache used over its configured cap; on the
+                    // "Cached PC" chip, the Compagnon's own audio cache (contract §8.3) used over its
+                    // ceiling — an unlimited cap hides the bar, like on the phone
+                    val phoneCache = when (chip) {
+                        SongsChip.CachedTel -> libraryCache?.cached
+                        SongsChip.DownloadTel -> libraryCache?.downloaded
+                        else -> null
+                    }
+                    val pcCache = if (chip == SongsChip.CachedPc) lists.audioCache else null
+                    AnimatedVisibility(visible = phoneCache?.maxBytes != null || pcCache?.ceiling != null) {
+                        when (val cache = pcCache) {
+                            null -> CacheSpaceIndicator(
+                                usedBytes = phoneCache?.usedBytes ?: 0L,
+                                maxBytes = phoneCache?.maxBytes,
+                                // Since 1.7.2: the phone's own label of its cap ("2GB", "Custom", "Turn off",
+                                // its `ExoPlayerDiskCacheMaxSize.text`); a ≤ 1.7.1 phone does not send it,
+                                // then the client formats its cap itself, as before
+                                maxText = phoneCache?.maxText ?: formatShortFileSize(phoneCache?.maxBytes ?: 0L),
+                            )
+                            else -> CacheSpaceIndicator(
+                                usedBytes = cache.totalBytes(),
+                                maxBytes = cache.ceiling,
+                                maxText = formatShortFileSize(cache.ceiling ?: 0L),
+                            )
+                        }
+                    }
                     search.SearchBar()
                 }
             },
@@ -328,6 +383,9 @@ fun HomeSongsScreen(
                     actions = actions,
                     live = live,
                     headerPadding = headerPadding,
+                    // Since 1.7.1: the phone's listening-sort overlays and the Top chip's rank
+                    sort = chipSort.songSort,
+                    isTop = chip == SongsChip.Top,
                 )
             }
         }

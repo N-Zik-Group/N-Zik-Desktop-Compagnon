@@ -23,6 +23,7 @@ import app.n_zik.compagnon.bridge.pairing.PairingState
 import app.n_zik.compagnon.components.settings.OtherSettingsEntry
 import app.n_zik.compagnon.components.settings.SettingsSectionCard
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
@@ -90,7 +91,7 @@ fun PairPcCard(
                 )
                 if (payload != null) {
                     Text(
-                        text = stringResource(Res.string.pair_qr_addresses, payload.ips.joinToString(", "), payload.port),
+                        text = formatText(stringResource(Res.string.pair_qr_addresses), payload.ips.joinToString(", "), payload.port),
                         style = typography().xxs,
                         color = palette.textSecondary,
                         textAlign = TextAlign.Center,

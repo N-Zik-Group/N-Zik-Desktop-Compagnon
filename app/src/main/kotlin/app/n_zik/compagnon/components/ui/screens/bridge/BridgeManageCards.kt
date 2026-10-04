@@ -36,6 +36,7 @@ import app.n_zik.compagnon.bridge.pairing.PairingState
 import app.n_zik.compagnon.components.settings.OtherSettingsEntry
 import app.n_zik.compagnon.components.settings.SettingsSectionCard
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.generated.resources.Res
@@ -87,11 +88,11 @@ fun PairedScreen(state: PairingState.Paired, onRetry: () -> Unit, onForget: () -
         SettingsSectionCard(title = stringResource(Res.string.paired_title), icon = Res.drawable.devices, content = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    stringResource(Res.string.paired_with, record.serverName),
+                    formatText(stringResource(Res.string.paired_with), record.serverName),
                     style = typography().s.semiBold,
                     color = palette.text,
                 )
-                Text(stringResource(Res.string.paired_as, record.deviceName), style = typography().xs, color = palette.textSecondary)
+                Text(formatText(stringResource(Res.string.paired_as), record.deviceName), style = typography().xs, color = palette.textSecondary)
                 when (val status = state.status) {
                     PairedStatus.Checking -> Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -109,11 +110,11 @@ fun PairedScreen(state: PairingState.Paired, onRetry: () -> Unit, onForget: () -
                         onRetry,
                     )
                     is PairedStatus.Incompatible -> StatusWithRetry(
-                        stringResource(Res.string.paired_incompatible, status.contractVersion),
+                        formatText(stringResource(Res.string.paired_incompatible), status.contractVersion),
                         onRetry,
                     )
                     is PairedStatus.Error -> StatusWithRetry(
-                        stringResource(Res.string.paired_error, status.status, status.code ?: stringResource(Res.string.error_unknown_code)),
+                        formatText(stringResource(Res.string.paired_error), status.status, status.code ?: stringResource(Res.string.error_unknown_code)),
                         onRetry,
                     )
                     PairedStatus.Unreachable -> Unit // own screen
@@ -199,7 +200,7 @@ fun UnreachableScreen(state: PairingState.Paired, onRetry: () -> Unit, onEditIp:
                         errorText = if (ip.isNotEmpty() && !valid) stringResource(Res.string.manual_ip_invalid) else null,
                     )
                     Text(
-                        stringResource(Res.string.unreachable_port_kept, record.serverPort),
+                        formatText(stringResource(Res.string.unreachable_port_kept), record.serverPort),
                         style = typography().xs,
                         color = palette.textSecondary,
                     )
@@ -247,7 +248,7 @@ fun ConnectionBanner(connection: ConnectionState, onReconnect: () -> Unit) {
     val (text, button) = when (connection) {
         ConnectionState.Live, ConnectionState.Connecting, ConnectionState.Revoked -> return
         is ConnectionState.Reconnecting ->
-            stringResource(Res.string.connection_reconnecting_in, ((connection.delayMs + 999) / 1_000).toInt()) to null
+            formatText(stringResource(Res.string.connection_reconnecting_in), ((connection.delayMs + 999) / 1_000).toInt()) to null
         is ConnectionState.ServerStopped -> stringResource(Res.string.connection_server_stopped) to Res.string.reconnect
         ConnectionState.Kicked -> stringResource(Res.string.connection_kicked) to Res.string.reconnect
         ConnectionState.Replaced -> stringResource(Res.string.connection_replaced) to Res.string.reconnect
@@ -278,8 +279,8 @@ fun PhonePanel(record: PairingRecord, connection: ConnectionState, onClose: () -
     OverlayPanel(onClose = onClose) {
         SettingsSectionCard(title = stringResource(Res.string.phone_panel_title), icon = Res.drawable.devices, content = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(stringResource(Res.string.paired_with, record.serverName), style = typography().s.semiBold, color = palette.text)
-                Text(stringResource(Res.string.paired_as, record.deviceName), style = typography().xs, color = palette.textSecondary)
+                Text(formatText(stringResource(Res.string.paired_with), record.serverName), style = typography().s.semiBold, color = palette.text)
+                Text(formatText(stringResource(Res.string.paired_as), record.deviceName), style = typography().xs, color = palette.textSecondary)
                 ConnectionIndicator(connection)
                 ForgetEntry(onForget)
             }

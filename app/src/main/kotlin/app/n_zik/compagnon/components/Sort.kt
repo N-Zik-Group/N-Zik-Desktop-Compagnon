@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.library.AlbumSort
@@ -191,7 +193,9 @@ class Sort<T>(
     private val baseRotation: Float = 0f,
     /**
      * The current sort's label, drawn next to the arrow (the phone's `PlaylistSongsSort` does the
-     * same in its `ToolBarButton` override: the selected sort's name, semi-bold, ellipsised).
+     * same in its `ToolBarButton` override: the selected sort's name, semi-bold, ellipsised). Like
+     * the phone's label, a click on it opens the sort menu (the phone's arrow long-click is a no-op;
+     * the PC keeps the arrow's right-click as a convenience).
      */
     private val currentLabel: (@Composable () -> Unit)? = null,
 ) : MenuIcon {
@@ -274,6 +278,16 @@ class Sort<T>(
             this::onShortClick,
             this::onLongClick,
         )
-        currentLabel?.invoke()
+        // The phone's label opens the sort menu on a click (its `PlaylistSongsSort` label is
+        // `.clickable { super.onLongClick() }`)
+        currentLabel?.let { label ->
+            Box(
+                modifier = Modifier
+                    .clip(uiRoundnessShape())
+                    .clickable { openMenu() },
+            ) {
+                label()
+            }
+        }
     }
 }
