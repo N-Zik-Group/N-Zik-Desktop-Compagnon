@@ -340,7 +340,6 @@ fun MainActivity(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .nestedScroll(nestedScrollConnection)
                 // A wheel step up shows the bars again even over a list already at its top (no nested scroll)
                 .onPointerEvent(PointerEventType.Scroll, PointerEventPass.Initial) { event ->
                     val notches = event.changes.firstOrNull()?.scrollDelta?.y ?: 0f
@@ -357,7 +356,15 @@ fun MainActivity(
                     if (event.button == PointerButton.Back) currentOnBackPress()
                 },
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
+            // The scroll-hide connection rides the content, not the window: the player sheet, the queue
+            // overlay and the menus are the Column's siblings, so their nested scroll never hides the
+            // bars — on the phone they are separate windows (`CustomModalBottomSheet`) and reach none of
+            // the activity's scroll listeners
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .nestedScroll(nestedScrollConnection),
+            ) {
                 // The header slides out with the scroll and the content follows it (phone's
                 // `AppNavigation.kt` 303-345: the content's top padding is the header plus its offset)
                 Box(
