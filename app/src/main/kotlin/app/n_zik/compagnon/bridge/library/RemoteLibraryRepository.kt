@@ -23,17 +23,22 @@ class RemoteLibraryRepository(
     override suspend fun songs(offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track> =
         guarded { api.songs(address, deviceToken, offset, limit, query) }
 
-    override suspend fun playlists(offset: Int, limit: Int): LibraryResult<Playlist> =
-        guarded { api.playlists(address, deviceToken, offset, limit) }
+    override suspend fun playlists(offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist> =
+        guarded { api.playlists(address, deviceToken, offset, limit, query) }
 
-    override suspend fun albums(offset: Int, limit: Int, filter: CollectionFilter): LibraryResult<Album> =
-        guarded { api.albums(address, deviceToken, offset, limit, filter) }
+    override suspend fun albums(offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album> =
+        guarded { api.albums(address, deviceToken, offset, limit, query) }
 
-    override suspend fun artists(offset: Int, limit: Int, filter: CollectionFilter): LibraryResult<Artist> =
-        guarded { api.artists(address, deviceToken, offset, limit, filter) }
+    override suspend fun artists(offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist> =
+        guarded { api.artists(address, deviceToken, offset, limit, query) }
 
-    override suspend fun collectionSongs(collection: CollectionRef, offset: Int, limit: Int): LibraryResult<Track> =
-        guarded { api.collectionSongs(address, deviceToken, collection, offset, limit) }
+    override suspend fun collectionSongs(
+        collection: CollectionRef,
+        offset: Int,
+        limit: Int,
+        query: PlaylistSongsQuery?,
+    ): LibraryResult<Track> =
+        guarded { api.collectionSongs(address, deviceToken, collection, offset, limit, query) }
 
     private suspend fun <T> guarded(call: suspend () -> LibraryResult<T>): LibraryResult<T> =
         revocation.confirmRest(call = call, isRevoked = { it is LibraryResult.Revoked }).result

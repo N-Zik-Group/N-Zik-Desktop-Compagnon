@@ -60,8 +60,29 @@ import app.n_zik.compagnon.components.ui.screens.home.rememberCollectionSongs
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.Res
+import app.n_zik.compagnon.generated.resources.add_in_playlist
+import app.n_zik.compagnon.generated.resources.add_to_playlist
+import app.n_zik.compagnon.generated.resources.artists_edit
+import app.n_zik.compagnon.generated.resources.checked_filled
+import app.n_zik.compagnon.generated.resources.cover_edit
+import app.n_zik.compagnon.generated.resources.download
+import app.n_zik.compagnon.generated.resources.downloaded
+import app.n_zik.compagnon.generated.resources.enqueue
+import app.n_zik.compagnon.generated.resources.info_download_all_songs
+import app.n_zik.compagnon.generated.resources.info_remove_all_downloaded_songs
+import app.n_zik.compagnon.generated.resources.info_shuffle
+import app.n_zik.compagnon.generated.resources.item_select
 import app.n_zik.compagnon.generated.resources.library_empty
+import app.n_zik.compagnon.generated.resources.play_next
+import app.n_zik.compagnon.generated.resources.play_skip_forward
+import app.n_zik.compagnon.generated.resources.radio
+import app.n_zik.compagnon.generated.resources.shuffle
 import app.n_zik.compagnon.generated.resources.songs
+import app.n_zik.compagnon.generated.resources.start_radio
+import app.n_zik.compagnon.generated.resources.title_edit
+import app.n_zik.compagnon.generated.resources.update_authors
+import app.n_zik.compagnon.generated.resources.update_cover
+import app.n_zik.compagnon.generated.resources.update_title
 import app.n_zik.compagnon.utils.align
 import app.n_zik.compagnon.utils.center
 import app.n_zik.compagnon.utils.color
@@ -83,13 +104,14 @@ const val DETAIL_COVER_SIZE_PX = 1200
  * actions (`TabToolBar` at 80 % of the width), the "Songs" section title (`m` semi-bold, 16 dp sides,
  * 24 dp above, 8 dp below) and `SongItem` without thumbnail, numbered `index + 1` (`s` semi-bold
  * `textDisabled`, centred on 54 dp).
- * Actions kept from the phone's toolbar: shuffle, locator, play next, enqueue (whole album). The bookmark
- * button then 15 dp before the toolbar (`AlbumScreen.kt` 676-678: `bookmark` in accent when the album is
+ * Toolbar: the phone's full order — shuffle, locator, play next and enqueue (whole album) are wired to the
+ * contract, the rest (download all / delete downloads, radio, item selector, edit title / authors / cover,
+ * add to playlist) are placeholders without a contract route, a click does nothing. The bookmark button
+ * then 15 dp before the toolbar (`AlbumScreen.kt` 676-678: `bookmark` in accent when the album is
  * bookmarked, contract 1.3 `isBookmarked`, `bookmark_outline` in text otherwise; no contract route, no
  * action) and the share icon at the top end of the cover (no action). While the first page is loading the
  * centred [Loader] replaces the list (`AlbumScreen.kt` 589-603).
- * Dropped (contract v1 or PC): download all / delete downloads, radio, multi-selection,
- * edit title / authors / cover, add to playlist, the MusicBrainz "Info and community" block with
+ * Dropped (contract v1 or PC): the MusicBrainz "Info and community" block with
  * translation, the alternative versions, swipe actions, the floating shuffle icon.
  * Added by the Compagnon: the paging row (loading, error + "Retry"), "Nothing here." for an empty album.
  * The duration shows once all tracks are loaded (the contract gives no total duration).
@@ -125,15 +147,29 @@ fun AlbumDetails(
     val enqueue = Enqueue(enabled = playbackEnabled) { collection?.onEnqueue?.invoke() }
     val bookmark = InertButton(
         iconId = if (album.isBookmarked) Res.drawable.bookmark else Res.drawable.bookmark_outline,
+        titleId = Res.string.bookmark,
         tint = if (album.isBookmarked) colorPalette().accent else colorPalette().text,
     )
+    // The phone's toolbar order; shuffle, locator, play next and enqueue are wired to the contract,
+    // the rest are placeholders without a contract route (no action)
     val toolbar = buildList<Button> {
-        if (collection != null) add(shuffle)
+        add(InertButton(Res.drawable.downloaded, Res.string.info_download_all_songs))
+        add(InertButton(Res.drawable.download, Res.string.info_remove_all_downloaded_songs))
+        if (collection != null) add(shuffle) else add(InertButton(Res.drawable.shuffle, Res.string.info_shuffle))
+        add(InertButton(Res.drawable.radio, Res.string.start_radio))
         add(locator)
+        add(InertButton(Res.drawable.checked_filled, Res.string.item_select))
+        add(InertButton(Res.drawable.title_edit, Res.string.update_title))
+        add(InertButton(Res.drawable.artists_edit, Res.string.update_authors))
+        add(InertButton(Res.drawable.cover_edit, Res.string.update_cover))
         if (collection != null) {
             add(playNext)
             add(enqueue)
+        } else {
+            add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
+            add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
         }
+        add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
     }
 
     val sectionTextModifier = Modifier

@@ -12,10 +12,21 @@ interface LibraryRepository {
     val features: Set<String>
 
     suspend fun songs(offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track>
-    suspend fun playlists(offset: Int, limit: Int): LibraryResult<Playlist>
-    suspend fun albums(offset: Int, limit: Int, filter: CollectionFilter): LibraryResult<Album>
-    suspend fun artists(offset: Int, limit: Int, filter: CollectionFilter): LibraryResult<Artist>
-    suspend fun collectionSongs(collection: CollectionRef, offset: Int, limit: Int): LibraryResult<Track>
+    suspend fun playlists(offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist>
+    suspend fun albums(offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album>
+    suspend fun artists(offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist>
+
+    /**
+     * The tracks of [collection], paginated. [query] (a local playlist's `sort` and `reverse`, contract
+     * 1.6 `library.sort`) is sent only when it is not `null`; `null` for albums and artists, whose
+     * tracks keep the phone's fixed order.
+     */
+    suspend fun collectionSongs(
+        collection: CollectionRef,
+        offset: Int,
+        limit: Int,
+        query: PlaylistSongsQuery? = null,
+    ): LibraryResult<Track>
 
     /**
      * The first tracks of [collection], read page after page, up to [max] (the default is one more than

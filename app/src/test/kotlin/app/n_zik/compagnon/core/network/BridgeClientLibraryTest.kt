@@ -4,11 +4,18 @@ import app.n_zik.compagnon.bridge.library.Album
 import app.n_zik.compagnon.bridge.library.Artist
 import app.n_zik.compagnon.bridge.library.CollectionFilter
 import app.n_zik.compagnon.bridge.library.CollectionKind
+import app.n_zik.compagnon.bridge.library.AlbumsQuery
+import app.n_zik.compagnon.bridge.library.ArtistsQuery
 import app.n_zik.compagnon.bridge.library.CollectionRef
 import app.n_zik.compagnon.bridge.library.Playlist
+import app.n_zik.compagnon.bridge.library.PlaylistSongSort
+import app.n_zik.compagnon.bridge.library.PlaylistSongsQuery
+import app.n_zik.compagnon.bridge.library.PlaylistsQuery
+import app.n_zik.compagnon.bridge.library.PlaylistsFilter
 import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongSort
 import app.n_zik.compagnon.bridge.library.SongsQuery
+import app.n_zik.compagnon.bridge.library.TopPeriod
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackSource
 import io.ktor.client.engine.mock.MockEngine
@@ -72,6 +79,27 @@ class BridgeClientLibraryTest {
     }
 
     @Test
+    fun `the reverse direction is sent to the phone`() = runTest {
+        client { empty() }.songs(address, token, 0, 100, SongsQuery(reverse = true))
+        assertEquals("true", request.url.parameters["reverse"])
+    }
+
+    @Test
+    fun `the top period is sent only when set`() = runTest {
+        client { empty() }.songs(address, token, 0, 100, SongsQuery(filter = SongFilter.Top, period = TopPeriod.Week))
+        assertEquals("week", requests[0].url.parameters["period"])
+        client { empty() }.songs(address, token, 0, 100, SongsQuery(filter = SongFilter.Top))
+        // Absent: the phone keeps its own Top period
+        assertNull(requests[1].url.parameters["period"])
+    }
+
+    @Test
+    fun `the playlists filter is sent to the phone`() = runTest {
+        client { empty() }.playlists(address, token, 0, 100, PlaylistsQuery(filter = PlaylistsFilter.Rewind))
+        assertEquals("rewind", request.url.parameters["filter"])
+    }
+
+    @Test
     fun `playlists, albums and artists`() = runTest {
         val api = client { req ->
             when {
@@ -82,16 +110,22 @@ class BridgeClientLibraryTest {
                 else -> json("""{"items":[{"id":"UCx","name":"X","trackCount":34,"hasArtwork":false}],"total":1,"offset":0,"limit":100}""")
             }
         }
-        assertEquals(Playlist("12", "Ma playlist", 42, null), (api.playlists(address, token, 0, 100) as LibraryResult.Ok).page.items.single())
+        assertEquals(Playlist("12", "Ma playlist", 42, null), (api.playlists(address, token, 0, 100, PlaylistsQuery()) as LibraryResult.Ok).page.items.single())
         assertEquals(
             Album("MPREb_x", "A", "X", "2021", 12, true),
-            (api.albums(address, token, 0, 100, CollectionFilter.Bookmarked) as LibraryResult.Ok).page.items.single(),
+            (api.albums(address, token, 0, 100, AlbumsQuery(CollectionFilter.Bookmarked)) as LibraryResult.Ok).page.items.single(),
         )
-        assertEquals(Artist("UCx", "X", 34, false), (api.artists(address, token, 0, 100, CollectionFilter.Library) as LibraryResult.Ok).page.items.single())
+        assertEquals(Artist("UCx", "X", 34, false), (api.artists(address, token, 0, 100, ArtistsQuery()) as LibraryResult.Ok).page.items.single())
         assertEquals(listOf("/api/v1/library/playlists", "/api/v1/library/albums", "/api/v1/library/artists"), requests.map { it.url.encodedPath })
-        assertNull(requests[0].url.parameters["filter"])
+        assertEquals("all", requests[0].url.parameters["filter"])
         assertEquals("bookmarked", requests[1].url.parameters["filter"])
         assertEquals("library", requests[2].url.parameters["filter"])
+        // Contract 1.6: the collections' sort and direction are sent to the phone
+        assertEquals("name", requests[0].url.parameters["sort"])
+        assertEquals("false", requests[0].url.parameters["reverse"])
+        assertEquals("title", requests[1].url.parameters["sort"])
+        assertEquals("name", requests[2].url.parameters["sort"])
+        assertEquals("false", requests[2].url.parameters["reverse"])
     }
 
     @Test
@@ -109,6 +143,23 @@ class BridgeClientLibraryTest {
             requests.map { it.url.encodedPath },
         )
         assertEquals("200", requests[2].url.parameters["offset"])
+        // Albums and artists keep the phone's fixed order: no sort parameters
+        assertNull(requests[1].url.parameters["sort"])
+        assertNull(requests[2].url.parameters["reverse"])
+    }
+
+    @Test
+    fun `a local playlist's sort and reverse are sent`() = runTest {
+        client { empty() }.collectionSongs(
+            address,
+            token,
+            CollectionRef(CollectionKind.Playlist, "12"),
+            0,
+            100,
+            PlaylistSongsQuery(sort = PlaylistSongSort.ArtistAndAlbum, reverse = true),
+        )
+        assertEquals("artistAndAlbum", request.url.parameters["sort"])
+        assertEquals("true", request.url.parameters["reverse"])
     }
 
     @Test
@@ -126,6 +177,6 @@ class BridgeClientLibraryTest {
         assertEquals(LibraryResult.Failed(503, "SERVER_STOPPING"), answer("""{"code":"SERVER_STOPPING","message":"x"}""", HttpStatusCode.ServiceUnavailable))
         assertEquals(LibraryResult.Failed(500, null), answer("not json", HttpStatusCode.InternalServerError))
         assertEquals(LibraryResult.Failed(200, null), answer("not json", HttpStatusCode.OK))
-        assertEquals(LibraryResult.Unreachable, client { throw IOException("refused") }.playlists(address, token, 0, 100))
+        assertEquals(LibraryResult.Unreachable, client { throw IOException("refused") }.playlists(address, token, 0, 100, PlaylistsQuery()))
     }
 }

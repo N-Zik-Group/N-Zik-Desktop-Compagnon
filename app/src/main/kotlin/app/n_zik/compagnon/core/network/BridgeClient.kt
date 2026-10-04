@@ -34,11 +34,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
 import app.n_zik.compagnon.bridge.library.Album
+import app.n_zik.compagnon.bridge.library.AlbumsQuery
 import app.n_zik.compagnon.bridge.library.Artist
-import app.n_zik.compagnon.bridge.library.CollectionFilter
+import app.n_zik.compagnon.bridge.library.ArtistsQuery
 import app.n_zik.compagnon.bridge.library.CollectionRef
 import app.n_zik.compagnon.bridge.library.Page
 import app.n_zik.compagnon.bridge.library.Playlist
+import app.n_zik.compagnon.bridge.library.PlaylistSongsQuery
+import app.n_zik.compagnon.bridge.library.PlaylistsQuery
 import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.pairing.ApiError
 import app.n_zik.compagnon.bridge.pairing.BridgeContract
@@ -288,16 +291,32 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
             query.text?.let { parameter("query", it) }
             parameter("filter", query.filter.wire)
             parameter("sort", query.sort.wire)
+            // Since 1.6 (`library.sort`): the phone re-sorts; a phone before 1.6 ignores the parameter
+            parameter("reverse", query.reverse.toString())
+            // Since 1.6: the period of the phone's Top tab; absent keeps the phone's own period
+            query.period?.let { parameter("period", it.wire) }
         }
 
-    override suspend fun playlists(address: ServerAddress, deviceToken: String, offset: Int, limit: Int): LibraryResult<Playlist> =
-        library(address, deviceToken, "library/playlists", Playlist.serializer(), offset, limit)
+    override suspend fun playlists(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist> =
+        library(address, deviceToken, "library/playlists", Playlist.serializer(), offset, limit) {
+            parameter("filter", query.filter.wire)
+            parameter("sort", query.sort.wire)
+            parameter("reverse", query.reverse.toString())
+        }
 
-    override suspend fun albums(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, filter: CollectionFilter): LibraryResult<Album> =
-        library(address, deviceToken, "library/albums", Album.serializer(), offset, limit) { parameter("filter", filter.wire) }
+    override suspend fun albums(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album> =
+        library(address, deviceToken, "library/albums", Album.serializer(), offset, limit) {
+            parameter("filter", query.filter.wire)
+            parameter("sort", query.sort.wire)
+            parameter("reverse", query.reverse.toString())
+        }
 
-    override suspend fun artists(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, filter: CollectionFilter): LibraryResult<Artist> =
-        library(address, deviceToken, "library/artists", Artist.serializer(), offset, limit) { parameter("filter", filter.wire) }
+    override suspend fun artists(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist> =
+        library(address, deviceToken, "library/artists", Artist.serializer(), offset, limit) {
+            parameter("filter", query.filter.wire)
+            parameter("sort", query.sort.wire)
+            parameter("reverse", query.reverse.toString())
+        }
 
     override suspend fun collectionSongs(
         address: ServerAddress,
@@ -305,10 +324,18 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
         collection: CollectionRef,
         offset: Int,
         limit: Int,
+        query: PlaylistSongsQuery?,
     ): LibraryResult<Track> {
         // Contract §1: an id in a URL path is percent-encoded, never parsed.
         val route = "library/${collection.kind.segment}/${collection.id.encodeURLPathPart()}/songs"
-        return library(address, deviceToken, route, Track.serializer(), offset, limit)
+        return library(address, deviceToken, route, Track.serializer(), offset, limit) {
+            // A local playlist's `sort` and `reverse` (contract 1.6, `library.sort`); absent for
+            // albums and artists, whose tracks keep the phone's fixed order
+            query?.let {
+                parameter("sort", it.sort.wire)
+                parameter("reverse", it.reverse.toString())
+            }
+        }
     }
 
     /** A paginated Bearer `GET`, its errors decided from the contract `code`. */

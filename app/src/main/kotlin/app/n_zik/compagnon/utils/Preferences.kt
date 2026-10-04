@@ -1,6 +1,12 @@
 package app.n_zik.compagnon.utils
 
 import androidx.compose.runtime.staticCompositionLocalOf
+import app.n_zik.compagnon.bridge.library.AlbumSort
+import app.n_zik.compagnon.bridge.library.ArtistSort
+import app.n_zik.compagnon.bridge.library.PlaylistSongSort
+import app.n_zik.compagnon.bridge.library.PlaylistSort
+import app.n_zik.compagnon.bridge.library.SongSort
+import app.n_zik.compagnon.bridge.library.TopPeriod
 import app.n_zik.compagnon.bridge.pairing.CredentialStore
 import app.n_zik.compagnon.enums.AudioQualityFormat
 import app.n_zik.compagnon.enums.ExoPlayerDiskCacheMaxSize
@@ -25,6 +31,36 @@ const val exoPlayerDiskCacheMaxSizeKey = "exoPlayerDiskCacheMaxSize"
 const val exoPlayerCustomCacheKey = "exoPlayerCustomCache"
 const val audioQualityFormatKey = "audioQualityFormat"
 const val playbackVolumeKey = "playbackVolume"
+const val chipSortsKey = "chipSorts"
+
+/**
+ * The sort state of one library chip (contract §10, since 1.6): as on the phone, every chip of a
+ * page keeps its own sort and direction (the phone's per-tab sort preferences). The wire values
+ * (`SongSort` / `TopPeriod`) are stored as strings, so an unknown one reads as the default.
+ */
+@Serializable
+data class ChipSort(
+    val sort: String = "title",
+    val reverse: Boolean = false,
+    /** The period of a Top chip (the phone's `StatisticsType`); `null` keeps the phone's own period. */
+    val period: String? = null,
+) {
+    val songSort: SongSort get() = SongSort.entries.firstOrNull { it.wire == sort } ?: SongSort.Title
+    val albumSort: AlbumSort get() = AlbumSort.entries.firstOrNull { it.wire == sort } ?: AlbumSort.Title
+    val artistSort: ArtistSort get() = ArtistSort.entries.firstOrNull { it.wire == sort } ?: ArtistSort.Name
+    val playlistSort: PlaylistSort get() = PlaylistSort.entries.firstOrNull { it.wire == sort } ?: PlaylistSort.Name
+
+    /**
+     * The local sort of a local playlist's tracks: the phone's `PlaylistSongSortBy` names (its 14 wire
+     * names) plus the phone's rewind-only `RewindTop`, which the contract serves as the phone's position
+     * order (`Custom` — the rewind playlists keep their top order in the database, so a live sort never
+     * rewrites it).
+     */
+    val playlistSongSort: PlaylistSongSort
+        get() = if (sort == "rewindTop") PlaylistSongSort.Custom
+        else PlaylistSongSort.entries.firstOrNull { it.wire == sort } ?: PlaylistSongSort.Title
+    val topPeriod: TopPeriod? get() = period?.let { value -> TopPeriod.entries.firstOrNull { it.wire == value } }
+}
 
 /** The user settings of the Compagnon. An unknown or missing value reads as the phone's default. */
 @Serializable
@@ -34,6 +70,8 @@ data class UserSettings(
     @SerialName(audioQualityFormatKey) val audioQualityFormat: AudioQualityFormat = AudioQualityFormat.Auto,
     /** 0–1, local only (contract §8.5). */
     @SerialName(playbackVolumeKey) val playbackVolume: Float = 1f,
+    /** The per-chip sort of the library pages, keyed `page:chip` (the phone keeps one sort per tab). */
+    @SerialName(chipSortsKey) val chipSorts: Map<String, ChipSort> = emptyMap(),
 ) {
     /** Ceiling of the audio cache: `0` disabled, `null` unlimited. */
     val songCacheMaxBytes: Long? get() = exoPlayerDiskCacheMaxSize.cacheBytes(exoPlayerCustomCache)

@@ -38,16 +38,25 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import app.n_zik.compagnon.bridge.command.PlayWindow
 import app.n_zik.compagnon.bridge.library.Album
+import app.n_zik.compagnon.bridge.library.AlbumsQuery
 import app.n_zik.compagnon.bridge.library.Artist
+import app.n_zik.compagnon.bridge.library.ArtistsQuery
 import app.n_zik.compagnon.bridge.library.CollectionFilter
 import app.n_zik.compagnon.bridge.library.CollectionKind
 import app.n_zik.compagnon.bridge.library.CollectionRef
+import app.n_zik.compagnon.bridge.library.LibraryContract
 import app.n_zik.compagnon.bridge.library.LibraryError
 import app.n_zik.compagnon.bridge.library.LibraryRepository
+import app.n_zik.compagnon.bridge.library.Page
 import app.n_zik.compagnon.bridge.library.PagedList
 import app.n_zik.compagnon.bridge.library.PagedState
 import app.n_zik.compagnon.bridge.library.Playlist
+import app.n_zik.compagnon.bridge.library.PlaylistSongsQuery
+import app.n_zik.compagnon.bridge.library.PlaylistsFilter
+import app.n_zik.compagnon.bridge.library.PlaylistsQuery
+import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongsQuery
+import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.bridge.state.PlayerRepository
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SessionContract
@@ -93,6 +102,60 @@ enum class LibraryTab(val feature: String, val textId: StringResource, val iconI
     }
 }
 
+/**
+ * The chips of the Songs tab (contract §10.1), in the user's order: the phone's chips read the phone
+ * through the contract's `filter`, "Cached PC" keeps the tracks of the phone's whole list that sit in
+ * the Compagnon's local audio cache (no phone round trip per page), "Download PC" is a placeholder
+ * (no PC download store yet) and "On device phone" is empty (the PC reads nothing from the phone's
+ * storage, faithful to the phone whose "On device" tab lists its local files).
+ */
+enum class SongsChip(val key: String, val wireFilter: SongFilter?) {
+    All("songs:all", SongFilter.All),
+    Liked("songs:liked", SongFilter.Liked),
+    Disliked("songs:disliked", SongFilter.Disliked),
+    Top("songs:top", SongFilter.Top),
+    DownloadTel("songs:download_tel", SongFilter.Downloaded),
+    DownloadPc("songs:download_pc", null),
+    CachedTel("songs:cached_tel", SongFilter.Offline),
+    CachedPc("songs:cached_pc", null),
+    OnDevice("songs:on_device", null),
+}
+
+/**
+ * The chips of the Albums tab, in the phone's order (`HomeAlbum.kt` `albumsDefaultOrder`): the phone's
+ * chips read the phone through the contract's `filter` (`disliked` since 1.6, inert on an older phone,
+ * which filters that tab on its own database).
+ */
+enum class AlbumsChip(val key: String, val wireFilter: CollectionFilter) {
+    All("albums:all", CollectionFilter.Library),
+    Liked("albums:favorites", CollectionFilter.Bookmarked),
+    Disliked("albums:disliked", CollectionFilter.Disliked),
+}
+
+/**
+ * The chips of the Artists tab, in the phone's order (`HomeArtist.kt` `artistsDefaultOrder`): the
+ * phone's chips read the phone through the contract's `filter` (`disliked` since 1.6, inert on an
+ * older phone, which filters that tab on its own database).
+ */
+enum class ArtistsChip(val key: String, val wireFilter: CollectionFilter) {
+    All("artists:all", CollectionFilter.Library),
+    Liked("artists:favorites", CollectionFilter.Bookmarked),
+    Disliked("artists:disliked", CollectionFilter.Disliked),
+}
+
+/**
+ * The chips of the Playlists tab, in the phone's order (`HomeLibrary.kt` `playlistsDefaultOrder`):
+ * the phone's chips read the phone through the contract's `filter` (contract §10, since 1.6). The
+ * phone's own visibility preferences (show pinned / rewind / YT playlists) are dropped, as on the
+ * other tabs.
+ */
+enum class PlaylistsChip(val key: String, val wireFilter: PlaylistsFilter) {
+    All("playlists:all", PlaylistsFilter.All),
+    Pinned("playlists:pinned", PlaylistsFilter.Pinned),
+    Rewind("playlists:rewind", PlaylistsFilter.Rewind),
+    Youtube("playlists:youtube", PlaylistsFilter.Youtube),
+}
+
 /** A playlist, album or artist opened from its tab: what its screen knows before reading its tracks. */
 sealed interface CollectionHeader {
     val ref: CollectionRef
@@ -132,16 +195,166 @@ data class ItemActions(
 
 /**
  * The lists of the four tabs, kept in memory for the main window's lifetime (contract §12: never
- * persisted), so that switching tabs does not reload them. "Refresh" reloads one.
+ * persisted). The phone's home tabs read its own database, so they are always fresh; here the lists
+ * are REST snapshots, so [reload] is called on every tab switch — the newly visible tab comes back
+ * from the phone, as if "Refresh" had been tapped.
  *
  * The Songs search text lives here (it survives a change of tab); it reaches the phone as `query` after a
  * short pause of typing ([SEARCH_DEBOUNCE_MS]).
  */
-class LibraryLists(private val library: LibraryRepository, private val scope: CoroutineScope) {
-    val songs = PagedList(SongsQuery(), scope) { query, offset, limit -> library.songs(offset, limit, query) }
-    val playlists = PagedList(Unit, scope) { _, offset, limit -> library.playlists(offset, limit) }
-    val albums = PagedList(CollectionFilter.Library, scope) { filter, offset, limit -> library.albums(offset, limit, filter) }
-    val artists = PagedList(CollectionFilter.Library, scope) { filter, offset, limit -> library.artists(offset, limit, filter) }
+class LibraryLists(
+    private val library: LibraryRepository,
+    private val scope: CoroutineScope,
+    private val audioCache: AudioCache? = null,
+) {
+    /**
+     * The phone sorts its songs in its own database (`library.sort`, contract 1.6): `reverse` is sent
+     * to the phone, which re-sorts. On an older phone the PC keeps the display's reverse direction,
+     * reading the phone's pages from their end ([songsReversed]).
+     */
+    private val sortsOnPhone get() = SessionContract.FEATURE_LIBRARY_SORT in library.features
+
+    val songs = PagedList(SongsQuery(), scope) { query, offset, limit ->
+        if (query.reverse && !sortsOnPhone) songsReversed(query, offset, limit) else library.songs(offset, limit, query)
+    }
+
+    /**
+     * The "Cached PC" chip: the phone's whole list (the chip's sort, `filter=all`), kept to the tracks in
+     * the Compagnon's local [AudioCache] — a client-side filter, so the phone's pages are read one after
+     * the other and the kept tracks are served as a single page.
+     */
+    val songsPcCached = PagedList(SongsQuery(), scope) { query, offset, _ -> pcCachedSongs(query, offset) }
+
+    /** The "Download PC" placeholder and the "On device phone" chip (the PC reads nothing): an empty list. */
+    val songsEmpty = PagedList(SongsQuery(), scope) { _, offset, _ ->
+        LibraryResult.Ok(Page<Track>(emptyList(), 0, offset, 0))
+    }
+    val playlists = PagedList(PlaylistsQuery(), scope) { query, offset, limit -> library.playlists(offset, limit, query) }
+    val albums = PagedList(AlbumsQuery(), scope) { query, offset, limit -> library.albums(offset, limit, query) }
+    val artists = PagedList(ArtistsQuery(), scope) { query, offset, limit -> library.artists(offset, limit, query) }
+
+    /** The chip shown on the Songs tab (the screen keeps it in sync); its list is re-read on a tab switch. */
+    var activeSongsChip: SongsChip = SongsChip.All
+        private set
+
+    fun setActiveSongsChip(chip: SongsChip) {
+        activeSongsChip = chip
+    }
+
+    /** The list behind the active chip of the Songs tab. */
+    fun activeSongsList(): PagedList<SongsQuery, Track> = when (activeSongsChip) {
+        SongsChip.CachedPc -> songsPcCached
+        SongsChip.DownloadPc, SongsChip.OnDevice -> songsEmpty
+        else -> songs
+    }
+
+    /** The list behind the active chip of the Songs tab, re-read from its first page. */
+    fun reloadActiveSongs() {
+        activeSongsList().reload()
+    }
+
+    /** The chip shown on the Albums tab (the screen keeps it in sync); its list is re-read on a tab switch. */
+    var activeAlbumsChip: AlbumsChip = AlbumsChip.All
+        private set
+
+    fun setActiveAlbumsChip(chip: AlbumsChip) {
+        activeAlbumsChip = chip
+    }
+
+    /** The list behind the active chip of the Albums tab (one list: the chip is the query's `filter`). */
+    fun activeAlbumsList(): PagedList<AlbumsQuery, Album> = albums
+
+    /** The list behind the active chip of the Albums tab, re-read from its first page. */
+    fun reloadActiveAlbums() {
+        albums.reload()
+    }
+
+    /** The chip shown on the Artists tab (the screen keeps it in sync); its list is re-read on a tab switch. */
+    var activeArtistsChip: ArtistsChip = ArtistsChip.All
+        private set
+
+    fun setActiveArtistsChip(chip: ArtistsChip) {
+        activeArtistsChip = chip
+    }
+
+    /** The list behind the active chip of the Artists tab (one list: the chip is the query's `filter`). */
+    fun activeArtistsList(): PagedList<ArtistsQuery, Artist> = artists
+
+    /** The list behind the active chip of the Artists tab, re-read from its first page. */
+    fun reloadActiveArtists() {
+        artists.reload()
+    }
+
+    /** The chip shown on the Playlists tab (the screen keeps it in sync); its list is re-read on a tab switch. */
+    var activePlaylistsChip: PlaylistsChip = PlaylistsChip.All
+        private set
+
+    fun setActivePlaylistsChip(chip: PlaylistsChip) {
+        activePlaylistsChip = chip
+    }
+
+    /** The list behind the active chip of the Playlists tab (one list: the chip is the query's `filter`). */
+    fun activePlaylistsList(): PagedList<PlaylistsQuery, Playlist> = playlists
+
+    /** The list behind the active chip of the Playlists tab, re-read from its first page. */
+    fun reloadActivePlaylists() {
+        playlists.reload()
+    }
+
+    /** The phone's `features` (contract §5): the tabs gate their sort on `library.sort` (1.6). */
+    val features: Set<String> get() = library.features
+
+    /** The phone's total of the current reverse read: re-probed for every list generation (offset 0). */
+    private var reverseTotal: Int? = null
+
+    /**
+     * The display's reverse direction, on top of the phone's fixed sort order (contract §10.1): the phone's
+     * pages are read from its end and shown reversed. For the displayed items [offset]–[offset]+[limit],
+     * the phone's page is `total - offset - limit` → `total - offset` (clamped at the list's start), read
+     * at most [limit] tracks so the phone's page bounds are never crossed mid-page. One read at a time,
+     * as `PagedList` guarantees.
+     */
+    private suspend fun songsReversed(query: SongsQuery, offset: Int, limit: Int): LibraryResult<Track> {
+        val phoneQuery = SongsQuery(query.text, query.filter, query.sort)
+        if (offset == 0) reverseTotal = null
+        val total = reverseTotal ?: run {
+            val probe = library.songs(0, 1, phoneQuery)
+            if (probe !is LibraryResult.Ok) return probe
+            probe.page.total.also { reverseTotal = it }
+        }
+        val start = (total - offset - limit).coerceAtLeast(0)
+        val count = (total - offset) - start
+        val result = library.songs(start, count, phoneQuery)
+        return when (result) {
+            is LibraryResult.Ok ->
+                result.copy(page = result.page.copy(items = result.page.items.reversed(), total = total, offset = offset, limit = limit))
+            else -> result
+        }
+    }
+
+    /**
+     * The read of [songsPcCached]: the phone's whole list (the chip's own sort, the current search)
+     * kept to the tracks of the Compagnon's local [audioCache]. The filter is client-side, so the
+     * phone's pages are read one after the other and the kept tracks are served as a single page; a
+     * later [offset] answers empty (the whole list is already served). On an older phone, the display's
+     * reverse direction is applied client-side, as on [songsReversed].
+     */
+    private suspend fun pcCachedSongs(query: SongsQuery, offset: Int): LibraryResult<Track> {
+        if (offset > 0) return LibraryResult.Ok(Page(emptyList(), 0, offset, 0))
+        val cache = audioCache ?: return LibraryResult.Ok(Page(emptyList(), 0, 0, 0))
+        val all = mutableListOf<Track>()
+        var pageOffset = 0
+        while (true) {
+            val page = library.songs(pageOffset, LibraryContract.PAGE_SIZE, query)
+            if (page !is LibraryResult.Ok) return page
+            all += page.page.items
+            if (page.page.items.isEmpty() || pageOffset + page.page.items.size >= page.page.total) break
+            pageOffset += page.page.items.size
+        }
+        val kept = all.filter { cache.contains(it.id) }
+            .let { if (query.reverse && !sortsOnPhone) it.reversed() else it }
+        return LibraryResult.Ok(Page(kept, kept.size, 0, kept.size))
+    }
 
     private val _songsSearch = MutableStateFlow("")
     val songsSearch: StateFlow<String> = _songsSearch.asStateFlow()
@@ -152,7 +365,7 @@ class LibraryLists(private val library: LibraryRepository, private val scope: Co
         searchJob?.cancel()
         searchJob = scope.launch {
             delay(SEARCH_DEBOUNCE_MS)
-            songs.setQuery(songs.query.value.copy(text = SongsQuery.normalizeText(text)))
+            activeSongsList().setQuery(activeSongsList().query.value.copy(text = SongsQuery.normalizeText(text)))
         }
     }
 
@@ -171,6 +384,16 @@ class LibraryLists(private val library: LibraryRepository, private val scope: Co
                 // A failure is never cached: the cell asks again next time it is shown
                 synchronized(requestedFirstTracks) { requestedFirstTracks.remove(playlistId) }
             }
+        }
+    }
+
+    /** The list of [tab] re-read from its first page: the tab just became visible. */
+    fun reload(tab: LibraryTab) {
+        when (tab) {
+            LibraryTab.Songs -> reloadActiveSongs()
+            LibraryTab.Artists -> reloadActiveArtists()
+            LibraryTab.Albums -> reloadActiveAlbums()
+            LibraryTab.Playlists -> reloadActivePlaylists()
         }
     }
 
@@ -381,7 +604,8 @@ fun NoItems(text: String, modifier: Modifier = Modifier) {
 
 /**
  * The tracks of an opened playlist, album or artist, read by pages while scrolling (memory only). A `404`
- * (the collection disappeared) shows "Not found" and goes back to the list.
+ * (the collection disappeared) shows "Not found" and goes back to the list. Albums and artists keep the
+ * phone's fixed order: no query is sent.
  */
 @Composable
 fun rememberCollectionSongs(
@@ -392,6 +616,33 @@ fun rememberCollectionSongs(
     val scope = rememberCoroutineScope()
     val list = remember(ref) {
         PagedList(Unit, scope) { _, offset, limit -> library.collectionSongs(ref, offset, limit) }
+    }
+    val state by list.state.collectAsState()
+    LaunchedEffect(state.notFound) {
+        if (state.notFound) {
+            // An error toast, like the phone's "not found" ones
+            Toaster.e(getString(Res.string.library_not_found))
+            onBack()
+        }
+    }
+    return list
+}
+
+/**
+ * The tracks of an opened local playlist, read by pages while scrolling (memory only), with the
+ * phone's own sort (contract §10.1, since 1.6 `library.sort`): `sort` and `reverse` are sent to the
+ * phone, which re-sorts (the default `custom` keeps the phone's position order, the 1.5 behavior).
+ * A `404` (the playlist disappeared) shows "Not found" and goes back to the list.
+ */
+@Composable
+fun rememberPlaylistSongs(
+    library: LibraryRepository,
+    ref: CollectionRef,
+    onBack: () -> Unit,
+): PagedList<PlaylistSongsQuery, Track> {
+    val scope = rememberCoroutineScope()
+    val list = remember(ref) {
+        PagedList(PlaylistSongsQuery(), scope) { query, offset, limit -> library.collectionSongs(ref, offset, limit, query) }
     }
     val state by list.state.collectAsState()
     LaunchedEffect(state.notFound) {

@@ -49,6 +49,13 @@ object SessionContract {
     const val FEATURE_QUEUE = "queue"
     const val FEATURE_ARTWORK = "artwork"
 
+    /**
+     * §5 / §10 (since 1.6): the phone sorts its library in its own database — the songs, albums,
+     * artists and playlists lists with their `sort` and `reverse`, the songs `filter` values beyond
+     * all / liked / local / downloaded, and a local playlist's tracks.
+     */
+    const val FEATURE_LIBRARY_SORT = "library.sort"
+
     /** §5 / §8: signed audio URLs. */
     const val FEATURE_AUDIO = "audio"
 

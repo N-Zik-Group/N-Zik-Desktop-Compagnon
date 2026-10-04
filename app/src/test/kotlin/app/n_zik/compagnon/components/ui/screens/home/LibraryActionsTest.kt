@@ -9,8 +9,12 @@ import app.n_zik.compagnon.bridge.library.CollectionFilter
 import app.n_zik.compagnon.bridge.library.CollectionKind
 import app.n_zik.compagnon.bridge.library.CollectionRef
 import app.n_zik.compagnon.bridge.library.LibraryRepository
+import app.n_zik.compagnon.bridge.library.AlbumsQuery
+import app.n_zik.compagnon.bridge.library.ArtistsQuery
 import app.n_zik.compagnon.bridge.library.Page
 import app.n_zik.compagnon.bridge.library.Playlist
+import app.n_zik.compagnon.bridge.library.PlaylistSongsQuery
+import app.n_zik.compagnon.bridge.library.PlaylistsQuery
 import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.state.PlayerNotice
 import app.n_zik.compagnon.bridge.state.PlayerRepository
@@ -80,10 +84,15 @@ class LibraryActionsTest {
     private class FakeLibrary(private val size: Int, private val failure: LibraryResult<Track>? = null) : LibraryRepository {
         override val features: Set<String> = setOf("library.albums")
         override suspend fun songs(offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track> = error("unused")
-        override suspend fun playlists(offset: Int, limit: Int): LibraryResult<Playlist> = error("unused")
-        override suspend fun albums(offset: Int, limit: Int, filter: CollectionFilter): LibraryResult<Album> = error("unused")
-        override suspend fun artists(offset: Int, limit: Int, filter: CollectionFilter): LibraryResult<Artist> = error("unused")
-        override suspend fun collectionSongs(collection: CollectionRef, offset: Int, limit: Int): LibraryResult<Track> =
+        override suspend fun playlists(offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist> = error("unused")
+        override suspend fun albums(offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album> = error("unused")
+        override suspend fun artists(offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist> = error("unused")
+        override suspend fun collectionSongs(
+            collection: CollectionRef,
+            offset: Int,
+            limit: Int,
+            query: PlaylistSongsQuery?,
+        ): LibraryResult<Track> =
             failure ?: LibraryResult.Ok(Page((offset until minOf(offset + limit, size)).map { Track("t$it") }, size, offset, limit))
     }
 

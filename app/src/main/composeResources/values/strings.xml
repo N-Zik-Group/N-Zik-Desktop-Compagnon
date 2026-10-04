@@ -156,13 +156,18 @@
     <string name="playlists">Playlists</string>
     <string name="all">All</string>
     <string name="favorites">Favorites</string>
-    <string name="on_device">On device</string>
+    <string name="cached">Cached</string>
+    <!-- "On device" on the phone; here the label says where the files are, to be told apart from "Cached" -->
+    <string name="on_device">On device phone</string>
     <string name="downloaded">Downloaded</string>
+    <string name="playlist_top">Top Playlist</string>
+    <string name="disliked">Disliked</string>
     <string name="search">Search</string>
     <string name="clear">Clear</string>
     <string name="sorting_order">Sorting order</string>
     <string name="sort_title">Title</string>
     <string name="sort_artist">Artist</string>
+    <string name="sort_artist_and_album">Artist, Album</string>
     <string name="sort_listening_time">Listening Time</string>
     <string name="no_items">No items</string>
     <string name="unknown_title">Unknown Title</string>
@@ -180,6 +185,46 @@
     <string name="no_song_found">No song found</string>
     <string name="no_song_to_shuffle">No song to shuffle</string>
     <string name="info_no_songs_yet">No songs available</string>
+    <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
+    <string name="bookmark">Bookmark</string>
+    <string name="follow">Follow</string>
+    <string name="item_select">Select</string>
+    <string name="info_download_all_songs">Download all songs</string>
+    <string name="info_smart_recommendation">Smart recommendations</string>
+    <string name="import_playlist">Import playlist</string>
+    <string name="export_playlist">Export playlist</string>
+    <string name="info_open_update_dialog">Open update dialog</string>
+    <string name="smart_trash">Smart trash</string>
+    <string name="info_shuffle">Shuffle</string>
+    <string name="info_pin_unpin_playlist">Pin/Unpin playlist</string>
+    <string name="edit_thumbnail">Edit Thumbnail</string>
+    <string name="reset_thumbnail">Reset Thumbnail</string>
+    <string name="randomizer">Randomizer</string>
+    <string name="size">Size</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_album">Album</string>
+    <string name="sort_duration">Duration</string>
+    <string name="sort_play_count">Play Count</string>
+    <string name="relative_listening_time">Relative Listening Time</string>
+    <string name="sort_date_added">Date Added</string>
+    <string name="sort_date_played">Date Played</string>
+    <string name="sort_date_liked">Date Favorited</string>
+    <string name="sort_downloaded">Downloaded</string>
+    <string name="sort_custom_order">Custom order</string>
+    <string name="sort_songs_number">Number of songs</string>
+    <string name="sort_album_year">Album Year</string>
+    <string name="match_album_audio_version">Match Album/Audio version</string>
+    <string name="autosync_likes">Auto Sync Liked Songs</string>
+    <string name="statistics">Statistics</string>
+    <string name="today">Today</string>
+    <string name="_1_week">1 Week</string>
+    <string name="_1_month">1 Month</string>
+    <string name="_3_month">3 month</string>
+    <string name="_6_month">6 Month</string>
+    <string name="_1_year">1 Year</string>
+    <!-- Compagnon-only chips (no phone equivalent) -->
+    <string name="download_pc">Download PC</string>
+    <string name="cached_pc">Cached PC</string>
 
     <!-- Library: Compagnon only (no phone equivalent) -->
     <string name="library_none">The phone shares no library with this PC.</string>
@@ -229,6 +274,9 @@
     <string name="bridge_audio_output_pc_subtitle">Sound on the PC (N-Zik Desktop Compagnon)</string>
     <string name="pinned_playlists">Pinned</string>
     <string name="yt_playlists">YT/YTM</string>
+    <string name="delete_playlists_label">Delete playlists</string>
+    <string name="rewind_top_sort">Rewind Top</string>
+    <string name="renumber_songs_positions">Shuffle song positions</string>
     <string name="information">Information</string>\n    <string name="navigation">Navigation</string>\n    <string name="listen_together">Listen Together</string>\n    <string name="update_title">Change Title</string>\n    <string name="update_authors">Change Authors</string>\n    <string name="update_cover">Change Cover</string>\n    <string name="start_radio">Start radio</string>\n    <string name="add_to_favorites">Add to favorites</string>\n    <string name="add_to_playlist">Add to playlist</string>\n    <string name="go_to_album">Go to album</string>\n    <string name="more_of">More of</string>\n    <string name="update_album_browse_id">Change Album Browse ID</string>\n    <string name="update_artist_browse_id">Change Artist Browse ID</string>\n    <string name="update">Update</string>\n    <string name="delete">Delete</string>\n    <string name="export_cached">Export cached</string>\n    <string name="edit_metadata">Edit Metadata</string>\n    <string name="rename_playlist">Rename playlist</string>\n    <string name="download">Download</string>\n    <string name="info_remove_all_downloaded_songs">Remove all downloaded songs</string>\n    <string name="tab_data">Data</string>
     <string name="data_settings_description">The data section contains settings that modify how the app handles data locally and remotely</string>
     <string name="cache">Cache</string>

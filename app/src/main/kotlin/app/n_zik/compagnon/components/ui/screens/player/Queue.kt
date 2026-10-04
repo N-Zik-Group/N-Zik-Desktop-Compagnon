@@ -53,14 +53,25 @@ import app.n_zik.compagnon.components.tab.Search
 import app.n_zik.compagnon.components.tab.toolbar.ConfirmDialog
 import app.n_zik.compagnon.components.tab.toolbar.Descriptive
 import app.n_zik.compagnon.components.tab.toolbar.Icon
+import app.n_zik.compagnon.components.tab.toolbar.InertButton
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
 import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.components.ui.screens.home.ItemActions
 import app.n_zik.compagnon.enums.QueueLoopType
 import app.n_zik.compagnon.generated.resources.Res
+import app.n_zik.compagnon.generated.resources.add_in_playlist
+import app.n_zik.compagnon.generated.resources.add_to_playlist
+import app.n_zik.compagnon.generated.resources.checked_filled
 import app.n_zik.compagnon.generated.resources.chevron_down
 import app.n_zik.compagnon.generated.resources.clean_queue_confirm
+import app.n_zik.compagnon.generated.resources.download
+import app.n_zik.compagnon.generated.resources.downloaded
+import app.n_zik.compagnon.generated.resources.export_outline
+import app.n_zik.compagnon.generated.resources.export_playlist
+import app.n_zik.compagnon.generated.resources.info_download_all_songs
+import app.n_zik.compagnon.generated.resources.info_remove_all_downloaded_songs
+import app.n_zik.compagnon.generated.resources.item_select
 import app.n_zik.compagnon.generated.resources.remove_from_queue
 import app.n_zik.compagnon.generated.resources.reorder
 import app.n_zik.compagnon.generated.resources.repeat
@@ -89,10 +100,13 @@ import org.jetbrains.compose.resources.stringResource
  * confirms, no optimistic UI); the toolbar's Locator, Search (local filter on the cleaned title / artists,
  * like the phone), reorder lock,
  * Repeat, Shuffle and "Remove from queue" (empties the queue after the phone's confirmation, `queue/clear`).
+ * The toolbar holds the phone's full order (discover is hidden by the phone's default preferences): the
+ * download buttons, the item selector, "Add to playlist" and the CSV export are placeholders without a
+ * contract route, a click does nothing.
  * Dropped: the swipe actions (no swipe on the PC: "Remove from queue" moves to the item's menu, PC only), the
- * multi-selection, Discover, the download buttons, "Add to playlist" and the CSV export (not in contract v1),
- * the radio's loading placeholders, the remembered scroll position across openings (the list opens on the
- * current track), the "Deleted" toast after clearing (the phone confirms it through the WS).
+ * multi-selection, Discover, the radio's loading placeholders, the remembered scroll position across openings
+ * (the list opens on the current track), the "Deleted" toast after clearing (the phone confirms it through
+ * the WS).
  * Queue actions are hidden without the `queue` feature and do nothing outside a `Live` session.
  */
 @Composable
@@ -150,15 +164,24 @@ fun Queue(
         // Dialog renders
         deleteDialog.Render()
 
+        // The phone's toolbar order; Locator, Search, position lock, Repeat, Shuffle and "Remove from
+        // queue" are wired to the contract, the rest are placeholders without a contract route
         val buttonsList = buildList {
             add(locator)
             add(search)
+            add(InertButton(Res.drawable.downloaded, Res.string.info_download_all_songs))
+            add(InertButton(Res.drawable.download, Res.string.info_remove_all_downloaded_songs))
             if (queueFeature) {
                 add(positionLock)
                 add(repeat)
                 add(shuffle)
+            }
+            add(InertButton(Res.drawable.checked_filled, Res.string.item_select))
+            if (queueFeature) {
                 add(deleteDialog)
             }
+            add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
+            add(InertButton(Res.drawable.export_outline, Res.string.export_playlist))
         }
 
         QueueToolBarState.mediaItemCount = items.size

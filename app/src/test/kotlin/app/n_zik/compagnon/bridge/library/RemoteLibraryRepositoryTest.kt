@@ -58,7 +58,7 @@ class RemoteLibraryRepositoryTest {
     @Test
     fun `a 401 DEVICE_REVOKED confirmed 2 s later revokes the pairing`() = runTest {
         val repository = repository { revokedAnswer() }
-        val result = async { repository.playlists(0, 100) }
+        val result = async { repository.playlists(0, 100, PlaylistsQuery()) }
         runCurrent()
         assertEquals(1, requests.size)
         advanceTimeBy(1_900)
@@ -91,7 +91,7 @@ class RemoteLibraryRepositoryTest {
         val repository = repository {
             json("""{"code":"CONFLICT_ACTIVE_CLIENT","message":"x","activeDevice":{"deviceId":"d","deviceName":"PC-BUREAU"}}""", HttpStatusCode.Conflict)
         }
-        assertEquals(LibraryResult.OtherActive("PC-BUREAU"), repository.albums(0, 100, CollectionFilter.Library))
+        assertEquals(LibraryResult.OtherActive("PC-BUREAU"), repository.albums(0, 100, AlbumsQuery()))
         assertEquals(1, requests.size)
         assertEquals(0, revoked)
     }

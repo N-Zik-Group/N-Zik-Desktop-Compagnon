@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.components.tab.toolbar.Button
+import app.n_zik.compagnon.components.tab.toolbar.EllipsisMenuComponent
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.onSecondaryClick
@@ -37,10 +38,9 @@ import app.n_zik.compagnon.utils.onSecondaryClick
  * Port of the phone's `app/it/fast4x/rimusic/ui/components/navigation/header/TabToolBar.kt`.
  *
  * The buttons change through an `AnimatedContent` (its default fade and size transform, phone's 86-98),
- * unless [disableAnimation] (the phone's home tabs).
- * Dropped: the ellipsis menu that groups the buttons that do not fit (the Compagnon's toolbars hold 4
- * buttons at most, which always fit at the window's minimum width); the buttons are only drawn once
- * their row has been measured, as on the phone.
+ * unless [disableAnimation] (the phone's home tabs). As on the phone, the row is measured first and, when
+ * more buttons than [canDisplay] are passed, all but the first `canDisplay - 1` go behind an
+ * `EllipsisMenuComponent` ("…") that lists them (the phone's 65-81).
  */
 object TabToolBar {
 
@@ -72,12 +72,20 @@ object TabToolBar {
             if (canDisplay == 0) {
                 Spacer(modifier = Modifier.fillMaxWidth())
             } else {
+                val isClustered = targetButtons.size > canDisplay
+                val ellipsisMenu = EllipsisMenuComponent.init {
+                    targetButtons.takeLast((targetButtons.size - canDisplay + 1).coerceAtLeast(0))
+                }
+
                 Row(
                     horizontalArrangement = horizontalArrangement,
                     verticalAlignment = verticalAlignment,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    targetButtons.forEach { it.ToolBarButton() }
+                    targetButtons.take(if (isClustered) canDisplay - 1 else targetButtons.size)
+                        .forEach { it.ToolBarButton() }
+
+                    if (isClustered) ellipsisMenu.ToolBarButton()
                 }
             }
         }

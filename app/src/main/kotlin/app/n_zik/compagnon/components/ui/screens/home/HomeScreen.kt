@@ -39,7 +39,9 @@ import app.n_zik.compagnon.generated.resources.library_none
  * `Skeleton` (`app/it/fast4x/rimusic/ui/components/Skeleton.kt` 106-338) in the default `BottomFloating`
  * position: the tabs Songs, Artists, Albums, Playlists (each hidden without its `library.*` feature),
  * their content cross-faded in 350 ms (the default `TransitionEffect.Fade`), each tab's state kept
- * (`rememberSaveableStateHolder`), and the floating bar over the bottom (sliding out with the scroll,
+ * (`rememberSaveableStateHolder`), and the list of the tab that just became visible re-read from the
+ * phone (its own tabs always are: they read its database; the PC's are REST snapshots — `LibraryLists.reload`),
+ * and the floating bar over the bottom (sliding out with the scroll,
  * `LocalBottomBarOffset`). An opened playlist, album or artist ([detail], held by the window for the header's
  * back button) replaces the home with the phone's default page transition (`TransitionEffect.Fade`: 350 ms
  * fades, `AppNavigation.kt` 183-229), as the phone's navigation to its own screen (which has no bar).
@@ -64,6 +66,8 @@ fun HomeScreen(
     val tabs = LibraryTab.visible(library.features)
     var tabIndex by remember { mutableStateOf(0) }
     if (tabIndex >= tabs.size) tabIndex = 0
+    // The phone's tabs are always fresh (its own database): the tab that just became visible is re-read
+    LaunchedEffect(tabIndex) { tabs.getOrNull(tabIndex)?.let { lists.reload(it) } }
     val onBack = { onDetail(null) }
     val bottomBarOffset = LocalBottomBarOffset.current
 

@@ -1,11 +1,14 @@
 package app.n_zik.compagnon.core.network
 
 import app.n_zik.compagnon.bridge.library.Album
+import app.n_zik.compagnon.bridge.library.AlbumsQuery
 import app.n_zik.compagnon.bridge.library.Artist
-import app.n_zik.compagnon.bridge.library.CollectionFilter
+import app.n_zik.compagnon.bridge.library.ArtistsQuery
 import app.n_zik.compagnon.bridge.library.CollectionRef
 import app.n_zik.compagnon.bridge.library.Page
 import app.n_zik.compagnon.bridge.library.Playlist
+import app.n_zik.compagnon.bridge.library.PlaylistSongsQuery
+import app.n_zik.compagnon.bridge.library.PlaylistsQuery
 import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.state.Track
 
@@ -39,18 +42,23 @@ interface LibraryApi {
         query: SongsQuery,
     ): LibraryResult<Track>
 
-    suspend fun playlists(address: ServerAddress, deviceToken: String, offset: Int, limit: Int): LibraryResult<Playlist>
+    /** `sort` and `reverse` of contract 1.6, sent when the phone has `library.sort`. */
+    suspend fun playlists(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist>
 
-    suspend fun albums(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, filter: CollectionFilter): LibraryResult<Album>
+    suspend fun albums(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album>
 
-    suspend fun artists(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, filter: CollectionFilter): LibraryResult<Artist>
+    suspend fun artists(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist>
 
-    /** `GET /library/{playlists|albums|artists}/{id}/songs`, the id percent-encoded. */
+    /**
+     * `GET /library/{playlists|albums|artists}/{id}/songs`, the id percent-encoded. [query] (a local
+     * playlist's `sort` and `reverse`, contract §10.1, since 1.6) is sent only when it is not `null`.
+     */
     suspend fun collectionSongs(
         address: ServerAddress,
         deviceToken: String,
         collection: CollectionRef,
         offset: Int,
         limit: Int,
+        query: PlaylistSongsQuery? = null,
     ): LibraryResult<Track>
 }

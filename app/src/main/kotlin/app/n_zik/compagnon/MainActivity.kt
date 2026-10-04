@@ -212,7 +212,7 @@ fun MainActivity(
     val onCommand: CommandLauncher = { command -> scope.launch { repository.command() } }
     // The screens' messages are the locator's, an information toast on the phone (`Locator.kt` 79, 88)
     val showMessage: (String) -> Unit = { text -> Toaster.i(text) }
-    val lists = remember(library) { LibraryLists(library, scope) }
+    val lists = remember(library, audioCache) { LibraryLists(library, scope, audioCache) }
     val actions = remember(repository, library) { LibraryActions(repository, library, scope, info = { Toaster.i(it) }) { Toaster.e(it) } }
 
     LaunchedEffect(repository) {
