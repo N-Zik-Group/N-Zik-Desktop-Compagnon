@@ -106,6 +106,22 @@ class CredentialStoreTest {
     }
 
     @Test
+    fun `selection follows the platform`() {
+        assertTrue(CredentialStore.selectSecretStore("Windows 11") is WindowsCredentialSecretStore)
+        val linuxStore = CredentialStore.selectSecretStore("LINUX")
+        assertTrue(linuxStore is SessionSecretStore || linuxStore is LinuxSecretStore)
+        assertTrue(CredentialStore.selectSecretStore("Mac OS X") === UnsupportedSecretStore)
+    }
+
+    @Test
+    fun `isSessionOnly matches the default store`() {
+        assertEquals(
+            CredentialStore.defaultSecretStore() === SessionSecretStore,
+            CredentialStore.isSessionOnly,
+        )
+    }
+
+    @Test
     fun `edit IP keeps token and port`() {
         val secrets = InMemorySecretStore()
         val store = CredentialStore(file(), secrets)

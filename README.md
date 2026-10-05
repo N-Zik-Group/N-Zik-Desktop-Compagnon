@@ -80,7 +80,7 @@ Join the N-Zik Discord:
 
 # 🎧 Features
 
-- 🔗 **QR or Manual Pairing**: Pair once with the QR code shown by the app (or the phone's IP, port and code by hand); the pairing is remembered across restarts, and the device token lives in the Windows Credential Manager.
+- 🔗 **QR or Manual Pairing**: Pair once with the QR code shown by the app (or the phone's IP, port and code by hand); the pairing is remembered across restarts, and the device token lives in the system secret store — the Windows Credential Manager, or the Linux keyring (in memory only, for the session, on a Linux machine without a keyring daemon).
 - 📚 **The Phone's Library**: Songs (search, filters, sorts), Artists, Albums and Playlists, switched from the floating bar at the bottom, with live refresh of the phone's lists.
 - ⏯️ **Unified Player**: A mini player above the navigation bar opens the full player: rotating cover animation, colours that follow the current cover, seek, speed, repeat and shuffle.
 - 📋 **Queue**: Opens from the player or the mini player: jump to a track, move it, remove it, clear the queue.
@@ -97,7 +97,7 @@ For QR pairing, the phone connects back to a temporary listener opened by this a
 
 If the phone has not reached the PC within 60 seconds, or if no local network address is found, the app switches to manual pairing: enter the IP address, port and 6-character code shown on the phone's "Manage server" screen. The QR code stays available.
 
-The device token is stored in the Windows Credential Manager (generic credential "N-Zik Desktop Compagnon"); the other pairing details live in `%APPDATA%\N-Zik Desktop Compagnon\pairing.json`. "Forget this phone", or revoking this PC from the phone, removes both.
+The device token is stored in the platform secret store: the Windows Credential Manager (generic credential "N-Zik Desktop Compagnon") on Windows, and the keyring on Linux (GNOME Secret Service: `libsecret` + a keyring daemon such as `gnome-keyring`). On a Linux machine without a keyring daemon, the token is kept in memory for the session only, with a visible note on the paired screen — pair again after a restart. The other pairing details live in `pairing.json` (`%APPDATA%\N-Zik Desktop Compagnon\` on Windows, `~/N-Zik Desktop Compagnon/` on Linux). "Forget this phone", or revoking this PC from the phone, removes both.
 
 # 🔊 Sound on the PC
 
@@ -201,7 +201,7 @@ Launch the app on Windows:
 gradlew.bat :app:run
 ```
 
-The app is not runnable on Linux yet (the embedded VLC Linux runtime is not ported); the build is.
+The app also runs on Linux: `./gradlew :app:run`. Pairing works there too (keyring, or session-only without a keyring daemon); the embedded VLC runtime — and with it "Sound on the PC" — is a Windows feature, so the PC plays no audio on Linux yet.
 
 ---
 

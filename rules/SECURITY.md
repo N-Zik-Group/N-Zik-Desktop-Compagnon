@@ -5,12 +5,12 @@
 ## The Device Token (primary secret of this app)
 
 - The paired device token is the ONLY secret this app handles — it authenticates every bridge call (REST Bearer + WS upgrade header)
-- **Storage: Windows Credential Manager ONLY** (generic credential "N-Zik Desktop Compagnon", via `WindowsCredentialSecretStore`'s JNA mapping of `CredWriteW`/`CredReadW`/`CredDeleteW`)
-- `pairing.json` (in `%APPDATA%\N-Zik Desktop Compagnon\`) holds the NON-SECRET fields only (`serverIps`, `serverPort`, `serverName`, `deviceId`, `deviceName`) — the token must NEVER appear there; `CredentialStore` is built so a missing token or a corrupt file reads as "not paired"
+- **Storage: the platform secret store** — the **Windows Credential Manager ONLY on Windows** (generic credential "N-Zik Desktop Compagnon", via `WindowsCredentialSecretStore`'s JNA mapping of `CredWriteW`/`CredReadW`/`CredDeleteW`), the **system keyring on Linux** (GNOME Secret Service via `LinuxSecretStore`'s JNA mapping of `libsecret`, loaded at runtime — JNA is already in the catalog, no new dependency), and an **in-memory session store on keyring-less Linux** (`SessionSecretStore`: the token survives only for the session, the paired screen shows a visible note, and a restart requires re-pairing). Plain text on disk is never a storage option
+- `pairing.json` (in `%APPDATA%\N-Zik Desktop Compagnon\` on Windows, `~/N-Zik Desktop Compagnon/` on Linux) holds the NON-SECRET fields only (`serverIps`, `serverPort`, `serverName`, `deviceId`, `deviceName`) — the token must NEVER appear there; `CredentialStore` is built so a missing token or a corrupt file reads as "not paired"
 - **NEVER log the token** — not at any level, not masked, not in an exception message
 - **NEVER write the token** into `Done.txt`, `TODO.txt`, README, comments, tests, or any file in this repo
-- "Forget this phone" and every revocation path (`RevocationPolicy`) must remove BOTH the Credential Manager entry and `pairing.json`
-- If a token (or a Credential Manager entry) appears in a diff, commit, log output, or a test artifact → HALT immediately, treat as a leaked secret (same escalation as "Secrets found in code" below)
+- "Forget this phone" and every revocation path (`RevocationPolicy`) must remove BOTH the platform secret store entry and `pairing.json`
+- If a token (or a secret store entry) appears in a diff, commit, log output, or a test artifact → HALT immediately, treat as a leaked secret (same escalation as "Secrets found in code" below)
 
 ## Secrets & API Keys
 
@@ -36,8 +36,8 @@
 
 ## Sensitive Data Storage
 
-- Use the Windows Credential Manager for the device token (the mechanism above) — no plain-text credential storage anywhere
-- `%APPDATA%\N-Zik Desktop Compagnon\` holds `pairing.json` (non-secret), `settings.json` (PC-local settings) and the audio cache — nothing sensitive
+- Use the platform secret store for the device token (the mechanism above) — no plain-text credential storage anywhere
+- The app data directory (`%APPDATA%\N-Zik Desktop Compagnon\` on Windows, `~/N-Zik Desktop Compagnon/` on Linux) holds `pairing.json` (non-secret), `settings.json` (PC-local settings) and the audio cache — nothing sensitive
 - Clear sensitive data when the user forgets the phone / the phone revokes this PC (Credential Manager entry + `pairing.json`, both)
 - All bridge network communication goes to the phone's **local** server — see the network exception below
 
@@ -57,10 +57,10 @@
 
 | Scenario                                | Action                                                                      |
 | --------------------------------------- | --------------------------------------------------------------------------- |
-| Device token found outside Credential Manager (diff, log, file, test) | HALT, remove it, rotate the pairing (re-pair from the phone), report to user |
+| Device token found outside the platform secret store (diff, log, file, test) | HALT, remove it, rotate the pairing (re-pair from the phone), report to user |
 | Secrets found in code                   | HALT immediately, remove secrets, report to user                            |
 | License violation detected              | HALT, remove code, report to user with violation details                    |
-| Hardcoded credentials                   | HALT, remove credentials, route them through the Credential Manager mechanism |
+| Hardcoded credentials                   | HALT, remove credentials, route them through the platform secret store mechanism |
 | Insecure change to the bridge (token in a URL/query, token logged) | HALT, revert, use the Bearer header convention, report                     |
 | VLC binary or runtime change in a diff  | HALT, verify it is not being committed; if the pinned hash changed, ask the user before anything |
 | User data leak                          | HALT, identify leak source, report to user (fix only after user confirmation) |

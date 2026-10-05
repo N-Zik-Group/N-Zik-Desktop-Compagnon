@@ -14,8 +14,10 @@
 #     (the Gradle toolchain can also auto-provision it if it is missing)
 #   - a Wi-Fi phone running N-Zik, if you want to run the app against it
 #
-# Note: launching the app on Linux (`./gradlew :app:run`) needs the embedded
-# VLC Linux runtime, which is not ported yet. Compiling and testing works today.
+# Note: the app also runs on Linux (`./gradlew :app:run`), pairing included
+# (keyring, or in-memory for the session when no keyring daemon is running).
+# The embedded VLC Linux runtime is not ported yet, so "Sound on the PC" is
+# unavailable there.
 
 set -euo pipefail
 

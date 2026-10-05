@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.ConnectionState
+import app.n_zik.compagnon.bridge.pairing.CredentialStore
 import app.n_zik.compagnon.bridge.pairing.PairedStatus
 import app.n_zik.compagnon.bridge.pairing.PairingRecord
 import app.n_zik.compagnon.bridge.pairing.PairingRules
@@ -61,6 +62,7 @@ import app.n_zik.compagnon.generated.resources.paired_incompatible
 import app.n_zik.compagnon.generated.resources.paired_ok
 import app.n_zik.compagnon.generated.resources.paired_other_active
 import app.n_zik.compagnon.generated.resources.paired_other_active_unknown
+import app.n_zik.compagnon.generated.resources.paired_session_only
 import app.n_zik.compagnon.generated.resources.paired_title
 import app.n_zik.compagnon.generated.resources.paired_with
 import app.n_zik.compagnon.generated.resources.pencil
@@ -93,6 +95,9 @@ fun PairedScreen(state: PairingState.Paired, onRetry: () -> Unit, onForget: () -
                     color = palette.text,
                 )
                 Text(formatText(stringResource(Res.string.paired_as), record.deviceName), style = typography().xs, color = palette.textSecondary)
+                if (CredentialStore.isSessionOnly) {
+                    Text(stringResource(Res.string.paired_session_only), style = typography().xs, color = palette.textSecondary)
+                }
                 when (val status = state.status) {
                     PairedStatus.Checking -> Row(
                         verticalAlignment = Alignment.CenterVertically,

@@ -40,7 +40,7 @@
 ## 🚫 Never Do
 
 - Put business logic or a streaming stack on the PC (the phone stays the source of truth — see the project identity above)
-- Write the device token anywhere except the Windows Credential Manager (never in `pairing.json`, logs, `Done.txt`, README, or code — see rules/SECURITY.md)
+- Write the device token anywhere except the platform secret store — the Windows Credential Manager, the Linux keyring, or the in-memory session store on a keyring-less Linux machine (never in `pairing.json`, logs, `Done.txt`, README, or code — see rules/SECURITY.md)
 - Edit any strings file other than `app/src/main/composeResources/values/strings.xml` (the single source of truth, English; `values-*` locale files are Crowdin-managed and must never be touched by hand — same rule as the phone's AGENTS.md)
 - Write code before completing full BMAD workflow
 - Skip BMAD workflow steps
@@ -96,7 +96,8 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 ├── app/
 │   ├── src/main/kotlin/app/n_zik/compagnon/   ★ ALL code lives here
 │   │   ├── bridge/          contract layer: BridgeSession.kt (the WS session), pairing/ (PairingController, PairingListener, PairingModels,
-│   │   │                    WindowsCredentialSecretStore, CredentialStore, RevocationPolicy), state/ (StateReducer, PlayerState,
+│   │   │                    WindowsCredentialSecretStore, LinuxSecretStore, SessionSecretStore, CredentialStore,
+│   │   │                    RevocationPolicy), state/ (StateReducer, PlayerState,
 │   │   │                    PlayerRepository/RemotePlayerRepository, ServerClock, BridgeStateMessages),
 │   │   │                    library/ (LibraryRepository/RemoteLibraryRepository, PagedList, ArtworkLoader, LibraryModels),
 │   │   │                    command/ (PlayWindow)
@@ -124,7 +125,7 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 | Playback            | `playback/` (VLC engine, audio cache, local playback)                     |
 | UI                  | `components/` (screens in `components/ui/screens/`, player in `components/player/`) |
 | Strings (English)   | `app/src/main/composeResources/values/strings.xml` — single file, no `values-*` |
-| Pairing persistence | token → Windows Credential Manager ("N-Zik Desktop Compagnon"); non-secret fields → `%APPDATA%\N-Zik Desktop Compagnon\pairing.json`; PC-local settings → `settings.json`; audio cache → `%APPDATA%\N-Zik Desktop Compagnon\cache\audio\` |
+| Pairing persistence | token → the platform secret store (Windows Credential Manager "N-Zik Desktop Compagnon"; Linux keyring via libsecret, in-memory session store without a keyring); non-secret fields → `%APPDATA%\N-Zik Desktop Compagnon\pairing.json` (Windows) / `~/N-Zik Desktop Compagnon/pairing.json` (Linux); PC-local settings → `settings.json`; audio cache → `%APPDATA%\N-Zik Desktop Compagnon\cache\audio\` |
 | Database            | none on the PC — the phone's local DB is the only database; schema work belongs to the N-Zik (phone) repo |
 | Tests               | `app/src/test/kotlin/`                                                   |
 
@@ -140,7 +141,7 @@ gradlew.bat :app:run                                    # Launch the app
 gradlew.bat clean build                                 # Clean + build
 ```
 
-> **Windows:** this app and its toolchain are Windows-only — always `gradlew.bat`, run from the repo root `N-Zik-Desktop-Compagnon/`. JDK 21 (Gradle toolchain).
+> **Windows:** `gradlew.bat`, run from the repo root `N-Zik-Desktop-Compagnon/`. **Linux:** `./gradlew` (or `build.sh`). JDK 21 (Gradle toolchain).
 >
 > **First build:** downloads the official VLC 3.0.24 win64 zip (about 83 MB) from download.videolan.org, checked against its pinned SHA-256; the zip is kept in the Gradle user home so `clean` does not re-download it — see rules/BUILD.md "Embedded VLC runtime".
 

@@ -10,8 +10,10 @@ import java.util.logging.Logger
 import kotlinx.serialization.Serializable
 
 /**
- * Holds the one secret of the pairing, the `deviceToken`. The Windows implementation is the
- * Credential Manager ([WindowsCredentialSecretStore]); tests use an in-memory one.
+ * Holds the one secret of the pairing, the `deviceToken`. The platform implementations are the
+ * Credential Manager on Windows ([WindowsCredentialSecretStore]) and the system keyring on Linux
+ * ([LinuxSecretStore]), with an in-memory session fallback on keyring-less Linux
+ * ([SessionSecretStore]); tests use an in-memory one.
  */
 interface SecretStore {
     /** The stored secret, or `null` when absent or unreadable. */
@@ -23,7 +25,7 @@ interface SecretStore {
     fun delete()
 }
 
-/** Off Windows (outside the target), no secret can be stored: pairing never persists. */
+/** Off the supported platforms (Windows, Linux), no secret can be stored: pairing never persists. */
 object UnsupportedSecretStore : SecretStore {
     override fun read(): String? = null
     override fun write(secret: String): Boolean = false
@@ -132,11 +134,30 @@ class CredentialStore(
             return Paths.get(base, AppInfo.NAME)
         }
 
-        fun defaultSecretStore(): SecretStore =
-            if (System.getProperty("os.name").orEmpty().startsWith("Windows", ignoreCase = true)) {
-                WindowsCredentialSecretStore(AppInfo.NAME)
-            } else {
-                UnsupportedSecretStore
-            }
+        fun defaultSecretStore(): SecretStore = defaultStore
+
+        /**
+         * The one platform store for this process: probed once (the Linux probe is a D-Bus call)
+         * and shared by every [CredentialStore] and the [isSessionOnly] check, so a second probe
+         * can never disagree with the first.
+         */
+        private val defaultStore: SecretStore by lazy {
+            selectSecretStore(System.getProperty("os.name").orEmpty())
+        }
+
+        /**
+         * The platform's secret store: the Credential Manager on Windows, the keyring on Linux
+         * (the in-memory [SessionSecretStore] when no keyring daemon is running), no storage
+         * anywhere else.
+         */
+        internal fun selectSecretStore(osName: String): SecretStore = when {
+            osName.startsWith("Windows", ignoreCase = true) -> WindowsCredentialSecretStore(AppInfo.NAME)
+            osName.startsWith("Linux", ignoreCase = true) -> LinuxSecretStore.create() ?: SessionSecretStore
+            else -> UnsupportedSecretStore
+        }
+
+        /** The token survives only for the session (Linux without a keyring daemon). */
+        val isSessionOnly: Boolean
+            get() = defaultStore === SessionSecretStore
     }
 }
