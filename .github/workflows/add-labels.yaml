@@ -24,9 +24,10 @@ jobs:
             // (mirrors the phone repo, which uses one bug report template per channel)
             const pcChannelLabels = ["stable pc", "beta pc", "dev pc"];
             const osLabels = ["Windows", "Linux"];
-
-            // The phone's build types (tel dev, tel beta, ...) are applied
-            // manually; the companion's bug report does not collect them.
+            const telBuildTypeLabels = [
+              "tel dev", "tel dev32", "tel beta", "tel beta32",
+              "tel full", "tel full32", "tel minified", "tel minified32", "tel foss",
+            ];
 
             function detectChannel(title) {
               const t = (title || "");
@@ -43,6 +44,23 @@ jobs:
               const value = match[1].trim();
               if (/^Windows/i.test(value)) return "Windows";
               if (/^Linux/i.test(value)) return "Linux";
+              return null;
+            }
+
+            function detectPhoneBuildType(body) {
+              const match = (body || "").match(/###\s*📱\s*N-Zik \(phone\) Build Type\s*\n+\s*(.+)/);
+              if (!match) return null;
+              const value = match[1].trim();
+              // 32-bit variants first so they are not shadowed by their non-32 siblings.
+              if (/^Dev32/i.test(value)) return "tel dev32";
+              if (/^Full32/i.test(value)) return "tel full32";
+              if (/^Minified32/i.test(value)) return "tel minified32";
+              if (/^Beta32/i.test(value)) return "tel beta32";
+              if (/^Dev/i.test(value)) return "tel dev";
+              if (/^Full/i.test(value)) return "tel full";
+              if (/^Minified/i.test(value)) return "tel minified";
+              if (/^Beta/i.test(value)) return "tel beta";
+              if (/^Foss/i.test(value)) return "tel foss";
               return null;
             }
 
@@ -83,12 +101,14 @@ jobs:
             async function processIssue(issueNumber, title, body) {
               const channel = detectChannel(title);
               const os = detectOs(body);
-              if (!channel && !os) {
-                console.log(`Issue #${issueNumber}: no matching channel or platform, skipping.`);
+              const phoneBuildType = detectPhoneBuildType(body);
+              if (!channel && !os && !phoneBuildType) {
+                console.log(`Issue #${issueNumber}: nothing to label, skipping.`);
                 return;
               }
               await applyLabel(issueNumber, channel, pcChannelLabels);
               await applyLabel(issueNumber, os, osLabels);
+              await applyLabel(issueNumber, phoneBuildType, telBuildTypeLabels);
             }
 
             if (context.eventName === "workflow_dispatch") {

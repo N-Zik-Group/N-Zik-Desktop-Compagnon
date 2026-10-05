@@ -1,4 +1,7 @@
 Added:
+- fix: the bug report now also collects the phone build type, and the Add labels workflow autolabels it to the tel ... labels
+  - New "📱 N-Zik (phone) Build Type" dropdown (required) in each of the three channel templates, right after the phone version field; options Dev/Dev32/Beta/Beta32/Full/Full32/Minified/Minified32/Foss
+  - add-labels.yaml: a third mutually exclusive category, detected from the new dropdown; the 32-bit variants are matched before their non-32 siblings so "Full32" is not shadowed by "Full"
 - fix: one bug report template per channel, like the phone, and the channel plus the OS are autolabelled from the title prefix and the Platform dropdown
   - Three templates: bug_report.yaml (stable, [BUG]:), bug_report_beta.yaml (beta, [BETA BUG]:), bug_report_dev.yaml (dev, [DEV BUG]:); each has a channel-specific name, title, "READ BEFORE SUBMITTING" note, and a "latest X version" checkbox
   - The redundant generic Build Type dropdown is dropped (the channel is the template itself); each keeps the Platform (Windows/Linux), the phone version and the OS version fields

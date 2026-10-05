@@ -62,6 +62,24 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: phone-build-type
+    attributes:
+      label: 📱 N-Zik (phone) Build Type
+      description: Which build of the phone app are you running (the phone stays the source of truth)?
+      options:
+        - Dev
+        - Dev32
+        - Beta
+        - Beta32
+        - Full
+        - Full32
+        - Minified
+        - Minified32
+        - Foss
+    validations:
+      required: true
+
   - type: input
     id: os-version
     attributes:
