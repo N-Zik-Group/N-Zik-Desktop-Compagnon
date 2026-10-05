@@ -1,4 +1,8 @@
 Added:
+- fix: one bug report template per channel, like the phone, and the channel plus the OS are autolabelled from the title prefix and the Platform dropdown
+  - Three templates: bug_report.yaml (stable, [BUG]:), bug_report_beta.yaml (beta, [BETA BUG]:), bug_report_dev.yaml (dev, [DEV BUG]:); each has a channel-specific name, title, "READ BEFORE SUBMITTING" note, and a "latest X version" checkbox
+  - The redundant generic Build Type dropdown is dropped (the channel is the template itself); each keeps the Platform (Windows/Linux), the phone version and the OS version fields
+  - add-labels.yaml: the channel label (stable pc / beta pc / dev pc) is now detected from the issue title prefix (order matters: BETA BUG and DEV BUG before BUG), the OS label (Windows / Linux) from the Platform dropdown; all long dashes removed from the templates
 - fix: the bug report collects the platform (Windows/Linux) and a generic OS version; the Add labels workflow autolabels the PC channel (stable pc / beta pc / dev pc) and the OS (Windows / Linux)
   - Labels reorganized: the phone build types are renamed with the tel prefix (tel dev, tel beta, tel full, tel minified, tel foss + the 32-bit variants, applied by hand, no dedicated field); the old names (dev, beta, full, minified, dev32, beta32, full32, minified32) are deleted; the PC channels are new labels (stable pc, beta pc, dev pc)
   - bug_report.yaml: new Platform dropdown (Windows/Linux) after Build Type; the "Windows Version" input becomes a generic "OS Version" (its description is a quoted scalar so a colon does not break the YAML)

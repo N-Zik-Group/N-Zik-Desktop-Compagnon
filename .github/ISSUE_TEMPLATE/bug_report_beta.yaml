@@ -1,6 +1,6 @@
-name: 👾 Bug report
-description: Report a bug found in the stable build of N-Zik Desktop Compagnon
-title: "[BUG]: "
+name: 🧪 Beta Bug report
+description: Report a bug found in the Beta build of N-Zik Desktop Compagnon
+title: "[BETA BUG]: "
 labels: ["bug"]
 
 body:
@@ -10,7 +10,7 @@ body:
         ****
         ### ❗ READ BEFORE SUBMITTING ❗
 
-        This form is for bugs found in the **stable** build of the companion. If you are on the **Beta** or **Dev** build, use the dedicated Beta or Dev Bug report template instead.
+        This form is for bugs found specifically in the **Beta** build of the companion. If you are on the **Stable** or **Dev** build, use the corresponding Bug report template instead.
 
         **Remember: the phone stays the source of truth.** This app only talks to the phone over Wi-Fi. If the problem is on the phone itself (library, downloads, streams), open the report on the [N-Zik phone repo](https://github.com/N-Zik-Group/N-Zik) instead.
 
@@ -26,7 +26,7 @@ body:
       label: 📝 Before submitting
       description: Please verify the following steps before submitting your issue. Completing these steps may fix problems!
       options:
-        - label: I am using the latest stable version of the companion.
+        - label: I am using the latest beta version of the companion.
           required: true
         - label: I have checked for already existing issues.
           required: true
@@ -37,8 +37,8 @@ body:
     id: companion-version
     attributes:
       label: 🏷️ Companion Version
-      description: The exact version of the stable build (the GitHub release name, or the commit hash if built from source).
-      placeholder: e.g. v0.1.0, or 9f35d2c8
+      description: The exact version of the beta build (the GitHub release name, or the commit hash if built from source).
+      placeholder: e.g. v0.1.0-beta.3, or 9f35d2c8
     validations:
       required: true
 
@@ -58,7 +58,7 @@ body:
     attributes:
       label: 📱 N-Zik (phone) Version
       description: The companion mirrors the phone, the phone's version matters too.
-      placeholder: 5.0.0-f
+      placeholder: 5.0.0-b
     validations:
       required: true
 

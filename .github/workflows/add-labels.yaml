@@ -9,26 +9,31 @@ permissions:
   issues: write
 
 jobs:
-  label-build-type-platform:
+  label-channel-platform:
     runs-on: ubuntu-latest
     steps:
-      - name: Detect build type and platform, apply labels
+      - name: Detect channel and platform, apply labels
         uses: actions/github-script@v9
         with:
           script: |
+            // The channel (stable / beta / dev) comes from the issue title prefix,
+            // set by the per-channel bug report template:
+            //   [BUG]:        -> stable
+            //   [BETA BUG]:   -> beta
+            //   [DEV BUG]:    -> dev
+            // (mirrors the phone repo, which uses one bug report template per channel)
             const pcChannelLabels = ["stable pc", "beta pc", "dev pc"];
             const osLabels = ["Windows", "Linux"];
 
             // The phone's build types (tel dev, tel beta, ...) are applied
             // manually; the companion's bug report does not collect them.
 
-            function detectBuildType(body) {
-              const match = (body || "").match(/###\s*🏗️\s*Build Type\s*\n+\s*(.+)/);
-              if (!match) return null;
-              const value = match[1].trim();
-              if (/^Stable/i.test(value)) return "stable pc";
-              if (/^Beta/i.test(value)) return "beta pc";
-              if (/^Dev/i.test(value)) return "dev pc";
+            function detectChannel(title) {
+              const t = (title || "");
+              // Order matters: BETA BUG and DEV BUG both contain BUG.
+              if (/^\[BETA BUG\]/i.test(t)) return "beta pc";
+              if (/^\[DEV BUG\]/i.test(t)) return "dev pc";
+              if (/^\[BUG\]/i.test(t)) return "stable pc";
               return null;
             }
 
@@ -75,14 +80,14 @@ jobs:
               console.log(`Issue #${issueNumber}: labeled "${label}".`);
             }
 
-            async function processIssue(issueNumber, body) {
-              const buildType = detectBuildType(body);
+            async function processIssue(issueNumber, title, body) {
+              const channel = detectChannel(title);
               const os = detectOs(body);
-              if (!buildType && !os) {
-                console.log(`Issue #${issueNumber}: no matching Build Type or Platform, skipping.`);
+              if (!channel && !os) {
+                console.log(`Issue #${issueNumber}: no matching channel or platform, skipping.`);
                 return;
               }
-              await applyLabel(issueNumber, buildType, pcChannelLabels);
+              await applyLabel(issueNumber, channel, pcChannelLabels);
               await applyLabel(issueNumber, os, osLabels);
             }
 
@@ -97,8 +102,8 @@ jobs:
 
               for (const issue of issues) {
                 if (issue.pull_request) continue; // ignore PRs
-                await processIssue(issue.number, issue.body);
+                await processIssue(issue.number, issue.title, issue.body);
               }
             } else {
-              await processIssue(context.issue.number, context.payload.issue.body);
+              await processIssue(context.issue.number, context.payload.issue.title, context.payload.issue.body);
             }
