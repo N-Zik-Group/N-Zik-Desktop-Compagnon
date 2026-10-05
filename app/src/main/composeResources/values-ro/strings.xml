@@ -33,7 +33,7 @@
     <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
     <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
     <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
-    <string name="error_storage_failed">The pairing could not be saved in the Windows Credential Manager.</string>
+    <string name="error_storage_failed">The pairing could not be saved on this PC.</string>
     <string name="error_listener_failed">The pairing listener could not be opened. Pair manually below.</string>
     <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
     <string name="error_unknown_code">no code</string>
@@ -48,6 +48,7 @@
     <string name="paired_other_active_unknown">another device</string>
     <string name="paired_incompatible">Phone version incompatible (contract %1$s).</string>
     <string name="paired_error">The phone answered with an error (HTTP %1$d, %2$s).</string>
+    <string name="paired_session_only">No keyring is available on this PC, so the pairing is kept only in memory for this session: pair again after a restart.</string>
     <string name="retry">Reîncercați</string>
     <string name="forget_phone">Forget this phone</string>
     <string name="forget_phone_text">Removes the pairing from this PC</string>
