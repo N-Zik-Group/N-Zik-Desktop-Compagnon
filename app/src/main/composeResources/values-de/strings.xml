@@ -265,6 +265,9 @@
     <string name="disable_scrolling_text">Lauftext deaktivieren</string>
     <string name="scrolling_text_is_used_for_long_texts">Lauftext wird für lange Texte verwendet</string>
     <string name="settings">Einstellungen</string>
+    <!-- App language (contract 1.9.0, `ui.language`); the per-locale translations arrive later through the Crowdin flow -->
+    <string name="languages">Sprachen</string>
+    <string name="app_language">App-Sprache</string>
     <string name="profile_base_name">N-Zik Fan</string>
     <string name="cd_blurred_background">verschwommener Hintergrund</string>
     <string name="cd_origin_indicator">origin_Indikator</string>
