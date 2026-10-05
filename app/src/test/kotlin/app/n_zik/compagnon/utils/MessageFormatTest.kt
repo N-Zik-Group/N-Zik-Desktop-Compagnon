@@ -4,6 +4,8 @@ import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.generated.resources.added_to_dislikes
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
@@ -32,7 +34,11 @@ class MessageFormatTest {
 
     @Test
     fun `formatMessage applies the args to a real resource`() = runBlocking {
-        // The phone's `added_to_dislikes` is "Disliked %s"; the label is the "«Title - Artist»" one.
-        assertEquals("Disliked «X»", formatMessage(Res.string.added_to_dislikes, "«X»"))
+        // The phone's `added_to_dislikes` is "Disliked %s" in English; with the l10n strings the
+        // resolved language depends on the JVM locale — locale-agnostic: the argument must be
+        // applied (no raw `%s` left) whatever the resolved language is.
+        val result = formatMessage(Res.string.added_to_dislikes, "«X»")
+        assertTrue(result.endsWith("«X»"))
+        assertFalse("%s" in result)
     }
 }
