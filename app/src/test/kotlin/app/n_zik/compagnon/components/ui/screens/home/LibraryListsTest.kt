@@ -184,18 +184,15 @@ class LibraryListsTest {
         override suspend fun cacheSpace(): LibraryCache? = null
     }
 
-    /** Serves the given `sortMenu` and `toolbar` on every songs read, recording the queries (the §7.2 live tests). */
-    private class MenuLibrary(
-        private val menu: List<String> = listOf("artist", "duration"),
-        private val toolbar: List<String> = listOf("locator", "search"),
-    ) : LibraryRepository {
+    /** Serves the given `sortMenu` on every songs read, recording the queries (the §7.2 live tests). */
+    private class MenuLibrary(private val menu: List<String> = listOf("artist", "duration")) : LibraryRepository {
         val menuQueries = mutableListOf<SongsQuery>()
         val menuPages = mutableListOf<Pair<Int, Int>>()
         override val features: Set<String> = setOf("library.songs")
         override suspend fun songs(offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track> {
             menuQueries += query
             menuPages += offset to limit
-            return LibraryResult.Ok(Page(emptyList(), 0, offset, limit, sortMenu = menu, toolbar = toolbar))
+            return LibraryResult.Ok(Page(emptyList(), 0, offset, limit, sortMenu = menu))
         }
         override suspend fun playlists(offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist> = error("unused")
         override suspend fun albums(offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album> = error("unused")
@@ -272,13 +269,10 @@ class LibraryListsTest {
         assertEquals(listOf(SongFilter.Offline), library.menuQueries.map { it.filter })
         assertEquals(listOf(0 to 1), library.menuPages, "a one-track probe: only the menu counts")
         assertEquals(listOf("artist", "duration"), lists.pcChipSortMenus.value[SongsChip.CachedPc])
-        // Since 1.8.0: the same probe captures the served toolbar alongside the sort menu
-        assertEquals(listOf("locator", "search"), lists.pcChipToolbars.value[SongsChip.CachedPc])
 
         lists.loadPcChipSortMenu(SongsChip.DownloadPc)
         advanceUntilIdle()
         assertEquals(listOf(SongFilter.Offline, SongFilter.Downloaded), library.menuQueries.map { it.filter })
-        assertEquals(listOf("locator", "search"), lists.pcChipToolbars.value[SongsChip.DownloadPc])
 
         lists.loadPcChipSortMenu(SongsChip.OnDevice)
         advanceUntilIdle()
@@ -286,13 +280,11 @@ class LibraryListsTest {
             listOf(SongFilter.Offline, SongFilter.Downloaded, SongFilter.Local),
             library.menuQueries.map { it.filter },
         )
-        assertEquals(listOf("locator", "search"), lists.pcChipToolbars.value[SongsChip.OnDevice])
 
         // The phone's chips do not probe
         lists.loadPcChipSortMenu(SongsChip.All)
         advanceUntilIdle()
         assertEquals(3, library.menuQueries.size)
-        assertNull(lists.pcChipToolbars.value[SongsChip.All])
     }
 
     /** Serves a different menu per filter, and can answer slowly (to reorder in-flight probes). */

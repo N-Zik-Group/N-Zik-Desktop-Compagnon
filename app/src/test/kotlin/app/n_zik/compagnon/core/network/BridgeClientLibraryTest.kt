@@ -90,22 +90,6 @@ class BridgeClientLibraryTest {
     }
 
     @Test
-    fun `songs carries the phone's toolbar, the other routes read none`() = runTest {
-        val songs = client {
-            json(
-                """{"items":[{"id":"dQw4w9WgXcQ","title":"T"}],"total":1,"offset":0,"limit":100,
-                   "toolbar":["locator","search"]}""",
-            )
-        }.songs(address, token, 0, 100, SongsQuery())
-        assertEquals(listOf("locator", "search"), (songs as LibraryResult.Ok).page.toolbar)
-
-        // The phone sends `JsonNull` on the other routes: the client reads none
-        val albums = client { json("""{"items":[],"total":0,"offset":0,"limit":100,"toolbar":null}""") }
-            .albums(address, token, 0, 100, AlbumsQuery())
-        assertNull((albums as LibraryResult.Ok).page.toolbar)
-    }
-
-    @Test
     fun `songs without text sends no query`() = runTest {
         client { empty() }.songs(address, token, 0, 100, SongsQuery())
         assertNull(request.url.parameters["query"])

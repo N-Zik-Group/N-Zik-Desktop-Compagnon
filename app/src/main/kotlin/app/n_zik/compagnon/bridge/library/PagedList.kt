@@ -36,12 +36,6 @@ data class PagedState<T>(
      * carries one (a ≤ 1.7.2 phone, or a route without a menu).
      */
     val sortMenu: List<String>? = null,
-    /**
-     * Since 1.8.0 (feature `library.toolbar`): the phone's effective Home Songs toolbar of the chip
-     * behind the current query (its content and order), read from the pages; `null` while no
-     * answered page carries one (a phone before 1.8.0, or a route without a toolbar).
-     */
-    val toolbar: List<String>? = null,
 ) {
     val endReached: Boolean get() = total != null && items.size >= total
 }
@@ -149,8 +143,6 @@ class PagedList<Q, T>(
                 totalDurationMs = result.page.totalDurationMs,
                 // Since 1.7.3: the chip's sort menu (a page without one keeps the earlier one)
                 sortMenu = result.page.sortMenu ?: current.sortMenu,
-                // Since 1.8.0: the chip's toolbar (a page without one keeps the earlier one)
-                toolbar = result.page.toolbar ?: current.toolbar,
                 loading = false,
                 error = null,
             )
