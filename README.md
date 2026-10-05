@@ -4,9 +4,9 @@
   <h3>🌐 <a href="https://n-zik.vercel.app/">Official Website</a></h3>
 
   <p>
-    <b>N-Zik Desktop Compagnon</b> is the Windows companion for
-    <a href="https://github.com/N-Zik-Group/N-Zik">N-Zik</a>:
-    control your phone's library and playback from a large screen, and listen on your PC.
+    <b>N-Zik Desktop Compagnon</b> is the desktop companion for
+    <a href="https://github.com/N-Zik-Group/N-Zik">N-Zik</a> (Windows and Linux):
+    control your phone's library and playback from a large screen, and listen on your computer.
   </p>
 
   <p>
@@ -21,8 +21,6 @@
   </p>
 </div>
 
-  <br>
-
 <div align="center">
   <img src="assets/stats/download-card.svg" alt="N-Zik Compagnon Stats" />
   <img src="assets/stats/chart.svg" alt="Download Growth" />
@@ -30,17 +28,39 @@
   <br><br>
 
   [![Launched on DevGlobe](https://devglobe.app/badges/launched-on-devglobe-dark.svg)](https://devglobe.app/projects/n-zik?utm_source=badge&utm_medium=embed)
-  
+
   [![Localization Progress](https://badges.crowdin.net/N-Zik/localized.svg)](https://crowdin.com/project/N-Zik) [![License: GPL v3](https://img.shields.io/github/license/N-Zik-Group/n-zik-desktop-compagnon?color=blue)](https://www.gnu.org/licenses/gpl-3.0)
   [![CodeFactor](https://www.codefactor.io/repository/github/n-zik-group/n-zik-desktop-compagnon/badge)](https://www.codefactor.io/repository/github/n-zik-group/n-zik-desktop-compagnon)
-
-  <br><br>
-
 </div>
 
 # 📲 Installation
+
 [![GitHub](https://github.com/N-Zik-Group/N-Zik/blob/main/assets/get-it-on/GitHub.png?raw=true)](https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/latest)
 [![BetaVersions](https://github.com/N-Zik-Group/N-Zik/blob/main/assets/get-it-on/GitHubBeta.png?raw=true)](https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases?q=&type=prerelease)
+
+## 📦 Available Builds
+
+---
+
+<div align="center">
+
+## 📚 Wiki
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/N-Zik-Group/N-Zik-Desktop-Compagnon)
+
+<br>
+
+## 🌍 Community
+
+Join the N-Zik Discord:
+
+<a href="https://discord.gg/bneHC7QRje">
+  <img src="https://discord.com/api/guilds/1345079801324634193/widget.png?style=banner2" alt="Discord Server">
+</a>
+
+<br>
+
+</div>
 
 # 🎧 Features
 
@@ -73,7 +93,13 @@ Audio is played by [vlcj](https://github.com/caprica/vlcj) 4.12.1 on an embedded
 
 If the embedded VLC cannot be loaded, the app still works: "This PC" is disabled with a message.
 
-# 🌐 Help Translate
+# 📷 Screenshots & Videos
+
+# 🌐 Supported Languages
+
+- 🇬🇧 **English**
+
+## 🌍 Help Translate
 
 Want to:
 
@@ -83,26 +109,28 @@ Want to:
 
 Join us on Crowdin!
 
+> ❓ Don't see your language?
+
 [![Translated with Crowdin](https://badges.crowdin.net/badge/light/crowdin-on-dark.png)](https://crowdin.com/project/n-zik)
-
-# 📚 Wiki
-
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/N-Zik-Group/N-Zik-Desktop-Compagnon)
 
 # 🛠️ Requirements & Building
 
 ## Requirements
 
-- Windows 10 or 11
+- Windows 10 or 11, or Linux
 - JDK 21 (used by the Gradle toolchain to build and run)
 - N-Zik on an Android phone connected to the same Wi-Fi network
 
 ## Build and run
 
-Compile and run the tests:
+Compile and run the tests — `gradlew.bat` on Windows, `./gradlew` on Linux:
 
 ```bat
 gradlew.bat build
+```
+
+```bash
+./gradlew build
 ```
 
 The first build downloads VLC 3.0.24 from download.videolan.org (about 83 MB, once).
@@ -111,6 +139,25 @@ Launch the app:
 
 ```bat
 gradlew.bat :app:run
+```
+
+(`./gradlew :app:run` on Linux.)
+
+---
+
+# 🤝 Contributing
+
+## 🛠️ Improve the App
+
+Pull requests are welcome!
+Feel free to fix bugs, enhance features, or suggest new ideas.
+
+# 📜 Clone the repo
+
+Use this command to clone the repo
+
+```
+git clone -b main --single-branch https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon.git
 ```
 
 # 🫂 Acknowledgements
@@ -140,9 +187,26 @@ Any file derived from Cubic Music Desktop keeps its original copyright and licen
 
 # 👀 Status
 
+## 🛠️ Build & Deployment
+
+[![Build](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build.yml)  
+[![Automatic Cache Builder](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/cache-builder.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/cache-builder.yaml)
+
 ## 🔄 Automation & Maintenance
 
+[![Automatic Dependency Submission](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/dependency-graph/auto-submission/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/dependency-graph/auto-submission)  
+[![Dependabot Updates](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/dependabot/dependabot-updates)  
+[![Chores](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/house-keeper.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/house-keeper.yaml)  
+[![Close stale tickets weekly](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/close-stale-tickets.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/close-stale-tickets.yaml)  
+[![Comment or close on label](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/comment-on-label.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/comment-on-label.yaml)  
 [![Update Project Stats and Chart](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/metrics.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/metrics.yml)
+
+## 🌐 Localization
+
+[![Sync Crowdin Translations](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/sync-crowdin-translations.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/sync-crowdin-translations.yaml)
+
+## 👥 Contributors
+
 [![Fetch, create, and update repo's contributors](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-contributors.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-contributors.yaml)
 
 # ⚠️ Disclaimer
@@ -153,5 +217,5 @@ Its contents are not affiliated with, funded, authorized, endorsed by, or in any
 
 Any trademarks, service marks, trade names, or other intellectual property rights used in this project remain the property of their respective owners.
 
-Made with ❤️ by [NEVARLeVrai](https://github.com/NEVARLeVrai)
+Made with ❤️ by [NEVARLeVrai](https://github.com/NEVARLeVrai)  
 Licensed under GPLv3 - see [LICENSE](LICENSE)
