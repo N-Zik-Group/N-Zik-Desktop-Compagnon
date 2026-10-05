@@ -1,0 +1,54 @@
+name: Build
+
+env:
+  TZ: Europe/Paris
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+  # Allows manual triggering
+  workflow_dispatch:
+
+# Cancel superseded runs of the same branch/PR
+concurrency:
+  group: 'build-${{ github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & test (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up JDK
+        uses: actions/setup-java@v6.0.1
+        with:
+          # Do NOT add `cache: 'gradle'` here — the manual actions/cache below
+          # also caches the build state so cache-builder can pre-warm it.
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Cache Gradle dependencies & build cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./build
+            ./app/build
+          # Same key contract as cache-builder.yaml — the pre-warmed build
+          # cache is restored here (the pinned VLC zip also lives under
+          # ~/.gradle/caches, so it is cached too).
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Build with Gradle
+        run: gradlew.bat build

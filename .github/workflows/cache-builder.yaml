@@ -1,0 +1,119 @@
+name: Automatic Cache Builder
+
+env:
+  TZ: Europe/Paris
+
+on:
+  # These files are dependencies of this project.
+  # Therefore, when 1 of them changes, everything needs
+  # to be rebuilt for an up-to-date cache.
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.gradle*'
+      - '**/gradle-wrapper.properties'
+      - 'gradle/libs.versions.toml'
+    # Don't run on tag creation
+    tags-ignore:
+      - '**'
+
+  schedule:
+    - cron: '0 16 * * 5'   # 4PM UTC every friday
+
+  # Allows manual triggering
+  workflow_dispatch:
+
+# A push-triggered warm-up and the weekly schedule must not save the same
+# cache key at the same time.
+concurrency:
+  group: 'cache-builder'
+  cancel-in-progress: true
+
+
+jobs:
+  #
+  # Topology:
+  # Scan Git's commit logs for any changes in 1 of these locations:
+  # - app/src (all sources: main + test)
+  # - .gradle, .gradle.kts, gradle-wrapper.properties, or the version catalog
+  # If any change is detected, warm the build cache later on.
+  #
+  check-changes:
+    name: Check for changes
+    runs-on: ubuntu-latest
+
+    outputs:
+      changes_made: ${{ steps.detect-changes.outputs.changes_made }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          # Always have a hard-coded limit of how many commits to fetch.
+          # Better idea to fetch the whole thing but fetch time goes BRRRRRR.
+          fetch-depth: 300
+
+      #
+      # Explanations:
+      # git log --since="48 hours ago" --name-only --pretty=format:
+      # - Show all files that were changed within 48 hrs.
+      # - Show changed file paths in relative (app/src, etc.)
+      #
+      - name: Detect changes in last 48 hours
+        id: detect-changes
+        run: |
+          CHANGES_MADE=false
+          if \
+            git log --since="48 hours ago" --name-only --pretty=format: | grep -q "^app/src/" || \
+            git log --since="48 hours ago" --name-only --pretty=format: | grep -q "^.*\.gradle.*" || \
+            git log --since="48 hours ago" --name-only --pretty=format: | grep -q "^gradle/wrapper/gradle-wrapper.properties$" || \
+            git log --since="48 hours ago" --name-only --pretty=format: | grep -q "^gradle/libs.versions.toml$"; then
+
+            CHANGES_MADE=true
+          fi
+
+          echo "changes_made=$CHANGES_MADE" >> $GITHUB_OUTPUT
+
+  build-cache:
+    needs: check-changes
+    if: needs.check-changes.outputs.changes_made == 'true'
+
+    name: Build (cache only)
+    # Must stay windows-latest: the cache key includes runner.os, and the
+    # companion (win64 VLC runtime, JNA) only builds on Windows — a cache
+    # pre-warmed on another OS would never be restored by the Build workflow.
+    runs-on: windows-latest
+    timeout-minutes: 60       # Prevent Github Action from terminating this workflow on first run
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up JDK
+        uses: actions/setup-java@v6.0.1
+        with:
+          # Do NOT add `cache: 'gradle'` here
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Cache Gradle dependencies & build cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./build
+            ./app/build
+          # Same key contract as build.yml — this pre-warmed cache is
+          # restored by the Build workflow.
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Build with Gradle (cache only)
+        # Gradle has built-in flag "-build-cache"
+        # That explicitly tells the compiler to generate reusable files
+        # (org.gradle.caching=true is already set in gradle.properties).
+        # Test execution is not cacheable, so it is skipped: the Build
+        # workflow runs the tests on top of the restored cache.
+        run: gradlew.bat build -x test --build-cache
