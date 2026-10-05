@@ -39,9 +39,11 @@
 
   <br><br>
 
-  [![GitHub](https://github.com/N-Zik-Group/N-Zik/blob/main/assets/get-it-on/GitHub.png?raw=true)](https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/latest)
-  [![BetaVersions](https://github.com/N-Zik-Group/N-Zik/blob/main/assets/get-it-on/GitHubBeta.png?raw=true)](https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases?q=&type=prerelease)
 </div>
+
+# 📲 Installation
+[![GitHub](https://github.com/N-Zik-Group/N-Zik/blob/main/assets/get-it-on/GitHub.png?raw=true)](https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/latest)
+[![BetaVersions](https://github.com/N-Zik-Group/N-Zik/blob/main/assets/get-it-on/GitHubBeta.png?raw=true)](https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases?q=&type=prerelease)
 
 # 🎧 Features
 
