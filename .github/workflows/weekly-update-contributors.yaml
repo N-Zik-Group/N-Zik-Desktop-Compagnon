@@ -36,7 +36,7 @@ jobs:
         run: python .github/get_developers.py
 
       - name: Copy generated contributors.json to its correct place
-        run: "mkdir -p app/src/main/composeResources/raw && mv contributors.json app/src/main/composeResources/raw/contributors.json"
+        run: "mkdir -p app/src/main/resources && mv contributors.json app/src/main/resources/contributors.json"
 
       - name: Get current date
         id: date
