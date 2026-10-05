@@ -1,0 +1,411 @@
+# Workflow Rules — N-Zik Desktop Compagnon
+
+**Version:** 1.0.0 | **Last updated:** 2026-10-05
+
+## Session Startup Sequence
+
+1. Read AGENTS.md entirely
+2. Read all @referenced rules files (BMAD.md, CODE.md, BUILD.md, WORKFLOW.md, SECURITY.md, RECOVERY.md, BMAD-TOOLS.md)
+3. Match user's language (from question tool prompt or BMAD `config.user.toml`)
+4. Announce critical rules (simplified list below)
+5. Ask user using question tool: "Bug, feature, or something else?"
+6. Wait for user input
+7. If bug or feature: ASK which IDE/tool (ONE at a time), ASK which skill to use
+
+> **"question tool"** = the IDE's interactive ask mechanism. If your IDE has no such tool, ask in chat and WAIT for the reply before proceeding — the blocking semantics are identical for every gate.
+
+## Announcement Template
+
+Use this format every session — keep it SHORT:
+
+```
+📋 Rules loaded:
+
+[CRITICAL]
+1. Code → app.n_zik.compagnon.* only (single :app module, no legacy namespace)
+2. java.util.logging.Logger (class tag) ONLY (no println/printStackTrace); NEVER log the device token
+3. Build: gradlew.bat build (Windows, repo root)
+4. Version catalog refs only (gradle/libs.versions.toml)
+5. NEVER commit without human approval
+6. NEVER skip BMAD workflow — complete FULL workflow before coding (exception: trivial doc-only edits, see "Doc-Only Exception")
+7. User suggestions ≠ shortcut (still complete workflow)
+8. Ask IDE ONE at a time (path depends on IDE)
+9. The phone is the single source of truth — no business logic / streaming on the PC; no contract route → inert button with the phone's title
+10. Device token → Windows Credential Manager ONLY (never pairing.json, logs, Done.txt, code)
+11. UI strings → the single composeResources/values/strings.xml (English); %s strings are formatted at the call site (formatMessage/formatText)
+12. NEVER skip ahead to later steps — follow Step 1→2→3... in order
+13. After any interruption, re-announce current step before continuing
+14. If you lost context, re-read the current step file
+15. After BMAD workflow COMPLETE: if user gives logs/bug/errors, START NEW bmad-cis-problem-solving or bmad-code-review workflow — don't improvise
+16. User input (logs, screenshots, errors) = new workflow trigger, NOT freeform response
+17. Steps 4 (plan validation), 8b (code review) and 8d (commit mode) are HARD GATES — ask via question tool, wait for the answer, NEVER skip them or force file edits
+18. Step 6 code hygiene gate: unused imports / dead code / comments / indentation checked AND shown (evidence) before the build
+
+See rules/*.md for full details.
+```
+
+## Step-by-Step Workflow
+
+**This workflow has 8 steps and EVERY step is mandatory. NEVER stop before Step 8. Steps 4, 8b and 8d are HARD GATES.**
+**`rules/CODE.md` applies to EVERY line of code at EVERY step — no step is exempt from code quality.**
+
+### Doc-Only Exception (Scope Gate)
+
+Before triggering the full BMAD workflow, check if the request is **doc-only and trivial**:
+
+- Applies ONLY to: typo fixes, `Done.txt`/`TODO.txt`/changelog wording, README/markdown prose — **zero changes to `.kt`, `.xml`, `.toml`, `.gradle.kts`, or any build file** (a comment change inside a code file is NOT doc-only — run the full workflow)
+- If it qualifies → SKIP the BMAD workflow, make the edit directly, show the diff, ask for approval before committing (commit approval rule from AGENTS.md still applies)
+- If there is ANY doubt whether a change is "trivial" (e.g. it touches a string resource key, not just prose) → treat it as a normal change and run the full workflow
+- This exception does NOT apply to code, dependency, or config changes, however small
+- Announce when using this exception: `[Doc-only exception — BMAD workflow skipped]` + the exact list of files that will be modified
+- The exception is INVALIDATED automatically if the final diff touches any file other than `.md`/`.txt` prose — in that case HALT and run the full workflow
+- If the exception is borderline (the user might reasonably disagree it is "trivial") → ASK the user first, don't self-judge
+
+### Step 1: Understand
+
+- Read request carefully
+- Ask clarifying questions: one clear question per decision — unrelated decisions are NEVER bundled into one question; related questions MAY be grouped in a single question tool call
+- Identify scope (packages, files, resources affected)
+- If the request touches what the PC may do with the phone → the wire contract spec (`spec-n-zik-pc-bridge`, contract 1.x, in `{project-root}/_bmad-output/`) is the reference
+
+### Step 2: Explore
+
+- Search existing implementations
+- Read neighboring files for conventions
+- Check imports and dependencies
+- Ported UI? Check the phone app's counterpart file (workspace `N-Zik/` repo, READ-ONLY reference — same file names under `app/n_zik/android/`) and match its constants/behaviour
+- Consult reference projects in `{project-root}/docs/` (workspace root) if needed
+- Show evidence: list the key files found/read (paths) that shaped the approach — never "explore" invisibly
+
+### Step 3: Execute BMAD Skill (MANDATORY)
+
+NEVER write code or create implementation plans without completing this step.
+
+**Loading a skill ≠ Completing the workflow.** You MUST complete ALL sub-steps below.
+
+#### 3a: Select IDE and Skill
+
+- **ASK FIRST:** Which IDE/tool they are using (before loading any skill) — **ask ONE IDE at a time** (skill path depends on IDE, see rules/BMAD-TOOLS.md). **Order:** OpenCode ⭐, GitHub Copilot ⭐, Google Antigravity ⭐, then others (Claude Code, Cursor, Codex, etc.).
+- **ASK FIRST:** Which skill to use (propose recommended, let user choose)
+- Identify appropriate skill (analyze skills directory first)
+- For bugs: `bmad-cis-problem-solving`, then `bmad-code-review`
+- For additions: `bmad-build` (still requires minimal planning at step-02)
+- Locate skills on disk (`{project-root}/.agents/skills/` for most IDEs)
+
+#### 3b: BMAD Activation Sequence (MANDATORY for every skill)
+
+**`{project-root}`** = the workspace root directory containing both `_bmad/` and `.agents/` (if only one exists, prefer `_bmad/`). Resolve it at runtime by finding that directory.
+
+> **Important for this project:** `_bmad/` and `.agents/` live at the **parent** of `N-Zik-Desktop-Compagnon/`. If your CWD is `N-Zik-Desktop-Compagnon/`, go **up one level** to find `{project-root}`.
+
+**`{skill-root}`** = `{project-root}/{target_dir}/{skill-name}` where `target_dir` depends on your IDE:
+- **Cursor/Copilot/Codex/OpenCode/Windsurf/Gemini CLI:** `{project-root}/.agents/skills/{skill-name}`
+- **Claude Code:** `{project-root}/.claude/skills/{skill-name}`
+- **Google Antigravity:** `{project-root}/.agent/skills/{skill-name}`
+
+Example for `bmad-build` with OpenCode: `{project-root}/.agents/skills/bmad-build`
+
+**TWO SKILL FORMATS EXIST — read the SKILL.md first and pick the matching activation path:**
+
+- **(a) Bootstrap format** (e.g. `bmad-build`): the SKILL.md instructs running `_bmad/scripts/render_skill.py` exactly once. → Run that command FIRST, then follow ONLY the rendered `workflow.md` it prints (its own "On Activation" section supersedes steps 1–8 below). On failure (including `uv` unavailable) → HALT and report the command output; no manual fallback, no direct reading of the workflow sources. The rendered `workflow.md` supersedes the inline activation sequence (steps 1–8) ONLY — the wrapper sub-steps 3c–3i remain MANDATORY on top of the skill's own steps; if the skill's step files already implement one of them (spec file, checkpoints, on_complete), follow the skill's implementation once — do NOT run a second pass.
+- **(b) Inline format** (e.g. `bmad-cis-*`): follow steps 1–8 below.
+
+1. Run `resolve_customization.py` to get merged config:
+
+   ```
+   uv run {project-root}/_bmad/scripts/resolve_customization.py --skill {skill-root} --key agent
+   ```
+
+   (or `--key workflow` for workflow skills)
+
+   > **Path tip:** If running from `N-Zik-Desktop-Compagnon/`, `{project-root}` resolves to the parent directory. Use `..` or resolve the absolute path to the workspace root (the directory containing `_bmad/`) before running scripts.
+
+2. If script fails → manually read 3 files in order and merge (scalars override, tables deep-merge, arrays of tables keyed by `code`/`id` → the matching entry is REPLACED, not field-merged, by the higher-priority one; unmatched entries keep, other arrays append):
+   - `{skill-root}/customize.toml` (defaults)
+   - `{project-root}/_bmad/custom/{skill-name}.toml` (team)
+   - `{project-root}/_bmad/custom/{skill-name}.user.toml` (personal)
+
+3. Execute `activation_steps_prepend` (before greeting)
+
+4. Load `persistent_facts` — file refs loaded as context, literal text kept verbatim
+
+5. Load config from the skill's module config (e.g., `_bmad/cis/config.yaml` for CIS skills, `_bmad/bmm/config.yaml` for BMM skills) — check the skill's SKILL.md for the correct path
+
+6. Adopt persona (role, identity, communication_style, principles)
+
+7. Greet user using `{user_name}` and `{communication_language}`
+
+8. Execute `activation_steps_append` (after greeting, before workflow)
+
+**After activation, read the ENTIRE workflow source before starting: the full `SKILL.md` (inline skills) or the rendered `workflow.md` (bootstrap skills).** Do NOT just read the step headers — read EVERY line including:
+
+- `<template-output>` tags (what to produce at each step)
+- `<energy-checkpoint>` tags (when to ask for breaks)
+- Checkpoint instructions (what options to present after each step)
+- `<action>` tags (what scripts to run)
+- All instructions between step tags
+
+**After activation, follow the skill's workflow step by step — NEVER skip to implementation.**
+
+**HALT at every checkpoint.**
+
+#### 3c: Spec Production (MANDATORY)
+
+- If the skill has a spec template file (`template.md` or `spec-template.md` — check the skill root's file listing) → you MUST produce a spec document using that template
+- **Process:**
+  1. Read `{template_file}` (the template structure with `{{placeholders}}`)
+  2. After each step, replace the `{{placeholders}}` with actual values
+  3. **Write/update the spec file on disk AFTER EACH STEP** (use the Write tool, incremental updates)
+  4. Display the content in chat for checkpoint
+  5. After each write, state the ABSOLUTE PATH of the spec file on disk (the path is the evidence — never just claim "saved")
+- **Where to write:** Read the skill's SKILL.md for the exact output path (resolved from config, e.g. `{project-root}/_bmad-output/`)
+- **In this project:** `{output_folder}` = `{project-root}/_bmad-output` (at the workspace root, one level above `N-Zik-Desktop-Compagnon/`) — the same shared folder the phone project uses; the bridge spec `spec-n-zik-pc-bridge` lives there
+- Show checkpoint separator, display generated content, present the checkpoint options DEFINED BY THE LOADED SKILL (CIS skills: `[a] [c] [p] [y]`; step-file skills: their `### CHECKPOINT` sections — verbatim)
+- Wait for user response before proceeding to next step
+- NEVER skip spec production — the spec IS the workflow output
+- NEVER just display the spec in chat — it MUST be saved to a file
+- NEVER wait until the end to write the spec — write AFTER EACH STEP
+- At the spec's final checkpoint, verify the file actually exists on disk (read it back) before presenting the options
+
+#### 3d: on_complete hook (MANDATORY)
+
+- At the end of the loaded BMAD skill's internal workflow (i.e. end of Step 3, BEFORE Step 4), run: `uv run {project-root}/_bmad/scripts/resolve_customization.py --skill {skill-root} --key workflow.on_complete`
+- If the resolved value is non-empty → follow it as final terminal instruction before exiting
+- NEVER skip this hook — it is the skill's official completion action
+- If the script cannot be executed (uv missing, path or permission error) → say so explicitly to the user, then continue — never fail silently, never "skip" without reporting
+
+#### 3e: Energy checkpoints (MANDATORY)
+
+- If the skill has `<energy-checkpoint>` tags → pause and ask the user about their energy level
+- Present the checkpoint message exactly as written in the skill
+- Wait for user response before proceeding
+- NEVER skip energy checkpoints — they prevent burnout during long sessions
+
+#### 3f: Co/Fast path choice (MANDATORY)
+
+- Some skills (bmad-architecture, bmad-prd, bmad-ux, bmad-product-brief) require offering:
+  - **Coaching path** — guided, explains each step
+  - **Fast path** — streamlined, skips explanations
+- Ask user which path before any drafting begins
+- NEVER skip this choice — it affects the entire workflow
+
+#### 3g: external_handoffs (MANDATORY)
+
+- If the skill has `{workflow.external_handoffs}` → execute it and surface returned URLs/IDs
+- Skip and flag unavailable tools (don't crash)
+- This routes artifacts to external systems (Confluence, Notion, Jira, etc.)
+
+#### 3h: doc_standards (MANDATORY)
+
+- If the skill has `{workflow.doc_standards}` → apply them in order
+- Structural passes before prose — do not polish soon-to-be-cut text
+
+#### 3i: finalize_reviewers (MANDATORY)
+
+- If the skill has `{workflow.finalize_reviewers}` → dispatch reviewer lenses as parallel subagents
+- Each reviewer lens evaluates the artifact independently
+- Surface all reviewer feedback to user before finalizing
+
+**Before writing ANY code:** verify you have completed EVERY step of the loaded BMAD skill's workflow. Read the skill's step files in order — if any step is incomplete → HALT, do NOT write code.
+
+**Enforcement — before starting the workflow:**
+
+1. Read the skill's SKILL.md file — **EVERY line, NOT just step headers**
+2. Count the total number of steps in the loaded workflow — either the `<workflow>` section (inline skills), the `## On Activation`/step sections of the rendered `workflow.md`, or the `step-NN-*.md` files (bootstrap/step-file skills)
+3. List all steps: "Steps: 1. X, 2. Y, 3. Z, ..."
+4. List the output artifact per step (from `<template-output>` tags when present, otherwise from each step's explicit "write `{spec_file}`" instruction)
+5. List the break points (from `<energy-checkpoint>` tags when present, otherwise from `### CHECKPOINT N` sections and "WAIT FOR INPUT" instructions)
+6. List all checkpoint instructions (what options to present — from the skill's checkpoint sections, verbatim)
+7. Announce: "BMAD workflow has N steps. Starting step 1."
+
+**Enforcement — during the workflow:**
+
+- Before each action, announce the current step — THREE formats only: `[Step X/8: <name>]` for the 8-step wrapper workflow (at every transition), `[BMAD Step X/N: <step name>]` for the loaded BMAD skill's internal steps, and `[Step 8x: <name>]` for the Step 8 sub-steps (e.g. `[Step 8b: Code Review Proposal]`, `[Step 8d: Commit]`)
+- After each step, present the checkpoint options DEFINED BY THE LOADED SKILL (CIS skills use `[a] [c] [p] [y]`; `bmad-build` uses `### CHECKPOINT` sections — one per step file that defines one; currently only `### CHECKPOINT 1` in `step-02-plan.md` — present them verbatim). If the skill defines no option list, present its checkpoint message verbatim — NEVER invent options, and NEVER just ask "Step X complete. Proceed to step Y?"
+- Before implementing, verify: "All N steps complete. Ready to implement?"
+- If you cannot name the current step → HALT, you are lost
+
+**User suggestions are input to the workflow, NOT a shortcut to skip it.** Even if the user suggests a specific fix, complete the skill's full workflow before implementing.
+
+**If user declines BMAD skill:** HALT and explain that BMAD workflow is mandatory per AGENTS.md rules. Ask user to confirm they want to proceed without BMAD. If the user confirms: record the explicit waiver, but it covers the BMAD skill (Step 3) ONLY — Step 6 (hygiene gate + build + tests), Step 8b (review gate) and Step 8d (commit mode gate) still apply. When Step 3 is waived, Step 4 is replaced by: present the implementation plan (files, approach, risks) and ask the same plan-approval question (HARD GATE unchanged). Steps 1, 2, 5, 7, 8a, 8b, 8c (after review) and 8e still apply unchanged. If the user does not confirm → HALT, no code is written.
+
+**If skill not found:**
+
+1. Search the IDE-specific skills directory for the user's IDE (see `rules/BMAD-TOOLS.md` table — most IDEs use `{project-root}/.agents/skills/`)
+2. If still not found → HALT, inform the user; re-installation is NOT defined in this workspace (see rules/BMAD.md "Installation Location") — ask the user for the re-installation procedure
+3. If SKILL.md is malformed → HALT, report error, suggest `bmad-module-builder` to rebuild
+
+**IMPORTANT: This workflow has 8 steps. NEVER stop before Step 8. Step 8 (Post-BMAD Actions) is MANDATORY.**
+
+#### 3j: Step-File Skills (micro-file design)
+
+Some skills use micro-file design where each step is in its own file.
+
+**Rules (NO EXCEPTIONS):**
+
+- NEVER load multiple step files simultaneously
+- ALWAYS read entire step file before execution
+- NEVER skip steps or optimize the sequence
+- ALWAYS follow exact instructions in the step file
+- ALWAYS halt at checkpoints and wait for human input
+- Load next step file ONLY when directed by current step
+
+**Alternate path (bmad-build):** `bmad-build` also ships `step-oneshot.md` — an EARLY EXIT taken by `step-01`/`step-02` when the spec carries `route: 'oneshot'`. It is a 6th step file with its own checkpoint semantics: when it is loaded, follow IT (do not continue the numbered sequence). When counting steps for the enforcement list, count it as an alternate path, not an extra sequential step.
+
+### Step 4: Validate Plan (MANDATORY — HARD GATE)
+
+- This step is a hard gate: after the plan/spec is produced, HALT and wait for the user's answer before editing ANY file, running ANY build, or starting ANY implementation — no step 5, no code, no "it's obvious, proceeding anyway".
+- Before implementing, **MUST ask user using question tool** — process:
+  - Read the loaded workflow (the full `SKILL.md` for inline skills; the rendered `workflow.md` + the current `step-NN-*.md` file for bootstrap/step-file skills) to see what actions/checkpoints are available after the plan
+  - Present them verbatim (e.g. `[a] [c] [p] [y]` for CIS skills; the `### CHECKPOINT` sections for `bmad-build`)
+  - Wait for user to choose before proceeding
+- If the session was interrupted before the question was answered → on resume, re-announce Step 4 and ask the question again (never assume a previous answer)
+
+**NEVER implement without user approval.**
+
+### Step 5: Implement
+
+- Write clean code following ALL of `rules/CODE.md` (naming, imports, comments, dead code, java.util.logging-only, null-safety, Compose anti-patterns, file placement, wire-contract gating) — apply them WHILE coding, never defer cleanup to the end
+- Follow existing patterns
+- Handle errors appropriately
+- Remove dead code and unused imports as you go
+
+### Step 6: Verify
+
+- **Code hygiene gate (MANDATORY — BEFORE the build):** run a cleanup pass over every file in the diff and verify each item (per `rules/CODE.md`):
+  - Unused imports removed; no wildcard imports; imports grouped (stdlib → third-party → project)
+  - No dead code: no commented-out code blocks, no unused functions/classes/variables/parameters (if intentionally kept: `// TODO(author): reason`)
+  - Comment hygiene: no comments that restate the code, KDoc on public APIs, TODOs as `// TODO(author): description`
+  - Indentation & formatting: consistent with the surrounding code, no trailing whitespace, newline at end of file
+  - `java.util.logging.Logger` with the class tag ONLY (no `println`/`System.out`/`printStackTrace`), no token in any log, no `!!` without a justification comment, no `GlobalScope`/`runBlocking`, no NEW raw `Dispatchers.*` in app code (use `NzikDispatchers` — grandfathered pre-existing usages excepted, see rules/CODE.md), no bare `Job()`
+- Show evidence for the hygiene gate: list the files cleaned + what was removed (or explicitly state "no issues found") — never just claim "clean"
+- Build: `gradlew.bat build`
+- Run tests (new feature/bug fix → at least one new test, per AGENTS.md: list the test file(s) added)
+- Review changes for quality
+- **Guard check (MANDATORY):** run `git diff --name-only HEAD` (staged + unstaged) AND `git status --porcelain` (includes untracked new files) from the repo root `N-Zik-Desktop-Compagnon/`, and verify that:
+  - no file under `build/` or any VLC binary appears as tracked/untracked (the VLC runtime is downloaded at build time, never committed)
+  - no diff touches the pinned VLC config in `app/build.gradle.kts` (`vlcVersion`/`vlcZipUrl`/`vlcZipSha256`/`vlcRuntimeFiles`) without the user's prior approval (AGENTS.md "Ask First")
+  - no token material appears anywhere in the diff (scan changed files for the device token / Credential Manager strings)
+  - all new `.kt` files live under `app.n_zik.compagnon.*`
+  — if any of these appears, HALT, revert it and report to the user
+- Show evidence: paste the build output tail + test results — never just claim "done"
+
+### Step 7: Report
+
+- Summarize what was done and why
+- Note files modified or created
+- Do NOT commit unless explicitly asked. An explicit commit request BEFORE Step 8 is recorded but only executed AFTER the 8b/8d gates (8b is a HARD GATE; the 8d mode choice always applies) — announce: "commit requested, will run after the 8b/8d gates"
+
+### Step 8: Post-BMAD Actions (MANDATORY)
+
+After the BMAD workflow completes, **MUST follow this exact flow** — NEVER skip any step:
+
+**Step 8a: Build and Test**
+
+- Run `gradlew.bat build` (compiles + runs all tests)
+- Show evidence: paste the tail of the build output (`BUILD SUCCESSFUL` / failing tests + counts) — never claim "build passed" without output
+- If FAILS → fix and rebuild with the SAME 3-attempt limit as rules/BUILD.md/rules/RECOVERY.md: **HALT after 3 failed attempts** → report to user with the full error log (NEVER loop "until it passes" indefinitely)
+
+**Step 8b: Code Review Proposal (HARD GATE — NEVER SKIP)**
+
+- This step is a hard gate: after Step 8a, HALT and wait for the user's answer before doing ANYTHING else — no 8c/8d/8e, no commit-related file edits, no "workflow complete" announcement, no reporting the task as done.
+- **MUST ask user using question tool, translated into `{communication_language}`:**
+  ```
+  Code is functional. Proceed to code review ?
+  1. Yes → launch bmad-code-review
+  2. No → structured self-check pass + fixes
+  ```
+- If user says "No" → do a structured self-check pass (null-safety, structured concurrency/lifecycle, logger usage + token absence in logs, error handling, test coverage), LIST the findings (or explicitly state "none found"), fix them, rebuild, then ask the Step 8b question again (the user may change their mind) — ask this question at most ONE more time; if the user says "No" again, record it as an explicit decision to skip the review (announce it: "8b review declined by user — 8c not applicable, no review performed") and proceed to Step 8d. No further self-check loops.
+- If user says "Yes" → load and execute `bmad-code-review` skill
+- If the `bmad-code-review` skill fails to load or execute (render/uv error, skill HALT) → HALT, report the error verbatim, and ask the user via question tool: (1) retry the skill, (2) proceed to the structured self-check pass of the "No" branch — explicitly announced as NOT fulfilling the 8b review gate. Cap retries at 2 — on the third failure, HALT and re-ask with only the self-check option (announced as NOT fulfilling the 8b gate) and "stop"
+- If the session was interrupted before the question was answered → on resume, re-announce Step 8b and ask the question again (never assume a previous answer)
+
+**Step 8c: Post-Review Actions**
+
+- First, present the review findings VERBATIM to the user (every issue, with severity and file refs). The verdict below is the USER's call — the agent NEVER decides on its own that the review is "good enough" or "functional".
+- After code review completes, **MUST ask user using question tool, translated into `{communication_language}`:**
+  ```
+  Code review complete. What next ?
+  1. Functional → proceed to commit
+  2. Not functional → fix the findings (then re-review)
+  3. Other → ask user
+  ```
+- If "Not functional" → fix the findings, rebuild + re-run tests, then RE-RUN `bmad-code-review` on the fixed scope before asking 8c again (fixes to review findings require a fresh review — never present self-judged fixes as review-passed). After **3** fix/re-review cycles without a "Functional" verdict → HALT and report the recurring findings to the user instead of looping again
+- If the session was interrupted before the question was answered → on resume, re-announce Step 8c and ask the question again (never assume a previous answer)
+
+**Step 8d: Commit (only if user says "Functional") — ASK MODE FIRST, THEN EDIT**
+
+This repo has **no version-bump machinery** (no `fastlane/`, no `Updater/`, no versionCode in the catalog; releases are manual GitHub releases — see `assets/notes/TODO.txt` story 13). The commit modes are therefore TWO, not three:
+
+- **MUST ask user using question tool BEFORE editing ANY file** (NEVER create or modify `assets/notes/Done.txt` before the user has chosen a mode), **translated into `{communication_language}`:**
+  ```
+  Code is functional. How do you want to commit ?
+  1. Done + commit → assets/notes/Done.txt only
+  2. Wait → nothing
+  ```
+- Wait for the user's answer before touching any file, then apply ONLY the chosen mode:
+  - **1. Done + commit:**
+    - Append the new work to `assets/notes/Done.txt` using its own template (`Changelog_Template.txt` in the same folder) — format: `<keyword>(<scope>): <short summary> (issue ref)` + technical sub-bullets, include full issue link or commit hash reference — NO other file is touched by the commit mode itself
+  - **2. Wait:**
+    - Do NOT edit any file, do NOT commit — announce that the task is paused and how to resume (re-ask the Step 8d commit-mode question in a new conversation — do NOT re-ask Step 8b, which is already resolved)
+- If the session was interrupted before the question was answered → on resume, re-announce Step 8d and ask the question again (never assume a previous answer)
+- After the chosen edits, show the diff AND the proposed commit message (conventional format `type(scope): …` per rules/BUILD.md), then **MUST ask user for commit approval** (NEVER commit without approval) — ONE prompt, not separately, **translated into `{communication_language}`:**
+  ```
+  Do you approve this commit ? (Your approval also confirms the human testing required by AGENTS.md)
+  Message: <type(scope): short description>
+  1. Commit + push
+  2. Commit only (no push)
+  3. Cancel
+  ```
+
+> **Rule:** every user-facing prompt template in this file is written in English as a reference — agents MUST present it translated into `{communication_language}` (resolved from BMAD config), never mix languages within the same session.
+- If "commit + push" → `git commit` + `git push`
+- If "commit only" → `git commit` only, no push
+- If "cancel" → leave the working tree as-is (edited files stay uncommitted), report what is pending
+
+**Step 8e: Finish Workflow (always runs)**
+
+- Run the `on_complete` hook ONLY if it was NOT already executed in Step 3d — it is a single hook: never run it twice (if already run, state so and move on). Step 8e runs it only when Step 3 was waived or 3d could not run
+- Announce: "Workflow complete."
+- **Start a new conversation** — the next task should begin with fresh context. Instruct the user (in `{communication_language}`) to open a new conversation for the next task.
+
+**NEVER skip any of these steps. The BMAD workflow is NOT complete until code is verified, reviewed, and committed (if approved).**
+
+## Change Scope
+
+This repo is a **single Gradle module** (`:app`) — there are no submodules and no feature subprojects. A change can still span layers, and the Step 6 guard check covers them all:
+
+1. `app/src/main/kotlin/` — code
+2. `app/src/test/kotlin/` — tests (mirror the package)
+3. `app/src/main/composeResources/` — drawables, fonts, `values/strings.xml` (a new string key or a changed one belongs in the same commit as the code that uses it)
+4. `app/build.gradle.kts` / `gradle/libs.versions.toml` — build/config (Ask First applies)
+
+When a change also requires the **phone side** to evolve (a new contract route or feature), HALT before Step 6 and say so explicitly: the phone work happens in the `N-Zik/` repo (its own AGENTS.md + rules), and the contract spec in `{project-root}/_bmad-output/` must be updated before either side is finished.
+
+## Announce Steps
+
+Before ANY file edit, command, or tool call, output a short plan:
+
+- Detailed plan when starting new task or deviating
+- Between actions inside a step, the same tags apply (no other formats)
+- At every transition between the 8 workflow steps (1→2→…→8), announce `[Step X/8: <name>]` — the user must always be able to see which step is running
+- NEVER skip this rule, even for "obvious" fixes
+
+## BMAD Dual Enforcement
+
+Follow BOTH AGENTS.md AND BMAD rules IN PARALLEL — at EVERY step of the workflow.
+
+- AGENTS.md wins on: code quality, security, commits, logging, persistence, build
+- BMAD wins on: workflow ordering, templates, checkpoints
+- **AGENTS.md rules apply DURING the BMAD workflow, not just after**
+
+**Conflict resolution example:**
+
+```
+CONFLICT:
+AGENTS.md says: "Never commit without human approval"
+BMAD workflow says: "Mark story complete and commit"
+RESOLUTION: AGENTS.md wins — HALT, ask user for commit approval
+```
+
+**NEVER use "I'm following BMAD" as an excuse to skip AGENTS.md rules.**
