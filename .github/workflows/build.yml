@@ -20,9 +20,15 @@ concurrency:
 
 jobs:
   build:
-    name: Build & test (Windows)
-    runs-on: windows-latest
+    name: Build & test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 60
+    strategy:
+      # A red Windows leg must not cancel the Linux leg (and vice versa) —
+      # both results are needed to know the state of the build on each OS.
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
 
     steps:
       - name: Checkout
@@ -44,11 +50,19 @@ jobs:
             ~/.gradle/wrapper
             ./build
             ./app/build
-          # Same key contract as cache-builder.yaml — the pre-warmed build
-          # cache is restored here (the pinned VLC zip also lives under
-          # ~/.gradle/caches, so it is cached too).
+          # Same key contract as cache-builder.yaml — the key includes
+          # runner.os, so each OS leg restores its own pre-warmed cache
+          # (the pinned VLC zip also lives under ~/.gradle/caches, so it
+          # is cached too).
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
           restore-keys: gradle-${{ runner.os }}-
 
-      - name: Build with Gradle
-        run: gradlew.bat build
+      # PowerShell (the default run shell on Windows) does not resolve
+      # executables from the current directory — the .\ prefix is required.
+      - name: Build with Gradle (Windows)
+        if: runner.os == 'Windows'
+        run: .\gradlew.bat build
+
+      - name: Build with Gradle (Linux)
+        if: runner.os == 'Linux'
+        run: ./gradlew build

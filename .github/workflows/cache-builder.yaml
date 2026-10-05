@@ -79,12 +79,15 @@ jobs:
     needs: check-changes
     if: needs.check-changes.outputs.changes_made == 'true'
 
-    name: Build (cache only)
-    # Must stay windows-latest: the cache key includes runner.os, and the
-    # companion (win64 VLC runtime, JNA) only builds on Windows — a cache
-    # pre-warmed on another OS would never be restored by the Build workflow.
-    runs-on: windows-latest
+    name: Build (cache only, ${{ matrix.os }})
+    # Mirrors build.yml: the cache key includes runner.os, so each OS leg
+    # pre-warms the exact cache that the matching Build leg will restore.
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 60       # Prevent Github Action from terminating this workflow on first run
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
 
     steps:
       - name: Checkout repository
@@ -110,10 +113,17 @@ jobs:
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
           restore-keys: gradle-${{ runner.os }}-
 
-      - name: Build with Gradle (cache only)
-        # Gradle has built-in flag "-build-cache"
-        # That explicitly tells the compiler to generate reusable files
-        # (org.gradle.caching=true is already set in gradle.properties).
-        # Test execution is not cacheable, so it is skipped: the Build
-        # workflow runs the tests on top of the restored cache.
-        run: gradlew.bat build -x test --build-cache
+      # Gradle has built-in flag "-build-cache"
+      # That explicitly tells the compiler to generate reusable files
+      # (org.gradle.caching=true is already set in gradle.properties).
+      # Test execution is not cacheable, so it is skipped: the Build
+      # workflow runs the tests on top of the restored cache.
+      # PowerShell (the default run shell on Windows) does not resolve
+      # executables from the current directory — the .\ prefix is required.
+      - name: Build with Gradle (Windows, cache only)
+        if: runner.os == 'Windows'
+        run: .\gradlew.bat build -x test --build-cache
+
+      - name: Build with Gradle (Linux, cache only)
+        if: runner.os == 'Linux'
+        run: ./gradlew build -x test --build-cache
