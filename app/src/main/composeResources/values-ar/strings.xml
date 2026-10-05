@@ -265,6 +265,9 @@
     <string name="disable_scrolling_text">Disable scrolling text</string>
     <string name="scrolling_text_is_used_for_long_texts">Scrolling text is used for long texts</string>
     <string name="settings">Settings</string>
+    <!-- App language (contract 1.9.0, `ui.language`); the per-locale translations arrive later through the Crowdin flow -->
+    <string name="languages">اللغات</string>
+    <string name="app_language">لغة التطبيق</string>
     <string name="profile_base_name">N-Zik Fan</string>
     <string name="cd_blurred_background">خلفية_ضبابية</string>
     <string name="cd_origin_indicator">مصدر_مؤشر</string>
