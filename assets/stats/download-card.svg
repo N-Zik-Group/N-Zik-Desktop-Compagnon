@@ -1,0 +1,69 @@
+<svg width="600" height="120" viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg { fill: #ffffff; stroke: #e1e4e8; }
+    .text-title { fill: #2b3137; font-weight: 600; font-size: 15px; }
+    .text-label { fill: #586069; font-weight: 500; font-size: 11px; }
+    .text-value-1 { fill: #0366d6; font-weight: 700; font-size: 26px; }
+    .text-value-2 { fill: #6f42c1; font-weight: 700; font-size: 18px; }
+    .text-value-3 { fill: #e3b341; font-weight: 700; font-size: 18px; }
+    .text-sub { fill: #28a745; font-weight: 600; font-size: 13px; }
+    .text-sub-2 { fill: #586069; font-weight: 600; font-size: 13px; }
+    .line { stroke: #e1e4e8; }
+    
+    /* Dark Mode */
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; stroke: #30363d; }
+      .text-title { fill: #c9d1d9; }
+      .text-label { fill: #8b949e; }
+      .text-value-1 { fill: #58a6ff; }
+      .text-value-2 { fill: #d2a8ff; }
+      .text-sub { fill: #3fb950; }
+      .text-sub-2 { fill: #8b949e; }
+      .line { stroke: #30363d; }
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animated { animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+  </style>
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity="0.05" />
+    </filter>
+  </defs>
+  <rect class="bg" width="600" height="120" rx="10" filter="url(#shadow)" stroke-width="1"/>
+  
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
+    <text x="25" y="30" class="text-title animated">📊 N-Zik Compagnon Project Stats</text>
+    
+    <!-- Column 1 -->
+    <g class="animated delay-1">
+      <text x="35" y="65" class="text-label">TOTAL DOWNLOADS</text>
+      <text x="35" y="95" class="text-value-1">0</text>
+    </g>
+
+    <line x1="220" y1="45" x2="220" y2="100" class="line" stroke-width="1" />
+    
+    <!-- Column 2 -->
+    <g class="animated delay-2">
+      <text x="245" y="65" class="text-label">LATEST RELEASE</text>
+      <text x="245" y="85" class="text-value-2">no release yet</text>
+      <text x="245" y="105" class="text-sub">📥 0 downloads</text>
+    </g>
+
+    <line x1="420" y1="45" x2="420" y2="100" class="line" stroke-width="1" />
+    
+    <!-- Column 3 -->
+    <g class="animated delay-3">
+      <text x="445" y="65" class="text-label">COMMUNITY</text>
+      <text x="445" y="85" class="text-value-3">⭐ 0</text>
+      <text x="445" y="105" class="text-sub-2">🍽️ 0 forks</text>
+    </g>
+  </g>
+</svg>
