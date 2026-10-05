@@ -64,16 +64,16 @@ Join the N-Zik Discord:
 
 # 🎧 Features
 
-- 🔗 **QR or Manual Pairing** – Pair once with the QR code shown by the app (or the phone's IP, port and code by hand); the pairing is remembered across restarts, and the device token lives in the Windows Credential Manager.
-- 📚 **The Phone's Library** – Songs (search, filters, sorts), Artists, Albums and Playlists, switched from the floating bar at the bottom, with live refresh of the phone's lists.
-- ⏯️ **Unified Player** – A mini player above the navigation bar opens the full player: rotating cover animation, colours that follow the current cover, seek, speed, repeat and shuffle.
-- 📋 **Queue** – Opens from the player or the mini player: jump to a track, move it, remove it, clear the queue.
-- 🎮 **Remote Control** – Everything plays on the phone: play / pause / previous / next, seek, speed, repeat, shuffle, and per-track menus (a right click is the phone's long press).
-- 🖥️ **Sound on the PC** – Stream the audio to your PC instead of the phone: pick the output device (this PC or the phone) and the PC follows the phone's playback; when this PC's session ends, the phone takes the sound back.
-- 💾 **Local Audio Cache** – Tracks already played in full are kept in a local cache and replayed without asking the phone again, with a configurable size (2 GB by default).
-- 🔊 **Embedded VLC** – Audio is played on an embedded copy of VLC: no VLC installation is needed on your PC.
-- 🎨 **The Phone's Look** – The UI is ported from N-Zik: same screens, same theme, dynamic palette from the current cover.
-- 🔁 **Auto-Reconnect** – The app reconnects by itself after a network loss; when the phone's server is stopped, or when you disconnect this PC from the phone, use "Reconnect".
+- 🔗 **QR or Manual Pairing**: Pair once with the QR code shown by the app (or the phone's IP, port and code by hand); the pairing is remembered across restarts, and the device token lives in the Windows Credential Manager.
+- 📚 **The Phone's Library**: Songs (search, filters, sorts), Artists, Albums and Playlists, switched from the floating bar at the bottom, with live refresh of the phone's lists.
+- ⏯️ **Unified Player**: A mini player above the navigation bar opens the full player: rotating cover animation, colours that follow the current cover, seek, speed, repeat and shuffle.
+- 📋 **Queue**: Opens from the player or the mini player: jump to a track, move it, remove it, clear the queue.
+- 🎮 **Remote Control**: Everything plays on the phone: play / pause / previous / next, seek, speed, repeat, shuffle, and per-track menus (a right click is the phone's long press).
+- 🖥️ **Sound on the PC**: Stream the audio to your PC instead of the phone: pick the output device (this PC or the phone) and the PC follows the phone's playback; when this PC's session ends, the phone takes the sound back.
+- 💾 **Local Audio Cache**: Tracks already played in full are kept in a local cache and replayed without asking the phone again, with a configurable size (2 GB by default).
+- 🔊 **Embedded VLC**: Audio is played on an embedded copy of VLC: no VLC installation is needed on your PC.
+- 🎨 **The Phone's Look**: The UI is ported from N-Zik: same screens, same theme, dynamic palette from the current cover.
+- 🔁 **Auto-Reconnect**: The app reconnects by itself after a network loss; when the phone's server is stopped, or when you disconnect this PC from the phone, use "Reconnect".
 
 # 🔒 Pairing, Windows Firewall and manual mode
 
@@ -123,25 +123,25 @@ Join us on Crowdin!
 
 ## Build and run
 
-Compile and run the tests — `gradlew.bat` on Windows, `./gradlew` on Linux:
+Compile and run the tests. On Windows: `gradlew.bat`. On Linux: the `build.sh` script.
 
 ```bat
 gradlew.bat build
 ```
 
 ```bash
-./gradlew build
+./build.sh
 ```
 
 The first build downloads VLC 3.0.24 from download.videolan.org (about 83 MB, once).
 
-Launch the app:
+Launch the app on Windows:
 
 ```bat
 gradlew.bat :app:run
 ```
 
-(`./gradlew :app:run` on Linux.)
+The app is not runnable on Linux yet (the embedded VLC Linux runtime is not ported); the build is.
 
 ---
 
