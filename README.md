@@ -34,9 +34,6 @@
   [![Localization Progress](https://badges.crowdin.net/N-Zik/localized.svg)](https://crowdin.com/project/N-Zik) [![License: GPL v3](https://img.shields.io/github/license/N-Zik-Group/n-zik-desktop-compagnon?color=blue)](https://www.gnu.org/licenses/gpl-3.0)
   [![CodeFactor](https://www.codefactor.io/repository/github/n-zik-group/n-zik-desktop-compagnon/badge)](https://www.codefactor.io/repository/github/n-zik-group/n-zik-desktop-compagnon)
 
-
-  [![Crowdin](https://badges.crowdin.net/N-Zik/localized.svg)](https://crowdin.com/project/N-Zik)
-
   <br><br>
 
 </div>
