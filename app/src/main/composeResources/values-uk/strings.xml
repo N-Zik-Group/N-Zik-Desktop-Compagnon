@@ -265,6 +265,9 @@
     <string name="disable_scrolling_text">Вимкнути прокрутку тексту</string>
     <string name="scrolling_text_is_used_for_long_texts">Прокрутка тексту використовується для довгих текстів</string>
     <string name="settings">Налаштування</string>
+    <!-- App language (contract 1.9.0, `ui.language`); the per-locale translations arrive later through the Crowdin flow -->
+    <string name="languages">Мови</string>
+    <string name="app_language">Мова програми</string>
     <string name="profile_base_name">N-Zik Fan</string>
     <string name="cd_blurred_background">розмитий фон</string>
     <string name="cd_origin_indicator">індикатор оригіналу</string>
