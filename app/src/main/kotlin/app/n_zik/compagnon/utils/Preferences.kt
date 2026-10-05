@@ -36,6 +36,8 @@ const val playbackVolumeKey = "playbackVolume"
 const val chipSortsKey = "chipSorts"
 const val itemSizesKey = "itemSizes"
 const val disableScrollingTextKey = "disableScrollingText"
+const val languageKey = "language"
+const val lastPhoneLanguageKey = "lastPhoneLanguage"
 
 /**
  * The sort state of one library chip (contract §10, since 1.6): as on the phone, every chip of a
@@ -84,6 +86,14 @@ data class UserSettings(
     @SerialName(itemSizesKey) val itemSizes: Map<String, String> = emptyMap(),
     /** The phone's "Disable scrolling text" (its `disableScrollingTextKey`, not in the contract). */
     @SerialName(disableScrollingTextKey) val disableScrollingText: Boolean = false,
+    /**
+     * The PC's own "App language" (contract 1.9.0, `ui.language`): the sentinel `auto_pc` (the PC's
+     * OS locale), `auto_tel` (the phone's language — the default) or a BCP-47 code of the phone's
+     * list; an unknown code falls back to the PC's `values/` (English), never a crash.
+     */
+    @SerialName(languageKey) val language: String = AppLanguage.AUTO_TEL,
+    /** The last phone language received in `meta` (contract 1.9.0): the `auto_tel` fallback. */
+    @SerialName(lastPhoneLanguageKey) val lastPhoneLanguage: String? = null,
 ) {
     /** Ceiling of the audio cache: `0` disabled, `null` unlimited. */
     val songCacheMaxBytes: Long? get() = exoPlayerDiskCacheMaxSize.cacheBytes(exoPlayerCustomCache)

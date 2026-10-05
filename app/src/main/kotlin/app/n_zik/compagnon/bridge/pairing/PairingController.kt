@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.bridge.pairing
 
+import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.core.network.BridgeApi
 import app.n_zik.compagnon.core.network.MetaResult
 import app.n_zik.compagnon.core.network.ProbeResult
@@ -59,9 +60,15 @@ sealed interface PairedStatus {
 
 /**
  * What the player session of story 11 needs from a healthy pairing: the credential, the address that
- * answered `meta`, and the phone's `features` (contract §5). Memory only.
+ * answered `meta`, the phone's `features` (contract §5) and the phone's effective UI language
+ * (contract 1.9.0, `ui.language`; `null` on a ≤ 1.8 phone). Memory only.
  */
-data class ActivePairing(val pairing: StoredPairing, val address: ServerAddress, val features: Set<String>)
+data class ActivePairing(
+    val pairing: StoredPairing,
+    val address: ServerAddress,
+    val features: Set<String>,
+    val language: String? = null,
+)
 
 sealed interface PairingState {
     data object Starting : PairingState
@@ -125,6 +132,11 @@ class PairingController(
     private val listenerFactory: () -> OfferListener,
     private val candidateProvider: suspend () -> List<String>,
     private val defaultDeviceName: String,
+    /**
+     * Persisted whenever a `meta` answers with a non-null phone language (contract 1.9.0,
+     * `ui.language`): the `auto_tel` fallback of the PC's "App language" setting.
+     */
+    private val onPhoneLanguage: (String) -> Unit = {},
     private val listenerUnreachableMs: Long = BridgeContract.LISTENER_UNREACHABLE_MS,
     revocationConfirmDelayMs: Long = BridgeContract.REVOCATION_CONFIRM_DELAY_MS,
 ) {
@@ -141,6 +153,15 @@ class PairingController(
     /** Set whenever the state is `Paired(Ok)`, `null` otherwise. */
     @Volatile var active: ActivePairing? = null
         private set
+
+    private val _phoneLanguage = MutableStateFlow<String?>(null)
+
+    /**
+     * The phone's effective language of the last successful `meta` (contract 1.9.0, `ui.language`):
+     * `null` before the first `meta`, and when the phone does not advertise the feature (≤ 1.8)
+     * or answers without the field.
+     */
+    val phoneLanguage: StateFlow<String?> = _phoneLanguage.asStateFlow()
 
     // Last phone address of this session, kept in memory only (never written once the pairing is erased):
     // it prefills the manual form after a revocation or a "Forget".
@@ -279,7 +300,6 @@ class PairingController(
             MetaResult.Unreachable -> return enterUnpaired(returnTo, PairingError.PhoneUnreachable)
             is MetaResult.Failed -> return enterUnpaired(returnTo, PairingError.Unexpected(meta.status, meta.code))
         }
-
         when (val result = api.validate(address, ValidateRequest(code = code, requestId = requestId, deviceName = deviceName))) {
             is ValidateResult.Ok -> {
                 val response = result.response
@@ -295,7 +315,11 @@ class PairingController(
                 pairing = stored
                 val reached = ServerAddress(address.ip, response.serverPort)
                 lastAddress = reached
-                active = ActivePairing(stored, reached, meta.meta.features.toSet())
+                // Contract 1.9.0 (`ui.language`): only a completed pairing remembers the phone's
+                // language — a rejected code (or a `409`) must not switch the applied language
+                // mid-flow.
+                val phoneLanguage = rememberPhoneLanguage(meta.meta)
+                active = ActivePairing(stored, reached, meta.meta.features.toSet(), phoneLanguage)
                 _state.value = PairingState.Paired(record, PairedStatus.Ok)
             }
             ValidateResult.Rejected -> enterUnpaired(returnTo, PairingError.CodeRejected)
@@ -340,6 +364,9 @@ class PairingController(
         closeListener()
         _state.value = PairingState.Paired(current.record, PairedStatus.Checking)
         val (address, meta) = reachMeta(current.record.serverIps, current.record.serverPort)
+        // Contract 1.9.0 (`ui.language`): the phone's language is remembered on every successful
+        // `meta`, whatever the health check ends up — it is the phone's, not this PC's, language
+        val phoneLanguage = if (meta is MetaResult.Ok) rememberPhoneLanguage(meta.meta) else null
         val status: PairedStatus = when (meta) {
             MetaResult.Unreachable -> PairedStatus.Unreachable
             is MetaResult.Incompatible -> PairedStatus.Incompatible(meta.contractVersion)
@@ -360,7 +387,7 @@ class PairingController(
             }
         }
         if (status == PairedStatus.Ok && meta is MetaResult.Ok) {
-            active = ActivePairing(current, address, meta.meta.features.toSet())
+            active = ActivePairing(current, address, meta.meta.features.toSet(), phoneLanguage)
         }
         _state.value = PairingState.Paired(current.record, status)
     }
@@ -379,6 +406,19 @@ class PairingController(
     private fun prefilledManualForm(): ManualForm {
         val last = lastAddress ?: return ManualForm()
         return ManualForm(ip = last.ip.takeIf(PairingRules::isIpv4).orEmpty(), port = last.port.toString())
+    }
+
+    /**
+     * The phone's effective language of a successful `meta` (contract 1.9.0, `ui.language`),
+     * feature-gated: `null` when the phone does not advertise the feature (≤ 1.8) or the field is
+     * absent. Kept in [phoneLanguage] for the resolver, and persisted by [onPhoneLanguage] (a
+     * non-null language only — the PC's own OS locale is never filed as a phone language).
+     */
+    private fun rememberPhoneLanguage(meta: MetaResponse): String? {
+        val language = if (SessionContract.FEATURE_UI_LANGUAGE in meta.features) meta.language else null
+        _phoneLanguage.value = language
+        language?.let(onPhoneLanguage)
+        return language
     }
 
     /** First candidate whose `meta` answers; the client tries the next IPs when there are several (contract §4.4). */

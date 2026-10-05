@@ -13,6 +13,7 @@ import io.ktor.http.headersOf
 import java.io.IOException
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -34,6 +35,35 @@ class BridgeClientTest {
         }.meta(address)
         assertTrue(result is MetaResult.Ok)
         assertEquals("http://192.168.1.14:42420/api/v1/meta", requests.single().url.toString())
+    }
+
+    @Test
+    fun `meta since 1_9 decodes the phone language`() = runTest {
+        val result = client {
+            json(
+                """{"contractVersion":"1.9","serverName":"Pixel 8","serverTimeMs":1,"features":["ui.language"],"language":"pt-BR"}""",
+            )
+        }.meta(address)
+        assertEquals("pt-BR", (result as MetaResult.Ok).meta.language)
+    }
+
+    @Test
+    fun `meta before 1_9 without the language field stays null`() = runTest {
+        val result = client {
+            json("""{"contractVersion":"1.8","serverName":"Pixel 8","serverTimeMs":1,"features":["playback"]}""")
+        }.meta(address)
+        assertNull((result as MetaResult.Ok).meta.language)
+    }
+
+    @Test
+    fun `meta with an explicit null language stays null`() = runTest {
+        // The phone's encoder always sends the field (`encodeDefaults`): `System` is a null on the wire.
+        val result = client {
+            json(
+                """{"contractVersion":"1.9","serverName":"Pixel 8","serverTimeMs":1,"features":["ui.language"],"language":null}""",
+            )
+        }.meta(address)
+        assertNull((result as MetaResult.Ok).meta.language)
     }
 
     @Test

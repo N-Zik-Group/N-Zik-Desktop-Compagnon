@@ -118,6 +118,8 @@ data class MetaResponse(
     val serverName: String,
     val serverTimeMs: Long = 0,
     val features: List<String> = emptyList(),
+    /** Since 1.9.0 (contract §5, `ui.language`): the phone's effective UI language as a BCP-47 tag. */
+    val language: String? = null,
 )
 
 /** `activeDevice` of a `409 CONFLICT_ACTIVE_CLIENT` (contract §3, §6.2). */

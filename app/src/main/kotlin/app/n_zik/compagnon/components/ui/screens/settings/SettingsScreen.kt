@@ -30,6 +30,7 @@ import app.n_zik.compagnon.components.ui.screens.bridge.PairingButton
 import app.n_zik.compagnon.enums.AudioQualityFormat
 import app.n_zik.compagnon.enums.ExoPlayerDiskCacheMaxSize
 import app.n_zik.compagnon.generated.resources.Res
+import app.n_zik.compagnon.generated.resources.app_language
 import app.n_zik.compagnon.generated.resources.audio_quality
 import app.n_zik.compagnon.generated.resources.audio_quality_automatic
 import app.n_zik.compagnon.generated.resources.audio_quality_format
@@ -39,6 +40,8 @@ import app.n_zik.compagnon.generated.resources.cache
 import app.n_zik.compagnon.generated.resources.cache_cleared
 import app.n_zik.compagnon.generated.resources.close
 import app.n_zik.compagnon.generated.resources.custom
+import app.n_zik.compagnon.generated.resources.globe
+import app.n_zik.compagnon.generated.resources.languages
 import app.n_zik.compagnon.generated.resources.data_settings_description
 import app.n_zik.compagnon.generated.resources.disable_scrolling_text
 import app.n_zik.compagnon.generated.resources.do_you_really_want_to_delete_cache
@@ -57,6 +60,7 @@ import app.n_zik.compagnon.generated.resources.turn_off
 import app.n_zik.compagnon.generated.resources.unlimited
 import app.n_zik.compagnon.generated.resources.used
 import app.n_zik.compagnon.playback.cache.AudioCache
+import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.Preferences
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import java.util.Locale
@@ -92,6 +96,7 @@ fun SettingsScreen(
     var showSongCacheDialog by remember { mutableStateOf(false) }
     var showExoPlayerCustomCacheDialog by remember { mutableStateOf(false) }
     var showAudioQualityDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
     var cleanCacheOfflineSongs by remember { mutableStateOf(false) }
     var cacheCleanedCounter by remember { mutableIntStateOf(0) }
 
@@ -226,6 +231,20 @@ fun SettingsScreen(
                 },
             )
 
+            // Languages Section (contract 1.9.0, `ui.language`): the PC's own "App language"
+            SettingsSectionCard(
+                title = stringResource(Res.string.languages),
+                icon = Res.drawable.globe,
+                content = {
+                    OtherSettingsEntry(
+                        title = stringResource(Res.string.app_language),
+                        text = languageLabel(settings.language),
+                        icon = Res.drawable.globe,
+                        onClick = { showLanguageDialog = true },
+                    )
+                },
+            )
+
             // Others Section (the PC's "Disable scrolling text" — a Compagnon-local setting, not in the contract)
             SettingsSectionCard(
                 title = stringResource(Res.string.other),
@@ -257,6 +276,20 @@ fun SettingsScreen(
                 )
             }
 
+            if (showLanguageDialog) {
+                ValueSelectorDialog(
+                    title = stringResource(Res.string.app_language),
+                    values = remember { (listOf(AppLanguage.AUTO_PC, AppLanguage.AUTO_TEL) + AppLanguage.LANGUAGES.map { it.first }) },
+                    selectedValue = settings.language,
+                    onValueSelected = {
+                        preferences.update { settings -> settings.copy(language = it) }
+                        showLanguageDialog = false
+                    },
+                    onDismiss = { showLanguageDialog = false },
+                    valueText = { languageLabel(it) },
+                )
+            }
+
             PairingButton(
                 text = stringResource(Res.string.close),
                 onClick = onClose,
@@ -266,6 +299,16 @@ fun SettingsScreen(
             )
         }
     }
+}
+
+/**
+ * The label of an "App language" value: the two static sentinel labels (like the endonyms, they
+ * are deliberately not localized), else the endonym of the phone's language ([AppLanguage.labelOf]).
+ */
+private fun languageLabel(value: String): String = when (value) {
+    AppLanguage.AUTO_PC -> "Auto PC"
+    AppLanguage.AUTO_TEL -> "Auto Tel"
+    else -> AppLanguage.labelOf(value)
 }
 
 /** Android's `Formatter.formatShortFileSize`: decimal units, one decimal under 100 (`"1.2 GB"`, `"345 MB"`). */

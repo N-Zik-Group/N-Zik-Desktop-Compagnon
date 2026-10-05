@@ -88,6 +88,8 @@ class PairingControllerTest {
     // Appended from the app-scope pool thread (the listener factory), read from the test thread.
     private val listeners = Collections.synchronizedList(mutableListOf<FakeListener>())
     private var candidates = listOf("192.168.1.20")
+    // The phone languages persisted through `onPhoneLanguage` (contract 1.9.0, `ui.language`).
+    private val phoneLanguages = mutableListOf<String>()
 
     private fun store() = CredentialStore(dir.resolve("pairing.json"), secrets)
 
@@ -98,6 +100,7 @@ class PairingControllerTest {
         listenerFactory = { FakeListener().also { listeners += it } },
         candidateProvider = { candidates },
         defaultDeviceName = "PC-SALON",
+        onPhoneLanguage = { phoneLanguages += it },
     )
 
     private fun offer(requestId: String = "rid-1") =
@@ -425,6 +428,98 @@ class PairingControllerTest {
         assertEquals("192.168.1.14", form.ip)
         assertEquals("42420", form.port)
         assertFalse(Files.readString(dir.resolve("pairing.json").takeIf { Files.exists(it) } ?: return@runTest).contains("192.168.1.14"))
+    }
+
+    @Test
+    fun `a phone that advertises the ui language feature files the language for the resolver`() = runTest {
+        api.metaAnswer = {
+            MetaResult.Ok(MetaResponse("1.9", "Pixel 8", features = listOf("ui.language"), language = "fr"))
+        }
+        val controller = controller()
+        controller.start()
+        runCurrent()
+        listeners.single().onOffer!!(offer())
+        runCurrent()
+        val active = controller.active!!
+        assertEquals("fr", active.language)
+        assertEquals("fr", controller.phoneLanguage.value)
+        assertEquals(listOf("fr"), phoneLanguages)
+    }
+
+    @Test
+    fun `a phone without the ui language feature leaves the language null and files nothing`() = runTest {
+        // Pre-1.9 phone: the field may be absent, or the phone may answer with it anyway — the
+        // feature gate decides, never the field.
+        api.metaAnswer = {
+            MetaResult.Ok(MetaResponse("1.8", "Pixel 8", features = listOf("playback"), language = "fr"))
+        }
+        val controller = controller()
+        controller.start()
+        runCurrent()
+        listeners.single().onOffer!!(offer())
+        runCurrent()
+        val active = controller.active!!
+        assertNull(active.language)
+        assertNull(controller.phoneLanguage.value)
+        assertTrue(phoneLanguages.isEmpty())
+    }
+
+    @Test
+    fun `a rejected code does not remember the phone language`() = runTest {
+        api.metaAnswer = {
+            MetaResult.Ok(MetaResponse("1.9", "Pixel 8", features = listOf("ui.language"), language = "fr"))
+        }
+        api.validateAnswer = { ValidateResult.Rejected }
+        val controller = controller()
+        controller.start()
+        runCurrent()
+        listeners.single().onOffer!!(offer())
+        runCurrent()
+        assertEquals(PairingError.CodeRejected, (controller.state.value as PairingState.Unpaired).error)
+        // The pairing failed: the phone's language must not have been remembered or persisted.
+        assertNull(controller.phoneLanguage.value)
+        assertTrue(phoneLanguages.isEmpty())
+    }
+
+    @Test
+    fun `an advertised feature without a language field leaves the language null`() = runTest {
+        // The phone could not determine an effective locale (an undetermined one): the field is
+        // null on the wire and must not be persisted as a phone language.
+        api.metaAnswer = {
+            MetaResult.Ok(MetaResponse("1.9", "Pixel 8", features = listOf("ui.language"), language = null))
+        }
+        val controller = controller()
+        controller.start()
+        runCurrent()
+        listeners.single().onOffer!!(offer())
+        runCurrent()
+        val active = controller.active!!
+        assertNull(active.language)
+        assertNull(controller.phoneLanguage.value)
+        assertTrue(phoneLanguages.isEmpty())
+    }
+
+    @Test
+    fun `a retry refreshes the remembered phone language`() = runTest {
+        savePairing()
+        api.metaAnswer = {
+            MetaResult.Ok(MetaResponse("1.9", "Pixel 8", features = listOf("ui.language"), language = "fr"))
+        }
+        val controller = controller()
+        controller.start()
+        runCurrent()
+        assertEquals("fr", controller.active!!.language)
+        assertEquals(listOf("fr"), phoneLanguages)
+
+        api.metaAnswer = {
+            MetaResult.Ok(MetaResponse("1.9", "Pixel 8", features = listOf("ui.language"), language = "de"))
+        }
+        controller.retry()
+        runCurrent()
+        assertEquals(PairedStatus.Ok, (controller.state.value as PairingState.Paired).status)
+        assertEquals("de", controller.active!!.language)
+        assertEquals("de", controller.phoneLanguage.value)
+        assertEquals(listOf("fr", "de"), phoneLanguages)
     }
 
     @Test

@@ -14,4 +14,10 @@ class SessionContractFeaturesTest {
         assertEquals("library.sortMenu", SessionContract.FEATURE_LIBRARY_SORT_MENU)
         assertEquals("library.toolbar", SessionContract.FEATURE_LIBRARY_TOOLBAR)
     }
+
+    @Test
+    fun `the ui language feature is the phone's wire literal`() {
+        // Contract 1.9.0: the PC gates the "App language" wiring on this feature, never the version.
+        assertEquals("ui.language", SessionContract.FEATURE_UI_LANGUAGE)
+    }
 }

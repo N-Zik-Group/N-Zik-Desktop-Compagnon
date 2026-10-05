@@ -20,6 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -43,6 +45,7 @@ import app.n_zik.compagnon.core.network.CandidateAddresses
 import app.n_zik.compagnon.core.network.SystemNetworkInterfaceSource
 import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.playback.services.LocalPlayback
+import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.Preferences
@@ -82,6 +85,15 @@ fun App() {
             listenerFactory = { PairingListener(scope) },
             candidateProvider = { withContext(NzikDispatchers.DATA) { CandidateAddresses.select(SystemNetworkInterfaceSource) } },
             defaultDeviceName = defaultDeviceName(),
+            // Contract 1.9.0 (`ui.language`): the last persisted phone language, the `auto_tel`
+            // fallback of the "App language" setting. Only a non-null phone language is filed —
+            // a phone on `System` files its resolved locale tag; the PC's own OS locale is
+            // never filed as a phone language.
+            onPhoneLanguage = { fresh ->
+                preferences.update {
+                    if (it.lastPhoneLanguage == fresh) it else it.copy(lastPhoneLanguage = fresh)
+                }
+            },
         )
     }
     DisposableEffect(controller) {
@@ -93,6 +105,24 @@ fun App() {
             wsClient.close()
             scope.cancel()
         }
+    }
+    // Contract 1.9.0 (`ui.language`): the applied locale is the composition root's recomposition key
+    // (`stringResource` is not locale-state-tracked on desktop, so [BridgeScreen] keys its content on
+    // the applied tag for the visible switch). An absent or unparseable tag keeps the OS locale.
+    val settings by preferences.settings.collectAsState()
+    val phoneLanguage by controller.phoneLanguage.collectAsState()
+    // Synchronous first apply during the root's first composition, before [BridgeScreen] reads the
+    // tag: no startup null → tag re-key.
+    remember {
+        AppLanguage.applyTag(
+            AppLanguage.resolveLanguageTag(settings.language, phoneLanguage, settings.lastPhoneLanguage),
+        )
+    }
+    // Re-apply on any change of the setting, the last persisted phone language, or a fresh `meta`.
+    LaunchedEffect(settings.language, settings.lastPhoneLanguage, phoneLanguage) {
+        AppLanguage.applyTag(
+            AppLanguage.resolveLanguageTag(settings.language, phoneLanguage, settings.lastPhoneLanguage),
+        )
     }
     // The phone's `MainActivity.setContent` root: its appearance, faded by `AnimatedAppearance`
     val fontFamily = rubikFontFamily()

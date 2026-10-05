@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +39,7 @@ import app.n_zik.compagnon.playback.services.LocalPlayback
 import app.n_zik.compagnon.playback.vlc.AudioEngine
 import app.n_zik.compagnon.playback.vlc.VlcAudioEngine
 import app.n_zik.compagnon.playback.vlc.VlcRuntime
+import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import java.util.logging.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -80,6 +82,9 @@ fun BridgeScreen(
     val state by controller.state.collectAsState()
     val shown = state
     val active = controller.active
+    // The applied language tag (app.n_zik.compagnon.utils.AppLanguage): a change re-keys the screens
+    // below so strings recompose in the new locale, while the session state above survives the re-key.
+    val appliedTag by AppLanguage.appliedTag.collectAsState()
     if (shown is PairingState.Paired && shown.status == PairedStatus.Ok && active != null) {
         val repository = remember(active) { playerFactory(active) }
         val library = remember(active) { libraryFactory(active) }
@@ -96,40 +101,48 @@ fun BridgeScreen(
                 engine?.release()
             }
         }
-        MainActivity(
-            repository = repository,
-            library = library,
-            localPlayback = localPlayback,
-            audioCache = audioCache,
-            record = shown.record,
-            appearanceState = appearanceState,
-            onForget = {
-                // The session is closed first, then the pairing is erased and the QR comes back.
-                repository.close()
-                controller.forget()
-            },
-        )
+        key(appliedTag) {
+            // Re-keyed on the applied language tag (strings recompose in the new locale); the
+            // repository, playback and engine state above it survives the re-key.
+            MainActivity(
+                repository = repository,
+                library = library,
+                localPlayback = localPlayback,
+                audioCache = audioCache,
+                record = shown.record,
+                appearanceState = appearanceState,
+                onForget = {
+                    // The session is closed first, then the pairing is erased and the QR comes back.
+                    repository.close()
+                    controller.forget()
+                },
+            )
+        }
         return
     }
-    val palette = colorPalette()
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(palette.background0)
-            .verticalScroll(rememberScrollState()),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        // PC: a window is wider than a phone; the page keeps a phone-like width, centred
-        Column(
-            modifier = Modifier.widthIn(max = 560.dp).fillMaxWidth().padding(vertical = 24.dp),
+    key(appliedTag) {
+        // The pairing page keeps its scroll and in-flight transition state: the re-key resets it
+        // (acceptable on a language change). Only the session state is hoisted above the key.
+        val palette = colorPalette()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(palette.background0)
+                .verticalScroll(rememberScrollState()),
+            contentAlignment = Alignment.TopCenter,
         ) {
-            Header()
-            AnimatedContent(
-                targetState = state,
-                contentKey = ::screenKey,
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
-                label = "pairingScreen",
-            ) { shown -> Screen(shown, controller) }
+            // PC: a window is wider than a phone; the page keeps a phone-like width, centred
+            Column(
+                modifier = Modifier.widthIn(max = 560.dp).fillMaxWidth().padding(vertical = 24.dp),
+            ) {
+                Header()
+                AnimatedContent(
+                    targetState = state,
+                    contentKey = ::screenKey,
+                    transitionSpec = { fadeIn() togetherWith fadeOut() },
+                    label = "pairingScreen",
+                ) { shown -> Screen(shown, controller) }
+            }
         }
     }
 }
