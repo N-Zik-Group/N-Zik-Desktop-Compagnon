@@ -338,6 +338,14 @@ class LibraryLists(
     private val _pcChipSortMenus = MutableStateFlow<Map<SongsChip, List<String>?>>(emptyMap())
     val pcChipSortMenus: StateFlow<Map<SongsChip, List<String>?>> = _pcChipSortMenus.asStateFlow()
 
+    /**
+     * Since 1.8.0 (feature `library.toolbar`): the toolbar of a PC-only chip, captured by the same
+     * one-track probe as its sort menu ([pcChipSortMenus]) — same call, same lifecycle (a failed
+     * read keeps the last served toolbar, none or the earlier one).
+     */
+    private val _pcChipToolbars = MutableStateFlow<Map<SongsChip, List<String>?>>(emptyMap())
+    val pcChipToolbars: StateFlow<Map<SongsChip, List<String>?>> = _pcChipToolbars.asStateFlow()
+
     fun loadPcChipSortMenu(chip: SongsChip) {
         val filter = when (chip) {
             SongsChip.CachedPc -> SongFilter.Offline
@@ -347,7 +355,10 @@ class LibraryLists(
         }
         scope.launch {
             when (val page = library.songs(0, 1, SongsQuery(null, filter))) {
-                is LibraryResult.Ok -> _pcChipSortMenus.value = _pcChipSortMenus.value + (chip to page.page.sortMenu)
+                is LibraryResult.Ok -> {
+                    _pcChipSortMenus.value = _pcChipSortMenus.value + (chip to page.page.sortMenu)
+                    _pcChipToolbars.value = _pcChipToolbars.value + (chip to page.page.toolbar)
+                }
                 else -> Unit
             }
         }

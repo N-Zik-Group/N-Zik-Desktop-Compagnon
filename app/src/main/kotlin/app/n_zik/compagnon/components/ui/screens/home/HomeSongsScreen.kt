@@ -111,10 +111,14 @@ import org.jetbrains.compose.resources.stringResource
  * and "On device phone" is empty (the PC reads nothing from the phone's storage); "Cached PC" keeps the
  * tracks of the phone's list that sit in the Compagnon's local audio cache ([LibraryLists.songsPcCached]).
  *
- * Toolbar: the phone's default buttons of the active chip in the phone's order
- * ([HomeSongsToolbarSettingsDialog] `allButtonIds` / `tabAvailableIds`), with the phone's show
- * conditions (position lock only while the chip's sort is `Custom`, match only while unmatched tracks
- * are loaded, no YouTube sync on the PC), plus the Compagnon's "Refresh". Wired: sort (or the period
+ * Toolbar: the active chip's toolbar as-served by the phone since 1.8.0 (feature `library.toolbar`:
+ * its `toolbar` of `GET /library/songs` — the user's order kept to the tab's visible buttons, the
+ * hidden ones dropped, the locked ones always kept; the PC-only chips read it from their mobile
+ * counterpart's probe), with the phone's show conditions (position lock only while the chip's sort
+ * is `Custom`, match only while unmatched tracks are loaded, no YouTube sync on the PC), plus the
+ * Compagnon's "Refresh". Until the first answered page — or on a phone before 1.8.0 — the phone's
+ * default buttons of the active chip stand in ([HomeSongsToolbarSettingsDialog] `allButtonIds` /
+ * `tabAvailableIds`). Wired: sort (or the period
  * selector on Top), search, locator, shuffle, play next and enqueue (on the loaded tracks); the rest
  * (position lock, match, download all / delete downloads, smart shuffle, item selector, add to
  * favorites / to a playlist, import / export, update, smart trash) are placeholders without a contract
@@ -137,9 +141,8 @@ import org.jetbrains.compose.resources.stringResource
  * `playCount` / `playTime` row overlays, and the sentinel alert of a track not matched to the phone's
  * library (a click is blocked with the phone's toast).
  *
- * Dropped (contract v1 or PC): YouTube likes sync, the chip visibility / order and toolbar order /
- * visibility preferences, the YouTube filter row, the smart-recommendation counter, the floating
- * search / settings icon.
+ * Dropped (contract v1 or PC): YouTube likes sync, the chip visibility / order preferences, the
+ * YouTube filter row, the smart-recommendation counter, the floating search / settings icon.
  */
 @Composable
 fun HomeSongsScreen(
@@ -167,6 +170,16 @@ fun HomeSongsScreen(
         SongsChip.CachedPc, SongsChip.DownloadPc, SongsChip.OnDevice -> pcChipSortMenus[chip]
         else -> state.sortMenu
     }
+
+    // Since 1.8.0 (feature `library.toolbar`): the phone's effective Home Songs toolbar of the active
+    // chip — on the phone's chips it rides on the list's pages; on the PC-only chips it is read from
+    // their mobile counterpart with the same one-track probe as their sort menu
+    val pcChipToolbars by lists.pcChipToolbars.collectAsState()
+    val toolbar: List<String>? = when (chip) {
+        SongsChip.CachedPc, SongsChip.DownloadPc, SongsChip.OnDevice -> pcChipToolbars[chip]
+        else -> state.toolbar
+    }
+    val toolbarFeature = SessionContract.FEATURE_LIBRARY_TOOLBAR in lists.features
 
     // Since 1.7.1: the phone's disk caches (contract §10 `library.cache`), read on a tab switch;
     // `null` hides the cache bar
@@ -265,11 +278,13 @@ fun HomeSongsScreen(
         )
     }
 
-    // The phone's toolbar of the active chip, in the phone's order, with the phone's show conditions;
-    // the Compagnon's "Refresh" is added at the end. Wired: sort / period, search, locator, shuffle,
-    // play next, enqueue, refresh. Placeholders (no contract route, a click does nothing): the rest.
+    // The active chip's toolbar, as-served by the phone since 1.8.0 (its user order and enabled
+    // toggles; the static default buttons stand in while the feature is absent or the served list
+    // is null/empty), with the phone's show conditions; the Compagnon's "Refresh" is added at the
+    // end, always last. Wired: sort / period, search, locator, shuffle, play next, enqueue, refresh.
+    // Placeholders (no contract route, a click does nothing): the rest.
     val buttons = buildList<Button> {
-        songsToolbarButtonIds(chip).forEach { id ->
+        chipToolbarIds(chip, toolbarFeature, toolbar).forEach { id ->
             when (id) {
                 "sort" -> add(sortButton)
                 "position_lock" -> if (chipSort.songSort == SongSort.Custom) {
@@ -446,6 +461,22 @@ private fun songsToolbarButtonIds(chip: SongsChip): List<String> = when (chip) {
     SongsChip.OnDevice -> SONGS_TOOLBAR_BUTTON_IDS.filter {
         it !in setOf("import_menu", "export_dialog", "export_cache", "smart_trash", "match", "download_all", "delete_downloads", "sync_ytm_likes", "update")
     }
+}
+
+/**
+ * The [chip]'s toolbar ids, in the order to build its buttons. Since 1.8.0 (feature
+ * `library.toolbar`), the phone serves the chip's effective toolbar — its user order kept to its
+ * tab's visible buttons (its hidden ones dropped, its locked ones always kept) — and it is shown
+ * as-served; the static default buttons stand in while the feature is absent or the served list
+ * is null/empty (a phone before 1.8.0, or before the first answered page). Ids the screen has no
+ * button branch for are dropped by its `when`; "Refresh" is added by the caller, always last.
+ */
+internal fun chipToolbarIds(chip: SongsChip, toolbarFeature: Boolean, served: List<String>?): List<String> {
+    if (!toolbarFeature) return songsToolbarButtonIds(chip)
+    return served
+        ?.filter { id -> id in SONGS_TOOLBAR_BUTTON_IDS }
+        ?.takeIf { it.isNotEmpty() }
+        ?: songsToolbarButtonIds(chip)
 }
 
 /** The chips that are filtered on the phone's own database and need `library.sort` (contract 1.6). */
