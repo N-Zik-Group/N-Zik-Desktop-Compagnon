@@ -1,0 +1,96 @@
+name: Add labels
+
+on:
+  issues:
+    types: [opened, edited]
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  label-build-type:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detect build type and apply label
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const buildTypeLabels = [
+              "full", "minified", "full32", "minified32", 
+              "beta", "beta32", "foss", "dev", "dev32"
+            ];
+
+            function detectLabel(body) {
+              const match = (body || "").match(/###\s*🏗️\s*Build Type\s*\n+\s*(.+)/);
+              if (!match) return null;
+              const value = match[1].trim();
+              
+              // Les versions 32 bits sont vérifiées en premier pour éviter les faux positifs 
+              if (/^Full32/i.test(value)) return "full32";
+              if (/^Full/i.test(value)) return "full";
+              if (/^Minified32/i.test(value)) return "minified32";
+              if (/^Minified/i.test(value)) return "minified";
+              if (/^Beta32/i.test(value)) return "beta32";
+              if (/^Beta/i.test(value)) return "beta";
+              if (/^Foss/i.test(value)) return "foss";
+              if (/^Dev32/i.test(value)) return "dev32";
+              if (/^Dev/i.test(value)) return "dev";
+              
+              return null;
+            }
+
+            async function applyLabel(issueNumber, body) {
+              const label = detectLabel(body);
+              if (!label) {
+                console.log(`Issue #${issueNumber}: no matching Build Type, skipping.`);
+                return;
+              }
+
+              const { data: currentLabels } = await github.rest.issues.listLabelsOnIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+              });
+
+              const already = currentLabels.some((l) => l.name === label);
+
+              for (const l of currentLabels) {
+                if (buildTypeLabels.includes(l.name) && l.name !== label) {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issueNumber,
+                    name: l.name,
+                  });
+                }
+              }
+
+              if (!already) {
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  labels: [label],
+                });
+              }
+
+              console.log(`Issue #${issueNumber}: labeled "${label}".`);
+            }
+
+            if (context.eventName === "workflow_dispatch") {
+              // Parcourt toutes les issues (ouvertes et fermées)
+              const issues = await github.paginate(github.rest.issues.listForRepo, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: "all",
+                per_page: 100,
+              });
+
+              for (const issue of issues) {
+                if (issue.pull_request) continue; // ignore les PR
+                await applyLabel(issue.number, issue.body);
+              }
+            } else {
+              await applyLabel(context.issue.number, context.payload.issue.body);
+            }

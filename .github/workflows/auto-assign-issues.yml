@@ -1,0 +1,114 @@
+name: Auto-assign issues
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Mode de lancement'
+        required: true
+        default: 'scan-clean'
+        type: choice
+        options:
+          - scan-clean
+          - scan-clean-keep-contributors
+          - scan-add-only
+  issues:
+    types: [opened]
+permissions:
+  issues: write
+jobs:
+  assign-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign issues
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const MAIN_ASSIGNEE = 'NEVARLeVrai';
+            const PROTECTED_ASSIGNEES = ['orangezxz'];
+
+            const mode = context.eventName === 'workflow_dispatch'
+              ? '${{ inputs.mode }}'
+              : 'auto-add';
+
+            async function processIssue(issue, mode) {
+              if (!issue) return;
+
+              const labels = (issue.labels || []).map(l => l.name);
+              if (!['bug', 'enhancement', 'security'].some(l => labels.includes(l))) return;
+
+              const currentAssignees = (issue.assignees || []).map(u => u.login);
+
+              if (mode === 'scan-clean') {
+                // Vire tout le monde sauf moi
+                const toRemove = currentAssignees.filter(login => login !== MAIN_ASSIGNEE);
+                if (toRemove.length > 0) {
+                  await github.rest.issues.removeAssignees({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    assignees: toRemove,
+                  });
+                }
+                if (!currentAssignees.includes(MAIN_ASSIGNEE)) {
+                  await github.rest.issues.addAssignees({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    assignees: [MAIN_ASSIGNEE],
+                  });
+                }
+
+              } else if (mode === 'scan-clean-keep-contributors') {
+                // Vire tout le monde sauf moi + les protected s'ils sont déjà là
+                const toKeep = [
+                  MAIN_ASSIGNEE,
+                  ...PROTECTED_ASSIGNEES.filter(login => currentAssignees.includes(login)),
+                ];
+                const toRemove = currentAssignees.filter(login => !toKeep.includes(login));
+                if (toRemove.length > 0) {
+                  await github.rest.issues.removeAssignees({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    assignees: toRemove,
+                  });
+                }
+                if (!currentAssignees.includes(MAIN_ASSIGNEE)) {
+                  await github.rest.issues.addAssignees({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    assignees: [MAIN_ASSIGNEE],
+                  });
+                }
+
+              } else {
+                // auto-add / scan-add-only : juste m'ajouter si absent
+                if (!currentAssignees.includes(MAIN_ASSIGNEE)) {
+                  await github.rest.issues.addAssignees({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    assignees: [MAIN_ASSIGNEE],
+                  });
+                }
+              }
+
+              console.log(`✅ Issue #${issue.number} synced (mode: ${mode})`);
+            }
+
+            if (mode === 'auto-add') {
+              await processIssue(context.payload.issue, mode);
+            } else {
+              const issues = await github.paginate(github.rest.issues.listForRepo, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                per_page: 100,
+              });
+              for (const issue of issues) {
+                if (issue.pull_request) continue;
+                await processIssue(issue, mode);
+              }
+              console.log(`🔎 Scan completed (${mode}) — ${issues.length} open issues processed.`);
+            }

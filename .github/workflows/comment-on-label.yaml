@@ -1,0 +1,128 @@
+name: Comment or close on label
+
+on:
+  issues:
+    types:
+      - labeled
+  pull_request:
+    types:
+      - labeled
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_REPO: ${{ github.repository }}
+  NUMBER: "${{ github.event.pull_request.number || github.event.issue.number }}"
+
+jobs:
+  # Label "patched STABLE": will be auto-closed by the stable release bot
+  # (build-all-flavors-weekly.yml) once the stable release is out.
+  patched-stable:
+    if: github.event.label.name == 'patched STABLE'
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      issues: write
+
+    steps:
+      - name: Add comment
+        run: gh issue comment "$NUMBER" --body "$BODY"
+        env:
+          BODY: >
+            This issue is patched in recent commits, please wait for the next **STABLE** release.
+
+            > Please DO NOT close this issue, a bot will handle this automatically when the new stable release drops.
+
+  # Label "patched BETA": same message, but will NEVER be auto-closed.
+  # The beta workflow (build-beta-flavor.yaml) will just post the beta
+  # release link as a comment.
+  patched-beta:
+    if: github.event.label.name == 'patched BETA'
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      issues: write
+
+    steps:
+      - name: Add comment
+        run: gh issue comment "$NUMBER" --body "$BODY"
+        env:
+          BODY: >
+            This issue is patched in recent commits, please wait for the next **BETA** update.
+
+            > Please DO NOT close this issue, a bot will handle this automatically when the new beta release drops.
+
+  # Label "patched DEV": notify user that the fix is available in the next dev update.
+  patched-dev:
+    if: github.event.label.name == 'patched DEV'
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      issues: write
+
+    steps:
+      - name: Add comment
+        run: gh issue comment "$NUMBER" --body "$BODY"
+        env:
+          BODY: >
+            This problem is fully fixed, available in the next **DEV** build.
+
+            > Please DO NOT close this issue, a bot will handle this automatically when the new dev release drops.
+
+  # Handle PR that contains implemented code
+  pr-implemented:
+    if: github.event.label.name == 'implemented' && github.event_name == 'pull_request'
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Add comment
+        run: gh pr comment "$NUMBER" --body "$BODY"
+        env:
+          BODY: >
+            This feature already exists in the codebase.
+
+            > Ticket will be closed. If you have any further question, feel free to comment below
+
+      - name: Close pull request
+        run: gh pr close "$NUMBER"
+
+  # Handle feature quests that are implented
+  issue-implemented:
+    if: github.event.label.name == 'implemented' && github.event_name == 'issues'
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      issues: write
+
+    steps:
+      - name: Add comment
+        run: gh issue comment "$NUMBER" --body "$BODY"
+        env:
+          BODY: >
+            This feature already exists in the codebase.
+
+            > Ticket will be closed. If you have any further question, feel free to comment below
+
+      - name: Close request
+        run: gh issue close "$NUMBER"
+
+  # Borked PR is when if implemented, the app will fail to compile
+  # or will have some feature run in unexpected behavior
+  borked:
+    if: github.event.label.name == 'borked'
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Close pull request
+        run: gh pr close "$NUMBER"

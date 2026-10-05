@@ -1,0 +1,44 @@
+name: Close stale tickets weekly
+
+on:
+  schedule:
+    - cron: '0 3 * * 4'  # Every Thursday at 3 AM
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  issue-tickets:
+    runs-on: ubuntu-latest
+
+    permissions:
+      issues: write
+
+    steps:
+      - uses: actions/stale@v11
+        with:
+          days-before-issue-stale: 14
+          days-before-issue-close: 7
+          stale-issue-label: 'stale'
+          close-issue-message: 'This issue has been automatically closed because it has been marked as stale and has not had recent activity.'
+          exempt-issue-labels: 'open'
+          only-issue-labels: 'bug'
+          any-of-issue-labels: 'external,invalid,not_our_fault,not_planned'
+          remove-issue-stale-when-updated: true
+
+  pr-tickets:
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/stale@v11
+        with:
+          days-before-pr-stale: 21
+          days-before-pr-close: 7
+          stale-pr-label: 'stale'
+          close-pr-message: 'This PR has been automatically closed because it has been marked as stale and has not had recent activity.'
+          exempt-pr-labels: 'translation,dependencies,open'
+          any-of-pr-labels: 'borked,invalid'
+          remove-pr-stale-when-updated: true
