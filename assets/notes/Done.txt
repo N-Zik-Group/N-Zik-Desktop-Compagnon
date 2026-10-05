@@ -1,4 +1,5 @@
 Added:
+- docs: add the missing "Auto-assign issues" badge to the README Status section (the workflow is active but had no badge; the phone README does not show one either)
 - fix: the bug report now also collects the phone build type, and the Add labels workflow autolabels it to the tel ... labels
   - New "📱 N-Zik (phone) Build Type" dropdown (required) in each of the three channel templates, right after the phone version field; options Dev/Dev32/Beta/Beta32/Full/Full32/Minified/Minified32/Foss
   - add-labels.yaml: a third mutually exclusive category, detected from the new dropdown; the 32-bit variants are matched before their non-32 siblings so "Full32" is not shadowed by "Full"
