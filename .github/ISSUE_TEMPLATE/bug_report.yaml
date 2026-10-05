@@ -28,7 +28,7 @@ body:
           required: true
         - label: I have checked for already existing issues.
           required: true
-        - label: I have tried restarting the app, and re-pairing if relevant (or a full reset: "Forget this phone" from the app, deleting `%APPDATA%\N-Zik Desktop Compagnon`, and removing the "N-Zik Desktop Compagnon" entry from the Windows Credential Manager if needed).
+        - label: I have tried restarting the app, and re-pairing if relevant (or a full reset — "Forget this phone" from the app, deleting `%APPDATA%\N-Zik Desktop Compagnon`, and removing the "N-Zik Desktop Compagnon" entry from the Windows Credential Manager if needed).
           required: true
 
   - type: input
