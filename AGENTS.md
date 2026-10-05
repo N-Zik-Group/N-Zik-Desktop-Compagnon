@@ -1,6 +1,6 @@
 # AGENTS.md — N-Zik Desktop Compagnon
 
-**Version:** 1.0.0 | **Last updated:** 2026-10-05
+**Version:** 1.1.0 | **Last updated:** 2026-10-06
 
 **MANDATORY: Read this file + rules/*.md before any task.**
 
@@ -41,6 +41,7 @@
 
 - Put business logic or a streaming stack on the PC (the phone stays the source of truth — see the project identity above)
 - Write the device token anywhere except the Windows Credential Manager (never in `pairing.json`, logs, `Done.txt`, README, or code — see rules/SECURITY.md)
+- Edit any strings file other than `app/src/main/composeResources/values/strings.xml` (the single source of truth, English; `values-*` locale files are Crowdin-managed and must never be touched by hand — same rule as the phone's AGENTS.md)
 - Write code before completing full BMAD workflow
 - Skip BMAD workflow steps
 - Skip the Step 8b code-review gate, or edit `assets/notes/Done.txt` before the user chose a commit mode (Step 8d) — exception: doc-only edits (rules/WORKFLOW.md "Doc-Only Exception") follow their own commit-approval flow and are NOT subject to the Step 8d mode question
