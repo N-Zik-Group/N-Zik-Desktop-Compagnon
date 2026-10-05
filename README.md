@@ -29,7 +29,7 @@
 
   <br><br>
 
-  [![Localization Progress](https://badges.crowdin.net/n-zik-desktop/localized.svg)](https://crowdin.com/project/n-zik-desktop) [![License: GPL v3](https://img.shields.io/github/license/N-Zik-Group/N-Zik-Desktop-Compagnon?color=blue)](https://www.gnu.org/licenses/gpl-3.0)
+  [![Crowdin](https://badges.crowdin.net/N-Zik/localized.svg)](https://crowdin.com/project/N-Zik) [![License: GPL v3](https://img.shields.io/github/license/N-Zik-Group/N-Zik-Desktop-Compagnon?color=blue)](https://www.gnu.org/licenses/gpl-3.0)
 
   <br><br>
 
