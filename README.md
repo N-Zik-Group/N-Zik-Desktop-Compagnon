@@ -83,7 +83,7 @@ Want to:
 
 Join us on Crowdin!
 
-[![Translated with Crowdin](https://badges.crowdin.net/badge/light/crowdin-on-dark.png)](https://crowdin.com/project/n-zik-desktop)
+[![Translated with Crowdin](https://badges.crowdin.net/badge/light/crowdin-on-dark.png)](https://crowdin.com/project/n-zik)
 
 # 🛠️ Requirements & Building
 
