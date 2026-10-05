@@ -1,4 +1,8 @@
 Added:
+- fix: the bug report collects the platform (Windows/Linux) and a generic OS version; the Add labels workflow autolabels the PC channel (stable pc / beta pc / dev pc) and the OS (Windows / Linux)
+  - Labels reorganized: the phone build types are renamed with the tel prefix (tel dev, tel beta, tel full, tel minified, tel foss + the 32-bit variants, applied by hand, no dedicated field); the old names (dev, beta, full, minified, dev32, beta32, full32, minified32) are deleted; the PC channels are new labels (stable pc, beta pc, dev pc)
+  - bug_report.yaml: new Platform dropdown (Windows/Linux) after Build Type; the "Windows Version" input becomes a generic "OS Version" (its description is a quoted scalar so a colon does not break the YAML)
+  - add-labels.yaml: rewritten around the two dropdowns; a category with no detection leaves its labels untouched
 - docs: the README now points the Linux build at build.sh (the script stays the entry point, not a raw ./gradlew that would make it pointless), and all long dashes are removed: the build line is reworded and the Features bullets use a colon after the bold label
 - build: add build.sh — the local Linux build entry point (mirrors gradlew.bat on Windows): `./build.sh` compiles + runs all tests, with `test` and `clean` subcommands and a JDK 21 check; executable bit set in git (100755)
 - docs: the README now mirrors the phone's design — same section skeleton and order, companion content where it exists, blank headers where a category does not exist yet

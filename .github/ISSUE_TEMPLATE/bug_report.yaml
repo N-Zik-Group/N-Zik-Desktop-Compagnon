@@ -24,7 +24,7 @@ body:
       label: 📝 Before submitting
       description: Please verify the following steps before submitting your issue. Completing these steps may fix problems!
       options:
-        - label: I am using the latest version of the companion (the latest stable release, or the latest beta if I opted in).
+        - label: I am using the latest version of the companion in my build channel (Stable, Beta, or Dev).
           required: true
         - label: I have checked for already existing issues.
           required: true
@@ -41,14 +41,25 @@ body:
       required: true
 
   - type: dropdown
-    id: release-channel
+    id: build-type
     attributes:
-      label: 📦 Release Channel
-      description: Select which release you installed from the companion's GitHub releases page.
+      label: 🏗️ Build Type
+      description: Select the build type you are currently using.
       options:
-        - Stable (latest release)
-        - Beta (pre-release)
-        - Built from source (commit)
+        - Stable
+        - Beta
+        - Dev
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 🖥️ Platform
+      description: On which operating system does the issue occur?
+      options:
+        - Windows
+        - Linux
     validations:
       required: true
 
@@ -62,11 +73,11 @@ body:
       required: true
 
   - type: input
-    id: windows-version
+    id: os-version
     attributes:
-      label: 🪟 Windows Version
-      description: The exact version of Windows (Settings > System > About).
-      placeholder: Windows 11 24H2
+      label: 📟 OS Version
+      description: "The exact version of your operating system (Windows: Settings > System > About; Linux: the distro name and version)."
+      placeholder: Windows 11 24H2, or Ubuntu 24.04
     validations:
       required: true
 
