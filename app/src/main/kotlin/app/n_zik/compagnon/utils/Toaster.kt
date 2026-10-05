@@ -34,9 +34,7 @@ import app.n_zik.compagnon.generated.resources.alert
 import app.n_zik.compagnon.generated.resources.checkmark
 import app.n_zik.compagnon.generated.resources.close
 import app.n_zik.compagnon.generated.resources.information
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -83,7 +81,7 @@ object Toaster {
     private class Toast(val message: String, val type: Type, val duration: Long)
 
     private val toasts = Channel<Toast>(Channel.UNLIMITED)
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val scope = NzikDispatchers.fireAndForget(NzikDispatchers.UI)
 
     fun toast(message: String, type: Type = Type.NORMAL, duration: Long = LENGTH_SHORT) {
         toasts.trySend(Toast(message, type, duration))

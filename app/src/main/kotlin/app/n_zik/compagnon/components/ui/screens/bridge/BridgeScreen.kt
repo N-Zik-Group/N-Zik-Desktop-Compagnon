@@ -38,11 +38,9 @@ import app.n_zik.compagnon.playback.services.LocalPlayback
 import app.n_zik.compagnon.playback.vlc.AudioEngine
 import app.n_zik.compagnon.playback.vlc.VlcAudioEngine
 import app.n_zik.compagnon.playback.vlc.VlcRuntime
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import java.util.logging.Logger
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
@@ -65,7 +63,10 @@ import org.jetbrains.compose.resources.stringResource
  *
  * Story 12: with the session comes the PC's own player ([localPlaybackFactory], on the embedded libvlc
  * when it loads, else without engine), started with it and released with it: the player stopped, then
- * the vlcj media player and factory released, then its scope cancelled.
+ * the vlcj media player and factory released. The player's scope is a fire-and-forget one
+ * ([NzikDispatchers.fireAndForget] on [NzikDispatchers.PLAYBACK]) and is never cancelled from here:
+ * a composable leaving composition is not the owner of a scope that in-flight work (forge, probe,
+ * revocation, download) must be allowed to finish on.
  */
 @Composable
 fun BridgeScreen(
@@ -82,17 +83,17 @@ fun BridgeScreen(
     if (shown is PairingState.Paired && shown.status == PairedStatus.Ok && active != null) {
         val repository = remember(active) { playerFactory(active) }
         val library = remember(active) { libraryFactory(active) }
-        val playbackScope = remember(repository) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+        val playbackScope = remember(repository) { NzikDispatchers.fireAndForget(NzikDispatchers.PLAYBACK) }
         val engine = remember(repository) { createEngine() }
         val localPlayback = remember(repository) { localPlaybackFactory(active, repository, engine, playbackScope) }
         DisposableEffect(repository) {
             repository.start()
             localPlayback.start()
             onDispose {
+                // The playback scope is fire-and-forget: never cancelled, in-flight work survives.
                 localPlayback.close()
                 repository.close()
                 engine?.release()
-                playbackScope.cancel()
             }
         }
         MainActivity(

@@ -27,9 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
 import app.n_zik.compagnon.bridge.BridgeSession
@@ -47,6 +44,7 @@ import app.n_zik.compagnon.core.network.SystemNetworkInterfaceSource
 import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.playback.services.LocalPlayback
 import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.Preferences
 import androidx.compose.runtime.CompositionLocalProvider
 
@@ -67,7 +65,10 @@ fun main() = application {
 
 @Composable
 fun App() {
-    val scope = remember { CoroutineScope(SupervisorJob() + Dispatchers.Main) }
+    // The app scope carries only non-UI work (pairing machine, pairing listener, the WS session):
+    // it runs on the data dispatcher, never on the Swing EDT, and an unhandled failure is logged
+    // by the shared fire-and-forget handler instead of dying uncaught on a pool thread.
+    val scope = remember { NzikDispatchers.fireAndForget(NzikDispatchers.DATA) }
     val client = remember { BridgeClient() }
     val wsClient = remember { BridgeSession.httpClient() }
     // Story 12: user settings (`settings.json`) and the local audio cache, both next to `pairing.json`
@@ -79,7 +80,7 @@ fun App() {
             api = client,
             store = CredentialStore(),
             listenerFactory = { PairingListener(scope) },
-            candidateProvider = { withContext(Dispatchers.IO) { CandidateAddresses.select(SystemNetworkInterfaceSource) } },
+            candidateProvider = { withContext(NzikDispatchers.DATA) { CandidateAddresses.select(SystemNetworkInterfaceSource) } },
             defaultDeviceName = defaultDeviceName(),
         )
     }

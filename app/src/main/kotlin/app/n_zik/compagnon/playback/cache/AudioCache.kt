@@ -2,6 +2,7 @@ package app.n_zik.compagnon.playback.cache
 
 import app.n_zik.compagnon.bridge.pairing.CredentialStore
 import app.n_zik.compagnon.core.network.DownloadResult
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -11,7 +12,6 @@ import java.util.UUID
 import java.util.logging.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -32,7 +32,7 @@ class AudioCache(
     private val directory: Path = defaultDirectory(),
     private val maxBytes: () -> Long?,
     private val now: () -> Long = System::currentTimeMillis,
-    private val io: CoroutineDispatcher = Dispatchers.IO,
+    private val io: CoroutineDispatcher = NzikDispatchers.DATA,
 ) {
     private val log = Logger.getLogger("AudioCache")
 

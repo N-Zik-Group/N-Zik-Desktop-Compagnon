@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.bridge.pairing
 
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -19,10 +20,8 @@ import java.security.SecureRandom
 import java.util.Base64
 import java.util.logging.Logger
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -173,7 +172,7 @@ class PairingListener(
             }
         }
         server = engine
-        val port = withContext(Dispatchers.IO) {
+        val port = withContext(NzikDispatchers.DATA) {
             engine.startSuspend(wait = false)
             engine.engine.resolvedConnectors().first().port
         }
@@ -203,7 +202,7 @@ class PairingListener(
 
     private fun stopServer(engine: EmbeddedServer<*, *>) {
         // Grace period: the `200` that triggered the close may still be flushing.
-        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+        NzikDispatchers.fireAndForget(NzikDispatchers.DATA).launch {
             withContext(NonCancellable) { engine.stopSuspend(gracePeriodMillis = 300, timeoutMillis = 1_500) }
             log.info("Pairing listener closed")
         }

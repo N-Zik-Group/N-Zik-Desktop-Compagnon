@@ -14,6 +14,7 @@ import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.SnapshotMessage
 import app.n_zik.compagnon.bridge.state.StopCode
 import app.n_zik.compagnon.core.network.ServerAddress
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.cio.CIO
@@ -34,10 +35,8 @@ import io.ktor.websocket.readText
 import java.util.logging.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -159,7 +158,7 @@ class BridgeSession(
     @Volatile override var lastKickAtMs: Long? = null
         private set
     @Volatile private var closed = false
-    private val cleanupScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val cleanupScope = NzikDispatchers.fireAndForget(NzikDispatchers.DATA)
 
     private val url: String get() = "ws://${address.ip}:${address.port}${BridgeContract.API_PREFIX}${SessionContract.WS_PATH}"
 

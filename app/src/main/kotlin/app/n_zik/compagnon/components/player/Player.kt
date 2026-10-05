@@ -80,7 +80,7 @@ import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.formatAsTime
 import app.n_zik.compagnon.utils.positionAndDurationState
 import app.n_zik.compagnon.utils.semiBold
-import kotlinx.coroutines.Dispatchers
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
@@ -165,7 +165,7 @@ fun Player(
             val bitmap = (if (mediaItem.hasArtwork) repository.artwork(ArtworkKey.track(mediaItem.id, PLAYER_ARTWORK_SIZE_PX)) else null)
                 ?: throw Exception("Bitmap is null")
 
-            val paletteResult = withContext(Dispatchers.Default) {
+            val paletteResult = withContext(NzikDispatchers.MEDIA) {
                 computePlayerDynamicPalette(bitmap.toPaletteBitmap(), !lightTheme, color)
             }
 

@@ -58,7 +58,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -98,6 +97,7 @@ import app.n_zik.compagnon.core.palette.toPaletteBitmap
 import app.n_zik.compagnon.enums.ColorPaletteMode
 import app.n_zik.compagnon.enums.ColorPaletteName
 import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.formatMessage
 import app.n_zik.compagnon.components.ui.screens.settings.SettingsScreen
 import app.n_zik.compagnon.playback.cache.AudioCache
@@ -140,7 +140,7 @@ class AppearanceState(initial: Appearance) {
         val finalPalette = if (bitmap == null) {
             null
         } else {
-            withContext(Dispatchers.Default) { m3eDynamicColorPaletteOf(bitmap.toPaletteBitmap(), isDark) }
+            withContext(NzikDispatchers.MEDIA) { m3eDynamicColorPaletteOf(bitmap.toPaletteBitmap(), isDark) }
         }
         val targetPalette = finalPalette ?: dynamicColorPaletteOf(VIOLET_ACCENT, isDark)
         if (appearance.colorPalette == targetPalette) return

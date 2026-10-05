@@ -58,8 +58,8 @@ import app.n_zik.compagnon.generated.resources.unlimited
 import app.n_zik.compagnon.generated.resources.used
 import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import java.util.Locale
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -102,13 +102,13 @@ fun SettingsScreen(
     // The cache fills while a track plays: its size is read again every few seconds, off the UI thread
     val diskCacheSize by produceState(0L, cache, cacheCleanedCounter) {
         while (true) {
-            value = cache?.let { withContext(Dispatchers.IO) { it.totalBytes() } } ?: 0L
+            value = cache?.let { withContext(NzikDispatchers.DATA) { it.totalBytes() } } ?: 0L
             delay(CACHE_SIZE_REFRESH_MS)
         }
     }
 
     fun trimCache() {
-        scope.launch { withContext(Dispatchers.IO) { cache?.trim() } }
+        scope.launch { withContext(NzikDispatchers.DATA) { cache?.trim() } }
     }
 
     if (cleanCacheOfflineSongs) {
@@ -118,7 +118,7 @@ fun SettingsScreen(
             onConfirm = {
                 cleanCacheOfflineSongs = false
                 scope.launch {
-                    withContext(Dispatchers.IO) { cache?.clear() }
+                    withContext(NzikDispatchers.DATA) { cache?.clear() }
                     cacheCleanedCounter++
                 }
             },

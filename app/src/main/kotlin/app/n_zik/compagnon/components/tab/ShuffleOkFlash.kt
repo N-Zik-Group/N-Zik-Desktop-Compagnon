@@ -3,10 +3,8 @@ package app.n_zik.compagnon.components.tab
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -19,15 +17,15 @@ import kotlinx.coroutines.launch
  * shuffle placeholders (no contract route, their click only toasts) do not follow it — the phone's
  * disabled `SongShuffler` instances do, its state being binder-wide.
  *
- * [app.n_zik.compagnon.utils.Toaster]'s precedent: a `SupervisorJob + Dispatchers.Default` scope outside
- * the composition.
+ * [app.n_zik.compagnon.utils.Toaster]'s precedent: a fire-and-forget scope
+ * ([NzikDispatchers.fireAndForget] on [NzikDispatchers.UI]) outside the composition.
  */
 object ShuffleOkFlash {
 
     /** The phone's `SHUFFLE_OK_FLASH_MS` (`PlayerServiceModern.kt`). */
     private const val SHUFFLE_OK_FLASH_MS = 1_000L
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val scope = NzikDispatchers.fireAndForget(NzikDispatchers.UI)
     private var resetJob: Job? = null
 
     var active by mutableStateOf(false)

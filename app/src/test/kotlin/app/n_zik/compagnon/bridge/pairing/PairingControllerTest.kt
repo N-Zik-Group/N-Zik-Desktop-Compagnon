@@ -8,6 +8,17 @@ import app.n_zik.compagnon.core.network.ValidateResult
 import app.n_zik.compagnon.enums.PairingMode
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.Collections
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.TestScope
@@ -50,11 +61,15 @@ class PairingControllerTest {
         var validateAnswer: (ValidateRequest) -> ValidateResult = {
             ValidateResult.Ok(ValidateResponse(token, "Ab3dE5fG7hI", "Pixel 8", 42420))
         }
+
+        /** Test hook: suspends the `meta` call (holds an operation in flight). */
+        var metaSuspend: suspend () -> Unit = {}
         val probes = ArrayDeque<ProbeResult>()
         val calls = mutableListOf<String>()
         val validateRequests = mutableListOf<ValidateRequest>()
         override suspend fun meta(address: ServerAddress): MetaResult {
             calls += "meta ${address.ip}:${address.port}"
+            metaSuspend()
             return metaAnswer(address)
         }
         override suspend fun validate(address: ServerAddress, request: ValidateRequest): ValidateResult {
@@ -70,7 +85,8 @@ class PairingControllerTest {
 
     private val api = FakeApi()
     private val secrets = InMemorySecretStore()
-    private val listeners = mutableListOf<FakeListener>()
+    // Appended from the app-scope pool thread (the listener factory), read from the test thread.
+    private val listeners = Collections.synchronizedList(mutableListOf<FakeListener>())
     private var candidates = listOf("192.168.1.20")
 
     private fun store() = CredentialStore(dir.resolve("pairing.json"), secrets)
@@ -86,6 +102,16 @@ class PairingControllerTest {
 
     private fun offer(requestId: String = "rid-1") =
         PairingOffer(1, requestId, "K7M2QX", listOf("192.168.1.14"), 42420, "Pixel 8")
+
+    /** Polls on the test thread until [condition] holds (real time — no virtual clock). */
+    private fun waitFor(what: String, condition: () -> Boolean) {
+        val deadline = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < deadline) {
+            if (condition()) return
+            Thread.sleep(10)
+        }
+        error("Timed out waiting for: $what")
+    }
 
     private fun savePairing() {
         store().save(
@@ -399,5 +425,116 @@ class PairingControllerTest {
         assertEquals("192.168.1.14", form.ip)
         assertEquals("42420", form.port)
         assertFalse(Files.readString(dir.resolve("pairing.json").takeIf { Files.exists(it) } ?: return@runTest).contains("192.168.1.14"))
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `an offer that crosses a user operation never runs it in parallel`() {
+        // Real threads: the virtual-time tests cannot produce a two-thread interleaving. The
+        // machine is now driven from two places at once (the Compose handlers on the UI thread
+        // and the listener's `onOffer` on the app scope's data dispatcher). Every iteration
+        // releases the user's manual submit and the listener's offer simultaneously while the
+        // state is still `Unpaired` (a shared latch), so the crossing is real, not a decided
+        // order — repeated, so a single lucky interleaving cannot carry the test.
+        val threads = Executors.newFixedThreadPool(2)
+        val scope = CoroutineScope(SupervisorJob() + threads.asCoroutineDispatcher())
+        try {
+            repeat(5) { iteration ->
+                // Fresh pairing state for the iteration (the previous one was saved).
+                store().clear()
+                // The in-flight operation is held on its `meta` call, on a gate that respects
+                // cancellation: a cancelled operation is interrupted, never holding its thread.
+                val metaGate = CountDownLatch(1)
+                api.metaSuspend = { runInterruptible { metaGate.await() } }
+
+                val controller = PairingController(
+                    scope = scope,
+                    api = api,
+                    store = store(),
+                    listenerFactory = { FakeListener().also { listeners += it } },
+                    candidateProvider = { candidates },
+                    defaultDeviceName = "PC-SALON",
+                )
+                val listenersBefore = listeners.size
+                controller.start()
+                waitFor("the unpaired screen with its offer handler") {
+                    controller.state.value is PairingState.Unpaired &&
+                        listeners.size > listenersBefore && listeners.last().onOffer != null
+                }
+                val listener = listeners.last()
+                controller.showManual()
+                controller.updateManual(ManualForm(ip = "192.168.1.14", port = "42420", code = "ABC-DEF"))
+
+                val history = Collections.synchronizedList(mutableListOf<PairingState>())
+                val historyJob = scope.launch { controller.state.collect { history += it } }
+                val callsBefore = api.calls.size
+                val validatesBefore = api.validateRequests.size
+
+                // Both entry points cross while the state is still `Unpaired`: each thread parks
+                // on the shared release latch, so neither can win by starting first.
+                val ready = CountDownLatch(2)
+                val release = CountDownLatch(1)
+                val submit = Thread {
+                    ready.countDown()
+                    release.await()
+                    controller.submitManual()
+                }
+                val offerThread = Thread {
+                    ready.countDown()
+                    release.await()
+                    listener.onOffer!!.invoke(offer())
+                    // The `updateUnpaired` race: while the operation is held in flight on
+                    // `Validating`, emit a request update through the listener's flow — a late
+                    // update must never touch a state that is no longer `Unpaired`.
+                    waitFor("the operation to be held on Validating") {
+                        controller.state.value is PairingState.Validating
+                    }
+                    listener.flow.value = PairingRequest("rid-race", 0)
+                }
+                submit.start()
+                offerThread.start()
+                waitFor("both threads to park on the release latch") { ready.count == 0L }
+                release.countDown()
+                submit.join(5_000)
+                offerThread.join(5_000)
+
+                // The pool has a free thread for the listener's request collector while the held
+                // operation parks on the gate: a short settle lets the update race land before
+                // the state is asserted.
+                Thread.sleep(200)
+                assertTrue(
+                    controller.state.value is PairingState.Validating,
+                    "a request update must not move the state off Validating while the operation is in flight (iteration $iteration)",
+                )
+
+                metaGate.countDown()
+                waitFor("the pairing to complete") { controller.state.value is PairingState.Paired }
+                historyJob.cancel()
+
+                // Exactly one completed meta/validate/save round: if the operation the takeover
+                // cancelled had already sent its `meta` request before the interruption, one
+                // aborted call rides along; the completing round always has exactly one
+                // `validate` (and, with it, exactly one save).
+                val rounds = api.calls.subList(callsBefore, api.calls.size)
+                assertTrue(
+                    rounds.count { it.startsWith("meta") } in 1..2,
+                    "at most one aborted meta attempt plus the completing call (iteration $iteration): $rounds",
+                )
+                assertEquals(1, rounds.count { it.startsWith("validate") }, "exactly one validate round (iteration $iteration)")
+                assertEquals(1, api.validateRequests.size - validatesBefore, "exactly one validate call (iteration $iteration)")
+                assertEquals(token, secrets.secret, "the token was saved once (iteration $iteration)")
+                assertEquals(PairedStatus.Ok, (controller.state.value as PairingState.Paired).status)
+                val validating = history.indexOfFirst { it is PairingState.Validating }
+                assertTrue(validating >= 0, "the transition to Validating must be observed (iteration $iteration)")
+                assertTrue(
+                    history.subList(validating + 1, history.size).none { it is PairingState.Unpaired },
+                    "the state must not return to Unpaired after the transition (iteration $iteration)",
+                )
+                controller.close()
+            }
+        } finally {
+            scope.cancel()
+            threads.shutdown()
+        }
     }
 }

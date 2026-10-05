@@ -180,14 +180,43 @@ class LocalPlaybackTest {
         audioOutput = output,
     )
 
+    /** A fingerprint of everything the actor's work leaves behind (engine calls, forges, probes,
+     *  downloads, notices): [settle]'s progress marker. */
+    private fun workSignal(): Int =
+        engine.calls.size * 1_000_000_000 +
+            audio.forges.size * 1_000_000 +
+            audio.probed * 1_000 +
+            audio.downloads * 10 +
+            notices.size
+
+    /**
+     * Pumps virtual time until the scheduler is quiet for three consecutive rounds. The actor runs
+     * the cache's file I/O on the real data dispatcher (`withContext(NzikDispatchers.DATA)`), a hop
+     * out of virtual time: right after a state change or engine event it may still be mid-hop when
+     * [runCurrent] returns, so the pump breathes in real time until the hop has drained.
+     */
+    private fun TestScope.settle() {
+        var quiet = 0
+        while (quiet < 3) {
+            val before = workSignal()
+            runCurrent()
+            if (workSignal() == before) {
+                quiet += 1
+                Thread.sleep(10)
+            } else {
+                quiet = 0
+            }
+        }
+    }
+
     private fun TestScope.set(state: PlayerState?) {
         repo.state.value = state
-        runCurrent()
+        settle()
     }
 
     private fun TestScope.emit(event: EngineEvent) {
         engine.events.tryEmit(event)
-        runCurrent()
+        settle()
     }
 
     @Test
@@ -453,5 +482,39 @@ class LocalPlaybackTest {
         settings.value = UserSettings(playbackVolume = 0.4f)
         runCurrent()
         assertEquals("volume 40", engine.calls.last())
+    }
+
+    @Test
+    fun `close stops the tick and the engine, and later state changes are ignored`() = runTest {
+        val playback = playback()
+        set(state(position = 10_000, at = 1_000))
+        emit(EngineEvent.Playing)
+        engine.time = 10_000
+
+        playback.close()
+
+        // The tick is stopped: a large drift would seek on the next tick if it were still alive.
+        repo.now = 50_000
+        engine.time = 50_000
+        set(state(position = 40_000, at = 50_000))
+        advanceTimeBy(3_000)
+        runCurrent()
+
+        assertEquals("stop", engine.calls.last(), "no input may be processed after close")
+    }
+
+    @Test
+    fun `an in-flight revocation survives close, fire-and-forget by design`() = runTest {
+        audio.forgeResults += ForgeResult.Error(401, ApiError("DEVICE_REVOKED"))
+        audio.forgeResults += ForgeResult.Error(401, ApiError("DEVICE_REVOKED"))
+        val playback = playback()
+        set(state())
+        // The first 401 is being confirmed: the 2 s wait is in flight.
+        playback.close()
+
+        advanceTimeBy(2_001)
+        runCurrent()
+
+        assertEquals(1, revoked, "the untracked forge/revocation job must survive close")
     }
 }

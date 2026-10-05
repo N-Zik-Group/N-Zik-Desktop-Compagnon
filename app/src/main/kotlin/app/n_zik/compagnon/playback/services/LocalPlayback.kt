@@ -16,18 +16,20 @@ import app.n_zik.compagnon.playback.vlc.AudioEngine
 import app.n_zik.compagnon.playback.vlc.AudioSource
 import app.n_zik.compagnon.playback.vlc.EngineEvent
 import app.n_zik.compagnon.utils.UserSettings
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
+import app.n_zik.compagnon.utils.coroutines.runPeriodically
 import java.util.logging.Logger
 import kotlin.math.abs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** Why the PC could not play the current track; shown as a toast. */
 sealed interface LocalPlaybackNotice {
@@ -67,7 +69,12 @@ sealed interface LocalPlaybackNotice {
  * A failed track is not retried until the track, the output or the session changes.
  *
  * Every decision runs on one actor coroutine; network calls run beside it and post their result back,
- * stale results (an older [generation]) being dropped.
+ * stale results (an older [generation]) being dropped. The cache's file I/O hops to the data
+ * dispatcher ([NzikDispatchers.DATA]): the single playback thread never blocks on disk.
+ *
+ * Teardown: [close] stops only the tracked work (the actor, the collectors, the tick, the download).
+ * The untracked fire-and-forget jobs (forge, probe, revocation) survive [close] by design — the scope
+ * is never cancelled, so an in-flight confirmation (e.g. a `401` revocation wait) runs to completion.
  */
 class LocalPlayback(
     private val repository: PlayerRepository,
@@ -132,10 +139,8 @@ class LocalPlayback(
         jobs += scope.launch { engine.events.collect { inputs.trySend(Input.Engine(it)) } }
         jobs += scope.launch { settings.collect { inputs.trySend(Input.Volume(it.playbackVolume)) } }
         jobs += scope.launch {
-            while (true) {
-                delay(tickMs)
-                inputs.trySend(Input.Tick)
-            }
+            // The first tick fires immediately: it is a no-op, no track is loaded at start.
+            runPeriodically(tickMs) { inputs.trySend(Input.Tick) }
         }
     }
 
@@ -151,7 +156,7 @@ class LocalPlayback(
 
     // ---- Actor ------------------------------------------------------------------------------------
 
-    private fun handle(input: Input) {
+    private suspend fun handle(input: Input) {
         if (closed) return
         when (input) {
             Input.StateChanged -> reconcile()
@@ -172,7 +177,7 @@ class LocalPlayback(
             SessionContract.FEATURE_AUDIO_OUTPUT in repository.features
     }
 
-    private fun reconcile() {
+    private suspend fun reconcile() {
         val state = repository.state.value
         if (state == null || !isActive()) {
             if (loaded != null || pending != null) log.info("Local playback stopped")
@@ -209,10 +214,11 @@ class LocalPlayback(
         pending = null
     }
 
-    private fun load(trackId: String) {
+    private suspend fun load(trackId: String) {
         invalidRetried = false
         expiredRetries = 0
-        val cached = cache.lookup(trackId)
+        // Cache file I/O off the single playback thread: the actor hops to the data dispatcher.
+        val cached = withContext(NzikDispatchers.DATA) { cache.lookup(trackId) }
         if (cached != null) {
             log.info("Playing from the cache")
             loaded = Loaded(trackId, url = null, fromCache = true)
@@ -274,7 +280,7 @@ class LocalPlayback(
         download = scope.launch { cache.fill(trackId) { target -> audio.downloadAudio(url, target) } }
     }
 
-    private fun onEngine(event: EngineEvent) {
+    private suspend fun onEngine(event: EngineEvent) {
         val current = loaded ?: return
         when (event) {
             EngineEvent.Playing -> {
@@ -289,10 +295,10 @@ class LocalPlayback(
         }
     }
 
-    private fun onEngineError(current: Loaded) {
+    private suspend fun onEngineError(current: Loaded) {
         if (current.fromCache) {
             log.info("Cache entry unreadable: dropped, playing from the phone")
-            cache.remove(current.trackId)
+            withContext(NzikDispatchers.DATA) { cache.remove(current.trackId) }
             forge(current.trackId)
             return
         }

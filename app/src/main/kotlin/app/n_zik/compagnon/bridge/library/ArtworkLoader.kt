@@ -6,15 +6,15 @@ import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.core.network.ArtworkResult
 import app.n_zik.compagnon.core.network.PlayerApi
 import app.n_zik.compagnon.core.network.ServerAddress
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import java.util.logging.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.withContext
 
 /**
  * Artwork through the phone (tracks, albums and artists, Bearer, contract §10), keyed by [ArtworkKey]: decoded to
@@ -36,7 +36,7 @@ class ArtworkLoader(
     maxConcurrent: Int = DEFAULT_MAX_CONCURRENT,
     private val retryDelaysMs: List<Long> = DEFAULT_RETRY_DELAYS_MS,
     private val decode: (ByteArray) -> ImageBitmap? = ::decodeImage,
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+    private val scope: CoroutineScope = NzikDispatchers.fireAndForget(NzikDispatchers.DATA),
 ) {
     private val log = Logger.getLogger("ArtworkLoader")
 
@@ -82,7 +82,8 @@ class ArtworkLoader(
             var cacheable = false
             when (val result = fetchWithRetries(key)) {
                 is ArtworkResult.Ok -> {
-                    image = decode(result.bytes)
+                    // Skia decode is CPU-bound bitmap work: off the data pool, on the media pool.
+                    image = withContext(NzikDispatchers.MEDIA) { decode(result.bytes) }
                     cacheable = image != null
                     if (image == null) log.info("Artwork (${key.kind}) could not be decoded")
                 }

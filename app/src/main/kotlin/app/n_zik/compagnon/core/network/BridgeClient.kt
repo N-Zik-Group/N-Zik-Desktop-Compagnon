@@ -30,7 +30,6 @@ import io.ktor.utils.io.readAvailable
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
 import app.n_zik.compagnon.bridge.library.Album
@@ -58,6 +57,7 @@ import app.n_zik.compagnon.bridge.pairing.PairingRules
 import app.n_zik.compagnon.bridge.pairing.RevocationPolicy
 import app.n_zik.compagnon.bridge.pairing.ValidateRequest
 import app.n_zik.compagnon.bridge.pairing.ValidateResponse
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.bridge.state.CommandResponse
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
@@ -258,7 +258,7 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
             if (response.status != HttpStatusCode.OK) return@execute DownloadResult.Failed(response.status.value)
             val channel = response.bodyAsChannel()
             var total = 0L
-            withContext(Dispatchers.IO) {
+            withContext(NzikDispatchers.DATA) {
                 Files.newOutputStream(target).use { out ->
                     val buffer = ByteArray(DOWNLOAD_BUFFER_BYTES)
                     while (true) {

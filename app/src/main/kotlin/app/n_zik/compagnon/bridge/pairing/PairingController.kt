@@ -13,6 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /** Why the last pairing attempt failed; each one has its own UI message. */
@@ -104,7 +105,18 @@ sealed interface PairingState {
 /**
  * Pairing state machine (story 10): `Unpaired(Qr | Manual)` → `Validating` → `Paired(Ok | Unreachable |
  * OtherActive)`; `Revoked` → `Unpaired`. The listener lives only while `Unpaired` is shown and is closed
- * on every other transition. All methods are called from [scope]'s (single, UI) thread.
+ * on every other transition.
+ *
+ * Thread-safe: the methods are called from any thread — the Compose event handlers (the Swing EDT) and
+ * the coroutines of [scope] (the app scope, on the data dispatcher: the listener's `onOffer`). The state
+ * transitions are atomic on the [StateFlow]: the `Unpaired` → `Validating` gate is a `compareAndSet`
+ * (only the caller that still sees `Unpaired` may enter `Validating`), an operation taking over a
+ * cancelled one already on `Validating` continues the round (never stranding the state there),
+ * the [updateUnpaired] transforms run via `update {}` (applied only while the state is still
+ * `Unpaired`), and the other transitions are single value sets. The [operation] slot hands off atomically: a new operation cancels the previous one
+ * and waits for it to actually stop before it runs, so at most one operation body (meta → validate →
+ * store) ever runs at a time. The listener start/close is serialised on the shared [listenerJobs] lock,
+ * so a close racing a start cannot miss a live listener (which would leak its open port).
  */
 class PairingController(
     private val scope: CoroutineScope,
@@ -124,18 +136,20 @@ class PairingController(
     /** Reusable revocation rule (story 11 plugs WS `4003` and audio `401` into it). */
     val revocation = RevocationPolicy(onRevoked = ::onRevoked, confirmDelayMs = revocationConfirmDelayMs)
 
-    private var pairing: StoredPairing? = null
+    @Volatile private var pairing: StoredPairing? = null
 
     /** Set whenever the state is `Paired(Ok)`, `null` otherwise. */
-    var active: ActivePairing? = null
+    @Volatile var active: ActivePairing? = null
         private set
 
     // Last phone address of this session, kept in memory only (never written once the pairing is erased):
     // it prefills the manual form after a revocation or a "Forget".
-    private var lastAddress: ServerAddress? = null
-    private var listener: OfferListener? = null
+    @Volatile private var lastAddress: ServerAddress? = null
+    @Volatile private var listener: OfferListener? = null
+    // Guards [listener] and [listenerJobs]: the start/close handoff is serialised on this lock.
     private val listenerJobs = mutableListOf<Job>()
-    private var operation: Job? = null
+    private val operationLock = Any()
+    @Volatile private var operation: Job? = null
 
     fun start() = runOperation {
         val stored = store.load()
@@ -212,7 +226,8 @@ class PairingController(
         }
         _state.value = base
         val newListener = listenerFactory()
-        listener = newListener
+        // Assigned under the shared lock so a concurrent [closeListener] cannot miss it.
+        synchronized(listenerJobs) { listener = newListener }
         val port = try {
             newListener.start(::onOffer)
         } catch (e: Exception) {
@@ -222,14 +237,16 @@ class PairingController(
             return
         }
         updateUnpaired { it.copy(port = port) }
-        listenerJobs += scope.launch {
-            newListener.request.collect { request -> if (request != null) updateUnpaired { it.copy(request = request) } }
-        }
-        if (!base.listenerUnreachable) {
+        synchronized(listenerJobs) {
             listenerJobs += scope.launch {
-                delay(listenerUnreachableMs)
-                // Contract §4.6: no valid offer within 60 s of the first QR → explicit message + manual form.
-                updateUnpaired { it.copy(mode = PairingMode.Manual, listenerUnreachable = true) }
+                newListener.request.collect { request -> if (request != null) updateUnpaired { it.copy(request = request) } }
+            }
+            if (!base.listenerUnreachable) {
+                listenerJobs += scope.launch {
+                    delay(listenerUnreachableMs)
+                    // Contract §4.6: no valid offer within 60 s of the first QR → explicit message + manual form.
+                    updateUnpaired { it.copy(mode = PairingMode.Manual, listenerUnreachable = true) }
+                }
             }
         }
     }
@@ -243,7 +260,17 @@ class PairingController(
         returnTo: PairingState.Unpaired,
     ) {
         closeListener()
-        _state.value = PairingState.Validating(manual = requestId == null)
+        // Atomic transition: only the operation that still sees `Unpaired` may enter `Validating`,
+        // so a racing caller (the listener's `onOffer` vs a user submit) cannot double-drive it.
+        // An operation that takes over a cancelled one already on `Validating` continues the
+        // round instead of bailing: the cancelled operation no longer drives the state, and
+        // bailing here would strand it on `Validating` (nothing else may drive it from there).
+        val current = _state.value
+        if (current is PairingState.Unpaired) {
+            if (!_state.compareAndSet(current, PairingState.Validating(manual = requestId == null))) return
+        } else if (current !is PairingState.Validating) {
+            return
+        }
 
         val (address, meta) = reachMeta(ips, port)
         when (meta) {
@@ -367,25 +394,45 @@ class PairingController(
     }
 
     private fun updateUnpaired(transform: (PairingState.Unpaired) -> PairingState.Unpaired) {
-        val current = _state.value as? PairingState.Unpaired ?: return
-        _state.value = transform(current)
+        // Atomic transition: the transform runs only while the state is still `Unpaired`.
+        _state.update { current ->
+            if (current is PairingState.Unpaired) transform(current) else current
+        }
     }
 
+    /**
+     * Runs [block] as the controller's single live operation. The slot hands off atomically (no
+     * read-cancel-assign race across threads): the previous operation is cancelled, and the new
+     * one waits for it to actually stop before running, so two operation bodies never interleave.
+     */
     private fun runOperation(block: suspend () -> Unit) {
-        operation?.cancel()
-        operation = scope.launch { block() }
+        val job: Job
+        synchronized(operationLock) {
+            val previous = operation
+            previous?.cancel()
+            job = scope.launch {
+                previous?.join()
+                block()
+            }
+            operation = job
+        }
     }
 
     private fun closeListener() {
-        listenerJobs.forEach { it.cancel() }
-        listenerJobs.clear()
-        listener?.close()
-        listener = null
+        // The close/null shares the lock with the [enterUnpaired] assignment (re-read inside the
+        // lock): a close that races a start sees the new listener and closes it, never misses it.
+        synchronized(listenerJobs) {
+            listenerJobs.forEach { it.cancel() }
+            listenerJobs.clear()
+            val current = listener
+            listener = null
+            current?.close()
+        }
     }
 
     /** App exit: the listener is always closed. */
     fun close() {
-        operation?.cancel()
+        synchronized(operationLock) { operation?.cancel() }
         closeListener()
     }
 }
