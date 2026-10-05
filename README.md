@@ -85,6 +85,10 @@ Join us on Crowdin!
 
 [![Translated with Crowdin](https://badges.crowdin.net/badge/light/crowdin-on-dark.png)](https://crowdin.com/project/n-zik)
 
+# 📚 Wiki
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/N-Zik-Group/N-Zik-Desktop-Compagnon)
+
 # 🛠️ Requirements & Building
 
 ## Requirements

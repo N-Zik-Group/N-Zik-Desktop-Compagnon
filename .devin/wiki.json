@@ -1,0 +1,112 @@
+{
+  "repo_notes": [
+    {
+      "content": "This repository is N-Zik Desktop Compagnon, a Windows-only companion app (Kotlin + Compose Desktop, single :app module, package root app.n_zik.compagnon.) for the N-Zik Android music player. The phone is the single source of truth: it runs a local server on the Wi-Fi network, and this app only talks to it (pairing, REST + WebSocket, artwork, streamed audio). No business logic or streaming stack lives on the PC, and there is no database on the PC — the phone's local DB is the only database. It is a transitional product that will be replaced by a standalone N-Zik desktop app."
+    },
+    {
+      "content": "All code lives in app/src/main/kotlin/app/n_zik/compagnon/: bridge/ (the phone-to-PC contract layer: pairing/, state/, library/, command/, plus BridgeSession.kt the WebSocket session), components/ (the UI ported from the phone: ui/screens/, player/, queue, menus, chips/toolbars, theming), core/ (network: BridgeClient + LibraryApi/PlayerApi/AudioApi, navigation, palette, image cache factory), playback/ (embedded VLC via vlcj: VlcRuntime, VlcAudioEngine, AudioCache, LocalPlayback), and utils/coroutines/ (NzikDispatchers). app/build.gradle.kts pins an embedded VLC 3.0.24 win64 runtime that is downloaded at build time and verified against a pinned SHA-256. The central project rule is the wire contract: every feature is gated on its negotiated contract feature, and buttons without a contract route are shown as inert (InertButton/InertMenuItem), never faked."
+    },
+    {
+      "content": "The device token (pairing secret) lives only in the Windows Credential Manager and is never written to pairing.json, logs, or anywhere on disk — document the pairing security model accordingly. Tests live in app/src/test/kotlin mirroring the main package structure; `gradlew.bat build` runs compile + all tests. The .github/ directory holds the build CI (build.yml + cache-builder.yaml with a shared Gradle cache contract), repo-maintenance workflows, the Crowdin translation sync, issue/PR templates, dependabot, the code of conduct and the security policy."
+    }
+  ],
+  "pages": [
+    {
+      "title": "Project Overview",
+      "purpose": "What the companion is (Windows companion of the N-Zik phone app, phone as single source of truth, transitional product), how to install/build/run it (JDK 21, gradlew.bat build, gradlew.bat :app:run), and the high-level architecture"
+    },
+    {
+      "title": "Build & Embedded VLC Runtime",
+      "purpose": "The Gradle setup in app/build.gradle.kts: the embedded VLC 3.0.24 win64 runtime (downloadVlc/extractVlc/prepareAppResources, pinned SHA-256, the audio subset under build/vlc-runtime), the packaging tasks, and the opt-in VlcRuntimeTrialTest (-PvlcTrial)",
+      "parent": "Project Overview"
+    },
+    {
+      "title": "Wire Contract & Feature Gating",
+      "purpose": "The contract 1.x with the phone: session feature negotiation (SessionContract feature set), gating UI/actions on contract features, InertButton/InertMenuItem for routes the phone does not expose (shown, never faked), and version/contract compatibility behavior"
+    },
+    {
+      "title": "Bridge: Phone to PC Protocol",
+      "purpose": "The bridge/ layer as a whole: how the PC connects to the phone's local server, the REST + WebSocket split, and the pairing/state/library/command sub-packages"
+    },
+    {
+      "title": "Pairing & Device Token",
+      "purpose": "bridge/pairing/: PairingController and PairingListener, QR vs manual pairing (IP, port, 6-character code), WindowsCredentialSecretStore and the Windows Credential Manager, RevocationPolicy, and the non-secret fields in pairing.json",
+      "parent": "Bridge: Phone to PC Protocol"
+    },
+    {
+      "title": "Bridge Session & Player State",
+      "purpose": "BridgeSession.kt (the WebSocket session), bridge/state/ (StateReducer, PlayerState, PlayerRepository/RemotePlayerRepository, ServerClock, BridgeStateMessages), auto-reconnect and the kick/revocation handling",
+      "parent": "Bridge: Phone to PC Protocol"
+    },
+    {
+      "title": "Library Sync",
+      "purpose": "bridge/library/: LibraryRepository/RemoteLibraryRepository, PagedList (page cache + keep-last rules), ArtworkLoader, LibraryModels — how the phone's library (songs, artists, albums, playlists, search, filters, sorts) is mirrored on the PC",
+      "parent": "Bridge: Phone to PC Protocol"
+    },
+    {
+      "title": "User Interface (Phone Port)",
+      "purpose": "components/ as a whole: the UI ported from the phone (same screens, same theme), the navigation model, and the relationship between screens, the mini player and the full player"
+    },
+    {
+      "title": "Screens & Navigation",
+      "purpose": "components/ui/screens/ (home, album, artist, localplaylist, player, bridge, settings), the floating tab bar (chips, toolbars, search, sort), per-domain item menus, and core/navigation/ (BackNavigation)",
+      "parent": "User Interface (Phone Port)"
+    },
+    {
+      "title": "Player, Mini Player & Queue",
+      "purpose": "components/player/: Player, MiniPlayer, queue, seek bars and controls — the unified player experience ported from the phone, including remote control of the phone's playback (play/pause/seek/speed/repeat/shuffle)",
+      "parent": "User Interface (Phone Port)"
+    },
+    {
+      "title": "Theming & Dynamic Palette",
+      "purpose": "components/styling/, theme/ and themed/: the phone's look (Colors, Typography, Dimensions), the dynamic palette extracted from the current cover (core/palette/ pure-Kotlin port of androidx Palette) and the rotating cover animation",
+      "parent": "User Interface (Phone Port)"
+    },
+    {
+      "title": "Playback on the PC",
+      "purpose": "playback/ as a whole: how audio is streamed from the phone and played on the PC (or sent back to the phone), the audio output selection, and the relationship with the embedded VLC engine"
+    },
+    {
+      "title": "VLC Audio Engine",
+      "purpose": "playback/vlc/ (VlcAudioEngine, VlcRuntime) and playback/services/ (LocalPlayback): playing streamed audio with vlcj on the embedded VLC, the audio output PC/phone switching, and the failure/resilience paths (401 kick window, URL expiry)",
+      "parent": "Playback on the PC"
+    },
+    {
+      "title": "Local Audio Cache",
+      "purpose": "playback/cache/AudioCache: tracks kept locally after full playback for offline re-play, the configurable cache size (default 2 GB), storage under %APPDATA%, and the cache settings UI",
+      "parent": "Playback on the PC"
+    },
+    {
+      "title": "Core Infrastructure",
+      "purpose": "core/ and utils/ as a whole: the network layer, coroutines/dispatchers, preferences and persistence, and shared utilities"
+    },
+    {
+      "title": "BridgeClient & Phone APIs",
+      "purpose": "core/network/: BridgeClient plus LibraryApi/PlayerApi/AudioApi (REST + WebSocket against the phone's server), CandidateAddresses (local network discovery for pairing)",
+      "parent": "Core Infrastructure"
+    },
+    {
+      "title": "Coroutines & NzikDispatchers",
+      "purpose": "utils/coroutines/: NzikDispatchers (UI/PLAYBACK/MEDIA/DATA named dispatchers, fireAndForget hardening, app-lifetime executors), PeriodicRunner, and the rule that all app threads route through them",
+      "parent": "Core Infrastructure"
+    },
+    {
+      "title": "Tests",
+      "purpose": "app/src/test/kotlin: the JUnit 5 + kotlinx-coroutines-test + Ktor test tools setup, tests mirroring the main package structure, and how to run them (gradlew.bat :app:test)",
+      "parent": "Core Infrastructure"
+    },
+    {
+      "title": "Repository Automation & Contribution",
+      "purpose": ".github/ as a whole: the build CI, repo-maintenance workflows, issue/PR templates, dependabot, code of conduct, security policy, and the contribution conventions (commit convention, Done.txt changelog)"
+    },
+    {
+      "title": "GitHub Actions Workflows",
+      "purpose": ".github/workflows/: build.yml (the Windows build CI) and cache-builder.yaml (the Gradle cache pre-warming, shared cache key contract), plus the repo-maintenance workflows (contributors, metrics, house-keeper, stale tickets, labels, auto-assign) and the Crowdin translation sync",
+      "parent": "Repository Automation & Contribution"
+    },
+    {
+      "title": "Localization & Changelog Convention",
+      "purpose": "Crowdin (values/strings.xml English source, Crowdin-managed values-*/ translation files, the l10n sync flow) and the Done.txt changelog convention (assets/notes/Changelog_Template.txt: entry format, sections, commit types)"
+    }
+  ]
+}
