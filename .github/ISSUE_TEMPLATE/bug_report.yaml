@@ -1,0 +1,174 @@
+name: 👾 Bug report
+description: Make a bug report to help us improve N-Zik Desktop Compagnon
+title: "[BUG]: "
+labels: ["bug"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ****
+        ### ❗ READ BEFORE SUBMITTING ❗
+
+        **Remember: the phone stays the source of truth.** This app only talks to the phone over Wi-Fi — if the problem is on the phone itself (library, downloads, streams), open the report on the [N-Zik phone repo](https://github.com/N-Zik-Group/N-Zik) instead.
+
+        * **Connection / pairing issues:**
+        Make sure the phone and the PC are on the same Wi-Fi network, that the phone's N-Zik server is running, and that Windows allows the app through the firewall on **private** networks (see the README, "Pairing, Windows Firewall and manual mode").
+        * **Audio issues on the PC?**
+        Try switching the audio output back to the phone, or clearing the local audio cache (Settings), before opening a ticket.
+        ****
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: 📝 Before submitting
+      description: Please verify the following steps before submitting your issue. Completing these steps may fix problems!
+      options:
+        - label: I am using the latest version of the companion (the latest stable release, or the latest beta if I opted in).
+          required: true
+        - label: I have checked for already existing issues.
+          required: true
+        - label: I have tried restarting the app, and re-pairing if relevant (or a full reset: "Forget this phone" from the app, deleting `%APPDATA%\N-Zik Desktop Compagnon`, and removing the "N-Zik Desktop Compagnon" entry from the Windows Credential Manager if needed).
+          required: true
+
+  - type: input
+    id: companion-version
+    attributes:
+      label: 🏷️ Companion Version
+      description: The exact version of N-Zik Desktop Compagnon — the GitHub release name, or the commit hash if built from source.
+      placeholder: e.g. v0.1.0, or 9f35d2c8
+    validations:
+      required: true
+
+  - type: dropdown
+    id: release-channel
+    attributes:
+      label: 📦 Release Channel
+      description: Select which release you installed from the companion's GitHub releases page.
+      options:
+        - Stable (latest release)
+        - Beta (pre-release)
+        - Built from source (commit)
+    validations:
+      required: true
+
+  - type: input
+    id: phone-version
+    attributes:
+      label: 📱 N-Zik (phone) Version
+      description: The companion mirrors the phone — the phone's version matters too.
+      placeholder: 5.0.0-f
+    validations:
+      required: true
+
+  - type: input
+    id: windows-version
+    attributes:
+      label: 🪟 Windows Version
+      description: The exact version of Windows (Settings > System > About).
+      placeholder: Windows 11 24H2
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ****
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 👾 Bug description
+      description: Clearly describe the bug you are experiencing.
+      placeholder: |
+        I want to use the '...' feature but '...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 🔄 How to reproduce
+      description: Provide step-by-step instructions on how to trigger the bug.
+      placeholder: |
+        1. Open N-Zik Desktop Compagnon
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. Boom! Error happens
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: ✨ Expected Behavior
+      description: What do you expect to happen instead?
+      placeholder: |
+        I expected that the '...' feature would '...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: media
+    attributes:
+      label: 📸 Media (Optional)
+      description: Add screenshots or screen recordings to help us see the bug in action.
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ****
+
+  - type: dropdown
+    id: crash-occurred
+    attributes:
+      label: 💥 Did the app crash?
+      description: Select "Yes" if the app crashed or closed unexpectedly. If so, please provide logs below if you can obtain them (source builds only — see the Logs section).
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ****
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 📜 Logs
+      description: |
+        The app logs to its console (java.util.logging). If you build the app from source, launch it from a terminal with `gradlew.bat :app:run`, reproduce the issue, and copy the relevant lines from that terminal window.
+        Installed releases do not expose the console — in that case, skip this field and mention it in the bug description.
+        If the logs are too large to paste directly, attach them as a file, or upload them to https://pastebin.com/ and share the link.
+      placeholder: |
+        Paste your logs here, or a file/Pastebin link if too large
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ****
+
+  - type: textarea
+    id: settings-export
+    attributes:
+      label: 🗄️ Settings & pairing export (Optional)
+      description: |
+        If relevant to the bug, you can attach the PC's config files to help us reproduce the issue:
+        `%APPDATA%\N-Zik Desktop Compagnon\settings.json` and/or `pairing.json`.
+        These files are non-secret — the device token lives in the Windows Credential Manager and is never written to them.
+      placeholder: |
+        Attach the file(s) here, or a file-hosting link
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ****

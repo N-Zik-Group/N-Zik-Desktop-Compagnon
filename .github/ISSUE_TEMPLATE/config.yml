@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Join the Community (Discord)
+    url: https://discord.gg/bneHC7QRje
+    about: Ask questions, chat with developers, or share your setups.
+  - name: ❓ GitHub Discussions (N-Zik)
+    url: https://github.com/N-Zik-Group/N-Zik/discussions
+    about: Q&A about N-Zik in general — the companion has no Discussions of its own, so companion questions are welcome here too (or on Discord).
