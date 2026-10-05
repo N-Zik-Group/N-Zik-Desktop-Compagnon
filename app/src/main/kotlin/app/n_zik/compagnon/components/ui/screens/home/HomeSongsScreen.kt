@@ -1,6 +1,11 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -122,7 +127,12 @@ import org.jetbrains.compose.resources.stringResource
  * selector on Top), search, locator, shuffle, play next and enqueue (on the loaded tracks); the rest
  * (position lock, match, download all / delete downloads, smart shuffle, item selector, add to
  * favorites / to a playlist, import / export, update, smart trash) are placeholders without a contract
- * route, a click does nothing; the buttons that do not fit the row go behind the "…" menu.
+ * route, a click does nothing; the buttons that do not fit the row go behind the "…" menu. The phone
+ * reads its order synchronously from local preferences, so its tabs are always the chip's own toolbar;
+ * the PC's served list is null while the chip's page loads — the chip's last served toolbar stands in
+ * (the previously displayed one on a first visit in the session, the static default only before any
+ * page at all), and the row crossfades on a change (the phone's 300 ms — its home tabs disable this
+ * animation).
  *
  * Sort: the phone keeps one sort per tab — the chip's sort and direction live in the user settings
  * (`chipSorts`, key `songs:<chip>`), applied to the chip's list on every change and on the first
@@ -175,9 +185,25 @@ fun HomeSongsScreen(
     // chip — on the phone's chips it rides on the list's pages; on the PC-only chips it is read from
     // their mobile counterpart with the same one-track probe as their sort menu
     val pcChipToolbars by lists.pcChipToolbars.collectAsState()
-    val toolbar: List<String>? = when (chip) {
+    val servedToolbar: List<String>? = when (chip) {
         SongsChip.CachedPc, SongsChip.DownloadPc, SongsChip.OnDevice -> pcChipToolbars[chip]
         else -> state.toolbar
+    }
+
+    // The phone reads its toolbar order synchronously from local preferences — its tabs never stand
+    // a default in while loading. The PC's served list is null while the chip's page loads (the
+    // list's reload resets it): the chip's last served toolbar stands in (a revisit shows the chip's
+    // own toolbar immediately, and the page's arrival is a no-op when it confirms it); on a first
+    // visit in the session, the previously displayed toolbar stands in — the static default is the
+    // last resort, only the very first chip of a session, before any page
+    var lastServedToolbars by remember { mutableStateOf<Map<SongsChip, List<String>?>>(emptyMap()) }
+    var previousToolbar by remember { mutableStateOf<List<String>?>(null) }
+    val toolbar = servedToolbar ?: lastServedToolbars[chip] ?: previousToolbar
+    LaunchedEffect(chip, servedToolbar) {
+        if (servedToolbar != null) {
+            lastServedToolbars = lastServedToolbars + (chip to servedToolbar)
+            previousToolbar = servedToolbar
+        }
     }
     val toolbarFeature = SessionContract.FEATURE_LIBRARY_TOOLBAR in lists.features
 
@@ -282,9 +308,14 @@ fun HomeSongsScreen(
     // toggles; the static default buttons stand in while the feature is absent or the served list
     // is null/empty), with the phone's show conditions; the Compagnon's "Refresh" is added at the
     // end, always last. Wired: sort / period, search, locator, shuffle, play next, enqueue, refresh.
-    // Placeholders (no contract route, a click does nothing): the rest.
-    val buttons = buildList<Button> {
-        chipToolbarIds(chip, toolbarFeature, toolbar).forEach { id ->
+    // Placeholders (no contract route, a click does nothing): the rest. Built from the ids — the
+    // button instances are fresh on every composition (reference equality), so the ids (value
+    // equality) are the toolbar change's animation target (its `AnimatedContent`).
+    val toolbarIds = chipToolbarIds(chip, toolbarFeature, toolbar)
+
+    @Composable
+    fun toolbarButtons(ids: List<String>): List<Button> = buildList {
+        ids.forEach { id ->
             when (id) {
                 "sort" -> add(sortButton)
                 "position_lock" -> if (chipSort.songSort == SongSort.Custom) {
@@ -356,7 +387,24 @@ fun HomeSongsScreen(
                         }
                     }
 
-                    TabToolBar.Buttons(buttons, disableAnimation = true)
+                    // The chip change animates the toolbar row (the phone's `AnimatedContent`, its
+                    // `TabToolBar.kt` 91-98): the target is the ids (value equality — the button
+                    // instances are reference-fresh on every composition, so a plain `List<Button>`
+                    // would animate on every unrelated recomposition); the incoming row fades in
+                    // quickly and the outgoing one is removed immediately (no lingering of the
+                    // previous chip's toolbar while the new chip's page loads)
+                    AnimatedContent(
+                        targetState = toolbarIds,
+                        label = "SongsToolbarAnimation",
+                        transitionSpec = {
+                            // A real crossfade on a change (both rows fade over the 300 ms, the
+                            // phone's default): only the page's arrival animates — while a chip's
+                            // page loads the row keeps the previous toolbar, so nothing lingers
+                            ContentTransform(fadeIn(tween(300)), fadeOut(tween(300)))
+                        },
+                    ) { ids ->
+                        TabToolBar.Buttons(toolbarButtons(ids), disableAnimation = true)
+                    }
 
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
