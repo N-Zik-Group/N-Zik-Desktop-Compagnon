@@ -19,6 +19,22 @@
     <strong>Transitional product.</strong> This companion bridges the gap until a standalone N-Zik desktop app exists.
     It will be replaced by it.
   </p>
+
+  <p>
+    <strong>N-Zik</strong> is a side project I originally built for myself and friends, not chasing glory.
+    It's grown a bit since then, which is cool.
+  </p>
+
+  <p>
+    I use generative AI to assist with code, structured with the
+    <a href="https://github.com/bmad-code-org/BMAD-METHOD">BMAD Method</a>,
+    but everything gets reviewed and tested before it's pushed. I'm not shipping blind.
+  </p>
+
+  <p>
+    If AI-assisted development isn't your thing, no hard feelings,
+    there are plenty of great alternatives.
+  </p>
 </div>
 
 <div align="center">
