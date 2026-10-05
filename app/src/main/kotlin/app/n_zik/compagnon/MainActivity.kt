@@ -67,6 +67,7 @@ import app.n_zik.compagnon.bridge.library.LibraryRepository
 import app.n_zik.compagnon.bridge.pairing.PairingRecord
 import app.n_zik.compagnon.bridge.state.PlayerNotice
 import app.n_zik.compagnon.bridge.state.PlayerRepository
+import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.components.BottomSheetMenu
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.MenuState
@@ -229,6 +230,14 @@ fun MainActivity(
         repository.notices.collect { notice ->
             val text = noticeText(notice)
             if (notice is PlayerNotice.Truncated) Toaster.w(text) else Toaster.e(text)
+        }
+    }
+
+    // Since 1.7.3 (feature `library.live`): the phone's library moved — the loaded lists of the
+    // invalidated family re-read (coalesced in the lists)
+    LaunchedEffect(repository, lists) {
+        if (SessionContract.FEATURE_LIBRARY_LIVE in repository.features) {
+            repository.libraryChanged.collect { kind -> lists.onLibraryChanged(kind) }
         }
     }
 

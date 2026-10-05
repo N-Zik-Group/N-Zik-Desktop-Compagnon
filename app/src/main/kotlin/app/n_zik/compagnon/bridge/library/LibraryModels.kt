@@ -37,6 +37,12 @@ data class Page<T>(
     val offset: Int = 0,
     val limit: Int = 0,
     val totalDurationMs: Long = 0L,
+    /**
+     * Since 1.7.3 (feature `library.sortMenu`): the phone's effective sort menu (content and order)
+     * of the chip behind `GET /library/songs` — its saved order kept to its visible options; `null`
+     * on every other route (the phone sends `JsonNull`) and on a ≤ 1.7.2 phone (it does not send it).
+     */
+    val sortMenu: List<String>? = null,
 )
 
 /**
@@ -266,7 +272,12 @@ enum class SongSort(val wire: String) {
     DatePlayed("datePlayed"),
     DateLiked("dateLiked"),
     Downloaded("downloaded"),
-    Custom("custom"),
+    Custom("custom");
+
+    companion object {
+        /** `null` for a value that is not a song sort (the phone's Top periods share its menu, contract §7.2). */
+        fun fromWire(value: String?): SongSort? = entries.firstOrNull { it.wire == value }
+    }
 }
 
 /** `sort` of `GET /library/playlists/{id}/songs` (contract §10.1; the phone's `PlaylistSongSortBy`, since 1.6). */

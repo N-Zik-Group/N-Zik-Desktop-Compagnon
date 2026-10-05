@@ -8,6 +8,9 @@ Next stories (spec `spec-n-zik-pc-bridge`)
 Features
 - Synced appearance (option "Use the phone's appearance"): the phone exposes a read-only whitelist of UI preferences (light/dark mode, palette and accent, dynamic color from artwork, roundness, font, player and seek bar styles…) through contract 1.2 (e.g. `GET /api/v1/appearance` + a WS `appearanceChanged` message); the Compagnon applies them live when the option is on and keeps its own local settings when it is off. The PC never writes the phone's preferences, and no secret or non-UI setting is exposed. A preference only matters once the matching UI piece is copied, so it grows with the copied screens. Same batch as the audio output selector (contract 1.2), after the audio story.
 
+Threading
+- `NzikDispatchers` (same name and shape as the phone app's singleton, in `app.n_zik.compagnon.utils.coroutines`): named dispatchers `UI` (Main) / `PLAYBACK` (single `nzik-playback`) / `MEDIA` (pool of 2 `nzik-media-*`) / `DATA` (IO) + the `fireAndForget()` helper (`SupervisorJob` + logging `CoroutineExceptionHandler`). Already mandated by `rules/CODE.md` "Coroutines & Dispatchers" for all new code; the pre-existing raw `Dispatchers.*` usages (`Main.kt`, `MainActivity.kt`, `BridgeClient.kt`, `Player.kt`, `PairingListener.kt`) are grandfathered until the object lands.
+
 Audio (follow-ups from story 12)
 - The audio cache is filled by a second download of the signed URL beside the player's own stream (double transfer of the current track); a shared download feeding both would halve it.
 - A phone-side seek smaller than 0.5 s, and a drift under 1.5 s, are not followed (tolerance of the story).

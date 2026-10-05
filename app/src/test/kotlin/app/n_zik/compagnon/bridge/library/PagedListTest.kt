@@ -188,6 +188,35 @@ class PagedListTest {
     }
 
     @Test
+    fun `the sort menu rides on the pages and survives a page without one`() = runTest {
+        var withMenu = true
+        val paged = list(answer = {
+            LibraryResult.Ok(
+                Page(
+                    (it.offset until minOf(it.offset + it.limit, 230)).map { i -> "x:$i" },
+                    230,
+                    it.offset,
+                    it.limit,
+                    sortMenu = if (withMenu) listOf("artist", "duration") else null,
+                ),
+            )
+        })
+        assertNull(paged.state.value.sortMenu)
+        paged.loadMore()
+        runCurrent()
+        assertEquals(listOf("artist", "duration"), paged.state.value.sortMenu)
+
+        withMenu = false
+        paged.loadMore()
+        runCurrent()
+        assertEquals(listOf("artist", "duration"), paged.state.value.sortMenu, "a later page without a menu keeps the earlier one")
+
+        paged.reload()
+        runCurrent()
+        assertNull(paged.state.value.sortMenu, "a reload forgets the pages, the menu among them")
+    }
+
+    @Test
     fun `an empty page ends the list`() = runTest {
         val paged = list(answer = { LibraryResult.Ok(Page(emptyList(), 50, it.offset, it.limit)) })
         paged.loadMore()

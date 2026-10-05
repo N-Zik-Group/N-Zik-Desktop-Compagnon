@@ -80,6 +80,7 @@ class LocalPlaybackTest {
         override val state = MutableStateFlow<PlayerState?>(null)
         override val connection = MutableStateFlow<ConnectionState>(ConnectionState.Live)
         override val notices: SharedFlow<PlayerNotice> = MutableSharedFlow()
+        override val libraryChanged: SharedFlow<String> = MutableSharedFlow()
         var now = 1_000L
         var kickWindow = false
         override fun serverNowMs(): Long = now

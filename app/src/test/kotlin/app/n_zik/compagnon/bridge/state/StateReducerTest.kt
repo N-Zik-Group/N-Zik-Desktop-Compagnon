@@ -164,6 +164,25 @@ class StateReducerTest {
     }
 
     @Test
+    fun `libraryChanged counts as a delta and leaves the player untouched`() {
+        val state = synced(57)
+        val result = StateReducer.reduce(state, LibraryChangedMessage(58, 2_000, kind = "songs"))
+        assertEquals(58L, result.state.last)
+        assertEquals(state.player, result.state.player)
+        assertFalse(result.requestSnapshot)
+        assertTrue(result.applied, "an in-order delta is applied — the PC's family reloads on it")
+
+        // The usual delta rules: stale is rejected, a gap requests a snapshot — neither is applied
+        val stale = StateReducer.reduce(result.state, LibraryChangedMessage(58, 3_000, kind = "albums"))
+        assertSame(result.state, stale.state)
+        assertFalse(stale.applied)
+        val gap = StateReducer.reduce(result.state, LibraryChangedMessage(60, 3_000, kind = "songs"))
+        assertTrue(gap.requestSnapshot)
+        assertEquals(58L, gap.state.last)
+        assertFalse(gap.applied)
+    }
+
+    @Test
     fun `snapshot carries the buffering state and a missing field defaults to false`() {
         // A 1.4 phone sends the field...
         val message = ServerMessages.decode(
@@ -264,6 +283,7 @@ class StateReducerTest {
         assertTrue(ServerMessages.decode("""{"type":"trackChanged","revision":58,"serverTimeMs":1,"currentIndex":1,"currentTrackId":null,"positionMs":0,"isPlaying":true}""") is TrackChangedMessage)
         assertTrue(ServerMessages.decode("""{"type":"queueChanged","revision":58,"serverTimeMs":1,"queue":[],"currentIndex":-1,"currentTrackId":null}""") is QueueChangedMessage)
         assertTrue(ServerMessages.decode("""{"type":"modesChanged","revision":58,"serverTimeMs":1,"repeatMode":"all","shuffle":true}""") is ModesChangedMessage)
+        assertTrue(ServerMessages.decode("""{"type":"libraryChanged","revision":58,"serverTimeMs":1,"kind":"playlists"}""") is LibraryChangedMessage)
         assertTrue(ServerMessages.decode("""{"type":"heartbeat","revision":57,"serverTimeMs":1,"positionMs":93000,"isPlaying":true,"speed":1.0}""") is HeartbeatMessage)
         assertEquals(PongMessage(123456, 1790000000000, 1790000000001), ServerMessages.decode("""{"type":"pong","clientTimeMs":123456,"serverReceiveTimeMs":1790000000000,"serverSendTimeMs":1790000000001}"""))
         assertEquals(ErrorMessage("PLAYER_REJECTED", "…", "7f1c"), ServerMessages.decode("""{"type":"error","code":"PLAYER_REJECTED","message":"…","commandId":"7f1c"}"""))

@@ -285,6 +285,74 @@ class LibraryLists(
         }
     }
 
+    // ---- Live (contract §7.2, since 1.7.3 `library.live`) ----------------------------------------
+
+    private val liveKinds = mutableSetOf<String>()
+    private var liveJob: Job? = null
+
+    /**
+     * The phone's `libraryChanged` delta: [kind]'s family is re-read from its first page, coalesced —
+     * a burst of deltas (one write can touch several tables, and the PC's own §10.2 writes come back
+     * over the WS) waits until the phone is quiet, then each invalidated family reloads once. Only
+     * the loaded lists move: a family never read comes fresh from the phone on its first read. The
+     * PC's own writes are re-read too: the re-consult replaces the optimistic patch, no conflict.
+     */
+    fun onLibraryChanged(kind: String) {
+        synchronized(liveKinds) { liveKinds.add(kind) }
+        liveJob?.cancel()
+        liveJob = scope.launch {
+            delay(LIVE_RELOAD_DEBOUNCE_MS)
+            val kinds = synchronized(liveKinds) { liveKinds.toList().also { liveKinds.clear() } }
+            kinds.forEach { reloadLibraryFamily(it) }
+        }
+    }
+
+    /** The loaded lists of the [kind]'s family, re-read from their first page. */
+    private fun reloadLibraryFamily(kind: String) {
+        when (kind) {
+            "songs" -> {
+                if (isLoaded(songs)) songs.reload()
+                if (isLoaded(songsPcCached)) songsPcCached.reload()
+                // A no-op on the phone's chips (their menu rides on their pages)
+                loadPcChipSortMenu(activeSongsChip)
+                detailTrackLists().forEach { list -> if (isLoaded(list)) list.reload() }
+            }
+            "albums" -> if (isLoaded(albums)) albums.reload()
+            "artists" -> if (isLoaded(artists)) artists.reload()
+            "playlists" -> if (isLoaded(playlists)) playlists.reload()
+            else -> Unit // a family the contract does not name: no loaded list answers it
+        }
+    }
+
+    /** A list is loaded while its first page has answered ([PagedState.total] is set). */
+    private fun isLoaded(list: PagedList<*, *>): Boolean = list.state.value.total != null
+
+    /**
+     * Since 1.7.3 (feature `library.sortMenu`): the sort menu of a PC-only chip, read from its
+     * mobile counterpart (its "Cached PC" the phone's Offline tab, its "Download PC" the phone's
+     * Downloaded tab, its "On Device" the phone's OnDevice tab) with a one-track page — only the
+     * menu counts. One entry per chip: a stale or out-of-order probe (the user switched chips
+     * while one was in flight) refreshes only its own chip's entry. A failed read keeps the
+     * last served menu (none, or the earlier one); a ≤ 1.7.2 phone serves `null`.
+     */
+    private val _pcChipSortMenus = MutableStateFlow<Map<SongsChip, List<String>?>>(emptyMap())
+    val pcChipSortMenus: StateFlow<Map<SongsChip, List<String>?>> = _pcChipSortMenus.asStateFlow()
+
+    fun loadPcChipSortMenu(chip: SongsChip) {
+        val filter = when (chip) {
+            SongsChip.CachedPc -> SongFilter.Offline
+            SongsChip.DownloadPc -> SongFilter.Downloaded
+            SongsChip.OnDevice -> SongFilter.Local
+            else -> return
+        }
+        scope.launch {
+            when (val page = library.songs(0, 1, SongsQuery(null, filter))) {
+                is LibraryResult.Ok -> _pcChipSortMenus.value = _pcChipSortMenus.value + (chip to page.page.sortMenu)
+                else -> Unit
+            }
+        }
+    }
+
     /**
      * The phone's disk caches (contract §10, since 1.7.1), read on a tab switch: the Songs tab's cache
      * bar. `null` hides the bar (unreachable or a phone without the `library.cache` feature).
@@ -613,6 +681,9 @@ class LibraryLists(
     companion object {
         const val SEARCH_DEBOUNCE_MS = 300L
         const val MOSAIC_TRACKS = 4
+
+        /** The live reload's coalescing window (contract §7.2, since 1.7.3 `library.live`). */
+        const val LIVE_RELOAD_DEBOUNCE_MS = 300L
     }
 }
 

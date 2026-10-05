@@ -1,7 +1,10 @@
 package app.n_zik.compagnon.bridge.state
 
-/** Result of [StateReducer.reduce]: the new state and whether a `requestSnapshot` must be sent. */
-data class Reduction(val state: SyncState, val requestSnapshot: Boolean = false)
+/**
+ * Result of [StateReducer.reduce]: the new state, whether the message was applied (its revision
+ * became the state's `last`) and whether a `requestSnapshot` must be sent.
+ */
+data class Reduction(val state: SyncState, val applied: Boolean = false, val requestSnapshot: Boolean = false)
 
 /**
  * Pure revision rules of contract §7.3–§7.5. Knows neither Ktor nor Compose.
@@ -20,6 +23,7 @@ object StateReducer {
     fun reduce(state: SyncState, message: ServerMessage): Reduction = when (message) {
         is SnapshotMessage -> Reduction(
             SyncState(player = PlayerState.of(message), last = message.revision, awaitingSnapshot = false),
+            applied = true,
         )
         is DeltaMessage -> revised(state, message.revision) { player -> apply(player, message) }
         is UnknownMessage -> {
@@ -34,7 +38,7 @@ object StateReducer {
         val last = state.last
         val player = state.player
         if (state.awaitingSnapshot || last == null || player == null || revision <= last) return Reduction(state)
-        if (revision == last + 1) return Reduction(state.copy(player = apply(player), last = revision))
+        if (revision == last + 1) return Reduction(state.copy(player = apply(player), last = revision), applied = true)
         return Reduction(state.copy(awaitingSnapshot = true), requestSnapshot = true)
     }
 
@@ -84,5 +88,8 @@ object StateReducer {
         )
         is ModesChangedMessage -> player.copy(repeatMode = delta.repeatMode, shuffle = delta.shuffle)
         is OutputChangedMessage -> player.copy(audioOutput = delta.audioOutput)
+        // §7.2 (since 1.7.3): the phone's library moved: the player state is untouched, the PC's
+        // loaded lists of the delta's family re-read on their own (the repository emits the delta)
+        is LibraryChangedMessage -> player
     }
 }

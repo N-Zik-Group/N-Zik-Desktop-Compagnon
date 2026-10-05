@@ -91,6 +91,16 @@ object SessionContract {
 
     /** §5 (since 1.7.2): the phone's build ships FFmpeg — its "export cache" and "edit metadata" entries. */
     const val FEATURE_LIBRARY_FFMPEG = "library.ffmpeg"
+
+    /**
+     * §5 (since 1.7.3): the `libraryChanged` delta (§7.2): an in-app write of the phone (its own UI,
+     * or a §10.2 write performed from the PC) invalidates a library family — the PC's loaded lists
+     * of that family re-read.
+     */
+    const val FEATURE_LIBRARY_LIVE = "library.live"
+
+    /** §5 / §10.1 (since 1.7.3): the `sortMenu` of `GET /library/songs`: the phone's effective sort menu of the chip. */
+    const val FEATURE_LIBRARY_SORT_MENU = "library.sortMenu"
 }
 
 /** `RepeatMode` (contract §1.1); an unknown value reads as [Off]. */
@@ -383,6 +393,18 @@ data class OutputChangedMessage(
     val audioOutput: AudioOutput = AudioOutput.Phone,
 ) : DeltaMessage
 
+/**
+ * §7.2 (since 1.7.3): the phone's library moved (an in-app write, or its songs sort menu) — the
+ * PC's loaded lists of [kind]'s family re-read. The player state is untouched by this delta.
+ */
+@Serializable
+data class LibraryChangedMessage(
+    override val revision: Long,
+    override val serverTimeMs: Long,
+    /** The invalidated family (contract §7.2): `songs`, `albums`, `artists` or `playlists`. */
+    val kind: String,
+) : DeltaMessage
+
 /** §7.3: light, non-revised snapshot. */
 @Serializable
 data class HeartbeatMessage(
@@ -434,6 +456,7 @@ object ServerMessages {
             "queueChanged" -> QueueChangedMessage.serializer()
             "modesChanged" -> ModesChangedMessage.serializer()
             "outputChanged" -> OutputChangedMessage.serializer()
+            "libraryChanged" -> LibraryChangedMessage.serializer()
             "heartbeat" -> HeartbeatMessage.serializer()
             "pong" -> PongMessage.serializer()
             "error" -> ErrorMessage.serializer()

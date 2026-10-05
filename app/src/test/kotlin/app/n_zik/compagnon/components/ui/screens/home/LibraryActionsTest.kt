@@ -64,6 +64,7 @@ class LibraryActionsTest {
         override val state: StateFlow<PlayerState?> = MutableStateFlow(null)
         override val connection: StateFlow<ConnectionState> = MutableStateFlow(ConnectionState.Live)
         override val notices: SharedFlow<PlayerNotice> = MutableSharedFlow()
+        override val libraryChanged: SharedFlow<String> = MutableSharedFlow()
         override fun serverNowMs(): Long = 0
         override suspend fun artwork(key: ArtworkKey): ImageBitmap? = null
         override fun cachedArtwork(key: ArtworkKey): ImageBitmap? = null

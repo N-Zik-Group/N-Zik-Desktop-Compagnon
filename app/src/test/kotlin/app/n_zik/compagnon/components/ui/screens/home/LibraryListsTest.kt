@@ -24,11 +24,13 @@ import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.core.network.LibraryResult
 import app.n_zik.compagnon.core.network.WriteResult
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -180,6 +182,168 @@ class LibraryListsTest {
 
         // §10 (since 1.7.1): the cache bar is not exercised by these lists
         override suspend fun cacheSpace(): LibraryCache? = null
+    }
+
+    /** Serves the given `sortMenu` on every songs read, recording the queries (the §7.2 live tests). */
+    private class MenuLibrary(private val menu: List<String> = listOf("artist", "duration")) : LibraryRepository {
+        val menuQueries = mutableListOf<SongsQuery>()
+        val menuPages = mutableListOf<Pair<Int, Int>>()
+        override val features: Set<String> = setOf("library.songs")
+        override suspend fun songs(offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track> {
+            menuQueries += query
+            menuPages += offset to limit
+            return LibraryResult.Ok(Page(emptyList(), 0, offset, limit, sortMenu = menu))
+        }
+        override suspend fun playlists(offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist> = error("unused")
+        override suspend fun albums(offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album> = error("unused")
+        override suspend fun artists(offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist> = error("unused")
+        override suspend fun collectionSongs(
+            collection: CollectionRef,
+            offset: Int,
+            limit: Int,
+            query: PlaylistSongsQuery?,
+        ): LibraryResult<Track> = error("unused")
+        override suspend fun songLike(songId: String, state: TrackLike): WriteResult = error("unused")
+        override suspend fun albumBookmark(albumId: String, bookmarked: Boolean): WriteResult = error("unused")
+        override suspend fun artistFollow(artistId: String, state: ArtistFollow): WriteResult = error("unused")
+        override suspend fun playlistPin(playlistId: String, pinned: Boolean): WriteResult = error("unused")
+        override suspend fun albumLike(albumId: String, state: AlbumLike): WriteResult = error("unused")
+        override suspend fun playlistBookmark(playlistId: String, bookmarked: Boolean): WriteResult = error("unused")
+        override suspend fun cacheSpace(): LibraryCache? = null
+        override suspend fun rewindState(): RewindState? = null
+        override suspend fun dislikeMode(): DislikeMode? = null
+    }
+
+    // ---- Live (contract §7.2, since 1.7.3 `library.live`) ----
+
+    @Test
+    fun `a libraryChanged reloads the loaded family only, coalesced`() = runTest {
+        val library = FakeLibrary()
+        val lists = LibraryLists(library, this)
+
+        // Nothing is loaded yet: the delta has no list to re-read
+        lists.onLibraryChanged("songs")
+        advanceUntilIdle()
+        assertEquals(0, library.songQueries.size)
+
+        // Once the songs are loaded, a songs delta re-reads them from the first page
+        lists.songs.loadMore()
+        advanceUntilIdle()
+        lists.onLibraryChanged("songs")
+        advanceTimeBy(100)
+        assertEquals(1, library.songQueries.size, "the coalescing window is still open")
+        advanceUntilIdle()
+        assertEquals(2, library.songQueries.size)
+
+        // A burst of deltas coalesces into one reload per family (the families are loaded:
+        // a family never read has nothing to re-read)
+        lists.albums.loadMore()
+        lists.artists.loadMore()
+        lists.playlists.loadMore()
+        advanceUntilIdle()
+        val albumsBefore = library.albumReads
+        val artistsBefore = library.artistReads
+        val playlistsBefore = library.playlistReads
+        lists.onLibraryChanged("albums")
+        lists.onLibraryChanged("artists")
+        lists.onLibraryChanged("playlists")
+        advanceUntilIdle()
+        assertEquals(albumsBefore + 1, library.albumReads)
+        assertEquals(artistsBefore + 1, library.artistReads)
+        assertEquals(playlistsBefore + 1, library.playlistReads)
+
+        // A family the contract does not name reloads nothing
+        val before = library.songQueries.size
+        lists.onLibraryChanged("lyrics")
+        advanceUntilIdle()
+        assertEquals(before, library.songQueries.size)
+    }
+
+    @Test
+    fun `a PC-only chip reads its sort menu from its mobile counterpart with a one-track page`() = runTest {
+        val library = MenuLibrary()
+        val lists = LibraryLists(library, this)
+
+        lists.loadPcChipSortMenu(SongsChip.CachedPc)
+        advanceUntilIdle()
+        assertEquals(listOf(SongFilter.Offline), library.menuQueries.map { it.filter })
+        assertEquals(listOf(0 to 1), library.menuPages, "a one-track probe: only the menu counts")
+        assertEquals(listOf("artist", "duration"), lists.pcChipSortMenus.value[SongsChip.CachedPc])
+
+        lists.loadPcChipSortMenu(SongsChip.DownloadPc)
+        advanceUntilIdle()
+        assertEquals(listOf(SongFilter.Offline, SongFilter.Downloaded), library.menuQueries.map { it.filter })
+
+        lists.loadPcChipSortMenu(SongsChip.OnDevice)
+        advanceUntilIdle()
+        assertEquals(
+            listOf(SongFilter.Offline, SongFilter.Downloaded, SongFilter.Local),
+            library.menuQueries.map { it.filter },
+        )
+
+        // The phone's chips do not probe
+        lists.loadPcChipSortMenu(SongsChip.All)
+        advanceUntilIdle()
+        assertEquals(3, library.menuQueries.size)
+    }
+
+    /** Serves a different menu per filter, and can answer slowly (to reorder in-flight probes). */
+    private class ChipMenuLibrary(
+        private val menus: Map<SongFilter, List<String>>,
+        private val delaysMs: Map<SongFilter, Long> = emptyMap(),
+    ) : LibraryRepository {
+        val menuQueries = mutableListOf<SongsQuery>()
+        override val features: Set<String> = setOf("library.songs")
+        override suspend fun songs(offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track> {
+            delaysMs[query.filter]?.let { delay(it) }
+            menuQueries += query
+            return LibraryResult.Ok(Page(emptyList(), 0, offset, limit, sortMenu = menus.getValue(query.filter)))
+        }
+        override suspend fun playlists(offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist> = error("unused")
+        override suspend fun albums(offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album> = error("unused")
+        override suspend fun artists(offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist> = error("unused")
+        override suspend fun collectionSongs(
+            collection: CollectionRef,
+            offset: Int,
+            limit: Int,
+            query: PlaylistSongsQuery?,
+        ): LibraryResult<Track> = error("unused")
+        override suspend fun songLike(songId: String, state: TrackLike): WriteResult = error("unused")
+        override suspend fun albumBookmark(albumId: String, bookmarked: Boolean): WriteResult = error("unused")
+        override suspend fun artistFollow(artistId: String, state: ArtistFollow): WriteResult = error("unused")
+        override suspend fun playlistPin(playlistId: String, pinned: Boolean): WriteResult = error("unused")
+        override suspend fun albumLike(albumId: String, state: AlbumLike): WriteResult = error("unused")
+        override suspend fun playlistBookmark(playlistId: String, bookmarked: Boolean): WriteResult = error("unused")
+        override suspend fun cacheSpace(): LibraryCache? = null
+        override suspend fun rewindState(): RewindState? = null
+        override suspend fun dislikeMode(): DislikeMode? = null
+    }
+
+    @Test
+    fun `each PC-only chip keeps its own menu even when a probe lands late`() = runTest {
+        val library = ChipMenuLibrary(
+            menus = mapOf(
+                SongFilter.Offline to listOf("week"),
+                SongFilter.Downloaded to listOf("month"),
+                SongFilter.Local to listOf("title"),
+            ),
+            delaysMs = mapOf(SongFilter.Offline to 100L, SongFilter.Downloaded to 10L),
+        )
+        val lists = LibraryLists(library, this)
+
+        // Switch chips while the first probe is still in flight: the Downloaded probe lands first,
+        // the Cached probe lands late — each entry is written by its own probe
+        lists.loadPcChipSortMenu(SongsChip.CachedPc)
+        lists.loadPcChipSortMenu(SongsChip.DownloadPc)
+        advanceUntilIdle()
+        assertEquals(listOf("month"), lists.pcChipSortMenus.value[SongsChip.DownloadPc])
+        assertEquals(listOf("week"), lists.pcChipSortMenus.value[SongsChip.CachedPc], "the late probe refreshed only its own chip")
+        assertNull(lists.pcChipSortMenus.value[SongsChip.OnDevice])
+
+        lists.loadPcChipSortMenu(SongsChip.OnDevice)
+        advanceUntilIdle()
+        assertEquals(listOf("title"), lists.pcChipSortMenus.value[SongsChip.OnDevice])
+        assertEquals(3, library.menuQueries.size)
     }
 
     @Test

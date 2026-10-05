@@ -125,6 +125,38 @@ class RemotePlayerRepositoryTest {
     private fun applied(revision: Long, changed: Boolean = true) = """{"applied":true,"changed":$changed,"revision":$revision}"""
 
     @Test
+    fun `libraryChanged emits the invalidated family and moves no player state`() = runTest {
+        val repository = repository { json(applied(1)) }
+        val kinds = mutableListOf<String>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.libraryChanged.collect { kinds += it } }
+        deliver(snapshot(1))
+        runCurrent()
+        deliver(LibraryChangedMessage(2, 2_000, kind = "songs"))
+        deliver(LibraryChangedMessage(3, 3_000, kind = "albums"))
+        runCurrent()
+        assertEquals(listOf("songs", "albums"), kinds)
+        assertEquals(2, repository.state.value!!.queue.size, "the delta moves no player state")
+        assertEquals(3, repository.lastRevision)
+    }
+
+    @Test
+    fun `a rejected libraryChanged emits nothing, the applied one after it does`() = runTest {
+        val repository = repository { json(applied(1)) }
+        val kinds = mutableListOf<String>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.libraryChanged.collect { kinds += it } }
+        deliver(snapshot(3))
+        runCurrent()
+        // A duplicated delta (revision ≤ last): rejected by the revision rules — no reload
+        deliver(LibraryChangedMessage(3, 3_000, kind = "songs"))
+        runCurrent()
+        assertEquals(emptyList<String>(), kinds, "a rejected delta moved no state")
+        // The next in-order delta applies: its family reloads
+        deliver(LibraryChangedMessage(4, 4_000, kind = "albums"))
+        runCurrent()
+        assertEquals(listOf("albums"), kinds)
+    }
+
+    @Test
     fun `state comes only from the WS, revision rules applied`() = runTest {
         val repository = repository { json(applied(1)) }
         assertTrue(channel.started)

@@ -71,6 +71,10 @@ class RemotePlayerRepository(
     private val _notices = MutableSharedFlow<PlayerNotice>(extraBufferCapacity = 16, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     override val notices: SharedFlow<PlayerNotice> = _notices.asSharedFlow()
 
+    // The phone's library moved (§7.2, since 1.7.3): the oldest unseen family is dropped, as [notices].
+    private val _libraryChanged = MutableSharedFlow<String>(extraBufferCapacity = 16, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    override val libraryChanged: SharedFlow<String> = _libraryChanged.asSharedFlow()
+
     /** Last revision applied (contract §7.4), for tests and diagnostics. */
     val lastRevision: Long? get() = sync.value.last
 
@@ -112,6 +116,9 @@ class RemotePlayerRepository(
             val command = message.commandId?.let { id -> synchronized(recentCommands) { recentCommands[id] } }
             _notices.emit(PlayerNotice.LateError(command, message.code, message.commandId))
         }
+        // Only an applied delta re-reads a family: a rejected one (an out-of-order or duplicated
+        // revision, contract §7.4) moved no state — no reload
+        if (message is LibraryChangedMessage && reduction.applied) _libraryChanged.emit(message.kind)
     }
 
     private fun requestAwaitedSnapshot() {

@@ -14,6 +14,15 @@ class SongsQueryTest {
     }
 
     @Test
+    fun `a song sort reads its wire value, null for a foreign one`() {
+        assertEquals(SongSort.Title, SongSort.fromWire("title"))
+        assertEquals(SongSort.PlayTime, SongSort.fromWire("playTime"))
+        assertNull(SongSort.fromWire("OneWeek"), "the phone's Top periods share its menu, but are not song sorts")
+        assertNull(SongSort.fromWire("bogus"))
+        assertNull(SongSort.fromWire(null))
+    }
+
+    @Test
     fun `a cut through a surrogate pair drops the lone high surrogate`() {
         // 99 letters then an emoji (2 chars): the 100-char cut would keep only its high surrogate
         val text = "x".repeat(99) + "\uD83C\uDFB5" + "y"

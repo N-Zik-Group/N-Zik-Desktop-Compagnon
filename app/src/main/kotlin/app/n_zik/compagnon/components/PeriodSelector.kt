@@ -66,12 +66,15 @@ val TopPeriod.labelId: StringResource
  * (the phone's `header_view_top_of`, with the phone's default max items — its setting is phone-side
  * only, the PC cannot read it) and no selected highlight, as on the phone. [period] `null` keeps the
  * phone's own period (its default is `All`) and shows the `calendar_clear` icon. A click opens the menu
- * (the phone's selector has no direction arrow). Dropped: the phone's menu order / visibility
- * preferences.
+ * (the phone's selector has no direction arrow). Since 1.7.3 (feature `library.sortMenu`),
+ * [options] follows the phone's Top tab menu — its periods in its order, its hidden ones dropped;
+ * the native order stands in without it.
  */
 class PeriodSelector(
     private val menuState: MenuState,
     private val period: TopPeriod?,
+    /** Since 1.7.3 (feature `library.sortMenu`): the phone's Top tab menu — its periods, its order. */
+    private val options: List<TopPeriod> = TopPeriod.entries,
     private val onPeriodSelected: (TopPeriod) -> Unit,
 ) : MenuIcon {
 
@@ -88,7 +91,7 @@ class PeriodSelector(
     @Composable
     fun ListMenu() {
         ListMenu.Menu(title = menuIconTitle) {
-            TopPeriod.entries.forEach { entry ->
+            options.forEach { entry ->
                 ListMenu.Entry(
                     text = stringResource(entry.labelId),
                     icon = {

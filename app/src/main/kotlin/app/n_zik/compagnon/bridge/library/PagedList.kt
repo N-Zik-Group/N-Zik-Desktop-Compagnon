@@ -30,6 +30,12 @@ data class PagedState<T>(
     /** Since 1.7.2: the total duration in ms of the FULL list, before pagination and before `text`
      *  (the phone's `GET /library/playlists/{id}/songs`, its header duration); `0` on every other route. */
     val totalDurationMs: Long = 0L,
+    /**
+     * Since 1.7.3 (feature `library.sortMenu`): the phone's effective sort menu of the chip behind
+     * the current query (its content and order), read from the pages; `null` while no answered page
+     * carries one (a ≤ 1.7.2 phone, or a route without a menu).
+     */
+    val sortMenu: List<String>? = null,
 ) {
     val endReached: Boolean get() = total != null && items.size >= total
 }
@@ -135,6 +141,8 @@ class PagedList<Q, T>(
                 total = if (result.page.items.isEmpty()) current.items.size else result.page.total,
                 // Since 1.7.2: the full list's duration (a later page carries the same value)
                 totalDurationMs = result.page.totalDurationMs,
+                // Since 1.7.3: the chip's sort menu (a page without one keeps the earlier one)
+                sortMenu = result.page.sortMenu ?: current.sortMenu,
                 loading = false,
                 error = null,
             )

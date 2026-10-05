@@ -25,6 +25,7 @@ import app.n_zik.compagnon.bridge.library.LibraryCache
 import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongSort
 import app.n_zik.compagnon.bridge.library.SongsQuery
+import app.n_zik.compagnon.bridge.library.TopPeriod
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.unmatched
@@ -158,6 +159,15 @@ fun HomeSongsScreen(
     val state by activeList.state.collectAsState()
     val searchText by lists.songsSearch.collectAsState()
 
+    // Since 1.7.3 (feature `library.sortMenu`): the phone's effective sort menu of the active chip —
+    // on the phone's chips it rides on the list's pages; on the PC-only chips it is read from their
+    // mobile counterpart ("Cached PC" ← Offline, "Download PC" ← Downloaded) with a one-track probe
+    val pcChipSortMenus by lists.pcChipSortMenus.collectAsState()
+    val sortMenu: List<String>? = when (chip) {
+        SongsChip.CachedPc, SongsChip.DownloadPc, SongsChip.OnDevice -> pcChipSortMenus[chip]
+        else -> state.sortMenu
+    }
+
     // Since 1.7.1: the phone's disk caches (contract §10 `library.cache`), read on a tab switch;
     // `null` hides the cache bar
     var libraryCache by remember { mutableStateOf<LibraryCache?>(null) }
@@ -216,6 +226,12 @@ fun HomeSongsScreen(
     // the chip's own sort, not the list's default query (a no-op while the persisted sort is the default)
     LaunchedEffect(lists) { applyChipQuery(chip, settings?.chipSorts?.get(chip.key) ?: chip.defaultSort()) }
 
+    // Since 1.7.3: the PC-only chips read their sort menu from their mobile counterpart; a no-op on
+    // the phone's chips
+    LaunchedEffect(chip, lists) {
+        if (SessionContract.FEATURE_LIBRARY_SORT_MENU in lists.features) lists.loadPcChipSortMenu(chip)
+    }
+
     // The phone's `hasUnmatchedSongs` (HomeSongsScreen.kt 463, the phone's full check — `Track.unmatched`,
     // contract 1.7.1): a non-YT id or the zero-duration sentinel, the phone's `local:` files excluded —
     // the match button is shown when one is loaded
@@ -224,13 +240,14 @@ fun HomeSongsScreen(
     // The chip's sort button (the phone's per-tab sort). Top replaces it with the period selector;
     // Disliked keeps the arrow like on the phone (the phone's provider ignores the sort there)
     val sortButton: Button = if (chip == SongsChip.Top) {
-        PeriodSelector(menuState, chipSort.topPeriod) { period ->
+        // Since 1.7.3: the phone's Top tab menu — its periods in its order, its hidden ones dropped
+        PeriodSelector(menuState, chipSort.topPeriod, topPeriodOptions(sortMenu)) { period ->
             applyChipSort(chipSort.copy(period = period.wire))
         }
     } else if (sortsOnPhone) {
         Sort(
             menuState,
-            chipSortOptions(chip, sortsOnPhone),
+            chipSortOptions(chip, sortsOnPhone, sortMenu),
             chipSort.songSort,
             chipSort.reverse,
             onSortBy = { sort -> applyChipSort(chipSort.copy(sort = sort.wire)) },
@@ -239,7 +256,7 @@ fun HomeSongsScreen(
     } else {
         Sort(
             menuState,
-            chipSortOptions(chip, sortsOnPhone),
+            chipSortOptions(chip, sortsOnPhone, sortMenu),
             chipSort.songSort,
             chipSort.reverse,
             onSortBy = { sort -> applyChipSort(chipSort.copy(sort = sort.wire)) },
@@ -445,12 +462,33 @@ private fun SongsChip.defaultSort(): ChipSort = when (this) {
 }
 
 /**
- * The [chip]'s sort options, as on the phone: "Downloaded" is hidden on the downloaded / cached chips
- * (the tab is already the downloaded / cached songs); on a phone without `library.sort`, the options
- * without a contract route are shown without effect.
+ * The Top chip's period options. Since 1.7.3 (feature `library.sortMenu`), the phone serves its
+ * Top tab's periods — its content and order — and they are shown as-is; the static periods stand
+ * in until the first page (or on a ≤ 1.7.2 phone).
  */
-private fun chipSortOptions(chip: SongsChip, sortsOnPhone: Boolean): List<SortOption<SongSort>> {
-    val options = if (sortsOnPhone) songSortOptions else legacySongSortOptions
+internal fun topPeriodOptions(sortMenu: List<String>?): List<TopPeriod> {
+    val options = sortMenu?.mapNotNull { id -> TopPeriod.entries.firstOrNull { period -> period.wire == id } }
+    return options?.takeIf { it.isNotEmpty() } ?: TopPeriod.entries
+}
+
+/**
+ * The [chip]'s sort options. Since 1.7.3 (feature `library.sortMenu`), the phone serves the chip's
+ * effective menu — its content and order (its saved order kept to its visible options) — and it is
+ * shown as-is; the static options stand in until the first page (or on a ≤ 1.7.2 phone), and the
+ * unknown ids (the phone's Top periods) are dropped, the PC's Top selector keeping them. "Downloaded"
+ * is hidden on the downloaded / cached chips, as on the phone; on a phone without `library.sort`,
+ * the options without a contract route are shown without effect.
+ */
+internal fun chipSortOptions(chip: SongsChip, sortsOnPhone: Boolean, sortMenu: List<String>?): List<SortOption<SongSort>> {
+    val menu = if (sortsOnPhone) sortMenu else null
+    val options = when {
+        // The phone's menu: its ids in its order, the unknown ones dropped
+        !menu.isNullOrEmpty() ->
+            menu.mapNotNull { id -> songSortOptions.firstOrNull { option -> option.value == SongSort.fromWire(id) } }
+                .takeIf { it.isNotEmpty() } ?: songSortOptions
+        sortsOnPhone -> songSortOptions
+        else -> legacySongSortOptions
+    }
     if (chip !in setOf(SongsChip.DownloadTel, SongsChip.DownloadPc, SongsChip.CachedTel, SongsChip.CachedPc)) return options
     return options.filter { it.value != SongSort.Downloaded }
 }

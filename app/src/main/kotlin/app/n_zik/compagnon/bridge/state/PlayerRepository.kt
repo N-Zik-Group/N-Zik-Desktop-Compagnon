@@ -59,6 +59,14 @@ interface PlayerRepository {
     val features: Set<String>
     val notices: SharedFlow<PlayerNotice>
 
+    /**
+     * Contract §7.2 (since 1.7.3, feature `library.live`): one of the phone's library families
+     * changed — the event is the invalidated family's `kind` (`songs`, `albums`, `artists`,
+     * `playlists`), so the loaded lists of that family are re-read. The oldest unseen event is
+     * dropped: the flow must never suspend the WS receive loop that emits it.
+     */
+    val libraryChanged: SharedFlow<String>
+
     /** Estimated phone clock, for [PlayerState.extrapolatedPositionMs]. */
     fun serverNowMs(): Long
 
