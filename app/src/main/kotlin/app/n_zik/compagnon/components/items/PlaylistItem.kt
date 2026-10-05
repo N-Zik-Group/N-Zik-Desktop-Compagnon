@@ -81,7 +81,12 @@ fun playlistThumbnails(firstTracks: List<Track>?, artworkTrackId: String?, sizeP
     }
 }
 
-/** Port of `ThumbnailRenderer` (`PlaylistItem.kt` 97): a 2×2 mosaic from 4 thumbnails, else the first one. */
+/**
+ * Port of `ThumbnailRenderer` (`PlaylistItem.kt` 97): a 2×2 mosaic from 4 thumbnails, else the first
+ * one. All decorative — no `contentDescription` (the playlist's name is the adjacent readable label;
+ * the phone's legacy tokens `corner.toString()` / "fullSizeRender" were developer leftovers, not
+ * accessibility text).
+ */
 @Composable
 fun BoxWithConstraintsScope.ThumbnailRenderer(
     thumbnails: List<ArtworkKey>,
@@ -94,14 +99,14 @@ fun BoxWithConstraintsScope.ThumbnailRenderer(
         FOUR_CORNERS.forEachIndexed { index, corner ->
             ImageCacheFactory.Thumbnail(
                 key = thumbnails[index],
-                contentDescription = corner.toString(),
+                contentDescription = null,
                 contentScale = contentScale,
                 modifier = Modifier.size(halfWidth, halfHeight)
                     .align(corner),
             )
         }
     } else if (thumbnails.isNotEmpty()) {
-        ImageCacheFactory.Thumbnail(thumbnails.first(), "fullSizeRender", contentScale)
+        ImageCacheFactory.Thumbnail(thumbnails.first(), null, contentScale)
     }
 }
 
