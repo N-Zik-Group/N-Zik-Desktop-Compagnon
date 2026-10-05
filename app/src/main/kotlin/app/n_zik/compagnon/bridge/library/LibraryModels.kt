@@ -43,6 +43,13 @@ data class Page<T>(
      * on every other route (the phone sends `JsonNull`) and on a ≤ 1.7.2 phone (it does not send it).
      */
     val sortMenu: List<String>? = null,
+    /**
+     * Since 1.8.0 (feature `library.toolbar`): the phone's effective Home Songs toolbar (content and
+     * order) of the chip behind `GET /library/songs` — its saved order kept to its tab's visible
+     * buttons (its hidden ones dropped, its locked ones always kept); `null` on every other route
+     * (the phone sends `JsonNull`) and on a phone before 1.8.0 (it does not send it).
+     */
+    val toolbar: List<String>? = null,
 )
 
 /**

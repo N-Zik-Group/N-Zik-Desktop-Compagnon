@@ -1,0 +1,282 @@
+name: Update Project Stats and Chart
+
+env:
+  TZ: Europe/Paris
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */2 * * *' # Every 2 hours
+
+permissions:
+  contents: write
+
+jobs:
+  update-card:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: Fetch Data and Update History
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 1. Fetch general repo data
+          REPO_DATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}")
+          STARS=$(echo "$REPO_DATA" | jq '.stargazers_count')
+          FORKS=$(echo "$REPO_DATA" | jq '.forks_count')
+
+          # 2. Fetch latest release data (including pre-releases)
+          LATEST_DATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/releases?per_page=1" | jq '.[0]')
+          if [ "$(echo "$LATEST_DATA" | jq -r 'type')" = "object" ]; then
+            LATEST_VERSION=$(echo "$LATEST_DATA" | jq -r '.tag_name')
+            LATEST_DOWNLOADS=$(echo "$LATEST_DATA" | jq '[.assets[].download_count] | add // 0')
+          else
+            # No release published yet: keep the card renderable instead of failing the run
+            LATEST_VERSION="no release yet"
+            LATEST_DOWNLOADS=0
+          fi
+
+          # 3. Fetch total downloads across all releases (handling pagination)
+          TOTAL_DOWNLOADS=0
+          PAGE=1
+          while true; do
+            PAGE_DATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100&page=$PAGE")
+            COUNT=$(echo "$PAGE_DATA" | jq 'length')
+            if [ "$COUNT" = "0" ] || [ "$COUNT" = "null" ]; then
+              break
+            fi
+            DL=$(echo "$PAGE_DATA" | jq '[.[].assets[].download_count] | add // 0')
+            TOTAL_DOWNLOADS=$((TOTAL_DOWNLOADS + DL))
+            PAGE=$((PAGE + 1))
+          done
+
+          # Format numbers for the card
+          format_number() {
+            local num=$1
+            if [ "$num" -ge 1000000 ]; then echo "$(echo "scale=1; $num/1000000" | bc)M";
+            elif [ "$num" -ge 1000 ]; then echo "$(echo "scale=1; $num/1000" | bc)k";
+            else echo "$num";
+            fi
+          }
+
+          TOTAL_FMT=$(format_number $TOTAL_DOWNLOADS)
+          LATEST_FMT=$(format_number $LATEST_DOWNLOADS)
+          STARS_FMT=$(format_number $STARS)
+          FORKS_FMT=$(format_number $FORKS)
+
+          # 4. History management (assets/stats/history.json)
+          mkdir -p assets/stats
+          [ -f assets/stats/history.json ] || echo '[]' > assets/stats/history.json
+          LAST_SAVED=$(jq '.[-1].downloads // empty' assets/stats/history.json)
+
+          # Save a new data point ONLY if the number changed since last time
+          if [ "$LAST_SAVED" != "$TOTAL_DOWNLOADS" ]; then
+            TIMESTAMP=$(date +"%Y-%m-%d %H:%M")
+            jq --arg time "$TIMESTAMP" --argjson dl "$TOTAL_DOWNLOADS" '. += [{"time": $time, "downloads": $dl}]' assets/stats/history.json > tmp.json && mv tmp.json assets/stats/history.json
+            echo "UPDATE_NEEDED=true" >> $GITHUB_ENV
+          else
+            echo "UPDATE_NEEDED=false" >> $GITHUB_ENV
+          fi
+
+          # 5. Generate the main stats card (always refreshed for safety)
+          cat > assets/stats/download-card.svg << EOF
+          <svg width="600" height="120" viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg">
+            <style>
+              .bg { fill: #ffffff; stroke: #e1e4e8; }
+              .text-title { fill: #2b3137; font-weight: 600; font-size: 15px; }
+              .text-label { fill: #586069; font-weight: 500; font-size: 11px; }
+              .text-value-1 { fill: #0366d6; font-weight: 700; font-size: 26px; }
+              .text-value-2 { fill: #6f42c1; font-weight: 700; font-size: 18px; }
+              .text-value-3 { fill: #e3b341; font-weight: 700; font-size: 18px; }
+              .text-sub { fill: #28a745; font-weight: 600; font-size: 13px; }
+              .text-sub-2 { fill: #586069; font-weight: 600; font-size: 13px; }
+              .line { stroke: #e1e4e8; }
+              
+              /* Dark Mode */
+              @media (prefers-color-scheme: dark) {
+                .bg { fill: #0d1117; stroke: #30363d; }
+                .text-title { fill: #c9d1d9; }
+                .text-label { fill: #8b949e; }
+                .text-value-1 { fill: #58a6ff; }
+                .text-value-2 { fill: #d2a8ff; }
+                .text-sub { fill: #3fb950; }
+                .text-sub-2 { fill: #8b949e; }
+                .line { stroke: #30363d; }
+              }
+              
+              /* Animations */
+              @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+              }
+              .animated { animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+              .delay-1 { animation-delay: 0.1s; }
+              .delay-2 { animation-delay: 0.2s; }
+              .delay-3 { animation-delay: 0.3s; }
+            </style>
+            <defs>
+              <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+                <feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity="0.05" />
+              </filter>
+            </defs>
+            <rect class="bg" width="600" height="120" rx="10" filter="url(#shadow)" stroke-width="1"/>
+            
+            <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
+              <text x="25" y="30" class="text-title animated">📊 N-Zik Compagnon Project Stats</text>
+              
+              <!-- Column 1 -->
+              <g class="animated delay-1">
+                <text x="35" y="65" class="text-label">TOTAL DOWNLOADS</text>
+                <text x="35" y="95" class="text-value-1">${TOTAL_FMT}</text>
+              </g>
+
+              <line x1="220" y1="45" x2="220" y2="100" class="line" stroke-width="1" />
+              
+              <!-- Column 2 -->
+              <g class="animated delay-2">
+                <text x="245" y="65" class="text-label">LATEST RELEASE</text>
+                <text x="245" y="85" class="text-value-2">${LATEST_VERSION}</text>
+                <text x="245" y="105" class="text-sub">📥 ${LATEST_FMT} downloads</text>
+              </g>
+
+              <line x1="420" y1="45" x2="420" y2="100" class="line" stroke-width="1" />
+              
+              <!-- Column 3 -->
+              <g class="animated delay-3">
+                <text x="445" y="65" class="text-label">COMMUNITY</text>
+                <text x="445" y="85" class="text-value-3">⭐ ${STARS_FMT}</text>
+                <text x="445" y="105" class="text-sub-2">🍽️ ${FORKS_FMT} forks</text>
+              </g>
+            </g>
+          </svg>
+          EOF
+
+      - name: Generate History Chart
+        if: env.UPDATE_NEEDED == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cat > plot_chart.py << 'PYEOF'
+          import json
+
+          with open('assets/stats/history.json', 'r') as f:
+              data = json.load(f)
+
+          if not data:
+              exit()
+
+          width, height, padding = 600, 160, 35
+          chart_w = width - 2 * padding
+          chart_h = height - 2 * padding
+
+          from datetime import datetime
+
+          values = [d['downloads'] for d in data]
+          min_v, max_v = min(values), max(values)
+          if min_v == max_v: max_v += 1
+          range_v = max_v - min_v
+
+          times = [datetime.strptime(d['time'], '%Y-%m-%d %H:%M').timestamp() for d in data]
+          min_t, max_t = min(times), max(times)
+          range_t = max_t - min_t if max_t > min_t else 1
+
+          points = []
+          for i, d in enumerate(data):
+              t = datetime.strptime(d['time'], '%Y-%m-%d %H:%M').timestamp()
+              x = padding + ((t - min_t) / range_t) * chart_w
+              y = padding + chart_h - ((d['downloads'] - min_v) / range_v) * chart_h
+              points.append((x, y))
+
+          # Smooth Bezier Path Generation
+          def get_bezier_path(pts):
+              if len(pts) < 2:
+                  return f"M {pts[0][0]},{pts[0][1]}"
+              path = [f"M {pts[0][0]},{pts[0][1]}"]
+              for i in range(len(pts) - 1):
+                  x0, y0 = pts[i]
+                  x1, y1 = pts[i+1]
+                  cx = (x0 + x1) / 2
+                  path.append(f"C {cx},{y0} {cx},{y1} {x1},{y1}")
+              return " ".join(path)
+
+          path_d = get_bezier_path(points)
+          polygon_d = f"{path_d} L {points[-1][0]},{height - padding} L {points[0][0]},{height - padding} Z"
+
+          def fmt(n):
+              if n >= 1000000: return f"{n/1000000:.1f}M"
+              if n >= 1000: return f"{n/1000:.1f}k"
+              return str(n)
+
+          svg = f'''<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">
+            <style>
+              .bg {{ fill: #ffffff; stroke: #e1e4e8; }}
+              .text-title {{ fill: #2b3137; font-weight: 600; font-size: 15px; }}
+              .chart-line {{ stroke: #0366d6; fill: none; }}
+              .chart-dot {{ fill: #ffffff; stroke: #0366d6; }}
+              .grad-start {{ stop-color: #0366d6; stop-opacity: 0.4; }}
+              .grad-end {{ stop-color: #0366d6; stop-opacity: 0.0; }}
+              
+              @media (prefers-color-scheme: dark) {{
+                .bg {{ fill: #0d1117; stroke: #30363d; }}
+                .text-title {{ fill: #c9d1d9; }}
+                .chart-line {{ stroke: #58a6ff; }}
+                .chart-dot {{ fill: #0d1117; stroke: #58a6ff; }}
+                .grad-start {{ stop-color: #58a6ff; stop-opacity: 0.3; }}
+                .grad-end {{ stop-color: #58a6ff; stop-opacity: 0.0; }}
+              }}
+              
+              @keyframes pulse {{
+                0% {{ r: 4; stroke-width: 2.5; }}
+                50% {{ r: 5.5; stroke-width: 4; stroke-opacity: 0.6; }}
+                100% {{ r: 4; stroke-width: 2.5; }}
+              }}
+              .dot-pulse {{ animation: pulse 2s infinite; }}
+              @keyframes draw {{
+                from {{ stroke-dashoffset: 1000; }}
+                to {{ stroke-dashoffset: 0; }}
+              }}
+              .animated-line {{
+                stroke-dasharray: 1000;
+                stroke-dashoffset: 1000;
+                animation: draw 1.5s ease-out forwards;
+              }}
+            </style>
+            <defs>
+              <filter id="shadow2" x="-5%" y="-5%" width="110%" height="110%">
+                <feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity="0.05" />
+              </filter>
+              <linearGradient id="fillGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" class="grad-start"/>
+                <stop offset="100%" class="grad-end"/>
+              </linearGradient>
+            </defs>
+            <rect class="bg" width="{width}" height="{height}" rx="10" filter="url(#shadow2)" stroke-width="1"/>
+            <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
+              <text x="25" y="30" class="text-title">📈 Download Growth (Current: {fmt(max_v)})</text>
+            </g>
+
+            <!-- Area under the line -->
+            <path fill="url(#fillGrad)" d="{polygon_d}" />
+
+            <!-- Main curve -->
+            <path d="{path_d}" class="chart-line animated-line" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+
+            <!-- Bright endpoint dot -->
+            <circle cx="{points[-1][0]:.1f}" cy="{points[-1][1]:.1f}" r="4" class="chart-dot dot-pulse" stroke-width="2.5" />
+          </svg>'''
+
+          with open('assets/stats/chart.svg', 'w') as f:
+              f.write(svg)
+          PYEOF
+
+          python3 plot_chart.py
+
+      - name: Commit and Push Updates
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "chore: update stats and chart [skip ci]"
+          file_pattern: assets/stats/download-card.svg assets/stats/chart.svg assets/stats/history.json

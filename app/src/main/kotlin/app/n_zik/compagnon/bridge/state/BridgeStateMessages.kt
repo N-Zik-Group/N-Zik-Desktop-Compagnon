@@ -101,6 +101,9 @@ object SessionContract {
 
     /** §5 / §10.1 (since 1.7.3): the `sortMenu` of `GET /library/songs`: the phone's effective sort menu of the chip. */
     const val FEATURE_LIBRARY_SORT_MENU = "library.sortMenu"
+
+    /** §5 / §10.1 (since 1.8.0): the `toolbar` of `GET /library/songs`: the phone's effective Home Songs toolbar of the chip. */
+    const val FEATURE_LIBRARY_TOOLBAR = "library.toolbar"
 }
 
 /** `RepeatMode` (contract §1.1); an unknown value reads as [Off]. */

@@ -217,6 +217,35 @@ class PagedListTest {
     }
 
     @Test
+    fun `the toolbar rides on the pages and survives a page without one`() = runTest {
+        var withToolbar = true
+        val paged = list(answer = {
+            LibraryResult.Ok(
+                Page(
+                    (it.offset until minOf(it.offset + it.limit, 230)).map { i -> "x:$i" },
+                    230,
+                    it.offset,
+                    it.limit,
+                    toolbar = if (withToolbar) listOf("locator", "search") else null,
+                ),
+            )
+        })
+        assertNull(paged.state.value.toolbar)
+        paged.loadMore()
+        runCurrent()
+        assertEquals(listOf("locator", "search"), paged.state.value.toolbar)
+
+        withToolbar = false
+        paged.loadMore()
+        runCurrent()
+        assertEquals(listOf("locator", "search"), paged.state.value.toolbar, "a later page without a toolbar keeps the earlier one")
+
+        paged.reload()
+        runCurrent()
+        assertNull(paged.state.value.toolbar, "a reload forgets the pages, the toolbar among them")
+    }
+
+    @Test
     fun `an empty page ends the list`() = runTest {
         val paged = list(answer = { LibraryResult.Ok(Page(emptyList(), 50, it.offset, it.limit)) })
         paged.loadMore()
