@@ -56,14 +56,14 @@
 
 ## 📦 Available Builds
 
-- **Windows Installer** (`.exe`) – Per-user install (no administrator prompt by default) with Start menu + desktop shortcuts and an uninstall entry; a newer version upgrades it in place.
-- **Windows Portable** – The distributable app folder, no install needed (produced alongside the installer).
-- **Debian package** (`.deb`) – Debian / Ubuntu / Mint: `apt install ./<file>.deb`.
-- **RPM package** (`.rpm`) – Fedora / openSUSE / Rocky: `dnf` or `zypper` `install ./<file>.rpm`.
-- **Linux Portable** (`.zip`) – The app-image, unzip and run — the same bundle the AUR release entry consumes.
-- **AUR** – `n-zik-desktop-compagnon` (the latest release) and `n-zik-desktop-compagnon-git` (always the latest of `main` — needs JDK 21 to build).
+- **Windows Installer** (`.exe`): Per-user install (no administrator prompt by default) with Start menu + desktop shortcuts and an uninstall entry; a newer version upgrades it in place.
+- **Windows Portable**: The distributable app folder, no install needed (produced alongside the installer).
+- **Debian package** (`.deb`): Debian / Ubuntu / Mint - `apt install ./<file>.deb`.
+- **RPM package** (`.rpm`): Fedora / openSUSE / Rocky - `dnf` or `zypper` `install ./<file>.rpm`.
+- **Linux Portable** (`.zip`): The app-image, unzip and run - the same bundle the AUR release entry consumes.
+- **AUR**: `n-zik-desktop-compagnon` (the latest release) and `n-zik-desktop-compagnon-git` (always the latest of `main` - needs JDK 21 to build).
 
-> ℹ️ The builds are published as **GitHub release files only** — no self-hosted repository. On Linux, VLC is a **declared system dependency** of the packages (never bundled): the package manager pulls it in automatically and the app plays through the system libvlc. Every install ships an application-menu entry (`.desktop` + icon) and uninstalls cleanly, leaving your data (pairing, settings, audio cache) alone.
+> ℹ️ The builds are published as **GitHub release files only** - no self-hosted repository. On Linux, VLC is a **declared system dependency** of the packages (never bundled): the package manager pulls it in automatically and the app plays through the system libvlc. Every install ships an application-menu entry (`.desktop` + icon) and uninstalls cleanly, leaving your data (pairing, settings, audio cache) alone.
 
 ---
 
@@ -89,7 +89,7 @@ Join the N-Zik Discord:
 
 # 🎧 Features
 
-- 🔗 **QR or Manual Pairing**: Pair once with the QR code shown by the app (or the phone's IP, port and code by hand); the pairing is remembered across restarts, and the device token lives in the system secret store — the Windows Credential Manager, or the Linux keyring (in memory only, for the session, on a Linux machine without a keyring daemon).
+- 🔗 **QR or Manual Pairing**: Pair once with the QR code shown by the app (or the phone's IP, port and code by hand); the pairing is remembered across restarts, and the device token lives in the system secret store - the Windows Credential Manager, or the Linux keyring (in memory only, for the session, on a Linux machine without a keyring daemon).
 - 📚 **The Phone's Library**: Songs (search, filters, sorts), Artists, Albums and Playlists, switched from the floating bar at the bottom, with live refresh of the phone's lists.
 - ⏯️ **Unified Player**: A mini player above the navigation bar opens the full player: rotating cover animation, colours that follow the current cover, seek, speed, repeat and shuffle.
 - 📋 **Queue**: Opens from the player or the mini player: jump to a track, move it, remove it, clear the queue.
@@ -106,7 +106,7 @@ For QR pairing, the phone connects back to a temporary listener opened by this a
 
 If the phone has not reached the PC within 60 seconds, or if no local network address is found, the app switches to manual pairing: enter the IP address, port and 6-character code shown on the phone's "Manage server" screen. The QR code stays available.
 
-The device token is stored in the platform secret store: the Windows Credential Manager (generic credential "N-Zik Desktop Compagnon") on Windows, and the keyring on Linux (GNOME Secret Service: `libsecret` + a keyring daemon such as `gnome-keyring`). On a Linux machine without a keyring daemon, the token is kept in memory for the session only, with a visible note on the paired screen — pair again after a restart. The other pairing details live in `pairing.json` (`%APPDATA%\N-Zik Desktop Compagnon\` on Windows, `~/N-Zik Desktop Compagnon/` on Linux). "Forget this phone", or revoking this PC from the phone, removes both.
+The device token is stored in the platform secret store: the Windows Credential Manager (generic credential "N-Zik Desktop Compagnon") on Windows, and the keyring on Linux (GNOME Secret Service: `libsecret` + a keyring daemon such as `gnome-keyring`). On a Linux machine without a keyring daemon, the token is kept in memory for the session only, with a visible note on the paired screen - pair again after a restart. The other pairing details live in `pairing.json` (`%APPDATA%\N-Zik Desktop Compagnon\` on Windows, `~/N-Zik Desktop Compagnon/` on Linux). "Forget this phone", or revoking this PC from the phone, removes both.
 
 # 🔊 Sound on the PC
 
@@ -210,7 +210,7 @@ Launch the app on Windows:
 gradlew.bat :app:run
 ```
 
-The app also runs on Linux: `./gradlew :app:run`. Pairing works there too (keyring, or session-only without a keyring daemon); "Sound on the PC" uses the **system libvlc** — install VLC (e.g. `sudo apt install vlc`) and local playback works; when it is missing, the app shows the install command for your distribution.
+The app also runs on Linux: `./gradlew :app:run`. Pairing works there too (keyring, or session-only without a keyring daemon); "Sound on the PC" uses the **system libvlc** - install VLC (e.g. `sudo apt install vlc`) and local playback works; when it is missing, the app shows the install command for your distribution.
 
 ## 🪟 Windows installer
 
@@ -222,9 +222,9 @@ gradlew.bat :app:packageExe
 
 The installer (`.exe`, written under `app\build\compose\binaries\`) installs to `%LOCALAPPDATA%\Programs\N-Zik Desktop Compagnon` **without an administrator prompt by default** (picking a protected folder still elevates), adds Start menu + desktop shortcuts, and registers the uninstall entry under **N-Zik Desktop Compagnon**. It needs no extra tool on the build machine: the build downloads its packaging toolset (WiX) automatically on first use.
 
-Installing a newer version on top of an existing one **upgrades it in place** — the same frozen upgrade identifier is baked into every build. The user data in `%APPDATA%\N-Zik Desktop Compagnon\` (pairing, settings, audio cache) is left untouched by an upgrade or an uninstall, and the portable build is produced separately and is not affected.
+Installing a newer version on top of an existing one **upgrades it in place** - the same frozen upgrade identifier is baked into every build. The user data in `%APPDATA%\N-Zik Desktop Compagnon\` (pairing, settings, audio cache) is left untouched by an upgrade or an uninstall, and the portable build is produced separately and is not affected.
 
-> The installer is **not code-signed yet** (signing is deferred, pending a code-signing certificate — see the release cadence): Windows SmartScreen shows its usual "publisher not verified" notice on the first run of each new version. Every GitHub release therefore publishes the installer's **SHA-256 checksum** so you can verify your download (PowerShell: `Get-FileHash -Algorithm SHA256 "N-Zik Desktop Compagnon-x.y.z.exe"`; the Linux release assets — `.deb`, `.rpm` and portable zip — are published with their **SHA-256 checksums** as well), and the source stays public so any build is reproducible and comparable.
+> The installer is **not code-signed yet** (signing is deferred, pending a code-signing certificate - see the release cadence): Windows SmartScreen shows its usual "publisher not verified" notice on the first run of each new version. Every GitHub release therefore publishes the installer's **SHA-256 checksum** so you can verify your download (PowerShell: `Get-FileHash -Algorithm SHA256 "N-Zik Desktop Compagnon-x.y.z.exe"`; the Linux release assets - `.deb`, `.rpm` and portable zip - are published with their **SHA-256 checksums** as well), and the source stays public so any build is reproducible and comparable.
 
 ## 🐧 Linux packages
 
@@ -245,11 +245,11 @@ yay -S n-zik-desktop-compagnon-git    # always the latest of main (needs JDK 21 
 
 `yay` is an [AUR helper](https://aur.archlinux.org/packages/yay/) (itself an AUR package): without one, build the entry from its PKGBUILD with `makepkg -si`.
 
-**No VLC to install:** the packages declare `vlc` as a dependency, so the package manager pulls it in automatically, and the app plays through the system libvlc. Installing puts the app in `/opt/n-zik-desktop-compagnon/`, adds a `.desktop` entry to the application menu (with the N-Zik icon) and a clean uninstall through the package manager. Your data — pairing, settings and audio cache in `~/N-Zik Desktop Compagnon/`, plus the keyring token — is left alone by an upgrade or an uninstall.
+**No VLC to install:** the packages declare `vlc` as a dependency, so the package manager pulls it in automatically, and the app plays through the system libvlc. Installing puts the app in `/opt/n-zik-desktop-compagnon/`, adds a `.desktop` entry to the application menu (with the N-Zik icon) and a clean uninstall through the package manager. Your data - pairing, settings and audio cache in `~/N-Zik Desktop Compagnon/`, plus the keyring token - is left alone by an upgrade or an uninstall.
 
-> **Minimal Arch installs:** the app needs X11 client libraries and a font to launch — a bare Arch system does not ship them, so a first launch may need a few extra packages (the full list is in `rules/BUILD.md`, "Live-install matrix").
+> **Minimal Arch installs:** the app needs X11 client libraries and a font to launch - a bare Arch system does not ship them, so a first launch may need a few extra packages (the full list is in `rules/BUILD.md`, "Live-install matrix").
 
-> The Linux packages are **not code-signed yet** (signing is deferred, pending a self-hosted repository — see the release cadence): `apt install ./x.deb` shows the usual "unauthenticated" warning for a package installed from a file. The source is public, so any build can be rebuilt and compared against this one — the packages are not byte-reproducible (the `.deb` embeds build timestamps), but a rebuild ships the same files and behavior.
+> The Linux packages are **not code-signed yet** (signing is deferred, pending a self-hosted repository - see the release cadence): `apt install ./x.deb` shows the usual "unauthenticated" warning for a package installed from a file. The source is public, so any build can be rebuilt and compared against this one - the packages are not byte-reproducible (the `.deb` embeds build timestamps), but a rebuild ships the same files and behavior.
 
 ---
 
