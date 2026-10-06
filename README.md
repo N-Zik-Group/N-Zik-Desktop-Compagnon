@@ -190,7 +190,7 @@ Join us on Crowdin!
 - JDK 21 (used by the Gradle toolchain to build and run)
 - N-Zik on an Android phone connected to the same Wi-Fi network
 
-## Build and run
+## 🏃 Build and run
 
 Compile and run the tests. On Windows: `gradlew.bat`. On Linux: the `build.sh` script.
 
