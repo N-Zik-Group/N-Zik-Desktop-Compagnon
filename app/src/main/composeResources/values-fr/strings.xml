@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_subtitle">Companion for N-Zik</string>
-    <string name="starting">Démarrage de…</string>
+    <string name="starting">C\'est parti…</string>
     <!-- QR pairing -->
     <string name="pair_title">Pair with your phone</string>
     <string name="pair_qr_description">In N-Zik on your phone, open Manage server, start pairing, then tap Scan and point the camera at this code.</string>
@@ -33,7 +33,7 @@
     <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
     <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
     <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
-    <string name="error_storage_failed">The pairing could not be saved in the Windows Credential Manager.</string>
+    <string name="error_storage_failed">L\'appairage n\'a pas pu être enregistré sur cet ordinateur.</string>
     <string name="error_listener_failed">The pairing listener could not be opened. Pair manually below.</string>
     <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
     <string name="error_unknown_code">no code</string>
@@ -226,10 +226,10 @@
     <string name="library_none">The phone shares no library with this PC.</string>
     <string name="library_refresh">Actualiser</string>
     <string name="library_back">Back</string>
-    <string name="library_empty">Nothing here.</string>
-    <string name="library_error_unreachable">The phone could not be reached.</string>
-    <string name="library_not_found">Not found on the phone. It may have been deleted.</string>
-    <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
+    <string name="library_empty">Il n\'y a rien ici.</string>
+    <string name="library_error_unreachable">Le téléphone était injoignable.</string>
+    <string name="library_not_found">Introuvable sur le téléphone. Il a peut-être été supprimé.</string>
+    <string name="library_tracks_failed">Les pistes n\'ont pas pu être lues : %1$s</string>
     <string name="queue_open">File d\'attente</string>
     <!-- Player, queue, header and theme (phase 3): keys and texts of the phone (N-Zik strings.xml) -->
     <string name="confirm">Confirmer</string>
@@ -306,14 +306,14 @@
     <string name="turn_off">Desactivé</string>
     <string name="unlimited">Illimité</string>
     <string name="custom">Personnalisé</string>
-    <string name="used">used</string>
+    <string name="used">utilisé</string>
     <string name="set_custom_cache">Définir un cache personnalisé</string>
     <string name="enter_value_in_mb">Entrez la valeur en Mo</string>
     <string name="do_you_really_want_to_delete_cache">Voulez-vous vraiment vider le cache ?</string>
     <string name="playback_blocked_match_first">Lecture bloquée, veuillez d\'abord faire correspondre</string>
     <string name="unmatched_song">Chanson sans correspondance</string>
     <string name="value_cannot_be_empty">La valeur ne peut pas être vide</string>
-    <string name="value_must_be_greater_than">Value must be greater than</string>
+    <string name="value_must_be_greater_than">La valeur doit être supérieure à</string>
     <string name="filter_by">Filtrer par</string>
     <string name="rewind_filter_month">Mois</string>
     <string name="rewind_filter_year">Année</string>
@@ -324,12 +324,12 @@
     <string name="update_playlist_browse_id">Modifier l\'identifiant de navigation de la playlist</string>
     <string name="cannot_bookmark_special_playlist">Impossible d\'ajouter à ses favoris la playlist « Titres ou épisodes appréciés »</string>
     <!-- Compagnon only: the PC as an audio output -->
-    <string name="this_pc">This PC</string>
-    <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
-    <string name="local_playback_not_found">This song is no longer on your phone.</string>
+    <string name="this_pc">Cet ordinateur</string>
+    <string name="local_playback_unavailable">Le son n\'est pas disponible sur cet ordinateur : le lecteur VLC intégré n\'a pas pu être chargé.</string>
+    <string name="local_playback_not_found">Ce titre ne se trouve plus sur votre téléphone.</string>
     <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
     <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
     <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
     <string name="local_playback_unreachable">Your phone did not answer.</string>
-    <string name="local_playback_failed">This song could not be played on this PC.</string>
+    <string name="local_playback_failed">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
 </resources>
