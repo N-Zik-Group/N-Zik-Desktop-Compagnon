@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="app_subtitle">Guide d\'accompagnement pour N-Zik</string>
     <string name="starting">C\'est parti…</string>
     <!-- QR pairing -->
-    <string name="pair_title">Pair with your phone</string>
-    <string name="pair_qr_description">In N-Zik on your phone, open Manage server, start pairing, then tap Scan and point the camera at this code.</string>
-    <string name="pair_device_name">Name of this PC</string>
-    <string name="pair_device_name_invalid">Enter a name of 1 to 64 characters.</string>
+    <string name="pair_title">Appairez-le avec votre téléphone</string>
+    <string name="pair_qr_description">Dans l\'application N-Zik sur votre téléphone, ouvrez « Gérer le serveur », lancez le couplage, puis appuyez sur « Scanner » et pointez l\'appareil photo vers ce code.</string>
+    <string name="pair_device_name">Nom de cet ordinateur</string>
+    <string name="pair_device_name_invalid">Saisissez un nom comportant entre 1 et 64 caractères.</string>
     <string name="pair_qr_waiting">Waiting for your phone…</string>
     <string name="pair_qr_preparing">Preparing the QR code…</string>
     <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
@@ -17,32 +17,32 @@
     <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
     <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
     <!-- Manual pairing -->
-    <string name="manual_title">Manual pairing</string>
+    <string name="manual_title">Appairage manuel</string>
     <string name="manual_description">On your phone, Manage server shows the IP address, the port and a 6-character code.</string>
-    <string name="manual_ip">Phone IP address</string>
+    <string name="manual_ip">Adresse IP du téléphone</string>
     <string name="manual_port">Port</string>
     <string name="manual_code">Code d\'appariement</string>
-    <string name="manual_ip_invalid">Enter an IPv4 address, for example 192.168.1.14.</string>
-    <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
-    <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
+    <string name="manual_ip_invalid">Saisissez une adresse IPv4, par exemple 192.168.1.14.</string>
+    <string name="manual_port_invalid">Entrez un numéro de port compris entre 1 et 65 535.</string>
+    <string name="manual_code_invalid">Le code comporte 6 caractères, par exemple ABC-DEF.</string>
     <string name="manual_submit">Appairer</string>
     <!-- Validation -->
-    <string name="validating">Pairing with your phone…</string>
+    <string name="validating">Appairage avec votre téléphone…</string>
     <!-- Errors -->
-    <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
-    <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
+    <string name="error_code_rejected">Code invalide ou périmé. Vérifiez le code sur votre téléphone et réessayez.</string>
+    <string name="error_rate_limited">Trop de tentatives. Veuillez réessayer dans %1$d s.</string>
     <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
     <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
     <string name="error_storage_failed">L\'appairage n\'a pas pu être enregistré sur cet ordinateur.</string>
-    <string name="error_listener_failed">The pairing listener could not be opened. Pair manually below.</string>
+    <string name="error_listener_failed">Impossible d\'ouvrir le récepteur d\'appairage. Effectuez l\'appairage manuellement ci-dessous.</string>
     <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
     <string name="error_unknown_code">no code</string>
     <string name="dismiss">Ignorer</string>
     <!-- Paired -->
     <string name="paired_title">Paired</string>
     <string name="paired_with">Associé à %1$s</string>
-    <string name="paired_as">This PC appears as %1$s on the phone.</string>
-    <string name="paired_checking">Checking the connection…</string>
+    <string name="paired_as">Cet ordinateur apparaît sous le nom de %1$s sur le téléphone.</string>
+    <string name="paired_checking">Vérification de la connexion…</string>
     <string name="paired_ok">The phone is reachable.</string>
     <string name="paired_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
     <string name="paired_other_active_unknown">another device</string>
@@ -56,14 +56,14 @@
     <string name="unreachable_title">Phone unreachable</string>
     <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
     <string name="unreachable_edit_ip">Edit IP</string>
-    <string name="unreachable_edit_ip_text">Keep the pairing, change the phone’s IP address only</string>
+    <string name="unreachable_edit_ip_text">Conservez l\'appairage, modifiez uniquement l\'adresse IP du téléphone</string>
     <string name="unreachable_port_kept">Port %1$d (kept)</string>
-    <string name="unreachable_save_ip">Save and retry</string>
+    <string name="unreachable_save_ip">Enregistrer et réessayer</string>
     <string name="cancel">Annuler</string>
     <!-- Revoked -->
-    <string name="revoked_title">Pairing revoked</string>
-    <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
-    <string name="revoked_pair_again">Pair again</string>
+    <string name="revoked_title">Appairage annulé</string>
+    <string name="revoked_description">Cet ordinateur a été supprimé de la liste des appareils appairés avec le téléphone. Appairez-le à nouveau pour continuer à l\'utiliser.</string>
+    <string name="revoked_pair_again">Re-appairer</string>
     <!-- Main window -->
     <string name="phone_panel_title">Phone</string>
     <string name="phone_panel_open">Phone: %1$s</string>
