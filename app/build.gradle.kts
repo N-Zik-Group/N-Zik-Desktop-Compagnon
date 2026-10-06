@@ -1,3 +1,4 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -14,6 +15,12 @@ plugins {
 kotlin {
     jvmToolchain(21)
 }
+
+// The app version (version catalog, N-Zik Android convention): it feeds the portable distributable
+// and the Windows installer alike. `nzikVersionName` is the jpackage app version, `nzikVersionCode`
+// stays in the catalog for release discipline only (not read by the build). Bumped manually on each
+// release (this repo has no version-bump machinery).
+version = libs.versions.nzikVersionName.get()
 
 // The embedded VLC runtime is Windows-only: on a non-Windows host the app plays through the system libvlc
 // (spec `spec-linux-system-libvlc`), so the win64 zip is neither downloaded nor extracted.
@@ -55,6 +62,10 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    // The frozen installation identity (version catalog `nzikUpgradeUuid` / `nzikPerUser`), so
+    // `UpgradeIdentityTest` fails if the upgrade UUID or the per-user flag is ever changed.
+    systemProperty("install.upgradeUuid", libs.versions.nzikUpgradeUuid.get())
+    systemProperty("install.perUser", libs.versions.nzikPerUser.get().toBoolean().toString())
     // Packaging trial of story 12 (opt-in): `gradlew test -PvlcTrial=<directory of audio samples>`.
     providers.gradleProperty("vlcTrial").orNull?.let { media ->
         check(isWindowsHost) { "The VLC packaging trial (-PvlcTrial) is Windows-only: the embedded runtime is not built elsewhere" }
@@ -201,12 +212,47 @@ val extractVlc = tasks.register<Sync>("extractVlc") {
     }
 }
 
+// The app icon (committed binary, like `ic_banner2.png`): it rides in the installer, the app exe
+// and the shortcuts. Pinned to the repository root so the path stays valid if the module moves.
+val installerIcon = rootProject.file("assets/design/icon.ico")
+
 compose.desktop {
     application {
         mainClass = "app.n_zik.compagnon.MainKt"
         nativeDistributions {
+            // Windows installer: `gradlew.bat :app:packageExe` — jpackage `--type exe`, a
+            // self-extracting installer wrapping the embedded MSI, compiled by the WiX toolset that
+            // the Compose plugin downloads itself (`downloadWix`/`unzipWix` on the root project).
+            // The portable `createDistributable` image is produced separately and is not affected.
+            targetFormats(TargetFormat.Exe)
+
+            // Display identity of the app (version catalog, N-Zik Android convention): installer
+            // name, Start menu group and the Control-Panel (uninstall) entry.
+            packageName = libs.versions.nzikPackageName.get()
+            description = "Desktop companion for N-Zik: control your phone's library and playback from a large screen, and listen on your computer."
+            vendor = "N-Zik Group"
+            copyright = "Copyright (C) 2026 N-Zik Group"
+
+            windows {
+                // Per-user install without an elevation prompt: the app data live in %APPDATA% and
+                // the Windows Credential Manager (both per-user), so a future in-app updater never
+                // needs admin rights.
+                perUserInstall = libs.versions.nzikPerUser.get().toBoolean()
+                dirChooser = true
+                menu = true
+                menuGroup = "N-Zik"
+                shortcut = true
+                // FROZEN upgrade identity of the installation (version catalog `nzikUpgradeUuid`) —
+                // NEVER change that GUID. jpackage passes it (`--win-upgrade-uuid`) to the installer
+                // build, so every future installer (and the deferred in-app updater, which re-launches
+                // the installer silently) recognizes this installation and upgrades it in place.
+                // Pinned by `UpgradeIdentityTest`.
+                upgradeUuid = libs.versions.nzikUpgradeUuid.get()
+                iconFile.set(installerIcon)
+            }
+
             // build/vlc-runtime/windows-x64/vlc → <compose.application.resources.dir>/vlc, under
-            // `run` as in `createDistributable`.
+            // `run`, `createDistributable` and the installer (same jpackage image).
             appResourcesRootDir.set(vlcRuntimeRoot)
         }
     }

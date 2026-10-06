@@ -1,6 +1,6 @@
 # Build & Test Rules — N-Zik Desktop Compagnon
 
-**Version:** 1.0.0 | **Last updated:** 2026-10-05
+**Version:** 1.0.0 | **Last updated:** 2026-10-06
 
 ## Gradle Version Catalog
 
@@ -25,6 +25,7 @@ gradlew.bat :app:test                                      # Tests only
 gradlew.bat :app:test --tests "app.n_zik.compagnon.PagedListTest"   # Single test class
 gradlew.bat :app:run                                       # Launch the app
 gradlew.bat clean build                                    # Clean + build
+gradlew.bat :app:packageExe                                # Windows installer (see "Windows Installer" below)
 ```
 
 > **Windows:** `gradlew.bat`, run from the repo root `N-Zik-Desktop-Compagnon/`. **Linux:** `./gradlew` (or `build.sh`) — local playback uses the **system libvlc** (VLC must be installed, e.g. `sudo apt install vlc`; the app shows the right package command per distro via `/etc/os-release`). The workspace root (the parent of `N-Zik-Desktop-Compagnon/`, where `_bmad/` lives) is **not** a git/gradle project.
@@ -78,6 +79,19 @@ Audio is played by vlcj 4.12.1 on an **embedded copy of VLC 3.0.24** — no VLC 
 ### Packaging trial (opt-in)
 
 `gradlew.bat test -PvlcTrial=<directory of audio samples>` runs `VlcRuntimeTrialTest`: it plays every sample from a file and over HTTP with the embedded runtime and prints the libvlc modules used. Use it when touching the VLC plugin list or the audio path; it is OFF by default (the task only activates with `-PvlcTrial`).
+
+## Windows Installer
+
+`gradlew.bat :app:packageExe` builds the Windows installer (spec `spec-windows-installer`) into `app/build/compose/binaries/` (gitignored — never committed).
+
+- **What it is:** jpackage `--type exe` — a self-extracting `.exe` wrapping the embedded MSI. The embedded VLC runtime goes in exactly as in the portable build (same jpackage image, same `compose.application.resources.dir` layout).
+- **No tool to install on the build machine:** the Compose plugin downloads the WiX 3.11 toolset itself (`downloadWix`/`unzipWix` on the root project; the zip is kept in the Gradle user home). Set the `WIX_PATH` environment variable to a local WiX directory to use one instead.
+- **Windows host only:** on a non-Windows host the task is disabled by the plugin (OS incompatible) and `build` never builds the installer — the build stays green with no packaging tool at all.
+- **Per-user, no UAC by default** (`perUserInstall` + `dirChooser` in `app/build.gradle.kts`): installs to `%LOCALAPPDATA%\Programs\N-Zik Desktop Compagnon` without an elevation prompt. (With `dirChooser`, a user who deliberately picks a protected folder — e.g. `C:\Program Files` — still gets a UAC prompt; the default location never does.) This matches the data model (`%APPDATA%\N-Zik Desktop Compagnon\` + Windows Credential Manager, both per-user) and a future in-app updater will need no admin rights.
+- **Shortcuts + uninstall entry:** Start menu (group `N-Zik`) and desktop shortcut; the Control-Panel entry is the catalog's `nzikPackageName` with the version `nzikVersionName`.
+- **Upgrade:** `nzikUpgradeUuid` in `gradle/libs.versions.toml` is **FROZEN — never change this GUID** (pinned by `UpgradeIdentityTest`). It is the identity of the installation: every future installer (and the deferred in-app updater, which re-launches the installer silently) upgrades an existing install in place, and user data in `%APPDATA%\N-Zik Desktop Compagnon\` survives upgrade and uninstall. **The version must always strictly increase** (`nzikVersionName`, e.g. `0.0.1` → `0.0.2`): an MSI upgrade only applies when the incoming version is greater than the installed one, so a lower or equal version is refused.
+- **Version / name:** the app's identity lives in the version catalog (`gradle/libs.versions.toml`, N-Zik Android convention): `nzikPackageName` (display name) and `nzikVersionName` (the jpackage app version, read by `version` in `app/build.gradle.kts`) — the single source in the build, portable distributable and installer alike. `nzikVersionCode` stays in the catalog for release discipline only; the build never reads it. `nzikUpgradeUuid` / `nzikPerUser` are the frozen installation identity (never bumped; see **Upgrade** above). Bumped manually on each release — there is no version-bump machinery in this repo.
+- **Icon:** `assets/design/icon.ico` (committed binary, like `ic_banner2.png`) — referenced by `windows.iconFile`, rides in the installer, the app exe and the shortcuts.
 
 ## Commit Convention
 

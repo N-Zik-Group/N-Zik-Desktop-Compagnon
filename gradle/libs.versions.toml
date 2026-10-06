@@ -1,4 +1,10 @@
 [versions]
+nzikPackageName = "N-Zik Desktop Compagnon"
+nzikVersionCode = "1"
+nzikVersionName = "0.0.1"
+# FROZEN installation identity — NEVER change (the deferred in-app updater's foundation); pinned by UpgradeIdentityTest.
+nzikUpgradeUuid = "da55e7af-5c5a-4d1e-841e-bb2646046bc2"
+nzikPerUser = "true"
 kotlin = "2.4.20"
 compose-plugin = "1.13.0-alpha01"
 compose-material3 = "1.13.0-alpha01"

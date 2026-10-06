@@ -2,6 +2,8 @@ package app.n_zik.compagnon
 
 import app.n_zik.compagnon.components.theme.robotoFontFamily
 import app.n_zik.compagnon.components.theme.materialTypographyOf
+import app.n_zik.compagnon.generated.resources.Res
+import app.n_zik.compagnon.generated.resources.app_icon
 import androidx.compose.material3.ripple
 import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.LocalRippleConfiguration
@@ -29,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import org.jetbrains.compose.resources.painterResource
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
 import app.n_zik.compagnon.bridge.BridgeSession
@@ -57,6 +60,7 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title = AppInfo.NAME,
+        icon = painterResource(Res.drawable.app_icon),
         state = rememberWindowState(width = 1100.dp, height = 800.dp),
         onPreviewKeyEvent = { event -> isBackKey(event) && backDispatcher.dispatch() },
     ) {

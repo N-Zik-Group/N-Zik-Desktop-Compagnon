@@ -203,6 +203,18 @@ gradlew.bat :app:run
 
 The app also runs on Linux: `./gradlew :app:run`. Pairing works there too (keyring, or session-only without a keyring daemon); "Sound on the PC" uses the **system libvlc** — install VLC (e.g. `sudo apt install vlc`) and local playback works; when it is missing, the app shows the install command for your distribution.
 
+## Windows installer
+
+Alongside the portable build, the app ships as a Windows installer:
+
+```bat
+gradlew.bat :app:packageExe
+```
+
+The installer (`.exe`, written under `app\build\compose\binaries\`) installs **per user — no administrator prompt by default** (picking a protected folder still elevates) — to `%LOCALAPPDATA%\Programs\N-Zik Desktop Compagnon`, adds Start menu and desktop shortcuts, and registers an uninstall entry under **N-Zik Desktop Compagnon**. It needs no extra tool on the build machine: the build downloads its packaging toolset (WiX) automatically on first use.
+
+Installing a newer version on top of an existing one **upgrades it in place** — the same frozen upgrade identifier is baked into every build — and the user data in `%APPDATA%\N-Zik Desktop Compagnon\` (pairing, settings, audio cache) is left untouched by an upgrade or an uninstall. The portable build is produced separately and is not affected.
+
 ---
 
 # 🤝 Contributing
