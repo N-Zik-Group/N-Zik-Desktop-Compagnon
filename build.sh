@@ -8,11 +8,14 @@
 #   ./build.sh            compile + run all tests
 #   ./build.sh test       run the tests only
 #   ./build.sh clean      clean, then compile + run all tests
+#   ./build.sh package    run the tests, then build the Linux .deb + .rpm + portable zip (Linux/WSL host only)
 #
 # Requirements:
 #   - JDK 21 on PATH, or JAVA_HOME pointing at a JDK 21
 #     (the Gradle toolchain can also auto-provision it if it is missing)
 #   - a Wi-Fi phone running N-Zik, if you want to run the app against it
+#   - for `package`: the jpackage tooling must be able to build a .deb and a .rpm on this host
+#     (see rules/BUILD.md "Linux packaging")
 #
 # Note: the app also runs on Linux (`./gradlew :app:run`), pairing included
 # (keyring, or in-memory for the session when no keyring daemon is running).
@@ -48,8 +51,14 @@ case "${1:-build}" in
   clean)
     ./gradlew clean build
     ;;
+  package)
+    # Linux packages only: on a non-Linux host the .deb/.rpm tasks are disabled by the Compose
+    # plugin (incompatible OS), so this is a Linux/WSL-host command. The packages are shipped
+    # only after the tests pass (the packaging config is pinned by the JVM test suite).
+    ./gradlew :app:test :app:packageDeb :app:packageRpm :app:packageLinuxPortable
+    ;;
   *)
-    echo "Usage: ./build.sh [build|test|clean]" >&2
+    echo "Usage: ./build.sh [build|test|clean|package]" >&2
     exit 1
     ;;
 esac

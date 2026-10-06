@@ -1,0 +1,102 @@
+# Maintainer: N-Zik Group
+#
+# N-Zik Desktop Compagnon — `-git` AUR entry.
+#
+# Tracks the `main` branch: clones the repository and builds the portable app-image with Gradle
+# (`:app:createDistributable`), then installs it to /opt with the .desktop menu entry ("raccourci")
+# and the icon. Always the latest state of main — no release chore needed (unlike the release-zip
+# entry, whose `pkgver` + `sha256sums` are bumped on every release).
+#
+# Build requirements: JDK 21 (makedepends) and network access. The first build downloads the Gradle
+# wrapper + dependencies (~1 GB cache) and takes a few minutes. No VLC is bundled: the app plays
+# through the system libvlc, so `vlc` is a hard dependency (installed by pacman).
+
+pkgname=n-zik-desktop-compagnon-git
+# The AUR package name drops the `-git` suffix for the source directory / install identity.
+_pkgname=n-zik-desktop-compagnon
+
+# makepkg (7.x) lints the pkgver variable BEFORE it runs pkgver(), so the function below needs a
+# placeholder value; the real version is always computed from the tracked branch (and overwritten
+# in the build file by makepkg).
+pkgver=0
+pkgver() {
+  # makepkg evaluates pkgver() BEFORE it downloads the source, so there is no local clone to
+  # `git describe` yet: read the tip of the tracked branch straight from the remote instead
+  # (works with the GitHub URL on the AUR and with a local file:// checkout in testing).
+  git ls-remote --heads "${url}" main | cut -c1-7
+}
+pkgrel=1
+pkgdesc="Desktop companion for N-Zik: control your phone's library and playback from a large screen, and listen on your computer."
+arch=(x86_64)
+url="https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon"
+license=(GPL-3.0-only)
+depends=(vlc)
+makedepends=(jdk21-openjdk)
+# The `${_pkgname}::` prefix pins the git clone dir: without it makepkg uses the URL basename (the
+# mixed-case GitHub repo name "N-Zik-Desktop-Compagnon"), while pkgver() and package() cd into
+# the lowercase ${_pkgname} (which would fail on a case-sensitive filesystem). Note the makepkg
+# source syntax is "name::url" — the custom name comes BEFORE the "::" separator.
+source=("${_pkgname}::git+${url}#branch=main")
+# A git source always needs an integrity entry; the tracked branch moves, so the checksum is SKIP.
+sha256sums=('SKIP')
+
+# The app-image is named after the app display name (with spaces): "N-Zik Desktop Compagnon", and its
+# launcher lives in bin/ (named the same). The app-image bundles its own JRE (lib/runtime), so no
+# system Java is needed at runtime. We install it under the lowercase name in /opt so the install path
+# matches the .deb/.rpm and the release-zip AUR entry (all one /opt/n-zik-desktop-compagnon/).
+_appdir="N-Zik Desktop Compagnon"
+# Where the Gradle build puts the app-image (relative to the repo root; `main` is the plugin's
+# default-build-type directory).
+_appimage="app/build/compose/binaries/main/app/${_appdir}"
+
+package() {
+  cd "${srcdir}/${_pkgname}"
+
+  # makepkg runs package() under fakeroot (as root), where the JVM would resolve the user home
+  # to /root: pin the Gradle user home to the build dir so the wrapper/dependency cache lands in
+  # a writable, self-contained place.
+  export GRADLE_USER_HOME="${srcdir}/.gradle-user-home"
+
+  # Build the portable app-image (the Gradle wrapper auto-downloads itself + dependencies).
+  ./gradlew :app:createDistributable
+
+  # Install the app-image under the lowercase name in /opt (single /opt location across all packages).
+  install -Dm755 -d "${pkgdir}/opt/${_pkgname}"
+  cp -a "${_appimage}/." "${pkgdir}/opt/${_pkgname}/"
+
+  # The app-image launcher (jpackage puts it in <app-image>/bin/). Fail loudly if the app-image
+  # layout ever changes, instead of shipping a broken .desktop entry.
+  local launcher="/opt/${_pkgname}/bin/${_appdir}"
+  if [ ! -x "${pkgdir}${launcher}" ]; then
+    echo "error: launcher ${launcher} not found in the app-image" >&2
+    find "${pkgdir}/opt/${_pkgname}" -maxdepth 2 >&2 || true
+    exit 1
+  fi
+
+  # Space-free launcher in /usr/bin (the /opt launcher path contains spaces): the .desktop Exec and
+  # the terminal both use it.
+  install -Dm755 -d "${pkgdir}/usr/bin"
+  ln -sf "${launcher}" "${pkgdir}/usr/bin/${pkgname}"
+
+  # Install the application icon (read straight from the repo checkout — the -git entry has source).
+  install -Dm644 "assets/design/icon-linux.png" \
+    "${pkgdir}/usr/share/icons/hicolor/256x256/apps/${_pkgname}.png"
+
+  # The GPL-3.0 license text (from the checkout; the release-zip entry fetches it as a third source
+  # pinned to the tag, since it is not in the portable zip).
+  install -Dm644 "LICENSE" \
+    "${pkgdir}/usr/share/licenses/${_pkgname}/LICENSE"
+
+  # The .desktop menu entry ("raccourci").
+  install -Dm755 -d "${pkgdir}/usr/share/applications"
+  cat <<EOF > "${pkgdir}/usr/share/applications/${pkgname}.desktop"
+[Desktop Entry]
+Type=Application
+Name=${_appdir}
+Comment=${pkgdesc}
+Exec=/usr/bin/${pkgname}
+Icon=${_pkgname}
+Terminal=false
+Categories=Audio;
+EOF
+}

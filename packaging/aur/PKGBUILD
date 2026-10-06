@@ -1,0 +1,84 @@
+# Maintainer: N-Zik Group
+#
+# N-Zik Desktop Compagnon — release-zip AUR entry.
+#
+# Installs the portable Linux app-image (the jpackage app-image, shipped as a zip in the GitHub
+# releases) to /opt, plus the .desktop menu entry ("raccourci") and the icon. No VLC is bundled: the
+# app plays through the system libvlc, so `vlc` is a hard dependency (installed by pacman).
+#
+# Release chore (one-shot, per release):
+#   1. bump `pkgver` to the new release version
+#   2. recompute ALL THREE `sha256sums` (the portable zip, the icon and the LICENSE text — all are
+#      pinned to the tag `v<pkgver>`, which must exist for the `releases/download` URL to resolve)
+#
+# The `-git` variant (n-zik-desktop-compagnon-git) tracks `main` directly and needs no chore.
+
+pkgname=n-zik-desktop-compagnon
+pkgver=0.0.1
+pkgrel=1
+pkgdesc="Desktop companion for N-Zik: control your phone's library and playback from a large screen, and listen on your computer."
+arch=(x86_64)
+url="https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon"
+license=(GPL-3.0-only)
+depends=(vlc)
+makedepends=(unzip)
+# The portable app-image, the icon and the GPL-3.0 license text (the LICENSE is not in the zip),
+# all pinned to the release tag v<pkgver>.
+source=(
+  "https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${pkgver}/n-zik-desktop-compagnon-${pkgver}-linux-portable.zip"
+  "https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/v${pkgver}/assets/design/icon-linux.png"
+  "https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/v${pkgver}/LICENSE"
+)
+sha256sums=(
+  "0000000000000000000000000000000000000000000000000000000000000000"  # portable zip: filled by the release chore
+  "831edcc324a716691b501f976b8a8b8254c4615a69f82ba088bec2bf775797e4"  # icon-linux.png @ v<pkgver>
+  "0000000000000000000000000000000000000000000000000000000000000000"  # LICENSE @ v<pkgver>: filled by the release chore
+)
+
+# The zip's root entry is the jpackage app-image folder, named after the app display name (with
+# spaces): "N-Zik Desktop Compagnon". Its launcher lives in bin/ (named the same) and it bundles its
+# own JRE (lib/runtime), so no system Java is needed at runtime. We install it under the lowercase
+# package name in /opt so the install path matches the .deb/.rpm (jpackage uses --linux-package-name).
+_appdir="N-Zik Desktop Compagnon"
+
+package() {
+  # Unpack the app-image to /opt/, then rename the display-name folder to the lowercase package name
+  # (single /opt install location across all the Linux packages).
+  unzip -q "${srcdir}/n-zik-desktop-compagnon-${pkgver}-linux-portable.zip" -d "${pkgdir}/opt"
+  mv "${pkgdir}/opt/${_appdir}" "${pkgdir}/opt/${pkgname}"
+
+  # The app-image launcher (jpackage puts it in <app-image>/bin/). Fail loudly if the app-image
+  # layout ever changes, instead of shipping a broken .desktop entry.
+  local launcher="/opt/${pkgname}/bin/${_appdir}"
+  if [ ! -x "${pkgdir}${launcher}" ]; then
+    echo "error: launcher ${launcher} not found in the app-image" >&2
+    find "${pkgdir}/opt/${pkgname}" -maxdepth 2 >&2 || true
+    exit 1
+  fi
+
+  # Space-free launcher in /usr/bin (the /opt launcher path contains spaces): the .desktop Exec and
+  # the terminal both use it.
+  install -Dm755 -d "${pkgdir}/usr/bin"
+  ln -sf "${launcher}" "${pkgdir}/usr/bin/${pkgname}"
+
+  # Install the application icon.
+  install -Dm644 "${srcdir}/icon-linux.png" \
+    "${pkgdir}/usr/share/icons/hicolor/256x256/apps/${pkgname}.png"
+
+  # The GPL-3.0 license text (the license=(GPL-3.0-only) field must be backed by the actual text).
+  install -Dm644 "${srcdir}/LICENSE" \
+    "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+
+  # The .desktop menu entry ("raccourci").
+  install -Dm755 -d "${pkgdir}/usr/share/applications"
+  cat <<EOF > "${pkgdir}/usr/share/applications/${pkgname}.desktop"
+[Desktop Entry]
+Type=Application
+Name=${_appdir}
+Comment=${pkgdesc}
+Exec=/usr/bin/${pkgname}
+Icon=${pkgname}
+Terminal=false
+Categories=Audio;
+EOF
+}

@@ -56,6 +56,15 @@
 
 ## 📦 Available Builds
 
+- **Windows Installer** (`.exe`) – Per-user install (no administrator prompt by default) with Start menu + desktop shortcuts and an uninstall entry; a newer version upgrades it in place.
+- **Windows Portable** – The distributable app folder, no install needed (produced alongside the installer).
+- **Debian package** (`.deb`) – Debian / Ubuntu / Mint: `apt install ./<file>.deb`.
+- **RPM package** (`.rpm`) – Fedora / openSUSE / Rocky: `dnf` or `zypper` `install ./<file>.rpm`.
+- **Linux Portable** (`.zip`) – The app-image, unzip and run — the same bundle the AUR release entry consumes.
+- **AUR** – `n-zik-desktop-compagnon` (the latest release) and `n-zik-desktop-compagnon-git` (always the latest of `main` — needs JDK 21 to build).
+
+> ℹ️ The builds are published as **GitHub release files only** — no self-hosted repository. On Linux, VLC is a **declared system dependency** of the packages (never bundled): the package manager pulls it in automatically and the app plays through the system libvlc. Every install ships an application-menu entry (`.desktop` + icon) and uninstalls cleanly, leaving your data (pairing, settings, audio cache) alone.
+
 ---
 
 <div align="center">
@@ -203,19 +212,44 @@ gradlew.bat :app:run
 
 The app also runs on Linux: `./gradlew :app:run`. Pairing works there too (keyring, or session-only without a keyring daemon); "Sound on the PC" uses the **system libvlc** — install VLC (e.g. `sudo apt install vlc`) and local playback works; when it is missing, the app shows the install command for your distribution.
 
-## Windows installer
+## 🪟 Windows installer
 
-Alongside the portable build, the app ships as a Windows installer:
+Alongside the portable build, the app ships as a per-user Windows installer:
 
 ```bat
 gradlew.bat :app:packageExe
 ```
 
-The installer (`.exe`, written under `app\build\compose\binaries\`) installs **per user — no administrator prompt by default** (picking a protected folder still elevates) — to `%LOCALAPPDATA%\Programs\N-Zik Desktop Compagnon`, adds Start menu and desktop shortcuts, and registers an uninstall entry under **N-Zik Desktop Compagnon**. It needs no extra tool on the build machine: the build downloads its packaging toolset (WiX) automatically on first use.
+The installer (`.exe`, written under `app\build\compose\binaries\`) installs to `%LOCALAPPDATA%\Programs\N-Zik Desktop Compagnon` **without an administrator prompt by default** (picking a protected folder still elevates), adds Start menu + desktop shortcuts, and registers the uninstall entry under **N-Zik Desktop Compagnon**. It needs no extra tool on the build machine: the build downloads its packaging toolset (WiX) automatically on first use.
 
-Installing a newer version on top of an existing one **upgrades it in place** — the same frozen upgrade identifier is baked into every build — and the user data in `%APPDATA%\N-Zik Desktop Compagnon\` (pairing, settings, audio cache) is left untouched by an upgrade or an uninstall. The portable build is produced separately and is not affected.
+Installing a newer version on top of an existing one **upgrades it in place** — the same frozen upgrade identifier is baked into every build. The user data in `%APPDATA%\N-Zik Desktop Compagnon\` (pairing, settings, audio cache) is left untouched by an upgrade or an uninstall, and the portable build is produced separately and is not affected.
 
-The installer is **not code-signed yet** (signing is deferred, pending a code-signing certificate — see the release cadence): Windows SmartScreen shows its usual "publisher not verified" notice on the first run of each new version. Every GitHub release therefore publishes the installer's **SHA-256 checksum** so you can verify your download (PowerShell: `Get-FileHash -Algorithm SHA256 "N-Zik Desktop Compagnon-x.y.z.exe"`), and the source stays public so any build is reproducible and comparable.
+> The installer is **not code-signed yet** (signing is deferred, pending a code-signing certificate — see the release cadence): Windows SmartScreen shows its usual "publisher not verified" notice on the first run of each new version. Every GitHub release therefore publishes the installer's **SHA-256 checksum** so you can verify your download (PowerShell: `Get-FileHash -Algorithm SHA256 "N-Zik Desktop Compagnon-x.y.z.exe"`; the Linux release assets — `.deb`, `.rpm` and portable zip — are published with their **SHA-256 checksums** as well), and the source stays public so any build is reproducible and comparable.
+
+## 🐧 Linux packages
+
+On Linux the app ships as a `.deb` (Debian/Ubuntu/Mint), a `.rpm` (Fedora/openSUSE/Rocky) and through the [AUR](https://aur.archlinux.org/) for Arch-based distros (Arch, Manjaro, CachyOS). Grab the package from a [GitHub release](https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/latest) and install it (the exact filenames are the release assets):
+
+```bash
+# Debian / Ubuntu / Mint
+apt install ./n-zik-desktop-compagnon_<version>-1_amd64.deb
+
+# Fedora / openSUSE / Rocky
+dnf install ./n-zik-desktop-compagnon-<version>-1.x86_64.rpm      # Fedora / Rocky
+zypper install ./n-zik-desktop-compagnon-<version>-1.x86_64.rpm   # openSUSE
+
+# Arch-based (AUR)
+yay -S n-zik-desktop-compagnon        # the latest release
+yay -S n-zik-desktop-compagnon-git    # always the latest of main (needs JDK 21 to build)
+```
+
+`yay` is an [AUR helper](https://aur.archlinux.org/packages/yay/) (itself an AUR package): without one, build the entry from its PKGBUILD with `makepkg -si`.
+
+**No VLC to install:** the packages declare `vlc` as a dependency, so the package manager pulls it in automatically, and the app plays through the system libvlc. Installing puts the app in `/opt/n-zik-desktop-compagnon/`, adds a `.desktop` entry to the application menu (with the N-Zik icon) and a clean uninstall through the package manager. Your data — pairing, settings and audio cache in `~/N-Zik Desktop Compagnon/`, plus the keyring token — is left alone by an upgrade or an uninstall.
+
+> **Minimal Arch installs:** the app needs X11 client libraries and a font to launch — a bare Arch system does not ship them, so a first launch may need a few extra packages (the full list is in `rules/BUILD.md`, "Live-install matrix").
+
+> The Linux packages are **not code-signed yet** (signing is deferred, pending a self-hosted repository — see the release cadence): `apt install ./x.deb` shows the usual "unauthenticated" warning for a package installed from a file. The source is public, so any build can be rebuilt and compared against this one — the packages are not byte-reproducible (the `.deb` embeds build timestamps), but a rebuild ships the same files and behavior.
 
 ---
 

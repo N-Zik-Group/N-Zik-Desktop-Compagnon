@@ -26,6 +26,7 @@ gradlew.bat :app:test --tests "app.n_zik.compagnon.PagedListTest"   # Single tes
 gradlew.bat :app:run                                       # Launch the app
 gradlew.bat clean build                                    # Clean + build
 gradlew.bat :app:packageExe                                # Windows installer (see "Windows Installer" below)
+./build.sh package          (Linux/WSL host)               # Linux .deb + .rpm + portable zip (see "Linux packaging" below)
 ```
 
 > **Windows:** `gradlew.bat`, run from the repo root `N-Zik-Desktop-Compagnon/`. **Linux:** `./gradlew` (or `build.sh`) — local playback uses the **system libvlc** (VLC must be installed, e.g. `sudo apt install vlc`; the app shows the right package command per distro via `/etc/os-release`). The workspace root (the parent of `N-Zik-Desktop-Compagnon/`, where `_bmad/` lives) is **not** a git/gradle project.
@@ -92,6 +93,55 @@ Audio is played by vlcj 4.12.1 on an **embedded copy of VLC 3.0.24** — no VLC 
 - **Upgrade:** `nzikUpgradeUuid` in `gradle/libs.versions.toml` is **FROZEN — never change this GUID** (pinned by `UpgradeIdentityTest`). It is the identity of the installation: every future installer (and the deferred in-app updater, which re-launches the installer silently) upgrades an existing install in place, and user data in `%APPDATA%\N-Zik Desktop Compagnon\` survives upgrade and uninstall. **The version must always strictly increase** (`nzikVersionName`, e.g. `0.0.1` → `0.0.2`): an MSI upgrade only applies when the incoming version is greater than the installed one, so a lower or equal version is refused.
 - **Version / name:** the app's identity lives in the version catalog (`gradle/libs.versions.toml`, N-Zik Android convention): `nzikPackageName` (display name) and `nzikVersionName` (the jpackage app version, read by `version` in `app/build.gradle.kts`) — the single source in the build, portable distributable and installer alike. `nzikVersionCode` stays in the catalog for release discipline only; the build never reads it. `nzikUpgradeUuid` / `nzikPerUser` are the frozen installation identity (never bumped; see **Upgrade** above). Bumped manually on each release — there is no version-bump machinery in this repo.
 - **Icon:** `assets/design/icon.ico` (committed binary, like `ic_banner2.png`) — referenced by `windows.iconFile`, rides in the installer, the app exe and the shortcuts.
+
+## Linux packaging
+
+`./build.sh package` (or `./gradlew :app:packageDeb :app:packageRpm :app:packageLinuxPortable`) builds the Linux packages from the same jpackage app-image as the portable build (spec `spec-linux-packaging`) into `app/build/compose/binaries/` (gitignored — never committed):
+
+- **`.deb`** — `binaries/main/deb/n-zik-desktop-compagnon_<version>-1_amd64.deb` — Debian / Ubuntu / Mint: `apt install ./<file>.deb`
+- **`.rpm`** — `binaries/main/rpm/n-zik-desktop-compagnon-<version>-1.x86_64.rpm` — Fedora / openSUSE / Rocky: `dnf install ./<file>.rpm` (architecture `x86_64`, never `noarch` — the bundled JRE is architecture-specific)
+- **portable zip** — `binaries/n-zik-desktop-compagnon-<version>-linux-portable.zip`: a zip of the app-image directory (the app-image folder is the zip root) — the only Linux binary the AUR entry consumes; the Linux "portable" is the app-image directory, never a tar.gz
+- **Portable-zip launcher exec bit:** the `packageLinuxPortable.doLast` patches the launcher's central-directory entry in the zip (the Unix mode lives at byte 38 of each central header — set to 0o100755) and verifies by re-reading it. Why: this repo lives on the 9P/drvfs mount (`/mnt/d` on WSL), where the zip writer loses the launcher's exec bit (observed 0777 on disk but 0644 in the entry) and Java's zip API has no external-attributes setter. On a non-9P host the entry already carries the bit, so the patch is a no-op. Without it, the launcher would unzip non-executable (the AUR release entry consumes this zip).
+
+> **Linux/WSL host only:** on a Windows host the plugin disables the Deb/Rpm tasks (the format is not compatible with the current OS) and `gradlew.bat build` stays green with identical Windows outputs. Build the packages on WSL (or native Linux).
+
+- **VLC is never bundled on Linux:** the app plays through the system libvlc (the existing `VlcRuntime` path), so the `.deb`/`.rpm`/AUR declare `vlc` as a dependency — the package manager installs it. The pinned VLC config (`vlcVersion`/`vlcZipUrl`/`vlcZipSha256`) and the `downloadVlc`/`extractVlc` tasks are unchanged; `appResourcesRootDir` is now conditional on the Windows host, so no runtime reaches the Linux packages.
+- **The `vlc` dependency is injected through `freeArgs`** (`--linux-package-deps vlc`) on `packageDeb`/`packageRpm` — the Compose plugin's `linux { }` DSL exposes no `depends` and never passes jpackage's `--linux-package-deps`, so `freeArgs` (prepended to the jpackage command line) is the hook; `vlc` lands in the deb `Depends` and the rpm `Requires` with no repackaging. The same hook injects **`--linux-menu-group Audio;`** — the jpackage flag that fills the `.desktop` `Categories=` field (jpackage's default is `Unknown`; `linux.appCategory` only sets the deb `Section` and the rpm `Group`) — so the menu entry sorts under Audio, matching the AUR entries' own `.desktop`.
+- **What an install gives (the "raccourci"):** the app in `/opt/n-zik-desktop-compagnon/` (the jpackage package name — the same `/opt` location on the `.deb`, the `.rpm` and both AUR entries), a `.desktop` menu entry + icon (jpackage `shortcut = true` — the DSL default is off), a clean uninstall via the package manager. The jpackage layout keeps the `.desktop` inside the app dir (`/opt/<pkg>/lib/<pkg>-<app>.desktop`) and the install/uninstall maintainer scripts register/remove it with `xdg-desktop-menu` (run as root → system mode, for all users; that is why `xdg-utils` is a package dependency); the icon is bundled at `/opt/<pkg>/lib/<app>.png` and referenced by absolute path in the `.desktop`. No desktop icon by default (GNOME requires user trust).
+- **User data lives outside the package:** `~/N-Zik Desktop Compagnon/` + the keyring (libsecret) — an in-place upgrade (same package name, monotone version) and an uninstall leave it alone. The frozen upgrade UUID stays exclusive to the Windows installer.
+- **Unsigned by design (deferred):** no GPG signature and no self-hosted apt/rpm repo — the packages are distributed as GitHub release files, so `apt install ./n-zik…deb` shows an "unauthenticated" warning (accepted; the source is public and every build is reproducible). Signing + a self-hosted repo are deferred (`deferred-work.md`).
+
+### jpackage tooling (WSL)
+
+jpackage builds the `.deb` with `dpkg-deb` + `fakeroot` and the `.rpm` with `rpmbuild`. On WSL (Debian/Ubuntu-based) install them **system-wide**:
+
+```bash
+sudo apt install -y fakeroot rpm
+```
+
+`dpkg-deb` ships with `dpkg` (already present). A user-prefix install of `rpm`/`fakeroot` does **not** work — `rpmbuild` has a compiled-in `/usr/lib/rpm/rpmrc` path and the Debian `fakeroot` wrapper hardcodes a `/usr/lib` LD_PRELOAD path, so both need the system location.
+
+### AUR entries (Arch / Manjaro / CachyOS)
+
+Two entries under `packaging/`, pinned by `AurPkgbuildTest`:
+
+- **`packaging/aur/PKGBUILD`** — `n-zik-desktop-compagnon` (release-zip): downloads the portable zip + the icon, both pinned to the release tag `v<pkgver>`, and installs them to `/opt/n-zik-desktop-compagnon/` + the `/usr/bin` symlink + `.desktop` + icon. `depends=(vlc)`, `makedepends=(unzip)`.
+- **`packaging/aur-git/PKGBUILD`** — `n-zik-desktop-compagnon-git`: clones `main` and builds the app-image with `./gradlew :app:createDistributable`. `makedepends=(jdk21-openjdk)` — JDK 21 on the user's machine (the Arch package name; the spec's `openjdk-21` is the Debian/Fedora name — refined here). `depends=(vlc)`. The first build downloads the Gradle wrapper + dependencies (~1 GB cache, a few minutes).
+- **The `-git` entry's live-build requirements (makepkg ≥ 7.0, verified 2026-10-06 on WSL Arch, makepkg 7.1.0):** `pkgver()` runs before the source is downloaded (there is no local clone to inspect yet — the version is the 7-char short hash of the `main` tip, read with `git ls-remote`), and makepkg lints the `pkgver` variable before it runs the function (hence the `pkgver=0` placeholder); the VCS source uses the `name::url` syntax (the custom clone-dir name comes before the `::` — makepkg's `get_url` strips the prefix before the first `::`) with `sha256sums=('SKIP')`; and `package()` runs under fakeroot (as root), so `GRADLE_USER_HOME` is pinned to the build dir (otherwise the Gradle wrapper writes to `/root/.gradle`, which is not writable by the build user). A function-only `pkgver()` with no placeholder dies at lint with "pkgver is not allowed to be empty".
+
+The jpackage app-image puts its launcher in `<app-image>/bin/` (named after the display name, which contains spaces) and bundles its own JRE under `lib/runtime`. The app-image folder is named after the display name, but **all four Linux install paths use the same `/opt` location — `/opt/n-zik-desktop-compagnon/`**: the `.deb`/`.rpm` get it from jpackage (`--linux-package-name`), and both AUR entries install the app-image under the lowercase package name (unzip + rename). Each entry also creates a **space-free `/usr/bin/<pkgname>` symlink** to the `bin/` launcher (the `.desktop` `Exec` points at the symlink, not the raw space-containing `/opt` path) and **fails loudly if the app-image layout ever changes**. The jpackage-generated `.desktop` files are self-consistent with their own (lowercase) `/opt` layout: `Exec="/opt/n-zik-desktop-compagnon/bin/N-Zik Desktop Compagnon"` (the space-containing path quoted), `Icon=` the bundled PNG.
+
+**Release chore (release-zip entry only):** on every GitHub release, bump `pkgver` and recompute **all three** `sha256sums` (the portable zip, the icon and the LICENSE text — all are pinned to the tag `v<pkgver>`, which must exist for the `releases/download` URL to resolve; the current zip is `9e9f555a135c54b297ba30a53b5c9d451078deed4e88b99e2b762482d73394eb`, the icon is `831edcc324a716691b501f976b8a8b8254c4615a69f82ba088bec2bf775797e4`, and the LICENSE sum is filled from the same tag). Publish the `.deb`/`.rpm`/zip with their **SHA-256 checksums** alongside the release (the README's integrity note covers the Linux assets, not just the Windows installer). The `-git` entry tracks `main` with a dynamic `pkgver()` and needs no chore.
+
+### Live-install matrix (WSL 2 / WSLg, 2026-10-06)
+
+All four install paths were live-tested on WSL: Ubuntu 26.04 (`.deb`, including the 0.0.1→0.0.2 in-place upgrade with `~/N-Zik Desktop Compagnon/` preserved), Fedora 44 (`.rpm`), and Arch (`makepkg` for the release-zip entry and the `-git` entry — the `-git` `pkgver()` came out as the `main` tip's short hash). Every install, layout (`/opt/n-zik-desktop-compagnon/`, the `.desktop` + icon, the `/usr/bin` symlink), and uninstall was verified; **every launch was verified past "process alive"** — the window is mapped on the WSLg display (1090×770) and the pairing screen renders (QR code, IP/port, device-name input — confirmed by screenshot). WSLg mirrors the user's target environment (Wayland-only desktops): the app's windowing there is X11 against WSLg's X server (it does not use the `WAYLAND_DISPLAY` WSLg provides), and Skiko falls back to software rendering (no GL context under WSLg). If a window ever fails to open or freezes under Wayland, record it as a Wayland signal — the fallback is an explicit Compose `renderApi` selection (one line, no package impact).
+
+Environment findings (not package bugs — the spec scopes the package dependency to `vlc`):
+
+- A minimal Arch cannot launch the app until the X11 client libs (`libx11 libxext libxrender libxi libxcursor libxfixes libxrandr libxres libxss libxinerama libxft libxtst fontconfig libglvnd`) and a font (`ttf-dejavu`) are present — an `UnsatisfiedLinkError` on `libXtst.so.6` and "Could not load font" without them. Ubuntu ships these by default (which is why the `.deb` launched out of the box).
+- On a minimal Ubuntu the deb/rpm postinst's `xdg-desktop-menu` step needs `/usr/share/desktop-directories`; without it, apt leaves the package half-configured (the install itself succeeds) — `mkdir -p /usr/share/desktop-directories` fixes it.
+- The rpm's `Requires` is minimal (vlc, xdg-utils, `/bin/sh` + rpmlib — the JRE is bundled, never a system dependency); the deb carries `share/doc/copyright`, the rpm does not; the deb embeds build timestamps (non-reproducible across rebuilds).
 
 ## Commit Convention
 
