@@ -8,12 +8,12 @@
     <string name="pair_device_name">Nom de cet ordinateur</string>
     <string name="pair_device_name_invalid">Saisissez un nom comportant entre 1 et 64 caractères.</string>
     <string name="pair_qr_waiting">Waiting for your phone…</string>
-    <string name="pair_qr_preparing">Preparing the QR code…</string>
-    <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_renew_hint">The code renews itself every 2 minutes.</string>
-    <string name="pair_manual_entry">Manual entry</string>
-    <string name="pair_manual_entry_text">Type the address and code shown on your phone</string>
-    <string name="pair_show_qr">Show the QR code</string>
+    <string name="pair_qr_preparing">Préparation du QR code…</string>
+    <string name="pair_qr_addresses">Cet ordinateur : %1$s (port %2$d)</string>
+    <string name="pair_qr_renew_hint">Le code est actualisé toutes les 2 minutes.</string>
+    <string name="pair_manual_entry">Saisie manuelle</string>
+    <string name="pair_manual_entry_text">Saisissez l\'adresse et le code affichés sur votre téléphone</string>
+    <string name="pair_show_qr">Afficher le QR code</string>
     <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
     <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
     <!-- Manual pairing -->
@@ -32,23 +32,23 @@
     <string name="error_code_rejected">Code invalide ou périmé. Vérifiez le code sur votre téléphone et réessayez.</string>
     <string name="error_rate_limited">Trop de tentatives. Veuillez réessayer dans %1$d s.</string>
     <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
-    <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
+    <string name="error_phone_unreachable">Impossible de joindre le téléphone. Vérifiez que son serveur fonctionne et que les deux appareils sont connectés au même réseau Wi-Fi.</string>
     <string name="error_storage_failed">L\'appairage n\'a pas pu être enregistré sur cet ordinateur.</string>
     <string name="error_listener_failed">Impossible d\'ouvrir le récepteur d\'appairage. Effectuez l\'appairage manuellement ci-dessous.</string>
     <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
-    <string name="error_unknown_code">no code</string>
+    <string name="error_unknown_code">aucun code</string>
     <string name="dismiss">Ignorer</string>
     <!-- Paired -->
     <string name="paired_title">Paired</string>
     <string name="paired_with">Associé à %1$s</string>
     <string name="paired_as">Cet ordinateur apparaît sous le nom de %1$s sur le téléphone.</string>
     <string name="paired_checking">Vérification de la connexion…</string>
-    <string name="paired_ok">The phone is reachable.</string>
-    <string name="paired_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
+    <string name="paired_ok">Le téléphone est joignable.</string>
+    <string name="paired_other_active">Un autre ordinateur (%1$s) est connecté au téléphone. Déconnectez-le du téléphone, puis réessayez.</string>
     <string name="paired_other_active_unknown">another device</string>
     <string name="paired_incompatible">Phone version incompatible (contract %1$s).</string>
     <string name="paired_error">The phone answered with an error (HTTP %1$d, %2$s).</string>
-    <string name="paired_session_only">No keyring is available on this PC, so the pairing is kept only in memory for this session: pair again after a restart.</string>
+    <string name="paired_session_only">Aucun porte-clés n\'est disponible sur ce PC, l\'appairage est donc conservé uniquement en mémoire pour cette session : veuillez procéder à un nouvel appairage après un redémarrage.</string>
     <string name="retry">Réessayer</string>
     <string name="forget_phone">Forget this phone</string>
     <string name="forget_phone_text">Removes the pairing from this PC</string>
@@ -77,7 +77,7 @@
     <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
     <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
     <string name="connection_replaced">Another window of this PC took over the session.</string>
-    <string name="connection_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
+    <string name="connection_other_active">Un autre ordinateur (%1$s) est connecté au téléphone. Déconnectez-le du téléphone, puis réessayez.</string>
     <string name="reconnect">Se reconnecter</string>
     <!-- Player -->
     <string name="player_nothing_playing">Nothing is playing</string>
@@ -167,16 +167,16 @@
     <string name="enqueue">Mettre en file d\'attente</string>
     <string name="shuffle">Aléatoire</string>
     <string name="play_all_local_songs">Jouer toutes les chansons locales</string>
-    <string name="info_find_the_song_that_is_playing">Trouver le titre qui est en cours de lecture</string>
+    <string name="info_find_the_song_that_is_playing">Afficher le titre en cours de lecture</string>
     <string name="playing_song_not_found_on_current_list">Impossible de trouver le titre en cours de lecture dans la liste actuelle</string>
     <string name="no_songs_playing">Aucun titre n\'est joué pour le moment</string>
     <string name="artist_songs_count_duration">Titres %1$d • %2$s</string>
-    <string name="no_song_found">Aucune chanson trouvée</string>
+    <string name="no_song_found">Aucun titre trouvé</string>
     <string name="no_song_to_shuffle">Aucun titre à mélanger</string>
-    <string name="info_no_songs_yet">Pas encore de titres</string>
+    <string name="info_no_songs_yet">Aucun titre disponible</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Signet</string>
-    <string name="info_bookmark_album">Marquer l\'album</string>
+    <string name="info_bookmark_album">Ajouter l\'album à vos favoris</string>
     <string name="follow">Suivre</string>
     <string name="following">Suit</string>
     <string name="item_select">Sélectionner</string>
