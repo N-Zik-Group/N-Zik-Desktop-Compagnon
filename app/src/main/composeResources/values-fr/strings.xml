@@ -326,6 +326,7 @@
     <!-- Compagnon only: the PC as an audio output -->
     <string name="this_pc">Cet ordinateur</string>
     <string name="local_playback_unavailable">Le son n\'est pas disponible sur cet ordinateur : le lecteur VLC intégré n\'a pas pu être chargé.</string>
+    <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
     <string name="local_playback_not_found">Ce titre ne se trouve plus sur votre téléphone.</string>
     <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
     <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
