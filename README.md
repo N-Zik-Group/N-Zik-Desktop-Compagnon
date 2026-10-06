@@ -112,7 +112,7 @@ The device token is stored in the platform secret store: the Windows Credential 
 
 The mini player's "audio output" button opens the audio devices: choose **This PC** to hear the music on your computer, or your phone to hear it there. Both keep controlling the same playback; only one of them sounds. While the PC plays, the phone keeps playing silently, and the PC follows it (pause, seek, speed, next track). If this PC's session ends (app closed, disconnected from the phone, Wi-Fi lost), the phone pauses and takes the sound back. The button needs N-Zik with contract 1.2; with an older N-Zik it is hidden.
 
-### Embedded VLC
+### 🎬 Embedded VLC
 
 Audio is played by [vlcj](https://github.com/caprica/vlcj) 4.12.1 on an embedded copy of [VLC](https://www.videolan.org/) 3.0.24: no VLC installation is needed. The build downloads the official VideoLAN zip (`vlc-3.0.24-win64.zip`, checked against its pinned SHA-256), keeps it in the Gradle user home so `clean` does not download it again, and extracts only the audio part (libvlc, libvlccore, about 30 plugins, `COPYING.txt`: about 10 MB) under `app/build/vlc-runtime`. No VLC binary is stored in this repository. VLC is © the VideoLAN team and contributors; libvlc is licensed under the LGPL 2.1 or later and some plugins under the GPL 2 or later (see `COPYING.txt` next to the runtime). vlcj is licensed under the GPL 3.0.
 
@@ -184,7 +184,7 @@ Join us on Crowdin!
 
 # 🛠️ Requirements & Building
 
-## Requirements
+## 📋 Requirements
 
 - Windows 10 or 11, or Linux
 - JDK 21 (used by the Gradle toolchain to build and run)
