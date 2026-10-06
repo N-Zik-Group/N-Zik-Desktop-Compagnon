@@ -1,13 +1,13 @@
 package app.n_zik.compagnon.bridge.pairing
 
 import app.n_zik.compagnon.AppInfo
-import com.sun.jna.Function
 import com.sun.jna.Library
 import com.sun.jna.Memory
 import com.sun.jna.Native
 import com.sun.jna.Pointer
-import com.sun.jna.Structure
 import com.sun.jna.ptr.PointerByReference
+import java.util.logging.Level
+import java.util.logging.LogRecord
 import java.util.logging.Logger
 
 /**
@@ -69,22 +69,12 @@ class LinuxSecretStore private constructor(
     /** Logs a `GError` (never the token), then frees it. A "no secret" result carries no error. */
     private fun logError(operation: String, error: PointerByReference) {
         val pointer = error.value ?: return
-        val detail = GError(pointer).message?.getString(0, "UTF-8")?.let { " ($it)" }.orEmpty()
+        val detail = gErrorMessage(pointer)?.let { " ($it)" }.orEmpty()
         log.warning("Keyring $operation failed$detail")
         glib.g_error_free(pointer)
     }
 
-    /** The GLib `GError` (domain quark, code, message) that libsecret failures are reported in. */
-    @Structure.FieldOrder("domain", "code", "message")
-    private class GError : Structure {
-        @JvmField var domain: Int = 0
-        @JvmField var code: Int = 0
-        @JvmField var message: Pointer? = null
 
-        constructor(pointer: Pointer) : super(pointer) {
-            read()
-        }
-    }
 
     /** The stable libsecret schema/password API (`libsecret-1`). */
     @Suppress("FunctionName")
@@ -114,11 +104,15 @@ class LinuxSecretStore private constructor(
         fun secret_password_free(password: Pointer)
     }
 
-    /** The `glib-2.0` functions used here (hash table construction and `GError` cleanup). */
+    /**
+     * The `glib-2.0` functions used here (hash table construction and `GError` cleanup).
+     * The nullable `Pointer` parameters accept C's zero pointer — JNA 5.19's `Pointer.NULL`
+     * is literally Java `null`, so a non-null Kotlin parameter would reject it.
+     */
     @Suppress("FunctionName")
     private interface GLibApi : Library {
         fun g_hash_table_new_full(hashFunc: Pointer, keyEqual: Pointer, valueDestroy: Pointer?, keyDestroy: Pointer?): Pointer?
-        fun g_hash_table_insert(table: Pointer, key: Pointer, value: Pointer)
+        fun g_hash_table_insert(table: Pointer, key: Pointer, value: Pointer?)
         fun g_hash_table_destroy(table: Pointer)
         fun g_error_free(error: Pointer)
     }
@@ -144,6 +138,14 @@ class LinuxSecretStore private constructor(
         }
 
         /**
+         * The message of the GLib `GError` that libsecret failures are reported in. Read directly
+         * off the pointer (`guint` domain, `int` code, then `gchar *message` at offset 8 on
+         * 64-bit) instead of a JNA `Structure`: JNA 5.19 no longer makes non-final fields
+         * accessible, so the field reflection of a private structure class throws on `deriveLayout`.
+         */
+        private fun gErrorMessage(error: Pointer): String? = error.getPointer(8L)?.getString(0, "UTF-8")
+
+        /**
          * The keyring store, or `null` when `libsecret` cannot be loaded (JNA reports an
          * `UnsatisfiedLinkError`, which `runCatching` below catches) or the Secret Service
          * daemon cannot be reached (the probe lookup below reports a `GError`) — the caller
@@ -153,17 +155,22 @@ class LinuxSecretStore private constructor(
         fun create(): LinuxSecretStore? = runCatching {
             val api = Native.load("secret-1", SecretApi::class.java)
             val glib = Native.load("glib-2.0", GLibApi::class.java)
-            // `Function` is a `Pointer` on the native function's address (glib's string hash/equal).
-            val strHash = Function.getFunction("g_str_hash", "glib-2.0")
-            val strEqual = Function.getFunction("g_str_equal", "glib-2.0")
+            // The glib string hash/equal used as hash-table callbacks (a `Function` is a `Pointer`
+            // on the native function's address). Resolved on the already-loaded library instance:
+            // JNA's two-argument `Function.getFunction(symbol, library)` is misleading — the first
+            // argument is the library name (verified on the JNA 5.19.1 bytecode), so the static
+            // form read as symbol-first requested `libg_str_hash.so` and failed.
+            val glibNative = Native.getNativeLibrary(glib)
+            val strHash = glibNative.getFunction("g_str_hash")
+            val strEqual = glibNative.getFunction("g_str_equal")
 
             // The schema: one string attribute, [ATTRIBUTE]. The table value is the attribute type
             // enum cast to a pointer (libsecret reads it back with `GPOINTER_TO_INT`, 0.20.x and
-            // 0.21.x alike); `SECRET_SCHEMA_ATTRIBUTE_STRING` is 0, i.e. `Pointer.NULL`.
+            // 0.21.x alike); `SECRET_SCHEMA_ATTRIBUTE_STRING` is 0, i.e. the null pointer.
             val schemaName = cstring(SCHEMA_NAME)
             val attribute = cstring(ATTRIBUTE)
-            val schemaTypes = glib.g_hash_table_new_full(strHash, strEqual, Pointer.NULL, Pointer.NULL) ?: return@runCatching null
-            glib.g_hash_table_insert(schemaTypes, attribute, Pointer.NULL)
+            val schemaTypes = glib.g_hash_table_new_full(strHash, strEqual, null, null) ?: return@runCatching null
+            glib.g_hash_table_insert(schemaTypes, attribute, null)
             val schema = api.secret_schema_newv(schemaName, SCHEMA_NONE, schemaTypes)
             glib.g_hash_table_destroy(schemaTypes)
             schemaName.close()
@@ -171,7 +178,7 @@ class LinuxSecretStore private constructor(
 
             // The attribute table (attribute -> value) used by every store/lookup/clear call.
             val value = cstring(VALUE)
-            val attributes = glib.g_hash_table_new_full(strHash, strEqual, Pointer.NULL, Pointer.NULL) ?: return@runCatching null
+            val attributes = glib.g_hash_table_new_full(strHash, strEqual, null, null) ?: return@runCatching null
             glib.g_hash_table_insert(attributes, attribute, value)
 
             // Probe: a lookup on our own attributes. No daemon -> `GError` -> no keyring; a
@@ -181,13 +188,18 @@ class LinuxSecretStore private constructor(
             if (probe != null) api.secret_password_free(probe)
             val probeError = error.value
             if (probeError != null) {
-                val detail = GError(probeError).message?.getString(0, "UTF-8")?.let { " ($it)" }.orEmpty()
+                val detail = gErrorMessage(probeError)?.let { " ($it)" }.orEmpty()
                 glib.g_error_free(probeError)
                 log.info("Secret Service daemon unreachable$detail: using the session store")
                 return@runCatching null
             }
 
             LinuxSecretStore(api, glib, schema, attributes, attribute, value)
-        }.onFailure { log.warning("Keyring unavailable: ${it::class.simpleName}") }.getOrNull()
+        }.onFailure {
+            // JUL has no warning(msg, throwable) overload: the stack trace rides the LogRecord.
+            val record = LogRecord(Level.WARNING, "Keyring unavailable: ${it::class.simpleName}: ${it.message}")
+            record.thrown = it
+            log.log(record)
+        }.getOrNull()
     }
 }

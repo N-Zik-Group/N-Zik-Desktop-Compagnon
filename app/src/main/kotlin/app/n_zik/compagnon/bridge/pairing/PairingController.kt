@@ -230,6 +230,8 @@ class PairingController(
     private suspend fun enterUnpaired(previous: PairingState.Unpaired? = null, error: PairingError? = null) {
         closeListener()
         val candidates = runCatching { candidateProvider() }.getOrDefault(emptyList())
+        if (candidates.isEmpty()) log.warning("No LAN address for the pairing QR: manual form only")
+        else log.info("Pairing QR candidates: $candidates")
         val deviceName = previous?.deviceName ?: defaultDeviceName
         val base = PairingState.Unpaired(
             mode = previous?.mode ?: PairingMode.Qr,
