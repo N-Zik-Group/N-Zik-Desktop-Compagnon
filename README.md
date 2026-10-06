@@ -215,6 +215,8 @@ The installer (`.exe`, written under `app\build\compose\binaries\`) installs **p
 
 Installing a newer version on top of an existing one **upgrades it in place** — the same frozen upgrade identifier is baked into every build — and the user data in `%APPDATA%\N-Zik Desktop Compagnon\` (pairing, settings, audio cache) is left untouched by an upgrade or an uninstall. The portable build is produced separately and is not affected.
 
+The installer is **not code-signed yet** (signing is deferred, pending a code-signing certificate — see the release cadence): Windows SmartScreen shows its usual "publisher not verified" notice on the first run of each new version. Every GitHub release therefore publishes the installer's **SHA-256 checksum** so you can verify your download (PowerShell: `Get-FileHash -Algorithm SHA256 "N-Zik Desktop Compagnon-x.y.z.exe"`), and the source stays public so any build is reproducible and comparable.
+
 ---
 
 # 🤝 Contributing
