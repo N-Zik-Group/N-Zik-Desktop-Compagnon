@@ -193,7 +193,7 @@ gradlew.bat build
 ./build.sh
 ```
 
-The first build downloads VLC 3.0.24 from download.videolan.org (about 83 MB, once).
+The first build on a **Windows host** downloads VLC 3.0.24 from download.videolan.org (about 83 MB, once); on a **Linux host** the download is skipped and the app uses the **system libvlc** instead.
 
 Launch the app on Windows:
 
@@ -201,7 +201,7 @@ Launch the app on Windows:
 gradlew.bat :app:run
 ```
 
-The app also runs on Linux: `./gradlew :app:run`. Pairing works there too (keyring, or session-only without a keyring daemon); the embedded VLC runtime — and with it "Sound on the PC" — is a Windows feature, so the PC plays no audio on Linux yet.
+The app also runs on Linux: `./gradlew :app:run`. Pairing works there too (keyring, or session-only without a keyring daemon); "Sound on the PC" uses the **system libvlc** — install VLC (e.g. `sudo apt install vlc`) and local playback works; when it is missing, the app shows the install command for your distribution.
 
 ---
 

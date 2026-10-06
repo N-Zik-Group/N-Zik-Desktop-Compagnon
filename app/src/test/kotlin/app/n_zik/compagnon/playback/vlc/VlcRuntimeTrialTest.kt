@@ -25,7 +25,8 @@ import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter
  * Packaging trial of story 12, opt-in (`gradlew test -PvlcTrial=<media dir>`): loads the embedded
  * runtime only (no system VLC), then plays every sample of the media directory from a file and over HTTP
  * with `Range`, at a start position, with a seek. Prints the libvlc modules used (debug log), which froze
- * the plugin list of `app/build.gradle.kts`.
+ * the plugin list of `app/build.gradle.kts`. Windows host only (the `-PvlcTrial` guard in
+ * `app/build.gradle.kts` fails the build on other hosts): it validates the embedded path only.
  */
 @EnabledIfSystemProperty(named = "vlc.trial.media", matches = ".+")
 class VlcRuntimeTrialTest {

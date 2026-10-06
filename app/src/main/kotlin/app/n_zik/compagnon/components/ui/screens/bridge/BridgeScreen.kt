@@ -147,7 +147,7 @@ fun BridgeScreen(
     }
 }
 
-/** The vlcj engine on the embedded libvlc, or `null` when libvlc is not available (the app keeps working). */
+/** The vlcj engine on the loaded libvlc (embedded on Windows, system on Linux), or `null` when libvlc is not available (the app keeps working). */
 private fun createEngine(): AudioEngine? {
     if (!VlcRuntime.isAvailable) return null
     return runCatching { VlcAudioEngine() }

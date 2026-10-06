@@ -49,6 +49,7 @@ import app.n_zik.compagnon.generated.resources.audio_quality_format_high
 import app.n_zik.compagnon.generated.resources.audio_quality_format_low
 import app.n_zik.compagnon.generated.resources.computer
 import app.n_zik.compagnon.generated.resources.local_playback_unavailable
+import app.n_zik.compagnon.generated.resources.local_playback_unavailable_linux
 import app.n_zik.compagnon.generated.resources.music_note
 import app.n_zik.compagnon.generated.resources.phone_android
 import app.n_zik.compagnon.generated.resources.this_pc
@@ -57,6 +58,7 @@ import app.n_zik.compagnon.playback.vlc.VlcRuntime
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.semiBold
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -86,7 +88,7 @@ enum class AudioDeviceType(val output: AudioOutput, val icon: DrawableResource) 
  * - "Volume": the PC's playback volume only (local, persisted, contract §8.5), in the phone's `VolumeRow`.
  * - "Audio Quality": the quality asked when the PC forges an audio URL.
  * Dropped: the hardware device discovery (Bluetooth, car, broadcasts, permission), the loading / error
- * states that come with it, the device volume (it is Windows' volume) and the grid style.
+ * states that come with it, the device volume (it is the host's volume) and the grid style.
  */
 @Composable
 fun AudioDeviceMenu(onDismiss: () -> Unit, phoneName: String) {
@@ -113,7 +115,15 @@ fun AudioDeviceMenu(onDismiss: () -> Unit, phoneName: String) {
         AudioQualityFormat.High to stringResource(Res.string.audio_quality_format_high),
         AudioQualityFormat.Low to stringResource(Res.string.audio_quality_format_low),
     )
-    val unavailableText = stringResource(Res.string.local_playback_unavailable)
+    // The reason differs per platform: the embedded VLC on Windows, the system VLC on Linux (its install hint
+    // was resolved with the load, so reading it here is a field access, not a file IO)
+    val unavailableText = if (VlcRuntime.usesEmbeddedRuntime) {
+        stringResource(Res.string.local_playback_unavailable)
+    } else {
+        val installHint = (VlcRuntime.availability as? VlcRuntime.Availability.Unavailable)?.installHint
+            ?: VlcRuntime.GENERIC_VLC_INSTALL_HINT
+        formatText(stringResource(Res.string.local_playback_unavailable_linux), installHint)
+    }
     val pcSubtitle = stringResource(Res.string.bridge_audio_output_pc_subtitle)
 
     ListMenu.Menu(title = stringResource(Res.string.audio_devices), showDragHandle = true) {

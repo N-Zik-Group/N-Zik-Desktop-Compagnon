@@ -27,9 +27,9 @@ gradlew.bat :app:run                                       # Launch the app
 gradlew.bat clean build                                    # Clean + build
 ```
 
-> **Windows:** this project builds and runs on Windows only — use `gradlew.bat`, run from the repo root `N-Zik-Desktop-Compagnon/`. The workspace root (the parent of `N-Zik-Desktop-Compagnon/`, where `_bmad/` lives) is **not** a git/gradle project.
+> **Windows:** `gradlew.bat`, run from the repo root `N-Zik-Desktop-Compagnon/`. **Linux:** `./gradlew` (or `build.sh`) — local playback uses the **system libvlc** (VLC must be installed, e.g. `sudo apt install vlc`; the app shows the right package command per distro via `/etc/os-release`). The workspace root (the parent of `N-Zik-Desktop-Compagnon/`, where `_bmad/` lives) is **not** a git/gradle project.
 >
-> **JDK 21** toolchain (set in `app/build.gradle.kts`). **First build** downloads the embedded VLC zip (about 83 MB, once — see "Embedded VLC runtime" below).
+> **JDK 21** toolchain (set in `app/build.gradle.kts`). **First build (Windows host)** downloads the embedded VLC zip (about 83 MB, once — see "Embedded VLC runtime" below); on a Linux host the download/extract tasks are disabled.
 
 ## Verification
 
@@ -66,6 +66,8 @@ The entry keyword for Done.txt follows the template's sections — it is not aut
 ## Embedded VLC Runtime
 
 Audio is played by vlcj 4.12.1 on an **embedded copy of VLC 3.0.24** — no VLC installation is needed, and **no VLC binary is ever committed to this repo**.
+
+> **Windows host only:** `downloadVlc`/`extractVlc` are disabled on a non-Windows host (`isWindowsHost` in `app/build.gradle.kts`) and the win64 runtime never enters the Linux distributable (tar.gz via `createDistributable`). On Linux, local playback uses the **system libvlc** (e.g. `sudo apt install vlc`); `VlcRuntime` skips the embedded gate and loads the system `libvlc` through vlcj's `NativeDiscovery`, and the "This PC" unavailable message carries the distro's install command (spec `spec-linux-system-libvlc`).
 
 - `app/build.gradle.kts` pins `vlcVersion`, `vlcZipUrl` (the official VideoLAN zip) and `vlcZipSha256` (from the official `.sha256`); the `downloadVlc` task downloads once into the Gradle user home (`caches/n-zik-compagnon/vlc/`) and checks the hash, `extractVlc` keeps only the audio subset (libvlc, libvlccore, ~30 plugins, `COPYING.txt`) under `build/vlc-runtime/windows-x64/vlc`
 - `prepareAppResources` depends on `extractVlc` — the runtime reaches the app both under `:app:run` and in `createDistributable` (via `appResourcesRootDir`)

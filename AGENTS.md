@@ -4,7 +4,7 @@
 
 **MANDATORY: Read this file + rules/*.md before any task.**
 
-> **Project identity:** Windows desktop companion for [N-Zik](https://github.com/N-Zik-Group/N-Zik). The **phone is the single source of truth** — it runs a local server on the Wi-Fi network and this app only talks to it (pairing, REST + WebSocket, artwork, streamed audio). **No business logic and no streaming stack live on the PC.** **Transitional product** — it will be replaced by a standalone N-Zik desktop app (see README.md). Wire contract with the phone: spec `spec-n-zik-pc-bridge` (contract 1.x) in the workspace `_bmad-output/`.
+> **Project identity:** desktop companion for [N-Zik](https://github.com/N-Zik-Group/N-Zik) on **Windows and Linux**. The **phone is the single source of truth** — it runs a local server on the Wi-Fi network and this app only talks to it (pairing, REST + WebSocket, artwork, streamed audio). **No business logic and no streaming stack live on the PC.** **Transitional product** — it will be replaced by a standalone N-Zik desktop app (see README.md). Wire contract with the phone: spec `spec-n-zik-pc-bridge` (contract 1.x) in the workspace `_bmad-output/`.
 
 ## Session Startup
 
@@ -143,7 +143,7 @@ gradlew.bat clean build                                 # Clean + build
 
 > **Windows:** `gradlew.bat`, run from the repo root `N-Zik-Desktop-Compagnon/`. **Linux:** `./gradlew` (or `build.sh`). JDK 21 (Gradle toolchain).
 >
-> **First build:** downloads the official VLC 3.0.24 win64 zip (about 83 MB) from download.videolan.org, checked against its pinned SHA-256; the zip is kept in the Gradle user home so `clean` does not re-download it — see rules/BUILD.md "Embedded VLC runtime".
+> **First build (Windows host):** downloads the official VLC 3.0.24 win64 zip (about 83 MB) from download.videolan.org, checked against its pinned SHA-256; the zip is kept in the Gradle user home so `clean` does not re-download it — see rules/BUILD.md "Embedded VLC runtime". **Linux host:** the download/extract tasks are disabled and local playback uses the **system libvlc** (VLC must be installed, e.g. `sudo apt install vlc` — the app shows the right package command per distro).
 
 HALT after 3 failed build attempts → report with full error log.
 

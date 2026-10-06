@@ -16,8 +16,8 @@
 #
 # Note: the app also runs on Linux (`./gradlew :app:run`), pairing included
 # (keyring, or in-memory for the session when no keyring daemon is running).
-# The embedded VLC Linux runtime is not ported yet, so "Sound on the PC" is
-# unavailable there.
+# "Sound on the PC" uses the system libvlc — install VLC first (e.g.
+# `sudo apt install vlc`); the app shows the install command when it is missing.
 
 set -euo pipefail
 

@@ -15,6 +15,10 @@ kotlin {
     jvmToolchain(21)
 }
 
+// The embedded VLC runtime is Windows-only: on a non-Windows host the app plays through the system libvlc
+// (spec `spec-linux-system-libvlc`), so the win64 zip is neither downloaded nor extracted.
+val isWindowsHost = System.getProperty("os.name", "").startsWith("Windows", ignoreCase = true)
+
 dependencies {
     implementation(compose.desktop.currentOs)
     implementation(libs.compose.components.resources)
@@ -53,6 +57,7 @@ tasks.test {
     useJUnitPlatform()
     // Packaging trial of story 12 (opt-in): `gradlew test -PvlcTrial=<directory of audio samples>`.
     providers.gradleProperty("vlcTrial").orNull?.let { media ->
+        check(isWindowsHost) { "The VLC packaging trial (-PvlcTrial) is Windows-only: the embedded runtime is not built elsewhere" }
         dependsOn("extractVlc")
         systemProperty("vlc.trial.media", media)
         val runtime = providers.gradleProperty("vlcTrialRuntime").orNull
@@ -141,6 +146,9 @@ fun sha256Of(file: File): String {
 val downloadVlc = tasks.register("downloadVlc") {
     group = "vlc"
     description = "Downloads the official VLC $vlcVersion win64 zip and checks its pinned SHA-256."
+    // Windows host only — see isWindowsHost.
+    enabled = isWindowsHost
+    if (!isWindowsHost) logger.lifecycle("downloadVlc: skipped on this non-Windows host — the embedded runtime is Windows-only (the app uses the system libvlc)")
     val zip = vlcZipFile
     val url = vlcZipUrl
     val expected = vlcZipSha256
@@ -176,6 +184,8 @@ val extractVlc = tasks.register<Sync>("extractVlc") {
     group = "vlc"
     description = "Extracts the audio subset of VLC $vlcVersion into build/vlc-runtime/windows-x64/vlc."
     dependsOn(downloadVlc)
+    // Windows host only — see isWindowsHost.
+    enabled = isWindowsHost
     val prefix = "vlc-$vlcVersion/"
     val wanted = vlcRuntimeFiles.map { prefix + it }.toSet()
     from(zipTree(vlcZipFile)) {
