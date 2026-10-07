@@ -337,7 +337,6 @@ Any file derived from Cubic Music Desktop keeps its original copyright and licen
 This project is a companion for [N-Zik](https://github.com/N-Zik-Group/N-Zik).
 
 Its contents are not affiliated with, funded, authorized, endorsed by, or in any way associated with YouTube, Google LLC, or any of its affiliates or subsidiaries.
-
 Any trademarks, service marks, trade names, or other intellectual property rights used in this project remain the property of their respective owners.
 
 Made with ❤️ by [NEVARLeVrai](https://github.com/NEVARLeVrai)  
