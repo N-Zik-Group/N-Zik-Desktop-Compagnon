@@ -14,11 +14,11 @@
     <string name="pair_manual_entry">Saisie manuelle</string>
     <string name="pair_manual_entry_text">Saisissez l\'adresse et le code affichés sur votre téléphone</string>
     <string name="pair_show_qr">Afficher le QR code</string>
-    <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
-    <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
+    <string name="pair_listener_unreachable">Votre téléphone n\'a pas pu se connecter à cet ordinateur. Est-ce dû au pare-feu Windows ou à un réseau configuré en mode « Public » ? Autorisez N-Zik Desktop Compagnon sur les réseaux privés ou effectuez l\'appairage manuellement ci-dessous.</string>
+    <string name="pair_no_address">Aucune adresse réseau locale n\'a été détectée sur cet ordinateur ; par conséquent, aucun QR code ne peut s\'afficher. Effectuez l\'appairage manuellement ci-dessous.</string>
     <!-- Manual pairing -->
     <string name="manual_title">Appairage manuel</string>
-    <string name="manual_description">On your phone, Manage server shows the IP address, the port and a 6-character code.</string>
+    <string name="manual_description">Sur votre téléphone, la rubrique « Gérer le serveur » affiche l\'adresse IP, le port et un code à 6 caractères.</string>
     <string name="manual_ip">Adresse IP du téléphone</string>
     <string name="manual_port">Port</string>
     <string name="manual_code">Code d\'appariement</string>
@@ -31,7 +31,7 @@
     <!-- Errors -->
     <string name="error_code_rejected">Code invalide ou périmé. Vérifiez le code sur votre téléphone et réessayez.</string>
     <string name="error_rate_limited">Trop de tentatives. Veuillez réessayer dans %1$d s.</string>
-    <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
+    <string name="error_incompatible_version">Version mobile incompatible (abonnement %1$s). Mettez à jour N-Zik Desktop Compagnon ou N-Zik.</string>
     <string name="error_phone_unreachable">Impossible de joindre le téléphone. Vérifiez que son serveur fonctionne et que les deux appareils sont connectés au même réseau Wi-Fi.</string>
     <string name="error_storage_failed">L\'appairage n\'a pas pu être enregistré sur cet ordinateur.</string>
     <string name="error_listener_failed">Impossible d\'ouvrir le récepteur d\'appairage. Effectuez l\'appairage manuellement ci-dessous.</string>
@@ -46,7 +46,7 @@
     <string name="paired_ok">Le téléphone est joignable.</string>
     <string name="paired_other_active">Un autre ordinateur (%1$s) est connecté au téléphone. Déconnectez-le du téléphone, puis réessayez.</string>
     <string name="paired_other_active_unknown">another device</string>
-    <string name="paired_incompatible">Phone version incompatible (contract %1$s).</string>
+    <string name="paired_incompatible">Version mobile incompatible (abonnement %1$s).</string>
     <string name="paired_error">The phone answered with an error (HTTP %1$d, %2$s).</string>
     <string name="paired_session_only">Aucun porte-clés n\'est disponible sur ce PC, l\'appairage est donc conservé uniquement en mémoire pour cette session : veuillez procéder à un nouvel appairage après un redémarrage.</string>
     <string name="retry">Réessayer</string>
@@ -100,14 +100,14 @@
     <!-- Queue -->
     <string name="queue_title">File d\'attente</string>
     <string name="queue_count">%1$d tracks</string>
-    <string name="queue_empty">The queue is empty. Start playing something on your phone.</string>
-    <string name="queue_track_menu">Track options</string>
+    <string name="queue_empty">La file d\'attente est vide. Lancez la lecture d\'un morceau sur votre téléphone.</string>
+    <string name="queue_track_menu">Options de titre</string>
     <string name="queue_play">Lire</string>
-    <string name="queue_move_up">Move up</string>
-    <string name="queue_move_down">Move down</string>
-    <string name="queue_remove">Remove</string>
-    <string name="queue_clear">Clear queue</string>
-    <string name="queue_clear_confirm_title">Clear the queue?</string>
+    <string name="queue_move_up">Remonter</string>
+    <string name="queue_move_down">Descendre</string>
+    <string name="queue_remove">Supprimer</string>
+    <string name="queue_clear">Vider la file d\'attente</string>
+    <string name="queue_clear_confirm_title">Vider la file d\'attente ?</string>
     <string name="queue_clear_confirm_text">Every track is removed from the phone’s queue and playback stops.</string>
     <!-- Command failures -->
     <string name="command_play">Lire</string>
@@ -115,18 +115,18 @@
     <string name="command_seek">Seek</string>
     <string name="command_next">Suivant</string>
     <string name="command_previous">Précédent</string>
-    <string name="command_speed">Speed</string>
+    <string name="command_speed">Vitesse</string>
     <string name="command_repeat">Répéter</string>
     <string name="command_shuffle">Aléatoire</string>
-    <string name="command_jump">Play from the queue</string>
-    <string name="command_remove">Remove from the queue</string>
-    <string name="command_move">Move in the queue</string>
-    <string name="command_clear">Clear the queue</string>
+    <string name="command_jump">Lire à partir de la file d\'attente</string>
+    <string name="command_remove">Retirer de la file d\'attente</string>
+    <string name="command_move">Avancer dans la file d\'attente</string>
+    <string name="command_clear">Vider la file d\'attente</string>
     <string name="command_queue_play">Lire</string>
-    <string name="command_queue_add">Add to queue</string>
+    <string name="command_queue_add">Ajouter à la file d\'attente</string>
     <string name="command_output">Sortie audio</string>
-    <string name="command_unknown">A command</string>
-    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
+    <string name="command_unknown">Une commande</string>
+    <string name="notice_no_delta">%1$s : le téléphone n\'a pas validé la modification. Actualisation en cours…</string>
     <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
     <string name="notice_rejected">%1$s: refused by the phone.</string>
     <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
@@ -156,7 +156,7 @@
     <string name="sorting_order">Ordre de tri</string>
     <string name="sort_title">Titre</string>
     <string name="sort_artist">Artiste</string>
-    <string name="sort_artist_and_album">Artist, Album</string>
+    <string name="sort_artist_and_album">Artiste, Album</string>
     <string name="sort_listening_time">Durée d’écoute</string>
     <string name="no_items">Aucun élément</string>
     <string name="unknown_title">Titre inconnu</string>
@@ -225,7 +225,7 @@
     <!-- Library: Compagnon only (no phone equivalent) -->
     <string name="library_none">The phone shares no library with this PC.</string>
     <string name="library_refresh">Actualiser</string>
-    <string name="library_back">Back</string>
+    <string name="library_back">Retour</string>
     <string name="library_empty">Il n\'y a rien ici.</string>
     <string name="library_error_unreachable">Le téléphone était injoignable.</string>
     <string name="library_not_found">Introuvable sur le téléphone. Il a peut-être été supprimé.</string>
@@ -326,10 +326,10 @@
     <!-- Compagnon only: the PC as an audio output -->
     <string name="this_pc">Cet ordinateur</string>
     <string name="local_playback_unavailable">Le son n\'est pas disponible sur cet ordinateur : le lecteur VLC intégré n\'a pas pu être chargé.</string>
-    <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
+    <string name="local_playback_unavailable_linux">Le son ne fonctionne pas sur cet ordinateur. Installez VLC à l\'aide de %1$s, puis redémarrez l\'application.</string>
     <string name="local_playback_not_found">Ce titre ne se trouve plus sur votre téléphone.</string>
-    <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
-    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
+    <string name="local_playback_upstream_failed">Votre téléphone n\'a pas pu télécharger ce morceau.</string>
+    <string name="local_playback_invalid_url">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
     <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
     <string name="local_playback_unreachable">Your phone did not answer.</string>
     <string name="local_playback_failed">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
