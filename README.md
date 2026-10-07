@@ -62,9 +62,10 @@
 - **RPM package** (`.rpm`): Fedora / openSUSE / Rocky - `dnf` or `zypper` `install ./<file>.rpm`.
 - **Linux Portable** (`.zip`): The app-image, unzip and run - the same bundle the AUR release entry consumes.
 - **Linux AppImage** (`.AppImage`): A single self-contained file - app + JRE + the official VLC runtime, so it plays without any system VLC; runs directly, no install.
+- **Linux Flatpak** (`.flatpak`, x86_64): The sandboxed install for Flatpak-based systems - app + JRE + the official VLC runtime, so it plays without any system VLC; the keyring client (libsecret) is built into the bundle from its pinned GNOME source; a manual build (no Flathub submission), installed with `flatpak install`.
 - **AUR**: `n-zik-desktop-compagnon` (the latest release) and `n-zik-desktop-compagnon-git` (always the latest of `main` - needs JDK 21 to build).
 
-> ℹ️ The builds are published as **GitHub release files only** - no self-hosted repository. On Linux, VLC is a **declared system dependency** of the packages (never bundled): the package manager pulls it in automatically and the app plays through the system libvlc - the **AppImage is the exception**, it embeds the official VLC runtime so it needs no system VLC. Every install ships an application-menu entry (`.desktop` + icon) and uninstalls cleanly, leaving your data (pairing, settings, audio cache) alone.
+> ℹ️ The builds are published as **GitHub release files only** - no self-hosted repository. On Linux, VLC is a **declared system dependency** of the packages (never bundled): the package manager pulls it in automatically and the app plays through the system libvlc - the **AppImage and the Flatpak are the exceptions**, they embed the official VLC runtime so they need no system VLC. Every install ships an application-menu entry (`.desktop` + icon) and uninstalls cleanly, leaving your data (pairing, settings, audio cache) alone.
 
 ---
 
@@ -225,11 +226,11 @@ The installer (`.exe`, written under `app\build\compose\binaries\`) installs to 
 
 Installing a newer version on top of an existing one **upgrades it in place** - the same frozen upgrade identifier is baked into every build. The user data in `%APPDATA%\N-Zik Desktop Compagnon\` (pairing, settings, audio cache) is left untouched by an upgrade or an uninstall, and the portable build is produced separately and is not affected.
 
-> The installer is **not code-signed yet** (signing is deferred, pending a code-signing certificate - see the release cadence): Windows SmartScreen shows its usual "publisher not verified" notice on the first run of each new version. Every GitHub release therefore publishes the installer's **SHA-256 checksum** so you can verify your download (PowerShell: `Get-FileHash -Algorithm SHA256 "N-Zik Desktop Compagnon-x.y.z.exe"`; the Linux release assets - `.deb`, `.rpm`, portable zip and AppImage - are published with their **SHA-256 checksums** as well), and the source stays public, so any build can be rebuilt and compared against this one (builds are not byte-reproducible, but a rebuild ships the same files and behavior).
+> The installer is **not code-signed yet** (signing is deferred, pending a code-signing certificate - see the release cadence): Windows SmartScreen shows its usual "publisher not verified" notice on the first run of each new version. Every GitHub release therefore publishes the installer's **SHA-256 checksum** so you can verify your download (PowerShell: `Get-FileHash -Algorithm SHA256 "N-Zik Desktop Compagnon-x.y.z.exe"`; the Linux release assets - `.deb`, `.rpm`, portable zip, AppImage and Flatpak - are published with their **SHA-256 checksums** as well), and the source stays public, so any build can be rebuilt and compared against this one (builds are not byte-reproducible, but a rebuild ships the same files and behavior).
 
 ## 🐧 Linux packages
 
-On Linux the app ships as a `.deb` (Debian/Ubuntu/Mint), a `.rpm` (Fedora/openSUSE/Rocky), an **AppImage** (any distro, no install) and through the [AUR](https://aur.archlinux.org/) for Arch-based distros (Arch, Manjaro, CachyOS). Grab the asset from a [GitHub release](https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/latest) and install it - the AppImage is run, not installed (the exact filenames are the release assets):
+On Linux the app ships as a `.deb` (Debian/Ubuntu/Mint), a `.rpm` (Fedora/openSUSE/Rocky), an **AppImage** (any distro, no install), a **Flatpak** (any Flatpak-based distro) and through the [AUR](https://aur.archlinux.org/) for Arch-based distros (Arch, Manjaro, CachyOS). Grab the asset from a [GitHub release](https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/latest) and install it - the AppImage is run, not installed (the exact filenames are the release assets):
 
 ```bash
 # Debian / Ubuntu / Mint
@@ -254,6 +255,14 @@ chmod +x n-zik-desktop-compagnon-<version>-x86_64.AppImage
 ```
 
 Most distros need `fuse3` for the AppImage mount; on a host without FUSE, run it the extract-and-run way instead: `./<file>.AppImage --appimage-extract-and-run`. Dropping the file in an applications directory (e.g. `~/Applications`) makes some desktop environments register its embedded `.desktop` menu entry automatically; others do not. Like the other Linux assets, the AppImage's **SHA-256** is published with the release. The only host-side audio library it relies on is the ALSA one (`alsa-lib`, present on virtually every Linux desktop): the PulseAudio output is bundled, the ALSA output uses the host's.
+
+**Flatpak (any Flatpak-based distro, x86_64):** grab the `.flatpak` release asset and install it with `flatpak install` (Flatpak must be on the machine, e.g. `sudo apt install flatpak`, and a flatpak remote must be configured for the base runtime — Flathub, once: `flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo`; several distros do not add one automatically):
+
+```bash
+flatpak install ./n-zik-desktop-compagnon-<version>-x86_64.flatpak
+```
+
+The first install downloads the base runtime (`org.freedesktop.Platform`) once from the Flathub CDN (through the configured remote); the bundle itself is self-contained - app + JRE + the official VLC runtime, so no system VLC is needed. It is built manually on a Linux host (no Flathub submission - no app page, no CI, no review). Your data - pairing, settings and audio cache in `~/N-Zik Desktop Compagnon/`, plus the keyring token (GNOME Secret Service) - is left alone by an upgrade or an uninstall. The Flatpak is unsigned by design, like the other assets: its **SHA-256** is published with the release.
 
 **No VLC to install with the packages:** the packages declare `vlc` as a dependency, so the package manager pulls it in automatically, and the app plays through the system libvlc. Installing puts the app in `/opt/n-zik-desktop-compagnon/`, adds a `.desktop` entry to the application menu (with the N-Zik icon) and a clean uninstall through the package manager. Your data - pairing, settings and audio cache in `~/N-Zik Desktop Compagnon/`, plus the keyring token - is left alone by an upgrade or an uninstall.
 

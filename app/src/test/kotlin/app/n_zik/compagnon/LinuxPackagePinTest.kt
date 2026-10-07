@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
  * The Linux packaging contract lives in build config that no other test path touches: a plugin
  * upgrade that stops forwarding the jpackage `freeArgs` would ship a `.deb`/`.rpm` WITHOUT the
  * `vlc` dependency (the core contract — the `.deb`/`.rpm`/AUR/portable paths never bundle VLC; only
- * the AppImage embeds the runtime), and a renamed `nzikPackageName` would desynchronize the `/opt`
+ * the AppImage and the Flatpak embed the runtime, each into its own staging), and a renamed `nzikPackageName` would desynchronize the `/opt`
  * dir from the portable zip name, the AUR `pkgname`s and the download URL — all with a green build.
  * The build exposes the effective values (`systemProperty` in `app/build.gradle.kts`, same pattern
  * as `install.upgradeUuid`) so this test pins them.
@@ -102,7 +102,7 @@ class LinuxPackagePinTest {
     }
 
     @Test
-    fun `the AppImage is the only Linux artifact that injects resources vlc`() {
+    fun `the AppImage and the Flatpak are the only Linux artifacts that inject resources vlc`() {
         // The runtime goes into the AppDir's app resources dir (the cfg's $APPDIR/resources), and NO
         // other Linux path gets it: the .deb/.rpm/AUR/portable app-image keeps its system-vlc contract.
         val injection = appImageProp("linux.appImage.resourcesInjection")

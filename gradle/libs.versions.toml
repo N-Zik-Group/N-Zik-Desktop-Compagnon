@@ -11,7 +11,10 @@ nzikPerUser = "true"
 # by scripts/build-vlc-linux-tarball.sh; its own SHA-256 is pinned below and published with the release
 # asset (the URL points at that asset — the download task is cache-first until the upload chore lands).
 vlc-linux-tarball-url = "https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/download/v0.0.1/vlc-3.0.24-linux-x64.tar.gz"
-vlc-linux-tarball-sha256 = "9ce6c77e10d9b25fb09934ba32475abfdf56930802a51b60f1d682f943c36daa"
+# Re-pinned 2026-10-07 (approved): the original tarball was lost from the build cache and was
+# never uploaded to the release, so the original SHA is unrecoverable; the rebuild (same pinned
+# official source + same committed script + same audio subset) yields a different binary hash.
+vlc-linux-tarball-sha256 = "3a4293f590eab7f4b28b5fd0a6084bf8c59cc7e4ce8d178e0d1429300b71c884"
 linuxdeploy-version = "1-alpha-20251107-1"
 linuxdeploy-url = "https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20251107-1/linuxdeploy-x86_64.AppImage"
 linuxdeploy-sha256 = "c20cd71e3a4e3b80c3483cef793cda3f4e990aca14014d23c544ca3ce1270b4d"

@@ -1,0 +1,52 @@
+{
+  "app-id": "__APP_ID__",
+  "runtime": "org.freedesktop.Platform",
+  "runtime-version": "24.08",
+  "sdk": "org.freedesktop.Sdk",
+  "command": "nzik",
+  "icon": "__APP_ID__",
+  "version": "__VERSION__",
+  "finish-args": [
+    "--share=network",
+    "--socket=x11",
+    "--socket=wayland",
+    "--socket=pulseaudio",
+    "--device=dri",
+    "--filesystem=home",
+    "--talk-name=org.freedesktop.secrets"
+  ],
+  "modules": [
+    {
+      "name": "libsecret",
+      "buildsystem": "meson",
+      "config-opts": [
+        "-Dvapi=false",
+        "-Dintrospection=false",
+        "-Dgtk_doc=false",
+        "-Dmanpage=false"
+      ],
+      "sources": [
+        {
+          "type": "archive",
+          "url": "https://github.com/GNOME/libsecret/archive/refs/tags/0.21.8.2.tar.gz",
+          "sha256": "83b63bdf73124e5de7a24653aee518e861daee65f6ec8593d20fb87f3097bd98"
+        }
+      ]
+    },
+    {
+      "name": "app",
+      "buildsystem": "simple",
+      "build-commands": [
+        "cp -a bin lib share /app/",
+        "chmod 755 /app/bin/nzik",
+        "chmod 755 \"/app/bin/N-Zik Desktop Compagnon\""
+      ],
+      "sources": [
+        {
+          "type": "dir",
+          "path": "app"
+        }
+      ]
+    }
+  ]
+}

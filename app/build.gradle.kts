@@ -30,9 +30,10 @@ kotlin {
 version = libs.versions.nzikVersionName.get()
 
 // The embedded VLC runtime is built for Windows from the official VideoLAN zip, and for the Linux
-// AppImage from the pinned Linux tarball (produced one-shot by scripts/build-vlc-linux-tarball.sh,
-// spec `spec-linux-appimage`). The other Linux install paths (.deb/.rpm/AUR/portable) play through
-// the system libvlc (spec `spec-linux-system-libvlc`): no runtime is downloaded for them.
+// AppImage + Flatpak from the pinned Linux tarball (produced one-shot by
+// scripts/build-vlc-linux-tarball.sh, specs `spec-linux-appimage` / `spec-linux-flatpak`). The
+// other Linux install paths (.deb/.rpm/AUR/portable) play through the system libvlc (spec
+// `spec-linux-system-libvlc`): no runtime is downloaded for them.
 val isWindowsHost = System.getProperty("os.name", "").startsWith("Windows", ignoreCase = true)
 val isLinuxHost = System.getProperty("os.name", "").startsWith("Linux", ignoreCase = true)
 
@@ -232,9 +233,10 @@ val extractVlc = tasks.register<Sync>("extractVlc") {
 // (it survives `clean`), checked against the pinned SHA-256, and only the audio part extracted
 // under build/vlc-runtime. No VLC binary is ever committed.
 //
-// The AppImage is the ONLY Linux artifact that embeds VLC: the runtime is injected into the AppDir
-// at assembly time (packageAppImage), never into the shared app-image — the .deb/.rpm/AUR/portable
-// keep their system-vlc contract (`vlc` declared as a dependency, no resources/vlc).
+// The AppImage and the Flatpak are the ONLY Linux artifacts that embed VLC: the runtime is
+// injected into their own staging at assembly time (packageAppImage / packageFlatpak), never into
+// the shared app-image — the .deb/.rpm/AUR/portable keep their system-vlc contract (`vlc`
+// declared as a dependency, no resources/vlc).
 //
 // linuxdeploy (the AppImage builder, itself an AppImage) is pinned the same way and run at build
 // time with `--appimage-extract-and-run`: no FUSE is needed on the build host (WSL included).
@@ -294,9 +296,10 @@ val vlcLinuxRuntimeFiles = listOf(
 val downloadVlcLinux = tasks.register("downloadVlcLinux") {
     group = "vlc"
     description = "Downloads the pinned Linux VLC $vlcVersion runtime tarball and checks its SHA-256."
-    // Linux host only — the embedded runtime feeds the AppImage (see packageAppImage).
+    // Linux host only — the embedded runtime feeds the AppImage + the Flatpak (see
+    // packageAppImage / packageFlatpak).
     enabled = isLinuxHost
-    if (!isLinuxHost) logger.lifecycle("downloadVlcLinux: skipped on this non-Linux host — the embedded Linux runtime feeds the AppImage only (the other Linux paths use the system libvlc)")
+    if (!isLinuxHost) logger.lifecycle("downloadVlcLinux: skipped on this non-Linux host — the embedded Linux runtime feeds the AppImage + the Flatpak only (the other Linux paths use the system libvlc)")
     val tarball = vlcLinuxTarballFile
     val url = vlcLinuxTarballUrl
     val expected = vlcLinuxTarballSha256
@@ -412,6 +415,39 @@ val linuxPackageName = libs.versions.nzikPackageName.get().lowercase().replace('
 // from the same package name + version as every other Linux artifact. Pinned by LinuxPackagePinTest.
 val appImageFileName = "${linuxPackageName}-${libs.versions.nzikVersionName.get()}-x86_64.AppImage"
 
+// The Flatpak app-id (spec spec-linux-flatpak, AD-1): the frozen Flatpak identity — the bundle's
+// install name, the upgrade identity and the icon name all derive from it, so it must never
+// change after the first release (a changed app-id would orphan every installed copy). Pinned by
+// FlatpakPinTest (exposed to the JVM tests as `flatpak.appId`).
+val flatpakAppId = "com.nzik.desktop.compagnon"
+
+// The Flatpak release file name (spec spec-linux-flatpak): the frozen x86_64 asset name, derived
+// from the same package name + version as every other Linux artifact (the AppImage pattern).
+// Pinned by FlatpakPinTest.
+val flatpakFileName = "${linuxPackageName}-${libs.versions.nzikVersionName.get()}-x86_64.flatpak"
+
+// The committed Flatpak manifest template (spec spec-linux-flatpak): the reviewable, committed
+// build recipe (transparency of the manual build — the bundle is built with the host's
+// flatpak-builder, never from generated-only config). The build substitutes its two placeholders
+// (__APP_ID__, __VERSION__) and reads the effective contract (runtime, command, finish-args)
+// from it, so the template stays the single source of truth. Read eagerly: a broken template
+// fails the build on every host, not just the Linux one.
+val flatpakManifestTemplate = rootProject.file("packaging/flatpak/manifest.json")
+val flatpakManifestJson = groovy.json.JsonSlurper().parseText(flatpakManifestTemplate.readText()) as Map<String, Any>
+val flatpakRuntimeName = flatpakManifestJson["runtime"] as String
+val flatpakRuntimeVersion = flatpakManifestJson["runtime-version"] as String
+val flatpakCommand = flatpakManifestJson["command"] as String
+val flatpakFinishArgs = (flatpakManifestJson["finish-args"] as List<*>).joinToString("\u001f")
+// The libsecret module pin (spec spec-linux-flatpak): the keyring client library. The freedesktop
+// runtime does not ship libsecret-1.so, so the bundle builds it from the pinned GNOME source —
+// without the module the app silently falls back to the in-memory session store inside the
+// sandbox (the token would not survive a restart). Read from the template like the rest of the
+// contract, so a dropped or drifted module fails the contract test, not the user's keyring.
+val flatpakLibsecretModule = (flatpakManifestJson["modules"] as List<*>).first { (it as Map<*, *>)["name"] == "libsecret" } as Map<*, *>
+val flatpakLibsecretSource = (flatpakLibsecretModule["sources"] as List<*>).first() as Map<*, *>
+val flatpakLibsecretUrl = flatpakLibsecretSource["url"] as String
+val flatpakLibsecretSha256 = flatpakLibsecretSource["sha256"] as String
+
 compose.desktop {
     application {
         mainClass = "app.n_zik.compagnon.MainKt"
@@ -487,10 +523,11 @@ tasks.matching { it.name == "prepareAppResources" }.configureEach { dependsOn(ex
 // The Compose plugin registers its jpackage tasks in its own afterEvaluate, so these references are
 // deferred to project.afterEvaluate (which runs after the plugin's, once the tasks exist).
 //
-// None of the four Linux package paths (.deb/.rpm/AUR/portable) embeds VLC — the AppImage is the
-// deliberate exception (spec spec-linux-appimage, the 5th release asset): those four play through
-// the system libvlc (see VlcRuntime), so the .deb, the .rpm and the AUR entries declare `vlc` as
-// a dependency — the package manager installs it. The
+// None of the four Linux package paths (.deb/.rpm/AUR/portable) embeds VLC — the AppImage (5th
+// release asset, spec spec-linux-appimage) and the Flatpak (6th, spec spec-linux-flatpak) are the
+// deliberate exceptions: those four play through the system libvlc (see VlcRuntime), so the .deb,
+// the .rpm and the AUR entries declare `vlc` as a dependency — the package manager installs it.
+// The
 // plugin exposes no `depends` in the linux { } DSL and never passes jpackage's `--linux-package-deps`,
 // so we inject it through the plugin's `freeArgs` extension point (those args are prepended to the
 // jpackage command line): `vlc` lands in the deb `Depends` and the rpm `Requires` with no repackaging.
@@ -524,6 +561,19 @@ project.afterEvaluate {
         systemProperty("linux.appImage.linuxdeploySha256", linuxdeploySha256)
         systemProperty("linux.appImage.fileName", appImageFileName)
         systemProperty("linux.appImage.resourcesInjection", "usr/lib/app/resources/vlc")
+        // The Flatpak contract (spec spec-linux-flatpak): the frozen app-id (AD-1), the base
+        // runtime + version (AD-2), the finish-args (the sandbox contract: network = pairing
+        // listener, SecretService = keyring, home = the data dir, …), the frozen bundle name and
+        // the wrapper command — all read from the committed template above, so a template change
+        // fails the test.
+        systemProperty("flatpak.appId", flatpakAppId)
+        systemProperty("flatpak.runtime", flatpakRuntimeName)
+        systemProperty("flatpak.runtimeVersion", flatpakRuntimeVersion)
+        systemProperty("flatpak.finishArgs", flatpakFinishArgs)
+        systemProperty("flatpak.fileName", flatpakFileName)
+        systemProperty("flatpak.command", flatpakCommand)
+        systemProperty("flatpak.libsecretUrl", flatpakLibsecretUrl)
+        systemProperty("flatpak.libsecretSha256", flatpakLibsecretSha256)
     }
 
     // The portable Linux build is the jpackage app-image — the only Linux binary the AUR entry consumes.
@@ -559,7 +609,7 @@ project.afterEvaluate {
         // A runtime leaking here would ride in the .deb/.rpm/AUR/portable under a green build.
         if (appImage.resolve("lib/app/resources/vlc").exists()) {
             throw GradleException(
-                "the shared app-image carries lib/app/resources/vlc ($appImage) — only the AppImage may embed the VLC runtime"
+                "the shared app-image carries lib/app/resources/vlc ($appImage) — only the AppImage and the Flatpak may embed the VLC runtime, and each into its own staging (never the shared app-image, whose other consumers — .deb/.rpm/AUR/portable — must stay on the system libvlc)"
             )
         }
         val launcher = appImage.resolve("bin").resolve(appImage.name)
@@ -684,7 +734,7 @@ project.afterEvaluate {
             // portable artifacts, and the build fails instead of shipping it.
             if (File(image, "lib/app/resources/vlc").exists()) {
                 throw GradleException(
-                    "the shared app-image carries lib/app/resources/vlc ($image) — only the AppImage may embed the VLC runtime"
+                    "the shared app-image carries lib/app/resources/vlc ($image) — only the AppImage and the Flatpak may embed the VLC runtime, and each into its own staging (never the shared app-image, whose other consumers — .deb/.rpm/AUR/portable — must stay on the system libvlc)"
                 )
             }
 
@@ -838,6 +888,209 @@ project.afterEvaluate {
             // The release chore publishes the AppImage's SHA-256 next to its name: log it here so it
             // can be copied straight from the build output.
             logger.lifecycle("AppImage SHA-256: ${sha256Of(target)}")
+        }
+    }
+
+    // The Flatpak (spec spec-linux-flatpak) — the 6th Linux artifact: the same app-image the
+    // AppImage packages (one source of truth, kept free of the VLC runtime) + the embedded Linux
+    // VLC runtime in lib/app/resources/vlc + the nzik wrapper launcher in the app's bin/ dir
+    // (a Flatpak .desktop cannot carry Env= — the wrapper exports the runtime dir on
+    // LD_LIBRARY_PATH, the compiled libs have no rpath; bin/ is where the flatpak sandbox PATH
+    // and the builder's finish step resolve the bare command — step 4) + the .desktop + icon,
+    // staged under the Gradle user home (local disk, the same
+    // 9P-mount reasoning as the AppImage) and built with the HOST's flatpak-builder + flatpak
+    // (apt tools — never pinned artifacts). Manual build, no Flathub submission: the only
+    // Flathub involvement is downloading the base runtime from the Flathub CDN (AD-2) — the
+    // bundle is distributed as a GitHub release asset, like the five others.
+    // Linux host only; on Windows it is skipped like packageAppImage, so gradlew.bat build stays green.
+    tasks.register("packageFlatpak") {
+        group = "n-zik"
+        description = "Builds the x86_64 Flatpak bundle (app + JRE + embedded VLC) from the app-image via flatpak-builder."
+        enabled = isLinuxHost
+        if (!isLinuxHost) {
+            logger.lifecycle("packageFlatpak: skipped on this non-Linux host — build it on a Linux/WSL host")
+        }
+        dependsOn(createDistributableImpl, extractVlcLinux)
+        doLast {
+            val binaries = layout.buildDirectory.dir("compose/binaries").get().asFile
+            // The staging + the build dir live under the Gradle user home (local disk): the repo
+            // is on the 9P mount on the WSL build host, where the long-lived daemon can serve a
+            // stale (empty) listing of a dir another process just populated (the AppImage lost a
+            // produced AppImage that way once), and flatpak-builder does thousands of small file
+            // ops. Only the finished bundle is transferred back to the repo (step 7).
+            val workDir = File(gradle.gradleUserHomeDir, "caches/n-zik-compagnon/flatpak")
+
+            // 1. Fail-loud host prerequisites (the flatpak tools are apt host tools, not pinned
+            //    artifacts; the base runtime is downloaded from a configured remote on first use).
+            fun isOnPath(binary: String): Boolean =
+                runCatching {
+                    val process = ProcessBuilder(binary, "--version").redirectErrorStream(true).start()
+                    process.inputStream.readBytes()
+                    process.waitFor()
+                }.isSuccess
+            if (!isOnPath("flatpak") || !isOnPath("flatpak-builder")) {
+                throw GradleException(
+                    "flatpak / flatpak-builder not found on the PATH — install them with: sudo apt install flatpak-builder"
+                )
+            }
+            val remotesProcess = ProcessBuilder("flatpak", "remotes", "--columns=name").redirectErrorStream(true).start()
+            val remotes = remotesProcess.inputStream.bufferedReader().readText()
+                .lineSequence().filter { it.isNotBlank() }.toList()
+            if (remotesProcess.waitFor() != 0 || remotes.isEmpty()) {
+                throw GradleException(
+                    "no flatpak remote is configured (the base runtime is downloaded from one) — add Flathub with: " +
+                        "flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo"
+                )
+            }
+
+            // 2. Locate the app-image (the same dynamic detection as packageAppImage) + the
+            //    fail-loud boundary: the shared app-image must be free of the embedded runtime —
+            //    this task injects it into the staging dir only (step 3, after this point), so a
+            //    pre-existing resources/vlc here means a leak into the .deb/.rpm/AUR/portable
+            //    artifacts, and the build fails instead of shipping it.
+            val base = createDistributableImpl.get().destinationDir.get().asFile
+            val appImages = base.listFiles { f, _ -> f.isDirectory }
+                ?.filter { it.resolve("bin").isDirectory }
+                ?: throw GradleException("app-image output dir is missing or not a directory: $base")
+            require(appImages.size == 1) { "expected exactly one app-image directory (with a bin/) in $base, found ${appImages.size}" }
+            val image = appImages.first()
+            if (File(image, "lib/app/resources/vlc").exists()) {
+                throw GradleException(
+                    "the shared app-image carries lib/app/resources/vlc ($image) — only the AppImage and the Flatpak may embed the VLC runtime, and each into its own staging (never the shared app-image, whose other consumers — .deb/.rpm/AUR/portable — must stay on the system libvlc)"
+                )
+            }
+
+            // 3. Stage the app-image contents + the embedded runtime + the wrapper + the .desktop
+            //    + the icon under <workDir>/app/ (the manifest's dir source). The build dir is a
+            //    sub-dir (<workDir>/build) so --force-clean never wipes the staging or the
+            //    generated manifest.
+            val staging = File(workDir, "app")
+            delete(staging)
+            copy { from(image); into(staging) }
+            // Inject the embedded VLC runtime into the app-image's resources dir — the one
+            // VlcRuntime reads (the cfg sets -Dcompose.application.resources.dir=$APPDIR/resources,
+            // i.e. /app/lib/app/resources in the Flatpak). Only the staging gets it: the shared
+            // app-image (and therefore the .deb/.rpm/AUR/portable) stays free of resources/vlc.
+            copy { from(vlcLinuxRuntimeRoot.get().dir("vlc")); into(File(staging, "lib/app/resources/vlc")) }
+
+            // 4. The wrapper launcher, in the app's bin/ dir: a Flatpak .desktop cannot carry
+            //    Env= (flatpak ignores it) and the embedded libs carry no rpath — so the wrapper
+            //    exports the runtime dir on LD_LIBRARY_PATH and execs the jpackage launcher (whose
+            //    path contains spaces — quoted). bin/ is mandatory, not cosmetic: the flatpak
+            //    sandbox PATH puts /app/bin first (the bare Exec + command resolve to
+            //    /app/bin/nzik), and flatpak-builder's finish step hard-fails when the command
+            //    binary is not in <builddir>/files/bin/ ("Command 'nzik' not found").
+            val displayName = libs.versions.nzikPackageName.get()
+            File(staging, "bin/$flatpakCommand").apply {
+                writeText(
+                    "#!/bin/sh\n" +
+                        "export LD_LIBRARY_PATH=\"/app/lib/app/resources/vlc\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\"\n" +
+                        "exec \"/app/bin/$displayName\" \"\$@\"\n"
+                )
+                setExecutable(true, false)
+            }
+
+            // 5. The .desktop entry + the hicolor icon (both under /app/share: flatpak resolves
+            //    the bare Exec command and the app-id icon name against them). No Version= key:
+            //    per the desktop-entry spec it is the SPEC version (1.5), not the app version.
+            //    Categories needs no AudioVideo main-category pair (unlike the AppImage spec).
+            File(staging, "share/applications").mkdirs()
+            File(staging, "share/applications/$flatpakAppId.desktop").writeText(
+                "[Desktop Entry]\n" +
+                    "Type=Application\n" +
+                    "Name=$displayName\n" +
+                    "Comment=Desktop companion for N-Zik: control your phone's library and playback from a large screen, and listen on your computer.\n" +
+                    "Exec=$flatpakCommand\n" +
+                    "Icon=$flatpakAppId\n" +
+                    "Terminal=false\n" +
+                    "Categories=Audio;\n"
+            )
+            File(staging, "share/icons/hicolor/256x256/apps").mkdirs()
+            linuxIcon.copyTo(File(staging, "share/icons/hicolor/256x256/apps/$flatpakAppId.png"), overwrite = true)
+
+            // 6. Generate the manifest in the workdir from the committed template: only the two
+            //    placeholders are substituted (transparency of the manual build — the recipe is
+            //    reviewable without Gradle).
+            val manifest = File(workDir, "manifest.json")
+            manifest.writeText(
+                flatpakManifestTemplate.readText()
+                    .replace("__APP_ID__", flatpakAppId)
+                    .replace("__VERSION__", libs.versions.nzikVersionName.get())
+            )
+
+            // 7. Build + bundle. The base runtime + the sdk are installed into the flatpak install
+            //    dir (user scope — the documented prerequisite is a user remote, no root needed)
+            //    before the build: `flatpak install` is idempotent, so an install already present
+            //    at that version is left alone (AD-2: a download from the Flathub CDN at build
+            //    time, once — and again on the target machine at the first install).
+            val remote = remotes.first()
+            val install = ProcessBuilder(
+                "flatpak", "install", "--user", "-y", remote,
+                "$flatpakRuntimeName//$flatpakRuntimeVersion",
+                "org.freedesktop.Sdk//$flatpakRuntimeVersion"
+            ).redirectErrorStream(true)
+            val installProcess = install.start()
+            val installOutput = installProcess.inputStream.bufferedReader().readText()
+            val installCode = installProcess.waitFor()
+            if (installCode != 0) {
+                logger.error("flatpak install failed (exit $installCode):\n$installOutput")
+                throw GradleException(
+                    "could not install the base runtime ($flatpakRuntimeName $flatpakRuntimeVersion) from the " +
+                        "'$remote' remote — check the remote hosts it (the documented setup is: " +
+                        "flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo)"
+                )
+            }
+            val buildDir = File(workDir, "build")
+            // --repo <builddir>/repo is required: without it (or --install) flatpak-builder 1.4.x
+            // only stages the app in the build dir and never commits it to a repo, so there would
+            // be nothing for build-bundle to package. build-export auto-creates the repo.
+            val builder = ProcessBuilder(
+                "flatpak-builder", "--force-clean",
+                "--repo", File(buildDir, "repo").absolutePath,
+                buildDir.absolutePath, manifest.absolutePath
+            ).directory(workDir).redirectErrorStream(true)
+            val builderProcess = builder.start()
+            val builderOutput = builderProcess.inputStream.bufferedReader().readText()
+            val builderCode = builderProcess.waitFor()
+            if (builderCode != 0) {
+                logger.error("flatpak-builder failed (exit $builderCode):\n$builderOutput")
+                throw GradleException("flatpak-builder failed (exit $builderCode)")
+            }
+            // build-bundle takes REPO FILENAME APP-ID (the arch is passed explicitly — the frozen
+            // x86_64 asset). The bundle is written to the process's working directory (there is
+            // no output-dir flag), which is the workdir — step 8 then moves it to binaries/.
+            val packer = ProcessBuilder(
+                "flatpak", "build-bundle", File(buildDir, "repo").absolutePath,
+                flatpakFileName, flatpakAppId, "--arch=x86_64"
+            ).directory(workDir).redirectErrorStream(true)
+            val packerProcess = packer.start()
+            val packerOutput = packerProcess.inputStream.bufferedReader().readText()
+            val packerCode = packerProcess.waitFor()
+            if (packerCode != 0) {
+                logger.error("flatpak build-bundle failed (exit $packerCode):\n$packerOutput")
+                throw GradleException("flatpak build-bundle failed (exit $packerCode)")
+            }
+
+            // 8. Move the produced bundle to binaries/. Its name is already the frozen release
+            //    name (passed to build-bundle), so check that exact file rather than scanning.
+            //    The move is cross-device (local workdir → the repo build dir), so renameTo is
+            //    tried first with a copy fallback.
+            val produced = File(workDir, flatpakFileName)
+            if (!produced.isFile) {
+                val found = workDir.listFiles()?.joinToString { it.name } ?: "(unreadable)"
+                throw GradleException("flatpak build-bundle produced no bundle: expected ${produced.absolutePath} (dir contents: $found)")
+            }
+            binaries.mkdirs()
+            val target = File(binaries, flatpakFileName)
+            if (target.exists()) target.delete()
+            if (!produced.renameTo(target)) {
+                produced.copyTo(target)
+                produced.delete()
+            }
+            logger.lifecycle("Flatpak built: ${target.absolutePath}")
+            // The release chore publishes the Flatpak's SHA-256 next to its name: log it here so
+            // it can be copied straight from the build output.
+            logger.lifecycle("Flatpak SHA-256: ${sha256Of(target)}")
         }
     }
 }
