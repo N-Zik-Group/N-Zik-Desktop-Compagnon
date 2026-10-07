@@ -307,7 +307,6 @@ Any file derived from Cubic Music Desktop keeps its original copyright and licen
 
 ## 🛠️ Build & Deployment
 
-[![Build](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build.yml)  
 [![Automatic Cache Builder](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/cache-builder.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/cache-builder.yaml)
 
 ## 🔄 Automation & Maintenance
