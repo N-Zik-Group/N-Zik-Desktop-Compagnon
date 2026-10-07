@@ -146,7 +146,7 @@
     <string name="favorites">Favoris</string>
     <string name="cached">En cache</string>
     <!-- "On device" on the phone; here the label says where the files are, to be told apart from "Cached" -->
-    <string name="on_device">On device phone</string>
+    <string name="on_device">Sur le téléphone</string>
     <string name="done">Terminé</string>
     <string name="downloaded">Téléchargés</string>
     <string name="playlist_top">Top de la playlist</string>
