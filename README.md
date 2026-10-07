@@ -61,9 +61,10 @@
 - **Debian package** (`.deb`): Debian / Ubuntu / Mint - `apt install ./<file>.deb`.
 - **RPM package** (`.rpm`): Fedora / openSUSE / Rocky - `dnf` or `zypper` `install ./<file>.rpm`.
 - **Linux Portable** (`.zip`): The app-image, unzip and run - the same bundle the AUR release entry consumes.
+- **Linux AppImage** (`.AppImage`): A single self-contained file - app + JRE + the official VLC runtime, so it plays without any system VLC; runs directly, no install.
 - **AUR**: `n-zik-desktop-compagnon` (the latest release) and `n-zik-desktop-compagnon-git` (always the latest of `main` - needs JDK 21 to build).
 
-> ℹ️ The builds are published as **GitHub release files only** - no self-hosted repository. On Linux, VLC is a **declared system dependency** of the packages (never bundled): the package manager pulls it in automatically and the app plays through the system libvlc. Every install ships an application-menu entry (`.desktop` + icon) and uninstalls cleanly, leaving your data (pairing, settings, audio cache) alone.
+> ℹ️ The builds are published as **GitHub release files only** - no self-hosted repository. On Linux, VLC is a **declared system dependency** of the packages (never bundled): the package manager pulls it in automatically and the app plays through the system libvlc - the **AppImage is the exception**, it embeds the official VLC runtime so it needs no system VLC. Every install ships an application-menu entry (`.desktop` + icon) and uninstalls cleanly, leaving your data (pairing, settings, audio cache) alone.
 
 ---
 
@@ -114,7 +115,7 @@ The mini player's "audio output" button opens the audio devices: choose **This P
 
 ### 🎬 Embedded VLC
 
-Audio is played by [vlcj](https://github.com/caprica/vlcj) 4.12.1 on an embedded copy of [VLC](https://www.videolan.org/) 3.0.24: no VLC installation is needed. The build downloads the official VideoLAN zip (`vlc-3.0.24-win64.zip`, checked against its pinned SHA-256), keeps it in the Gradle user home so `clean` does not download it again, and extracts only the audio part (libvlc, libvlccore, about 30 plugins, `COPYING.txt`: about 10 MB) under `app/build/vlc-runtime`. No VLC binary is stored in this repository. VLC is © the VideoLAN team and contributors; libvlc is licensed under the LGPL 2.1 or later and some plugins under the GPL 2 or later (see `COPYING.txt` next to the runtime). vlcj is licensed under the GPL 3.0.
+Audio is played by [vlcj](https://github.com/caprica/vlcj) 4.12.1 on an embedded copy of [VLC](https://www.videolan.org/) 3.0.24: no VLC installation is needed. The build downloads the official VideoLAN zip (`vlc-3.0.24-win64.zip`) for the Windows build and the pinned Linux tarball (`vlc-3.0.24-linux-x64.tar.gz`, produced by `scripts/build-vlc-linux-tarball.sh` from the official VideoLAN source and published as a release asset) for the AppImage, checked against their pinned SHA-256s, keeps both in the Gradle user home so `clean` does not download them again, and extracts only the audio part (libvlc, libvlccore, about 30 plugins, the license file: about 10 MB) under `app/build/vlc-runtime`. No VLC binary is stored in this repository. VLC is © the VideoLAN team and contributors; libvlc is licensed under the LGPL 2.1 or later and some plugins under the GPL 2 or later (see `COPYING.txt` next to the runtime). vlcj is licensed under the GPL 3.0.
 
 If the embedded VLC cannot be loaded, the app still works: "This PC" is disabled with a message.
 
@@ -224,11 +225,11 @@ The installer (`.exe`, written under `app\build\compose\binaries\`) installs to 
 
 Installing a newer version on top of an existing one **upgrades it in place** - the same frozen upgrade identifier is baked into every build. The user data in `%APPDATA%\N-Zik Desktop Compagnon\` (pairing, settings, audio cache) is left untouched by an upgrade or an uninstall, and the portable build is produced separately and is not affected.
 
-> The installer is **not code-signed yet** (signing is deferred, pending a code-signing certificate - see the release cadence): Windows SmartScreen shows its usual "publisher not verified" notice on the first run of each new version. Every GitHub release therefore publishes the installer's **SHA-256 checksum** so you can verify your download (PowerShell: `Get-FileHash -Algorithm SHA256 "N-Zik Desktop Compagnon-x.y.z.exe"`; the Linux release assets - `.deb`, `.rpm` and portable zip - are published with their **SHA-256 checksums** as well), and the source stays public so any build is reproducible and comparable.
+> The installer is **not code-signed yet** (signing is deferred, pending a code-signing certificate - see the release cadence): Windows SmartScreen shows its usual "publisher not verified" notice on the first run of each new version. Every GitHub release therefore publishes the installer's **SHA-256 checksum** so you can verify your download (PowerShell: `Get-FileHash -Algorithm SHA256 "N-Zik Desktop Compagnon-x.y.z.exe"`; the Linux release assets - `.deb`, `.rpm`, portable zip and AppImage - are published with their **SHA-256 checksums** as well), and the source stays public, so any build can be rebuilt and compared against this one (builds are not byte-reproducible, but a rebuild ships the same files and behavior).
 
 ## 🐧 Linux packages
 
-On Linux the app ships as a `.deb` (Debian/Ubuntu/Mint), a `.rpm` (Fedora/openSUSE/Rocky) and through the [AUR](https://aur.archlinux.org/) for Arch-based distros (Arch, Manjaro, CachyOS). Grab the package from a [GitHub release](https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/latest) and install it (the exact filenames are the release assets):
+On Linux the app ships as a `.deb` (Debian/Ubuntu/Mint), a `.rpm` (Fedora/openSUSE/Rocky), an **AppImage** (any distro, no install) and through the [AUR](https://aur.archlinux.org/) for Arch-based distros (Arch, Manjaro, CachyOS). Grab the asset from a [GitHub release](https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/latest) and install it - the AppImage is run, not installed (the exact filenames are the release assets):
 
 ```bash
 # Debian / Ubuntu / Mint
@@ -245,7 +246,16 @@ yay -S n-zik-desktop-compagnon-git    # always the latest of main (needs JDK 21 
 
 `yay` is an [AUR helper](https://aur.archlinux.org/packages/yay/) (itself an AUR package): without one, build the entry from its PKGBUILD with `makepkg -si`.
 
-**No VLC to install:** the packages declare `vlc` as a dependency, so the package manager pulls it in automatically, and the app plays through the system libvlc. Installing puts the app in `/opt/n-zik-desktop-compagnon/`, adds a `.desktop` entry to the application menu (with the N-Zik icon) and a clean uninstall through the package manager. Your data - pairing, settings and audio cache in `~/N-Zik Desktop Compagnon/`, plus the keyring token - is left alone by an upgrade or an uninstall.
+**AppImage (any distro, no install):** the AppImage release asset is a single self-contained file - app + JRE + the official VLC runtime (the one Linux build that needs no system VLC). It runs directly from wherever you put it:
+
+```bash
+chmod +x n-zik-desktop-compagnon-<version>-x86_64.AppImage
+./n-zik-desktop-compagnon-<version>-x86_64.AppImage
+```
+
+Most distros need `fuse3` for the AppImage mount; on a host without FUSE, run it the extract-and-run way instead: `./<file>.AppImage --appimage-extract-and-run`. Dropping the file in an applications directory (e.g. `~/Applications`) makes some desktop environments register its embedded `.desktop` menu entry automatically; others do not. Like the other Linux assets, the AppImage's **SHA-256** is published with the release. The only host-side audio library it relies on is the ALSA one (`alsa-lib`, present on virtually every Linux desktop): the PulseAudio output is bundled, the ALSA output uses the host's.
+
+**No VLC to install with the packages:** the packages declare `vlc` as a dependency, so the package manager pulls it in automatically, and the app plays through the system libvlc. Installing puts the app in `/opt/n-zik-desktop-compagnon/`, adds a `.desktop` entry to the application menu (with the N-Zik icon) and a clean uninstall through the package manager. Your data - pairing, settings and audio cache in `~/N-Zik Desktop Compagnon/`, plus the keyring token - is left alone by an upgrade or an uninstall.
 
 > **Minimal Arch installs:** the app needs X11 client libraries and a font to launch - a bare Arch system does not ship them, so a first launch may need a few extra packages (the full list is in `rules/BUILD.md`, "Live-install matrix").
 

@@ -115,9 +115,11 @@ fun AudioDeviceMenu(onDismiss: () -> Unit, phoneName: String) {
         AudioQualityFormat.High to stringResource(Res.string.audio_quality_format_high),
         AudioQualityFormat.Low to stringResource(Res.string.audio_quality_format_low),
     )
-    // The reason differs per platform: the embedded VLC on Windows, the system VLC on Linux (its install hint
-    // was resolved with the load, so reading it here is a field access, not a file IO)
-    val unavailableText = if (VlcRuntime.usesEmbeddedRuntime) {
+    // The message is platform-aware (VlcRuntime.unavailableMessageIsEmbedded, pure in os.name), not
+    // a file-existence check: the embedded-VLC one on Windows (the build embeds VLC by design, so a
+    // load failure there is an app problem, not a missing package), the system-install one on Linux
+    // (its install hint was resolved with the load, so reading it here is a field access, not a file IO)
+    val unavailableText = if (VlcRuntime.unavailableMessageIsEmbedded(System.getProperty("os.name").orEmpty())) {
         stringResource(Res.string.local_playback_unavailable)
     } else {
         val installHint = (VlcRuntime.availability as? VlcRuntime.Availability.Unavailable)?.installHint

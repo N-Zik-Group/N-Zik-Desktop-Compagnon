@@ -8,7 +8,7 @@
 #   ./build.sh            compile + run all tests
 #   ./build.sh test       run the tests only
 #   ./build.sh clean      clean, then compile + run all tests
-#   ./build.sh package    run the tests, then build the Linux .deb + .rpm + portable zip (Linux/WSL host only)
+#   ./build.sh package    run the tests, then build the Linux .deb + .rpm + portable zip + AppImage (Linux/WSL host only)
 #
 # Requirements:
 #   - JDK 21 on PATH, or JAVA_HOME pointing at a JDK 21
@@ -52,10 +52,11 @@ case "${1:-build}" in
     ./gradlew clean build
     ;;
   package)
-    # Linux packages only: on a non-Linux host the .deb/.rpm tasks are disabled by the Compose
-    # plugin (incompatible OS), so this is a Linux/WSL-host command. The packages are shipped
-    # only after the tests pass (the packaging config is pinned by the JVM test suite).
-    ./gradlew :app:test :app:packageDeb :app:packageRpm :app:packageLinuxPortable
+    # Linux artifacts only: on a non-Linux host the .deb/.rpm tasks are disabled by the Compose
+    # plugin (incompatible OS) and the AppImage task skips itself (lifecycle message), so this is
+    # a Linux/WSL-host command. The artifacts are shipped only after the tests pass (the
+    # packaging config is pinned by the JVM test suite).
+    ./gradlew :app:test :app:packageDeb :app:packageRpm :app:packageLinuxPortable :app:packageAppImage
     ;;
   *)
     echo "Usage: ./build.sh [build|test|clean|package]" >&2

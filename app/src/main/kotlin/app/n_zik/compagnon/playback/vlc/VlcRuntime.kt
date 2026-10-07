@@ -5,22 +5,27 @@ import java.util.logging.Logger
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery
 
 /**
- * The libvlc runtime for local playback.
+ * The libvlc runtime for local playback — one rule for every build variant:
  *
- * Windows: the embedded libvlc 3.0.24 (story 12) — the build extracts it into the app resources
- * (`<compose.application.resources.dir>/vlc`, under `gradlew run` as in `createDistributable`); it is
- * pointed at through `jna.library.path`, then vlcj's [NativeDiscovery] loads it and sets the plugin path.
+ * the resources directory carrying this platform's libvlc → the embedded runtime (pointed at
+ * through `jna.library.path`, then vlcj's [NativeDiscovery] loads it and sets the plugin path);
+ * no embedded runtime → the system libvlc (e.g. `sudo apt install vlc`) found by [NativeDiscovery]
+ * alone; the embedded libvlc present but failing to load (corrupt) → the same system discovery
+ * retried once.
  *
- * Linux: the system libvlc (e.g. `sudo apt install vlc`) — there is no embedded runtime, so the embedded
- * gate is skipped and [NativeDiscovery] alone finds the system `libvlc.so` (spec `spec-linux-system-libvlc`).
+ * That single decision covers the Windows build (embedded, `libvlc.dll`), the Linux AppImage
+ * (embedded, `libvlc.so`) and the other four Linux install paths (`.deb`/`.rpm`/the AUR entries/the
+ * portable zip, whose app-image carries no `resources/vlc` — system libvlc, spec
+ * `spec-linux-system-libvlc`; the AppImage exception is spec `spec-linux-appimage`).
  *
- * No libvlc at all → playback is [Availability.Unavailable] and the rest of the app keeps working.
+ * No libvlc at all (neither embedded nor system) → playback is [Availability.Unavailable] and the
+ * rest of the app keeps working.
  */
 object VlcRuntime {
     private val log = Logger.getLogger("VlcRuntime")
 
     sealed interface Availability {
-        /** libvlc loaded from [directory] (the embedded runtime dir on Windows; `system` on the system-library path). */
+        /** libvlc loaded from [directory] (the embedded runtime dir; `system` on the system-library path). */
         data class Available(val directory: String) : Availability
 
         /** libvlc could not be loaded; [reason] is for the log only, [installHint] the user-facing install hint. */
@@ -38,18 +43,29 @@ object VlcRuntime {
 
     val isAvailable: Boolean get() = availability is Availability.Available
 
-    /** [true] on Windows, the only platform with an embedded runtime; elsewhere the system libvlc is used. */
-    val usesEmbeddedRuntime: Boolean
-        get() = isEmbeddedPlatform(System.getProperty(OS_NAME_PROPERTY).orEmpty())
+    /**
+     * Which "local playback unavailable" message the UI shows when libvlc could not be loaded:
+     * pure in [osName] so the menu's selection is testable per platform. [true] on Windows (the
+     * embedded-VLC message: the Windows build embeds VLC by design, so a load failure there is an
+     * app problem, not a missing system package) and [false] on Linux (the system-install message:
+     * an unavailable runtime means no usable system libvlc, and the per-distro hint was resolved
+     * with the load).
+     */
+    internal fun unavailableMessageIsEmbedded(osName: String): Boolean =
+        osName.startsWith("Windows", ignoreCase = true)
 
     /**
-     * The platform split of the load. On the embedded platform the resources directory must carry
-     * [LIBVLC] before [discover] runs (and [JNA_LIBRARY_PATH] is prefixed with it); on other platforms
-     * [discover] alone loads the system libvlc. [discover] is injected so the branches are testable
-     * without the native call.
+     * The platform split of the load, one rule for every variant: the embedded runtime is the
+     * platform libvlc ([LIBVLC_WINDOWS] on Windows, [LIBVLC_LINUX] on Linux) inside
+     * `<resourcesDir>/[RUNTIME_DIR]`; when it is absent (no resources dir, no `vlc` subfolder, or
+     * the platform libvlc missing), [discover] alone loads the system libvlc, and when the
+     * platform libvlc is present but fails to load (corrupt), the embedded branch is rolled back
+     * (the previous `jna.library.path` restored) and [discover] is retried on the system path.
+     * [discover] is injected so the branches are testable without the native call.
      */
     internal fun load(osName: String, resourcesDir: String?, discover: () -> Boolean): Availability {
-        if (!isEmbeddedPlatform(osName)) {
+        val directory = embeddedRuntimeDirectory(resourcesDir, osName)
+        if (directory == null) {
             return if (discoverSafely(discover)) {
                 log.info("libvlc loaded from the system")
                 Availability.Available(SYSTEM_LIBRARY)
@@ -58,9 +74,6 @@ object VlcRuntime {
                 unavailable("no libvlc on the system", vlcInstallHint(readOsRelease()))
             }
         }
-        val directory = resourcesDir?.takeIf { it.isNotBlank() }?.let { File(it, RUNTIME_DIR) }
-            ?: return unavailable("$RESOURCES_DIR_PROPERTY is not set")
-        if (!File(directory, LIBVLC).isFile) return unavailable("no $LIBVLC in the embedded runtime")
         val path = directory.absolutePath
         val previous = System.getProperty(JNA_LIBRARY_PATH)
         System.setProperty(JNA_LIBRARY_PATH, if (previous.isNullOrBlank()) path else "$path${File.pathSeparator}$previous")
@@ -68,19 +81,42 @@ object VlcRuntime {
             log.info("libvlc loaded from the embedded runtime")
             Availability.Available(path)
         } else {
-            unavailable("NativeDiscovery found no libvlc")
+            // The embedded libvlc is present but failed to load (missing deps, corrupt file): roll
+            // back the embedded branch (restore the previous jna.library.path) and retry the system
+            // discovery once; only a failed system discovery leaves playback unavailable (with the
+            // distro install hint, resolved like the absent-runtime case).
+            if (previous.isNullOrBlank()) System.clearProperty(JNA_LIBRARY_PATH) else System.setProperty(JNA_LIBRARY_PATH, previous)
+            if (discoverSafely(discover)) {
+                log.info("embedded runtime failed to load; libvlc loaded from the system")
+                Availability.Available(SYSTEM_LIBRARY)
+            } else {
+                unavailable("no libvlc on the system", vlcInstallHint(readOsRelease()))
+            }
         }
     }
+
+    /**
+     * The embedded runtime directory — the platform libvlc inside `<resourcesDir>/[RUNTIME_DIR]` —
+     * or [null] when there is no embedded runtime: no resources dir, no `vlc` subfolder, or the
+     * platform libvlc is missing. One rule for all variants: the Windows build and the AppImage
+     * carry `resources/vlc`; the `.deb`/`.rpm`/AUR/portable app-image does not, so their system
+     * behavior is preserved by construction.
+     */
+    internal fun embeddedRuntimeDirectory(resourcesDir: String?, osName: String): File? =
+        resourcesDir
+            ?.takeIf { it.isNotBlank() }
+            ?.let { File(it, RUNTIME_DIR) }
+            ?.takeIf { File(it, libVlcName(osName)).isFile }
+
+    /** The platform libvlc file name: the `.dll` on Windows, the `.so` on Linux (the project's targets). */
+    internal fun libVlcName(osName: String): String =
+        if (osName.startsWith("Windows", ignoreCase = true)) LIBVLC_WINDOWS else LIBVLC_LINUX
 
     /** Runs the native discovery so a failure degrades to "not available" instead of escaping [load] (the "never throws" contract). */
     private fun discoverSafely(discover: () -> Boolean): Boolean =
         runCatching { discover() }
             .onFailure { log.warning("libvlc discovery failed: ${it::class.simpleName}: ${it.message}") }
             .getOrDefault(false)
-
-    /** [true] on the embedded-runtime platform (Windows). */
-    internal fun isEmbeddedPlatform(osName: String): Boolean =
-        osName.startsWith("Windows", ignoreCase = true)
 
     /**
      * The package-manager command that installs VLC on the distribution described by [osRelease]
@@ -127,7 +163,8 @@ object VlcRuntime {
     const val GENERIC_VLC_INSTALL_HINT = "your distribution's package manager"
 
     private const val RUNTIME_DIR = "vlc"
-    private const val LIBVLC = "libvlc.dll"
+    private const val LIBVLC_WINDOWS = "libvlc.dll"
+    private const val LIBVLC_LINUX = "libvlc.so"
     private const val JNA_LIBRARY_PATH = "jna.library.path"
     private const val OS_NAME_PROPERTY = "os.name"
     private const val OS_RELEASE_PATH = "/etc/os-release"

@@ -5,6 +5,16 @@ nzikVersionName = "0.0.1"
 # FROZEN installation identity — NEVER change (the deferred in-app updater's foundation); pinned by UpgradeIdentityTest.
 nzikUpgradeUuid = "da55e7af-5c5a-4d1e-841e-bb2646046bc2"
 nzikPerUser = "true"
+# Linux AppImage pins (spec spec-linux-appimage) — SEPARATE from the Windows VLC pins (which live in
+# app/build.gradle.kts and are never touched by the AppImage). The Linux tarball is produced one-shot
+# from the official VideoLAN source (vlc-3.0.24.tar.xz, official SHA e7cab503d1d7d5849b89d2cf0e1ee60d0ef6d012407791b644b9cfc0cc225fdf)
+# by scripts/build-vlc-linux-tarball.sh; its own SHA-256 is pinned below and published with the release
+# asset (the URL points at that asset — the download task is cache-first until the upload chore lands).
+vlc-linux-tarball-url = "https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/download/v0.0.1/vlc-3.0.24-linux-x64.tar.gz"
+vlc-linux-tarball-sha256 = "9ce6c77e10d9b25fb09934ba32475abfdf56930802a51b60f1d682f943c36daa"
+linuxdeploy-version = "1-alpha-20251107-1"
+linuxdeploy-url = "https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20251107-1/linuxdeploy-x86_64.AppImage"
+linuxdeploy-sha256 = "c20cd71e3a4e3b80c3483cef793cda3f4e990aca14014d23c544ca3ce1270b4d"
 kotlin = "2.4.20"
 compose-plugin = "1.13.0-alpha01"
 compose-material3 = "1.13.0-alpha01"
