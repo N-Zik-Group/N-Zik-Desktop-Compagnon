@@ -1,0 +1,99 @@
+# Changelog Convention (N-Zik)
+
+To maintain a clean and consistent project history, it is recommended to use the following standard keywords as section headers in Updates Changelog Folder, here there is no limit of characters, you can describe the changes in as much detail as you want.
+
+When referencing issues, include the full link: `(issue https://github.com/N-Zik-Group/N-Zik/issues/123)`
+
+You can be descriptive but not too much, just the right amount of details, also for the language, basic people can understand it easily, so avoid to use complex words.
+
+---
+
+## Standard Keywords
+
+### Hotfix:
+For urgent patches that fix a critical bug or regression in a previously released version, outside of the normal release cycle.
+
+```
+Hotfix:
+- Fixed app crash on startup caused by missing database migration.
+```
+
+---
+
+### Added:
+For any new feature, screen, or capability added to the application.
+
+```
+Added:
+- New option to change the visualizer line thickness.
+```
+
+---
+
+### Changed:
+For changes in behavior, design, or logic of an existing feature.
+
+```
+Changed:
+- Default thumbnail roundness changed from 12 to 20.
+```
+
+---
+
+### Improved:
+For minor UI, UX, or performance enhancements that are neither entirely new features nor outright bug fixes.
+
+```
+Improved:
+- Visualizer buttons now dynamically squeeze if the thumbnail shape is round.
+```
+
+---
+
+### Fixed:
+For any bug fixes or crash resolutions.
+
+```
+Fixed:
+- Line thickness setting now correctly applies in real-time without restarting the view.
+```
+
+---
+
+### Refactor:
+For internal code changes that do not alter existing external behavior or functionality, but improve the code structure, readability, or maintainability.
+
+```
+Refactor:
+- Extracted visualizer control buttons into a separate composable function.
+```
+
+---
+
+### Removed:
+For features or options that have been intentionally taken out of the application.
+
+```
+Removed:
+- The legacy video player component is no longer available.
+```
+
+---
+
+### Deprecated:
+For features that are still present but are marked to be removed in a future update.
+
+```
+Deprecated:
+- The old visualizer style is deprecated and will be removed in v2.0.
+```
+
+---
+
+### Other:
+For miscellaneous updates, documentation changes, or dependency bumps that don't neatly fit into the above categories.
+
+```
+Other:
+- Updated Gradle plugins to the latest stable versions.
+```
