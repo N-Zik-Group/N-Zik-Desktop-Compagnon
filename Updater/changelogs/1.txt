@@ -1,8 +1,0 @@
-New:
-- the first release of the N-Zik Desktop Compagnon: pair the PC with the phone over the Wi-Fi network (QR code or code entry) and control the phone's library and playback from a large screen
-- browse and search the phone's songs, albums, artists and playlists, with artwork streamed from the phone
-- listen on the computer: the PC joins the phone as an audio output, the audio is streamed over the network and played locally (embedded official VLC 3.0.24 on Windows, system VLC on Linux)
-- a song cache on the PC for the songs it plays (configurable size, clearable from the settings)
-- the settings panel: song cache size, the audio quality asked from the phone, the scrolling-text switch, the app language
-- Windows: the per-user installer (jpackage/WiX, no UAC) and the portable app-image; Linux: the .deb / .rpm packages, the portable zip, the AppImage and the Flatpak bundle, plus the two AUR entries
-- the app language follows the phone's language (or the PC's OS locale, or a manual pick among the 48 phone languages), applied at runtime without dropping the session
