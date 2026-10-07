@@ -108,11 +108,11 @@
     <string name="queue_remove">Supprimer</string>
     <string name="queue_clear">Vider la file d\'attente</string>
     <string name="queue_clear_confirm_title">Vider la file d\'attente ?</string>
-    <string name="queue_clear_confirm_text">Every track is removed from the phone’s queue and playback stops.</string>
+    <string name="queue_clear_confirm_text">Tous les morceaux sont supprimés de la file d\'attente du téléphone et la lecture s\'arrête.</string>
     <!-- Command failures -->
     <string name="command_play">Lire</string>
     <string name="command_pause">Mettre en pause</string>
-    <string name="command_seek">Seek</string>
+    <string name="command_seek">Rechercher</string>
     <string name="command_next">Suivant</string>
     <string name="command_previous">Précédent</string>
     <string name="command_speed">Vitesse</string>
