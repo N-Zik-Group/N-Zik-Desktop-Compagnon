@@ -53,7 +53,7 @@
     <string name="forget_phone">Forget this phone</string>
     <string name="forget_phone_text">Removes the pairing from this PC</string>
     <!-- Unreachable -->
-    <string name="unreachable_title">Phone unreachable</string>
+    <string name="unreachable_title">Téléphone injoignable</string>
     <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
     <string name="unreachable_edit_ip">Edit IP</string>
     <string name="unreachable_edit_ip_text">Conservez l\'appairage, modifiez uniquement l\'adresse IP du téléphone</string>
@@ -65,15 +65,15 @@
     <string name="revoked_description">Cet ordinateur a été supprimé de la liste des appareils appairés avec le téléphone. Appairez-le à nouveau pour continuer à l\'utiliser.</string>
     <string name="revoked_pair_again">Re-appairer</string>
     <!-- Main window -->
-    <string name="phone_panel_title">Phone</string>
-    <string name="phone_panel_open">Phone: %1$s</string>
+    <string name="phone_panel_title">Téléphone</string>
+    <string name="phone_panel_open">Téléphone : %1$s</string>
     <string name="close">Fermer</string>
     <!-- Connection -->
     <string name="connection_live">Connecté</string>
     <string name="connection_connecting">Connexion en cours…</string>
     <string name="connection_reconnecting">Rétablissement de la connexion…</string>
     <string name="connection_offline">Déconnecté</string>
-    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
+    <string name="connection_reconnecting_in">Connexion au téléphone perdue. Reconnexion dans %1$d s…</string>
     <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
     <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
     <string name="connection_replaced">Another window of this PC took over the session.</string>
@@ -94,8 +94,8 @@
     <string name="player_repeat_one">Repeat: one</string>
     <string name="player_shuffle_on">Shuffle: on</string>
     <string name="player_shuffle_off">Shuffle: off</string>
-    <string name="player_open_full">Open the player</string>
-    <string name="player_close_full">Close the player</string>
+    <string name="player_open_full">Ouvrir le lecteur</string>
+    <string name="player_close_full">Fermer le lecteur</string>
     <string name="player_waiting_state">Waiting for the phone’s playback state…</string>
     <!-- Queue -->
     <string name="queue_title">File d\'attente</string>
