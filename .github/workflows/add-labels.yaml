@@ -95,7 +95,7 @@ jobs:
                 });
               }
 
-              console.log(`Issue #${issueNumber}: labeled "${label}".`);
+              console.log(Issue #${issueNumber}: labeled "${label}".);
             }
 
             async function processIssue(issueNumber, title, body) {
@@ -103,7 +103,7 @@ jobs:
               const os = detectOs(body);
               const phoneBuildType = detectPhoneBuildType(body);
               if (!channel && !os && !phoneBuildType) {
-                console.log(`Issue #${issueNumber}: nothing to label, skipping.`);
+                console.log(Issue #${issueNumber}: nothing to label, skipping.);
                 return;
               }
               await applyLabel(issueNumber, channel, pcChannelLabels);

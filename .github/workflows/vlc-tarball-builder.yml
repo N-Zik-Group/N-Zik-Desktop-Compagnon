@@ -1,6 +1,6 @@
 name: VLC Linux Tarball Builder
 
-# Spec `spec-vlc-tarball-ci` — the 4th workflow (not a channel workflow): when the committed
+# The 4th workflow (not a channel workflow): when the committed
 # scripts/build-vlc-linux-tarball.sh is bumped on main, this pipeline builds the tarball,
 # publishes the prerelease staging release vlc-<v>-tarball, and opens the catalog-only bot PR
 # bot/vlc-pin-<v> (exactly the 2 pin lines of gradle/libs.versions.toml). The bot never merges:
@@ -10,7 +10,7 @@ name: VLC Linux Tarball Builder
 # protected by its same-channel tag filter, not by this flag. The no-op verdict includes a
 # HEAD-check of the pinned asset: same version + asset live = a green no-op; same version +
 # asset MISSING (HTTP 404) = self-heal (rebuild + republish + re-open the pin PR — the version
-# is unchanged, the SHA may move). The Sunday 23:30 (Europe/Paris, explicit `timezone:`)
+# is unchanged, the SHA may move). The Sunday 23:30 (Europe/Paris, explicit timezone:)
 # schedule run is the periodic no-op / self-heal check.
 
 on:
@@ -46,7 +46,7 @@ jobs:
           set -euo pipefail
           # The committed script is the producer's single source of truth (its VLC_VERSION line).
           # Both sides reduce to the bare numeric version, so a quoted assignment cannot desync the compare.
-          # `|| true`: a missing line falls through to the curated guard below (set -e would
+          # || true: a missing line falls through to the curated guard below (set -e would
           # otherwise abort the step at the parse line, making the explicit ERROR unreachable).
           SCRIPT_VERSION="$(sed -n 's/^VLC_VERSION=//p' scripts/build-vlc-linux-tarball.sh | head -n1 | grep -oE '[0-9]+(\.[0-9]+)+' | head -n1 || true)"
           # The current pin is derived from the catalog URL's asset name (vlc-<v>-linux-x64.tar.gz) — no further parse.
@@ -153,12 +153,12 @@ jobs:
           cat > release_body.md <<'BODY'
           ## Linux VLC @VERSION@ runtime tarball (staging)
 
-          Built on GitHub Actions by the committed `scripts/build-vlc-linux-tarball.sh` (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped) — spec `spec-vlc-tarball-ci`.
+          Built on GitHub Actions by the committed scripts/build-vlc-linux-tarball.sh (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped).
 
-          - Asset: `vlc-@VERSION@-linux-x64.tar.gz`
-          - SHA-256: `@SHA@`
+          - Asset: vlc-@VERSION@-linux-x64.tar.gz
+          - SHA-256: @SHA@
 
-          > This release is a **prerelease** on purpose: the `vlc-*-tarball` namespace never becomes "latest" (the `/releases/latest` readers — the CI version guards + the metrics — stay on the app releases; the in-app updater reads the full release list and is protected by its same-channel tag filter). It is consumed only by the version catalog (`vlc-linux-tarball-url`) once the bot's pin PR is reviewed and merged.
+          > This release is a **prerelease** on purpose: the vlc-*-tarball namespace never becomes "latest" (the /releases/latest readers — the CI version guards + the metrics — stay on the app releases; the in-app updater reads the full release list and is protected by its same-channel tag filter). It is consumed only by the version catalog (vlc-linux-tarball-url) once the bot's pin PR is reviewed and merged.
           BODY
           sed -i \
             -e "s|@VERSION@|${VERSION}|g" \
@@ -174,7 +174,7 @@ jobs:
           prerelease: true
           make_latest: false
           # In-place re-publish: if the tag already carries a release, the action updates that
-          # release (the same-named asset is overwritten — `overwrite_files` defaults to true)
+          # release (the same-named asset is overwritten — overwrite_files defaults to true)
           # and the explicitly set name/body/prerelease are applied on top of the existing info.
           body_path: release_body.md
           fail_on_unmatched_files: true
@@ -232,20 +232,20 @@ jobs:
           # announces the re-publication (same version — the SHA is what moves, the producer is
           # not byte-reproducible).
           if [ "$REASON" = "self-heal" ]; then
-            LEAD="Re-publishes the pinned Linux VLC runtime tarball **@VERSION@** (the release asset was MISSING on GitHub — self-heal; the version is unchanged, the SHA is what moves: the producer is not byte-reproducible) — the committed \`scripts/build-vlc-linux-tarball.sh\` (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped) is the producer; this PR is its catalog-only output."
+            LEAD="Re-publishes the pinned Linux VLC runtime tarball **@VERSION@** (the release asset was MISSING on GitHub — self-heal; the version is unchanged, the SHA is what moves: the producer is not byte-reproducible) — the committed scripts/build-vlc-linux-tarball.sh (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped) is the producer; this PR is its catalog-only output."
           else
-            LEAD="Bumps the pinned Linux VLC runtime tarball **@CATALOG@ -> @VERSION@** — the committed \`scripts/build-vlc-linux-tarball.sh\` (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped) is the producer; this PR is its catalog-only output."
+            LEAD="Bumps the pinned Linux VLC runtime tarball **@CATALOG@ -> @VERSION@** — the committed scripts/build-vlc-linux-tarball.sh (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped) is the producer; this PR is its catalog-only output."
           fi
           cat > pr_body.md <<'BODY'
           @LEAD@
 
-          - New URL: `@URL@`
-          - New SHA-256: `@SHA@`
-          - Staging release: @RELEASE@ (prerelease — the `vlc-*-tarball` namespace never becomes "latest")
+          - New URL: @URL@
+          - New SHA-256: @SHA@
+          - Staging release: @RELEASE@ (prerelease — the vlc-*-tarball namespace never becomes "latest")
 
-          **Changed files:** exactly the 2 pin lines of `gradle/libs.versions.toml` (`vlc-linux-tarball-url` + `vlc-linux-tarball-sha256`) — nothing else.
+          **Changed files:** exactly the 2 pin lines of gradle/libs.versions.toml (vlc-linux-tarball-url + vlc-linux-tarball-sha256) — nothing else.
 
-          **Optional local verification:** `bash scripts/build-vlc-linux-tarball.sh` (the same committed script) -> compare the printed SHA-256 with the one above.
+          **Optional local verification:** bash scripts/build-vlc-linux-tarball.sh (the same committed script) -> compare the printed SHA-256 with the one above.
 
           > The bot never merges this PR — the merge is the human verification gate (rules/BUILD.md "VLC Linux tarball pipeline").
           BODY

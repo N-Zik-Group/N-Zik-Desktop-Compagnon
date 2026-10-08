@@ -3,26 +3,26 @@ name: Build Test (stable dry run)
 # Port of the phone repo's build-test.yaml (N-Zik/.github/workflows/build-test.yaml) —
 # a manual dry run of the release build pipeline: it builds the full stable set of
 # 6 artifacts and exposes them as plain workflow artifacts, WITHOUT publishing
-# (no release, no tag, no Discord, no issue automation). spec `spec-ci-build-test`.
+# (no release, no tag, no Discord, no issue automation).
 #
 # Divergences from the mobile port (documented here by design):
-# - No `versioning` job: on mobile its only usage was copying the changelog into
+# - No versioning job: on mobile its only usage was copying the changelog into
 #   res/raw; the desktop changelog is served through the raw release link (the
 #   in-app updater contract), so the job has no purpose here — the stable base
-#   version is grepped inline in the `collect` job.
-# - No `sign-apks` job: the desktop artifacts are unsigned by design (no keystore
-#   secrets in this repo) — the `collect` job replaces it (listing + SHA-256 +
+#   version is grepped inline in the collect job.
+# - No sign-apks job: the desktop artifacts are unsigned by design (no keystore
+#   secrets in this repo) — the collect job replaces it (listing + SHA-256 +
 #   artifact re-exposure).
-# - No `submodules: true` on checkout: the desktop repo has no submodules.
+# - No submodules: true on checkout: the desktop repo has no submodules.
 # - No guards / verify / publish: this is a test run, not a channel run — it never
 #   publishes, so there is nothing to verify against; the channel workflows
 #   (build-stable / build-beta / build-dev) are the only publishers.
 #
 # Prerequisite (fail-loud, same as the channel workflows): the pinned Linux VLC
-# tarball `vlc-3.0.24-linux-x64.tar.gz` must exist as the asset of the prerelease
-# carrier `vlc-3.0.24-tarball` — until then the Linux leg fails loud on
-# `downloadVlcLinux` (its "VLC Linux tarball download failed: HTTP 404" message —
-# the docs' `TARBALL_404` shorthand); the Windows leg is unaffected and still
+# tarball vlc-3.0.24-linux-x64.tar.gz must exist as the asset of the prerelease
+# carrier vlc-3.0.24-tarball — until then the Linux leg fails loud on
+# downloadVlcLinux (its "VLC Linux tarball download failed: HTTP 404" message —
+# the docs' TARBALL_404 shorthand); the Windows leg is unaffected and still
 # produces the installer.
 
 env:
@@ -42,16 +42,27 @@ jobs:
       - name: Align the runner OS timezone to Europe/Paris
         run: sudo ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
 
-      - name: Install the build prerequisites (jpackage tools + Flatpak + libebml5 for the AppImage)
-        # libebml5: the pinned Linux VLC tarball's libmkv_plugin.so carries libebml.so.5 as an
-        # external DT_NEEDED (the audio subset links against the build host's libebml —
-        # scripts/build-vlc-linux-tarball.sh installs libebml-dev to build it). The
-        # ubuntu-latest image used to ship VLC (which pulled in libebml5); the image dropped
-        # VLC, so linuxdeploy (the :app:packageAppImage bundler) no longer finds the lib —
-        # the 2026-10-08 dev run failed with "Could not find dependency: libebml.so.5".
+      - name: Install the build prerequisites (jpackage tools + Flatpak + the AppImage runtime deps)
+        # The pinned Linux VLC tarball's audio subset links against the producer's system libraries
+        # (scripts/build-vlc-linux-tarball.sh installs the -dev packages), so linuxdeploy (the
+        # :app:packageAppImage bundler) must find every external soname on THIS host to deploy it into
+        # the AppDir. The producer runs on ubuntu-latest (noble), so exactly its apt packages are
+        # required:
+        #   libebml5        -> libebml.so.5      (the mkv demux plugin)
+        #   libmatroska7    -> libmatroska.so.7  (the mkv demux plugin)
+        #   libfaad2        -> libfaad.so.2      (the faad codec plugin)
+        #   libasound2t64   -> libasound.so.2    (the ALSA output plugin)
+        # The rest (libFLAC/libpulse/libogg/libopus/libvorbis/libmpg123/libsamplerate) are already in the
+        # base image. The ubuntu-latest image used to ship VLC (which pulled these in); the image dropped
+        # VLC, so the 2026-10-08 dev run failed with "Could not find dependency: libebml.so.5" — and
+        # libmatroska.so.7 surfaced next (linuxdeploy reports one missing dependency per file at a time,
+        # not the whole list). The tarball pinned then had been built on a WSL 26.04 dev machine and
+        # carried sonames noble does not have (libFLAC.so.14 vs noble's libFLAC.so.12) — it was
+        # self-heal-rebuilt on noble through the vlc-tarball-builder pipeline. Keep the producer and the
+        # consumer on the same distro.
         run: |
           sudo apt-get update
-          sudo apt-get install -y fakeroot rpm flatpak flatpak-builder libebml5
+          sudo apt-get install -y fakeroot rpm flatpak flatpak-builder libebml5 libmatroska7 libfaad2 libasound2t64
 
       - name: Configure the Flathub remote
         run: flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -119,9 +130,9 @@ jobs:
 
       - name: Prepare the embedded NSIS (tools/nsis — SHA-verified, extracted for $NSIS_DIR)
         # The windows-latest runner migrated to Windows Server 2025, which dropped NSIS from
-        # the image (the Windows 2022 image shipped "NSIS 3.10" — the premise recorded in
-        # spec-github-ci-canals broke with the migration; the 2026-10-08 dev run failed with
-        # :app:packageInstaller "NSIS (makensis.exe) not found"). The toolchain is embedded
+        # the image (the Windows 2022 image shipped "NSIS 3.10" — that premise broke with the
+        # migration; the 2026-10-08 dev run failed with :app:packageInstaller
+        # "NSIS (makensis.exe) not found"). The toolchain is embedded
         # in the repo instead (tools/nsis/ — user decision 2026-10-08): verify the single
         # embedded zip against its pinned SHA-256 (fail-loud), extract it to
         # <runner.temp>\nsis (the job env NSIS_DIR), and smoke-check makensis.
@@ -180,14 +191,13 @@ jobs:
         # preinstalled, so the build neither relies on the image nor downloads the
         # toolchain). The "Prepare the embedded NSIS" step above verifies the pinned
         # SHA-256 (fail-loud) and extracts the zip to <runner.temp>\nsis (the portable zip
-        # ships makensis.exe at the extraction root); nsis-updater.yml (spec
-        # `spec-nsis-updater-ci`) opens the update bot PR when the official SourceForge
-        # project ships a newer NSIS 3.x. Step-level env: the runner context is not
-        # available in a job-level env.
+        # ships makensis.exe at the extraction root); nsis-updater.yml opens the update
+        # bot PR when the official SourceForge project ships a newer NSIS 3.x. Step-level
+        # env: the runner context is not available in a job-level env.
         env:
           NSIS_DIR: ${{ runner.temp }}\nsis
         # PowerShell (the default run shell on Windows) does not resolve executables
-        # from the current directory — the `.\` prefix is required.
+        # from the current directory — the .\ prefix is required.
         run: .\gradlew.bat :app:packageInstaller -Pchannel=stable
 
       - name: Upload the Windows artifact
@@ -213,7 +223,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # The mobile `versioning` job is excluded from the port (its only usage
+          # The mobile versioning job is excluded from the port (its only usage
           # was the res/raw changelog copy) — the stable base is grepped inline.
           BASE="$(grep -E '^\s*nzikVersionName\s*=' gradle/libs.versions.toml | awk -F '\"' '{print $2}')"
 
@@ -251,7 +261,7 @@ jobs:
             echo "| Artifact | SHA-256 |"
             echo "|----------|---------|"
             while read -r hash name; do
-              printf '| %s | `%s` |\n' "$name" "$hash"
+              printf '| %s | %s |\n' "$name" "$hash"
             done < SHA256SUMS.txt
           } > sha_table.md
 

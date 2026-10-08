@@ -1,6 +1,6 @@
 name: NSIS Update Checker
 
-# Spec `spec-nsis-updater-ci` — the 5th workflow (not a channel workflow): the NSIS 3.x
+# The 5th workflow (not a channel workflow): the NSIS 3.x
 # toolchain is EMBEDDED in the repo (tools/nsis/ — user decision 2026-10-08: the
 # windows-latest runner migrated to Windows Server 2025, which dropped NSIS from the
 # image, so the channel workflows extract the pinned official zip from the repo instead
@@ -16,7 +16,7 @@ name: NSIS Update Checker
 # The bot never merges: the merge is the human verification gate (rules/BUILD.md). A
 # SourceForge fetch failure is fail-loud (curated ERROR — re-dispatch before concluding);
 # no update PR is ever opened on a fetch the pipeline could not verify. The Sunday 23:30
-# (Europe/Paris, explicit `timezone:`) schedule run is the periodic check.
+# (Europe/Paris, explicit timezone:) schedule run is the periodic check.
 
 on:
   workflow_dispatch:
@@ -48,8 +48,8 @@ jobs:
         run: |
           set -euo pipefail
           # The embedded version = the single tools/nsis/nsis-<v>.zip file name (the source
-          # of truth — the channel workflows read the same file generically). `|| true`:
-          # with no match `ls` exits non-zero (pipefail would otherwise abort the step
+          # of truth — the channel workflows read the same file generically). || true:
+          # with no match ls exits non-zero (pipefail would otherwise abort the step
           # before the curated guard below).
           ZIP_COUNT="$(ls tools/nsis/nsis-*.zip 2>/dev/null | wc -l || true)"
           if [ "$ZIP_COUNT" != "1" ]; then
@@ -67,7 +67,7 @@ jobs:
             echo "ERROR: fetching the SourceForge NSIS 3 directory listing failed (a transient network / SourceForge outage?) — re-dispatch before concluding; no update PR is opened on a fetch the pipeline could not verify." >&2
             exit 1
           })"
-          # `|| true`: with no version folder the grep exits non-zero — under pipefail that
+          # || true: with no version folder the grep exits non-zero — under pipefail that
           # would abort the assignment before the curated guard below.
           LATEST_VERSION="$(printf '%s\n' "$LIST" \
             | grep -oE '/projects/nsis/files/NSIS%203/[0-9]+(\.[0-9]+)+/"' \
@@ -100,7 +100,7 @@ jobs:
       pull-requests: write
     env:
       # gh does NOT auto-use the runner's GITHUB_TOKEN — it must be passed explicitly
-      # (gh's own error message says so — the run-#3 lesson of spec-vlc-tarball-ci).
+      # (gh's own error message says so).
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v7
@@ -154,7 +154,7 @@ jobs:
           # The committed installer.nsi needs its 15 Gradle /D defines (see :app:packageInstaller
           # in app/build.gradle.kts) — the smoke compile passes DUMMY channel values + a stub
           # app-image seeded with one placeholder file: installer.nsi does
-          # `File /r "${APPIMAGE_DIR}\*.*"` at COMPILE time, and makensis ABORTS on an empty
+          # File /r "${APPIMAGE_DIR}\*.*" at COMPILE time, and makensis ABORTS on an empty
           # dir ("no files found" — proven by execution), so an empty stub cannot compile.
           # The check is about the NSIS toolchain + the script, not the app content; makensis
           # resolves !include from its own distribution root (the extracted zip provides it),
@@ -244,9 +244,9 @@ jobs:
           $body = @'
           Updates the embedded NSIS toolchain **@EMBEDDED@ -> @LATEST@** (the official release — the SourceForge NSIS 3 project; the folder listing is the source of truth, the project page banner is stale).
 
-          - New zip: `tools/nsis/nsis-@LATEST@.zip` (SHA-256: `@SHA@`) — replaces `tools/nsis/nsis-@EMBEDDED@.zip`
+          - New zip: tools/nsis/nsis-@LATEST@.zip (SHA-256: @SHA@) — replaces tools/nsis/nsis-@EMBEDDED@.zip
           - The channel workflows are UNCHANGED: they read the single embedded zip generically (SHA-verified against its .sha256 at build time)
-          - **Proof:** `app/packaging/windows/installer.nsi` compiled with the new makensis on this run (the smoke compile passed — the committed installer script is compatible with NSIS @LATEST@)
+          - **Proof:** app/packaging/windows/installer.nsi compiled with the new makensis on this run (the smoke compile passed — the committed installer script is compatible with NSIS @LATEST@)
 
           > The bot never merges this PR — the merge is the human verification gate (rules/BUILD.md "Windows Installer" — the "NSIS on the build machine" bullet). After merging, dev machines can move to NSIS @LATEST@ (the per-user install in rules/BUILD.md).
           '@

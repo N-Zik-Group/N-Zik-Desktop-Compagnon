@@ -113,16 +113,27 @@ jobs:
       - name: Align the runner OS timezone to Europe/Paris
         run: sudo ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
 
-      - name: Install the build prerequisites (jpackage tools + Flatpak + libebml5 for the AppImage)
-        # libebml5: the pinned Linux VLC tarball's libmkv_plugin.so carries libebml.so.5 as an
-        # external DT_NEEDED (the audio subset links against the build host's libebml —
-        # scripts/build-vlc-linux-tarball.sh installs libebml-dev to build it). The
-        # ubuntu-latest image used to ship VLC (which pulled in libebml5); the image dropped
-        # VLC, so linuxdeploy (the :app:packageAppImage bundler) no longer finds the lib —
-        # the 2026-10-08 dev run failed with "Could not find dependency: libebml.so.5".
+      - name: Install the build prerequisites (jpackage tools + Flatpak + the AppImage runtime deps)
+        # The pinned Linux VLC tarball's audio subset links against the producer's system libraries
+        # (scripts/build-vlc-linux-tarball.sh installs the -dev packages), so linuxdeploy (the
+        # :app:packageAppImage bundler) must find every external soname on THIS host to deploy it into
+        # the AppDir. The producer runs on ubuntu-latest (noble), so exactly its apt packages are
+        # required:
+        #   libebml5        -> libebml.so.5      (the mkv demux plugin)
+        #   libmatroska7    -> libmatroska.so.7  (the mkv demux plugin)
+        #   libfaad2        -> libfaad.so.2      (the faad codec plugin)
+        #   libasound2t64   -> libasound.so.2    (the ALSA output plugin)
+        # The rest (libFLAC/libpulse/libogg/libopus/libvorbis/libmpg123/libsamplerate) are already in the
+        # base image. The ubuntu-latest image used to ship VLC (which pulled these in); the image dropped
+        # VLC, so the 2026-10-08 dev run failed with "Could not find dependency: libebml.so.5" — and
+        # libmatroska.so.7 surfaced next (linuxdeploy reports one missing dependency per file at a time,
+        # not the whole list). The tarball pinned then had been built on a WSL 26.04 dev machine and
+        # carried sonames noble does not have (libFLAC.so.14 vs noble's libFLAC.so.12) — it was
+        # self-heal-rebuilt on noble through the vlc-tarball-builder pipeline. Keep the producer and the
+        # consumer on the same distro.
         run: |
           sudo apt-get update
-          sudo apt-get install -y fakeroot rpm flatpak flatpak-builder libebml5
+          sudo apt-get install -y fakeroot rpm flatpak flatpak-builder libebml5 libmatroska7 libfaad2 libasound2t64
 
       - name: Configure the Flathub remote
         run: flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -191,9 +202,9 @@ jobs:
 
       - name: Prepare the embedded NSIS (tools/nsis — SHA-verified, extracted for $NSIS_DIR)
         # The windows-latest runner migrated to Windows Server 2025, which dropped NSIS from
-        # the image (the Windows 2022 image shipped "NSIS 3.10" — the premise recorded in
-        # spec-github-ci-canals broke with the migration; the 2026-10-08 dev run failed with
-        # :app:packageInstaller "NSIS (makensis.exe) not found"). The toolchain is embedded
+        # the image (the Windows 2022 image shipped "NSIS 3.10" — that premise broke with the
+        # migration; the 2026-10-08 dev run failed with :app:packageInstaller
+        # "NSIS (makensis.exe) not found"). The toolchain is embedded
         # in the repo instead (tools/nsis/ — user decision 2026-10-08): verify the single
         # embedded zip against its pinned SHA-256 (fail-loud), extract it to
         # <runner.temp>\nsis (the job env NSIS_DIR), and smoke-check makensis.
@@ -252,14 +263,13 @@ jobs:
         # preinstalled, so the build neither relies on the image nor downloads the
         # toolchain). The "Prepare the embedded NSIS" step above verifies the pinned
         # SHA-256 (fail-loud) and extracts the zip to <runner.temp>\nsis (the portable zip
-        # ships makensis.exe at the extraction root); nsis-updater.yml (spec
-        # `spec-nsis-updater-ci`) opens the update bot PR when the official SourceForge
-        # project ships a newer NSIS 3.x. Step-level env: the runner context is not
-        # available in a job-level env.
+        # ships makensis.exe at the extraction root); nsis-updater.yml opens the update
+        # bot PR when the official SourceForge project ships a newer NSIS 3.x. Step-level
+        # env: the runner context is not available in a job-level env.
         env:
           NSIS_DIR: ${{ runner.temp }}\nsis
         # PowerShell (the default run shell on Windows) does not resolve executables
-        # from the current directory — the `.\` prefix is required.
+        # from the current directory — the .\ prefix is required.
         run: .\gradlew.bat :app:packageInstaller -Pchannel=stable
 
       - name: Upload the Windows artifact
@@ -319,7 +329,7 @@ jobs:
             echo "| Artifact | SHA-256 |"
             echo "|----------|---------|"
             while read -r hash name; do
-              printf '| %s | `%s` |\n' "$name" "$hash"
+              printf '| %s | %s |\n' "$name" "$hash"
             done < SHA256SUMS.txt
           } > sha_table.md
 
@@ -337,7 +347,7 @@ jobs:
 
           ## 🔎 Verification
 
-          > The artifacts are **unsigned** (code signing is deferred). Verify the SHA-256 of the file you downloaded before installing - the table below and the `SHA256SUMS.txt` asset (published with this release) are the source of truth.
+          > The artifacts are **unsigned** (code signing is deferred). Verify the SHA-256 of the file you downloaded before installing - the table below and the SHA256SUMS.txt asset (published with this release) are the source of truth.
 
           ### SHA-256
 
@@ -346,23 +356,23 @@ jobs:
           ## 📲 Installation
 
           1. Download the artifact for your platform below.
-          2. Verify its SHA-256 (the table above, or `SHA256SUMS.txt`).
+          2. Verify its SHA-256 (the table above, or SHA256SUMS.txt).
           3. Install it:
              - **Windows:** run the installer (it is unsigned - Windows SmartScreen may warn; the source is public and any build can be rebuilt and compared against this one).
-             - **Debian / Ubuntu / Mint:** `apt install ./<file>.deb`
-             - **Fedora / openSUSE / Rocky:** `dnf install ./<file>.rpm`
-             - **Portable:** unzip the zip and run the launcher in `bin/`.
-             - **AppImage:** run the file directly (needs `fuse3`; without it: `./<file>.AppImage --appimage-extract-and-run`).
-             - **Flatpak:** `flatpak install ./<file>.flatpak`.
+             - **Debian / Ubuntu / Mint:** apt install ./<file>.deb
+             - **Fedora / openSUSE / Rocky:** dnf install ./<file>.rpm
+             - **Portable:** unzip the zip and run the launcher in bin/.
+             - **AppImage:** run the file directly (needs fuse3; without it: ./<file>.AppImage --appimage-extract-and-run).
+             - **Flatpak:** flatpak install ./<file>.flatpak.
 
           Please report any crashes, bugs, or unexpected behavior.
 
           ## 📦 Available Builds
 
-          - **Windows installer** (`.exe`) - x86_64
-          - **Debian / Ubuntu** (`.deb`) - x86_64
-          - **Fedora / openSUSE / Rocky** (`.rpm`) - x86_64
-          - **Portable** (`.zip`) - x86_64
+          - **Windows installer** (.exe) - x86_64
+          - **Debian / Ubuntu** (.deb) - x86_64
+          - **Fedora / openSUSE / Rocky** (.rpm) - x86_64
+          - **Portable** (.zip) - x86_64
           - **AppImage** - x86_64
           - **Flatpak** - x86_64
 
@@ -379,10 +389,10 @@ jobs:
           - [Changelog text file](@CHANGELOG_RAW@)
           - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/@TAG@>
 
-          - 📥 **Windows installer (`.exe`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@EXE_URL@
-          - 📥 **Debian (`.deb`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@DEB@
-          - 📥 **Fedora (`.rpm`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@RPM@
-          - 📥 **Portable (`.zip`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@ZIP@
+          - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@EXE_URL@
+          - 📥 **Debian (.deb):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@DEB@
+          - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@RPM@
+          - 📥 **Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@ZIP@
           - 📥 **AppImage:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@APPIMAGE@
           - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@FLATPAK@
           BODY
@@ -470,17 +480,17 @@ jobs:
             ## 📲 Installation
 
             1. Download the artifact for your platform below.
-            2. Verify its SHA-256 (the `SHA256SUMS.txt` asset of the release).
+            2. Verify its SHA-256 (the SHA256SUMS.txt asset of the release).
             3. Install it (Windows: run the installer - it is unsigned; Linux: apt / dnf / flatpak install, unzip the portable, or run the AppImage).
 
             Please report any crashes, bugs, or unexpected behavior.
 
             ## 📦 Available Builds
 
-            - **Windows installer** (`.exe`) - x86_64
-            - **Debian / Ubuntu** (`.deb`) - x86_64
-            - **Fedora / openSUSE / Rocky** (`.rpm`) - x86_64
-            - **Portable** (`.zip`) - x86_64
+            - **Windows installer** (.exe) - x86_64
+            - **Debian / Ubuntu** (.deb) - x86_64
+            - **Fedora / openSUSE / Rocky** (.rpm) - x86_64
+            - **Portable** (.zip) - x86_64
             - **AppImage** - x86_64
             - **Flatpak** - x86_64
 
@@ -493,10 +503,10 @@ jobs:
 
             ## 🔗 Changelog & Downloads
 
-            - 📥 **Windows installer (`.exe`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/N-Zik%20Desktop%20Compagnon-${{ needs.versioning.outputs.downstream }}.exe
-            - 📥 **Debian (`.deb`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon_${{ needs.versioning.outputs.downstream }}-1_amd64.deb
-            - 📥 **Fedora (`.rpm`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-1.x86_64.rpm
-            - 📥 **Portable (`.zip`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-linux-portable.zip
+            - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/N-Zik%20Desktop%20Compagnon-${{ needs.versioning.outputs.downstream }}.exe
+            - 📥 **Debian (.deb):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon_${{ needs.versioning.outputs.downstream }}-1_amd64.deb
+            - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-1.x86_64.rpm
+            - 📥 **Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-linux-portable.zip
             - 📥 **AppImage:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-x86_64.AppImage
             - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-x86_64.flatpak
             - 📄 **Changelog:** <https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/Updater/changelogs/${{ needs.versioning.outputs.code }}.txt>

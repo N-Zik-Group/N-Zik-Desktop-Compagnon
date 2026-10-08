@@ -96,7 +96,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v6.0.1
         with:
-          # Do NOT add `cache: 'gradle'` here
+          # Do NOT add cache: 'gradle' here
           distribution: 'corretto'
           java-version: '21'
 
