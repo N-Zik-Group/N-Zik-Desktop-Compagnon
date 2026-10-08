@@ -99,7 +99,7 @@
     <string name="player_waiting_state">En attente de l\'état de lecture du téléphone…</string>
     <!-- Queue -->
     <string name="queue_title">File d\'attente</string>
-    <string name="queue_count">%1$d tracks</string>
+    <string name="queue_count">%1$d titres</string>
     <string name="queue_empty">La file d\'attente est vide. Lancez la lecture d\'un morceau sur votre téléphone.</string>
     <string name="queue_track_menu">Options de titre</string>
     <string name="queue_play">Lire</string>
@@ -127,15 +127,15 @@
     <string name="command_output">Sortie audio</string>
     <string name="command_unknown">Une commande</string>
     <string name="notice_no_delta">%1$s : le téléphone n\'a pas validé la modification. Actualisation en cours…</string>
-    <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
-    <string name="notice_rejected">%1$s: refused by the phone.</string>
-    <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
+    <string name="notice_queue_mismatch">%1$s : la file d\'attente a changé entre-temps. Elle a été actualisée, réessayez.</string>
+    <string name="notice_rejected">%1$s : rejeté par le téléphone.</string>
+    <string name="notice_unavailable">%1$s : le lecteur du téléphone n\'est pas disponible. Veuillez réessayer plus tard.</string>
     <string name="notice_server_stopping">%1$s : le serveur du téléphone s\'arrête.</string>
     <string name="notice_other_active">%1$s : un autre ordinateur (%2$s) est connecté au téléphone.</string>
     <string name="notice_not_found">%1$s : introuvable sur le téléphone.</string>
-    <string name="notice_unreachable">%1$s: the phone did not answer.</string>
-    <string name="notice_truncated">%1$s: only %2$d of %3$d tracks were sent.</string>
-    <string name="notice_failed">%1$s failed (HTTP %2$d, %3$s).</string>
+    <string name="notice_unreachable">%1$s : le téléphone n\'a pas répondu.</string>
+    <string name="notice_truncated">%1$s : seuls %2$d titres sur %3$d ont été envoyés.</string>
+    <string name="notice_failed">%1$s a échoué (HTTP %2$d, %3$s).</string>
     <string name="notice_late_error">%1$s a échoué sur le téléphone (%2$s, commande %3$s).</string>
     <!-- Library: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="songs">Titres</string>
@@ -166,16 +166,16 @@
     <string name="play_next">Musique suivante</string>
     <string name="enqueue">Mettre en file d\'attente</string>
     <string name="shuffle">Aléatoire</string>
-    <string name="play_all_local_songs">Jouer toutes les chansons locales</string>
+    <string name="play_all_local_songs">Écouter tous les titres stockés localement</string>
     <string name="info_find_the_song_that_is_playing">Afficher le titre en cours de lecture</string>
     <string name="playing_song_not_found_on_current_list">Impossible de trouver le titre en cours de lecture dans la liste actuelle</string>
     <string name="no_songs_playing">Aucun titre n\'est joué pour le moment</string>
     <string name="artist_songs_count_duration">Titres %1$d • %2$s</string>
     <string name="no_song_found">Aucun titre trouvé</string>
-    <string name="no_song_to_shuffle">Aucun titre à mélanger</string>
+    <string name="no_song_to_shuffle">Aucun titre en lecture aléatoire</string>
     <string name="info_no_songs_yet">Aucun titre disponible</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
-    <string name="bookmark">Signet</string>
+    <string name="bookmark">Ajouter aux favoris</string>
     <string name="info_bookmark_album">Ajouter l\'album à vos favoris</string>
     <string name="follow">Suivre</string>
     <string name="following">Suit</string>
@@ -337,11 +337,11 @@
     <string name="local_playback_not_found">Ce titre ne se trouve plus sur votre téléphone.</string>
     <string name="local_playback_upstream_failed">Votre téléphone n\'a pas pu télécharger ce morceau.</string>
     <string name="local_playback_invalid_url">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
-    <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
+    <string name="local_playback_other_active">Son sur cet ordinateur : un autre ordinateur (%1$s) est connecté au téléphone.</string>
     <string name="local_playback_unreachable">Votre téléphone n\'a pas répondu.</string>
     <string name="local_playback_failed">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
     <!-- App update (spec spec-updater: the in-app updater + the channel header badge) -->
-    <string name="update_current_version">Current version</string>
+    <string name="update_current_version">Version actuelle</string>
     <string name="enable_check_for_update">Activer la vérification des mises à jour</string>
     <string name="update_check_when_enabled">Lorsque cette option est activée, le système vérifie la disponibilité d\'une nouvelle version de cette chaîne au démarrage et la propose dans la boîte de dialogue de mise à jour.</string>
     <string name="update_check_off_build">Si vous voyez ce message, cela signifie que votre version n\'a pas activé la mise à jour automatique, pls met à jour l\'application manuellement à partir de github</string>
@@ -353,29 +353,29 @@
     <string name="update_download_progress">Téléchargement de la mise à jour… %1$d%%</string>
     <string name="info_no_update_available">Aucune mise à jour disponible</string>
     <string name="update_download_completed">Mise à jour téléchargée</string>
-    <string name="error_update_check_failed">The update check failed (%1$s)</string>
-    <string name="error_update_download_failed">The update download failed (%1$s)</string>
+    <string name="error_update_check_failed">La vérification des mises à jour a échoué (%1$s)</string>
+    <string name="error_update_download_failed">Le téléchargement de la mise à jour a échoué (%1$s)</string>
     <string name="error_no_internet">Pas de réseau</string>
-    <string name="install_now">Install now</string>
-    <string name="install_file_saved_at">The update file is saved at:</string>
-    <string name="install_open_folder">Open folder</string>
-    <string name="install_copy_path">Copy path</string>
-    <string name="path_copied">Path copied</string>
-    <string name="install_flatpak_command">Update in place with:</string>
-    <string name="install_pkg_command">Install the package with:</string>
-    <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
+    <string name="install_now">Installer maintenant</string>
+    <string name="install_file_saved_at">Le fichier de mise à jour est enregistré à l\'emplacement suivant :</string>
+    <string name="install_open_folder">Ouvrir le dossier</string>
+    <string name="install_copy_path">Copier le chemin d\'accès</string>
+    <string name="path_copied">Chemin d\'accès copié</string>
+    <string name="install_flatpak_command">Mise à jour effectuée avec :</string>
+    <string name="install_pkg_command">Installez le pack à l\'aide de la commande suivante :</string>
+    <string name="install_pkg_manual">Aucun gestionnaire de packs n\'a été détecté. Installez manuellement le pack téléchargé.</string>
     <string name="install_pkg_aur_hint">Cette machine utilise Pacman : mettez à jour l\'entrée AUR (n-zik-desktop-compagnon ou n-zik-desktop-compagnon-git) à l\'aide de votre outil de gestion AUR.</string>
-    <string name="install_replacement_appimage">Replace the AppImage: put the downloaded file where the current one is, then relaunch.</string>
+    <string name="install_replacement_appimage">Remplacez le fichier AppImage : placez le fichier téléchargé à l\'emplacement où se trouve le fichier actuel, puis relancez l\'application.</string>
     <string name="install_replacement_portable">Remplacer le dossier de l\'application : décompressez le fichier téléchargé dans le dossier actuel de l\'application, puis relancez celle-ci.</string>
     <string name="old_install_path">Installation actuelle :</string>
     <!-- The channel header badge (4 labels; stable shows no badge — the phone's rule) -->
-    <string name="beta_title">Beta</string>
-    <string name="dev_title">Dev</string>
+    <string name="beta_title">Bêta</string>
+    <string name="dev_title">Développeur</string>
     <string name="git_title">Git</string>
     <string name="debug_title">Débogage</string>
     <!-- Loop 2: the update page (spec spec-updater AD-9 revised) -->
     <string name="check_update">Vérifier les mises à jour</string>
-    <string name="check_update_ask">Check for updates now?</string>
+    <string name="check_update_ask">Vérifier les mises à jour maintenant ?</string>
     <!-- The "ask" startup dialog (the phone's CheckForUpdateDialog, ported 1:1) -->
     <string name="check_at_github_for_updates">Vérifier sur Github les mises à jour ?</string>
     <string name="when_an_update_is_available_you_will_be_asked_if_you_want_to_install_info">Lorsqu\'une mise à jour est disponible, on vous demandera si vous voulez l\'installer. Il n\'y aura pas d\'installations automatiques, en arrière-plan.</string>
@@ -400,9 +400,9 @@
     <string name="redownload_update">Télécharger à nouveau la dernière mise à jour</string>
     <string name="download_cancelled">Téléchargement annulé</string>
     <string name="update_cache_cleared">Cache vidé</string>
-    <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
-    <string name="update_download_indeterminate">Downloaded %1$s (unknown size)</string>
-    <string name="error_windows_install_helper">The Windows installer could not be started. Run the downloaded installer manually.</string>
+    <string name="update_download_truncated">Le téléchargement de la mise à jour a été interrompu. Le fichier partiel a été conservé — essayez de le télécharger à nouveau.</string>
+    <string name="update_download_indeterminate">%1$s téléchargé (taille inconnue)</string>
+    <string name="error_windows_install_helper">Le programme d\'installation Windows n\'a pas pu être lancé. Lancez manuellement le programme d\'installation que vous avez téléchargé.</string>
     <string name="install">Installer</string>
     <string name="stable_title">STABLE</string>
     <string name="menu">Menu</string>
