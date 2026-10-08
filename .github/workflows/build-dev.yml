@@ -507,7 +507,7 @@ jobs:
               .filter(r => r.tag_name.includes('-dev-'))
               .sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
 
-            console.log(📊 Found ${devReleases.length} dev releases);
+            console.log(`📊 Found ${devReleases.length} dev releases`);
 
             // Keep only the last 2 dev releases
             const releasesToDelete = devReleases.slice(2);
@@ -518,7 +518,7 @@ jobs:
             }
 
             for (const release of releasesToDelete) {
-              console.log(🗑️ Deleting release: ${release.tag_name});
+              console.log(`🗑️ Deleting release: ${release.tag_name}`);
 
               // Delete the release
               await github.rest.repos.deleteRelease({
@@ -532,15 +532,15 @@ jobs:
                 await github.rest.git.deleteRef({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  ref: tags/${release.tag_name},
+                  ref: `tags/${release.tag_name}`,
                 });
-                console.log(✅ Tag deleted: ${release.tag_name});
+                console.log(`✅ Tag deleted: ${release.tag_name}`);
               } catch (error) {
-                console.log(⚠️ Could not delete tag ${release.tag_name}: ${error.message});
+                console.log(`⚠️ Could not delete tag ${release.tag_name}: ${error.message}`);
               }
             }
 
-            console.log(✨ Cleanup complete. Kept ${Math.min(devReleases.length, 2)} latest dev releases.);
+            console.log(`✨ Cleanup complete. Kept ${Math.min(devReleases.length, 2)} latest dev releases.`);
 
   comment-dev-issues:
     needs: [upload-to-release, versioning, build_time]
@@ -562,8 +562,8 @@ jobs:
 
             const version = '${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}';
             const body = [
-              🧪 This issue is fixed in the **DEV** build **v${version}** 🧪,
-              ➤ Download: https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/v${version},
+              `🧪 This issue is fixed in the **DEV** build **v${version}** 🧪`,
+              `➤ Download: https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/v${version}`,
               '',
               '> This is a dev release, the ticket stays open until the stable version confirms the fix.'
             ].join('\n');
@@ -584,7 +584,7 @@ jobs:
                 name: 'patched DEV'
               });
 
-              console.log(Commented on issue #${issue.number} and removed label);
+              console.log(`Commented on issue #${issue.number} and removed label`);
             }
 
   notify-discord:

@@ -94,7 +94,7 @@ jobs:
                 }
               }
 
-              console.log(✅ Issue #${issue.number} synced (mode: ${mode}));
+              console.log(`✅ Issue #${issue.number} synced (mode: ${mode})`);
             }
 
             if (mode === 'auto-add') {
@@ -110,5 +110,5 @@ jobs:
                 if (issue.pull_request) continue;
                 await processIssue(issue, mode);
               }
-              console.log(🔎 Scan completed (${mode}) — ${issues.length} open issues processed.);
+              console.log(`🔎 Scan completed (${mode}) — ${issues.length} open issues processed.`);
             }

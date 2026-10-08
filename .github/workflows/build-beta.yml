@@ -435,8 +435,8 @@ jobs:
 
             const version = '${{ needs.versioning.outputs.downstream }}-beta';
             const body = [
-              🧪 This issue is fixed in the **BETA** build **v${version}** 🧪,
-              ➤ Download: https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/v${version},
+              `🧪 This issue is fixed in the **BETA** build **v${version}** 🧪`,
+              `➤ Download: https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/v${version}`,
               '',
               '> This is a beta release, the ticket stays open until the stable version confirms the fix.'
             ].join('\n');
@@ -457,7 +457,7 @@ jobs:
                 name: 'patched BETA'
               });
 
-              console.log(Commented on issue #${issue.number} and removed label);
+              console.log(`Commented on issue #${issue.number} and removed label`);
             }
 
   notify-discord:
