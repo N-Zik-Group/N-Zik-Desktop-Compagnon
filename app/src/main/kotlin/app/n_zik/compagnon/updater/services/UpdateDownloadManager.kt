@@ -83,6 +83,20 @@ object UpdateDownloadManager {
      */
     private var downloadToken: Any? = null
 
+    /**
+     * The cancel fence, per download generation: set by [cancelDownload], cleared by
+     * [startDownload]. A terminal write (Completed / Failed / the truncation check) that lands
+     * AFTER the user's cancel — the microsecond race where the job finishes its last read between
+     * the cancel and the coroutine's death — is treated as a cancel, never as a completion or a
+     * failure: the user's cancel is the last word (no Completed overwriting the cancel's Idle,
+     * no "download failed" dialog after a cancel), and the file is deleted like any cancelled
+     * download. `@Volatile`: written on the UI thread by [cancelDownload], read on the job
+     * thread — there is no happens-before edge between the two (unlike [downloadToken], which is
+     * set before [kotlinx.coroutines.CoroutineScope.launch] and handed over with the job).
+     */
+    @Volatile
+    private var cancelRequested: Boolean = false
+
     /** Injectable download directory for the JVM tests (`@TempDir`); `null` in production. */
     private var testDirectory: Path? = null
 
@@ -135,6 +149,7 @@ object UpdateDownloadManager {
             // this late write)
             val token = Any()
             downloadToken = token
+            cancelRequested = false
             downloadJob = NzikDispatchers.fireAndForget(NzikDispatchers.DATA).launch {
                 if (downloadToken === token) {
                     _downloadState.value = DownloadState.Failed(
@@ -151,6 +166,7 @@ object UpdateDownloadManager {
 
         val token = Any()
         downloadToken = token
+        cancelRequested = false
         downloadingVersion = version
         downloadingAsset = assetName
         _downloadState.value = DownloadState.Starting
@@ -221,7 +237,7 @@ object UpdateDownloadManager {
                 // against its Content-Length while RECEIVING the response and throws on a short
                 // body before any byte reaches the disk — that path is mapped in the Exception
                 // handler below; a streaming engine without that validation would reach this check.)
-                if (contentLength > 0 && totalBytesRead != contentLength) {
+                if (contentLength > 0 && totalBytesRead != contentLength && !cancelRequested) {
                     log.warning("Update download truncated: $totalBytesRead of $contentLength bytes ($version)")
                     if (downloadToken === token) {
                         _downloadState.value = DownloadState.Failed(
@@ -231,8 +247,18 @@ object UpdateDownloadManager {
                     return@launch
                 }
 
-                if (downloadToken === token) {
+                if (downloadToken === token && !cancelRequested) {
                     _downloadState.value = DownloadState.Completed(outputFile.absolutePath)
+                } else if (downloadToken === token) {
+                    // The cancel fence: the user cancelled AFTER the last byte was read (the
+                    // microsecond race — the job was about to report Completed when the cancel
+                    // arrived). The cancel is authoritative: treat it as a cancel (Idle is what
+                    // cancelDownload already wrote; this write covers the order where this branch
+                    // lands first), and the finally below deletes the file like any cancelled
+                    // download.
+                    cancelled = true
+                    log.info("Update download cancelled after the last byte ($version)")
+                    _downloadState.value = DownloadState.Idle
                 }
             } catch (e: CancellationException) {
                 // Download was cancelled — the state resets here (the phone's cancellation
@@ -259,8 +285,14 @@ object UpdateDownloadManager {
                 } else {
                     e.message ?: getString(Res.string.error_update_download_failed, "unknown")
                 }
-                if (downloadToken === token) {
+                if (downloadToken === token && !cancelRequested) {
                     _downloadState.value = DownloadState.Failed(error)
+                } else if (downloadToken === token) {
+                    // The cancel fence: a failure racing the cancel — the user's cancel is the
+                    // last word (no error dialog after a cancel). The finally below deletes the
+                    // file like any cancelled download.
+                    cancelled = true
+                    _downloadState.value = DownloadState.Idle
                 }
             } finally {
                 // Close this job's stream FIRST: on Windows a file cannot be deleted while its
@@ -284,9 +316,15 @@ object UpdateDownloadManager {
      * Cancels an ongoing download and resets the state (port of the phone's `cancelDownload`).
      * The token is deliberately NOT invalidated here: the cancelled job's cleanup (guarded by
      * the token) must still be able to close its stream and delete its own file — only a newer
-     * [startDownload] replaces the token, and that is what invalidates the stale job.
+     * [startDownload] replaces the token, and that is what invalidates the stale job. The
+     * [cancelRequested] fence (set here) is what stops the dying job's LATE terminal writes
+     * (Completed / Failed — the microsecond race where it finished its last read after the
+     * cancel) from overwriting the Idle written below.
      */
     fun cancelDownload() {
+        // The cancel fence FIRST: from this point on, any terminal write the dying job still
+        // makes (Completed / Failed) is a cancel, not a completion or a failure
+        cancelRequested = true
         downloadJob?.cancel()
         downloadJob = null
         val asset = downloadingAsset

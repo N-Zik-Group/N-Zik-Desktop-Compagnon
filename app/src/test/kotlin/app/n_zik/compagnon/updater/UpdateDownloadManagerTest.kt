@@ -104,18 +104,24 @@ class UpdateDownloadManagerTest {
 
         UpdateDownloadManager.startDownload("https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v0.0.2/$assetName", "0.0.2", assetName)
 
-        // Wait for the download to actually start (bytes on disk), then cancel
+        // Wait for the download to LEAVE Starting, then cancel. The 1 MB in-memory mock body
+        // can be fully consumed BEFORE this wait even reads the state (fast filesystem +
+        // in-memory engine): the StateFlow then conflates to Completed and a
+        // `first { Downloading }` wait would never match. So wait for ANY non-Starting state —
+        // whatever it is, the cancel below is authoritative (the manager's cancel fence turns
+        // a late Completed/Failed into a cancel, and cancelDownload's synchronous backstop
+        // deletes the file when the job already finished), so the terminal state is Idle with
+        // the file gone on every platform.
         withTimeout(10_000) {
-            UpdateDownloadManager.downloadState.first { state ->
-                state is DownloadState.Downloading || state is DownloadState.DownloadingIndeterminate
-            }
+            UpdateDownloadManager.downloadState.first { it !is DownloadState.Starting }
         }
         UpdateDownloadManager.cancelDownload()
 
         assertInstanceOf(DownloadState.Idle::class.java, withTimeout(10_000) { UpdateDownloadManager.downloadState.first { it is DownloadState.Idle } })
-        // The file is deleted by the cancelled job's cleanup AFTER it closes its stream (a file
-        // cannot be deleted while its handle is open — Windows), so wait for its absence instead
-        // of asserting it right after cancelDownload() returns
+        // The file is deleted either way — by the job's cleanup after it closes its stream
+        // (cancel mid-download; a file cannot be deleted while its handle is open — Windows)
+        // or by cancelDownload's synchronous backstop (the download completed first) — so wait
+        // for its absence instead of asserting it right after cancelDownload() returns
         val file = File(dir.toFile(), assetName)
         withTimeout(10_000) {
             while (file.exists()) {
