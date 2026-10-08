@@ -227,7 +227,9 @@ jobs:
           restore-keys: gradle-${{ runner.os }}-
 
       - name: Build with Gradle (NSIS)
-        run: gradlew.bat :app:packageInstaller -Pchannel=dev
+        # PowerShell (the default run shell on Windows) does not resolve executables
+        # from the current directory — the `.\` prefix is required.
+        run: .\gradlew.bat :app:packageInstaller -Pchannel=dev
 
       - name: Upload the Windows artifact
         uses: actions/upload-artifact@v7
