@@ -30,20 +30,14 @@ import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.ui.sliders.SliderControl
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.controls_header_customize
-import app.n_zik.compagnon.generated.resources.controls_title_playback_volume
-import app.n_zik.compagnon.generated.resources.volume
-import app.n_zik.compagnon.generated.resources.volume_up
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.UserSettings
 import kotlinx.coroutines.flow.MutableStateFlow
-import app.n_zik.compagnon.generated.resources.controls_title_playback_speed
-import app.n_zik.compagnon.generated.resources.playback
-import app.n_zik.compagnon.generated.resources.slow_motion
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.semiBold
+import kotlin.math.round
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -92,7 +86,7 @@ class PlaybackSettingsMenu private constructor(
                 title = stringResource(Res.string.controls_title_playback_speed),
                 value = playbackSpeed,
                 onValueChange = {
-                    val rounded = kotlin.math.round(it * 10f) / 10f
+                    val rounded = round(it * 10f) / 10f
                     dragged = rounded
                 },
                 onSlideComplete = {
@@ -119,7 +113,7 @@ class PlaybackSettingsMenu private constructor(
                 title = stringResource(Res.string.controls_title_playback_volume),
                 value = playbackVolume,
                 onValueChange = {
-                    val rounded = kotlin.math.round(it * 100f) / 100f
+                    val rounded = round(it * 100f) / 100f
                     draggedVolume = rounded
                 },
                 onSlideComplete = {

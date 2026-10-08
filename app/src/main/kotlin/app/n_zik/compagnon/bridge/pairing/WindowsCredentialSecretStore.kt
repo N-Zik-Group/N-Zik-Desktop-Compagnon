@@ -28,8 +28,9 @@ class WindowsCredentialSecretStore(private val target: String) : SecretStore {
         try {
             val credential = Credential(out.value)
             val size = credential.CredentialBlobSize
-            if (size <= 0 || credential.CredentialBlob == null) null
-            else String(credential.CredentialBlob!!.getByteArray(0, size), Charsets.UTF_8)
+            val blob = credential.CredentialBlob
+            if (size <= 0 || blob == null) null
+            else String(blob.getByteArray(0, size), Charsets.UTF_8)
         } finally {
             api.CredFree(out.value)
         }

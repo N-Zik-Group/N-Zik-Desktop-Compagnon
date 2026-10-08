@@ -65,15 +65,7 @@ import app.n_zik.compagnon.components.themed.animateBrushRotation
 import app.n_zik.compagnon.components.ui.screens.home.ItemActions
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.core.palette.toPaletteBitmap
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.cd_app_icon_in_player
-import app.n_zik.compagnon.generated.resources.cd_background_image
-import app.n_zik.compagnon.generated.resources.chevron_down
-import app.n_zik.compagnon.generated.resources.ellipsis_vertical
-import app.n_zik.compagnon.generated.resources.ic_launcher_monochrome
-import app.n_zik.compagnon.generated.resources.time
-import app.n_zik.compagnon.generated.resources.unknown_artist
-import app.n_zik.compagnon.generated.resources.unknown_title
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.hasExplicitPrefix
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
@@ -81,6 +73,7 @@ import app.n_zik.compagnon.utils.formatAsTime
 import app.n_zik.compagnon.utils.positionAndDurationState
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
@@ -178,7 +171,7 @@ fun Player(
             lightMuted = paletteResult.lightMuted
             darkMuted = paletteResult.darkMuted
             coverSwatchesLoaded = true
-        } catch (e: kotlinx.coroutines.CancellationException) {
+        } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             dynamicColorPalette = dynamicColorPaletteOf(VIOLET_ACCENT, !lightTheme)

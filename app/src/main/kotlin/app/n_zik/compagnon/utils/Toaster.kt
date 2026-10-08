@@ -29,12 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.alert
-import app.n_zik.compagnon.generated.resources.checkmark
-import app.n_zik.compagnon.generated.resources.close
-import app.n_zik.compagnon.generated.resources.information
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
+import java.awt.GraphicsEnvironment
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -168,7 +165,7 @@ object Toaster {
     @OptIn(ExperimentalTextApi::class)
     private val TOAST_FONT_FAMILY: FontFamily by lazy {
         val installed = runCatching {
-            java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().availableFontFamilyNames
+            GraphicsEnvironment.getLocalGraphicsEnvironment().availableFontFamilyNames
                 .any { it.equals(CONDENSED_FAMILY, ignoreCase = true) }
         }.getOrDefault(false)
         if (installed) FontFamily(SystemFont(CONDENSED_FAMILY)) else FontFamily.Default

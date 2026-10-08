@@ -2,9 +2,11 @@
 nzikPackageName = "N-Zik Desktop Compagnon"
 nzikVersionCode = "1"
 nzikVersionName = "0.0.1"
-# FROZEN installation identity — NEVER change (the deferred in-app updater's foundation); pinned by UpgradeIdentityTest.
-nzikUpgradeUuid = "da55e7af-5c5a-4d1e-841e-bb2646046bc2"
-nzikPerUser = "true"
+# The MSI-era installation identity (nzikUpgradeUuid / nzikUpgradeUuidDev / nzikPerUser) is GONE
+# (the user decision — the NSIS installer replaced the jpackage self-extracting exe; spec
+# `spec-updater` Change Log + AD-8 superseded): the NSIS installer uses a registry-based
+# per-channel × per-scope version identity instead (app/packaging/windows/installer.nsi — the
+# registry key + the exit-code contract are pinned by InstallerContractTest).
 # Linux AppImage pins (spec spec-linux-appimage) — SEPARATE from the Windows VLC pins (which live in
 # app/build.gradle.kts and are never touched by the AppImage). The Linux tarball is produced one-shot
 # from the official VideoLAN source (vlc-3.0.24.tar.xz, official SHA e7cab503d1d7d5849b89d2cf0e1ee60d0ef6d012407791b644b9cfc0cc225fdf)
@@ -23,6 +25,10 @@ compose-plugin = "1.13.0-alpha01"
 compose-material3 = "1.13.0-alpha01"
 junit = "6.1.3"
 ktor = "3.6.0"
+# In-app updater changelog translation (spec `spec-updater`, loop 2 — the single sanctioned new
+# dependency, same version + hard OkHttp runtime requirement as the phone).
+translator = "1.1.2"
+okhttp3 = "5.5.0"
 kotlinx-serialization = "1.11.0"
 kotlinx-coroutines = "1.11.0"
 jna = "5.19.1"
@@ -49,6 +55,8 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+okhttp3-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3" }
+translator = { group = "com.github.rebelonion", name = "translator", version.ref = "translator" }
 zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
 jna-platform = { group = "net.java.dev.jna", name = "jna-platform", version.ref = "jna" }
 androidx-graphics-shapes = { group = "androidx.graphics", name = "graphics-shapes", version.ref = "graphics-shapes" }

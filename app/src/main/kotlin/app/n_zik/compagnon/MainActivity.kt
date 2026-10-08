@@ -100,18 +100,13 @@ import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.formatMessage
 import app.n_zik.compagnon.components.ui.screens.settings.SettingsScreen
+import app.n_zik.compagnon.components.ui.screens.settings.UpdateScreen
+import app.n_zik.compagnon.components.ui.screens.settings.cancelDownloadOnBack
 import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.playback.services.LocalPlayback
 import app.n_zik.compagnon.playback.services.LocalPlaybackNotice
 import app.n_zik.compagnon.utils.LocalPreferences
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.local_playback_failed
-import app.n_zik.compagnon.generated.resources.local_playback_invalid_url
-import app.n_zik.compagnon.generated.resources.local_playback_not_found
-import app.n_zik.compagnon.generated.resources.local_playback_other_active
-import app.n_zik.compagnon.generated.resources.local_playback_unreachable
-import app.n_zik.compagnon.generated.resources.local_playback_upstream_failed
-import app.n_zik.compagnon.generated.resources.paired_other_active_unknown
+import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.getString
 
 /**
@@ -178,17 +173,81 @@ fun computeAppearance(fontFamily: FontFamily): Appearance {
 }
 
 /**
+ * The state of the window's navigation pages (spec `spec-settings-navigation` NAV-2 / NAV-4 / NAV-7 /
+ * NAV-10): the settings page (with its sub-tab), the update sub-page of it, the "Serveur PC" page. The
+ * pages replace the home content, one at a time — opening one closes the other and resets the settings
+ * tab to Général (the phone's destination recreation); the update page stacks over the settings page and
+ * back lands on its About tab (the settings page stays open). Pure and [internal] so it is testable;
+ * [MainActivity] owns the instance.
+ */
+internal data class NavPageState(
+    val settingsOpen: Boolean = false,
+    val settingsTab: Int = 0,
+    val updateOpen: Boolean = false,
+    val phoneOpen: Boolean = false,
+) {
+    companion object {
+        /** All the pages closed (the home). */
+        val closed = NavPageState()
+
+        /** The About sub-tab, the last one (NAV-3). */
+        const val ABOUT_TAB = 4
+    }
+
+    /** Any navigation page shown (the home content and the connection banner are hidden). */
+    val anyPageOpen: Boolean
+        get() = settingsOpen || updateOpen || phoneOpen
+
+    /** The header's "Settings" button: the settings page replaces the Serveur PC page, the tab reset to
+     * Général; a press on the already-open settings page does nothing (its tab is kept). */
+    fun onSettingsPress(): NavPageState =
+        if (settingsOpen) this
+        else copy(phoneOpen = false, settingsOpen = true, settingsTab = 0, updateOpen = false)
+
+    /** The header's "Serveur PC" button: the Serveur PC page replaces the settings page (with its update
+     * sub-page); a press on the already-open Serveur PC page does nothing. */
+    fun onPhonePress(): NavPageState =
+        if (phoneOpen) this
+        else copy(settingsOpen = false, updateOpen = false, phoneOpen = true)
+
+    /** The settings' sub-tab switch: only the tab moves. */
+    fun onTabChanged(tab: Int): NavPageState = copy(settingsTab = tab)
+
+    /** The About tab's update card (NAV-4): the update page over the settings page, the tab on About. */
+    fun openUpdate(): NavPageState = copy(updateOpen = true, settingsTab = ABOUT_TAB)
+
+    /** The logo (NAV-9): home, all the pages closed, the tab reset. */
+    fun closeAll(): NavPageState = copy(settingsOpen = false, settingsTab = 0, updateOpen = false, phoneOpen = false)
+
+    /**
+     * The window's back (NAV-7): the update sub-page first, then the settings page (the tab reset to
+     * Général) or the Serveur PC page; `null` when no page is open (the caller goes on to the queue,
+     * the player or the detail page — [backStep]).
+     */
+    fun back(): NavPageState? =
+        when {
+            updateOpen -> copy(updateOpen = false)
+            settingsOpen -> copy(settingsOpen = false, updateOpen = false, settingsTab = 0)
+            phoneOpen -> copy(phoneOpen = false)
+            else -> null
+        }
+}
+
+/**
  * The phone's `MainActivity` content once paired (`app/n_zik/android/MainActivity.kt` `setContent`): the
  * [AppHeader], the home ([HomeScreen]: library tabs and floating navigation bar), the player sheet in its
  * palette fade (the [MiniPlayer] floating above the navigation bar, the full [Player] opened from it), the
- * mini-player's queue overlay, the menu sheet, the toasts. PC only: the connection banners, the "Phone"
- * panel (opened from the header), the settings overlay ([SettingsScreen], from the header's settings icon)
- * and the toasts of the PC's own player ([localPlayback], story 12).
+ * mini-player's queue overlay, the menu sheet, the toasts. PC only: the connection banners, the
+ * navigation pages — the "Serveur PC" page ([PhonePanel]) and the settings page ([SettingsScreen], its
+ * About tab and its update sub-page [UpdateScreen]), opened from the header — and the toasts of the
+ * PC's own player ([localPlayback], story 12).
  *
  * The dynamic palette follows the current track's cover (`setDynamicPalette` on each track change).
  * The open page ([CollectionHeader], the phone's album / artist / playlist route) lives here so the header
- * shows its back button. The back (story 11c): the window's Escape key ([LocalBackDispatcher]) and the
- * mouse's back button close, in order, the menu, the panels, the queue, the player, the page ([backStep]).
+ * shows its back button; a navigation page does too (its [NavPageState] here) — the header's back arrow
+ * closes the innermost page. The back (story 11c): the window's Escape key ([LocalBackDispatcher]) and
+ * the mouse's back button close, in order, the menu, the navigation pages (the update page, then the
+ * settings or the Serveur PC page), the queue, the player, the page ([backStep]).
  * The scroll-hide of the bars (phone's `MainActivity.kt` 1660-1785): a scroll moves the header up to 64 dp
  * out ([LocalTopBarOffset], the content following it) and the floating bar and mini-player up to 240 dp down
  * ([LocalBottomBarOffset]); on release they snap in 150 ms to shown or hidden. Off while the player or the
@@ -212,8 +271,9 @@ fun MainActivity(
     val scope = rememberCoroutineScope()
     var showPlayer by remember { mutableStateOf(false) }
     var showQueueOverlay by remember { mutableStateOf(false) }
-    var phonePanel by remember { mutableStateOf(false) }
-    var settingsPanel by remember { mutableStateOf(false) }
+    // The navigation pages (spec `spec-settings-navigation` NAV-2 / NAV-4 / NAV-7): the settings page
+    // (with its sub-tab), the update sub-page, the Serveur PC page — they replace the home content
+    var pages by remember { mutableStateOf(NavPageState.closed) }
     var detail by remember { mutableStateOf<CollectionHeader?>(null) }
     val preferences = LocalPreferences.current
     var navBarVisible by remember { mutableStateOf(false) }
@@ -309,12 +369,19 @@ fun MainActivity(
         }
     }
 
-    // Back: one step per press, in the phone's order (menu, panels, queue, player, page)
+    // Back: one step per press, in the phone's order (menu, pages, queue, player, page)
     val onBackPress: () -> Boolean = {
-        val step = backStep(menuState.isDisplayed, phonePanel || settingsPanel, showQueueOverlay, showPlayer, detail != null)
+        val step = backStep(menuState.isDisplayed, pages.anyPageOpen, showQueueOverlay, showPlayer, detail != null)
         when (step) {
             BackStep.Menu -> menuState.hide()
-            BackStep.Panel -> if (settingsPanel) settingsPanel = false else phonePanel = false
+            // The pages stack: update (innermost) -> settings (the tab reset) or Serveur PC
+            BackStep.Panel -> {
+                // Back / Escape on the update page while a download is running cancels the
+                // download instead of navigating away mid-download (the loop-2 closure)
+                if (pages.updateOpen) cancelDownloadOnBack()
+                val closed = pages.back()
+                if (closed != null) pages = closed
+            }
             BackStep.Queue -> showQueueOverlay = false
             BackStep.Player -> showPlayer = false
             BackStep.Page -> detail = null
@@ -435,30 +502,60 @@ fun MainActivity(
                     },
                 ) {
                     AppHeader(
-                        isHome = detail == null,
-                        onBack = { detail = null },
-                        onHome = { detail = null },
-                        onPhone = { phonePanel = true },
-                        onSettings = { settingsPanel = true },
+                        isHome = detail == null && !pages.anyPageOpen,
+                        onBack = { currentOnBackPress() },
+                        onHome = {
+                            detail = null
+                            pages = pages.closeAll()
+                        },
+                        onPhone = { pages = pages.onPhonePress() },
+                        onSettings = { pages = pages.onSettingsPress() },
                     )
                 }
-                ConnectionBanner(connection, onReconnect = repository::reconnect)
-                HomeScreen(
-                    lists = lists,
-                    library = library,
-                    actions = actions,
-                    live = connection == ConnectionState.Live,
-                    onMessage = showMessage,
-                    detail = detail,
-                    onDetail = { detail = it },
-                    onNavBarVisible = { navBarVisible = it },
-                    modifier = Modifier.weight(1f),
-                )
+                // The navigation pages replace the home (the connection banner and the lists are
+                // hidden with it — like the phone's destinations replacing the home content)
+                if (pages.anyPageOpen) {
+                    val prefs = preferences
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (pages.phoneOpen) {
+                            PhonePanel(record, connection, onForget = onForget)
+                        } else if (prefs != null) {
+                            SettingsScreen(
+                                prefs,
+                                audioCache,
+                                pages.settingsTab,
+                                onTabChanged = { pages = pages.onTabChanged(it) },
+                                onOpenUpdate = { pages = pages.openUpdate() },
+                            )
+                            // The update page over the settings page (NAV-7): back closes it first,
+                            // the settings page stays open on its About tab
+                            if (pages.updateOpen) {
+                                UpdateScreen(prefs, onClose = { pages = pages.copy(updateOpen = false) })
+                            }
+                        }
+                    }
+                } else {
+                    ConnectionBanner(connection, onReconnect = repository::reconnect)
+                    HomeScreen(
+                        lists = lists,
+                        library = library,
+                        actions = actions,
+                        live = connection == ConnectionState.Live,
+                        onMessage = showMessage,
+                        detail = detail,
+                        onDetail = { detail = it },
+                        onNavBarVisible = { navBarVisible = it },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
 
-            // PlayerPosition.Bottom with the floating bar: the sheet sits above the bar when it is shown
+            // PlayerPosition.Bottom with the floating bar: the sheet sits above the bar when it is shown —
+            // the home's navigation bar (reported by [HomeScreen]) or the settings page's sub-tab bar
+            // (the Serveur PC page and the update page have none)
+            val barUnderMiniPlayer = if (pages.anyPageOpen) pages.settingsOpen && !pages.updateOpen else navBarVisible
             val playerPadBottom by animateDpAsState(
-                targetValue = if (navBarVisible) {
+                targetValue = if (barUnderMiniPlayer) {
                     Dimensions.floatingNavBarIconOnlyHeight + Dimensions.navBarBottomPadding + 4.dp
                 } else {
                     Dimensions.navBarBottomPadding
@@ -504,19 +601,13 @@ fun MainActivity(
             }
 
             // The queue overlay is drawn ABOVE the sheet so its panel (65 % height) is not
-            // hidden by the PlayerSheet's full-size box; the menu, the panels and the toasters
-            // (composed after the overlay) stay above all
+            // hidden by the PlayerSheet's full-size box; the menu and the toasters (composed after
+            // the overlay) stay above all
             MiniPlayerQueueOverlay(
                 showSheet = showQueueOverlay,
                 onDismiss = { showQueueOverlay = false },
             )
             BottomSheetMenu(menuState)
-            if (phonePanel) {
-                PhonePanel(record, connection, onClose = { phonePanel = false }, onForget = onForget)
-            }
-            if (settingsPanel && preferences != null) {
-                SettingsScreen(preferences, audioCache, onClose = { settingsPanel = false })
-            }
             with(Toaster) { Host() }
         }
     }

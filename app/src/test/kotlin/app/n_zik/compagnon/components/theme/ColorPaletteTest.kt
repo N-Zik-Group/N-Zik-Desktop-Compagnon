@@ -2,6 +2,8 @@ package app.n_zik.compagnon.components.theme
 
 import androidx.compose.ui.graphics.Color
 import app.n_zik.compagnon.core.palette.PaletteBitmap
+import app.n_zik.compagnon.enums.ColorPaletteMode
+import app.n_zik.compagnon.enums.ColorPaletteName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotSame
 import org.junit.jupiter.api.Assertions.assertNull
@@ -64,7 +66,7 @@ class ColorPaletteTest {
 
     @Test
     fun `the static start is the default dark palette itself`() {
-        val palette = colorPaletteOf(app.n_zik.compagnon.enums.ColorPaletteName.Dynamic, app.n_zik.compagnon.enums.ColorPaletteMode.Dark, true)
+        val palette = colorPaletteOf(ColorPaletteName.Dynamic, ColorPaletteMode.Dark, true)
         assertSame(DefaultDarkColorPalette, palette)
         assertNotSame(DefaultDarkColorPalette, dynamicColorPaletteOf(DefaultDarkColorPalette.accent, true))
     }

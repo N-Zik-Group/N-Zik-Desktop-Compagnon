@@ -22,6 +22,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import java.io.IOException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -414,7 +415,7 @@ class RemotePlayerRepositoryTest {
 
     @Test
     fun `unreachable phone is reported`() = runTest {
-        val repository = repository { throw java.io.IOException("refused") }
+        val repository = repository { throw IOException("refused") }
         repository.play()
         assertEquals(listOf<PlayerNotice>(PlayerNotice.Unreachable(CommandKind.Play)), notices)
     }

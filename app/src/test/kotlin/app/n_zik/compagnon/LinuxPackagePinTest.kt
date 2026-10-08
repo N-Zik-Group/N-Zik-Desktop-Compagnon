@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
  * the AppImage and the Flatpak embed the runtime, each into its own staging), and a renamed `nzikPackageName` would desynchronize the `/opt`
  * dir from the portable zip name, the AUR `pkgname`s and the download URL — all with a green build.
  * The build exposes the effective values (`systemProperty` in `app/build.gradle.kts`, same pattern
- * as `install.upgradeUuid`) so this test pins them.
+ * as `windows.packageName`) so this test pins them.
  */
 class LinuxPackagePinTest {
 

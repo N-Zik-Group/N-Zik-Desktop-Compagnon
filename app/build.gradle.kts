@@ -2,6 +2,9 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.compose.desktop.application.tasks.AbstractJPackageTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -11,6 +14,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.security.MessageDigest
+import java.util.Base64
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -28,6 +32,199 @@ kotlin {
 // stays in the catalog for release discipline only (not read by the build). Bumped manually on each
 // release (this repo has no version-bump machinery).
 version = libs.versions.nzikVersionName.get()
+
+// ---- Build channel (spec `spec-updater`, AD-1) -------------------------------------------------------
+//
+// The channel is a Gradle build property: `-Pchannel=debug|stable|beta|dev|git`. Absent → debug
+// for `:app:run` / plain compilation (dev iteration: Debug badge, updater off). Every packaging
+// task requires an explicit channel (fail-loud): a release artifact is never made without saying
+// which channel it is — the mobile build-type discipline, as a build property. The channel suffix
+// lives ONLY in the artifact file names, the generated in-app version and the GitHub tag
+// (`v{base}`, `v{base}-beta`, `v{base}-dev-YYYYMMDD`): the jpackage version stays numeric, so the
+// stable artifact names remain byte-identical to the no-channel convention (the AUR release entry
+// stays valid).
+
+val channel = providers.gradleProperty("channel").orNull ?: "debug"
+
+// Which channel each packaging task accepts (AD-1): the seven packaging tasks take stable|beta|dev;
+// `createDistributable` + the portable zip additionally take `git` (AUR-git / source builds — no
+// release asset, updater off, badge "Git").
+val packagingTaskChannels = mapOf(
+    "packageExe" to listOf("stable", "beta", "dev"),
+    "packageDeb" to listOf("stable", "beta", "dev"),
+    "packageRpm" to listOf("stable", "beta", "dev"),
+    "packageLinuxPortable" to listOf("stable", "beta", "dev", "git"),
+    "packageAppImage" to listOf("stable", "beta", "dev"),
+    "packageFlatpak" to listOf("stable", "beta", "dev"),
+    "packageInstaller" to listOf("stable", "beta", "dev"),
+    "createDistributable" to listOf("stable", "beta", "dev", "git"),
+)
+
+check(channel in packagingTaskChannels.values.flatten() + "debug") {
+    "Unknown -Pchannel '$channel' (allowed: debug, stable, beta, dev, git)"
+}
+for (taskName in gradle.startParameter.taskNames.map { it.substringAfterLast(':') }.toSet()) {
+    packagingTaskChannels[taskName]?.let { allowed ->
+        check(channel in allowed) {
+            "$taskName requires an explicit -Pchannel: ${allowed.joinToString("|")} " +
+                "(the channel decides the artifact names and the in-app version; run/compile default to debug)"
+        }
+    }
+}
+
+// The channel suffix (AD-2): empty for stable/debug, `-beta`, `-dev-<build date>` or
+// `-git-<8-char commit hash>` (a git checkout is required — outside one the build fails loudly).
+val baseVersion = libs.versions.nzikVersionName.get()
+val channelSuffix = when (channel) {
+    "stable", "debug" -> ""
+    "beta" -> "-beta"
+    "dev" -> "-dev-" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+    else -> "-git-" + gitShortHash8()
+}
+val appVersionName = baseVersion + channelSuffix
+
+// The channel display name (spec `spec-updater`, AD-8): the per-channel product name — the
+// jpackage app name (the Windows installer base, the Linux launcher, the AppImage AppRun and
+// the Flatpak `exec` all derive from it), the .desktop `Name=` and the in-app window title.
+// Stable / debug / -git keep the plain catalog name; beta and dev carry the channel in
+// parentheses (the in-app badge convention, "Beta" / "Dev").
+val channelDisplayName = when (channel) {
+    "beta" -> "${libs.versions.nzikPackageName.get()} (Beta)"
+    "dev" -> "${libs.versions.nzikPackageName.get()} (Dev)"
+    else -> libs.versions.nzikPackageName.get()
+}
+
+/**
+ * `git rev-parse --short=8 HEAD` of this checkout: the in-app identity of a `-git` build.
+ * Outside a git checkout the build fails with an explicit message (spec matrix CHANNEL_GIT).
+ */
+fun gitShortHash8(): String {
+    val process = try {
+        ProcessBuilder("git", "rev-parse", "--short=8", "HEAD")
+            .directory(project.projectDir)
+            .redirectErrorStream(true)
+            .start()
+    } catch (e: Exception) {
+        throw GradleException(
+            "-Pchannel=git requires a git checkout: the `git` executable could not be started " +
+                "(${e::class.simpleName}: ${e.message}) — build from a git working copy " +
+                "(the in-app version embeds the commit hash)",
+            e,
+        )
+    }
+    val output = process.inputStream.bufferedReader().readText().trim()
+    val code = process.waitFor()
+    if (code != 0 || output.isEmpty()) {
+        throw GradleException(
+            "-Pchannel=git requires a git checkout: `git rev-parse --short=8 HEAD` failed — " +
+                "build from a git working copy (the in-app version embeds the commit hash)"
+        )
+    }
+    return output
+}
+
+// ---- Generated in-app version (spec `spec-updater`, AD-2) -------------------------------------------
+//
+// The source tree carries no version: a task generates `AppVersion.kt` (build dir, never committed)
+// from the catalog + the channel, wired into the main source set. The app reads it at runtime
+// (version display, the channel badge, the updater gate, the update check).
+val appVersionFile = layout.buildDirectory.file(
+    "generated/source/appVersion/main/app/n_zik/compagnon/generated/AppVersion.kt",
+)
+
+val generateAppVersion = tasks.register("generateAppVersion") {
+    val output = appVersionFile
+    inputs.property("channel", channel)
+    inputs.property("versionName", appVersionName)
+    inputs.property("versionCode", libs.versions.nzikVersionCode.get())
+    outputs.file(output)
+    doLast {
+        output.get().asFile.parentFile.mkdirs()
+        output.get().asFile.writeText(
+            """
+            |package app.n_zik.compagnon.generated
+            |
+            |/**
+            | * Generated by the `generateAppVersion` Gradle task — do not edit or commit.
+            | *
+            | * The in-app identity of this build (spec `spec-updater`, AD-2): the catalog's base
+            | * version + the channel suffix. Only the artifact file names, this object and the
+            | * GitHub tag carry the suffix — jpackage keeps the numeric base version.
+            | */
+            |object AppVersion {
+            |    /** The displayed version: base + channel suffix (e.g. "0.0.1-beta", "0.0.1-dev-20261007"). */
+            |    const val versionName: String = "$appVersionName"
+            |    /** The catalog's `nzikVersionCode` (release discipline: the changelog file name). */
+            |    const val versionCode: Int = ${libs.versions.nzikVersionCode.get()}
+            |    /** The build channel: debug / stable / beta / dev / git. */
+            |    const val channel: String = "$channel"
+            |    /** The in-app updater is enabled on stable / beta / dev only: debug and -git are
+            |     |  source builds (no check at startup, the settings entry is forced disabled — anti-downgrade). */
+            |    const val updaterEnabled: Boolean = ${channel in listOf("stable", "beta", "dev")}
+            |}
+            """.trimMargin()
+        )
+    }
+}
+
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir(layout.buildDirectory.dir("generated/source/appVersion/main"))
+    }
+}
+
+tasks.named<KotlinCompile>("compileKotlin") {
+    dependsOn(generateAppVersion)
+}
+
+// The channel artifact rename (spec `spec-updater`, AD-2 / AD-8, loop 2) — ONE helper, applied by
+// every packaging task: the channel suffix is inserted right after the base version in the
+// artifact name ("n-zik-desktop-compagnon-0.0.1-linux-portable.zip" →
+// "n-zik-desktop-compagnon-0.0.1-beta-linux-portable.zip"). An empty suffix (stable, the debug
+// default) returns the name unchanged — the stable artifact names stay byte-identical to the
+// no-channel convention (the AUR release entry stays valid). Two loop-2 hardenings:
+//   * the base version is matched on a BOUNDARY — the next character is `.`, `-`, `_` or the
+//     end of the name — so a base version that is a prefix of a longer version number
+//     ("0.0.1" in "0.0.11-…") is never hit in the middle of a number;
+//   * an artifact that ALREADY carries the channel suffix right after the base version is
+//     rejected (`canBeChannelRenamed` returns false): a stale dated dev file
+//     ("…-0.0.2-dev-20261006…") must not be re-suffixed into a corrupted
+//     ("…-0.0.2-dev-20261007dev-20261006…").
+fun versionBoundaryIndex(fileName: String, base: String): Int {
+    var from = 0
+    while (true) {
+        val index = fileName.indexOf(base, from)
+        if (index < 0) return -1
+        val next = fileName.getOrNull(index + base.length)
+        if (next == null || next == '.' || next == '-' || next == '_') return index
+        from = index + 1
+    }
+}
+
+/** The marker of "already suffixed", right after the bounded base version ("" for stable/debug). */
+val channelSuffixPrefix = when (channel) {
+    "dev" -> "-dev-"
+    "git" -> "-git-"
+    else -> channelSuffix
+}
+
+fun canBeChannelRenamed(fileName: String): Boolean {
+    if (channelSuffix.isEmpty()) return true
+    val index = versionBoundaryIndex(fileName, baseVersion)
+    if (index < 0) return false
+    return channelSuffixPrefix.isEmpty() ||
+        !fileName.startsWith(channelSuffixPrefix, index + baseVersion.length)
+}
+
+fun channelArtifactName(fileName: String): String {
+    if (channelSuffix.isEmpty()) return fileName
+    check(canBeChannelRenamed(fileName)) {
+        "channel rename: '$fileName' is not a plain-base artifact to rename " +
+            "(the bounded base version '$baseVersion' is missing, or the file already carries the channel suffix)"
+    }
+    val index = versionBoundaryIndex(fileName, baseVersion)
+    return fileName.substring(0, index + baseVersion.length) + channelSuffix + fileName.substring(index + baseVersion.length)
+}
 
 // The embedded VLC runtime is built for Windows from the official VideoLAN zip, and for the Linux
 // AppImage + Flatpak from the pinned Linux tarball (produced one-shot by
@@ -51,6 +248,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.swing)
+    // In-app updater changelog translation (spec `spec-updater`, loop 2 — the single sanctioned
+    // new dependency, the phone's same version): the `translator` jar ships no POM (transitive
+    // deps undeclared), so its hard OkHttp runtime requirement is declared explicitly.
+    implementation(libs.okhttp3.okhttp)
+    implementation(libs.translator)
     implementation(libs.zxing.core)
     implementation(libs.jna.platform)
     implementation(libs.androidx.graphics.shapes)
@@ -73,10 +275,6 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    // The frozen installation identity (version catalog `nzikUpgradeUuid` / `nzikPerUser`), so
-    // `UpgradeIdentityTest` fails if the upgrade UUID or the per-user flag is ever changed.
-    systemProperty("install.upgradeUuid", libs.versions.nzikUpgradeUuid.get())
-    systemProperty("install.perUser", libs.versions.nzikPerUser.get().toBoolean().toString())
     // Packaging trial of story 12 (opt-in): `gradlew test -PvlcTrial=<directory of audio samples>`.
     providers.gradleProperty("vlcTrial").orNull?.let { media ->
         check(isWindowsHost) { "The VLC packaging trial (-PvlcTrial) is Windows-only: the embedded runtime is not built elsewhere" }
@@ -93,10 +291,380 @@ tasks.compileTestKotlin {
     compilerOptions.optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
+// ---- Windows NSIS installer (spec `spec-updater` — the user decision: NSIS replaces the
+// jpackage self-extracting installer; the record is the spec's Change Log) ----
+//
+// `:app:packageExe` (jpackage) builds the APP-IMAGE at `compose/binaries/main/app/<product>/`
+// (the launcher + app/ + runtime/ with the embedded VLC) — plus the jpackage self-extracting
+// exe, which is now a build BYPRODUCT, no longer distributed. This task runs makensis on the
+// committed installer source of truth (`packaging/windows/installer.nsi`) with the per-channel
+// defines and writes the final installer at the SAME output path as the jpackage exe (it
+// overwrites the byproduct): `<product>-<version>.exe` (e.g.
+// "N-Zik Desktop Compagnon (Dev)-0.0.1-dev-20261007.exe").
+//
+// NSIS 3.x toolchain: preinstalled on the GitHub Actions windows runners
+// (`C:\Program Files (x86)\NSIS` — recorded in `spec-github-ci-canals.md`); on a dev machine
+// per-user under `%LOCALAPPDATA%\Programs\NSIS\nsis-3.10` (the official portable zip — the
+// setup.exe manifests requireAdministrator, so it is extracted, not installed) or the machine
+// defaults; the `NSIS_DIR` environment variable (the NSIS root) wins when set. Branding is the
+// window icon only (MUI_ICON / MUI_UNI_ICON) — plain MUI, no header image.
+fun findMakensis(): File {
+    val localAppData = System.getenv("LOCALAPPDATA").orEmpty()
+    val candidates = listOfNotNull(
+        providers.environmentVariable("NSIS_DIR").orNull?.let { File(it, "makensis.exe") },
+        File("C:/Program Files (x86)/NSIS/makensis.exe"),
+        File("C:/Program Files/NSIS/makensis.exe"),
+        File(localAppData, "Programs/NSIS/nsis-3.10/Bin/makensis.exe"),
+        File(localAppData, "Programs/NSIS/makensis.exe"),
+    )
+    return candidates.firstOrNull { it.isFile } ?: error(
+        "NSIS (makensis.exe) not found — install NSIS 3.x (the official portable zip, per-user — " +
+            "see rules/BUILD.md) or set the NSIS_DIR environment variable to the NSIS root",
+    )
+}
+
+tasks.register<Exec>("packageInstaller") {
+    // Windows-only (makensis); an explicit -Pchannel is enforced by the packagingTaskChannels map
+    onlyIf { isWindowsHost }
+    dependsOn("packageExe")
+    val appImageDir = layout.buildDirectory.dir("compose/binaries/main/app/$channelDisplayName").get().asFile
+    val outDir = layout.buildDirectory.dir("compose/binaries/main/exe").get().asFile
+    val outFile = File(outDir, "$channelDisplayName-$appVersionName.exe")
+    // A non-numeric version catalog entry must fail with a clear message, not a raw
+    // NumberFormatException deeper in the pipeline
+    check(baseVersion.matches(Regex("\\d+(\\.\\d+)*"))) {
+        "base version '$baseVersion' must be numeric dot-separated (e.g. 0.0.1)"
+    }
+    val versionParts = baseVersion.split(".").map { it.toInt() }
+    // The numeric "build" of the registry version identity: the dev build date (channelSuffix
+    // "-dev-<date>"), 0 for the other channels
+    val versionBuild = if (channel == "dev") channelSuffix.removePrefix("-dev-") else "0"
+    val nsisScript = layout.projectDirectory.file("packaging/windows/installer.nsi")
+    inputs.file(nsisScript)
+    inputs.dir(appImageDir)
+    outputs.file(outFile)
+    doFirst {
+        check(appImageDir.isDirectory) {
+            "the jpackage app-image is missing: $appImageDir — run :app:packageExe -Pchannel=$channel first"
+        }
+        logger.lifecycle("NSIS installer → $outFile")
+        // makensis is resolved AT EXECUTION TIME (not at configuration time — a build on a
+        // machine without NSIS must stay green); doFirst runs before the Exec task starts the
+        // process, so the command line can be set here
+        commandLine(
+            findMakensis(),
+            "/DPRODUCT_NAME=$channelDisplayName",
+            "/DCHANNEL=$channel",
+            "/DAPP_VERSION=$appVersionName",
+            "/DVERSION_MAJOR=${versionParts[0]}",
+            "/DVERSION_MINOR=${versionParts[1]}",
+            "/DVERSION_PATCH=${versionParts.getOrNull(2) ?: 0}",
+            "/DVERSION_BUILD=$versionBuild",
+            "/DAPPIMAGE_DIR=${appImageDir.absolutePath}",
+            "/DLAUNCHER_NAME=$channelDisplayName.exe",
+            "/DOUT_FILE=${outFile.absolutePath}",
+            "/DICON_FILE=${project.file("../assets/design/icon.ico").absolutePath}",
+            "/DVENDOR=N-Zik Group",
+            "/DDESCRIPTION=Desktop companion for N-Zik: control your phone's library and playback from a large screen, and listen on your computer.",
+            // AppInfo.NAME — the app data dir name AND the Windows Credential Manager target
+            // (NOT channel-suffixed: one shared data dir across channels — verified against
+            // `CredentialStore.appDirectory()` / `WindowsCredentialSecretStore`)
+            "/DDATA_DIR_NAME=${libs.versions.nzikPackageName.get()}",
+            "/DCRED_TARGET=${libs.versions.nzikPackageName.get()}",
+            nsisScript,
+        )
+    }
+}
+
 compose.resources {
     packageOfResClass = "app.n_zik.compagnon.generated.resources"
     publicResClass = false
     generateResClass = always
+}
+
+// ---- Unescaped strings (user report 2026-10-07: visible Android escaping in the UI) ---------------
+//
+// The Crowdin-managed `values*/strings.xml` files carry the phone's Android escaping convention
+// (`\'` for an apostrophe, `\"` for a quote, `\\` for a backslash — 116 occurrences across 31
+// locale files). aapt2 unescapes them at Android compile time, but the Compose desktop resource
+// pipeline does NOT — the backslash renders in the UI (« c\'est »). Fix at BUILD TIME, in two
+// tasks:
+//
+//  * `unescapeStringsXml` — generates unescaped COPIES of every `values*/strings.xml` into a
+//    generated dir (asserted on by UnescapedStringsTest; the source files are NEVER modified —
+//    `values/` and `values-*` are Crowdin-managed and a future import would re-escape them);
+//  * `unescapeCompiledResources` — the actual FIX, applied AFTER the compose resource
+//    processing: the plugin's FINAL values merge (assembleMainResources →
+//    `assembledResources/.../values*/strings.main.cvr`, the compiled values the runtime reads)
+//    keeps the ORIGINAL escaped values. Empirical merge-order check (2026-10-07): the
+//    unescaped copies registered as an additional res dir (sourceSets srcDir, then the
+//    `ResourcesExtension.customDirectory` API) do NOT win — the original values stay in the
+//    compiled `.cvr`. So, per the spec, the fallback is used: the compiled values are
+//    post-processed in place, before `processResources` copies them to `build/resources`
+//    (from which :app:run, the tests, the jar and the packaged apps all take them).
+val unescapedResourcesDir = layout.buildDirectory.dir("generated/composeResourcesUnescaped")
+
+/**
+ * The pure left-to-right pass of the Android string unescape: `\'` → `'`, `\"` → `"`,
+ * `\\` → `\`; a backslash before any other character (or a trailing backslash) is kept as-is.
+ * Single pass, so a source `\\'` becomes `\'` (an escaped backslash followed by a plain
+ * quote — NOT a re-escaped quote). The JVM tests carry a semantic copy of this function
+ * (build scripts cannot call test sources); UnescapedStringsTest pins the build's
+ * implementation on the real generated files.
+ */
+fun unescapeAndroidStringEscapes(value: String): String {
+    val out = StringBuilder(value.length)
+    var i = 0
+    while (i < value.length) {
+        if (value[i] == '\\' && i + 1 < value.length) {
+            when (value[i + 1]) {
+                '\\' -> { out.append('\\'); i += 2 }
+                '\'' -> { out.append('\''); i += 2 }
+                '"' -> { out.append('"'); i += 2 }
+                else -> { out.append(value[i]); i += 1 }
+            }
+        } else {
+            out.append(value[i])
+            i += 1
+        }
+    }
+    return out.toString()
+}
+
+/** Unescape the value of every `<string>` element of a values XML (structure left untouched). */
+fun unescapeAndroidStrings(xml: String): String {
+    val stringElement = Regex("(<string name=\"[^\"]+\"[^>]*>)(.*?)(</string>)", RegexOption.DOT_MATCHES_ALL)
+    return stringElement.replace(xml) { m ->
+        m.groupValues[1] + unescapeAndroidStringEscapes(m.groupValues[2]) + m.groupValues[3]
+    }
+}
+
+val unescapeStringsXml = tasks.register("unescapeStringsXml") {
+    description = "Generates unescaped copies of composeResources/values*/strings.xml (the Android escaping convention the desktop pipeline does not unescape)."
+    val sourceRoot = project.file("src/main/composeResources")
+    inputs.files(project.fileTree(sourceRoot) { include("values*/strings.xml") })
+    outputs.dir(unescapedResourcesDir)
+    doLast {
+        val outRoot = unescapedResourcesDir.get().asFile
+        outRoot.deleteRecursively()
+        var count = 0
+        project.fileTree(sourceRoot)
+            .matching { include("values*/strings.xml") }
+            .files
+            .forEach { source ->
+                val target = outRoot.resolve(source.relativeTo(sourceRoot).path)
+                target.parentFile.mkdirs()
+                target.writeText(unescapeAndroidStrings(source.readText()))
+                count++
+            }
+        logger.lifecycle("unescapeStringsXml: $count strings.xml files unescaped into ${outRoot.path}")
+    }
+}
+
+// The FIX: unescape the COMPILED values (the plugin's final merge kept the escaped originals —
+// see the block above). The .cvr format is plain text, one `string|<name>|<base64>` line per
+// value; only the base64 payload of the `string|` lines is rewritten (UTF-8 decode → unescape →
+// re-encode). In place on purpose: `assembledResources` is the source `processResources` copies
+// from (→ build/resources → :app:run / tests / jar / packaging), so there is no other injection
+// point. (The in-place rewrite makes the pipeline re-run its two tasks each build — deliberate,
+// ~1 s, and keeps the generated files in sync with the sources.)
+val unescapeCompiledResources = tasks.register("unescapeCompiledResources") {
+    description = "Unescapes the Android escaping in the compiled compose values (.cvr) under build/generated/compose/resourceGenerator — the plugin's final values merge keeps the original escaped values (empirical, 2026-10-07)."
+    // BOTH generated trees are rewritten, not only `assembledResources`:
+    //  * `assembledResources` is what `processResources` ships (→ build/resources → run/tests/jar/packaging);
+    //  * `preparedResources` is scanned by `generateResourceAccessorsFor*` to compute each
+    //    ResourceItem's byte OFFSET + SIZE into the .cvr (empirical, 2026-10-07: after the
+    //    rewrite, the regenerated accessors carry the unescaped offsets). Rewriting only the
+    //    assembled tree would leave the accessors pointing at the escaped layout (garbled
+    //    runtime strings — the runtime skip()s to the offset and read()s the size).
+    val preparedTree = layout.buildDirectory.dir("generated/compose/resourceGenerator/preparedResources")
+    val assembledTree = layout.buildDirectory.dir("generated/compose/resourceGenerator/assembledResources")
+    // The task post-processes the WHOLE tree (Main/Dev/Test in both stages) — depend on every
+    // assembler that writes into it (Gradle's implicit-dependency validation is strict)
+    dependsOn(
+        tasks.named("assembleMainResources"),
+        tasks.named("assembleDevResources"),
+        tasks.named("assembleTestResources"),
+    )
+    // Inputs only — the fix is applied in place (see the block above): declaring the modified
+    // files as outputs of two tasks would be a duplicate-output conflict. The bases are the two
+    // cvr trees, NOT resourceGenRoot as a whole: Gradle's implicit-dependency overlap check
+    // looks at the base location, and resourceGenRoot would cover kotlin/commonResClass (the
+    // generateComposeResClass output).
+    inputs.files(
+        project.fileTree(preparedTree) { include("**/*.cvr") },
+        project.fileTree(assembledTree) { include("**/*.cvr") },
+    )
+    doLast {
+        val encoder = Base64.getEncoder()
+        val linePattern = Regex("(?m)^string\\|([^|]*)\\|([A-Za-z0-9+/=]+)\\r?\\n?")
+        var files = 0
+        var values = 0
+        (project.fileTree(preparedTree) { include("**/*.cvr") } +
+            project.fileTree(assembledTree) { include("**/*.cvr") })
+            .files
+            .forEach { file ->
+                val text = file.readText()
+                var changed = false
+                val updated = linePattern.replace(text) { m ->
+                    val payload = m.groupValues[2]
+                    val decoded = runCatching {
+                        String(Base64.getDecoder().decode(payload), Charsets.UTF_8)
+                    }.getOrNull() ?: return@replace m.value
+                    val unescaped = unescapeAndroidStringEscapes(decoded)
+                    if (unescaped == decoded) {
+                        m.value
+                    } else {
+                        changed = true
+                        values++
+                        "string|${m.groupValues[1]}|${encoder.encodeToString(unescaped.toByteArray(Charsets.UTF_8))}" +
+                            (if (m.value.endsWith("\r\n")) "\r\n" else if (m.value.endsWith("\n")) "\n" else "")
+                    }
+                }
+                if (changed) {
+                    file.writeText(updated)
+                    files++
+                }
+            }
+        logger.lifecycle("unescapeCompiledResources: $files compiled values files unescaped ($values values)")
+    }
+}
+
+// The compiled values must be unescaped in BOTH generated trees:
+//  * `assembledResources` is what `processResources` ships (→ build/resources → run/tests/jar);
+//  * `preparedResources` is consumed by the accessor pipeline (see `recomputeResourceItemOffsets`).
+listOf(
+    "generateResourceAccessorsForMain",
+    "generateResourceAccessorsForTest",
+    "processResources",
+).forEach { taskName ->
+    tasks.named(taskName) {
+        dependsOn(unescapeCompiledResources)
+    }
+}
+
+// ---- Accessor offset repair (safety net: the accessors must match the unescaped cvr layout) ----
+//
+// Every generated ResourceItem carries a byte OFFSET + SIZE into the .cvr (empirical, 2026-10-07 —
+// e.g. `ResourceItem(..., 12803, 167)`; the runtime `skip`s to the offset and `read`s the size,
+// GitHub JetBrains/compose-multiplatform#4938). The compose plugin computes those offsets from the
+// PREPARED .cvrs — so `unescapeCompiledResources` above rewrites BOTH generated trees: when the
+// accessors are regenerated, they pick up the unescaped offsets (empirical: regenerating after the
+// rewrite emits the unescaped layout; rewriting only `assembledResources` left the accessors
+// pointing at the escaped layout — the runtime then reads misaligned chunks, garbled/truncated
+// strings). This task is the safety net that keeps the two consistent no matter what: it re-points
+// every ResourceItem that does not match the unescaped .cvr layout (line start → line end,
+// excluding the trailing newline — the plugin's own convention: size 28 for a 29-byte line). In
+// the steady state it is a no-op ("nothing to repair").
+val recomputeResourceItemOffsets = tasks.register("recomputeResourceItemOffsets") {
+    description = "Safety net: re-points the generated accessors' ResourceItem offsets/sizes at the unescaped .cvr layout (see the block above)."
+    val resourceGenRoot = layout.buildDirectory.dir("generated/compose/resourceGenerator")
+    dependsOn(
+        unescapeCompiledResources,
+        tasks.named("generateResourceAccessorsForMain"),
+        tasks.named("generateResourceAccessorsForTest"),
+    )
+    // Inputs only — the fix is applied in place on the generated accessor sources (the same
+    // deliberate pattern as unescapeCompiledResources: the pipeline re-runs one cycle each build).
+    // The base locations are the individual sub-trees, NOT resourceGenRoot as a whole: Gradle's
+    // implicit-dependency overlap check looks at the base location, and resourceGenRoot would
+    // cover kotlin/commonResClass (the generateComposeResClass output).
+    inputs.files(
+        project.fileTree(layout.buildDirectory.dir("generated/compose/resourceGenerator/assembledResources")) { include("**/*.cvr") },
+        project.fileTree(layout.buildDirectory.dir("generated/compose/resourceGenerator/kotlin/mainResourceAccessors")) { include("**/*.kt") },
+        project.fileTree(layout.buildDirectory.dir("generated/compose/resourceGenerator/kotlin/devResourceAccessors")) { include("**/*.kt") },
+        project.fileTree(layout.buildDirectory.dir("generated/compose/resourceGenerator/kotlin/testResourceAccessors")) { include("**/*.kt") },
+    )
+    doLast {
+        val resourceGen = resourceGenRoot.get().asFile
+        val patchedFiles = mutableMapOf<String, Int>()
+        listOf(
+            "mainResourceAccessors" to "Main",
+            "devResourceAccessors" to "Dev",
+            "testResourceAccessors" to "Test",
+        ).forEach { (accessorDirName, setDirName) ->
+            val accessorDir = resourceGen.resolve("kotlin").resolve(accessorDirName)
+            val valuesRoot = resourceGen.resolve("assembledResources").resolve(setDirName)
+                .resolve("composeResources").resolve("app.n_zik.compagnon.generated.resources")
+            if (!accessorDir.isDirectory || !valuesRoot.isDirectory) return@forEach
+            // (cvr relative path) -> (string name) -> (byte offset, byte size) of the value line
+            val offsetMaps = mutableMapOf<String, Map<String, Pair<Long, Long>>>()
+            valuesRoot.walkTopDown()
+                .filter { it.extension == "cvr" }
+                .forEach { cvrFile ->
+                    val text = String(cvrFile.readBytes(), Charsets.UTF_8)
+                    val nameToRange = mutableMapOf<String, Pair<Long, Long>>()
+                    var offset = 0L
+                    for (line in text.split("\n")) {
+                        if (line.startsWith("string|")) {
+                            val nameEnd = line.indexOf('|', 7)
+                            nameToRange[line.substring(7, nameEnd)] = offset to line.length.toLong()
+                        }
+                        offset += (line.length + 1).toLong() // LF (the plugin writes LF)
+                    }
+                    // The generated accessors use '/' separators (values-fr/strings.main.cvr)
+                    offsetMaps[cvrFile.relativeTo(valuesRoot).path.replace('\\', '/')] = nameToRange
+                }
+            // Line shape: ResourceItem(setOf(LanguageQualifier("fr"), ), "${MD}values-fr/strings.main.cvr", 12859, 167),
+            // groups: 1 = cvr path (with the ${MD} prefix), 2 = old offset, 3 = old size
+            val itemPattern = Regex("ResourceItem\\(.*?, \"([^\"]+\\.cvr)\", (\\d+), (\\d+)\\)")
+            val namePattern = Regex("StringResource\\(\"string:([^\"]+)\",")
+            accessorDir.walkTopDown()
+                .filter { it.extension == "kt" }
+                .forEach { ktFile ->
+                    val raw = ktFile.readText()
+                    val lineEnding = if (raw.contains("\r\n")) "\r\n" else "\n"
+                    var currentName: String? = null
+                    var changed = false
+                    var patched = 0
+                    val updated = raw.split(lineEnding).joinToString(lineEnding) { line ->
+                        namePattern.find(line)?.let { currentName = it.groupValues[1] }
+                        val m = itemPattern.find(line) ?: return@joinToString line
+                        val name = currentName ?: return@joinToString line
+                        val cvrRel = m.groupValues[1].removePrefix("\${MD}")
+                        val range = offsetMaps[cvrRel]?.get(name) ?: return@joinToString line
+                        val oldOffsets = "${m.groupValues[2]}, ${m.groupValues[3]}"
+                        val newOffsets = "${range.first}, ${range.second}"
+                        if (oldOffsets != newOffsets) {
+                            changed = true
+                            patched++
+                            return@joinToString line.replace(oldOffsets, newOffsets)
+                        }
+                        line
+                    }
+                    if (changed) {
+                        ktFile.writeText(updated)
+                        patchedFiles[ktFile.name] = patched
+                    }
+                }
+        }
+        if (patchedFiles.isNotEmpty()) {
+            logger.lifecycle("recomputeResourceItemOffsets: " +
+                patchedFiles.entries.joinToString(", ") { "${it.key} (${it.value} items)" })
+        } else {
+            logger.lifecycle("recomputeResourceItemOffsets: nothing to repair")
+        }
+    }
+}
+// The dev source set's accessor task is registered by the compose plugin only after evaluation —
+// a plain tasks.named(...) fails at configuration time with "not found in project ':app'".
+afterEvaluate {
+    tasks.named("generateResourceAccessorsForDev") {
+        dependsOn(unescapeCompiledResources)
+    }
+    recomputeResourceItemOffsets {
+        dependsOn(tasks.named("generateResourceAccessorsForDev"))
+    }
+}
+// The compiled main sources must be built from the REPAIRED accessors (the generator's output
+// directory is a Kotlin source root — without this edge compileKotlin could read the stale
+// offsets before the repair runs).
+tasks.named<KotlinCompile>("compileKotlin") {
+    dependsOn(recomputeResourceItemOffsets)
+}
+// The generated copies are asserted on by the JVM tests (UnescapedStringsTest).
+tasks.named<Test>("test") {
+    dependsOn(unescapeStringsXml)
 }
 
 // ---- Embedded VLC runtime (libvlc 3.0.24, audio only) -----------------------------------------------
@@ -407,24 +975,33 @@ val linuxIcon = rootProject.file("assets/design/icon-linux.png")
 
 // The Linux package name (jpackage --linux-package-name): the deb/rpm file base name, the /opt
 // install dir, the portable-zip base name and the AUR install identity, all derived from the single
-// app identity (nzikPackageName) so none of them can drift from each other. Pinned by
-// LinuxPackagePinTest (exposed to the JVM tests as `linux.packageName`).
-val linuxPackageName = libs.versions.nzikPackageName.get().lowercase().replace(' ', '-')
+// app identity (nzikPackageName) so none of them can drift from each other. The dev channel keeps
+// its OWN package (spec `spec-updater`, AD-8): `n-zik-desktop-compagnon-dev`, installing to
+// `/opt/n-zik-desktop-compagnon-dev` beside the stable one — the dev build is a parallel product,
+// never a replacement of the stable installation. Pinned by LinuxPackagePinTest (exposed to the
+// JVM tests as `linux.packageName`).
+val linuxPackageName =
+    libs.versions.nzikPackageName.get().lowercase().replace(' ', '-') +
+        if (channel == "dev") "-dev" else ""
 
 // The AppImage release file name (spec spec-linux-appimage): the frozen x86_64 asset name, derived
 // from the same package name + version as every other Linux artifact. Pinned by LinuxPackagePinTest.
-val appImageFileName = "${linuxPackageName}-${libs.versions.nzikVersionName.get()}-x86_64.AppImage"
+// The channel suffix rides after the base version through the single rename helper (AD-2).
+val appImageFileName = channelArtifactName("${linuxPackageName}-${libs.versions.nzikVersionName.get()}-x86_64.AppImage")
 
 // The Flatpak app-id (spec spec-linux-flatpak, AD-1): the frozen Flatpak identity — the bundle's
 // install name, the upgrade identity and the icon name all derive from it, so it must never
-// change after the first release (a changed app-id would orphan every installed copy). Pinned by
-// FlatpakPinTest (exposed to the JVM tests as `flatpak.appId`).
-val flatpakAppId = "com.nzik.desktop.compagnon"
+// change after the first release (a changed app-id would orphan every installed copy). The dev
+// channel keeps its OWN app-id (spec `spec-updater`, AD-8): `com.nzik.desktop.compagnon.dev` —
+// like its package name, the dev bundle is a parallel product, never a replacement of the
+// stable one. Pinned by FlatpakPinTest (exposed to the JVM tests as `flatpak.appId`).
+val flatpakAppId = if (channel == "dev") "com.nzik.desktop.compagnon.dev" else "com.nzik.desktop.compagnon"
 
 // The Flatpak release file name (spec spec-linux-flatpak): the frozen x86_64 asset name, derived
 // from the same package name + version as every other Linux artifact (the AppImage pattern).
-// Pinned by FlatpakPinTest.
-val flatpakFileName = "${linuxPackageName}-${libs.versions.nzikVersionName.get()}-x86_64.flatpak"
+// Pinned by FlatpakPinTest. The channel suffix rides after the base version through the single
+// rename helper (AD-2).
+val flatpakFileName = channelArtifactName("${linuxPackageName}-${libs.versions.nzikVersionName.get()}-x86_64.flatpak")
 
 // The committed Flatpak manifest template (spec spec-linux-flatpak): the reviewable, committed
 // build recipe (transparency of the manual build — the bundle is built with the host's
@@ -452,36 +1029,41 @@ compose.desktop {
     application {
         mainClass = "app.n_zik.compagnon.MainKt"
         nativeDistributions {
-            // Windows installer: `gradlew.bat :app:packageExe` — jpackage `--type exe`, a
-            // self-extracting installer wrapping the embedded MSI, compiled by the WiX toolset that
-            // the Compose plugin downloads itself (`downloadWix`/`unzipWix` on the root project).
+            // Windows: `gradlew.bat :app:packageExe` builds the jpackage APP-IMAGE
+            // (`compose/binaries/main/app/`) + the jpackage self-extracting exe — the latter is
+            // now a build BYPRODUCT, not the distributed artifact: the Windows installer is NSIS
+            // (the user decision — `:app:packageInstaller` runs makensis on
+            // `packaging/windows/installer.nsi` over the app-image and overwrites the jpackage
+            // exe at the same output path; spec `spec-updater` Change Log).
             // The portable `createDistributable` image is produced separately and is not affected.
             // Deb/Rpm are the Linux packages: on a Windows host the plugin disables them (the format
             // is not compatible with the current OS), so the Windows outputs stay identical.
             targetFormats(TargetFormat.Exe, TargetFormat.Deb, TargetFormat.Rpm)
 
             // Display identity of the app (version catalog, N-Zik Android convention): installer
-            // name, Start menu group and the Control-Panel (uninstall) entry.
-            packageName = libs.versions.nzikPackageName.get()
+            // name, Start menu group and the Control-Panel (uninstall) entry. The per-channel
+            // product name (spec `spec-updater`, AD-8): beta and dev builds install as
+            // "N-Zik Desktop Compagnon (Beta)" / "(Dev)" — the jpackage app name drives the
+            // installer base name, the Linux launcher, the AppImage AppRun and the Flatpak
+            // `exec`, so the channel rides in the product identity, not only the file names.
+            packageName = channelDisplayName
             description = "Desktop companion for N-Zik: control your phone's library and playback from a large screen, and listen on your computer."
             vendor = "N-Zik Group"
             copyright = "Copyright (C) 2026 N-Zik Group"
 
             windows {
-                // Per-user install without an elevation prompt: the app data live in %APPDATA% and
-                // the Windows Credential Manager (both per-user), so a future in-app updater never
-                // needs admin rights.
-                perUserInstall = libs.versions.nzikPerUser.get().toBoolean()
+                // jpackage exe: build BYPRODUCT only (the user decision — the NSIS installer
+                // `packaging/windows/installer.nsi` is the distributed artifact; see the
+                // `packageInstaller` task + the Change Log of `spec-updater.md`). Kept
+                // machine-level (perUserInstall=false) so the byproduct stays consistent with the
+                // NSIS global scope. The MSI-era frozen upgrade UUIDs are gone with the
+                // self-extracting exe — the NSIS installer uses a registry-based per-channel ×
+                // per-scope version identity instead (spec AD-8 superseded).
+                perUserInstall = false
                 dirChooser = true
                 menu = true
                 menuGroup = "N-Zik"
                 shortcut = true
-                // FROZEN upgrade identity of the installation (version catalog `nzikUpgradeUuid`) —
-                // NEVER change that GUID. jpackage passes it (`--win-upgrade-uuid`) to the installer
-                // build, so every future installer (and the deferred in-app updater, which re-launches
-                // the installer silently) recognizes this installation and upgrades it in place.
-                // Pinned by `UpgradeIdentityTest`.
-                upgradeUuid = libs.versions.nzikUpgradeUuid.get()
                 iconFile.set(installerIcon)
             }
 
@@ -539,14 +1121,67 @@ project.afterEvaluate {
     tasks.named<AbstractJPackageTask>("packageDeb") { freeArgs.addAll(listOf("--linux-package-deps", "vlc", "--linux-menu-group", "Audio;")) }
     tasks.named<AbstractJPackageTask>("packageRpm") { freeArgs.addAll(listOf("--linux-package-deps", "vlc", "--linux-menu-group", "Audio;")) }
 
+    // The channel rename of the jpackage-produced artifacts (spec `spec-updater`, AD-2 / loop 2):
+    // jpackage derives the file name itself (the .exe / .deb / .rpm — all carrying the base
+    // version, in a different position per format), so each task renames its own output right
+    // after the build through the single `channelArtifactName` helper (a no-op for stable).
+    // Filtered by extension (the .deb and the .rpm may share the output tree under
+    // `createDistributable`, and a stale artifact of the other format must never be renamed) and
+    // by `canBeChannelRenamed`: the base version must sit on a version boundary (`.`, `-`, `_` or
+    // end of name) AND the file must not already carry the channel suffix (no `-beta-beta`, no
+    // re-suffixed `-dev-<date>dev-<other date>`).
+    for ((taskName, extension) in listOf("packageExe" to ".exe", "packageDeb" to ".deb", "packageRpm" to ".rpm")) {
+        tasks.named<AbstractJPackageTask>(taskName) {
+            doLast {
+                val dir = destinationDir.get().asFile
+                dir.listFiles()
+                    ?.filter {
+                        it.isFile && it.name.endsWith(extension) && canBeChannelRenamed(it.name)
+                    }
+                    ?.forEach { file ->
+                        val target = channelArtifactName(file.name)
+                        if (target != file.name) {
+                            val renamed = File(dir, target)
+                            if (renamed.exists()) renamed.delete()
+                            check(file.renameTo(renamed)) {
+                                "channel rename: could not rename ${file.name} → $target"
+                            }
+                            logger.lifecycle("channel rename: ${file.name} → $target")
+                        }
+                    }
+            }
+        }
+    }
+
     // Expose the effective Linux packaging contract to the JVM tests (same pattern as
-    // `install.upgradeUuid`): LinuxPackagePinTest fails if a plugin upgrade stops forwarding these
+    // `windows.packageName`): LinuxPackagePinTest fails if a plugin upgrade stops forwarding these
     // freeArgs (the `vlc` dependency + the Audio menu group are the core of the Linux packages) or
     // if the package name drifts from the portable zip's file name. Read eagerly here: this
     // afterEvaluate block runs after the plugin's (the tasks exist and the freeArgs are injected
     // above), and Test.systemProperty stores the value as-is (no Provider resolution).
     tasks.named<Test>("test") {
+        // The channel contract (spec `spec-updater`, AD-1/AD-2): the effective channel, the
+        // generated in-app version and the updater gate (the artifact names below already carry
+        // the channel suffix — with the default debug channel they stay byte-identical to the
+        // no-channel convention, so the pin tests keep passing unmodified).
+        systemProperty("channel", channel)
+        systemProperty("appVersion.versionName", appVersionName)
+        systemProperty("appVersion.versionCode", libs.versions.nzikVersionCode.get())
+        systemProperty("appVersion.updaterEnabled", (channel in listOf("stable", "beta", "dev")).toString())
+        // The per-channel product name (spec `spec-updater`, AD-8): the window title + the Windows
+        // package identity (the MSI-era upgrade UUIDs are gone with the NSIS installer — AD-8
+        // superseded).
+        systemProperty("windows.packageName", channelDisplayName)
         systemProperty("linux.packageName", linuxPackageName)
+        // The effective per-task artifact names AFTER the channel rename (spec `spec-updater`,
+        // AD-2 / loop 2 — the doLast hook above renames the jpackage outputs through
+        // `channelArtifactName`): the jpackage-derived base names (the conventions pinned in
+        // InstallModeDetectionTest) through that helper (a no-op for stable/debug).
+        // `ChannelArtifactNameTest` pins the derivation against these (test-side copy of the
+        // helper — build-script symbols are unreachable from the JVM tests).
+        systemProperty("artifacts.exe", channelArtifactName("${channelDisplayName}-$baseVersion.exe"))
+        systemProperty("artifacts.deb", channelArtifactName("${linuxPackageName}_$baseVersion-1_amd64.deb"))
+        systemProperty("artifacts.rpm", channelArtifactName("${linuxPackageName}-$baseVersion-1.x86_64.rpm"))
         systemProperty("linux.freeArgs.deb", tasks.named<AbstractJPackageTask>("packageDeb").get().freeArgs.get().joinToString("\u001f"))
         systemProperty("linux.freeArgs.rpm", tasks.named<AbstractJPackageTask>("packageRpm").get().freeArgs.get().joinToString("\u001f"))
         systemProperty("linux.portable.zipName", tasks.named<Zip>("packageLinuxPortable").get().archiveFileName.get())
@@ -626,7 +1261,8 @@ project.afterEvaluate {
         }
         dependsOn(createDistributableImpl)
         from(createDistributableImpl.flatMap { it.destinationDir })
-        archiveFileName.set("${linuxPackageName}-${libs.versions.nzikVersionName.get()}-linux-portable.zip")
+        // The channel suffix rides after the base version through the single rename helper (AD-2).
+        archiveFileName.set(channelArtifactName("${linuxPackageName}-${libs.versions.nzikVersionName.get()}-linux-portable.zip"))
         destinationDirectory.set(layout.buildDirectory.dir("compose/binaries"))
         // Patch the launcher entry's Unix mode to 0755 in the central directory (see above).
         doLast {
@@ -778,7 +1414,7 @@ project.afterEvaluate {
             File(appDir, "usr/share/applications/$linuxPackageName.desktop").writeText(
                 "[Desktop Entry]\n" +
                 "Type=Application\n" +
-                "Name=${libs.versions.nzikPackageName.get()}\n" +
+                "Name=${channelDisplayName}\n" +
                 "Comment=Desktop companion for N-Zik: control your phone's library and playback from a large screen, and listen on your computer.\n" +
                 "Exec=\"${image.name}\"\n" +
                 "Icon=$linuxPackageName\n" +
@@ -980,7 +1616,10 @@ project.afterEvaluate {
             //    sandbox PATH puts /app/bin first (the bare Exec + command resolve to
             //    /app/bin/nzik), and flatpak-builder's finish step hard-fails when the command
             //    binary is not in <builddir>/files/bin/ ("Command 'nzik' not found").
-            val displayName = libs.versions.nzikPackageName.get()
+            // The per-channel product name (spec `spec-updater`, AD-8): the jpackage launcher is
+            // named after the app name, so the wrapper and the .desktop ride the same channel
+            // identity as every other artifact.
+            val displayName = channelDisplayName
             File(staging, "bin/$flatpakCommand").apply {
                 writeText(
                     "#!/bin/sh\n" +

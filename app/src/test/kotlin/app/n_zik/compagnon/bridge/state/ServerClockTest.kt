@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.bridge.state
 
+import kotlin.math.abs
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -67,6 +68,6 @@ class ServerClockTest {
         mono = 10_000 + 10_000 // 10 s later on the client
         val shown = state.extrapolatedPositionMs(clock.serverNowMs())
         // Heartbeat sent at server time 5_010_000 would carry 93_000.
-        assertTrue(kotlin.math.abs(shown - 93_000) <= 1_000, "shown $shown")
+        assertTrue(abs(shown - 93_000) <= 1_000, "shown $shown")
     }
 }

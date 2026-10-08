@@ -10,6 +10,7 @@ import app.n_zik.compagnon.bridge.library.TopPeriod
 import app.n_zik.compagnon.bridge.pairing.CredentialStore
 import app.n_zik.compagnon.enums.AudioQualityFormat
 import app.n_zik.compagnon.enums.ExoPlayerDiskCacheMaxSize
+import app.n_zik.compagnon.updater.models.CheckUpdateState
 import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -38,6 +39,15 @@ const val itemSizesKey = "itemSizes"
 const val disableScrollingTextKey = "disableScrollingText"
 const val languageKey = "language"
 const val lastPhoneLanguageKey = "lastPhoneLanguage"
+// The in-app updater (spec `spec-updater`, the phone's updater preference keys):
+const val checkUpdateStateKey = "checkUpdateState"
+const val updateCancelledKey = "updateCancelled"
+const val lastUpdateCheckKey = "lastUpdateCheck"
+const val changelogCacheKey = "cached_changelog"
+const val changelogCacheVersionKey = "cached_changelog_version"
+// The updater's changelog translation (the phone's updater translation preference keys, spec AD-9):
+const val otherLanguageAppUpdateKey = "otherLanguageAppUpdate"
+const val updateTranslationActiveKey = "updateTranslationActive"
 
 /**
  * The sort state of one library chip (contract §10, since 1.6): as on the phone, every chip of a
@@ -94,9 +104,39 @@ data class UserSettings(
     @SerialName(languageKey) val language: String = AppLanguage.AUTO_TEL,
     /** The last phone language received in `meta` (contract 1.9.0): the `auto_tel` fallback. */
     @SerialName(lastPhoneLanguageKey) val lastPhoneLanguage: String? = null,
+    /**
+     * The in-app updater's three-state check choice (spec `spec-updater`, AD-9, loop 2 — the
+     * phone's `checkUpdateState`, replacing the v1 boolean): the wire value "on" (automatic
+     * check at startup), "ask" (ask the user at startup before checking) or "off" (no startup
+     * check); an unknown value reads as "on" (the default, [CheckUpdateState.fromWire]). The
+     * updater is forced off on debug / -git builds (`AppVersion.updaterEnabled`), where this
+     * choice is ignored.
+     */
+    @SerialName(checkUpdateStateKey) val checkUpdateState: String = CheckUpdateState.On.wire,
+    /** The update dialog was dismissed while an update was available (the phone's `updateCancelledKey`). */
+    @SerialName(updateCancelledKey) val updateCancelled: Boolean = false,
+    /** The last update check, millis (the phone's `lastUpdateCheckKey`). */
+    @SerialName(lastUpdateCheckKey) val lastUpdateCheck: Long = 0L,
+    /** The cached changelog of the running version (the phone's `cached_changelog`). */
+    @SerialName(changelogCacheKey) val changelogCache: String? = null,
+    /** The version code the [changelogCache] belongs to (the phone's `cached_changelog_version`; -1 = none). */
+    @SerialName(changelogCacheVersionKey) val changelogCacheVersion: Int = -1,
+    /**
+     * The changelog's translation language (the phone's `otherLanguageAppUpdate`): an `UpdateLanguage`
+     * BCP-47 code, "system" for the app language; an unknown code reads as "system" at the read site.
+     */
+    @SerialName(otherLanguageAppUpdateKey) val otherLanguageAppUpdate: String = "system",
+    /**
+     * The changelog translation toggle (the phone's `updateTranslationActive`); `null` = never set, and
+     * its default is the phone's — active when the app language is not English (decided at the read site).
+     */
+    @SerialName(updateTranslationActiveKey) val updateTranslationActive: Boolean? = null,
 ) {
     /** Ceiling of the audio cache: `0` disabled, `null` unlimited. */
     val songCacheMaxBytes: Long? get() = exoPlayerDiskCacheMaxSize.cacheBytes(exoPlayerCustomCache)
+
+    /** The [checkUpdateState] wire value decoded to the typed choice (unknown → [CheckUpdateState.On]). */
+    val checkUpdateStateValue: CheckUpdateState get() = CheckUpdateState.fromWire(checkUpdateState)
 }
 
 /**

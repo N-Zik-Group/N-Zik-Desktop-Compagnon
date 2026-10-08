@@ -1,22 +1,16 @@
 package app.n_zik.compagnon.components.ui.screens.bridge
 
-import app.n_zik.compagnon.uiRoundnessShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.layout.ColumnScope
 import app.n_zik.compagnon.components.themed.ConfirmationDialog
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,45 +34,7 @@ import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.alert_circle
-import app.n_zik.compagnon.generated.resources.cancel
-import app.n_zik.compagnon.generated.resources.close
-import app.n_zik.compagnon.generated.resources.connection_kicked
-import app.n_zik.compagnon.generated.resources.connection_other_active
-import app.n_zik.compagnon.generated.resources.connection_reconnecting_in
-import app.n_zik.compagnon.generated.resources.connection_replaced
-import app.n_zik.compagnon.generated.resources.connection_server_stopped
-import app.n_zik.compagnon.generated.resources.devices
-import app.n_zik.compagnon.generated.resources.error_unknown_code
-import app.n_zik.compagnon.generated.resources.forget_phone
-import app.n_zik.compagnon.generated.resources.forget_phone_text
-import app.n_zik.compagnon.generated.resources.manual_ip
-import app.n_zik.compagnon.generated.resources.manual_ip_invalid
-import app.n_zik.compagnon.generated.resources.paired_as
-import app.n_zik.compagnon.generated.resources.paired_checking
-import app.n_zik.compagnon.generated.resources.paired_error
-import app.n_zik.compagnon.generated.resources.paired_incompatible
-import app.n_zik.compagnon.generated.resources.paired_ok
-import app.n_zik.compagnon.generated.resources.paired_other_active
-import app.n_zik.compagnon.generated.resources.paired_other_active_unknown
-import app.n_zik.compagnon.generated.resources.paired_session_only
-import app.n_zik.compagnon.generated.resources.paired_title
-import app.n_zik.compagnon.generated.resources.paired_with
-import app.n_zik.compagnon.generated.resources.pencil
-import app.n_zik.compagnon.generated.resources.phone_panel_title
-import app.n_zik.compagnon.generated.resources.reconnect
-import app.n_zik.compagnon.generated.resources.retry
-import app.n_zik.compagnon.generated.resources.revoked_description
-import app.n_zik.compagnon.generated.resources.revoked_pair_again
-import app.n_zik.compagnon.generated.resources.revoked_title
-import app.n_zik.compagnon.generated.resources.trash
-import app.n_zik.compagnon.generated.resources.unreachable_description
-import app.n_zik.compagnon.generated.resources.unreachable_edit_ip
-import app.n_zik.compagnon.generated.resources.unreachable_edit_ip_text
-import app.n_zik.compagnon.generated.resources.unreachable_port_kept
-import app.n_zik.compagnon.generated.resources.unreachable_save_ip
-import app.n_zik.compagnon.generated.resources.unreachable_title
+import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 /** Paired: phone name, connection status, "Retry" when it makes sense, "Forget this phone". */
@@ -108,8 +64,8 @@ fun PairedScreen(state: PairingState.Paired, onRetry: () -> Unit, onForget: () -
                     }
                     PairedStatus.Ok -> Text(stringResource(Res.string.paired_ok), style = typography().xs, color = palette.accent)
                     is PairedStatus.OtherActive -> StatusWithRetry(
-                        stringResource(
-                            Res.string.paired_other_active,
+                        formatText(
+                            stringResource(Res.string.paired_other_active),
                             status.deviceName ?: stringResource(Res.string.paired_other_active_unknown),
                         ),
                         onRetry,
@@ -181,8 +137,8 @@ fun UnreachableScreen(state: PairingState.Paired, onRetry: () -> Unit, onEditIp:
         SettingsSectionCard(
             title = stringResource(Res.string.unreachable_title),
             icon = Res.drawable.alert_circle,
-            description = stringResource(
-                Res.string.unreachable_description,
+            description = formatText(
+                stringResource(Res.string.unreachable_description),
                 record.serverName,
                 record.serverIps.joinToString(", ") { "$it:${record.serverPort}" },
             ),
@@ -257,8 +213,8 @@ fun ConnectionBanner(connection: ConnectionState, onReconnect: () -> Unit) {
         is ConnectionState.ServerStopped -> stringResource(Res.string.connection_server_stopped) to Res.string.reconnect
         ConnectionState.Kicked -> stringResource(Res.string.connection_kicked) to Res.string.reconnect
         ConnectionState.Replaced -> stringResource(Res.string.connection_replaced) to Res.string.reconnect
-        is ConnectionState.OtherActive -> stringResource(
-            Res.string.connection_other_active,
+        is ConnectionState.OtherActive -> formatText(
+            stringResource(Res.string.connection_other_active),
             connection.deviceName ?: stringResource(Res.string.paired_other_active_unknown),
         ) to Res.string.retry
     }
@@ -275,13 +231,21 @@ fun ConnectionBanner(connection: ConnectionState, onReconnect: () -> Unit) {
 }
 
 /**
- * The "Paired" content of story 10, now a panel of the main window ("PC server" in the header menu): phone
- * name, connection, "Forget this phone" (confirmed). Shown in the same [OverlayPanel] as the settings.
+ * The "Serveur PC" page (spec `spec-settings-navigation` NAV-2 — the "Paired" content of story 10, now
+ * its own navigation page of the main window, reached from the header's "PC server" button): the phone's
+ * name, the connection indicator, "Forget this phone" (confirmed). Like the phone's destinations it
+ * replaces the home content (the window header's back arrow closes it — the v1 bottom close button is
+ * gone with the overlay).
  */
 @Composable
-fun PhonePanel(record: PairingRecord, connection: ConnectionState, onClose: () -> Unit, onForget: () -> Unit) {
+fun PhonePanel(record: PairingRecord, connection: ConnectionState, onForget: () -> Unit) {
     val palette = colorPalette()
-    OverlayPanel(onClose = onClose) {
+    Column(
+        modifier = Modifier
+            .background(palette.background0)
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+    ) {
         SettingsSectionCard(title = stringResource(Res.string.phone_panel_title), icon = Res.drawable.devices, content = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(formatText(stringResource(Res.string.paired_with), record.serverName), style = typography().s.semiBold, color = palette.text)
@@ -290,41 +254,5 @@ fun PhonePanel(record: PairingRecord, connection: ConnectionState, onClose: () -
                 ForgetEntry(onForget)
             }
         })
-        PairingButton(
-            text = stringResource(Res.string.close),
-            onClick = onClose,
-            containerColor = colorPalette().background2,
-            contentColor = colorPalette().text,
-            modifier = Modifier.padding(horizontal = 16.dp),
-        )
-    }
-}
-
-/**
- * Compagnon only (the phone navigates to its pages): the overlay that holds the "Phone" panel and the
- * settings, one container for both: `background0` at 70 % over the window (a click closes it), a column at
- * most 560 dp wide, 24 dp from the edges, on `background0` in the UI roundness, scrolling, 16 dp above and
- * below its content.
- */
-@Composable
-fun OverlayPanel(onClose: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
-    val palette = colorPalette()
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(palette.background0.copy(alpha = 0.7f))
-            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onClose),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            modifier = Modifier
-                .widthIn(max = 560.dp)
-                .padding(24.dp)
-                .background(palette.background0, shape = uiRoundnessShape())
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {}
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 16.dp),
-            content = content,
-        )
     }
 }

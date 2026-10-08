@@ -17,10 +17,12 @@ import io.ktor.http.decodeURLPart
 import io.ktor.http.headersOf
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
+import java.util.concurrent.atomic.AtomicInteger
 import javax.imageio.ImageIO
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -227,11 +229,11 @@ class ArtworkLoaderTest {
     @Test
     fun `at most four artwork requests run at the same time`() = runTest {
         // The mock engine answers on several threads: atomic counters
-        val running = java.util.concurrent.atomic.AtomicInteger()
-        val peak = java.util.concurrent.atomic.AtomicInteger()
+        val running = AtomicInteger()
+        val peak = AtomicInteger()
         val loader = loader { request ->
             peak.accumulateAndGet(running.incrementAndGet(), ::maxOf)
-            kotlinx.coroutines.delay(100)
+            delay(100)
             running.decrementAndGet()
             image(trackIdOf(request).toByteArray())
         }

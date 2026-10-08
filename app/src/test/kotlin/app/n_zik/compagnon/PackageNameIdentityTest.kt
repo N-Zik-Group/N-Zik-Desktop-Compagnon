@@ -1,5 +1,6 @@
 package app.n_zik.compagnon
 
+import app.n_zik.compagnon.updater.models.ArtifactNames
 import java.io.File
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -19,5 +20,15 @@ class PackageNameIdentityTest {
         val match = Regex("""nzikPackageName\s*=\s*"(.*)\"""").find(toml)
         assertNotNull(match, "nzikPackageName missing from gradle/libs.versions.toml")
         assertEquals(AppInfo.NAME, match!!.groupValues[1])
+    }
+
+    @Test
+    fun `the exposed windows package name matches the per-channel product name`() {
+        // The build exposes the effective channel + the jpackage Windows package name (same
+        // pattern as the LinuxPackagePinTest pins): a drift would desync the installer identity
+        // from the in-app updater's per-channel product name (spec `spec-updater`, AD-8).
+        val channel = System.getProperty("channel") ?: error("the build must expose the effective channel")
+        val exposed = System.getProperty("windows.packageName") ?: error("windows.packageName is not exposed to the tests")
+        assertEquals(ArtifactNames.productName(channel), exposed, "windows.packageName must stay the per-channel product name")
     }
 }

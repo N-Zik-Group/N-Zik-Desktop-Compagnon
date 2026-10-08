@@ -74,6 +74,9 @@ class AurPkgbuildTest {
             "git entry must clone the main branch into the pinned ${'$'}{_pkgname} dir (name::url order)"
         )
         assertTrue(text.contains(":app:createDistributable"), "git entry must build the app-image with Gradle")
+        // Loop 2 (spec `spec-updater` AD-1): the -git entry builds the -git channel explicitly —
+        // the in-app version then carries the commit hash and the badge is "Git"
+        assertTrue(text.contains("-Pchannel=git"), "git entry must build with -Pchannel=git (the explicit-channel discipline)")
         assertTrue(text.contains("jdk21-openjdk"), "git entry must require JDK 21 (jdk21-openjdk) as a makedep")
         // makepkg requires an integrity entry per source; the tracked branch moves, so a -git
         // source is checked with 'SKIP' (an empty sha256sums=() aborts the build).

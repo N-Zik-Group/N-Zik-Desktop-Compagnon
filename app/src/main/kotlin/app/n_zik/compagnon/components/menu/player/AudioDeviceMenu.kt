@@ -1,6 +1,6 @@
 package app.n_zik.compagnon.components.menu.player
 
-import app.n_zik.compagnon.generated.resources.bridge_audio_output_pc_subtitle
+import app.n_zik.compagnon.generated.resources.*
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -39,27 +39,13 @@ import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.ui.sliders.SliderControl
 import app.n_zik.compagnon.enums.AudioQualityFormat
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.audio_devices
-import app.n_zik.compagnon.generated.resources.audio_output_title
-import app.n_zik.compagnon.generated.resources.audio_quality
-import app.n_zik.compagnon.generated.resources.audio_quality_automatic
-import app.n_zik.compagnon.generated.resources.audio_quality_format
-import app.n_zik.compagnon.generated.resources.audio_quality_format_high
-import app.n_zik.compagnon.generated.resources.audio_quality_format_low
-import app.n_zik.compagnon.generated.resources.computer
-import app.n_zik.compagnon.generated.resources.local_playback_unavailable
-import app.n_zik.compagnon.generated.resources.local_playback_unavailable_linux
-import app.n_zik.compagnon.generated.resources.music_note
-import app.n_zik.compagnon.generated.resources.phone_android
-import app.n_zik.compagnon.generated.resources.this_pc
-import app.n_zik.compagnon.generated.resources.volume
 import app.n_zik.compagnon.playback.vlc.VlcRuntime
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.semiBold
+import kotlin.math.round
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -188,7 +174,7 @@ fun AudioDeviceMenu(onDismiss: () -> Unit, phoneName: String) {
             maxVolume = 1f,
             enabled = preferences != null,
             onVolumeChange = { newVolume ->
-                dragged = kotlin.math.round(newVolume * 100f) / 100f
+                dragged = round(newVolume * 100f) / 100f
             },
             onVolumeChangeComplete = {
                 dragged?.let { value -> preferences?.update { it.copy(playbackVolume = value.coerceIn(0f, 1f)) } }
@@ -284,7 +270,7 @@ private fun VolumeRow(
         )
 
         BasicText(
-            text = "${if (maxVolume > 0) kotlin.math.round(((currentVolume / maxVolume) * 100)).toInt() else 0}%",
+            text = "${if (maxVolume > 0) round(((currentVolume / maxVolume) * 100)).toInt() else 0}%",
             style = typography().xxs.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = colorPalette().accent,

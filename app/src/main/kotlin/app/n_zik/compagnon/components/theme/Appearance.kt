@@ -6,6 +6,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import kotlin.math.min
 
 /**
  * Port of the phone's `app/it/fast4x/rimusic/ui/styling/Appearance.kt` (17-43, 83). Dropped: the `Saver`
@@ -16,7 +17,7 @@ class BoundedCornerSize(val dp: Dp, val maxFraction: Float) : CornerSize {
     override fun toPx(shapeSize: Size, density: Density): Float {
         val requestedPx = with(density) { dp.toPx() }
         val maxPx = shapeSize.minDimension * maxFraction
-        return kotlin.math.min(requestedPx, maxPx)
+        return min(requestedPx, maxPx)
     }
 }
 

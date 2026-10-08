@@ -13,6 +13,7 @@ import java.io.File
 import java.util.Collections
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty
@@ -61,7 +62,7 @@ class VlcRuntimeTrialTest {
                 }
             }
         }.start(wait = false)
-        val port = kotlinx.coroutines.runBlocking { server.engine.resolvedConnectors().first().port }
+        val port = runBlocking { server.engine.resolvedConnectors().first().port }
 
         val modules = Collections.synchronizedSortedSet(sortedSetOf<String>())
         val factory = MediaPlayerFactory("--no-video", "--intf=dummy", "--no-metadata-network-access", "--network-caching=300")

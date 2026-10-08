@@ -7,7 +7,9 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
+import java.net.Socket
 import java.util.concurrent.atomic.AtomicLong
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -33,12 +35,12 @@ class PairingListenerTest {
     private fun offerJson(requestId: String, v: Int = 1) =
         """{"v":$v,"requestId":"$requestId","code":"K7M2QX","serverIps":["192.168.1.14"],"serverPort":42420,"serverName":"Pixel 8","extra":true}"""
 
-    private fun listenerTest(block: suspend io.ktor.server.testing.ApplicationTestBuilder.() -> Unit) = testApplication {
+    private fun listenerTest(block: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
         application { pairingOfferModule(registry) { accepted += it } }
         block()
     }
 
-    private suspend fun io.ktor.server.testing.ApplicationTestBuilder.postOffer(body: String) =
+    private suspend fun ApplicationTestBuilder.postOffer(body: String) =
         client.post(BridgeContract.OFFER_PATH) {
             contentType(ContentType.Application.Json)
             setBody(body)
@@ -151,7 +153,17 @@ class PairingListenerTest {
 
             val status = rawPost(port, offerJson("id-1"))
             assertEquals(200, status)
-            runCurrent()
+            // The CIO server writes the 200 BEFORE it runs the accepted-callback (which closes
+            // the listener and enqueues onOffer onto the test dispatcher — pairingOfferModule:
+            // respondText, then onAccepted -> scope.launch). A single runCurrent() can race that
+            // enqueue under load (the full-build CI thread is delayed), so wait in REAL time
+            // (yielding to the CIO thread) until the offer is enqueued and processed. `received`
+            // is only mutated by the dispatcher task, so it is safe to read here.
+            val deadline = System.currentTimeMillis() + 5_000
+            while (received.isEmpty() && System.currentTimeMillis() < deadline) {
+                runCurrent()
+                Thread.sleep(10)
+            }
             assertEquals(1, received.size)
             assertNull(listener.request.value)
             listener.close()
@@ -159,7 +171,7 @@ class PairingListenerTest {
     }
 
     /** Same raw HTTP/1.1 request as the phone's `PairingOfferSender`. */
-    private fun rawPost(port: Int, body: String): Int = java.net.Socket("127.0.0.1", port).use { socket ->
+    private fun rawPost(port: Int, body: String): Int = Socket("127.0.0.1", port).use { socket ->
         val bytes = body.toByteArray(Charsets.UTF_8)
         val head = "POST ${BridgeContract.OFFER_PATH} HTTP/1.1\r\nHost: 127.0.0.1:$port\r\n" +
             "Content-Type: application/json; charset=utf-8\r\nContent-Length: ${bytes.size}\r\nConnection: close\r\n\r\n"

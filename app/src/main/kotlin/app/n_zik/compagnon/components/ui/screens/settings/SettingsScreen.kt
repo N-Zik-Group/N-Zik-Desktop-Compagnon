@@ -1,328 +1,123 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
-import app.n_zik.compagnon.components.ui.screens.bridge.OverlayPanel
-import app.n_zik.compagnon.components.themed.CacheSpaceIndicator
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.components.settings.CacheSettingsEntry
-import app.n_zik.compagnon.components.settings.OtherSettingsEntry
-import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
-import app.n_zik.compagnon.components.settings.SettingsDescription
-import app.n_zik.compagnon.components.settings.SettingsSectionCard
-import app.n_zik.compagnon.components.themed.ConfirmationDialog
-import app.n_zik.compagnon.components.themed.HeaderWithIcon
-import app.n_zik.compagnon.components.themed.InputNumericDialog
-import app.n_zik.compagnon.components.themed.ValueSelectorDialog
-import app.n_zik.compagnon.components.ui.screens.bridge.PairingButton
-import app.n_zik.compagnon.enums.AudioQualityFormat
-import app.n_zik.compagnon.enums.ExoPlayerDiskCacheMaxSize
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.app_language
-import app.n_zik.compagnon.generated.resources.audio_quality
-import app.n_zik.compagnon.generated.resources.audio_quality_automatic
-import app.n_zik.compagnon.generated.resources.audio_quality_format
-import app.n_zik.compagnon.generated.resources.audio_quality_format_high
-import app.n_zik.compagnon.generated.resources.audio_quality_format_low
-import app.n_zik.compagnon.generated.resources.cache
-import app.n_zik.compagnon.generated.resources.cache_cleared
-import app.n_zik.compagnon.generated.resources.close
-import app.n_zik.compagnon.generated.resources.custom
-import app.n_zik.compagnon.generated.resources.globe
-import app.n_zik.compagnon.generated.resources.languages
-import app.n_zik.compagnon.generated.resources.data_settings_description
-import app.n_zik.compagnon.generated.resources.disable_scrolling_text
-import app.n_zik.compagnon.generated.resources.do_you_really_want_to_delete_cache
-import app.n_zik.compagnon.generated.resources.enter_value_in_mb
-import app.n_zik.compagnon.generated.resources.music_file
-import app.n_zik.compagnon.generated.resources.other
-import app.n_zik.compagnon.generated.resources.quality
-import app.n_zik.compagnon.generated.resources.scrolling_text_is_used_for_long_texts
-import app.n_zik.compagnon.generated.resources.server
-import app.n_zik.compagnon.generated.resources.set_custom_cache
-import app.n_zik.compagnon.generated.resources.settings
-import app.n_zik.compagnon.generated.resources.song_cache_max_size
-import app.n_zik.compagnon.generated.resources.speaker
-import app.n_zik.compagnon.generated.resources.text
-import app.n_zik.compagnon.generated.resources.turn_off
-import app.n_zik.compagnon.generated.resources.unlimited
-import app.n_zik.compagnon.generated.resources.used
+import app.n_zik.compagnon.LocalBottomBarOffset
+import app.n_zik.compagnon.components.navigation.nav.HorizontalNavigationBar
+import app.n_zik.compagnon.components.navigation.nav.NavigationTab
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.playback.cache.AudioCache
-import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.Preferences
-import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
-import java.util.Locale
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
+import kotlin.math.roundToInt
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * The Compagnon's settings, opened from the header's settings icon as an overlay (like the "Phone" panel).
- * Only what applies to the PC is kept, its cards ported from the phone:
- * - "Cache" with "Song cache max size" (phone's `DataSettings.kt` 364-412: `CacheSettingsEntry`,
- *   `ValueSelectorDialog`, the custom size dialog and the "used" line), here the local audio cache;
- * - "Quality" with "Audio Quality" (phone's `NetworkSettings.kt` 248-266 and its dialog 294-310), the
- *   quality asked when the PC forges an audio URL;
- * - "Others" with "Disable scrolling text" (phone's `OtherSwitchSettingEntry`, its
- *   `ui/screens/settings/SettingsScreen.kt` 277-367), a Compagnon-local setting: it drops the `SongItem`
- *   title / artists marquee.
- * The song cache shows the phone's `CacheSpaceIndicator` (`DataSettings.kt` 410, 20 dp sides, no info line)
- * of the local audio cache, then the "used" line. The cards follow each other without extra spacing (the
- * phone's settings column).
- * Dropped: the phone's other settings (image cache, downloads, other qualities, search…) and the player
- * service restart.
+ * The Compagnon's settings page (spec `spec-settings-navigation` NAV-1/NAV-3/NAV-9/NAV-13): a navigation
+ * destination of the main window (the home content and the connection banner replaced, the window
+ * header's back arrow closes it) with the phone's settings screens as **5 sub-tabs** — Général /
+ * Données / Réseau / Autres / About, a mirror of the phone's tabs. The floating bar is the home's
+ * [HorizontalNavigationBar] (the phone's `BottomFloating` / `IconOnly` default), sliding out with the
+ * scroll like it does on the home ([LocalBottomBarOffset]); the tab change is an [AnimatedContent]
+ * (the phone's `Skeleton` pattern) and each tab keeps its own scroll state. The tab state is owned by
+ * the window ([settingsTab] / [onTabChanged]) and reset to 0 when the page is closed.
+ *
+ * This file is the **container only** (NAV-13): the 5 sub-tabs are 5 page files mirroring the phone's
+ * file structure — [GeneralSettingsScreen] (the phone's `GeneralSettings.kt`), [DataSettingsScreen]
+ * (`DataSettings.kt`), [NetworkSettingsScreen] (`NetworkSettings.kt`), [OtherSettingsScreen]
+ * (`OtherSettings.kt`) and [AboutScreen] (`About.kt`) — each keeping its phone screen's structure (its
+ * `HeaderWithIcon(enabled = false)` + `SettingsDescription` + the section cards). The About tab is the
+ * [AboutScreen] itself (NAV-3); the update page is a sub-destination of this navigation, opened from it
+ * (NAV-4).
+ *
+ * The search (NAV-12): each content tab has the phone's `Search()` of its own toolbar row — the
+ * standalone toolbar button right after the description (the phone's `search.ToolBarButton()` +
+ * `search.SearchBar`, its `GeneralSettings.kt` 307-308) — its query preserved per tab across tab
+ * switches (the phone keeps one `Search` per tab, its destination's state surviving the change), and
+ * its [settingsSearchCtx] filter hiding the cards whose titles no longer match (the phone's
+ * `searchCtx` pattern, its `AnimatedVisibility` fadeIn + scaleIn 600 ms). The About tab and the update
+ * page have none (the phone has none there).
+ *
+ * The settings logic (state, dialogs, the `CacheSpaceIndicator`) is unchanged from the v1 overlay —
+ * only its container moved into the tabs. Dropped: the phone's 4 other tabs (search, AI
+ * recommendations, accounts, UI), the image-cache / download-qualities / player-appearance entries,
+ * the phone's settings search over its 9 tabs (here it is functional over the 4 ported ones).
  */
 @Composable
 fun SettingsScreen(
     preferences: Preferences,
     cache: AudioCache?,
-    onClose: () -> Unit,
+    settingsTab: Int,
+    onTabChanged: (Int) -> Unit,
+    onOpenUpdate: () -> Unit,
 ) {
-    val settings by preferences.settings.collectAsState()
-    val scope = rememberCoroutineScope()
-    var showSongCacheDialog by remember { mutableStateOf(false) }
-    var showExoPlayerCustomCacheDialog by remember { mutableStateOf(false) }
-    var showAudioQualityDialog by remember { mutableStateOf(false) }
-    var showLanguageDialog by remember { mutableStateOf(false) }
-    var cleanCacheOfflineSongs by remember { mutableStateOf(false) }
-    var cacheCleanedCounter by remember { mutableIntStateOf(0) }
+    val bottomBarOffset = LocalBottomBarOffset.current
+    // Fresh on every recomposition: the bar animates only on the tab index (its `updateTransition`),
+    // and the `stringResource` labels need the composition scope
+    val tabs = SETTINGS_TABS.map { (label, icon) -> NavigationTab(stringResource(label), icon) }
 
-    val exoPlayerDiskCacheMaxSize = settings.exoPlayerDiskCacheMaxSize
-    val exoPlayerCustomCache = settings.exoPlayerCustomCache
-    val audioQualityFormat = settings.audioQualityFormat
+    // The per-tab search queries (NAV-12): the phone keeps one Search per tab, its query surviving a
+    // tab change (its destinations stay alive in the back stack); here they live at the page level,
+    // the tabs only reading and writing their own
+    var searchQueries by remember { mutableStateOf<Map<Int, String>>(emptyMap()) }
 
-    // The cache fills while a track plays: its size is read again every few seconds, off the UI thread
-    val diskCacheSize by produceState(0L, cache, cacheCleanedCounter) {
-        while (true) {
-            value = cache?.let { withContext(NzikDispatchers.DATA) { it.totalBytes() } } ?: 0L
-            delay(CACHE_SIZE_REFRESH_MS)
+    Box(modifier = Modifier.fillMaxSize()) {
+        AnimatedContent(
+            targetState = settingsTab,
+            transitionSpec = { fadeIn(tween(350)) togetherWith fadeOut(tween(350)) },
+            label = "settings tab",
+            modifier = Modifier.fillMaxSize(),
+        ) { tab ->
+            when (tab) {
+                0 -> GeneralSettingsScreen(preferences, searchQueries[0].orEmpty()) { searchQueries = searchQueries + (0 to it) }
+                1 -> DataSettingsScreen(preferences, cache, searchQueries[1].orEmpty()) { searchQueries = searchQueries + (1 to it) }
+                2 -> NetworkSettingsScreen(preferences, searchQueries[2].orEmpty()) { searchQueries = searchQueries + (2 to it) }
+                3 -> OtherSettingsScreen(preferences, searchQueries[3].orEmpty()) { searchQueries = searchQueries + (3 to it) }
+                4 -> AboutScreen(preferences, onOpenUpdate)
+                else -> Unit
+            }
         }
-    }
 
-    fun trimCache() {
-        scope.launch { withContext(NzikDispatchers.DATA) { cache?.trim() } }
-    }
-
-    if (cleanCacheOfflineSongs) {
-        ConfirmationDialog(
-            text = stringResource(Res.string.do_you_really_want_to_delete_cache),
-            onDismiss = { cleanCacheOfflineSongs = false },
-            onConfirm = {
-                cleanCacheOfflineSongs = false
-                scope.launch {
-                    withContext(NzikDispatchers.DATA) { cache?.clear() }
-                    cacheCleanedCounter++
-                }
-            },
+        HorizontalNavigationBar(
+            tabs = tabs,
+            tabIndex = settingsTab,
+            onTabChanged = onTabChanged,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .offset { IntOffset(0, bottomBarOffset.value.roundToInt()) },
         )
     }
-
-    OverlayPanel(onClose = onClose) {
-        run {
-            HeaderWithIcon(
-                title = stringResource(Res.string.settings),
-                iconId = Res.drawable.server,
-                enabled = false,
-                showIcon = true,
-                modifier = Modifier,
-                onClick = {},
-            )
-
-            SettingsDescription(
-                text = stringResource(Res.string.data_settings_description),
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-            )
-
-            // Cache Section
-            SettingsSectionCard(
-                title = stringResource(Res.string.cache),
-                icon = Res.drawable.server,
-                description = stringResource(Res.string.cache_cleared),
-                content = {
-                    CacheSettingsEntry(
-                        title = stringResource(Res.string.song_cache_max_size),
-                        text = when (exoPlayerDiskCacheMaxSize) {
-                            ExoPlayerDiskCacheMaxSize.Custom -> "${stringResource(Res.string.custom)}: ${exoPlayerCustomCache}MB"
-                            ExoPlayerDiskCacheMaxSize.Disabled -> stringResource(Res.string.turn_off)
-                            else -> exoPlayerDiskCacheMaxSize.text
-                        },
-                        icon = Res.drawable.music_file,
-                        onClick = { showSongCacheDialog = true },
-                        onTrashClick = { cleanCacheOfflineSongs = true },
-                    )
-
-                    if (showSongCacheDialog) {
-                        ValueSelectorDialog(
-                            title = stringResource(Res.string.song_cache_max_size),
-                            selectedValue = exoPlayerDiskCacheMaxSize,
-                            values = ExoPlayerDiskCacheMaxSize.entries.toList(),
-                            onValueSelected = {
-                                preferences.update { settings -> settings.copy(exoPlayerDiskCacheMaxSize = it) }
-                                if (it == ExoPlayerDiskCacheMaxSize.Custom) showExoPlayerCustomCacheDialog = true
-                                trimCache()
-                            },
-                            valueText = { it.text },
-                            onDismiss = { showSongCacheDialog = false },
-                        )
-                    }
-
-                    if (showExoPlayerCustomCacheDialog) {
-                        InputNumericDialog(
-                            title = stringResource(Res.string.set_custom_cache),
-                            placeholder = stringResource(Res.string.enter_value_in_mb),
-                            value = exoPlayerCustomCache.toString(),
-                            valueMin = "32",
-                            valueMax = "10000",
-                            onDismiss = { showExoPlayerCustomCacheDialog = false },
-                            setValue = {
-                                preferences.update { settings -> settings.copy(exoPlayerCustomCache = it.toInt()) }
-                                showExoPlayerCustomCacheDialog = false
-                                trimCache()
-                            },
-                        )
-                    }
-
-                    val maxBytes = settings.songCacheMaxBytes
-                    CacheSpaceIndicator(
-                        usedBytes = diskCacheSize,
-                        maxBytes = maxBytes,
-                        maxText = exoPlayerDiskCacheMaxSize.text,
-                        horizontalPadding = 20.dp,
-                        showCacheInfo = false,
-                    )
-
-                    SettingsDescription(
-                        text = "${formatShortFileSize(diskCacheSize)} ${stringResource(Res.string.used)} (${
-                            if (maxBytes != null && maxBytes > 0) "${diskCacheSize * 100 / maxBytes}%" else stringResource(Res.string.unlimited)
-                        })",
-                    )
-                },
-            )
-
-            // Quality Settings Section
-            SettingsSectionCard(
-                title = stringResource(Res.string.quality),
-                icon = Res.drawable.audio_quality,
-                content = {
-                    OtherSettingsEntry(
-                        title = stringResource(Res.string.audio_quality_format),
-                        text = when (audioQualityFormat) {
-                            AudioQualityFormat.Auto -> stringResource(Res.string.audio_quality_automatic)
-                            AudioQualityFormat.High -> stringResource(Res.string.audio_quality_format_high)
-                            AudioQualityFormat.Low -> stringResource(Res.string.audio_quality_format_low)
-                        },
-                        icon = Res.drawable.speaker,
-                        onClick = { showAudioQualityDialog = true },
-                    )
-                },
-            )
-
-            // Languages Section (contract 1.9.0, `ui.language`): the PC's own "App language"
-            SettingsSectionCard(
-                title = stringResource(Res.string.languages),
-                icon = Res.drawable.globe,
-                content = {
-                    OtherSettingsEntry(
-                        title = stringResource(Res.string.app_language),
-                        text = languageLabel(settings.language),
-                        icon = Res.drawable.globe,
-                        onClick = { showLanguageDialog = true },
-                    )
-                },
-            )
-
-            // Others Section (the PC's "Disable scrolling text" — a Compagnon-local setting, not in the contract)
-            SettingsSectionCard(
-                title = stringResource(Res.string.other),
-                icon = Res.drawable.text,
-                content = {
-                    ToggleSettingsEntry(
-                        title = stringResource(Res.string.disable_scrolling_text),
-                        text = stringResource(Res.string.scrolling_text_is_used_for_long_texts),
-                        icon = Res.drawable.text,
-                        isChecked = settings.disableScrollingText,
-                        onCheckedChange = { enable ->
-                            preferences.update { s -> s.copy(disableScrollingText = enable) }
-                        },
-                    )
-                },
-            )
-
-            if (showAudioQualityDialog) {
-                ValueSelectorDialog(
-                    title = stringResource(Res.string.audio_quality_format),
-                    values = AudioQualityFormat.entries.toList(),
-                    selectedValue = audioQualityFormat,
-                    onValueSelected = {
-                        preferences.update { settings -> settings.copy(audioQualityFormat = it) }
-                        showAudioQualityDialog = false
-                    },
-                    onDismiss = { showAudioQualityDialog = false },
-                    valueText = { stringResource(it.textId) },
-                )
-            }
-
-            if (showLanguageDialog) {
-                ValueSelectorDialog(
-                    title = stringResource(Res.string.app_language),
-                    values = remember { (listOf(AppLanguage.AUTO_PC, AppLanguage.AUTO_TEL) + AppLanguage.LANGUAGES.map { it.first }) },
-                    selectedValue = settings.language,
-                    onValueSelected = {
-                        preferences.update { settings -> settings.copy(language = it) }
-                        showLanguageDialog = false
-                    },
-                    onDismiss = { showLanguageDialog = false },
-                    valueText = { languageLabel(it) },
-                )
-            }
-
-            PairingButton(
-                text = stringResource(Res.string.close),
-                onClick = onClose,
-                containerColor = colorPalette().background2,
-                contentColor = colorPalette().text,
-                modifier = Modifier.padding(horizontal = 16.dp),
-            )
-        }
-    }
 }
+
+/** The 5 settings sub-tabs (NAV-1): the phone's label + icon of each, in the phone's order. */
+internal val SETTINGS_TABS: List<Pair<StringResource, DrawableResource>> = listOf(
+    Res.string.tab_general to Res.drawable.ic_launcher_monochrome,
+    Res.string.tab_data to Res.drawable.server,
+    Res.string.tab_network to Res.drawable.network,
+    Res.string.tab_miscellaneous to Res.drawable.equalizer,
+    Res.string.about to Res.drawable.information,
+)
 
 /**
- * The label of an "App language" value: the two static sentinel labels (like the endonyms, they
- * are deliberately not localized), else the endonym of the phone's language ([AppLanguage.labelOf]).
+ * The phone's `searchCtx` filter (NAV-12, its `GeneralSettings.kt` 311): a section is shown when the
+ * query is blank or one of its titles (the section card's, its entries') contains it, case-insensitively.
  */
-private fun languageLabel(value: String): String = when (value) {
-    AppLanguage.AUTO_PC -> "Auto PC"
-    AppLanguage.AUTO_TEL -> "Auto Tel"
-    else -> AppLanguage.labelOf(value)
-}
-
-/** Android's `Formatter.formatShortFileSize`: decimal units, one decimal under 100 (`"1.2 GB"`, `"345 MB"`). */
-fun formatShortFileSize(bytes: Long): String {
-    if (bytes < 1_000) return "$bytes B"
-    val units = listOf("kB", "MB", "GB", "TB")
-    var value = bytes.toDouble() / 1_000
-    var unit = 0
-    while (value >= 1_000 && unit < units.lastIndex) {
-        value /= 1_000
-        unit++
-    }
-    val text = if (value < 100) String.format(Locale.ROOT, "%.1f", value) else String.format(Locale.ROOT, "%.0f", value)
-    return "$text ${units[unit]}"
-}
-
-private const val CACHE_SIZE_REFRESH_MS = 2_000L
+internal fun settingsSearchCtx(query: String, vararg titles: String): Boolean =
+    query.isBlank() || titles.any { title -> title.contains(query, ignoreCase = true) }

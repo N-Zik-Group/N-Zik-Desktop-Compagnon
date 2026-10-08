@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.player
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import app.n_zik.compagnon.components.theme.DefaultDarkColorPalette
 import app.n_zik.compagnon.components.theme.dynamicColorPaletteOf
@@ -47,7 +48,7 @@ class CoverPaletteExtractorTest {
 
     @Test
     fun `saturate adds 0_35 in dark mode above 0_1 and darkenBy halves the colour`() {
-        val source = androidx.compose.ui.graphics.Color(0xFF4D7399.toInt())
+        val source = Color(0xFF4D7399.toInt())
         val saturated = m3eSaturate(0xFF4D7399.toInt(), lightTheme = false)
         assertEquals(source.hsl.saturation + 0.35f, saturated.hsl.saturation, 0.02f)
         val dark = saturated.m3eDarkenBy(lightTheme = false)

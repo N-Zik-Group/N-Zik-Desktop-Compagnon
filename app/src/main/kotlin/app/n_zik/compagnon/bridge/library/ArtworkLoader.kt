@@ -15,6 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import org.jetbrains.skia.Image
 
 /**
  * Artwork through the phone (tracks, albums and artists, Bearer, contract §10), keyed by [ArtworkKey]: decoded to
@@ -127,6 +128,6 @@ class ArtworkLoader(
 
         /** JPEG, PNG or WebP bytes → bitmap (Skia); `null` when undecodable. */
         fun decodeImage(bytes: ByteArray): ImageBitmap? =
-            runCatching { org.jetbrains.skia.Image.makeFromEncoded(bytes).toComposeImageBitmap() }.getOrNull()
+            runCatching { Image.makeFromEncoded(bytes).toComposeImageBitmap() }.getOrNull()
     }
 }

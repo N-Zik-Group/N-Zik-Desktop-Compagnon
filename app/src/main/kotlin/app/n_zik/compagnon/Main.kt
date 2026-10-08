@@ -2,8 +2,7 @@ package app.n_zik.compagnon
 
 import app.n_zik.compagnon.components.theme.robotoFontFamily
 import app.n_zik.compagnon.components.theme.materialTypographyOf
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.app_icon
+import app.n_zik.compagnon.generated.resources.*
 import androidx.compose.material3.ripple
 import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.LocalRippleConfiguration
@@ -26,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -42,6 +42,8 @@ import app.n_zik.compagnon.bridge.pairing.PairingListener
 import app.n_zik.compagnon.bridge.state.RemotePlayerRepository
 import app.n_zik.compagnon.components.theme.AnimatedAppearance
 import app.n_zik.compagnon.components.theme.rubikFontFamily
+import app.n_zik.compagnon.components.dialog.updater.CheckForUpdateDialog
+import app.n_zik.compagnon.components.dialog.updater.NewUpdateAvailableDialog
 import app.n_zik.compagnon.components.ui.screens.bridge.BridgeScreen
 import app.n_zik.compagnon.core.network.BridgeClient
 import app.n_zik.compagnon.core.network.CandidateAddresses
@@ -50,8 +52,14 @@ import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.playback.services.LocalPlayback
 import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.generated.AppVersion
+import app.n_zik.compagnon.updater.models.ArtifactNames
+import app.n_zik.compagnon.updater.models.CheckUpdateState
+import app.n_zik.compagnon.updater.services.UpdateDownloadManager
+import app.n_zik.compagnon.updater.services.Updater
 import androidx.compose.runtime.CompositionLocalProvider
 
 fun main() = application {
@@ -59,7 +67,9 @@ fun main() = application {
     val backDispatcher = remember { BackDispatcher() }
     Window(
         onCloseRequest = ::exitApplication,
-        title = AppInfo.NAME,
+        // The AD-8 per-channel product name (stable plain, beta "(Beta)", dev "(Dev)"); the source
+        // builds (debug / -git) keep the base name, the badge alone marking them
+        title = ArtifactNames.productName(AppVersion.channel),
         icon = painterResource(Res.drawable.app_icon),
         state = rememberWindowState(width = 1100.dp, height = 800.dp),
         onPreviewKeyEvent = { event -> isBackKey(event) && backDispatcher.dispatch() },
@@ -80,6 +90,14 @@ fun App() {
     val wsClient = remember { BridgeSession.httpClient() }
     // Story 12: user settings (`settings.json`) and the local audio cache, both next to `pairing.json`
     val preferences = remember { Preferences() }
+    // The updater's settings binding (spec `spec-updater` AD-6): its state lives in `settings.json`
+    // — the desktop equivalent of the phone's global `appContext().preferences` (attached once)
+    remember { Updater.attach(preferences) }
+    // The dialog's cancelled flag is re-armed to its default on every launch (the phone's
+    // `NewUpdateAvailableDialog.kt` L105 — `!IS_AUTOUPDATE`, here `!updaterEnabled`): the
+    // persisted `updateCancelled` setting is WRITE-ONLY, like on the phone — it is never read
+    // back, so a dismissal only cancels the dialog for THIS run, not across launches
+    remember { NewUpdateAvailableDialog.isCancelled = !AppVersion.updaterEnabled }
     val audioCache = remember { AudioCache(maxBytes = { preferences.settings.value.songCacheMaxBytes }) }
     val controller = remember {
         PairingController(
@@ -128,6 +146,30 @@ fun App() {
             AppLanguage.resolveLanguageTag(settings.language, phoneLanguage, settings.lastPhoneLanguage),
         )
     }
+    // The startup update check (spec `spec-updater` loop 2): the phone's 3-state
+    // `CheckUpdateState` (replacing the v1 boolean), read once at startup on the updater-enabled
+    // channels (not debug / -git):
+    //  - On  : the non-forced check, unless the dialog was cancelled during THIS run (the
+    //          in-memory flag only — the phone's rule; the persisted setting is write-only
+    //          and never suppresses the startup check across launches);
+    //  - Ask : the phone's full `CheckForUpdateDialog` (its `Skeleton.kt` call site, ported 1:1 —
+    //          the loop-2 closure replaced the v1 themed confirmation with the phone's own dialog:
+    //          info card + Check / Cancel / Turn off);
+    //  - Off : nothing.
+    LaunchedEffect(Unit) {
+        if (AppVersion.updaterEnabled) {
+            when (settings.checkUpdateStateValue) {
+                CheckUpdateState.On -> if (!NewUpdateAvailableDialog.isCancelled) Updater.checkForUpdate()
+                CheckUpdateState.Ask -> CheckForUpdateDialog.isActive = true
+                CheckUpdateState.Off -> Unit
+            }
+        }
+    }
+    // Loop 2: a failed Windows install from the previous run is toasted at startup (the
+    // marker written next to the pairing data by `UpdateDownloadManager`)
+    LaunchedEffect(Unit) {
+        UpdateDownloadManager.consumeInstallFailureMarker()?.let { Toaster.e(it) }
+    }
     // The phone's `MainActivity.setContent` root: its appearance, faded by `AnimatedAppearance`
     val fontFamily = rubikFontFamily()
     val materialTypography = materialTypographyOf(robotoFontFamily())
@@ -175,6 +217,13 @@ fun App() {
                         audioCache = audioCache,
                         appearanceState = appearanceState,
                     )
+                    // The new-update dialog (spec `spec-updater` AD-6, the phone's `Skeleton.kt`
+                    // call site): drawn at the root, above the bridge screen
+                    NewUpdateAvailableDialog.Render()
+                    // The "ask" startup dialog (spec AD-9, the phone's `CheckForUpdateDialog` —
+                    // the v1 confirmation is gone): the phone's info card + Check / Cancel /
+                    // Turn off, active once at startup when the choice is [CheckUpdateState.Ask]
+                    CheckForUpdateDialog.Render()
                 }
             }
           }

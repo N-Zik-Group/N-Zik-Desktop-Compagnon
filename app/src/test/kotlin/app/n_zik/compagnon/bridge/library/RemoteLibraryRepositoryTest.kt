@@ -5,6 +5,7 @@ import app.n_zik.compagnon.core.network.BridgeClient
 import app.n_zik.compagnon.core.network.LibraryResult
 import app.n_zik.compagnon.core.network.ServerAddress
 import app.n_zik.compagnon.core.network.WriteResult
+import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockRequestHandleScope
@@ -14,6 +15,7 @@ import io.ktor.client.request.HttpResponseData
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import java.io.IOException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -84,7 +86,7 @@ class RemoteLibraryRepositoryTest {
             }
         }
         val result = repository.songs(0, 100, SongsQuery())
-        assertEquals(LibraryResult.Ok(Page<app.n_zik.compagnon.bridge.state.Track>(emptyList(), 0, 0, 100)), result)
+        assertEquals(LibraryResult.Ok(Page<Track>(emptyList(), 0, 0, 100)), result)
         assertEquals(0, revoked)
     }
 
@@ -161,7 +163,7 @@ class RemoteLibraryRepositoryTest {
     fun `a failure on page 2 gives that failure, never a partial list`() = runTest {
         val unreachable = repository { request ->
             val offset = request.url.parameters["offset"]!!.toInt()
-            if (offset == 0) tracks(0, 100, 300) else throw java.io.IOException("phone gone")
+            if (offset == 0) tracks(0, 100, 300) else throw IOException("phone gone")
         }
         assertEquals(LibraryResult.Unreachable, unreachable.collectionTracks(CollectionRef(CollectionKind.Artist, "UCx")))
 

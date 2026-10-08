@@ -56,7 +56,7 @@
 
 ## 📦 Available Builds
 
-- **Windows Installer** (`.exe`): Per-user install (no administrator prompt by default) with Start menu + desktop shortcuts and an uninstall entry; a newer version upgrades it in place.
+- **Windows Installer** (`.exe`): an NSIS install with a scope-choice page (per-user by default, no prompt; the global scope asks for a visible UAC elevation) with Start menu + desktop shortcuts and an uninstall entry; a newer version of the same channel upgrades it in place.
 - **Windows Portable**: The distributable app folder, no install needed (produced alongside the installer).
 - **Debian package** (`.deb`): Debian / Ubuntu / Mint - `apt install ./<file>.deb`.
 - **RPM package** (`.rpm`): Fedora / openSUSE / Rocky - `dnf` or `zypper` `install ./<file>.rpm`.
@@ -66,6 +66,15 @@
 - **AUR**: `n-zik-desktop-compagnon` (the latest release) and `n-zik-desktop-compagnon-git` (always the latest of `main` - needs JDK 21 to build).
 
 > ℹ️ The builds are published as **GitHub release files only** - no self-hosted repository. On Linux, VLC is a **declared system dependency** of the packages (never bundled): the package manager pulls it in automatically and the app plays through the system libvlc - the **AppImage and the Flatpak are the exceptions**, they embed the official VLC runtime so they need no system VLC. Every install ships an application-menu entry (`.desktop` + icon) and uninstalls cleanly, leaving your data (pairing, settings, audio cache) alone.
+
+### 🔄 Channels and auto-update
+
+The app is released on **channels** (the phone's discipline, adapted): **stable** (the plain releases), **beta** (pre-releases, tagged `v{base}-beta`) and **dev** (dated pre-releases, tagged `v{base}-dev-YYYYMMDD`). The channel is fixed at build time (`-Pchannel` - never a runtime toggle) and only the **same channel** is ever offered as an update.
+
+- **In-app updater:** on the stable/beta/dev channels the app checks the [GitHub releases](https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases) at startup (settings → About → the update card → the update page: the startup check is a three-state choice — **on** (automatic check), **ask** (an info dialog first, the phone's own), or **off** (never) — and the check can also be run on demand from the update page itself), shows the release's changelog, downloads the artifact for your install with progression, and offers the native install gesture per install mode - **Windows**: in-place reinstall — the app quits, then the installer runs interactively with the `/UPDATE` flag (the scope defaults to the current install's scope — per-user or global, the global one shows a visible UAC prompt — and an "already installed — reinstall anyway?" confirmation shows first when the installed version is the same or older; cancellable — and the app relaunches itself on success); **Flatpak**: the exact `flatpak install <file>` command; **`.deb`/`.rpm`** (installed from a package manager): the exact `apt`/`dnf` install command, shown but never auto-run (no privilege escalation); **AppImage / portable**: the old location + the downloaded file, to replace by hand. The download cleans up its own file on cancel, and a failed download (a body shorter than its `Content-Length` is rejected by the HTTP client while receiving it) shows a clean error and can be re-run.
+- **Channel badge:** the app header shows a small badge for non-stable builds - **Beta**, **Dev**, **Git** (source builds from `main`, the AUR `-git` entry) or **Debug** (a plain run/compile); the stable build shows none.
+- **Per-channel product identity (AD-8):** the product name is `N-Zik Desktop Compagnon (Beta)` / `N-Zik Desktop Compagnon (Dev)` for beta / dev (the installer base name, the window title, the badges; stable keeps the plain name). On Windows every channel is its own installation (its own registry identity - no frozen upgrade identifier anymore), so a beta or dev install lives beside the stable one; on Linux the **beta channel replaces the stable one in place** (same package base + Flatpak app-id) while the **dev channel** installs as `n-zik-desktop-compagnon-dev` in `/opt/` with its own Flatpak app-id - a parallel product, never a replacement. The updater of each channel only ever offers its own channel.
+- **Source builds:** a run from source or the AUR `-git` entry never checks for updates (anti-downgrade: a `main` build must not offer a release as an "update") - the settings entry is disabled with an explanation there.
 
 ---
 
@@ -212,19 +221,23 @@ Launch the app on Windows:
 gradlew.bat :app:run
 ```
 
+A plain run (or a plain compile) builds the **debug channel** - the Debug badge in the header, no auto-update (source-build discipline). A release artifact is never built without an explicit channel: `-Pchannel=stable|beta|dev` on the packaging tasks (`stable` is the only one whose artifact names stay byte-identical to the original convention).
+
 The app also runs on Linux: `./gradlew :app:run`. Pairing works there too (keyring, or session-only without a keyring daemon); "Sound on the PC" uses the **system libvlc** - install VLC (e.g. `sudo apt install vlc`) and local playback works; when it is missing, the app shows the install command for your distribution.
 
 ## 🪟 Windows installer
 
-Alongside the portable build, the app ships as a per-user Windows installer:
+Alongside the portable build, the app ships as an NSIS Windows installer (a scope-choice page: per-user by default, or global with a visible UAC prompt):
 
 ```bat
-gradlew.bat :app:packageExe
+gradlew.bat :app:packageExe -Pchannel=stable
 ```
 
-The installer (`.exe`, written under `app\build\compose\binaries\`) installs to `%LOCALAPPDATA%\Programs\N-Zik Desktop Compagnon` **without an administrator prompt by default** (picking a protected folder still elevates), adds Start menu + desktop shortcuts, and registers the uninstall entry under **N-Zik Desktop Compagnon**. It needs no extra tool on the build machine: the build downloads its packaging toolset (WiX) automatically on first use.
+The channel is required (`stable`, `beta` or `dev` - see "Channels and auto-update" above): the beta/dev installers are named after it on the per-channel product name (AD-8: e.g. `N-Zik Desktop Compagnon (Beta)-0.0.2-beta.exe` — the jpackage name with the channel suffix right after the version), the stable one keeps its plain name.
 
-Installing a newer version on top of an existing one **upgrades it in place** - the same frozen upgrade identifier is baked into every build. The user data in `%APPDATA%\N-Zik Desktop Compagnon\` (pairing, settings, audio cache) is left untouched by an upgrade or an uninstall, and the portable build is produced separately and is not affected.
+The installer (`.exe`, written under `app\build\compose\binaries\`) is built from `app\packaging\windows\installer.nsi` (the header there is the full contract - the NSIS installer replaced the jpackage self-extracting exe). It offers a scope-choice page: **per-user by default** (no administrator prompt, installs to `%LOCALAPPDATA%\N-Zik Desktop Compagnon`) or **global** (a visible UAC elevation, installs to `%PROGRAMFILES%\N-Zik Desktop Compagnon`). It adds Start menu + desktop shortcuts and registers the uninstall entry under the per-channel product name (**N-Zik Desktop Compagnon**). Building it needs NSIS 3.x on the build machine (the official portable zip per-user, or the `NSIS_DIR` environment variable - the build resolves `makensis.exe` at execution time and does not download the toolchain).
+
+Installing a newer version on top of an existing one (same channel) **upgrades it in place** - the installation's identity is its registry key (`Software\N-Zik\DesktopCompagnon\{channel}` - HKCU for per-user, HKLM for global), recorded by the installer itself; no frozen upgrade identifier anymore. The user data in `%APPDATA%\N-Zik Desktop Compagnon\` (pairing, settings, audio cache) is left untouched by an upgrade or an uninstall, and the portable build is produced separately and is not affected.
 
 > The installer is **not code-signed yet** (signing is deferred, pending a code-signing certificate - see the release cadence): Windows SmartScreen shows its usual "publisher not verified" notice on the first run of each new version. Every GitHub release therefore publishes the installer's **SHA-256 checksum** so you can verify your download (PowerShell: `Get-FileHash -Algorithm SHA256 "N-Zik Desktop Compagnon-x.y.z.exe"`; the Linux release assets - `.deb`, `.rpm`, portable zip, AppImage and Flatpak - are published with their **SHA-256 checksums** as well), and the source stays public, so any build can be rebuilt and compared against this one (builds are not byte-reproducible, but a rebuild ships the same files and behavior).
 
@@ -337,6 +350,7 @@ Any file derived from Cubic Music Desktop keeps its original copyright and licen
 This project is a companion for [N-Zik](https://github.com/N-Zik-Group/N-Zik).
 
 Its contents are not affiliated with, funded, authorized, endorsed by, or in any way associated with YouTube, Google LLC, or any of its affiliates or subsidiaries.
+
 Any trademarks, service marks, trade names, or other intellectual property rights used in this project remain the property of their respective owners.
 
 Made with ❤️ by [NEVARLeVrai](https://github.com/NEVARLeVrai)  

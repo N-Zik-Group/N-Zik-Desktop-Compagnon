@@ -36,11 +36,7 @@ import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.components.themed.HeaderIconButton
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.bookmark
-import app.n_zik.compagnon.generated.resources.bookmark_slash
-import app.n_zik.compagnon.generated.resources.cd_origin_indicator
-import app.n_zik.compagnon.generated.resources.ytmusic
+import app.n_zik.compagnon.generated.resources.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -97,7 +93,7 @@ fun ArtistItem(
                     Image(
                         painter = painterResource(Res.drawable.ytmusic),
                         colorFilter = ColorFilter.tint(Color.Red.copy(alpha = 0.75f).compositeOver(Color.White)),
-                        contentDescription = stringResource(Res.string.cd_origin_indicator),
+                        contentDescription = stringResource(Res.string.cd_background_image),
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
                             .size(40.dp)

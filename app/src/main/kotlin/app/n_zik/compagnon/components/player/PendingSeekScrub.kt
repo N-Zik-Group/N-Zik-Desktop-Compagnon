@@ -1,5 +1,7 @@
 package app.n_zik.compagnon.components.player
 
+import kotlin.math.abs
+
 /*
  * Port of the phone's `app/n_zik/android/components/player/PendingSeekScrub.kt` (issue #881, Phase 3 Fix E
  * and 3.1): the seek target held on the bar and the label until the player confirms it. On the PC the
@@ -26,7 +28,7 @@ internal fun shouldReleasePendingSeekPosition(
     heldForMs: Long,
 ): Boolean =
     heldForMs >= PENDING_SEEK_RELEASE_TIMEOUT_MS ||
-        kotlin.math.abs(playerPositionMs - pendingTargetMs) <= PENDING_SEEK_SETTLE_TOLERANCE_MS
+        abs(playerPositionMs - pendingTargetMs) <= PENDING_SEEK_SETTLE_TOLERANCE_MS
 
 /**
  * The position a skip button (±5/10/30 s) adjusts from, evaluated at tap time: the in-flight drag, else a

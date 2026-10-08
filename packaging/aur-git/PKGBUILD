@@ -58,7 +58,11 @@ package() {
   export GRADLE_USER_HOME="${srcdir}/.gradle-user-home"
 
   # Build the portable app-image (the Gradle wrapper auto-downloads itself + dependencies).
-  ./gradlew :app:createDistributable
+  # The -git channel (spec `spec-updater` AD-1): an explicit source build — the in-app updater is
+  # off by build (anti-downgrade: a main-branch build never offers itself a "release" update),
+  # the header shows the Git badge, and the short hash (git rev-parse --short=8 HEAD) goes into
+  # the version string. Outside a git checkout the build fails explicitly.
+  ./gradlew :app:createDistributable -Pchannel=git
 
   # Install the app-image under the lowercase name in /opt (single /opt location across all packages).
   install -Dm755 -d "${pkgdir}/opt/${_pkgname}"

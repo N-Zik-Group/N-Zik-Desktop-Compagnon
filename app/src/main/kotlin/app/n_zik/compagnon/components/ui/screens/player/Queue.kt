@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -59,27 +61,11 @@ import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollT
 import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.components.ui.screens.home.ItemActions
 import app.n_zik.compagnon.enums.QueueLoopType
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.add_in_playlist
-import app.n_zik.compagnon.generated.resources.add_to_playlist
-import app.n_zik.compagnon.generated.resources.unchecked_outline
-import app.n_zik.compagnon.generated.resources.chevron_down
-import app.n_zik.compagnon.generated.resources.clean_queue_confirm
-import app.n_zik.compagnon.generated.resources.download
-import app.n_zik.compagnon.generated.resources.downloaded
-import app.n_zik.compagnon.generated.resources.export_outline
-import app.n_zik.compagnon.generated.resources.export_playlist
-import app.n_zik.compagnon.generated.resources.info_download_all_songs
-import app.n_zik.compagnon.generated.resources.info_remove_all_downloaded_songs
-import app.n_zik.compagnon.generated.resources.item_select
-import app.n_zik.compagnon.generated.resources.remove_from_queue
-import app.n_zik.compagnon.generated.resources.reorder
-import app.n_zik.compagnon.generated.resources.repeat
-import app.n_zik.compagnon.generated.resources.shuffle
-import app.n_zik.compagnon.generated.resources.trash
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.cleanPrefix
 import app.n_zik.compagnon.utils.smoothScrollToTop
+import kotlin.math.abs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.DrawableResource
@@ -340,7 +326,7 @@ private fun targetIndex(state: LazyListState, from: Int, offset: Float): Int? {
     val visible = state.layoutInfo.visibleItemsInfo
     val dragged = visible.firstOrNull { it.key.toString().substringBefore(':').toIntOrNull() == from } ?: return null
     val center = dragged.offset + dragged.size / 2f + offset
-    return visible.minByOrNull { kotlin.math.abs(it.offset + it.size / 2f - center) }
+    return visible.minByOrNull { abs(it.offset + it.size / 2f - center) }
         ?.key?.toString()?.substringBefore(':')?.toIntOrNull()
 }
 
@@ -364,7 +350,7 @@ class Repeat(
     override val menuIconTitle: String
         @Composable
         get() = stringResource(messageId)
-    override val icon: androidx.compose.ui.graphics.painter.Painter
+    override val icon: Painter
         @Composable
         get() = painterResource(type.iconId)
 
@@ -425,7 +411,7 @@ fun DeleteFromQueue(
 }
 
 class DeleteFromQueueButton(
-    private val activeState: androidx.compose.runtime.MutableState<Boolean>,
+    private val activeState: MutableState<Boolean>,
     private val enabled: Boolean,
     private val onDeleteConfirm: ConfirmDialog.() -> Unit,
 ) : MenuIcon, Descriptive, ConfirmDialog {

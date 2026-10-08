@@ -9,7 +9,8 @@ import androidx.compose.ui.input.key.type
 
 /**
  * The PC's back (story 11c): the phone's system back, as the window's Escape key and the mouse's back
- * button. Each press closes one thing, in the phone's order: the menu sheet, then the panels (phone, settings),
+ * button. Each press closes one thing, in the phone's order: the menu sheet, then the navigation page
+ * (spec `spec-settings-navigation` NAV-7: the update sub-page, then the settings or the Serveur PC page),
  * then the queue overlay, then the full player, then the open page (album, artist, playlist).
  */
 enum class BackStep { Menu, Panel, Queue, Player, Page }

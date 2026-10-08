@@ -30,6 +30,7 @@ import io.ktor.websocket.readText
 import java.net.ServerSocket
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.abs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -189,7 +190,7 @@ class BridgeSessionTest {
         assertTrue(first.contains("\"clientTimeMs\":"))
         nextReceived { it.contains("\"ping\"") } // and again after the interval
         withTimeout(5_000) { while (!session.clock.isSynced) delay(10) }
-        val skew = kotlin.math.abs(session.clock.serverNowMs() - System.currentTimeMillis())
+        val skew = abs(session.clock.serverNowMs() - System.currentTimeMillis())
         assertTrue(skew < 1_000, "skew $skew")
         session.close()
     }

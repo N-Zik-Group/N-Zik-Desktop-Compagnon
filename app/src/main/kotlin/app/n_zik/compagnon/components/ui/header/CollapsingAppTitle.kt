@@ -30,9 +30,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.cd_app_s_icon
-import app.n_zik.compagnon.generated.resources.ic_launcher
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.semiBold
@@ -58,7 +56,8 @@ internal fun shouldCollapseTitle(availablePx: Int, idealPx: Int, tolerancePx: In
  * Port of `CollapsingAppTitle` (phone's `app/n_zik/android/components/ui/header/CollapsingAppTitle.kt`): the
  * 36 dp app logo then "N-ZIK" in xl.semiBold, which slides behind the logo when the header runs out of width.
  * The title goes home ([onHome], phone's `AppLogoText` 245-266); the logo stays clickable without action
- * (its easter eggs are phone games). Dropped: the version badge (none for a release build), the
+ * (its easter eggs are phone games). Dropped: the phone's version badge (none for a release build) —
+ * the desktop shows the [HeaderChannelBadge] instead (spec `spec-updater` AD-6) — and the
  * parental-control shield and the debug badge (phone settings).
  */
 @Composable
@@ -142,6 +141,8 @@ private fun AppTitleExtras(
         modifier = modifier,
     ) {
         AppLogoText(onHome)
+        // The channel badge (Beta / Dev / Git / Debug — none for stable; spec `spec-updater` AD-6)
+        HeaderChannelBadge()
     }
 }
 

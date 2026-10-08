@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -120,7 +121,7 @@ internal fun queueToolBarProgress(fraction: Float): Float {
  * `Player.kt` 2378-2523): scrim, panel resized from its handle, [Queue], [QueueToolBar].
  */
 @Composable
-internal fun androidx.compose.foundation.layout.BoxScope.QueuePanel(
+internal fun BoxScope.QueuePanel(
     queuePanelHeightFraction: Animatable<Float, *>,
     screenHeightPx: Int,
     maxFraction: Float,
