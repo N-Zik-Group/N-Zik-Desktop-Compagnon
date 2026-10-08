@@ -43,15 +43,15 @@
   </defs>
   <rect class="bg" width="600" height="160" rx="10" filter="url(#shadow2)" stroke-width="1"/>
   <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
-    <text x="25" y="30" class="text-title">📈 Download Growth (Current: 1)</text>
+    <text x="25" y="30" class="text-title">📈 Download Growth (Current: 3)</text>
   </g>
 
   <!-- Area under the line -->
-  <path fill="url(#fillGrad)" d="M 35.0,125.0 L 35.0,125 L 35.0,125 Z" />
+  <path fill="url(#fillGrad)" d="M 35.0,125.0 C 300.0,125.0 300.0,35.0 565.0,35.0 L 565.0,125 L 35.0,125 Z" />
 
   <!-- Main curve -->
-  <path d="M 35.0,125.0" class="chart-line animated-line" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M 35.0,125.0 C 300.0,125.0 300.0,35.0 565.0,35.0" class="chart-line animated-line" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
 
   <!-- Bright endpoint dot -->
-  <circle cx="35.0" cy="125.0" r="4" class="chart-dot dot-pulse" stroke-width="2.5" />
+  <circle cx="565.0" cy="35.0" r="4" class="chart-dot dot-pulse" stroke-width="2.5" />
 </svg>
