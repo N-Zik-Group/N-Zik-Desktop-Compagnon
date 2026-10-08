@@ -479,8 +479,14 @@ jobs:
             ## 📲 Installation
 
             1. Download the build for your platform below (recommended: the native package for your distro).
-            2. Verify its SHA-256 (the SHA256SUMS.txt asset of the release).
-            3. Install it (Windows: run the installer - it is unsigned; Linux: apt / dnf / flatpak install, unzip the portable, or run the AppImage).
+            2. Verify its SHA-256 using the table above.
+            3. Install it on your system:
+               - **Windows:** run the installer (it is unsigned - Windows SmartScreen may warn; the source is public and any build can be rebuilt and compared against this one).
+               - **Debian / Ubuntu / Mint:** apt install ./<file>.deb
+               - **Fedora / openSUSE / Rocky:** dnf install ./<file>.rpm
+               - **Portable:** unzip the zip and run the launcher in bin/.
+               - **AppImage:** run the file directly (needs fuse3; without it: ./<file>.AppImage --appimage-extract-and-run).
+               - **Flatpak:** flatpak install ./<file>.flatpak.
 
             > The **Portable** and **AppImage** builds are available if you prefer not to install a package. They are fully stable.
 
