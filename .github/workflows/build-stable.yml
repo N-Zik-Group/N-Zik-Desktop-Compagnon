@@ -1,0 +1,452 @@
+name: Build Stable
+
+env:
+  TZ: Europe/Paris
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Every Sunday at 0AM
+  workflow_dispatch:
+
+concurrency:
+  group: 'stable-deploy'
+  cancel-in-progress: false
+
+jobs:
+  build_time:
+    name: Capture current time
+    runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+    steps:
+      - name: Get date
+        id: date
+        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+
+  versioning:
+    name: Extract version
+    runs-on: ubuntu-latest
+    outputs:
+      downstream: ${{ steps.downstream.outputs.version }}
+      code: ${{ steps.downstream.outputs.code }}
+      upstream: ${{ steps.upstream.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Get downstream (local) version
+        id: downstream
+        run: |
+          echo "version=$(grep -E '^\s*nzikVersionName\s*=' gradle/libs.versions.toml | awk -F '\"' '{print $2}')" >> $GITHUB_OUTPUT
+          echo "code=$(grep -E '^\s*nzikVersionCode\s*=' gradle/libs.versions.toml | awk -F '\"' '{print $2}')" >> $GITHUB_OUTPUT
+      - name: Get upstream version
+        id: upstream
+        run: |
+          tag_name="$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)"
+          echo "version=${tag_name#v}" >> $GITHUB_OUTPUT
+
+  verify-version:
+    needs: [versioning]
+    name: Verify versions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check if version changed
+        run: |
+          if [ "${{ needs.versioning.outputs.downstream }}" = "${{ needs.versioning.outputs.upstream }}" ]; then
+            echo "Versions are equal. Skipping build."
+            exit 1
+          fi
+
+      - name: Check if changelog exists
+        run: |
+          if [ ! -f "Updater/changelogs/${{ needs.versioning.outputs.code }}.txt" ]; then
+            echo "Changelog not found. Exiting."
+            exit 1
+          fi
+
+      - name: Check if Beta release exists
+        run: |
+          repo="${GITHUB_REPOSITORY}"
+          beta_tag="${{ needs.versioning.outputs.downstream }}-beta"
+
+          echo "Checking if beta $beta_tag already exists..."
+          # Hardening beyond the mobile verbatim port: a failed API call must fail loud —
+          # a silent pass would publish the stable release while a same-base beta is in flight.
+          releases_json=$(curl -sf "https://api.github.com/repos/$repo/releases") || {
+            echo "GitHub API request failed - cannot verify the in-flight beta guard. Failing loud (no publish)."
+            exit 1
+          }
+          beta_exists=$(echo "$releases_json" | jq -r '.[] | select(.prerelease==true) | .tag_name | ltrimstr("v")' | grep "$beta_tag" || true)
+
+          if [ -n "$beta_exists" ]; then
+            echo "Beta $beta_tag already exists. Skipping build."
+            exit 1
+          fi
+
+      - name: Check if Dev release exists
+        run: |
+          repo="${GITHUB_REPOSITORY}"
+          dev_tag="${{ needs.versioning.outputs.downstream }}-dev"
+
+          echo "Checking if dev $dev_tag already exists..."
+          # Hardening beyond the mobile verbatim port: a failed API call must fail loud —
+          # a silent pass would publish the stable release while a same-base dev is in flight.
+          releases_json=$(curl -sf "https://api.github.com/repos/$repo/releases") || {
+            echo "GitHub API request failed - cannot verify the in-flight dev guard. Failing loud (no publish)."
+            exit 1
+          }
+          dev_exists=$(echo "$releases_json" | jq -r '.[] | select(.prerelease==true) | .tag_name | ltrimstr("v")' | grep "$dev_tag" || true)
+
+          if [ -n "$dev_exists" ]; then
+            echo "Dev $dev_tag already exists. Skipping build."
+            exit 1
+          fi
+
+  build-linux:
+    needs: [versioning, verify-version]
+    name: Build the Linux packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Align the runner OS timezone to Europe/Paris
+        run: sudo ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+
+      - name: Install the build prerequisites (jpackage tools + Flatpak)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fakeroot rpm flatpak flatpak-builder
+
+      - name: Configure the Flathub remote
+        run: flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+      - name: Pre-install the Flatpak base runtime
+        run: flatpak install --user --noninteractive flathub org.freedesktop.Platform//24.08
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v6.0.1
+        with:
+          java-version: "21"
+          distribution: "corretto"
+
+      - name: Restore Gradle dependencies & build cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./build
+            ./app/build
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Build with Gradle
+        run: ./gradlew :app:packageDeb :app:packageRpm :app:packageLinuxPortable :app:packageAppImage :app:packageFlatpak -Pchannel=stable
+
+      - name: Upload the Linux artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-artifacts
+          path: |
+            app/build/compose/binaries/*.zip
+            app/build/compose/binaries/*.AppImage
+            app/build/compose/binaries/*.flatpak
+            app/build/compose/binaries/main/deb/*.deb
+            app/build/compose/binaries/main/rpm/*.rpm
+
+  build-windows:
+    needs: [versioning, verify-version]
+    name: Build the Windows installer
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Align the runner OS timezone to Europe/Paris
+        run: Set-TimeZone -Id 'Romance Standard Time'
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v6.0.1
+        with:
+          java-version: "21"
+          distribution: "corretto"
+
+      - name: Restore Gradle dependencies & build cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./build
+            ./app/build
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Build with Gradle (NSIS)
+        run: gradlew.bat :app:packageInstaller -Pchannel=stable
+
+      - name: Upload the Windows artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-artifact
+          path: app/build/compose/binaries/main/exe/*.exe
+
+  upload-to-release:
+    needs: [build_time, versioning, build-linux, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download the built artifacts
+        uses: actions/download-artifact@v8.0.1
+        with:
+          path: artifacts
+
+      - name: Collect the 6 artifacts and compute the SHA-256
+        run: |
+          set -euo pipefail
+
+          BASE="${{ needs.versioning.outputs.downstream }}"
+          CODE="${{ needs.versioning.outputs.code }}"
+          UPSTREAM="${{ needs.versioning.outputs.upstream }}"
+
+          SUFFIX=""
+          PKG="n-zik-desktop-compagnon"
+          PRODUCT="N-Zik Desktop Compagnon"
+          TAG="v${BASE}"
+
+          EXE="${PRODUCT}-${BASE}${SUFFIX}.exe"
+          DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
+          RPM="${PKG}-${BASE}${SUFFIX}-1.x86_64.rpm"
+          ZIP="${PKG}-${BASE}${SUFFIX}-linux-portable.zip"
+          APPIMAGE="${PKG}-${BASE}${SUFFIX}-x86_64.AppImage"
+          FLATPAK="${PKG}-${BASE}${SUFFIX}-x86_64.flatpak"
+
+          # A missing artifact fails the run loud: the CI never "fixes" the
+          # packaging contract (it belongs to the build script).
+          mkdir -p release
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/main/deb/${DEB}" release/
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/main/rpm/${RPM}" release/
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/${ZIP}" release/
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/${APPIMAGE}" release/
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/${FLATPAK}" release/
+          cp "artifacts/windows-artifact/app/build/compose/binaries/main/exe/${EXE}" release/
+
+          cd release
+          sha256sum "${EXE}" "${DEB}" "${RPM}" "${ZIP}" "${APPIMAGE}" "${FLATPAK}" > ../SHA256SUMS.txt
+          cd ..
+
+          # The markdown SHA-256 table (the artifacts are unsigned — this is
+          # the desktop equivalent of the mobile signature-hash section).
+          {
+            echo "| Artifact | SHA-256 |"
+            echo "|----------|---------|"
+            while read -r hash name; do
+              printf '| %s | `%s` |\n' "$name" "$hash"
+            done < SHA256SUMS.txt
+          } > sha_table.md
+
+          CHANGELOG_RAW="https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/Updater/changelogs/${CODE}.txt"
+
+          cat > release_body.md <<'BODY'
+          ## ✨ What's New in v@BASE@
+
+          ---
+
+          <div align="center">
+            <img alt="N-Zik Desktop Compagnon" src="https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/assets/design/ic_banner2.png" width="1000" />
+            <p><b>N-Zik Desktop Compagnon</b> - by N-Zik Group</p>
+          </div>
+
+          ## 🔎 Verification
+
+          > The artifacts are **unsigned** (code signing is deferred). Verify the SHA-256 of the file you downloaded before installing - the table below and the `SHA256SUMS.txt` asset (published with this release) are the source of truth.
+
+          ### SHA-256
+
+          @@SHA_TABLE@@
+
+          ## 📲 Installation
+
+          1. Download the artifact for your platform below.
+          2. Verify its SHA-256 (the table above, or `SHA256SUMS.txt`).
+          3. Install it:
+             - **Windows:** run the installer (it is unsigned - Windows SmartScreen may warn; the source is public and any build can be rebuilt and compared against this one).
+             - **Debian / Ubuntu / Mint:** `apt install ./<file>.deb`
+             - **Fedora / openSUSE / Rocky:** `dnf install ./<file>.rpm`
+             - **Portable:** unzip the zip and run the launcher in `bin/`.
+             - **AppImage:** run the file directly (needs `fuse3`; without it: `./<file>.AppImage --appimage-extract-and-run`).
+             - **Flatpak:** `flatpak install ./<file>.flatpak`.
+
+          Please report any crashes, bugs, or unexpected behavior.
+
+          ## 📦 Available Builds
+
+          - **Windows installer** (`.exe`) - x86_64
+          - **Debian / Ubuntu** (`.deb`) - x86_64
+          - **Fedora / openSUSE / Rocky** (`.rpm`) - x86_64
+          - **Portable** (`.zip`) - x86_64
+          - **AppImage** - x86_64
+          - **Flatpak** - x86_64
+
+          > All 6 artifacts are x86_64 only.
+
+          ## 🔄 Update Policy
+
+          - Updates are handled by the **in-app updater** (Settings - About - the update card): the channel is fixed **at build time** - an app only ever sees releases of its own channel.
+          - **Cross-channel** (e.g. beta to stable) is a **manual reinstall** (accepted: the product is transitional).
+
+          ## 🔗 Changelog & Downloads
+
+          @COMPARE_LINE@
+          - [Changelog text file](@CHANGELOG_RAW@)
+          - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/@TAG@>
+
+          - 📥 **Windows installer (`.exe`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@EXE_URL@
+          - 📥 **Debian (`.deb`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@DEB@
+          - 📥 **Fedora (`.rpm`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@RPM@
+          - 📥 **Portable (`.zip`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@ZIP@
+          - 📥 **AppImage:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@APPIMAGE@
+          - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@FLATPAK@
+          BODY
+
+          # Insert the SHA-256 table where the marker stands
+          awk '
+            /^@@SHA_TABLE@@$/ {
+              while ((getline line < "sha_table.md") > 0) print line
+              close("sha_table.md")
+              next
+            }
+            { print }
+          ' release_body.md > release_body.tmp && mv release_body.tmp release_body.md
+
+          if [ -n "${UPSTREAM}" ] && [ "${UPSTREAM}" != "null" ]; then
+            COMPARE_LINE="- Full changelog: [Compare v${UPSTREAM}...v${BASE}](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/compare/v${UPSTREAM}...v${BASE})"
+          else
+            COMPARE_LINE=""
+          fi
+
+          sed -i \
+            -e "s|@BASE@|${BASE}|g" \
+            -e "s|@TAG@|${TAG}|g" \
+            -e "s|@CHANGELOG_RAW@|${CHANGELOG_RAW}|g" \
+            -e "s|@EXE_URL@|${EXE// /%20}|g" \
+            -e "s|@DEB@|${DEB}|g" \
+            -e "s|@RPM@|${RPM}|g" \
+            -e "s|@ZIP@|${ZIP}|g" \
+            -e "s|@APPIMAGE@|${APPIMAGE}|g" \
+            -e "s|@FLATPAK@|${FLATPAK}|g" \
+            -e "s|^@COMPARE_LINE@.*$|${COMPARE_LINE}|" \
+            release_body.md
+
+      - name: Publish the release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            release/**
+            SHA256SUMS.txt
+          name: v${{ needs.versioning.outputs.downstream }} | 🛡️ STABLE Build
+          tag_name: v${{ needs.versioning.outputs.downstream }}
+          make_latest: true
+          bodyFile: release_body.md
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generate_release_notes: true
+
+  close-issues:
+    needs: [upload-to-release, versioning]
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Close issues marked as "patched STABLE"
+        uses: gcampbell-msft/fixed-pending-release@0.0.13
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          label: patched STABLE
+          message: |
+            🎉 This issue has been fixed and is now available in **v${{ needs.versioning.outputs.downstream }}** 🎉
+            ➤ Download: https://github.com/${{ github.repository }}/releases/tag/v${{ needs.versioning.outputs.downstream }}
+            This ticket is now closed. If you have any questions, feel free to reply below.
+            If needed, the ticket will be reopened for further support.
+      - name: Close issues marked as "implemented"
+        uses: gcampbell-msft/fixed-pending-release@0.0.13
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          label: implemented
+          message: |
+            ✔️ This feature is now implemented in the app. Therefore, this ticket is closed.
+            If you have any question, feel free to reply below.
+            The ticket will be reopened if needed.
+
+  notify-discord:
+    needs: [upload-to-release, versioning]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚀 Stable Release Notification
+        env:
+          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          CONTENT: |
+            ✨ **||<@&1557313505432965170>|| NEW STABLE RELEASE v${{ needs.versioning.outputs.downstream }}!**
+
+            🚀 Download now!
+          DESCRIPTION: |
+            ## 📲 Installation
+
+            1. Download the artifact for your platform below.
+            2. Verify its SHA-256 (the `SHA256SUMS.txt` asset of the release).
+            3. Install it (Windows: run the installer - it is unsigned; Linux: apt / dnf / flatpak install, unzip the portable, or run the AppImage).
+
+            Please report any crashes, bugs, or unexpected behavior.
+
+            ## 📦 Available Builds
+
+            - **Windows installer** (`.exe`) - x86_64
+            - **Debian / Ubuntu** (`.deb`) - x86_64
+            - **Fedora / openSUSE / Rocky** (`.rpm`) - x86_64
+            - **Portable** (`.zip`) - x86_64
+            - **AppImage** - x86_64
+            - **Flatpak** - x86_64
+
+            > All 6 artifacts are x86_64 only.
+
+            ## 🔄 Update Policy
+
+            - Updates are handled by the **in-app updater** (Settings - About - the update card): the channel is fixed **at build time** - an app only ever sees releases of its own channel.
+            - **Cross-channel** (e.g. beta to stable) is a **manual reinstall** (accepted: the product is transitional).
+
+            ## 🔗 Changelog & Downloads
+
+            - 📥 **Windows installer (`.exe`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/N-Zik%20Desktop%20Compagnon-${{ needs.versioning.outputs.downstream }}.exe
+            - 📥 **Debian (`.deb`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon_${{ needs.versioning.outputs.downstream }}-1_amd64.deb
+            - 📥 **Fedora (`.rpm`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-1.x86_64.rpm
+            - 📥 **Portable (`.zip`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-linux-portable.zip
+            - 📥 **AppImage:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-x86_64.AppImage
+            - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-x86_64.flatpak
+            - 📄 **Changelog:** <https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/Updater/changelogs/${{ needs.versioning.outputs.code }}.txt>
+            - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/v${{ needs.versioning.outputs.downstream }}>
+        run: |
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "❌ The DISCORD_WEBHOOK_URL secret is not set on this repo — the release was published, the Discord notification is skipped."
+            exit 1
+          fi
+          jq -n \
+            --arg content "$CONTENT" \
+            --arg username "N-Zik Compagnon Stable" \
+            --arg avatar "https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/assets/design/icon-linux.png" \
+            --arg desc "$DESCRIPTION" \
+            '{
+              content: $content,
+              username: $username,
+              avatar_url: $avatar,
+              embeds: [{
+                color: 13632401,
+                description: $desc,
+                footer: {
+                  text: "N-Zik Compagnon Stable • Made by the community, for the community",
+                  icon_url: $avatar
+                }
+              }]
+            }' > payload.json
+
+          curl -X POST -H "Content-Type: application/json" -d @payload.json $WEBHOOK_URL

@@ -1,0 +1,572 @@
+name: Build Dev
+
+env:
+  TZ: Europe/Paris
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # Every day at 0AM
+  push:
+    branches: [main]
+
+concurrency:
+  group: 'dev-deploy'
+  cancel-in-progress: false
+
+jobs:
+  check-author:
+    name: Check if push is from NEVARLeVrai
+    runs-on: ubuntu-latest
+    outputs:
+      should-build: ${{ steps.check.outputs.should-build }}
+    steps:
+      - name: Check author and commit message
+        id: check
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should-build=true" >> $GITHUB_OUTPUT
+          elif [[ "$COMMIT_MSG" == *"crowdin"* ]] || [[ "$COMMIT_MSG" == *"Crowdin"* ]]; then
+            echo "should-build=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Crowdin commit detected, skipping build"
+          elif [[ "$COMMIT_MSG" == *"update stats and chart"* ]]; then
+            echo "should-build=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Stats/chart update commit detected, skipping build"
+          elif [[ "$COMMIT_MSG" == *"In-app contributors list updated"* ]]; then
+            echo "should-build=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Contributor list update commit detected, skipping build"
+          elif [ "$ACTOR" = "github-actions[bot]" ]; then
+            echo "should-build=false" >> $GITHUB_OUTPUT
+            echo "⚠️ github-actions[bot] commit detected, skipping build"
+          elif [ "$ACTOR" = "NEVARLeVrai" ]; then
+            echo "should-build=true" >> $GITHUB_OUTPUT
+          else
+            echo "should-build=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Push not from NEVARLeVrai, skipping build"
+          fi
+
+  check-changes:
+    name: Check if there are changes
+    needs: [check-author]
+    if: needs.check-author.outputs.should-build == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+
+      - name: Check if dev changelog exists
+        run: |
+          if [ ! -f "Updater/changelogs/dev.txt" ]; then
+            echo "Changelog not found. Exiting."
+            exit 1
+          fi
+
+      - name: Check for changes since last commit
+        id: diff
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TODAY_TAG=$(date +'%Y%m%d')
+          TODAY_DISPLAY=$(date +'%Y-%m-%d')
+
+          export GH_PROMPT_DISABLED=1
+
+          ALREADY_BUILT=$(gh release list --limit 15 | grep -e "-dev-$TODAY_TAG" || echo "")
+
+          if [ ! -z "$ALREADY_BUILT" ]; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "⏭️ A dev build has already been released today ($TODAY_DISPLAY). Skipping build."
+            exit 0
+          fi
+
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            SINCE=$(date -u -d '1 day ago' +%Y-%m-%dT%H:%M:%SZ)
+
+            COMMITS=$(gh api "repos/${{ github.repository }}/commits?since=$SINCE&author=NEVARLeVrai" \
+              --jq '.[] | [.sha, (.commit.message | split("\n")[0])] | @tsv')
+
+            RELEVANT=$(echo "$COMMITS" | grep -viE 'crowdin|update stats and chart|In-app contributors list updated' || true)
+
+            if [ ! -z "$RELEVANT" ]; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+              echo "✅ New relevant commits from NEVARLeVrai in the last day. Building."
+              echo "$RELEVANT"
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+              echo "⏭️ No relevant commits from NEVARLeVrai in the last day (or only excluded ones)."
+            fi
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "✅ Push or manual trigger detected. Launching first build of the day."
+          fi
+
+  build_time:
+    name: Capture current time
+    needs: [check-changes]
+    if: needs.check-changes.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+      timestamp: ${{ steps.date.outputs.timestamp }}
+    steps:
+      - name: Get date
+        id: date
+        run: |
+          echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+          echo "timestamp=$(date +'%H:%M Europe/Paris')" >> $GITHUB_OUTPUT
+
+  versioning:
+    name: Extract version
+    needs: [check-changes]
+    if: needs.check-changes.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      downstream: ${{ steps.downstream.outputs.version }}
+      code: ${{ steps.downstream.outputs.code }}
+    env:
+      GITHUB_REPOSITORY: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Get downstream (local) version
+        id: downstream
+        run: |
+          versionCode=$(grep -E '^\s*nzikVersionCode\s*=' gradle/libs.versions.toml | sed 's/[^0-9]*//g')
+          versionName=$(grep -E '^\s*nzikVersionName\s*=' gradle/libs.versions.toml | sed -E 's/.*"(.+)".*/\1/')
+
+          echo "version=$versionName" >> $GITHUB_OUTPUT
+          echo "code=$versionCode" >> $GITHUB_OUTPUT
+
+  build-linux:
+    needs: [versioning, check-changes, build_time]
+    if: needs.check-changes.outputs.changed == 'true'
+    name: Build the Linux packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Align the runner OS timezone to Europe/Paris
+        run: sudo ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+
+      - name: Install the build prerequisites (jpackage tools + Flatpak)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fakeroot rpm flatpak flatpak-builder
+
+      - name: Configure the Flathub remote
+        run: flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+      - name: Pre-install the Flatpak base runtime
+        run: flatpak install --user --noninteractive flathub org.freedesktop.Platform//24.08
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v6.0.1
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      - name: Restore Gradle dependencies & build cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./build
+            ./app/build
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Build with Gradle
+        run: ./gradlew :app:packageDeb :app:packageRpm :app:packageLinuxPortable :app:packageAppImage :app:packageFlatpak -Pchannel=dev
+
+      - name: Upload the Linux artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-artifacts
+          path: |
+            app/build/compose/binaries/*.zip
+            app/build/compose/binaries/*.AppImage
+            app/build/compose/binaries/*.flatpak
+            app/build/compose/binaries/main/deb/*.deb
+            app/build/compose/binaries/main/rpm/*.rpm
+
+  build-windows:
+    needs: [versioning, check-changes, build_time]
+    if: needs.check-changes.outputs.changed == 'true'
+    name: Build the Windows installer
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Align the runner OS timezone to Europe/Paris
+        run: Set-TimeZone -Id 'Romance Standard Time'
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v6.0.1
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      - name: Restore Gradle dependencies & build cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./build
+            ./app/build
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Build with Gradle (NSIS)
+        run: gradlew.bat :app:packageInstaller -Pchannel=dev
+
+      - name: Upload the Windows artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-artifact
+          path: app/build/compose/binaries/main/exe/*.exe
+
+  upload-to-release:
+    needs: [build_time, versioning, build-linux, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download the built artifacts
+        uses: actions/download-artifact@v8.0.1
+        with:
+          path: artifacts
+
+      - name: Collect the 6 artifacts and compute the SHA-256
+        run: |
+          set -euo pipefail
+
+          BASE="${{ needs.versioning.outputs.downstream }}"
+          DATE="${{ needs.build_time.outputs.date }}"
+
+          SUFFIX="-dev-${DATE}"
+          PKG="n-zik-desktop-compagnon-dev"
+          PRODUCT="N-Zik Desktop Compagnon (Dev)"
+          TAG="v${BASE}-dev-${DATE}"
+
+          EXE="${PRODUCT}-${BASE}${SUFFIX}.exe"
+          DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
+          RPM="${PKG}-${BASE}${SUFFIX}-1.x86_64.rpm"
+          ZIP="${PKG}-${BASE}${SUFFIX}-linux-portable.zip"
+          APPIMAGE="${PKG}-${BASE}${SUFFIX}-x86_64.AppImage"
+          FLATPAK="${PKG}-${BASE}${SUFFIX}-x86_64.flatpak"
+
+          # A missing artifact fails the run loud: the CI never "fixes" the
+          # packaging contract (it belongs to the build script).
+          mkdir -p release
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/main/deb/${DEB}" release/
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/main/rpm/${RPM}" release/
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/${ZIP}" release/
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/${APPIMAGE}" release/
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/${FLATPAK}" release/
+          cp "artifacts/windows-artifact/app/build/compose/binaries/main/exe/${EXE}" release/
+
+          cd release
+          sha256sum "${EXE}" "${DEB}" "${RPM}" "${ZIP}" "${APPIMAGE}" "${FLATPAK}" > ../SHA256SUMS.txt
+          cd ..
+
+          # The markdown SHA-256 table (the artifacts are unsigned — this is
+          # the desktop equivalent of the mobile signature-hash section).
+          {
+            echo "| Artifact | SHA-256 |"
+            echo "|----------|---------|"
+            while read -r hash name; do
+              printf '| %s | `%s` |\n' "$name" "$hash"
+            done < SHA256SUMS.txt
+          } > sha_table.md
+
+          CHANGELOG_RAW="https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/Updater/changelogs/dev.txt"
+
+          cat > release_body.md <<'BODY'
+          ## 🔨 Dev Build v@BASE@-dev-@DATE@
+
+          ---
+
+          <div align="center">
+            <img alt="N-Zik Desktop Compagnon" src="https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/assets/design/ic_banner2.png" width="1000" />
+            <p><b>N-Zik Desktop Compagnon (Dev)</b> - Development Build</p>
+            <p><i>Built from latest commits. For testing & development only.</i></p>
+          </div>
+
+          ## 🔎 Verification
+
+          > The artifacts are **unsigned** (code signing is deferred). Verify the SHA-256 of the file you downloaded before installing - the table below and the `SHA256SUMS.txt` asset (published with this release) are the source of truth.
+
+          ### SHA-256
+
+          @@SHA_TABLE@@
+
+          ## 📲 Installation
+
+          ⚠️ This is a **DEV build**, not a stable version.
+          It is intended **only for testing and development feedback**.
+
+          1. Download the artifact for your platform below.
+          2. Verify its SHA-256 (the table above, or `SHA256SUMS.txt`).
+          3. Install it:
+             - **Windows:** run the installer (it is unsigned - Windows SmartScreen may warn; the dev build is a separate installation, it lives beside the stable/beta one).
+             - **Debian / Ubuntu / Mint:** `apt install ./<file>.deb`
+             - **Fedora / openSUSE / Rocky:** `dnf install ./<file>.rpm`
+             - **Portable:** unzip the zip and run the launcher in `bin/`.
+             - **AppImage:** run the file directly (needs `fuse3`; without it: `./<file>.AppImage --appimage-extract-and-run`).
+             - **Flatpak:** `flatpak install ./<file>.flatpak`.
+
+          Please report any crashes, bugs, or unexpected behavior.
+
+          ## 📦 Available Builds
+
+          - **Windows installer** (`.exe`) - x86_64
+          - **Debian / Ubuntu** (`.deb`) - x86_64
+          - **Fedora / openSUSE / Rocky** (`.rpm`) - x86_64
+          - **Portable** (`.zip`) - x86_64
+          - **AppImage** - x86_64
+          - **Flatpak** - x86_64
+
+          > All 6 artifacts are x86_64 only.
+
+          ## 🔄 Update Policy
+
+          - The **dev channel** is a separate product: on Windows every channel is its own installation; on Linux the dev build installs as `n-zik-desktop-compagnon-dev` (beside the stable/beta package) with its own Flatpak app-id.
+          - The in-app updater only ever offers **dev** releases to a dev build.
+          - **Cross-channel** is a **manual reinstall** (accepted: the product is transitional).
+
+          ## 🔗 Changelog & Downloads
+
+          - [Changelog text file (dev)](@CHANGELOG_RAW@)
+          - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/@TAG@>
+
+          - 📥 **Windows installer (`.exe`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@EXE_URL@
+          - 📥 **Debian (`.deb`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@DEB@
+          - 📥 **Fedora (`.rpm`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@RPM@
+          - 📥 **Portable (`.zip`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@ZIP@
+          - 📥 **AppImage:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@APPIMAGE@
+          - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@FLATPAK@
+          BODY
+
+          # Insert the SHA-256 table where the marker stands
+          awk '
+            /^@@SHA_TABLE@@$/ {
+              while ((getline line < "sha_table.md") > 0) print line
+              close("sha_table.md")
+              next
+            }
+            { print }
+          ' release_body.md > release_body.tmp && mv release_body.tmp release_body.md
+
+          sed -i \
+            -e "s|@BASE@|${BASE}|g" \
+            -e "s|@DATE@|${DATE}|g" \
+            -e "s|@TAG@|${TAG}|g" \
+            -e "s|@CHANGELOG_RAW@|${CHANGELOG_RAW}|g" \
+            -e "s|@EXE_URL@|${EXE// /%20}|g" \
+            -e "s|@DEB@|${DEB}|g" \
+            -e "s|@RPM@|${RPM}|g" \
+            -e "s|@ZIP@|${ZIP}|g" \
+            -e "s|@APPIMAGE@|${APPIMAGE}|g" \
+            -e "s|@FLATPAK@|${FLATPAK}|g" \
+            release_body.md
+
+      - name: Publish the release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            release/**
+            SHA256SUMS.txt
+          name: v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }} | 🔨 DEV Build
+          tag_name: v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}
+          prerelease: true
+          make_latest: false
+          bodyFile: release_body.md
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generate_release_notes: true
+
+  cleanup-old-dev-releases:
+    needs: [upload-to-release]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Delete old dev releases and tags
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const releases = await github.paginate(github.rest.repos.listReleases, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100,
+            });
+
+            // Filter only dev releases and sort by date (newest first)
+            const devReleases = releases
+              .filter(r => r.tag_name.includes('-dev-'))
+              .sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
+
+            console.log(`📊 Found ${devReleases.length} dev releases`);
+
+            // Keep only the last 2 dev releases
+            const releasesToDelete = devReleases.slice(2);
+
+            if (releasesToDelete.length === 0) {
+              console.log('✅ Nothing to clean up. Keep all old releases.');
+              return;
+            }
+
+            for (const release of releasesToDelete) {
+              console.log(`🗑️ Deleting release: ${release.tag_name}`);
+
+              // Delete the release
+              await github.rest.repos.deleteRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: release.id,
+              });
+
+              // Delete the tag
+              try {
+                await github.rest.git.deleteRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `tags/${release.tag_name}`,
+                });
+                console.log(`✅ Tag deleted: ${release.tag_name}`);
+              } catch (error) {
+                console.log(`⚠️ Could not delete tag ${release.tag_name}: ${error.message}`);
+              }
+            }
+
+            console.log(`✨ Cleanup complete. Kept ${Math.min(devReleases.length, 2)} latest dev releases.`);
+
+  comment-dev-issues:
+    needs: [upload-to-release, versioning, build_time]
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Comment issues marked as "patched DEV" and remove label
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'patched DEV',
+              per_page: 100,
+            });
+
+            const version = '${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}';
+            const body = [
+              `🧪 This issue is fixed in the **DEV** build **v${version}** 🧪`,
+              `➤ Download: https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/v${version}`,
+              '',
+              '> This is a dev release, the ticket stays open until the stable version confirms the fix.'
+            ].join('\n');
+
+            for (const issue of issues) {
+              if (issue.pull_request) continue;
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body,
+              });
+
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                name: 'patched DEV'
+              });
+
+              console.log(`Commented on issue #${issue.number} and removed label`);
+            }
+
+  notify-discord:
+    needs: [build_time, versioning, upload-to-release]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔨 Dev Build Notification
+        env:
+          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          CONTENT: |
+            🔨 **||<@&1557313445890760744>|| NEW DEV BUILD v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}!**
+
+            🧪 Testing & development snapshot ready!
+          DESCRIPTION: |
+            ## 📲 Installation
+
+            ⚠️ This is a **DEV build**, not a stable version.
+            It is intended **only for testing and development feedback**.
+
+            1. Download the artifact for your platform below.
+            2. Verify its SHA-256 (the `SHA256SUMS.txt` asset of the release).
+            3. Install it (Windows: run the installer - it is unsigned; Linux: apt / dnf / flatpak install, unzip the portable, or run the AppImage).
+
+            Please report any crashes, bugs, or unexpected behavior.
+
+            ## 📦 Available Builds
+
+            - **Windows installer** (`.exe`) - x86_64
+            - **Debian / Ubuntu** (`.deb`) - x86_64
+            - **Fedora / openSUSE / Rocky** (`.rpm`) - x86_64
+            - **Portable** (`.zip`) - x86_64
+            - **AppImage** - x86_64
+            - **Flatpak** - x86_64
+
+            > All 6 artifacts are x86_64 only.
+
+            ## 🔄 Update Policy
+
+            - The **dev channel** is a separate product: on Windows every channel is its own installation; on Linux the dev build installs as `n-zik-desktop-compagnon-dev` (beside the stable/beta package) with its own Flatpak app-id.
+            - The in-app updater only ever offers **dev** releases to a dev build.
+            - **Cross-channel** is a **manual reinstall** (accepted: the product is transitional).
+
+            ## 🔗 Changelog & Downloads
+
+            - 📥 **Windows installer (`.exe`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/N-Zik%20Desktop%20Compagnon%20(Dev)-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}.exe
+            - 📥 **Debian (`.deb`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev_${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1_amd64.deb
+            - 📥 **Fedora (`.rpm`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1.x86_64.rpm
+            - 📥 **Portable (`.zip`):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-linux-portable.zip
+            - 📥 **AppImage:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-x86_64.AppImage
+            - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-x86_64.flatpak
+            - 📄 **Changelog (dev):** <https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/Updater/changelogs/dev.txt>
+            - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}>
+        run: |
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "❌ The DISCORD_WEBHOOK_URL secret is not set on this repo — the release was published, the Discord notification is skipped."
+            exit 1
+          fi
+          jq -n \
+            --arg content "$CONTENT" \
+            --arg username "N-Zik Compagnon Dev" \
+            --arg avatar "https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/assets/design/icon-linux.png" \
+            --arg desc "$DESCRIPTION" \
+            '{
+              content: $content,
+              username: $username,
+              avatar_url: $avatar,
+              embeds: [{
+                color: 16776960,
+                description: $desc,
+                footer: {
+                  text: "N-Zik Compagnon DEV • Testing & Development Snapshot",
+                  icon_url: $avatar
+                }
+              }]
+            }' > payload.json
+
+          curl -X POST -H "Content-Type: application/json" -d @payload.json $WEBHOOK_URL
