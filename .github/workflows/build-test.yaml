@@ -1,0 +1,193 @@
+name: Build Test (stable dry run)
+
+# Port of the phone repo's build-test.yaml (N-Zik/.github/workflows/build-test.yaml) —
+# a manual dry run of the release build pipeline: it builds the full stable set of
+# 6 artifacts and exposes them as plain workflow artifacts, WITHOUT publishing
+# (no release, no tag, no Discord, no issue automation). spec `spec-ci-build-test`.
+#
+# Divergences from the mobile port (documented here by design):
+# - No `versioning` job: on mobile its only usage was copying the changelog into
+#   res/raw; the desktop changelog is served through the raw release link (the
+#   in-app updater contract), so the job has no purpose here — the stable base
+#   version is grepped inline in the `collect` job.
+# - No `sign-apks` job: the desktop artifacts are unsigned by design (no keystore
+#   secrets in this repo) — the `collect` job replaces it (listing + SHA-256 +
+#   artifact re-exposure).
+# - No `submodules: true` on checkout: the desktop repo has no submodules.
+# - No guards / verify / publish: this is a test run, not a channel run — it never
+#   publishes, so there is nothing to verify against; the channel workflows
+#   (build-stable / build-beta / build-dev) are the only publishers.
+#
+# Prerequisite (fail-loud, same as the channel workflows): the pinned Linux VLC
+# tarball `vlc-3.0.24-linux-x64.tar.gz` must exist as the asset of the prerelease
+# carrier `vlc-3.0.24-tarball` — until then the Linux leg fails loud on
+# `downloadVlcLinux` (its "VLC Linux tarball download failed: HTTP 404" message —
+# the docs' `TARBALL_404` shorthand); the Windows leg is unaffected and still
+# produces the installer.
+
+env:
+  TZ: Europe/Paris
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    name: Build the Linux packages (stable, dry run)
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Align the runner OS timezone to Europe/Paris
+        run: sudo ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+
+      - name: Install the build prerequisites (jpackage tools + Flatpak)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fakeroot rpm flatpak flatpak-builder
+
+      - name: Configure the Flathub remote
+        run: flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+      - name: Pre-install the Flatpak base runtime
+        run: flatpak install --user --noninteractive flathub org.freedesktop.Platform//24.08
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v6.0.1
+        with:
+          java-version: "21"
+          distribution: "corretto"
+
+      - name: Restore Gradle dependencies & build cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./build
+            ./app/build
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Build with Gradle
+        run: ./gradlew :app:packageDeb :app:packageRpm :app:packageLinuxPortable :app:packageAppImage :app:packageFlatpak -Pchannel=stable
+
+      - name: Upload the Linux artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-artifacts
+          path: |
+            app/build/compose/binaries/*.zip
+            app/build/compose/binaries/*.AppImage
+            app/build/compose/binaries/*.flatpak
+            app/build/compose/binaries/main/deb/*.deb
+            app/build/compose/binaries/main/rpm/*.rpm
+
+  build-windows:
+    name: Build the Windows installer (stable, dry run)
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Align the runner OS timezone to Europe/Paris
+        run: Set-TimeZone -Id 'Romance Standard Time'
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v6.0.1
+        with:
+          java-version: "21"
+          distribution: "corretto"
+
+      - name: Restore Gradle dependencies & build cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./build
+            ./app/build
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Build with Gradle (NSIS)
+        # PowerShell (the default run shell on Windows) does not resolve executables
+        # from the current directory — the `.\` prefix is required.
+        run: .\gradlew.bat :app:packageInstaller -Pchannel=stable
+
+      - name: Upload the Windows artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-artifact
+          path: app/build/compose/binaries/main/exe/*.exe
+
+  collect:
+    name: Collect the 6 artifacts (no publish)
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download the built artifacts
+        uses: actions/download-artifact@v8.0.1
+        with:
+          path: artifacts
+
+      - name: List the artifacts and compute the SHA-256
+        run: |
+          set -euo pipefail
+
+          # The mobile `versioning` job is excluded from the port (its only usage
+          # was the res/raw changelog copy) — the stable base is grepped inline.
+          BASE="$(grep -E '^\s*nzikVersionName\s*=' gradle/libs.versions.toml | awk -F '\"' '{print $2}')"
+
+          SUFFIX=""
+          PKG="n-zik-desktop-compagnon"
+          PRODUCT="N-Zik Desktop Compagnon"
+
+          EXE="${PRODUCT}-${BASE}${SUFFIX}.exe"
+          DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
+          RPM="${PKG}-${BASE}${SUFFIX}-1.x86_64.rpm"
+          ZIP="${PKG}-${BASE}${SUFFIX}-linux-portable.zip"
+          APPIMAGE="${PKG}-${BASE}${SUFFIX}-x86_64.AppImage"
+          FLATPAK="${PKG}-${BASE}${SUFFIX}-x86_64.flatpak"
+
+          # A missing artifact fails the run loud: the CI never "fixes" the
+          # packaging contract (it belongs to the build script).
+          mkdir -p release
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/main/deb/${DEB}" release/
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/main/rpm/${RPM}" release/
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/${ZIP}" release/
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/${APPIMAGE}" release/
+          cp "artifacts/linux-artifacts/app/build/compose/binaries/${FLATPAK}" release/
+          cp "artifacts/windows-artifact/app/build/compose/binaries/main/exe/${EXE}" release/
+
+          echo "Collected the 6 dry-run artifacts:"
+          ls -lR release
+
+          cd release
+          sha256sum "${EXE}" "${DEB}" "${RPM}" "${ZIP}" "${APPIMAGE}" "${FLATPAK}" > ../SHA256SUMS.txt
+          cd ..
+
+          # The markdown SHA-256 table (the artifacts are unsigned — this is the
+          # desktop equivalent of the mobile signature-hash section).
+          {
+            echo "| Artifact | SHA-256 |"
+            echo "|----------|---------|"
+            while read -r hash name; do
+              printf '| %s | `%s` |\n' "$name" "$hash"
+            done < SHA256SUMS.txt
+          } > sha_table.md
+
+          echo "### SHA-256"
+          cat sha_table.md
+
+      - name: Upload the collected artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-artifacts
+          path: |
+            release/**
+            SHA256SUMS.txt
