@@ -19,7 +19,7 @@ vlc-linux-tarball-url = "https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/
 # Re-pinned 2026-10-07 (approved): the original tarball was lost from the build cache and was
 # never uploaded to the release, so the original SHA is unrecoverable; the rebuild (same pinned
 # official source + same committed script + same audio subset) yields a different binary hash.
-vlc-linux-tarball-sha256 = "83d5fecbdaf2f6db93c54050659263d2fe630fb7878a276c06e690de6f17b8e4"
+vlc-linux-tarball-sha256 = "641b6ca21e4f9567778f097e1d03e441dec2ccdf4810551f05df9574ed8d1060"
 linuxdeploy-version = "1-alpha-20251107-1"
 linuxdeploy-url = "https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20251107-1/linuxdeploy-x86_64.AppImage"
 linuxdeploy-sha256 = "c20cd71e3a4e3b80c3483cef793cda3f4e990aca14014d23c544ca3ce1270b4d"
