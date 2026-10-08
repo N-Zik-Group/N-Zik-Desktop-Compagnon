@@ -7,11 +7,11 @@ name: VLC Linux Tarball Builder
 # the merge is the human verification gate. Prerelease is mandatory — a non-prerelease would
 # become "latest" and shadow the app releases for the /releases/latest readers (the CI
 # version guards + the metrics); the in-app updater reads the full /releases list and is
-# protected by its same-channel tag filter, not by this flag. A Sunday 23:30 (Europe/Paris,
-# explicit `timezone:`) schedule run is the pin health check: the independent verify-pin job
-# HEAD-checks the pinned tarball URL and fails loud if the release asset is gone — the no-op
-# version path never touches the network, so this is the periodic existence signal (red while
-# the pinned asset is missing, green as soon as it is live).
+# protected by its same-channel tag filter, not by this flag. The no-op verdict includes a
+# HEAD-check of the pinned asset: same version + asset live = a green no-op; same version +
+# asset MISSING (HTTP 404) = self-heal (rebuild + republish + re-open the pin PR — the version
+# is unchanged, the SHA may move). The Sunday 23:30 (Europe/Paris, explicit `timezone:`)
+# schedule run is the periodic no-op / self-heal check.
 
 on:
   push:
@@ -36,6 +36,7 @@ jobs:
       action: ${{ steps.decide.outputs.action }}
       version: ${{ steps.decide.outputs.version }}
       catalog-version: ${{ steps.decide.outputs.catalog-version }}
+      reason: ${{ steps.decide.outputs.reason }}
     steps:
       - uses: actions/checkout@v7
 
@@ -62,12 +63,29 @@ jobs:
           echo "catalog version: $CATALOG_VERSION"
           echo "version=$SCRIPT_VERSION" >> "$GITHUB_OUTPUT"
           echo "catalog-version=$CATALOG_VERSION" >> "$GITHUB_OUTPUT"
-          if [ "$SCRIPT_VERSION" = "$CATALOG_VERSION" ]; then
-            echo "VLC version unchanged — no-op: the pin is already at $SCRIPT_VERSION, no release, no PR."
-            echo "action=skip" >> "$GITHUB_OUTPUT"
-          else
+          if [ "$SCRIPT_VERSION" != "$CATALOG_VERSION" ]; then
             echo "VLC version bump detected: $CATALOG_VERSION -> $SCRIPT_VERSION — building the tarball."
             echo "action=build" >> "$GITHUB_OUTPUT"
+            echo "reason=bump" >> "$GITHUB_OUTPUT"
+          else
+            # Same version: is the pinned asset still live on GitHub? The no-op verdict must not
+            # hide a missing asset (a deleted release, or the one-shot upload that never
+            # happened) — a missing asset means the tarball gets rebuilt + republished +
+            # re-PRed (self-heal), not silently skipped. A transient check failure (5xx /
+            # network) is NOT a missing asset: it fails loud and never triggers a rebuild.
+            CODE="$(curl -sS -I -L -o /dev/null -w '%{http_code}' --max-time 30 "$CATALOG_URL" || true)"
+            [ -n "$CODE" ] || CODE="000"
+            if [ "$CODE" = "200" ]; then
+              echo "VLC version unchanged and the pinned asset is live (HTTP 200) — no-op: the pin is already at $SCRIPT_VERSION, no release, no PR."
+              echo "action=skip" >> "$GITHUB_OUTPUT"
+            elif [ "$CODE" = "404" ]; then
+              echo "VLC version unchanged but the pinned asset is MISSING (HTTP 404) — self-heal: rebuilding the tarball, republishing the release vlc-${CATALOG_VERSION}-tarball and re-opening the pin PR (the version is unchanged; the SHA may move — the producer is not byte-reproducible)."
+              echo "action=build" >> "$GITHUB_OUTPUT"
+              echo "reason=self-heal" >> "$GITHUB_OUTPUT"
+            else
+              echo "ERROR: the pinned asset check answered HTTP $CODE (not 200, not 404) — $CATALOG_URL. A 5xx / network-level failure is transient — re-dispatch before concluding. The pipeline does NOT rebuild on a hiccup (only a clean 404 = the asset is gone)." >&2
+              exit 1
+            fi
           fi
 
   build-tarball:
@@ -199,11 +217,20 @@ jobs:
           set -euo pipefail
           VERSION="${{ needs.check-version.outputs.version }}"
           CATALOG_VERSION="${{ needs.check-version.outputs.catalog-version }}"
+          REASON="${{ needs.check-version.outputs.reason }}"
           SHA="$(cat release/vlc-tarball.sha256)"
           NEW_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download/vlc-${VERSION}-tarball/vlc-${VERSION}-linux-x64.tar.gz"
           RELEASE_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/vlc-${VERSION}-tarball"
+          # The lead line is reason-aware: a bump PR announces the version move; a self-heal PR
+          # announces the re-publication (same version — the SHA is what moves, the producer is
+          # not byte-reproducible).
+          if [ "$REASON" = "self-heal" ]; then
+            LEAD="Re-publishes the pinned Linux VLC runtime tarball **@VERSION@** (the release asset was MISSING on GitHub — self-heal; the version is unchanged, the SHA is what moves: the producer is not byte-reproducible) — the committed \`scripts/build-vlc-linux-tarball.sh\` (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped) is the producer; this PR is its catalog-only output."
+          else
+            LEAD="Bumps the pinned Linux VLC runtime tarball **@CATALOG@ -> @VERSION@** — the committed \`scripts/build-vlc-linux-tarball.sh\` (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped) is the producer; this PR is its catalog-only output."
+          fi
           cat > pr_body.md <<'BODY'
-          Bumps the pinned Linux VLC runtime tarball **@CATALOG@ -> @VERSION@** — the committed `scripts/build-vlc-linux-tarball.sh` (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped) is the producer; this PR is its catalog-only output.
+          @LEAD@
 
           - New URL: `@URL@`
           - New SHA-256: `@SHA@`
@@ -216,6 +243,7 @@ jobs:
           > The bot never merges this PR — the merge is the human verification gate (rules/BUILD.md "VLC Linux tarball pipeline").
           BODY
           sed -i \
+            -e "s|@LEAD@|${LEAD}|g" \
             -e "s|@VERSION@|${VERSION}|g" \
             -e "s|@CATALOG@|${CATALOG_VERSION}|g" \
             -e "s|@URL@|${NEW_URL}|g" \
@@ -227,32 +255,3 @@ jobs:
             --head "bot/vlc-pin-${VERSION}" \
             --title "chore(catalog): pin the Linux VLC tarball to ${VERSION}" \
             --body-file pr_body.md
-
-  verify-pin:
-    name: Verify the pinned tarball still exists (the Sunday 23:30 health check)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: HEAD-check the pinned tarball URL (fail-loud unless HTTP 200)
-        run: |
-          set -euo pipefail
-          # The catalog is the single source of truth for the pinned asset (the bot PR is the only
-          # sanctioned path to change it). The no-op version path never touches the network, so
-          # without this job a missing / deleted release asset would only surface as a TARBALL_404
-          # in an actual build. This one answers "does the pinned asset still exist?" — HEAD only,
-          # following the release redirect to the asset CDN (a missing asset answers 404 in place).
-          CATALOG_URL="$(sed -n 's/^vlc-linux-tarball-url *= *"\(.*\)" *$/\1/p' gradle/libs.versions.toml | head -n1)"
-          if [ -z "$CATALOG_URL" ]; then
-            echo "ERROR: no vlc-linux-tarball-url line in gradle/libs.versions.toml — failing loud." >&2
-            exit 1
-          fi
-          CODE="$(curl -sS -I -L -o /dev/null -w '%{http_code}' --max-time 30 "$CATALOG_URL" || true)"
-          [ -n "$CODE" ] || CODE="000"
-          if [ "$CODE" = "200" ]; then
-            echo "OK: the pinned tarball is reachable (HTTP 200) — $CATALOG_URL"
-          else
-            echo "ERROR: the pinned tarball is not reachable (HTTP $CODE, expected 200 — a 404 means the asset is gone and every fresh-host Linux build will fail loud, TARBALL_404; a 5xx / 000 may be transient, re-dispatch before concluding) — $CATALOG_URL." >&2
-            exit 1
-          fi
