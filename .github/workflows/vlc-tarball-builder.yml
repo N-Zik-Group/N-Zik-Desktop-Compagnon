@@ -7,7 +7,11 @@ name: VLC Linux Tarball Builder
 # the merge is the human verification gate. Prerelease is mandatory — a non-prerelease would
 # become "latest" and shadow the app releases for the /releases/latest readers (the CI
 # version guards + the metrics); the in-app updater reads the full /releases list and is
-# protected by its same-channel tag filter, not by this flag.
+# protected by its same-channel tag filter, not by this flag. A Sunday 23:30 (Europe/Paris,
+# explicit `timezone:`) schedule run is the pin health check: the independent verify-pin job
+# HEAD-checks the pinned tarball URL and fails loud if the release asset is gone — the no-op
+# version path never touches the network, so this is the periodic existence signal (red while
+# the pinned asset is missing, green as soon as it is live).
 
 on:
   push:
@@ -15,6 +19,9 @@ on:
       - main
     paths:
       - 'scripts/build-vlc-linux-tarball.sh'
+  schedule:
+    - cron: '30 23 * * 0'
+      timezone: 'Europe/Paris'
   workflow_dispatch:
 
 concurrency:
@@ -220,3 +227,32 @@ jobs:
             --head "bot/vlc-pin-${VERSION}" \
             --title "chore(catalog): pin the Linux VLC tarball to ${VERSION}" \
             --body-file pr_body.md
+
+  verify-pin:
+    name: Verify the pinned tarball still exists (the Sunday 23:30 health check)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: HEAD-check the pinned tarball URL (fail-loud unless HTTP 200)
+        run: |
+          set -euo pipefail
+          # The catalog is the single source of truth for the pinned asset (the bot PR is the only
+          # sanctioned path to change it). The no-op version path never touches the network, so
+          # without this job a missing / deleted release asset would only surface as a TARBALL_404
+          # in an actual build. This one answers "does the pinned asset still exist?" — HEAD only,
+          # following the release redirect to the asset CDN (a missing asset answers 404 in place).
+          CATALOG_URL="$(sed -n 's/^vlc-linux-tarball-url *= *"\(.*\)" *$/\1/p' gradle/libs.versions.toml | head -n1)"
+          if [ -z "$CATALOG_URL" ]; then
+            echo "ERROR: no vlc-linux-tarball-url line in gradle/libs.versions.toml — failing loud." >&2
+            exit 1
+          fi
+          CODE="$(curl -sS -I -L -o /dev/null -w '%{http_code}' --max-time 30 "$CATALOG_URL" || true)"
+          [ -n "$CODE" ] || CODE="000"
+          if [ "$CODE" = "200" ]; then
+            echo "OK: the pinned tarball is reachable (HTTP 200) — $CATALOG_URL"
+          else
+            echo "ERROR: the pinned tarball is not reachable (HTTP $CODE, expected 200 — a 404 means the asset is gone and every fresh-host Linux build will fail loud, TARBALL_404; a 5xx / 000 may be transient, re-dispatch before concluding) — $CATALOG_URL." >&2
+            exit 1
+          fi
