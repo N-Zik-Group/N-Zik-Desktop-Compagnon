@@ -342,7 +342,6 @@ jobs:
           SUFFIX="-dev-${DATE}"
           PKG="n-zik-desktop-compagnon-dev"
           PRODUCT="N-Zik Desktop Compagnon (Dev)"
-          TAG="v${BASE}-dev-${DATE}"
 
           EXE="${PRODUCT}-${BASE}${SUFFIX}.exe"
           DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
@@ -381,8 +380,6 @@ jobs:
             done < SHA256SUMS.txt
           } > sha_table.md
 
-          CHANGELOG_RAW="https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/Updater/changelogs/dev.txt"
-
           cat > release_body.md <<'BODY'
           ## 🔨 Dev Build v@BASE@-dev-@DATE@
 
@@ -390,13 +387,13 @@ jobs:
 
           <div align="center">
             <img alt="N-Zik Desktop Compagnon" src="https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/assets/design/ic_banner2.png" width="1000" />
-            <p><b>N-Zik Desktop Compagnon (Dev)</b> - Development Build</p>
+            <p><b>N-Zik Desktop Compagnon</b> - Development Build</p>
             <p><i>Built from latest commits. For testing & development only.</i></p>
           </div>
 
           ## 🔎 Verification
 
-          > The artifacts are **unsigned** (code signing is deferred). Verify the SHA-256 of the file you downloaded before installing - the table below and the SHA256SUMS.txt asset (published with this release) are the source of truth.
+          > Always verify the SHA-256 before installing any artifact downloaded from GitHub or other distributors.
 
           ### SHA-256
 
@@ -407,9 +404,9 @@ jobs:
           ⚠️ This is a **DEV build**, not a stable version.
           It is intended **only for testing and development feedback**.
 
-          1. Download the artifact for your platform below.
-          2. Verify its SHA-256 (the table above, or SHA256SUMS.txt).
-          3. Install it:
+          1. Download the **Dev build** below.
+          2. Verify its SHA-256 using the table above.
+          3. Install it on your system:
              - **Windows:** run the installer (it is unsigned - Windows SmartScreen may warn; the dev build is a separate installation, it lives beside the stable/beta one).
              - **Debian / Ubuntu / Mint:** apt install ./<file>.deb
              - **Fedora / openSUSE / Rocky:** dnf install ./<file>.rpm
@@ -417,36 +414,40 @@ jobs:
              - **AppImage:** run the file directly (needs fuse3; without it: ./<file>.AppImage --appimage-extract-and-run).
              - **Flatpak:** flatpak install ./<file>.flatpak.
 
+          ⚠️ **WARNING:** This build may contain bugs, experimental features, and incomplete functionality. Use only for development testing.
+
           Please report any crashes, bugs, or unexpected behavior.
 
           ## 📦 Available Builds
 
-          - **Windows installer** (.exe) - x86_64
-          - **Debian / Ubuntu** (.deb) - x86_64
-          - **Fedora / openSUSE / Rocky** (.rpm) - x86_64
-          - **Portable** (.zip) - x86_64
-          - **AppImage** - x86_64
-          - **Flatpak** - x86_64
+          - **Windows installer** (.exe) – Complete build with all components (x86_64, 64-bit only).
+          - **Debian / Ubuntu** (.deb) – Complete build for Debian-based distros (x86_64, 64-bit only).
+          - **Fedora / openSUSE / Rocky** (.rpm) – Complete build for RPM-based distros (x86_64, 64-bit only).
+          - **Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
+          - **AppImage** – Single-file build, no installation needed (x86_64, 64-bit only).
+          - **Flatpak** – Flatpak build (x86_64, 64-bit only).
 
-          > All 6 artifacts are x86_64 only.
+          > ℹ️ All 6 artifacts are 64-bit only (x86_64).
+
+          ## 🔄 Features
+
+          - 🔧 Built from the latest code commits
+          - ⚡ Latest features and improvements (unstable)
+          - 🐛 May contain bugs and experimental code
+          - 📝 Auto-update is **enabled** (dev builds auto-update to latest dev version)
 
           ## 🔄 Update Policy
 
-          - The **dev channel** is a separate product: on Windows every channel is its own installation; on Linux the dev build installs as n-zik-desktop-compagnon-dev (beside the stable/beta package) with its own Flatpak app-id.
-          - The in-app updater only ever offers **dev** releases to a dev build.
-          - **Cross-channel** is a **manual reinstall** (accepted: the product is transitional).
-
-          ## 🔗 Changelog & Downloads
-
-          - [Changelog text file (dev)](@CHANGELOG_RAW@)
-          - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/@TAG@>
-
-          - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@EXE_URL@
-          - 📥 **Debian (.deb):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@DEB@
-          - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@RPM@
-          - 📥 **Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@ZIP@
-          - 📥 **AppImage:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@APPIMAGE@
-          - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@FLATPAK@
+          - 🔴 **Dev Build**
+            - **Separate installation:** Installs alongside Stable/Beta as a distinct installation (on Windows every channel is its own installation; on Linux the dev package is n-zik-desktop-compagnon-dev with its own Flatpak app-id).
+            - **Default:** Auto-update is **enabled by default**.
+            - **User options:**
+              - You can **disable auto update** in **Settings > About > the update card**.
+            - **Behavior:**
+              - Dev builds auto-update to the latest **Dev** release only.
+              - Does **not** receive Stable or Beta updates.
+              - Does **not** interfere with your Stable or Beta installation.
+            - ⚠️ **Note:** This build is for testing and development only. May contain bugs and experimental features.
           BODY
 
           # Insert the SHA-256 table where the marker stands
@@ -462,14 +463,6 @@ jobs:
           sed -i \
             -e "s|@BASE@|${BASE}|g" \
             -e "s|@DATE@|${DATE}|g" \
-            -e "s|@TAG@|${TAG}|g" \
-            -e "s|@CHANGELOG_RAW@|${CHANGELOG_RAW}|g" \
-            -e "s|@EXE_URL@|${EXE// /%20}|g" \
-            -e "s|@DEB@|${DEB}|g" \
-            -e "s|@RPM@|${RPM}|g" \
-            -e "s|@ZIP@|${ZIP}|g" \
-            -e "s|@APPIMAGE@|${APPIMAGE}|g" \
-            -e "s|@FLATPAK@|${FLATPAK}|g" \
             release_body.md
 
       - name: Publish the release
@@ -604,39 +597,44 @@ jobs:
             ⚠️ This is a **DEV build**, not a stable version.
             It is intended **only for testing and development feedback**.
 
-            1. Download the artifact for your platform below.
+            1. Download the **Dev build** below.
             2. Verify its SHA-256 (the SHA256SUMS.txt asset of the release).
             3. Install it (Windows: run the installer - it is unsigned; Linux: apt / dnf / flatpak install, unzip the portable, or run the AppImage).
+
+            ⚠️ **WARNING:** This build may contain bugs, experimental features, and incomplete functionality. Use only for development testing.
 
             Please report any crashes, bugs, or unexpected behavior.
 
             ## 📦 Available Builds
 
-            - **Windows installer** (.exe) - x86_64
-            - **Debian / Ubuntu** (.deb) - x86_64
-            - **Fedora / openSUSE / Rocky** (.rpm) - x86_64
-            - **Portable** (.zip) - x86_64
-            - **AppImage** - x86_64
-            - **Flatpak** - x86_64
+            - **Windows installer** (.exe) – Complete build with all components (x86_64, 64-bit only).
+            - **Debian / Ubuntu** (.deb) – Complete build for Debian-based distros (x86_64, 64-bit only).
+            - **Fedora / openSUSE / Rocky** (.rpm) – Complete build for RPM-based distros (x86_64, 64-bit only).
+            - **Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
+            - **AppImage** – Single-file build, no installation needed (x86_64, 64-bit only).
+            - **Flatpak** – Flatpak build (x86_64, 64-bit only).
 
-            > All 6 artifacts are x86_64 only.
+            > ℹ️ All 6 artifacts are 64-bit only (x86_64).
+
+            ## 🔄 Features
+
+            - 🔧 Built from the latest code commits
+            - ⚡ Latest features and improvements (unstable)
+            - 🐛 May contain bugs and experimental code
+            - 📝 Auto-update is **enabled** (dev builds auto-update to latest dev version)
 
             ## 🔄 Update Policy
 
-            - The **dev channel** is a separate product: on Windows every channel is its own installation; on Linux the dev build installs as n-zik-desktop-compagnon-dev (beside the stable/beta package) with its own Flatpak app-id.
-            - The in-app updater only ever offers **dev** releases to a dev build.
-            - **Cross-channel** is a **manual reinstall** (accepted: the product is transitional).
-
-            ## 🔗 Changelog & Downloads
-
-            - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/N-Zik%20Desktop%20Compagnon%20(Dev)-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}.exe
-            - 📥 **Debian (.deb):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev_${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1_amd64.deb
-            - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1.x86_64.rpm
-            - 📥 **Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-linux-portable.zip
-            - 📥 **AppImage:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-x86_64.AppImage
-            - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-x86_64.flatpak
-            - 📄 **Changelog (dev):** <https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/Updater/changelogs/dev.txt>
-            - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}>
+            - 🔴 **Dev Build**
+              - **Separate installation:** Installs alongside Stable/Beta as a distinct installation (on Windows every channel is its own installation; on Linux the dev package is n-zik-desktop-compagnon-dev with its own Flatpak app-id).
+              - **Default:** Auto-update is **enabled by default**.
+              - **User options:**
+                - You can **disable auto update** in **Settings > About > the update card**.
+              - **Behavior:**
+                - Dev builds auto-update to the latest **Dev** release only.
+                - Does **not** receive Stable or Beta updates.
+                - Does **not** interfere with your Stable or Beta installation.
+              - ⚠️ **Note:** This build is for testing and development only. May contain bugs and experimental features.
         run: |
           if [ -z "$WEBHOOK_URL" ]; then
             echo "❌ The DISCORD_WEBHOOK_URL secret is not set on this repo — the release was published, the Discord notification is skipped."

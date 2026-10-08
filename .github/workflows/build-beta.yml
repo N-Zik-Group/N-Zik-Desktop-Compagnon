@@ -265,7 +265,6 @@ jobs:
           SUFFIX="-beta"
           PKG="n-zik-desktop-compagnon"
           PRODUCT="N-Zik Desktop Compagnon (Beta)"
-          TAG="v${BASE}-beta"
 
           EXE="${PRODUCT}-${BASE}${SUFFIX}.exe"
           DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
@@ -319,7 +318,7 @@ jobs:
 
           ## 🔎 Verification
 
-          > The artifacts are **unsigned** (code signing is deferred). Verify the SHA-256 of the file you downloaded before installing - the table below and the SHA256SUMS.txt asset (published with this release) are the source of truth.
+          > Always verify the SHA-256 before installing any artifact downloaded from GitHub or other distributors.
 
           ### SHA-256
 
@@ -330,9 +329,9 @@ jobs:
           ⚠️ This is a **BETA release**, not a stable version.
           It is intended **only for testing and feedback**.
 
-          1. Download the artifact for your platform below.
-          2. Verify its SHA-256 (the table above, or SHA256SUMS.txt).
-          3. Install it:
+          1. Download the **Beta build** below.
+          2. Verify its SHA-256 using the table above.
+          3. Install it on your system:
              - **Windows:** run the installer (it is unsigned - Windows SmartScreen may warn; the source is public and any build can be rebuilt and compared against this one).
              - **Debian / Ubuntu / Mint:** apt install ./<file>.deb
              - **Fedora / openSUSE / Rocky:** dnf install ./<file>.rpm
@@ -344,32 +343,32 @@ jobs:
 
           ## 📦 Available Builds
 
-          - **Windows installer** (.exe) - x86_64
-          - **Debian / Ubuntu** (.deb) - x86_64
-          - **Fedora / openSUSE / Rocky** (.rpm) - x86_64
-          - **Portable** (.zip) - x86_64
-          - **AppImage** - x86_64
-          - **Flatpak** - x86_64
-
-          > All 6 artifacts are x86_64 only.
+          - **Windows installer** (.exe) – Complete build with all components (x86_64, 64-bit only).
+          - **Debian / Ubuntu** (.deb) – Complete build for Debian-based distros (x86_64, 64-bit only).
+          - **Fedora / openSUSE / Rocky** (.rpm) – Complete build for RPM-based distros (x86_64, 64-bit only).
+          - **Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
+          - **AppImage** – Single-file build, no installation needed (x86_64, 64-bit only).
+          - **Flatpak** – Flatpak build (x86_64, 64-bit only).
+            ⚠️ May contain bugs or experimental features.
 
           ## 🔄 Update Policy
 
-          - Updates are handled by the **in-app updater** (Settings - About - the update card): the channel is fixed **at build time** - a beta build only ever sees **beta** releases.
-          - **Cross-channel** (e.g. beta to stable) is a **manual reinstall** (accepted: the product is transitional).
+          - 🟡 **Beta Build**
+            - **Default:** Update notifications for **Beta** are **enabled by default**.
+            - **User options:**
+              - You can **disable Beta updates** in **Settings > About > the update card** (Update disabled).
+              - You can **ask first before each check** in **Settings > About > the update card** (Ask user).
+            - **Behavior:**
+              - The channel is fixed at build time → stays on the **Beta channel** and receives **Beta updates** only.
+              - Does **not** receive **Stable** updates.
+            - ⚠️ **Note:** This build may contain experimental features and bugs.
+
+          This lets you decide whether to test new experimental updates or stick with the stable ones.
 
           ## 🔗 Changelog & Downloads
 
           @COMPARE_LINE@
           - [Changelog text file](@CHANGELOG_RAW@)
-          - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/@TAG@>
-
-          - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@EXE_URL@
-          - 📥 **Debian (.deb):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@DEB@
-          - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@RPM@
-          - 📥 **Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@ZIP@
-          - 📥 **AppImage:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@APPIMAGE@
-          - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/@TAG@/@FLATPAK@
           BODY
 
           # Insert the SHA-256 table where the marker stands
@@ -390,14 +389,7 @@ jobs:
 
           sed -i \
             -e "s|@BASE@|${BASE}|g" \
-            -e "s|@TAG@|${TAG}|g" \
             -e "s|@CHANGELOG_RAW@|${CHANGELOG_RAW}|g" \
-            -e "s|@EXE_URL@|${EXE// /%20}|g" \
-            -e "s|@DEB@|${DEB}|g" \
-            -e "s|@RPM@|${RPM}|g" \
-            -e "s|@ZIP@|${ZIP}|g" \
-            -e "s|@APPIMAGE@|${APPIMAGE}|g" \
-            -e "s|@FLATPAK@|${FLATPAK}|g" \
             -e "s|^@COMPARE_LINE@.*$|${COMPARE_LINE}|" \
             release_body.md
 
@@ -477,7 +469,7 @@ jobs:
             ⚠️ This is a **BETA release**, not a stable version.
             It is intended **only for testing and feedback**.
 
-            1. Download the artifact for your platform below.
+            1. Download the **Beta build** below.
             2. Verify its SHA-256 (the SHA256SUMS.txt asset of the release).
             3. Install it (Windows: run the installer - it is unsigned; Linux: apt / dnf / flatpak install, unzip the portable, or run the AppImage).
 
@@ -485,19 +477,27 @@ jobs:
 
             ## 📦 Available Builds
 
-            - **Windows installer** (.exe) - x86_64
-            - **Debian / Ubuntu** (.deb) - x86_64
-            - **Fedora / openSUSE / Rocky** (.rpm) - x86_64
-            - **Portable** (.zip) - x86_64
-            - **AppImage** - x86_64
-            - **Flatpak** - x86_64
-
-            > All 6 artifacts are x86_64 only.
+            - **Windows installer** (.exe) – Complete build with all components (x86_64, 64-bit only).
+            - **Debian / Ubuntu** (.deb) – Complete build for Debian-based distros (x86_64, 64-bit only).
+            - **Fedora / openSUSE / Rocky** (.rpm) – Complete build for RPM-based distros (x86_64, 64-bit only).
+            - **Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
+            - **AppImage** – Single-file build, no installation needed (x86_64, 64-bit only).
+            - **Flatpak** – Flatpak build (x86_64, 64-bit only).
+              ⚠️ May contain bugs or experimental features.
 
             ## 🔄 Update Policy
 
-            - Updates are handled by the **in-app updater** (Settings - About - the update card): the channel is fixed **at build time** - a beta build only ever sees **beta** releases.
-            - **Cross-channel** (e.g. beta to stable) is a **manual reinstall** (accepted: the product is transitional).
+            - 🟡 **Beta Build**
+              - **Default:** Update notifications for **Beta** are **enabled by default**.
+              - **User options:**
+                - You can **disable Beta updates** in **Settings > About > the update card** (Update disabled).
+                - You can **ask first before each check** in **Settings > About > the update card** (Ask user).
+              - **Behavior:**
+                - The channel is fixed at build time → stays on the **Beta channel** and receives **Beta updates** only.
+                - Does **not** receive **Stable** updates.
+              - ⚠️ **Note:** This build may contain experimental features and bugs.
+
+            This lets you decide whether to test new experimental updates or stick with the stable ones.
 
             ## 🔗 Changelog & Downloads
 
