@@ -265,15 +265,16 @@ Test files: `app/src/test/kotlin/` — mirror the source package structure exact
 
 New features/bug fixes should include at least one test. If the change is pure UI with no extractable logic, note it in the report (the codebase's convention is to extract the math — sheet snap, scrubber, duration indicator — into a pure function and test it).
 
-## GitHub CI (channel workflows)
+## GitHub CI (channel workflows + test dry-run)
 
-Three GitHub Actions workflows under `.github/workflows/` — one per channel, each run = 1 channel = 1 release = the channel's full set of 6 artifacts, unsigned, no fastlane (port of the phone repo's channel workflows, spec `spec-github-ci-canals`):
+Three GitHub Actions channel workflows (plus one non-channel test dry-run — `build-test.yaml`, dispatch-only, builds without publishing, spec `spec-ci-build-test`, the bullet below) under `.github/workflows/` — the channel workflows: one per channel, each run = 1 channel = 1 release = the channel's full set of 6 artifacts, unsigned, no fastlane (port of the phone repo's channel workflows, spec `spec-github-ci-canals`):
 
 | Workflow | Channel | Tag | Triggers | Release |
 |----------|---------|-----|----------|---------|
 | `build-stable.yml` | `stable` | `v{base}` | Sunday 00:00 (Europe/Paris) + manual dispatch | normal, marked latest |
 | `build-beta.yml` | `beta` | `v{base}-beta` | manual dispatch only | pre-release, not latest |
 | `build-dev.yml` | `dev` | `v{base}-dev-YYYYMMDD` (the build date) | daily 00:00 (Europe/Paris) + manual dispatch + push to `main` | pre-release |
+| `build-test.yaml` | (none — test dry-run) | (none) | manual dispatch only | none (workflow artifacts only) |
 
 Each run is a linear pipeline: the guards → the two build jobs in parallel (`build-linux` = the 5 Linux tasks in ONE gradle invocation; `build-windows` = `:app:packageInstaller`) → `upload-to-release` (softprops — the tag, the release, the 6 artifacts collected from their exact build output paths (a missing one fails loud), `SHA256SUMS.txt` as the 7th asset) → the channel's post jobs (`close-issues` stable; `comment-beta-issues` beta; `cleanup-old-dev-releases` keeping 2 + `comment-dev-issues` dev) → `notify-discord`. The version is read from the catalog (`versioning` greps `nzikVersionName` + `nzikVersionCode` from `gradle/libs.versions.toml`) — the CI never writes it. Concurrency groups `stable-deploy` / `beta-deploy` / `dev-deploy` with `cancel-in-progress: false` (a second run queues instead of cancelling; re-running the same base updates the release in place — never a 2nd release). Both build jobs pin the runner OS timezone to Europe/Paris **before** the gradle invocation (the dev build date is the JVM's `LocalDate.now()`).
 
@@ -282,6 +283,7 @@ Each run is a linear pipeline: the guards → the two build jobs in parallel (`b
 - **What the CI does NOT do:** no signing / fastlane / keystore (the "unsigned, SHA-256 published" story of "Release chore — channels" stays), no catalog bump, no changelog writing — bumping `gradle/libs.versions.toml` + writing `Updater/changelogs/{code}.txt` remain the manual release chore, and the changelog must be written **before** the bump (the guard reads it).
 - **Prerequisites (fail-loud early, never mid-build):** the pinned Linux VLC tarball `vlc-3.0.24-linux-x64.tar.gz` **uploaded as a release asset** (the AppImage release chore — until then the Linux job fails loud, `TARBALL_404`); the repo secret `DISCORD_WEBHOOK_URL` set once (if missing, ONLY `notify-discord` fails — the release is still published); the Linux runner tools `fakeroot` / `rpm` / `flatpak` / `flatpak-builder` + the Flathub remote + the pre-installed `org.freedesktop.Platform//24.08` runtime — installed as explicit steps of `build-linux` (the same host prerequisites as "Flatpak (the 6th Linux path)" above).
 - **Manual fallback:** `./build.sh package stable|beta|dev` + `gradlew.bat :app:packageInstaller -Pchannel=…` + the manual tag/upload stay valid — the CI collects exactly those artifact names (see "Release chore — channels" above).
+- **Test dry-run (`build-test.yaml`, spec `spec-ci-build-test`):** the phone's `build-test.yaml` ported — a manual dispatch-only dry-run of the release build pipeline: the same `build-linux` / `build-windows` legs as the channels (the `stable` channel, the same gradle cache keys/paths, the same `.\gradlew.bat` Windows step), then a `collect` job that downloads both leg artifacts, lists the 6 artifacts, logs their SHA-256 table, and re-exposes them as plain workflow artifacts (`test-artifacts` + `SHA256SUMS.txt`) — no release, no tag, no signing, no Discord, no issue automation, no `concurrency` block (mobile parity). Same TARBALL_404 prerequisite as the channels (the Linux leg fails loud until the pinned tarball is uploaded as the release asset — the Windows leg is unaffected and still produces the installer).
 
 ## CI Expectations
 
