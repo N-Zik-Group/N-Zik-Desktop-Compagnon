@@ -78,10 +78,16 @@ jobs:
       - name: Align the runner OS timezone to Europe/Paris
         run: sudo ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
 
-      - name: Install the build prerequisites (jpackage tools + Flatpak)
+      - name: Install the build prerequisites (jpackage tools + Flatpak + libebml5 for the AppImage)
+        # libebml5: the pinned Linux VLC tarball's libmkv_plugin.so carries libebml.so.5 as an
+        # external DT_NEEDED (the audio subset links against the build host's libebml —
+        # scripts/build-vlc-linux-tarball.sh installs libebml-dev to build it). The
+        # ubuntu-latest image used to ship VLC (which pulled in libebml5); the image dropped
+        # VLC, so linuxdeploy (the :app:packageAppImage bundler) no longer finds the lib —
+        # the 2026-10-08 dev run failed with "Could not find dependency: libebml.so.5".
         run: |
           sudo apt-get update
-          sudo apt-get install -y fakeroot rpm flatpak flatpak-builder
+          sudo apt-get install -y fakeroot rpm flatpak flatpak-builder libebml5
 
       - name: Configure the Flathub remote
         run: flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -148,7 +154,75 @@ jobs:
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: gradle-${{ runner.os }}-
 
+      - name: Prepare the embedded NSIS (tools/nsis — SHA-verified, extracted for $NSIS_DIR)
+        # The windows-latest runner migrated to Windows Server 2025, which dropped NSIS from
+        # the image (the Windows 2022 image shipped "NSIS 3.10" — the premise recorded in
+        # spec-github-ci-canals broke with the migration; the 2026-10-08 dev run failed with
+        # :app:packageInstaller "NSIS (makensis.exe) not found"). The toolchain is embedded
+        # in the repo instead (tools/nsis/ — user decision 2026-10-08): verify the single
+        # embedded zip against its pinned SHA-256 (fail-loud), extract it to
+        # <runner.temp>\nsis (the job env NSIS_DIR), and smoke-check makensis.
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (-not (Test-Path 'tools\nsis')) {
+            Write-Error "ERROR: tools\nsis is missing from the checkout — failing loud."
+            exit 1
+          }
+          $zips = Get-ChildItem -Path 'tools\nsis' -Filter 'nsis-*.zip' -File
+          if ($zips.Count -ne 1) {
+            Write-Error "ERROR: expected exactly one embedded NSIS zip in tools\nsis (found $($zips.Count)) — failing loud."
+            exit 1
+          }
+          $zip = $zips[0]
+          $shaFile = Join-Path $zip.DirectoryName ($zip.Name + '.sha256')
+          if (-not (Test-Path $shaFile)) {
+            Write-Error "ERROR: no $($zip.Name).sha256 next to the embedded NSIS zip — failing loud."
+            exit 1
+          }
+          # The .sha256 file holds the bare SHA-256 hex (one line, no file name).
+          $expected = (Get-Content $shaFile -Raw).Trim().ToLowerInvariant()
+          $actual = (Get-FileHash -Algorithm SHA256 -Path $zip.FullName).Hash.ToLowerInvariant()
+          if ($actual -ne $expected) {
+            Write-Error "ERROR: embedded NSIS zip SHA-256 mismatch (expected $expected, got $actual) — the tools\nsis copy is corrupt or was replaced without its .sha256 — failing loud."
+            exit 1
+          }
+          Expand-Archive -Path $zip.FullName -DestinationPath "$env:RUNNER_TEMP\nsis-extract" -Force
+          $tops = Get-ChildItem "$env:RUNNER_TEMP\nsis-extract" -Directory
+          if ($tops.Count -ne 1) {
+            Write-Error "ERROR: the embedded NSIS zip must contain exactly one top-level folder (found $($tops.Count)) — failing loud."
+            exit 1
+          }
+          $top = $tops[0]
+          $dest = Join-Path $env:RUNNER_TEMP 'nsis'
+          if (Test-Path $dest) {
+            Remove-Item $dest -Recurse -Force
+          }
+          Move-Item -Path $top.FullName -Destination $dest
+          $makensis = Join-Path $dest 'makensis.exe'
+          if (-not (Test-Path $makensis)) {
+            Write-Error "ERROR: makensis.exe missing from the extracted NSIS — failing loud."
+            exit 1
+          }
+          & $makensis /VERSION
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "ERROR: makensis /VERSION failed (exit $LASTEXITCODE) — failing loud."
+            exit 1
+          }
+
       - name: Build with Gradle (NSIS)
+        # The :app:packageInstaller task resolves $NSIS_DIR\makensis.exe at execution time
+        # (findMakensis in app/build.gradle.kts). The NSIS 3.x toolchain ships EMBEDDED in
+        # the repo (tools/nsis/ — user decision 2026-10-08: the windows-latest runner
+        # migrated to Windows Server 2025, which dropped the NSIS the Windows 2022 image
+        # preinstalled, so the build neither relies on the image nor downloads the
+        # toolchain). The "Prepare the embedded NSIS" step above verifies the pinned
+        # SHA-256 (fail-loud) and extracts the zip to <runner.temp>\nsis (the portable zip
+        # ships makensis.exe at the extraction root); nsis-updater.yml (spec
+        # `spec-nsis-updater-ci`) opens the update bot PR when the official SourceForge
+        # project ships a newer NSIS 3.x. Step-level env: the runner context is not
+        # available in a job-level env.
+        env:
+          NSIS_DIR: ${{ runner.temp }}\nsis
         # PowerShell (the default run shell on Windows) does not resolve executables
         # from the current directory — the `.\` prefix is required.
         run: .\gradlew.bat :app:packageInstaller -Pchannel=beta

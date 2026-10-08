@@ -302,12 +302,15 @@ tasks.compileTestKotlin {
 // overwrites the byproduct): `<product>-<version>.exe` (e.g.
 // "N-Zik Desktop Compagnon (Dev)-0.0.1-dev-20261007.exe").
 //
-// NSIS 3.x toolchain: preinstalled on the GitHub Actions windows runners
-// (`C:\Program Files (x86)\NSIS` — recorded in `spec-github-ci-canals.md`); on a dev machine
-// per-user under `%LOCALAPPDATA%\Programs\NSIS\nsis-3.10` (the official portable zip — the
-// setup.exe manifests requireAdministrator, so it is extracted, not installed) or the machine
-// defaults; the `NSIS_DIR` environment variable (the NSIS root) wins when set. Branding is the
-// window icon only (MUI_ICON / MUI_UNI_ICON) — plain MUI, no header image.
+// NSIS 3.x toolchain: on CI the official zip ships EMBEDDED in the repo (tools/nsis/ — the
+// windows-latest runner migrated to Windows Server 2025, which dropped the NSIS that the
+// Windows 2022 image preinstalled; the channel workflows set NSIS_DIR to the SHA-verified
+// extracted copy — nsis-updater.yml opens the update bot PR when the official SourceForge
+// project ships a newer version, spec `spec-nsis-updater-ci`); on a dev machine per-user
+// under `%LOCALAPPDATA%\Programs\NSIS\nsis-3.10` (the official portable zip — the setup.exe
+// manifests requireAdministrator, so it is extracted, not installed) or the machine defaults;
+// the `NSIS_DIR` environment variable (the NSIS root) wins when set. Branding is the window
+// icon only (MUI_ICON / MUI_UNI_ICON) — plain MUI, no header image.
 fun findMakensis(): File {
     val localAppData = System.getenv("LOCALAPPDATA").orEmpty()
     val candidates = listOfNotNull(
