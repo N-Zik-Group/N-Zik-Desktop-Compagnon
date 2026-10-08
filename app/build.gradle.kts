@@ -992,6 +992,21 @@ val linuxPackageName =
 // The channel suffix rides after the base version through the single rename helper (AD-2).
 val appImageFileName = channelArtifactName("${linuxPackageName}-${libs.versions.nzikVersionName.get()}-x86_64.AppImage")
 
+// The AppImage AppRun's channel-independent env exports (spec spec-linux-appimage — the
+// 2026-10-08 embedded-runtime audio fix). LD_LIBRARY_PATH lets libvlc.so's DT_NEEDED (the
+// libvlccore soname) and the plugins' own DT_NEEDED resolve from the embedded runtime.
+// VLC_PLUGIN_PATH points libvlc at the embedded plugin dir: libvlc_new() loads its mandatory
+// modules (audio, clock, access) at instance creation, and in VLC 3.0.24 the --plugin-path CLI
+// option is gone (the env var is the only lever) — without it libvlc_new returns NULL and every
+// local playback fails. The AppImage shares the Flatpak's embedded tarball, so it carries the
+// same VLC exports — both lines (no `JAVA_TOOL_OPTIONS`: the AppImage uses the system libsecret,
+// only the sandbox needs the explicit `jna.library.path`; the AppImage resolves against $APPDIR,
+// the Flatpak wrapper against /app/lib).
+val appImageAppRunExports = listOf(
+    "export LD_LIBRARY_PATH=\"\$APPDIR/usr/lib/app/resources/vlc\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\"",
+    "export VLC_PLUGIN_PATH=\"\$APPDIR/usr/lib/app/resources/vlc/plugins\${VLC_PLUGIN_PATH:+:\$VLC_PLUGIN_PATH}\"",
+)
+
 // The Flatpak app-id (spec spec-linux-flatpak, AD-1): the frozen Flatpak identity — the bundle's
 // install name, the upgrade identity and the icon name all derive from it, so it must never
 // change after the first release (a changed app-id would orphan every installed copy). The dev
@@ -1027,6 +1042,23 @@ val flatpakLibsecretModule = (flatpakManifestJson["modules"] as List<*>).first {
 val flatpakLibsecretSource = (flatpakLibsecretModule["sources"] as List<*>).first() as Map<*, *>
 val flatpakLibsecretUrl = flatpakLibsecretSource["url"] as String
 val flatpakLibsecretSha256 = flatpakLibsecretSource["sha256"] as String
+
+// The Flatpak wrapper's channel-independent env exports (spec spec-linux-flatpak, AD-3 — the
+// 2026-10-08 flatpak audio/keyring fix). LD_LIBRARY_PATH lets libvlc.so's DT_NEEDED (the
+// libvlccore soname) and the plugins' own DT_NEEDED resolve from the embedded runtime.
+// VLC_PLUGIN_PATH points libvlc at the embedded plugin dir: libvlc_new() loads its mandatory
+// modules (audio, clock, access) at instance creation, and in VLC 3.0.24 the --plugin-path CLI
+// option is gone (the env var is the only lever) — without it libvlc_new returns NULL and every
+// local playback fails. jna.library.path makes the bundled libsecret (staged in /app/lib by the
+// libsecret module) resolvable by JNA's explicit search, independent of the sandbox's
+// host-dependent ld cache: the unversioned libsecret-1.so is installed by meson, but it is found
+// only through JNA's explicit path or the host ld cache, and that coverage is not guaranteed
+// across flatpak versions (the 2026-10-08 keyring regression).
+val flatpakWrapperExports = listOf(
+    "export LD_LIBRARY_PATH=\"/app/lib/app/resources/vlc\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\"",
+    "export VLC_PLUGIN_PATH=\"/app/lib/app/resources/vlc/plugins\${VLC_PLUGIN_PATH:+:\$VLC_PLUGIN_PATH}\"",
+    "export JAVA_TOOL_OPTIONS=\"-Djna.library.path=/app/lib\${JAVA_TOOL_OPTIONS:+ \$JAVA_TOOL_OPTIONS}\"",
+)
 
 compose.desktop {
     application {
@@ -1199,6 +1231,10 @@ project.afterEvaluate {
         systemProperty("linux.appImage.linuxdeploySha256", linuxdeploySha256)
         systemProperty("linux.appImage.fileName", appImageFileName)
         systemProperty("linux.appImage.resourcesInjection", "usr/lib/app/resources/vlc")
+        // The export lines carry shell quotes + ${...}: base64 keeps them command-line-safe as
+        // a systemProperty (a raw string with embedded quotes breaks the test JVM's Windows
+        // command line — the pin tests decode it).
+        systemProperty("linux.appImage.appRunExports", Base64.getEncoder().encodeToString(appImageAppRunExports.joinToString("\u001f").toByteArray()))
         // The Flatpak contract (spec spec-linux-flatpak): the frozen app-id (AD-1), the base
         // runtime + version (AD-2), the finish-args (the sandbox contract: network = pairing
         // listener, SecretService = keyring, home = the data dir, …), the frozen bundle name and
@@ -1212,6 +1248,7 @@ project.afterEvaluate {
         systemProperty("flatpak.command", flatpakCommand)
         systemProperty("flatpak.libsecretUrl", flatpakLibsecretUrl)
         systemProperty("flatpak.libsecretSha256", flatpakLibsecretSha256)
+        systemProperty("flatpak.wrapperExports", Base64.getEncoder().encodeToString(flatpakWrapperExports.joinToString("\u001f").toByteArray()))
     }
 
     // The portable Linux build is the jpackage app-image — the only Linux binary the AUR entry consumes.
@@ -1401,7 +1438,7 @@ project.afterEvaluate {
             File(appDir, "AppRun").apply {
                 writeText(
                     "#!/bin/sh\n" +
-                    "export LD_LIBRARY_PATH=\"${'$'}APPDIR/usr/lib/app/resources/vlc${'$'}{LD_LIBRARY_PATH:+:${'$'}LD_LIBRARY_PATH}\"\n" +
+                    appImageAppRunExports.joinToString("\n") + "\n" +
                     "exec \"${'$'}APPDIR/usr/bin/${image.name}\" \"${'$'}@\"\n"
                 )
                 setExecutable(true, false)
@@ -1626,7 +1663,7 @@ project.afterEvaluate {
             File(staging, "bin/$flatpakCommand").apply {
                 writeText(
                     "#!/bin/sh\n" +
-                        "export LD_LIBRARY_PATH=\"/app/lib/app/resources/vlc\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\"\n" +
+                        flatpakWrapperExports.joinToString("\n") + "\n" +
                         "exec \"/app/bin/$displayName\" \"\$@\"\n"
                 )
                 setExecutable(true, false)

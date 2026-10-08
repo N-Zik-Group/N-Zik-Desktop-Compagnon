@@ -149,8 +149,14 @@ class LinuxSecretStore private constructor(
          * The keyring store, or `null` when `libsecret` cannot be loaded (JNA reports an
          * `UnsatisfiedLinkError`, which `runCatching` below catches) or the Secret Service
          * daemon cannot be reached (the probe lookup below reports a `GError`) — the caller
-         * then falls back to [SessionSecretStore]. JNA resolves the soname itself
-         * (`secret-1` finds `libsecret-1.so.0`, no `-dev` symlink needed).
+         * then falls back to [SessionSecretStore]. Where JNA finds `libsecret`: on the distro
+         * install paths the system `libsecret` lives in the standard library dirs JNA's search
+         * already covers; in the Flatpak sandbox the bundled `libsecret` is staged in `/app/lib`,
+         * and JNA's first attempt — a bare `dlopen` of the unversioned name — succeeds only where
+         * the host ld cache happens to cover it (host-dependent, not guaranteed — the 2026-10-08
+         * keyring regression). The deterministic path is the explicit file search on the
+         * `jna.library.path` the Flatpak wrapper exports, where a `secret-1` request matches the
+         * versioned soname `libsecret-1.so.0`.
          */
         fun create(): LinuxSecretStore? = runCatching {
             val api = Native.load("secret-1", SecretApi::class.java)
