@@ -399,7 +399,7 @@
     <string name="reinstalling_update">Réinstallation de la mise à jour</string>
     <string name="redownload_update">Télécharger à nouveau la dernière mise à jour</string>
     <string name="download_cancelled">Téléchargement annulé</string>
-    <string name="update_cache_cleared">Cache vidé</string>
+    <string name="update_cache_cleared">Cache effacé</string>
     <string name="update_download_truncated">Le téléchargement de la mise à jour a été interrompu. Le fichier partiel a été conservé — essayez de le télécharger à nouveau.</string>
     <string name="update_download_indeterminate">%1$s téléchargé (taille inconnue)</string>
     <string name="error_windows_install_helper">Le programme d\'installation Windows n\'a pas pu être lancé. Lancez manuellement le programme d\'installation que vous avez téléchargé.</string>
@@ -408,7 +408,7 @@
     <string name="menu">Menu</string>
     <string name="translate">Traduire</string>
     <string name="info_translation">Traduction</string>
-    <string name="whats_new_in">Quoi de neuf dans %s</string>
+    <string name="whats_new_in">Quelles sont les nouveautés de %s ?</string>
     <!-- AD-10: the About page (1:1 port of the phone's About) -->
     <string name="about">À propos</string>
     <string name="about_description">La section « À propos » contient des informations sur l\'application, ses développeurs, le dépannage et les options de mise à jour.</string>
@@ -416,7 +416,7 @@
     <string name="troubleshooting">Dépannage</string>
     <string name="view_the_source_code">Afficher le code source</string>
     <string name="report_an_issue">Signaler un problème</string>
-    <string name="request_a_feature">Demander une fonctionnalité ou nous suggérer une idée</string>
+    <string name="request_a_feature">Demander une fonctionnalité ou proposer une idée</string>
     <string name="you_will_be_redirected_to_github">Vous allez être redirigé vers GitHub.</string>
     <string name="contributors">Contributeurs</string>
     <string name="translators">Traducteurs</string>
