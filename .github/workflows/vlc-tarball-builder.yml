@@ -158,7 +158,7 @@ jobs:
           - Asset: vlc-@VERSION@-linux-x64.tar.gz
           - SHA-256: @SHA@
 
-          > This release is a **prerelease** on purpose: the vlc-*-tarball namespace never becomes "latest" (the /releases/latest readers — the CI version guards + the metrics — stay on the app releases; the in-app updater reads the full release list and is protected by its same-channel tag filter). It is consumed only by the version catalog (vlc-linux-tarball-url) once the bot's pin PR is reviewed and merged.
+          > This release is a **prerelease** on purpose: the vlc-*-tarball namespace never becomes "latest" (the /releases/latest readers the CI version guards + the metrics stay on the app releases; the in-app updater reads the full release list and is protected by its same-channel tag filter). It is consumed only by the version catalog (vlc-linux-tarball-url) once the bot's pin PR is reviewed and merged.
           BODY
           sed -i \
             -e "s|@VERSION@|${VERSION}|g" \
