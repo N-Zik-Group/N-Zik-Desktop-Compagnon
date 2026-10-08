@@ -51,7 +51,7 @@
     <string name="paired_session_only">Aucun porte-clés n\'est disponible sur ce PC, l\'appairage est donc conservé uniquement en mémoire pour cette session : veuillez procéder à un nouvel appairage après un redémarrage.</string>
     <string name="retry">Réessayer</string>
     <string name="forget_phone">Forget this phone</string>
-    <string name="forget_phone_text">Removes the pairing from this PC</string>
+    <string name="forget_phone_text">Supprime l\'appairage de cet ordinateur</string>
     <!-- Unreachable -->
     <string name="unreachable_title">Téléphone injoignable</string>
     <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
@@ -300,6 +300,13 @@
     <string name="info_remove_all_downloaded_songs">Supprimer tous les titres téléchargés</string>
     <string name="tab_data">Données</string>
     <string name="data_settings_description">La section « Données » contient des paramètres qui modifient la manière dont l\'application gère les données en local et à distance.</string>
+    <!-- The settings sub-tabs (spec `spec-settings-navigation`, NAV-9): the phone's keys and English values, verbatim -->
+    <string name="tab_general">Général</string>
+    <string name="tab_network">Réseau</string>
+    <string name="tab_miscellaneous">Divers</string>
+    <string name="general_settings_description">La section « Général » contient les paramètres relatifs aux fonctionnalités générales de l\'application.</string>
+    <string name="network_settings_description">La section « Réseau » contient des paramètres permettant d\'optimiser les performances de l\'application et l\'utilisation des données.</string>
+    <string name="other_settings_description">La section « Divers » contient divers paramètres optionnels et utilitaires.</string>
     <string name="cache">Cache</string>
     <string name="cache_cleared">Lorsque le cache manque d\'espace, les ressources qui n\'ont pas été consultées depuis le plus longtemps sont effacées</string>
     <string name="song_cache_max_size">Taille maximale du cache des titres</string>
@@ -333,4 +340,86 @@
     <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
     <string name="local_playback_unreachable">Your phone did not answer.</string>
     <string name="local_playback_failed">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
+    <!-- App update (spec spec-updater: the in-app updater + the channel header badge) -->
+    <string name="update_current_version">Current version</string>
+    <string name="enable_check_for_update">Activer la vérification des mises à jour</string>
+    <string name="update_check_when_enabled">When enabled, a new version of this channel is checked at startup and the update dialog offers it.</string>
+    <string name="update_check_off_build">Si vous voyez ce message, cela signifie que votre version n\'a pas activé la mise à jour automatique, pls met à jour l\'application manuellement à partir de github</string>
+    <string name="info_check_update_now">Vérifiez maintenant</string>
+    <string name="update_available">Une mise à jour est disponible</string>
+    <string name="app_update_dialog_version">La nouvelle version %s peut être téléchargée !</string>
+    <string name="app_update_dialog_size">La taille du fichier est de %s</string>
+    <string name="downloading_update">Téléchargement de la mise à jour</string>
+    <string name="update_download_progress">Downloading update… %1$d%%</string>
+    <string name="info_no_update_available">Aucune mise à jour disponible</string>
+    <string name="update_download_completed">Mise à jour téléchargée</string>
+    <string name="error_update_check_failed">The update check failed (%1$s)</string>
+    <string name="error_update_download_failed">The update download failed (%1$s)</string>
+    <string name="error_no_internet">Pas de réseau</string>
+    <string name="install_now">Install now</string>
+    <string name="install_file_saved_at">The update file is saved at:</string>
+    <string name="install_open_folder">Open folder</string>
+    <string name="install_copy_path">Copy path</string>
+    <string name="path_copied">Path copied</string>
+    <string name="install_flatpak_command">Update in place with:</string>
+    <string name="install_pkg_command">Install the package with:</string>
+    <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
+    <string name="install_pkg_aur_hint">This machine uses pacman: update the AUR entry (n-zik-desktop-compagnon or n-zik-desktop-compagnon-git) with your AUR helper.</string>
+    <string name="install_replacement_appimage">Replace the AppImage: put the downloaded file where the current one is, then relaunch.</string>
+    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
+    <string name="old_install_path">Current install:</string>
+    <!-- The channel header badge (4 labels; stable shows no badge — the phone's rule) -->
+    <string name="beta_title">Beta</string>
+    <string name="dev_title">Dev</string>
+    <string name="git_title">Git</string>
+    <string name="debug_title">Débogage</string>
+    <!-- Loop 2: the update page (spec spec-updater AD-9 revised) -->
+    <string name="check_update">Vérifier les mises à jour</string>
+    <string name="check_update_ask">Check for updates now?</string>
+    <!-- The "ask" startup dialog (the phone's CheckForUpdateDialog, ported 1:1) -->
+    <string name="check_at_github_for_updates">Vérifier sur Github les mises à jour ?</string>
+    <string name="when_an_update_is_available_you_will_be_asked_if_you_want_to_install_info">Lorsqu\'une mise à jour est disponible, on vous demandera si vous voulez l\'installer. Il n\'y aura pas d\'installations automatiques, en arrière-plan.</string>
+    <string name="but_these_updates_would_not_go_through">Mais ces mises à jour ne passeraient pas par l\'examen supplémentaire effectué sur IzzyOnDroid ou F-Droid.</string>
+    <string name="you_can_still_turn_it_on_or_off_from_the_settings">Vous pouvez toujours l\'activer ou le désactiver à partir des paramètres.</string>
+    <string name="checking_for_updates">Vérification des mises à jour…</string>
+    <string name="auto_update_enabled">Activé</string>
+    <string name="auto_update_ask">Demander</string>
+    <string name="auto_update_disabled">Désactivé</string>
+    <string name="on">Activé</string>
+    <string name="off">Désactivé</string>
+    <string name="ask">Demander</string>
+    <string name="github">GitHub</string>
+    <string name="up_to_date">À jour</string>
+    <string name="never_checked">Jamais vérifié</string>
+    <string name="last_check">Dernière vérification : %s</string>
+    <string name="update_unknown">Inconnu</string>
+    <string name="update_not_available_yet">La mise à jour n\'est pas encore disponible ou la compilation est introuvable</string>
+    <string name="update_file_size">Taille du fichier : %s</string>
+    <string name="downloading_actual_version">Réinstallation : %1$s (%2$s)</string>
+    <string name="reinstalling_update">Réinstallation de la mise à jour</string>
+    <string name="redownload_update">Télécharger à nouveau la dernière mise à jour</string>
+    <string name="download_cancelled">Téléchargement annulé</string>
+    <string name="update_cache_cleared">Cache vidé</string>
+    <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
+    <string name="update_download_indeterminate">Downloaded %1$s (unknown size)</string>
+    <string name="error_windows_install_helper">The Windows installer could not be started. Run the downloaded installer manually.</string>
+    <string name="install">Installer</string>
+    <string name="stable_title">STABLE</string>
+    <string name="menu">Menu</string>
+    <string name="translate">Traduire</string>
+    <string name="info_translation">Traduction</string>
+    <string name="whats_new_in">Quoi de neuf dans %s</string>
+    <!-- AD-10: the About page (1:1 port of the phone's About) -->
+    <string name="about">À propos</string>
+    <string name="about_description">La section « À propos » contient des informations sur l\'application, ses développeurs, le dépannage et les options de mise à jour.</string>
+    <string name="by_string">par</string>
+    <string name="troubleshooting">Dépannage</string>
+    <string name="view_the_source_code">Afficher le code source</string>
+    <string name="report_an_issue">Signaler un problème</string>
+    <string name="request_a_feature">Demander une fonctionnalité ou nous suggérer une idée</string>
+    <string name="you_will_be_redirected_to_github">Vous allez être redirigé vers GitHub.</string>
+    <string name="contributors">Contributeurs</string>
+    <string name="translators">Traducteurs</string>
+    <string name="about_developers">Développeurs / Concepteurs</string>
+    <string name="in_alphabetical_order">Dans l\'ordre alphabétique :</string>
 </resources>
