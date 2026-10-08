@@ -149,7 +149,7 @@
     <string name="on_device">Sur le téléphone</string>
     <string name="done">Terminé</string>
     <string name="downloaded">Téléchargés</string>
-    <string name="playlist_top">Top de la playlist</string>
+    <string name="playlist_top">Playlist la plus écoutée</string>
     <string name="disliked">Pas aimé</string>
     <string name="search">Rechercher</string>
     <string name="clear">Effacer</string>
@@ -206,7 +206,7 @@
     <string name="sort_date_played">Date de lecture</string>
     <string name="sort_date_liked">Date de mise en favoris</string>
     <string name="sort_downloaded">Téléchargés</string>
-    <string name="sort_custom_order">Ordre personnalisée</string>
+    <string name="sort_custom_order">Ordre personnalisé</string>
     <string name="sort_songs_number">Numéro du titre</string>
     <string name="sort_album_year">Année de l\'album</string>
     <string name="match_album_audio_version">Version de l\'album/de l\'audio</string>
