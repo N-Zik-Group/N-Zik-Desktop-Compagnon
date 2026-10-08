@@ -4,18 +4,7 @@ import androidx.compose.runtime.Composable
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.MenuState
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.add_to_favorites
-import app.n_zik.compagnon.generated.resources.bookmark
-import app.n_zik.compagnon.generated.resources.bookmark_outline
-import app.n_zik.compagnon.generated.resources.enqueue
-import app.n_zik.compagnon.generated.resources.heart
-import app.n_zik.compagnon.generated.resources.info_pin_unpin_playlist
-import app.n_zik.compagnon.generated.resources.pin_filled
-import app.n_zik.compagnon.generated.resources.play_next
-import app.n_zik.compagnon.generated.resources.play_skip_forward
-import app.n_zik.compagnon.generated.resources.remove_from_queue
-import app.n_zik.compagnon.generated.resources.trash
+import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 

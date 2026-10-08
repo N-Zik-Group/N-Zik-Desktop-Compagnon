@@ -12,11 +12,7 @@ import app.n_zik.compagnon.bridge.state.PlayerRepository
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.info_find_the_song_that_is_playing
-import app.n_zik.compagnon.generated.resources.locate
-import app.n_zik.compagnon.generated.resources.no_songs_playing
-import app.n_zik.compagnon.generated.resources.playing_song_not_found_on_current_list
+import app.n_zik.compagnon.generated.resources.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.DrawableResource

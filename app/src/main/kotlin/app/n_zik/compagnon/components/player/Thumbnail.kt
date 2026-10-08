@@ -30,9 +30,7 @@ import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.state.PlayerState
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.cd_background_image
-import app.n_zik.compagnon.generated.resources.ic_launcher_box
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.thumbnailShape
 import app.n_zik.compagnon.utils.doubleShadowDrop
 import org.jetbrains.compose.resources.painterResource

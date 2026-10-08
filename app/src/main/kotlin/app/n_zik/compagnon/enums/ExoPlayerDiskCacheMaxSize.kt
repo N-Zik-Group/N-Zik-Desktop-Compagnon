@@ -1,10 +1,7 @@
 package app.n_zik.compagnon.enums
 
 import androidx.compose.runtime.Composable
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.custom
-import app.n_zik.compagnon.generated.resources.turn_off
-import app.n_zik.compagnon.generated.resources.unlimited
+import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 /**

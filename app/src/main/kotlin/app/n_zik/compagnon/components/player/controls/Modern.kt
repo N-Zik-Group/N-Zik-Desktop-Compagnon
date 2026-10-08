@@ -26,15 +26,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.album
-import app.n_zik.compagnon.generated.resources.explicit
-import app.n_zik.compagnon.generated.resources.people
-import app.n_zik.compagnon.generated.resources.person
-import app.n_zik.compagnon.generated.resources.unknown
-import app.n_zik.compagnon.generated.resources.unknown_artist
-import app.n_zik.compagnon.generated.resources.unknown_title
-import app.n_zik.compagnon.generated.resources.value_copied
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.Toaster

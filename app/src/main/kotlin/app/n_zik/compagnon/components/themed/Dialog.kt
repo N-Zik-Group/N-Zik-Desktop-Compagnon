@@ -39,11 +39,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.theme.ColorPalette
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.cancel
-import app.n_zik.compagnon.generated.resources.confirm
-import app.n_zik.compagnon.generated.resources.value_cannot_be_empty
-import app.n_zik.compagnon.generated.resources.value_must_be_greater_than
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.medium

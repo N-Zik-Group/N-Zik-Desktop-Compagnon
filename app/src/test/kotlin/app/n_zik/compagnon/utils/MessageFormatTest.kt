@@ -1,7 +1,6 @@
 package app.n_zik.compagnon.utils
 
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.added_to_dislikes
+import app.n_zik.compagnon.generated.resources.*
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse

@@ -26,9 +26,7 @@ import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.Icon as ToolbarIcon
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.cd_number_of_songs_in_queue
-import app.n_zik.compagnon.generated.resources.musical_notes
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.topUiRoundnessShape
 import app.n_zik.compagnon.typography
 import org.jetbrains.compose.resources.painterResource

@@ -1,6 +1,6 @@
 package app.n_zik.compagnon.components.themed
 
-import app.n_zik.compagnon.components.ui.screens.settings.formatShortFileSize
+import app.n_zik.compagnon.utils.formatShortFileSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

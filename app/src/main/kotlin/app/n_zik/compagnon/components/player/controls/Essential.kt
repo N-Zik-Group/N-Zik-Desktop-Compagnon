@@ -1,9 +1,7 @@
 package app.n_zik.compagnon.components.player.controls
 
 import app.n_zik.compagnon.components.theme.favoritesIcon
-import app.n_zik.compagnon.generated.resources.heart_outline
-import app.n_zik.compagnon.generated.resources.heart
-import app.n_zik.compagnon.generated.resources.heart_dislike
+import app.n_zik.compagnon.generated.resources.*
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloatAsState
@@ -58,17 +56,6 @@ import app.n_zik.compagnon.components.theme.ColorPalette
 import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.enums.PlayerPlayButtonType
 import app.n_zik.compagnon.enums.QueueLoopType
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.a13shape
-import app.n_zik.compagnon.generated.resources.added_to_dislikes
-import app.n_zik.compagnon.generated.resources.added_to_favorites
-import app.n_zik.compagnon.generated.resources.cd_background_image
-import app.n_zik.compagnon.generated.resources.pause
-import app.n_zik.compagnon.generated.resources.play
-import app.n_zik.compagnon.generated.resources.play_skip_back
-import app.n_zik.compagnon.generated.resources.play_skip_forward
-import app.n_zik.compagnon.generated.resources.removed_from_dislikes
-import app.n_zik.compagnon.generated.resources.removed_from_favorites
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.Toaster

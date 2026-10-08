@@ -31,9 +31,7 @@ import app.n_zik.compagnon.components.navigation.nav.NavigationTab
 import app.n_zik.compagnon.components.ui.screens.album.AlbumScreen
 import app.n_zik.compagnon.components.ui.screens.artist.ArtistScreen
 import app.n_zik.compagnon.components.ui.screens.localplaylist.LocalPlaylistSongs
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.library_none
-
+import app.n_zik.compagnon.generated.resources.*
 /**
  * Port of `HomeScreen` (phone's `app/n_zik/android/components/ui/screens/home/HomeScreen.kt` 182-342) with its
  * `Skeleton` (`app/it/fast4x/rimusic/ui/components/Skeleton.kt` 106-338) in the default `BottomFloating`

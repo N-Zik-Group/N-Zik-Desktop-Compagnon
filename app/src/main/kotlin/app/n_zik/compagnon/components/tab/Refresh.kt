@@ -2,9 +2,7 @@ package app.n_zik.compagnon.components.tab
 
 import androidx.compose.runtime.Composable
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.library_refresh
-import app.n_zik.compagnon.generated.resources.refresh
+import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 

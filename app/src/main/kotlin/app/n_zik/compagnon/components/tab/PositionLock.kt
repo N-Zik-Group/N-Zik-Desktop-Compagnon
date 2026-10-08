@@ -9,11 +9,7 @@ import app.n_zik.compagnon.components.tab.toolbar.Descriptive
 import app.n_zik.compagnon.components.tab.toolbar.DualIcon
 import app.n_zik.compagnon.components.tab.toolbar.DynamicColor
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.info_lock_unlock_reorder_songs
-import app.n_zik.compagnon.generated.resources.info_reorder_is_possible_only_in_ascending_sort
-import app.n_zik.compagnon.generated.resources.locked
-import app.n_zik.compagnon.generated.resources.unlocked
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.Toaster
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource

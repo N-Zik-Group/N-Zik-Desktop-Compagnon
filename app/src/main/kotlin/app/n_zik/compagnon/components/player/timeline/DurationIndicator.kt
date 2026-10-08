@@ -32,14 +32,7 @@ import app.n_zik.compagnon.LocalCommandLauncher
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.player.durationOutlineColorOf
 import app.n_zik.compagnon.components.theme.favoritesIcon
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.forward
-import app.n_zik.compagnon.generated.resources.forward_30_seconds
-import app.n_zik.compagnon.generated.resources.forward_5_seconds
-import app.n_zik.compagnon.generated.resources.play_forward
-import app.n_zik.compagnon.generated.resources.rewind
-import app.n_zik.compagnon.generated.resources.rewind_30_seconds
-import app.n_zik.compagnon.generated.resources.rewind_5_seconds
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.DURATION_INDICATOR_HEIGHT

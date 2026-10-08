@@ -1,10 +1,6 @@
 package app.n_zik.compagnon.components.player
 
-import app.n_zik.compagnon.generated.resources.song_lyrics
-import app.n_zik.compagnon.generated.resources.add_in_playlist
-import app.n_zik.compagnon.generated.resources.downloaded
-import app.n_zik.compagnon.generated.resources.download
-import app.n_zik.compagnon.generated.resources.video
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.bridge.state.TrackSource
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.background
@@ -33,10 +29,6 @@ import app.n_zik.compagnon.bridge.state.PlayerState
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.tab.ShuffleOkFlash
 import app.n_zik.compagnon.components.themed.IconButton
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.chevron_up
-import app.n_zik.compagnon.generated.resources.shuffle
-import app.n_zik.compagnon.generated.resources.shuffle_ok
 import app.n_zik.compagnon.uiRoundnessShape
 
 /**

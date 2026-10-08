@@ -19,8 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.chevron_up
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.ScrollingInfo
 import app.n_zik.compagnon.utils.scrollingInfo
 import app.n_zik.compagnon.utils.smoothScrollToTop

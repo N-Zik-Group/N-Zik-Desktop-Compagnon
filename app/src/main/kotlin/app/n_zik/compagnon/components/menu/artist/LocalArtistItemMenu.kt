@@ -1,14 +1,7 @@
 package app.n_zik.compagnon.components.menu.artist
 
-import app.n_zik.compagnon.generated.resources.update_artist_browse_id
-import app.n_zik.compagnon.generated.resources.update_cover
-import app.n_zik.compagnon.generated.resources.update_title
-import app.n_zik.compagnon.generated.resources.cover_edit
-import app.n_zik.compagnon.generated.resources.title_edit
-import app.n_zik.compagnon.generated.resources.management
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.components.menu.InertMenuItem
-import app.n_zik.compagnon.generated.resources.share_social
-import app.n_zik.compagnon.generated.resources.bookmark_outline
 import app.n_zik.compagnon.components.themed.IconButton
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.background
@@ -62,13 +55,6 @@ import app.n_zik.compagnon.components.ui.screens.artist.followToast
 import app.n_zik.compagnon.components.ui.screens.home.ItemActions
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.bookmark
-import app.n_zik.compagnon.generated.resources.bookmark_slash
-import app.n_zik.compagnon.generated.resources.play
-import app.n_zik.compagnon.generated.resources.play_all_local_songs
-import app.n_zik.compagnon.generated.resources.playback
-import app.n_zik.compagnon.generated.resources.songs
 import app.n_zik.compagnon.utils.secondary
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.DrawableResource

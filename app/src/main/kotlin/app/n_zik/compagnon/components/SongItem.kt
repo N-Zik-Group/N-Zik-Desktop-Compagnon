@@ -59,15 +59,7 @@ import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.components.themed.NowPlayingSongIndicator
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.download
-import app.n_zik.compagnon.generated.resources.download_progress
-import app.n_zik.compagnon.generated.resources.downloaded
-import app.n_zik.compagnon.generated.resources.explicit
-import app.n_zik.compagnon.generated.resources.heart
-import app.n_zik.compagnon.generated.resources.heart_dislike
-import app.n_zik.compagnon.generated.resources.unknown_artist
-import app.n_zik.compagnon.generated.resources.unknown_title
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.cleanPrefix

@@ -1,7 +1,6 @@
 package app.n_zik.compagnon.components.theme
 
-import app.n_zik.compagnon.generated.resources.roboto_w500
-import app.n_zik.compagnon.generated.resources.roboto_w400
+import app.n_zik.compagnon.generated.resources.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -9,12 +8,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.rubik_w300
-import app.n_zik.compagnon.generated.resources.rubik_w400
-import app.n_zik.compagnon.generated.resources.rubik_w500
-import app.n_zik.compagnon.generated.resources.rubik_w600
-import app.n_zik.compagnon.generated.resources.rubik_w700
 import org.jetbrains.compose.resources.Font
 
 /**

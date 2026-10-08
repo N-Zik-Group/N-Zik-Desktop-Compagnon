@@ -1,9 +1,6 @@
 package app.n_zik.compagnon.enums
 
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.audio_quality_automatic
-import app.n_zik.compagnon.generated.resources.audio_quality_format_high
-import app.n_zik.compagnon.generated.resources.audio_quality_format_low
+import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.StringResource
 
 /**

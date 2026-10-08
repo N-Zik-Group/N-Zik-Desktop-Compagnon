@@ -2,19 +2,7 @@ package app.n_zik.compagnon.components.items
 
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.painterResource
-import app.n_zik.compagnon.generated.resources.bookmark
-import app.n_zik.compagnon.generated.resources.cd_background_image
-import app.n_zik.compagnon.generated.resources.cd_origin_indicator
-import app.n_zik.compagnon.generated.resources.ic_launcher
-import app.n_zik.compagnon.generated.resources.locked
-import app.n_zik.compagnon.generated.resources.musical_notes
-import app.n_zik.compagnon.generated.resources.pin_filled
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.riplay
-import app.n_zik.compagnon.generated.resources.spotify
-import app.n_zik.compagnon.generated.resources.stat_month
-import app.n_zik.compagnon.generated.resources.stat_year
-import app.n_zik.compagnon.generated.resources.ytmusic
+import app.n_zik.compagnon.generated.resources.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.material3.Icon

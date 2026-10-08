@@ -16,12 +16,7 @@ import app.n_zik.compagnon.artistThumbnailShape
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.themed.DropdownMenu
 import app.n_zik.compagnon.components.ui.screens.profiles.ProfileFaceAvatar
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.bridge_server
-import app.n_zik.compagnon.generated.resources.devices
-import app.n_zik.compagnon.generated.resources.profile_base_name
-import app.n_zik.compagnon.generated.resources.search
-import app.n_zik.compagnon.generated.resources.settings
+import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 /**

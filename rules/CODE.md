@@ -119,10 +119,10 @@ New files MUST go under `app.n_zik.compagnon.*`. The tree mirrors the phone app'
 ## Imports
 
 - Imports at top of file ALWAYS
-- NO wildcard imports (`import com.example.*`)
+- NO wildcard imports (`import com.example.*`) — one exception: generated compose resources use a single wildcard `import app.n_zik.compagnon.generated.resources.*` (never per-resource explicit imports: the accessors are generated one top-level extension per resource, `Res` is covered by the same wildcard, and explicit imports have to be hand-maintained on every resource swap)
 - NO inline fully qualified names (`java.util.List`) unless absolute naming conflict
 - Remove unused imports before committing
-- Group: stdlib, third-party, project-internal
+- Sort: LEXICOGRAPHIC within the whole import block (the IntelliJ/VS Code default — keeps the block stable across editors and `Optimize Imports` runs; do NOT regroup by stdlib/third-party/project)
 
 ## Comments
 

@@ -44,17 +44,12 @@ import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import java.util.logging.Logger
 import kotlinx.coroutines.CoroutineScope
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.enums.PairingMode
 import app.n_zik.compagnon.components.settings.SettingsDescription
 import app.n_zik.compagnon.components.themed.HeaderWithIcon
-import app.n_zik.compagnon.generated.resources.devices
+import app.n_zik.compagnon.generated.resources.*
 import androidx.compose.ui.text.style.TextAlign
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.app_subtitle
-import app.n_zik.compagnon.generated.resources.starting
-import app.n_zik.compagnon.generated.resources.validating
 import org.jetbrains.compose.resources.stringResource
 
 /**

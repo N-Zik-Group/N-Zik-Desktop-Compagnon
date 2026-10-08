@@ -74,25 +74,7 @@ import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.core.network.LibraryResult
 import app.n_zik.compagnon.core.network.WriteResult
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.album
-import app.n_zik.compagnon.generated.resources.albums
-import app.n_zik.compagnon.generated.resources.artists
-import app.n_zik.compagnon.generated.resources.error_unknown_code
-import app.n_zik.compagnon.generated.resources.library
-import app.n_zik.compagnon.generated.resources.library_error_unreachable
-import app.n_zik.compagnon.generated.resources.library_not_found
-import app.n_zik.compagnon.generated.resources.library_tracks_failed
-import app.n_zik.compagnon.generated.resources.musical_notes
-import app.n_zik.compagnon.generated.resources.no_song_found
-import app.n_zik.compagnon.generated.resources.no_song_to_shuffle
-import app.n_zik.compagnon.generated.resources.paired_error
-import app.n_zik.compagnon.generated.resources.paired_other_active
-import app.n_zik.compagnon.generated.resources.paired_other_active_unknown
-import app.n_zik.compagnon.generated.resources.people
-import app.n_zik.compagnon.generated.resources.playlists
-import app.n_zik.compagnon.generated.resources.retry
-import app.n_zik.compagnon.generated.resources.songs
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.utils.semiBold
 

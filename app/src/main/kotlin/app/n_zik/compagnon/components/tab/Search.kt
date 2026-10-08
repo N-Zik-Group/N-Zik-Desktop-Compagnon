@@ -43,11 +43,7 @@ import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.backspace_outline
-import app.n_zik.compagnon.generated.resources.clear
-import app.n_zik.compagnon.generated.resources.search
-import app.n_zik.compagnon.generated.resources.search_circle
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.secondary
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource

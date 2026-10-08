@@ -17,11 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.ConnectionState
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.connection_connecting
-import app.n_zik.compagnon.generated.resources.connection_live
-import app.n_zik.compagnon.generated.resources.connection_offline
-import app.n_zik.compagnon.generated.resources.connection_reconnecting
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.utils.semiBold
 import org.jetbrains.compose.resources.stringResource

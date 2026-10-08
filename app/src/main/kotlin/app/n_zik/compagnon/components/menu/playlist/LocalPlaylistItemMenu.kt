@@ -1,15 +1,6 @@
 package app.n_zik.compagnon.components.menu.playlist
 
-import app.n_zik.compagnon.generated.resources.delete
-import app.n_zik.compagnon.generated.resources.trash
-import app.n_zik.compagnon.generated.resources.rename_playlist
-import app.n_zik.compagnon.generated.resources.title_edit
-import app.n_zik.compagnon.generated.resources.info_remove_all_downloaded_songs
-import app.n_zik.compagnon.generated.resources.download
-import app.n_zik.compagnon.generated.resources.downloaded
-import app.n_zik.compagnon.generated.resources.open
-import app.n_zik.compagnon.generated.resources.info_pin_unpin_playlist
-import app.n_zik.compagnon.generated.resources.pin_filled
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.components.menu.InertMenuItem
 import app.n_zik.compagnon.components.themed.HeaderIconButton
 import app.n_zik.compagnon.components.themed.IconButton
@@ -66,17 +57,6 @@ import app.n_zik.compagnon.components.ui.screens.home.ItemActions
 import app.n_zik.compagnon.components.ui.screens.home.LibraryActions
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.added_to_favorites
-import app.n_zik.compagnon.generated.resources.bookmark
-import app.n_zik.compagnon.generated.resources.bookmark_outline
-import app.n_zik.compagnon.generated.resources.cannot_bookmark_special_playlist
-import app.n_zik.compagnon.generated.resources.library
-import app.n_zik.compagnon.generated.resources.management
-import app.n_zik.compagnon.generated.resources.playback
-import app.n_zik.compagnon.generated.resources.removed_from_favorites
-import app.n_zik.compagnon.generated.resources.songs
-import app.n_zik.compagnon.generated.resources.update_playlist_browse_id
 import app.n_zik.compagnon.thumbnailShape
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.secondary

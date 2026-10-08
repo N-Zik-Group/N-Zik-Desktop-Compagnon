@@ -29,9 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.themed.HeaderIconButton
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.chevron_forward
-import app.n_zik.compagnon.generated.resources.trash
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.semiBold

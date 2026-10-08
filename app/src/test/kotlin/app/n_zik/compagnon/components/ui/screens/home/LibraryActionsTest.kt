@@ -7,7 +7,6 @@ import app.n_zik.compagnon.bridge.library.Album
 import app.n_zik.compagnon.bridge.library.AlbumLike
 import app.n_zik.compagnon.bridge.library.Artist
 import app.n_zik.compagnon.bridge.library.ArtistFollow
-import app.n_zik.compagnon.bridge.library.CollectionFilter
 import app.n_zik.compagnon.bridge.library.CollectionKind
 import app.n_zik.compagnon.bridge.library.CollectionRef
 import app.n_zik.compagnon.bridge.library.DislikeMode

@@ -1,10 +1,7 @@
 package app.n_zik.compagnon.enums
 
 import app.n_zik.compagnon.bridge.state.RepeatMode
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.infinite
-import app.n_zik.compagnon.generated.resources.repeat
-import app.n_zik.compagnon.generated.resources.repeatone
+import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 
 /**

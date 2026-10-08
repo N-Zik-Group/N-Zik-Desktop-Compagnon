@@ -1,6 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.artist
 
-import app.n_zik.compagnon.generated.resources.share_social
+import app.n_zik.compagnon.generated.resources.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.BasicText
@@ -68,22 +68,6 @@ import app.n_zik.compagnon.components.ui.screens.home.PagedStatus
 import app.n_zik.compagnon.components.ui.screens.home.rememberCollectionSongs
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.added_to_dislikes
-import app.n_zik.compagnon.generated.resources.added_to_favorites
-import app.n_zik.compagnon.generated.resources.artist_songs_count_duration
-import app.n_zik.compagnon.generated.resources.disliked
-import app.n_zik.compagnon.generated.resources.download
-import app.n_zik.compagnon.generated.resources.downloaded
-import app.n_zik.compagnon.generated.resources.enqueue
-import app.n_zik.compagnon.generated.resources.follow
-import app.n_zik.compagnon.generated.resources.following
-import app.n_zik.compagnon.generated.resources.info_download_all_songs
-import app.n_zik.compagnon.generated.resources.info_no_songs_yet
-import app.n_zik.compagnon.generated.resources.info_remove_all_downloaded_songs
-import app.n_zik.compagnon.generated.resources.removed_from_favorites
-import app.n_zik.compagnon.generated.resources.shuffle
-import app.n_zik.compagnon.generated.resources.shuffle_ok
 import app.n_zik.compagnon.utils.fadingEdge
 import app.n_zik.compagnon.utils.formatText
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -13,9 +13,7 @@ import app.n_zik.compagnon.components.MenuState
 import app.n_zik.compagnon.components.SortOption
 import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.arrow_up
-import app.n_zik.compagnon.generated.resources.sorting_order
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.uiRoundnessShape
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource

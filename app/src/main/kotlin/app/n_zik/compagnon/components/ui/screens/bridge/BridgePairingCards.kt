@@ -27,32 +27,7 @@ import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.globe
-import app.n_zik.compagnon.generated.resources.link
-import app.n_zik.compagnon.generated.resources.manual_code
-import app.n_zik.compagnon.generated.resources.manual_code_invalid
-import app.n_zik.compagnon.generated.resources.manual_description
-import app.n_zik.compagnon.generated.resources.manual_ip
-import app.n_zik.compagnon.generated.resources.manual_ip_invalid
-import app.n_zik.compagnon.generated.resources.manual_port
-import app.n_zik.compagnon.generated.resources.manual_port_invalid
-import app.n_zik.compagnon.generated.resources.manual_submit
-import app.n_zik.compagnon.generated.resources.manual_title
-import app.n_zik.compagnon.generated.resources.pair_device_name
-import app.n_zik.compagnon.generated.resources.pair_device_name_invalid
-import app.n_zik.compagnon.generated.resources.pair_listener_unreachable
-import app.n_zik.compagnon.generated.resources.pair_manual_entry
-import app.n_zik.compagnon.generated.resources.pair_manual_entry_text
-import app.n_zik.compagnon.generated.resources.pair_no_address
-import app.n_zik.compagnon.generated.resources.pair_qr_addresses
-import app.n_zik.compagnon.generated.resources.pair_qr_description
-import app.n_zik.compagnon.generated.resources.pair_qr_preparing
-import app.n_zik.compagnon.generated.resources.pair_qr_renew_hint
-import app.n_zik.compagnon.generated.resources.pair_qr_waiting
-import app.n_zik.compagnon.generated.resources.pair_show_qr
-import app.n_zik.compagnon.generated.resources.pair_title
-import app.n_zik.compagnon.generated.resources.pencil
+import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 /** Not paired, QR mode (contract §4.2–§4.4): QR, editable PC name, status, "Manual entry". */

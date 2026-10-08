@@ -2,10 +2,7 @@ package app.n_zik.compagnon.components.styling
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.big
-import app.n_zik.compagnon.generated.resources.medium
-import app.n_zik.compagnon.generated.resources.small
+import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.StringResource
 
 /**

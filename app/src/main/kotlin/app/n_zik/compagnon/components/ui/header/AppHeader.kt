@@ -29,8 +29,7 @@ import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.navigation.header.ActionBar
 import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.themed.Button
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.chevron_back
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.uiRoundnessShape
 
 /**

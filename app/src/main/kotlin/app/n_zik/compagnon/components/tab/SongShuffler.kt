@@ -4,9 +4,7 @@ import androidx.compose.runtime.Composable
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.MenuState
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.shuffle
-import app.n_zik.compagnon.generated.resources.shuffle_ok
+import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 

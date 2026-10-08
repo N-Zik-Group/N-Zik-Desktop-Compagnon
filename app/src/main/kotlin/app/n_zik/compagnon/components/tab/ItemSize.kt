@@ -15,10 +15,7 @@ import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.styling.HomeItemSize
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.arrow_forward
-import app.n_zik.compagnon.generated.resources.resize
-import app.n_zik.compagnon.generated.resources.size
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.uiRoundnessShape
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource

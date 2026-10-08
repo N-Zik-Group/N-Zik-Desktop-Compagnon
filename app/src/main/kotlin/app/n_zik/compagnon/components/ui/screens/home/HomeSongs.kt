@@ -31,11 +31,7 @@ import app.n_zik.compagnon.components.songSortOverlay
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.Search
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.alert
-import app.n_zik.compagnon.generated.resources.no_items
-import app.n_zik.compagnon.generated.resources.playback_blocked_match_first
-import app.n_zik.compagnon.generated.resources.unmatched_song
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.Toaster
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource

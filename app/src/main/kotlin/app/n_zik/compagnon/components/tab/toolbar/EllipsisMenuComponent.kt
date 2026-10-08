@@ -4,8 +4,7 @@ import androidx.compose.runtime.Composable
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.MenuState
 import app.n_zik.compagnon.components.menu.ListMenu
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.ellipsis_horizontal
+import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 
 /**

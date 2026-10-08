@@ -17,8 +17,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.cd_blurred_background
+import app.n_zik.compagnon.generated.resources.*
 import kotlin.math.sqrt
 import org.jetbrains.compose.resources.stringResource
 
