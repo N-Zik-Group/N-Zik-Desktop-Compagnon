@@ -7,7 +7,7 @@
     <string name="pair_qr_description">Dans l\'application N-Zik sur votre téléphone, ouvrez « Gérer le serveur », lancez le couplage, puis appuyez sur « Scanner » et pointez l\'appareil photo vers ce code.</string>
     <string name="pair_device_name">Nom de cet ordinateur</string>
     <string name="pair_device_name_invalid">Saisissez un nom comportant entre 1 et 64 caractères.</string>
-    <string name="pair_qr_waiting">Waiting for your phone…</string>
+    <string name="pair_qr_waiting">En attente de votre téléphone…</string>
     <string name="pair_qr_preparing">Préparation du QR code…</string>
     <string name="pair_qr_addresses">Cet ordinateur : %1$s (port %2$d)</string>
     <string name="pair_qr_renew_hint">Le code est actualisé toutes les 2 minutes.</string>
@@ -35,29 +35,29 @@
     <string name="error_phone_unreachable">Impossible de joindre le téléphone. Vérifiez que son serveur fonctionne et que les deux appareils sont connectés au même réseau Wi-Fi.</string>
     <string name="error_storage_failed">L\'appairage n\'a pas pu être enregistré sur cet ordinateur.</string>
     <string name="error_listener_failed">Impossible d\'ouvrir le récepteur d\'appairage. Effectuez l\'appairage manuellement ci-dessous.</string>
-    <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
+    <string name="error_unexpected">Réponse inattendue provenant du téléphone (HTTP %1$d, %2$s).</string>
     <string name="error_unknown_code">aucun code</string>
     <string name="dismiss">Ignorer</string>
     <!-- Paired -->
-    <string name="paired_title">Paired</string>
+    <string name="paired_title">Appairé</string>
     <string name="paired_with">Associé à %1$s</string>
     <string name="paired_as">Cet ordinateur apparaît sous le nom de %1$s sur le téléphone.</string>
     <string name="paired_checking">Vérification de la connexion…</string>
     <string name="paired_ok">Le téléphone est joignable.</string>
     <string name="paired_other_active">Un autre ordinateur (%1$s) est connecté au téléphone. Déconnectez-le du téléphone, puis réessayez.</string>
-    <string name="paired_other_active_unknown">another device</string>
+    <string name="paired_other_active_unknown">autre appareil</string>
     <string name="paired_incompatible">Version mobile incompatible (abonnement %1$s).</string>
-    <string name="paired_error">The phone answered with an error (HTTP %1$d, %2$s).</string>
+    <string name="paired_error">Le téléphone a renvoyé une erreur (HTTP %1$d, %2$s).</string>
     <string name="paired_session_only">Aucun porte-clés n\'est disponible sur ce PC, l\'appairage est donc conservé uniquement en mémoire pour cette session : veuillez procéder à un nouvel appairage après un redémarrage.</string>
     <string name="retry">Réessayer</string>
-    <string name="forget_phone">Forget this phone</string>
+    <string name="forget_phone">Oublier ce téléphone</string>
     <string name="forget_phone_text">Supprime l\'appairage de cet ordinateur</string>
     <!-- Unreachable -->
     <string name="unreachable_title">Téléphone injoignable</string>
-    <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
-    <string name="unreachable_edit_ip">Edit IP</string>
+    <string name="unreachable_description">%1$s n\'a pas répondu à %2$s. Son serveur est peut-être arrêté, ou son adresse IP a peut-être changé. L\'appairage est conservé.</string>
+    <string name="unreachable_edit_ip">Modifier l\'adresse IP</string>
     <string name="unreachable_edit_ip_text">Conservez l\'appairage, modifiez uniquement l\'adresse IP du téléphone</string>
-    <string name="unreachable_port_kept">Port %1$d (kept)</string>
+    <string name="unreachable_port_kept">Port %1$d (conservé)</string>
     <string name="unreachable_save_ip">Enregistrer et réessayer</string>
     <string name="cancel">Annuler</string>
     <!-- Revoked -->
@@ -74,9 +74,9 @@
     <string name="connection_reconnecting">Rétablissement de la connexion…</string>
     <string name="connection_offline">Déconnecté</string>
     <string name="connection_reconnecting_in">Connexion au téléphone perdue. Reconnexion dans %1$d s…</string>
-    <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
-    <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
-    <string name="connection_replaced">Another window of this PC took over the session.</string>
+    <string name="connection_server_stopped">Le serveur s\'est arrêté. Redémarrez-le depuis l\'application N-Zik sur votre téléphone, puis reconnectez-vous.</string>
+    <string name="connection_kicked">Déconnecté du téléphone. L\'appairage est conservé.</string>
+    <string name="connection_replaced">Une autre fenêtre de cet ordinateur a pris le contrôle de la session.</string>
     <string name="connection_other_active">Un autre ordinateur (%1$s) est connecté au téléphone. Déconnectez-le du téléphone, puis réessayez.</string>
     <string name="reconnect">Se reconnecter</string>
     <!-- Player -->
@@ -89,14 +89,14 @@
     <string name="player_previous">Précédent</string>
     <string name="player_speed">Vitesse de lecture</string>
     <string name="player_speed_value">%1$sx</string>
-    <string name="player_repeat_off">Repeat: off</string>
-    <string name="player_repeat_all">Repeat: all</string>
-    <string name="player_repeat_one">Repeat: one</string>
-    <string name="player_shuffle_on">Shuffle: on</string>
-    <string name="player_shuffle_off">Shuffle: off</string>
+    <string name="player_repeat_off">Répéter : désactivé</string>
+    <string name="player_repeat_all">Répéter : tout</string>
+    <string name="player_repeat_one">Répéter : une fois</string>
+    <string name="player_shuffle_on">Lecture aléatoire : activée</string>
+    <string name="player_shuffle_off">Lecture aléatoire : désactivée</string>
     <string name="player_open_full">Ouvrir le lecteur</string>
     <string name="player_close_full">Fermer le lecteur</string>
-    <string name="player_waiting_state">Waiting for the phone’s playback state…</string>
+    <string name="player_waiting_state">En attente de l\'état de lecture du téléphone…</string>
     <!-- Queue -->
     <string name="queue_title">File d\'attente</string>
     <string name="queue_count">%1$d tracks</string>
@@ -130,13 +130,13 @@
     <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
     <string name="notice_rejected">%1$s: refused by the phone.</string>
     <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
-    <string name="notice_server_stopping">%1$s: the phone’s server is stopping.</string>
-    <string name="notice_other_active">%1$s: another PC (%2$s) is connected to the phone.</string>
-    <string name="notice_not_found">%1$s: not found on the phone.</string>
+    <string name="notice_server_stopping">%1$s : le serveur du téléphone s\'arrête.</string>
+    <string name="notice_other_active">%1$s : un autre ordinateur (%2$s) est connecté au téléphone.</string>
+    <string name="notice_not_found">%1$s : introuvable sur le téléphone.</string>
     <string name="notice_unreachable">%1$s: the phone did not answer.</string>
     <string name="notice_truncated">%1$s: only %2$d of %3$d tracks were sent.</string>
     <string name="notice_failed">%1$s failed (HTTP %2$d, %3$s).</string>
-    <string name="notice_late_error">%1$s failed on the phone (%2$s, command %3$s).</string>
+    <string name="notice_late_error">%1$s a échoué sur le téléphone (%2$s, commande %3$s).</string>
     <!-- Library: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="songs">Titres</string>
     <string name="artists">Artistes</string>
@@ -221,9 +221,9 @@
     <string name="_1_year">1 An </string>
     <!-- Compagnon-only chips (no phone equivalent) -->
     <string name="download_pc">Download PC</string>
-    <string name="cached_pc">Cached PC</string>
+    <string name="cached_pc">Ordinateur en cache</string>
     <!-- Library: Compagnon only (no phone equivalent) -->
-    <string name="library_none">The phone shares no library with this PC.</string>
+    <string name="library_none">Le téléphone ne partage aucune bibliothèque avec cet ordinateur.</string>
     <string name="library_refresh">Actualiser</string>
     <string name="library_back">Retour</string>
     <string name="library_empty">Il n\'y a rien ici.</string>
@@ -338,19 +338,19 @@
     <string name="local_playback_upstream_failed">Votre téléphone n\'a pas pu télécharger ce morceau.</string>
     <string name="local_playback_invalid_url">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
     <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
-    <string name="local_playback_unreachable">Your phone did not answer.</string>
+    <string name="local_playback_unreachable">Votre téléphone n\'a pas répondu.</string>
     <string name="local_playback_failed">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
     <!-- App update (spec spec-updater: the in-app updater + the channel header badge) -->
     <string name="update_current_version">Current version</string>
     <string name="enable_check_for_update">Activer la vérification des mises à jour</string>
-    <string name="update_check_when_enabled">When enabled, a new version of this channel is checked at startup and the update dialog offers it.</string>
+    <string name="update_check_when_enabled">Lorsque cette option est activée, le système vérifie la disponibilité d\'une nouvelle version de cette chaîne au démarrage et la propose dans la boîte de dialogue de mise à jour.</string>
     <string name="update_check_off_build">Si vous voyez ce message, cela signifie que votre version n\'a pas activé la mise à jour automatique, pls met à jour l\'application manuellement à partir de github</string>
     <string name="info_check_update_now">Vérifiez maintenant</string>
     <string name="update_available">Une mise à jour est disponible</string>
     <string name="app_update_dialog_version">La nouvelle version %s peut être téléchargée !</string>
     <string name="app_update_dialog_size">La taille du fichier est de %s</string>
     <string name="downloading_update">Téléchargement de la mise à jour</string>
-    <string name="update_download_progress">Downloading update… %1$d%%</string>
+    <string name="update_download_progress">Téléchargement de la mise à jour… %1$d%%</string>
     <string name="info_no_update_available">Aucune mise à jour disponible</string>
     <string name="update_download_completed">Mise à jour téléchargée</string>
     <string name="error_update_check_failed">The update check failed (%1$s)</string>
@@ -364,10 +364,10 @@
     <string name="install_flatpak_command">Update in place with:</string>
     <string name="install_pkg_command">Install the package with:</string>
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_pkg_aur_hint">This machine uses pacman: update the AUR entry (n-zik-desktop-compagnon or n-zik-desktop-compagnon-git) with your AUR helper.</string>
+    <string name="install_pkg_aur_hint">Cette machine utilise Pacman : mettez à jour l\'entrée AUR (n-zik-desktop-compagnon ou n-zik-desktop-compagnon-git) à l\'aide de votre outil de gestion AUR.</string>
     <string name="install_replacement_appimage">Replace the AppImage: put the downloaded file where the current one is, then relaunch.</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="old_install_path">Current install:</string>
+    <string name="install_replacement_portable">Remplacer le dossier de l\'application : décompressez le fichier téléchargé dans le dossier actuel de l\'application, puis relancez celle-ci.</string>
+    <string name="old_install_path">Installation actuelle :</string>
     <!-- The channel header badge (4 labels; stable shows no badge — the phone's rule) -->
     <string name="beta_title">Beta</string>
     <string name="dev_title">Dev</string>
