@@ -35,10 +35,11 @@ class ContributorsTest {
     @Test
     fun `the embedded developers carry the phone fields`() {
         val developers = Contributors.parseDevelopers(contributorsJson.readText())
-        // The first entry of the embedded file: NEVERLeVrai (id 63956787, 338 contributions)
+        // The first entry of the embedded file: NEVERLeVrai (id 63956787, 408 contributions —
+        // re-pinned when the contributors.json refresh workflow updates the list)
         val first = developers.first { it.username == "NEVARLeVrai" }
         assertEquals(63956787, first.id)
-        assertEquals(338, first.contributions)
+        assertEquals(408, first.contributions)
         assertTrue(first.url.startsWith("https://github.com/"))
         assertTrue(first.avatar.startsWith("https://avatars.githubusercontent.com/"))
         // The embedded data has no GitHub `name` field: the display name falls back to the login

@@ -88,11 +88,19 @@ object ArtifactNames {
         if (channel == UpdaterConstants.TYPE_DEV) LINUX_PACKAGE_BASE_DEV else LINUX_PACKAGE_BASE
 
     /**
-     * The jpackage Windows installer name (verified against jpackage's real output: the product
-     * name + version, no architecture suffix — the product name is per-channel, spec AD-8).
+     * The release asset name of the Windows installer (spec AD-2 / AD-8): the CI renames
+     * jpackage's output (the spaced product name) to this exact name before upload — the GitHub
+     * asset upload sanitizes names (space → dot, "(" → "", ")" → ".") and the CI makes that
+     * transformation explicit instead of relying on it, so the release asset, the SHA-256 table
+     * and the in-app updater all agree on one name.
      */
     fun exe(version: String, channel: String = channelOf(version)): String =
-        "${productName(channel)}-$version.exe"
+        "${publishedName(productName(channel))}-$version.exe"
+
+    /** GitHub's asset-name sanitization applied to the product name (the rule the CI applies
+     *  when it renames the jpackage output — keep the two in sync). */
+    private fun publishedName(name: String): String =
+        name.replace(" ", ".").replace("(", "").replace(")", ".")
 
     fun deb(version: String, channel: String = channelOf(version)): String =
         "${linuxPackageBase(channel)}_$version-1_amd64.deb"

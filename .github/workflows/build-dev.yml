@@ -344,6 +344,13 @@ jobs:
           PRODUCT="N-Zik Desktop Compagnon (Dev)"
 
           EXE="${PRODUCT}-${BASE}${SUFFIX}.exe"
+          # The name GitHub stores the .exe as: the asset upload sanitizes the name
+          # (space -> dot, "(" -> "", ")" -> "."), so the collect renames the jpackage
+          # output to that exact name before upload — the release asset, the SHA-256
+          # table and the in-app updater (ArtifactNames.exe) all agree on it.
+          EXE_PUB="${EXE// /.}"
+          EXE_PUB="${EXE_PUB//(/}"
+          EXE_PUB="${EXE_PUB//)/.}"
           DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
           RPM="${PKG}-${BASE}${SUFFIX}-1.x86_64.rpm"
           ZIP="${PKG}-${BASE}${SUFFIX}-linux-portable.zip"
@@ -364,10 +371,10 @@ jobs:
           cp "artifacts/linux-artifacts/${ZIP}" release/
           cp "artifacts/linux-artifacts/${APPIMAGE}" release/
           cp "artifacts/linux-artifacts/${FLATPAK}" release/
-          cp "artifacts/windows-artifact/${EXE}" release/
+          cp "artifacts/windows-artifact/${EXE}" "release/${EXE_PUB}"
 
           cd release
-          sha256sum "${EXE}" "${DEB}" "${RPM}" "${ZIP}" "${APPIMAGE}" "${FLATPAK}" > ../SHA256SUMS.txt
+          sha256sum "${EXE_PUB}" "${DEB}" "${RPM}" "${ZIP}" "${APPIMAGE}" "${FLATPAK}" > ../SHA256SUMS.txt
           cd ..
 
           # The markdown SHA-256 table (the artifacts are unsigned — this is

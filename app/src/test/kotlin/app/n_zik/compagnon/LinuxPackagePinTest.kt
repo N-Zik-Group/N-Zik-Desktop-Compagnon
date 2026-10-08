@@ -63,7 +63,7 @@ class LinuxPackagePinTest {
         val url = appImageProp("linux.appImage.tarballUrl")
         val name = appImageProp("linux.appImage.tarballName")
         val sha = appImageProp("linux.appImage.tarballSha256")
-        assertTrue(url.startsWith("https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/download/"),
+        assertTrue(url.startsWith("https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/"),
             "the Linux tarball must be downloaded from the project's GitHub releases (the release asset it is published as): $url")
         assertTrue(url.endsWith("/$name"), "the tarball URL must point at the pinned file: $url vs $name")
         assertTrue(Regex("vlc-\\d+\\.\\d+\\.\\d+-linux-x64\\.tar\\.gz").matches(name),

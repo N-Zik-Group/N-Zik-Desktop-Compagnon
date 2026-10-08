@@ -36,7 +36,7 @@ class ArtifactNamesChannelTest {
     @Test
     fun `the stable names keep the plain byte-identical bases`() {
         val v = "0.0.2"
-        assertEquals("N-Zik Desktop Compagnon-$v.exe", ArtifactNames.exe(v))
+        assertEquals("N-Zik.Desktop.Compagnon-$v.exe", ArtifactNames.exe(v))
         assertEquals("n-zik-desktop-compagnon_$v-1_amd64.deb", ArtifactNames.deb(v))
         assertEquals("n-zik-desktop-compagnon-$v-1.x86_64.rpm", ArtifactNames.rpm(v))
         assertEquals("n-zik-desktop-compagnon-$v-linux-portable.zip", ArtifactNames.portableZip(v))
@@ -49,7 +49,7 @@ class ArtifactNamesChannelTest {
         // AD-8: the beta replaces the stable in place — the same Linux identity (package name /
         // app-id / path), only the Windows installer carries the channel product name
         val v = "0.0.3-beta"
-        assertEquals("N-Zik Desktop Compagnon (Beta)-$v.exe", ArtifactNames.exe(v))
+        assertEquals("N-Zik.Desktop.Compagnon.Beta.-$v.exe", ArtifactNames.exe(v))
         assertEquals("n-zik-desktop-compagnon_$v-1_amd64.deb", ArtifactNames.deb(v))
         assertEquals("n-zik-desktop-compagnon-$v-1.x86_64.rpm", ArtifactNames.rpm(v))
         assertEquals("n-zik-desktop-compagnon-$v-linux-portable.zip", ArtifactNames.portableZip(v))
@@ -63,7 +63,7 @@ class ArtifactNamesChannelTest {
         // package base (n-zik-desktop-compagnon-dev → /opt/n-zik-desktop-compagnon-dev), for ALL
         // the linux artifacts
         val v = "0.0.3-dev-20261007"
-        assertEquals("N-Zik Desktop Compagnon (Dev)-$v.exe", ArtifactNames.exe(v))
+        assertEquals("N-Zik.Desktop.Compagnon.Dev.-$v.exe", ArtifactNames.exe(v))
         assertEquals("n-zik-desktop-compagnon-dev_$v-1_amd64.deb", ArtifactNames.deb(v))
         assertEquals("n-zik-desktop-compagnon-dev-$v-1.x86_64.rpm", ArtifactNames.rpm(v))
         assertEquals("n-zik-desktop-compagnon-dev-$v-linux-portable.zip", ArtifactNames.portableZip(v))
@@ -74,7 +74,7 @@ class ArtifactNamesChannelTest {
     @Test
     fun `the per mode names follow the channel inference`() {
         val v = "0.0.3-dev-20261007"
-        assertEquals("N-Zik Desktop Compagnon (Dev)-$v.exe", ArtifactNames.forMode(InstallMode.WINDOWS, v, PackageManager.NONE))
+        assertEquals("N-Zik.Desktop.Compagnon.Dev.-$v.exe", ArtifactNames.forMode(InstallMode.WINDOWS, v, PackageManager.NONE))
         assertEquals("n-zik-desktop-compagnon-dev_$v-1_amd64.deb", ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, v, PackageManager.DEB))
         assertEquals("n-zik-desktop-compagnon-dev-$v-x86_64.flatpak", ArtifactNames.forMode(InstallMode.FLATPAK, v, PackageManager.NONE))
         // pacman builds from source: no binary asset (the dialog shows the AUR entry hint)

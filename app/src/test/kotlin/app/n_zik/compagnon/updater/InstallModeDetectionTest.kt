@@ -100,7 +100,7 @@ class InstallModeDetectionTest {
         // The observed jpackage convention (no architecture suffix): base name + version + extension
         // Loop 2 / AD-8 (documented deviation from the v1 pin): the beta installer carries the
         // per-channel product name ("… (Beta)" — the jpackage app name the build sets)
-        assertEquals("N-Zik Desktop Compagnon (Beta)-$version.exe", ArtifactNames.forMode(InstallMode.WINDOWS, version, PackageManager.NONE))
+        assertEquals("N-Zik.Desktop.Compagnon.Beta.-$version.exe", ArtifactNames.forMode(InstallMode.WINDOWS, version, PackageManager.NONE))
         assertEquals("n-zik-desktop-compagnon-$version-x86_64.flatpak", ArtifactNames.forMode(InstallMode.FLATPAK, version, PackageManager.NONE))
         assertEquals("n-zik-desktop-compagnon_$version-1_amd64.deb", ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, version, PackageManager.DEB))
         assertEquals("n-zik-desktop-compagnon-$version-1.x86_64.rpm", ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, version, PackageManager.RPM))
