@@ -326,7 +326,7 @@ jobs:
 
           ## 📲 Installation
 
-          ⚠️ This is a **BETA release**, not a stable version.
+          ⚠️ This is a **BETA release**, not a stable version.  
           It is intended **only for testing and feedback**.
 
           1. Download the **Beta build** below.
@@ -466,7 +466,7 @@ jobs:
           DESCRIPTION: |
             ## 📲 Installation
 
-            ⚠️ This is a **BETA release**, not a stable version.
+            ⚠️ This is a **BETA release**, not a stable version.  
             It is intended **only for testing and feedback**.
 
             1. Download the **Beta build** below.

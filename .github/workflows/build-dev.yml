@@ -401,7 +401,7 @@ jobs:
 
           ## 📲 Installation
 
-          ⚠️ This is a **DEV build**, not a stable version.
+          ⚠️ This is a **DEV build**, not a stable version.  
           It is intended **only for testing and development feedback**.
 
           1. Download the **Dev build** below.
@@ -594,7 +594,7 @@ jobs:
           DESCRIPTION: |
             ## 📲 Installation
 
-            ⚠️ This is a **DEV build**, not a stable version.
+            ⚠️ This is a **DEV build**, not a stable version.  
             It is intended **only for testing and development feedback**.
 
             1. Download the **Dev build** below.
