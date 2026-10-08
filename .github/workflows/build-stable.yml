@@ -342,7 +342,6 @@ jobs:
 
           cat > release_body.md <<'BODY'
           ## ✨ What's New in v@BASE@
-
           ---
 
           <div align="center">

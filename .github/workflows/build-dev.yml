@@ -382,7 +382,6 @@ jobs:
 
           cat > release_body.md <<'BODY'
           ## 🔨 Dev Build v@BASE@-dev-@DATE@
-
           ---
 
           <div align="center">
