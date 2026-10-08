@@ -39,7 +39,7 @@
       "build-commands": [
         "cp -a bin lib share /app/",
         "chmod 755 /app/bin/nzik",
-        "chmod 755 \"/app/bin/N-Zik Desktop Compagnon\""
+        "chmod 755 \"/app/bin/__LAUNCHER__\""
       ],
       "sources": [
         {

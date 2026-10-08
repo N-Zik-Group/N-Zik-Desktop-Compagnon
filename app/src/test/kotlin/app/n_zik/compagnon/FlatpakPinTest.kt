@@ -111,14 +111,16 @@ class FlatpakPinTest {
     }
 
     @Test
-    fun `the template manifest is valid json with exactly its two placeholders`() {
+    fun `the template manifest is valid json with exactly its three placeholders`() {
         val text = manifestTemplate.readText()
         val manifest = Json.parseToJsonElement(text).jsonObject
-        // The placeholders are the only dynamic values: app-id (+ the icon derived from it) and
-        // version — nothing else may be substituted by the build.
+        // The placeholders are the only dynamic values: app-id (+ the icon derived from it),
+        // version, and the launcher name (the channel display name — the jpackage app-image
+        // names its bin/ launcher after the app name, which carries the channel) — nothing
+        // else may be substituted by the build.
         val placeholders = Regex("""__[A-Z0-9_]+__""").findAll(text).map { it.value }.toSet()
-        assertEquals(setOf("__APP_ID__", "__VERSION__"), placeholders,
-            "the committed template keeps exactly its two placeholders (__APP_ID__, __VERSION__)")
+        assertEquals(setOf("__APP_ID__", "__VERSION__", "__LAUNCHER__"), placeholders,
+            "the committed template keeps exactly its three placeholders (__APP_ID__, __VERSION__, __LAUNCHER__)")
         assertEquals("__APP_ID__", manifest["app-id"]?.jsonPrimitive?.content,
             "the app-id is the __APP_ID__ placeholder (substituted by the build, frozen by the test)")
         assertEquals("__APP_ID__", manifest["icon"]?.jsonPrimitive?.content,
@@ -163,5 +165,13 @@ class FlatpakPinTest {
             ((app?.get("build-commands") as? JsonArray)?.mapNotNull { it.jsonPrimitive.content }.orEmpty())
                 .any { it.startsWith("cp -a bin lib share /app/") },
             "the app module copies bin + lib + share into /app (dropping lib would ship an unlaunchable bundle)")
+        // The launcher chmod must ride the placeholder, not a hardcoded product name: the
+        // jpackage bin/ launcher is named after the channel display name ("N-Zik Desktop
+        // Compagnon (Dev)" on dev), and a stable-only name chmods a missing file → the dev
+        // and beta builds fail in flatpak-builder (2026-10-08 dev run).
+        assertTrue(
+            ((app?.get("build-commands") as? JsonArray)?.mapNotNull { it.jsonPrimitive.content }.orEmpty())
+                .any { it == "chmod 755 \"/app/bin/__LAUNCHER__\"" },
+            "the launcher chmod rides the __LAUNCHER__ placeholder (a hardcoded name breaks the channel-aware launcher)")
     }
 }

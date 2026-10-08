@@ -1008,10 +1008,10 @@ val flatpakFileName = channelArtifactName("${linuxPackageName}-${libs.versions.n
 
 // The committed Flatpak manifest template (spec spec-linux-flatpak): the reviewable, committed
 // build recipe (transparency of the manual build — the bundle is built with the host's
-// flatpak-builder, never from generated-only config). The build substitutes its two placeholders
-// (__APP_ID__, __VERSION__) and reads the effective contract (runtime, command, finish-args)
-// from it, so the template stays the single source of truth. Read eagerly: a broken template
-// fails the build on every host, not just the Linux one.
+// flatpak-builder, never from generated-only config). The build substitutes its three
+// placeholders (__APP_ID__, __VERSION__, __LAUNCHER__) and reads the effective contract
+// (runtime, command, finish-args) from it, so the template stays the single source of truth.
+// Read eagerly: a broken template fails the build on every host, not just the Linux one.
 val flatpakManifestTemplate = rootProject.file("packaging/flatpak/manifest.json")
 val flatpakManifestJson = groovy.json.JsonSlurper().parseText(flatpakManifestTemplate.readText()) as Map<String, Any>
 val flatpakRuntimeName = flatpakManifestJson["runtime"] as String
@@ -1650,14 +1650,18 @@ project.afterEvaluate {
             File(staging, "share/icons/hicolor/256x256/apps").mkdirs()
             linuxIcon.copyTo(File(staging, "share/icons/hicolor/256x256/apps/$flatpakAppId.png"), overwrite = true)
 
-            // 6. Generate the manifest in the workdir from the committed template: only the two
+            // 6. Generate the manifest in the workdir from the committed template: only the three
             //    placeholders are substituted (transparency of the manual build — the recipe is
-            //    reviewable without Gradle).
+            //    reviewable without Gradle). __LAUNCHER__ is the channel display name: the jpackage
+            //    app-image names its bin/ launcher after the app name, which carries the channel
+            //    ("N-Zik Desktop Compagnon (Dev)" on dev — a stable-only hardcoded name here broke
+            //    the dev build: chmod on the missing file, flatpak-builder exit 1).
             val manifest = File(workDir, "manifest.json")
             manifest.writeText(
                 flatpakManifestTemplate.readText()
                     .replace("__APP_ID__", flatpakAppId)
                     .replace("__VERSION__", libs.versions.nzikVersionName.get())
+                    .replace("__LAUNCHER__", displayName)
             )
 
             // 7. Build + bundle. The base runtime + the sdk are installed into the flatpak install
