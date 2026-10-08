@@ -2,6 +2,8 @@ name: 👾 Bug report
 description: Report a bug found in the stable build of N-Zik Desktop Compagnon
 title: "[BUG]: "
 labels: ["bug"]
+assignees:
+  - NEVARLeVrai
 
 body:
   - type: markdown

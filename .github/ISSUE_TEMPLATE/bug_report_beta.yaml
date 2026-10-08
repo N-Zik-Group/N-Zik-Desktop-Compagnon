@@ -2,6 +2,8 @@ name: 🧪 Beta Bug report
 description: Report a bug found in the Beta build of N-Zik Desktop Compagnon
 title: "[BETA BUG]: "
 labels: ["bug"]
+assignees:
+  - NEVARLeVrai
 
 body:
   - type: markdown
