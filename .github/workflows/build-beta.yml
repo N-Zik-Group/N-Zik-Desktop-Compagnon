@@ -321,7 +321,7 @@ jobs:
           tag_name: v${{ needs.versioning.outputs.downstream }}-beta
           prerelease: true
           make_latest: false
-          bodyFile: release_body.md
+          body_path: release_body.md
           token: ${{ secrets.GITHUB_TOKEN }}
           generate_release_notes: true
 

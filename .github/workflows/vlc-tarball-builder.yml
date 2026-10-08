@@ -132,6 +132,10 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    env:
+      # gh does NOT auto-use the runner's GITHUB_TOKEN — it must be passed explicitly
+      # (gh's own error message says so). One job-level env covers both gh steps below.
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v7
 
@@ -169,14 +173,17 @@ jobs:
           name: "VLC Linux tarball ${{ needs.check-version.outputs.version }} (staging)"
           prerelease: true
           make_latest: false
-          delete_existing: true
-          bodyFile: release_body.md
+          # In-place re-publish: if the tag already carries a release, the action updates that
+          # release (the same-named asset is overwritten — `overwrite_files` defaults to true)
+          # and the explicitly set name/body/prerelease are applied on top of the existing info.
+          body_path: release_body.md
+          fail_on_unmatched_files: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Close the open bot PRs (same version re-run or older version — deterministic replacement)
         run: |
           set -euo pipefail
-          # gh uses the runner's GITHUB_TOKEN automatically. The branch is fixed per version
+          # The branch is fixed per version
           # (bot/vlc-pin-<v> + git push -f), so the replacement is: close the open bot PRs,
           # re-push the branch, re-create the PR (gh has no update-PR semantic). This also
           # closes a bot PR left open for an OLDER version (superseded by this bump).
