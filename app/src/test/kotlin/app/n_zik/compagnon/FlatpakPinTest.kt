@@ -30,8 +30,12 @@ class FlatpakPinTest {
 
     @Test
     fun `the app id is frozen to the reverse-domain identity`() {
-        assertEquals("com.nzik.desktop.compagnon", flatpakProp("flatpak.appId"),
-            "the Flatpak app-id is the frozen install/upgrade/icon identity (AD-1 — irreversible once published)")
+        // The dev channel keeps its OWN app-id (AD-8 — a parallel product, never a replacement
+        // of the stable bundle): the frozen install/upgrade/icon identity is the base id, dev
+        // adds its .dev suffix (whatever the channel, `build.sh package beta|dev` stays green)
+        val suffix = if (System.getProperty("channel") == "dev") ".dev" else ""
+        assertEquals("com.nzik.desktop.compagnon$suffix", flatpakProp("flatpak.appId"),
+            "the Flatpak app-id is the frozen install/upgrade/icon identity (AD-1 — irreversible once published; AD-8: dev keeps its .dev id)")
     }
 
     @Test
@@ -44,17 +48,17 @@ class FlatpakPinTest {
 
     @Test
     fun `the bundle file name is frozen to the package name and version`() {
-        // The version is the catalog's nzikVersionName (shared with Windows) and the package
-        // name the frozen Linux install identity — read them from the catalog / the exposed
-        // contract so the test pins the derivation, not a copy of the string.
-        val toml = File("../gradle/libs.versions.toml")
-        val version = Regex("""nzikVersionName\s*=\s*"?([^"\n]+)"?""")
-            .find(toml.readText())?.groupValues?.get(1)
-            ?: error("the catalog's nzikVersionName line is missing")
+        // The version is the channel-aware in-app version (the catalog's nzikVersionName with the
+        // channel suffix — the single rename helper, AD-2) and the package name the channel-aware
+        // Linux install identity (dev: its own -dev base, AD-8) — read them from the exposed
+        // contract so the test pins the derivation, not a copy of the string (a channel-blind
+        // pin reds `build.sh package beta|dev`).
+        val version = System.getProperty("appVersion.versionName")
+            ?: error("appVersion.versionName is not exposed to the tests")
         val pkgName = System.getProperty("linux.packageName") ?: error("linux.packageName is not exposed to the tests")
         val fileName = flatpakProp("flatpak.fileName")
         assertEquals("$pkgName-$version-x86_64.flatpak", fileName,
-            "the Flatpak name is <package>-<version>-x86_64.flatpak (the same frozen derivation as the AppImage)")
+            "the Flatpak name is <channel-aware package>-<channel-aware version>-x86_64.flatpak (the same frozen derivation as the AppImage)")
     }
 
     @Test

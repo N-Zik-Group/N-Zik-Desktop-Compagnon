@@ -11,8 +11,9 @@ import org.junit.jupiter.api.Test
  * The per-channel artifact names and product names (spec `spec-updater`, AD-8, loop 2): the
  * channel inferred from the version suffix, the per-channel product name ("… (Beta)" / "… (Dev)"
  * — the jpackage app name the build sets, mirrored here so the updater finds the renamed asset),
- * and the full set of six asset names per channel (the beta keeps the stable Linux base — the
- * beta REPLACES the stable in place; the dev carries its own package base, the parallel product).
+ * and the full set of seven asset names per channel (the uniform 7-asset matrix — the beta keeps
+ * the stable Linux base, the beta REPLACES the stable in place; the dev carries its own package
+ * base, the parallel product).
  */
 class ArtifactNamesChannelTest {
 
@@ -42,6 +43,7 @@ class ArtifactNamesChannelTest {
         assertEquals("n-zik-desktop-compagnon-$v-linux-portable.zip", ArtifactNames.portableZip(v))
         assertEquals("n-zik-desktop-compagnon-$v-x86_64.AppImage", ArtifactNames.appImage(v))
         assertEquals("n-zik-desktop-compagnon-$v-x86_64.flatpak", ArtifactNames.flatpak(v))
+        assertEquals("n-zik-desktop-compagnon-$v-1-x86_64.pkg.tar.zst", ArtifactNames.archPkg(v))
     }
 
     @Test
@@ -55,6 +57,8 @@ class ArtifactNamesChannelTest {
         assertEquals("n-zik-desktop-compagnon-$v-linux-portable.zip", ArtifactNames.portableZip(v))
         assertEquals("n-zik-desktop-compagnon-$v-x86_64.AppImage", ArtifactNames.appImage(v))
         assertEquals("n-zik-desktop-compagnon-$v-x86_64.flatpak", ArtifactNames.flatpak(v))
+        // The 7th asset keeps the stable Linux base too (the beta replaces the stable in place)
+        assertEquals("n-zik-desktop-compagnon-$v-1-x86_64.pkg.tar.zst", ArtifactNames.archPkg(v))
     }
 
     @Test
@@ -69,6 +73,7 @@ class ArtifactNamesChannelTest {
         assertEquals("n-zik-desktop-compagnon-dev-$v-linux-portable.zip", ArtifactNames.portableZip(v))
         assertEquals("n-zik-desktop-compagnon-dev-$v-x86_64.AppImage", ArtifactNames.appImage(v))
         assertEquals("n-zik-desktop-compagnon-dev-$v-x86_64.flatpak", ArtifactNames.flatpak(v))
+        assertEquals("n-zik-desktop-compagnon-dev-$v-1-x86_64.pkg.tar.zst", ArtifactNames.archPkg(v))
     }
 
     @Test
@@ -77,7 +82,13 @@ class ArtifactNamesChannelTest {
         assertEquals("N-Zik.Desktop.Compagnon.Dev.-$v.exe", ArtifactNames.forMode(InstallMode.WINDOWS, v, PackageManager.NONE))
         assertEquals("n-zik-desktop-compagnon-dev_$v-1_amd64.deb", ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, v, PackageManager.DEB))
         assertEquals("n-zik-desktop-compagnon-dev-$v-x86_64.flatpak", ArtifactNames.forMode(InstallMode.FLATPAK, v, PackageManager.NONE))
-        // pacman builds from source: no binary asset (the dialog shows the AUR entry hint)
-        assertNull(ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, v, PackageManager.AUR))
+        // A pacman install with the release marker (a release-pkg install) gets the 7th asset
+        assertEquals(
+            "n-zik-desktop-compagnon-dev-$v-1-x86_64.pkg.tar.zst",
+            ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, v, PackageManager.AUR, isReleasePackage = true),
+        )
+        // A pacman install WITHOUT the marker (an AUR install) has no binary asset — its updater
+        // is blocked before any asset is selected
+        assertNull(ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, v, PackageManager.AUR, isReleasePackage = false))
     }
 }

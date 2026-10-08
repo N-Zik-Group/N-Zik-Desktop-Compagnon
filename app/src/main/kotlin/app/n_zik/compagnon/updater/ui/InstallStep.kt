@@ -28,6 +28,7 @@ import java.awt.Desktop
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.io.File
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -41,6 +42,9 @@ import org.jetbrains.compose.resources.stringResource
  */
 @Composable
 fun InstallStep(filePath: String, installMode: InstallMode, packageManager: PackageManager?) {
+    // The exact command of this install mode (`null` = no command to show or copy — the
+    // manual-replacement modes and the probe-failed package-managed fallback)
+    val command = installCommand(installMode, packageManager, filePath)
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = colorPalette().background1),
@@ -62,31 +66,46 @@ fun InstallStep(filePath: String, installMode: InstallMode, packageManager: Pack
             Spacer(modifier = Modifier.height(12.dp))
             when (installMode) {
                 InstallMode.WINDOWS -> {
-                    // The silent in-place install runs on the "Install now" click (the caller
-                    // quits the app — nothing else to show here)
+                    // The interactive in-place install runs on the "Install" click (the caller
+                    // quits the app, the detached helper launches the NSIS installer with
+                    // /UPDATE — no silent flag, the user sees the installer pages and can
+                    // cancel — and the installer relaunches the app on success; nothing else
+                    // to show here)
                 }
 
-                InstallMode.FLATPAK -> CommandHint(
-                    stringResource(Res.string.install_flatpak_command),
-                    "flatpak install \"$filePath\"",
-                )
+                InstallMode.FLATPAK -> command?.let {
+                    CommandHint(
+                        stringResource(Res.string.install_flatpak_command),
+                        it,
+                    )
+                }
 
                 InstallMode.PACKAGE_MANAGED -> when (packageManager) {
-                    PackageManager.DEB -> CommandHint(
-                        stringResource(Res.string.install_pkg_command),
-                        "sudo apt install \"$filePath\"",
-                    )
+                    PackageManager.DEB -> command?.let {
+                        CommandHint(
+                            stringResource(Res.string.install_pkg_command),
+                            it,
+                        )
+                    }
 
-                    PackageManager.RPM -> CommandHint(
-                        stringResource(Res.string.install_pkg_command),
-                        "sudo dnf install \"$filePath\"",
-                    )
+                    PackageManager.RPM -> command?.let {
+                        CommandHint(
+                            stringResource(Res.string.install_pkg_command),
+                            it,
+                        )
+                    }
 
-                    // pacman builds from source: no binary asset — the AUR entry hint
-                    PackageManager.AUR -> BasicText(
-                        text = stringResource(Res.string.install_pkg_aur_hint),
-                        style = typography().xs.copy(color = colorPalette().textSecondary),
-                    )
+                    // pacman + the release marker: the downloaded file is the binary package —
+                    // the upgrade command (shown, NEVER auto-run, spec
+                    // `spec-arch-binary-package-release`). An AUR install (no marker) is blocked
+                    // before this card is ever shown, so this branch is reachable only for the
+                    // release-pkg installs.
+                    PackageManager.AUR -> command?.let {
+                        CommandHint(
+                            stringResource(Res.string.install_pkg_pacman_command),
+                            it,
+                        )
+                    }
 
                     // Probe failed (or not run yet): the manual command, no auto-run
                     PackageManager.NONE, null -> BasicText(
@@ -124,14 +143,26 @@ fun InstallStep(filePath: String, installMode: InstallMode, packageManager: Pack
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
+            // The copy action mirrors the command hint: when the mode has an exact command the
+            // card offers to COPY THE COMMAND (the user runs it in their terminal — it is never
+            // auto-run, privilege), otherwise the file path (the manual modes)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
             ) {
                 BasicText(
-                    text = stringResource(Res.string.install_copy_path),
+                    text = if (command != null) {
+                        stringResource(Res.string.install_copy_command)
+                    } else {
+                        stringResource(Res.string.install_copy_path)
+                    },
                     style = typography().xs.semiBold.copy(color = colorPalette().accent),
-                    modifier = Modifier.clickable { copyToClipboard(filePath) },
+                    modifier = Modifier.clickable {
+                        copyToClipboard(
+                            command ?: filePath,
+                            if (command != null) Res.string.command_copied else Res.string.path_copied,
+                        )
+                    },
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 BasicText(
@@ -166,11 +197,34 @@ fun oldInstallPath(): String =
     runCatching { ProcessHandle.current().info().command().orElse("") }.getOrDefault("")
         .ifEmpty { AppVersion.versionName }
 
+/**
+ * The exact install command of [installMode] for [filePath], or `null` when the mode has no
+ * command to show or copy (the Windows interactive install, the manual-replacement modes, and
+ * the probe-failed package-managed fallback — the card shows the manual hint instead). The
+ * command is shown and copied, NEVER auto-run (the privileged package-managed modes, spec
+ * `spec-arch-binary-package-release`).
+ */
+fun installCommand(installMode: InstallMode, packageManager: PackageManager?, filePath: String): String? =
+    when (installMode) {
+        InstallMode.WINDOWS -> null
+
+        InstallMode.FLATPAK -> "flatpak install \"$filePath\""
+
+        InstallMode.PACKAGE_MANAGED -> when (packageManager) {
+            PackageManager.DEB -> "sudo apt install \"$filePath\""
+            PackageManager.RPM -> "sudo dnf install \"$filePath\""
+            PackageManager.AUR -> "sudo pacman -U \"$filePath\""
+            PackageManager.NONE, null -> null
+        }
+
+        InstallMode.APPIMAGE, InstallMode.PORTABLE -> null
+    }
+
 /** Copies [text] to the clipboard (the desktop's "Copy" — a toast confirms it). */
-fun copyToClipboard(text: String) {
+fun copyToClipboard(text: String, copiedResource: StringResource = Res.string.path_copied) {
     runCatching {
         Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(text), null)
-        Toaster.s(Res.string.path_copied)
+        Toaster.s(copiedResource)
     }.onFailure { Toaster.e(it.message ?: "Copy failed") }
 }
 

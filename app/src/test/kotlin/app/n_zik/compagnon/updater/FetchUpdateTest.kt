@@ -1,6 +1,8 @@
 package app.n_zik.compagnon.updater
 
 import app.n_zik.compagnon.updater.models.ArtifactNames
+import app.n_zik.compagnon.updater.models.InstallMode
+import app.n_zik.compagnon.updater.models.PackageManager
 import app.n_zik.compagnon.updater.models.currentInstallMode
 import app.n_zik.compagnon.updater.models.probePackageManager
 import app.n_zik.compagnon.updater.services.Updater
@@ -24,8 +26,8 @@ import org.junit.jupiter.api.Test
  * `spec-updater`, AD-1 / AD-3): the channel filter over the whole releases list, the dev date
  * tiebreak, the `NoSuchFileException` "no update available" mapping, the changelog fetch (the body
  * link / `dev.txt`) and the per-mode asset selection. Every release carries ALL the channel's
- * asset names, so the assertion holds on any host (Windows exe, Linux deb / rpm / zip / AppImage /
- * flatpak, or the pacman / none case with no asset).
+ * asset names (the uniform 7-asset matrix), so the assertion holds on any host (Windows exe,
+ * Linux deb / rpm / zip / AppImage / flatpak / Arch pkg, or the pacman / none case with no asset).
  */
 class FetchUpdateTest {
 
@@ -59,7 +61,8 @@ class FetchUpdateTest {
                 ${assetJson(tag, ArtifactNames.rpm(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.portableZip(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.appImage(tag.removePrefix("v")))},
-                ${assetJson(tag, ArtifactNames.flatpak(tag.removePrefix("v")))}
+                ${assetJson(tag, ArtifactNames.flatpak(tag.removePrefix("v")))},
+                ${assetJson(tag, ArtifactNames.archPkg(tag.removePrefix("v")))}
               ]
             }
             """.trimIndent()
@@ -262,6 +265,40 @@ class FetchUpdateTest {
             assertNull(Updater.build)
         } else {
             assertEquals(expected, Updater.build?.name)
+        }
+    }
+
+    @Test
+    fun `a marked pacman install picks the arch package asset, an aur install picks none`() = runTest {
+        // The 7th asset (spec `spec-arch-binary-package-release`): the release marker decides —
+        // a package-managed install on pacman gets the binary package only when it is a
+        // release-pkg install; without the marker (an AUR install) no asset is selected (its
+        // updater is blocked before it reaches a check on that path)
+        val client = clientFor(
+            releasesJson("v0.0.2"),
+        )
+        try {
+            Updater.fetchUpdate(
+                client,
+                "stable",
+                installMode = InstallMode.PACKAGE_MANAGED,
+                packageManager = PackageManager.AUR,
+                isReleasePackage = true,
+            )
+            assertEquals(ArtifactNames.archPkg("0.0.2"), Updater.build?.name)
+
+            // Reset between the two fetches (the object's static state, JUnit does not guarantee order)
+            Updater.build = null
+            Updater.fetchUpdate(
+                client,
+                "stable",
+                installMode = InstallMode.PACKAGE_MANAGED,
+                packageManager = PackageManager.AUR,
+                isReleasePackage = false,
+            )
+            assertNull(Updater.build, "an AUR install (no marker) has no binary asset")
+        } finally {
+            client.close()
         }
     }
 }

@@ -12,15 +12,23 @@ import org.junit.jupiter.api.Test
  * the AppImage and the Flatpak embed the runtime, each into its own staging), and a renamed `nzikPackageName` would desynchronize the `/opt`
  * dir from the portable zip name, the AUR `pkgname`s and the download URL — all with a green build.
  * The build exposes the effective values (`systemProperty` in `app/build.gradle.kts`, same pattern
- * as `windows.packageName`) so this test pins them.
+ * as `windows.packageName`) so this test pins them. Channel-aware: the dev channel keeps its OWN
+ * package base (`n-zik-desktop-compagnon-dev`, AD-8) and every artifact name carries the channel
+ * suffix after the base version — `build.sh package beta|dev` runs `:app:test -Pchannel=…`, so a
+ * channel-blind pin reds those builds.
  */
 class LinuxPackagePinTest {
 
     private val releasePkgbuild = File("../packaging/aur/PKGBUILD")
     private val gitPkgbuild = File("../packaging/aur-git/PKGBUILD")
 
+    /** The channel-aware package name the running build generates (dev: its own `-dev` base, AD-8). */
     private fun pkgName(): String =
         System.getProperty("linux.packageName") ?: error("linux.packageName is not exposed to the tests")
+
+    /** The channel-aware in-app version the running build generates (stable/debug: the catalog base). */
+    private fun appVersionName(): String =
+        System.getProperty("appVersion.versionName") ?: error("appVersion.versionName is not exposed to the tests")
 
     @Test
     fun `both jpackage tasks carry the vlc dependency and the Audio menu group`() {
@@ -42,9 +50,15 @@ class LinuxPackagePinTest {
 
     @Test
     fun `the package name is frozen and matches the portable zip base`() {
-        assertEquals("n-zik-desktop-compagnon", pkgName(), "the catalog-derived linux.packageName is the frozen install identity")
+        // The dev channel keeps its OWN package base (AD-8 — a parallel product): the frozen
+        // install identity is the base name, dev adds its -dev suffix
+        assertEquals(
+            "n-zik-desktop-compagnon",
+            pkgName().removeSuffix("-dev"),
+            "the catalog-derived linux.packageName base is the frozen install identity (dev adds its -dev suffix)",
+        )
         val zip = System.getProperty("linux.portable.zipName") ?: error("the portable zip archiveFileName is not exposed to the tests")
-        assertTrue(zip.startsWith("${pkgName()}-"), "the portable zip base name must be the package name: $zip")
+        assertTrue(zip.startsWith("${pkgName()}-"), "the portable zip base name must be the channel-aware package name: $zip")
         assertTrue(zip.endsWith("-linux-portable.zip"), "the portable zip keeps its -linux-portable.zip suffix: $zip")
     }
 
@@ -90,15 +104,13 @@ class LinuxPackagePinTest {
 
     @Test
     fun `the AppImage file name is frozen to the package name and version`() {
-        // The version is the catalog's nzikVersionName (shared with Windows) — read it from the toml
-        // so the test pins the derivation, not a copy of the string.
-        val toml = File("../gradle/libs.versions.toml")
-        val version = Regex("""nzikVersionName\s*=\s*"?([^"\n]+)"?""")
-            .find(toml.readText())?.groupValues?.get(1)
-            ?: error("the catalog's nzikVersionName line is missing")
+        // The version is the channel-aware in-app version (the catalog's nzikVersionName with the
+        // channel suffix — the single rename helper, AD-2) and the package name the channel-aware
+        // install identity — read them from the exposed contract so the test pins the derivation,
+        // not a copy of the string (a channel-blind pin reds `build.sh package beta|dev`).
         val fileName = appImageProp("linux.appImage.fileName")
-        assertEquals("${pkgName()}-$version-x86_64.AppImage", fileName,
-            "the AppImage name is <package>-<version>-x86_64.AppImage (pinned through LDAI_OUTPUT in packageAppImage)")
+        assertEquals("${pkgName()}-${appVersionName()}-x86_64.AppImage", fileName,
+            "the AppImage name is <channel-aware package>-<channel-aware version>-x86_64.AppImage (pinned through LDAI_OUTPUT in packageAppImage)")
     }
 
     @Test
@@ -132,20 +144,23 @@ class LinuxPackagePinTest {
 
     @Test
     fun `the package name matches the AUR pkgnames and the download URL`() {
+        // The committed AUR entries are STABLE-ONLY (the dev channel is a parallel product — its
+        // own -dev package base): compare against the base name, whatever the channel is.
+        val baseName = pkgName().removeSuffix("-dev")
         // Release entry: pkgname is the package identity.
         val releaseName = releasePkgbuild.readText().lineSequence()
             .firstOrNull { it.startsWith("pkgname=") }?.removePrefix("pkgname=")
             ?: error("release entry: the pkgname= line is missing")
-        assertEquals(pkgName(), releaseName, "the release AUR pkgname must be the jpackage package name")
+        assertEquals(baseName, releaseName, "the release AUR pkgname must be the jpackage package name")
         // Git entry: pkgname carries the -git suffix; the install identity is _pkgname.
         val gitName = gitPkgbuild.readText().lineSequence()
             .firstOrNull { it.startsWith("_pkgname=") }?.removePrefix("_pkgname=")
             ?: error("git entry: the _pkgname= line is missing")
-        assertEquals(pkgName(), gitName, "the git AUR install identity (_pkgname) must be the jpackage package name")
+        assertEquals(baseName, gitName, "the git AUR install identity (_pkgname) must be the jpackage package name")
         // The release entry downloads the zip from the release; the URL's package base must be the same name.
         val urlBase = Regex("releases/download/v\\$\\{pkgver\\}/([a-z0-9-]+)-\\$\\{pkgver\\}-linux-portable\\.zip")
             .find(releasePkgbuild.readText())?.groupValues?.get(1)
             ?: error("release entry: the portable-zip download URL is missing")
-        assertEquals(pkgName(), urlBase, "the release download URL must name the portable zip after the package name")
+        assertEquals(baseName, urlBase, "the release download URL must name the portable zip after the package name")
     }
 }

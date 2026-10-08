@@ -40,6 +40,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.opentest4j.AssertionFailedError
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
@@ -213,6 +214,27 @@ class LocalPlaybackTest {
         settle()
     }
 
+    /**
+     * Waits until the engine has received [expectedCalls] play call(s) (real-time pump:
+     * [runCurrent] + a real-time breath for the data-dispatcher hop, like [settle]). Unlike
+     * [settle] this is condition-based — it returns as soon as the expected count is reached,
+     * and FAILS EXPLICITLY at the budget expiry (the missing play, not a misleading late
+     * assertion on the last call — spec `spec-arch-binary-package-release`, loop 2 G15).
+     */
+    private fun TestScope.awaitPlay(expectedCalls: Int, budgetMs: Long = 300) {
+        val deadline = System.currentTimeMillis() + budgetMs
+        while (engine.playCalls().size < expectedCalls) {
+            runCurrent()
+            Thread.sleep(10)
+            if (System.currentTimeMillis() > deadline) {
+                // The budget is exhausted before the expected play call(s) arrive: fail the test explicitly
+                // (a late, misleading assertion on the last call would hide the missing play — spec
+                // `spec-arch-binary-package-release`, loop 2 G15)
+                throw AssertionFailedError("awaitPlay: expected $expectedCalls play call(s), got ${engine.playCalls().size} (calls: ${engine.calls})")
+            }
+        }
+    }
+
     private fun TestScope.emit(event: EngineEvent) {
         engine.events.tryEmit(event)
         settle()
@@ -226,6 +248,7 @@ class LocalPlaybackTest {
 
         repo.now = 3_000
         set(state(output = AudioOutput.Pc, position = 10_000, at = 1_000))
+        awaitPlay(1)
         assertEquals(listOf("${a.id}/auto"), audio.forges)
         assertEquals(listOf("play http://phone/audio/${a.id}?t=1 at 12000 x1.0"), engine.playCalls())
     }

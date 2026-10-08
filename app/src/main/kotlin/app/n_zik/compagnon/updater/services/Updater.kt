@@ -9,9 +9,13 @@ import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.updater.models.ArtifactNames
 import app.n_zik.compagnon.updater.models.CheckUpdateState
 import app.n_zik.compagnon.updater.models.GithubRelease
+import app.n_zik.compagnon.updater.models.InstallMode
+import app.n_zik.compagnon.updater.models.PackageManager
 import app.n_zik.compagnon.updater.models.UpdaterConstants
+import app.n_zik.compagnon.updater.models.currentDistributionMarker
 import app.n_zik.compagnon.updater.models.currentInstallMode
-import app.n_zik.compagnon.updater.models.probePackageManager
+import app.n_zik.compagnon.updater.models.currentIsAurBlocked
+import app.n_zik.compagnon.updater.models.livePackageManager
 import app.n_zik.compagnon.utils.Preferences
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.UserSettings
@@ -231,6 +235,12 @@ object Updater {
      *
      * > **NOTE**: this is a blocking process, it should never run on the UI thread.
      *
+     * The install mode, the package manager and the release marker (spec
+     * `spec-arch-binary-package-release`, loop 2 G14) are injectable with live defaults:
+     * the marker decides whether a pacman install gets the binary package asset
+     * (release-pkg install) or none (AUR install — the updater is blocked before it
+     * reaches a check on that path).
+     *
      * @throws NoSuchFileException when no same-channel release exists (the phone's mapping:
      *   "no update available").
      *
@@ -242,6 +252,9 @@ object Updater {
         client: HttpClient,
         channel: String,
         isForced: Boolean = false,
+        installMode: InstallMode = currentInstallMode(),
+        packageManager: PackageManager = livePackageManager(),
+        isReleasePackage: Boolean = currentDistributionMarker() != null,
     ) = withContext(NzikDispatchers.DATA) {
         // Get all releases to find the best one
         val url = "${UpdaterConstants.GITHUB_API}/repos/${UpdaterConstants.REPO}/releases"
@@ -275,9 +288,10 @@ object Updater {
         // pacman/AUR hint shows instead of a download).
         val releaseVersion = bestRelease.tagName.removePrefix(UpdaterConstants.PREFIX_VERSION)
         val assetName = ArtifactNames.forMode(
-            currentInstallMode(),
+            installMode,
             releaseVersion,
-            probePackageManager(),
+            packageManager,
+            isReleasePackage = isReleasePackage,
         )
         this@Updater.build = when (assetName) {
             null -> null
@@ -375,10 +389,14 @@ object Updater {
      * The pure skip / result decision of [checkForUpdate] (loop 2 — the skip and reset rules
      * extracted so `decideCheckTest` pins them without any network or dialog):
      *
-     *  * [Skip] — the check does not run: the updater is off (debug / -git — anti-downgrade), or
-     *    a NON-forced check while the dialog-cancellation flag is set (the user's "don't check"
-     *    gesture — the phone's in-memory `NewUpdateAvailableDialog.isCancelled`, re-armed to its
-     *    default on every launch);
+     *  * [Skip] — the check does not run: the updater is off (debug / -git — anti-downgrade),
+     *    the updater is BLOCKED BY PROVENANCE (a pacman `/opt` install WITHOUT the release
+     *    marker = an AUR install — the AUR entry owns the update, spec
+     *    `spec-arch-binary-package-release`; the block is as absolute as the build gate, a
+     *    FORCED check does NOT bypass it — no update check at all, not even an explicit one),
+     *    or a NON-forced check while the dialog-cancellation flag is set (the user's
+     *    "don't check" gesture — the phone's in-memory `NewUpdateAvailableDialog.isCancelled`,
+     *    re-armed to its default on every launch);
      *  * [Result] — the check runs, with the outcome of the version comparison: [hasUpdate]
      *    true = the best same-channel release is newer than this build.
      *
@@ -388,7 +406,7 @@ object Updater {
      * skip decision, so a dismissal never suppresses the startup check across launches.
      */
     sealed interface CheckDecision {
-        /** The check was skipped (updater off, or dialog-cancelled + non-forced). */
+        /** The check was skipped (updater off, AUR-blocked, or dialog-cancelled + non-forced). */
         data object Skip : CheckDecision
 
         /** The check runs: [hasUpdate] is the outcome of the version comparison. */
@@ -397,12 +415,13 @@ object Updater {
 
     internal fun decideCheck(
         updaterEnabled: Boolean,
+        aurBlocked: Boolean = false,
         updateCancelled: Boolean,
         isForced: Boolean,
         bestTagName: String?,
         currentVersion: String,
     ): CheckDecision = when {
-        !updaterEnabled -> CheckDecision.Skip
+        !updaterEnabled || aurBlocked -> CheckDecision.Skip
         !isForced && updateCancelled -> CheckDecision.Skip
         else -> CheckDecision.Result(bestTagName?.let { isVersionNewer(it, currentVersion) } ?: false)
     }
@@ -420,8 +439,14 @@ object Updater {
      * @param showDialog whether the startup [NewUpdateAvailableDialog] is raised on an update
      *   (AD-10: the About page's "Check update" forces the check with `showDialog = false`
      *   and opens the update PAGE instead — the dialog and the page never both show).
+     * @param aurBlocked the provenance block, injectable for the tests (review loop 3 — L3-VG3):
+     *   `null` (the production default) computes it live INSIDE this launch — on the DATA thread
+     *   where it always ran (the production call sites run on the UI thread, so the live
+     *   composition must not be hoisted to a default argument); a forced value bypasses the live
+     *   composition entirely (the test seam — it pins that the block is actually passed to
+     *   [decideCheck]).
      */
-    fun checkForUpdate(isForced: Boolean = false, showDialog: Boolean = true) = NzikDispatchers.fireAndForget(NzikDispatchers.DATA).launch {
+    fun checkForUpdate(isForced: Boolean = false, showDialog: Boolean = true, aurBlocked: Boolean? = null) = NzikDispatchers.fireAndForget(NzikDispatchers.DATA).launch {
         // The check starts from a clean slate (loop 2): the previous check's changelog must not
         // linger when this one finds nothing (the "What's new" card shows nothing, not stale text).
         latestChangelog = null
@@ -431,6 +456,12 @@ object Updater {
         if (
             decideCheck(
                 updaterEnabled = AppVersion.updaterEnabled,
+                // The provenance block (spec `spec-arch-binary-package-release`): a pacman /opt
+                // install without the release marker is an AUR install — the AUR entry owns the
+                // update, so no check at all (not even a forced one). The live composition runs
+                // on the DATA thread (the launch above), off the UI thread (loop 2 G13); the
+                // `aurBlocked` seam (review loop 3 — L3-VG3) bypasses it when forced.
+                aurBlocked = aurBlocked ?: currentIsAurBlocked(),
                 // The in-memory dialog-cancellation flag only (the phone's skip rule, L417):
                 // the persisted `updateCancelled` setting is write-only, like on the phone
                 updateCancelled = NewUpdateAvailableDialog.isCancelled,

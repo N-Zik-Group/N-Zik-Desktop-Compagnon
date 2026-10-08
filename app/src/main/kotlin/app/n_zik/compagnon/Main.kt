@@ -58,6 +58,7 @@ import app.n_zik.compagnon.utils.Preferences
 import app.n_zik.compagnon.generated.AppVersion
 import app.n_zik.compagnon.updater.models.ArtifactNames
 import app.n_zik.compagnon.updater.models.CheckUpdateState
+import app.n_zik.compagnon.updater.models.currentIsAurBlocked
 import app.n_zik.compagnon.updater.services.UpdateDownloadManager
 import app.n_zik.compagnon.updater.services.Updater
 import androidx.compose.runtime.CompositionLocalProvider
@@ -156,12 +157,21 @@ fun App() {
     //          the loop-2 closure replaced the v1 themed confirmation with the phone's own dialog:
     //          info card + Check / Cancel / Turn off);
     //  - Off : nothing.
+    // The provenance block (spec `spec-arch-binary-package-release`): a pacman /opt install
+    // without the release marker is an AUR install — the AUR entry owns the update, so no
+    // startup check at all (same treatment as the git channel). The block composition (it may
+    // spawn the package-manager probes) never runs on the composition thread — off to the
+    // DATA thread, and short-circuited before the probe when the build is not updater-enabled
+    // or the mode is not package-managed (loop 2 G13).
     LaunchedEffect(Unit) {
         if (AppVersion.updaterEnabled) {
-            when (settings.checkUpdateStateValue) {
-                CheckUpdateState.On -> if (!NewUpdateAvailableDialog.isCancelled) Updater.checkForUpdate()
-                CheckUpdateState.Ask -> CheckForUpdateDialog.isActive = true
-                CheckUpdateState.Off -> Unit
+            val aurBlocked = withContext(NzikDispatchers.DATA) { currentIsAurBlocked() }
+            if (!aurBlocked) {
+                when (settings.checkUpdateStateValue) {
+                    CheckUpdateState.On -> if (!NewUpdateAvailableDialog.isCancelled) Updater.checkForUpdate()
+                    CheckUpdateState.Ask -> CheckForUpdateDialog.isActive = true
+                    CheckUpdateState.Off -> Unit
+                }
             }
         }
     }

@@ -133,7 +133,9 @@ jobs:
         # consumer on the same distro.
         run: |
           sudo apt-get update
-          sudo apt-get install -y fakeroot rpm flatpak flatpak-builder libebml5 libmatroska7 libfaad2 libasound2t64
+          # zstd: the .pkg.tar.zst compressor of :app:packageArch (the Arch binary package — the
+          # 7th Linux path; the task fails loud without it)
+          sudo apt-get install -y fakeroot rpm flatpak flatpak-builder libebml5 libmatroska7 libfaad2 libasound2t64 zstd
 
       - name: Configure the Flathub remote
         run: flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -159,7 +161,7 @@ jobs:
           restore-keys: gradle-${{ runner.os }}-
 
       - name: Build with Gradle
-        run: ./gradlew :app:packageDeb :app:packageRpm :app:packageLinuxPortable :app:packageAppImage :app:packageFlatpak -Pchannel=stable
+        run: ./gradlew :app:packageDeb :app:packageRpm :app:packageLinuxPortable :app:packageAppImage :app:packageFlatpak :app:packageArch -Pchannel=stable
 
       - name: Upload the Linux artifacts
         uses: actions/upload-artifact@v7
@@ -169,6 +171,7 @@ jobs:
             app/build/compose/binaries/*.zip
             app/build/compose/binaries/*.AppImage
             app/build/compose/binaries/*.flatpak
+            app/build/compose/binaries/*.pkg.tar.zst
             app/build/compose/binaries/main/deb/*.deb
             app/build/compose/binaries/main/rpm/*.rpm
 
@@ -289,7 +292,7 @@ jobs:
         with:
           path: artifacts
 
-      - name: Collect the 6 artifacts and compute the SHA-256
+      - name: Collect the 7 artifacts and compute the SHA-256
         run: |
           set -euo pipefail
 
@@ -314,6 +317,7 @@ jobs:
           ZIP="${PKG}-${BASE}${SUFFIX}-linux-portable.zip"
           APPIMAGE="${PKG}-${BASE}${SUFFIX}-x86_64.AppImage"
           FLATPAK="${PKG}-${BASE}${SUFFIX}-x86_64.flatpak"
+          ARCH="${PKG}-${BASE}${SUFFIX}-1-x86_64.pkg.tar.zst"
 
           # A missing artifact fails the run loud: the CI never "fixes" the
           # packaging contract (it belongs to the build script).
@@ -329,10 +333,11 @@ jobs:
           cp "artifacts/linux-artifacts/${ZIP}" release/
           cp "artifacts/linux-artifacts/${APPIMAGE}" release/
           cp "artifacts/linux-artifacts/${FLATPAK}" release/
+          cp "artifacts/linux-artifacts/${ARCH}" release/
           cp "artifacts/windows-artifact/${EXE}" "release/${EXE_PUB}"
 
           cd release
-          sha256sum "${EXE_PUB}" "${DEB}" "${RPM}" "${ZIP}" "${APPIMAGE}" "${FLATPAK}" > ../SHA256SUMS.txt
+          sha256sum "${EXE_PUB}" "${DEB}" "${RPM}" "${ZIP}" "${APPIMAGE}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
           cd ..
 
           # The markdown SHA-256 table (the artifacts are unsigned — this is
@@ -372,6 +377,7 @@ jobs:
              - **Windows:** run the installer (it is unsigned - Windows SmartScreen may warn; the source is public and any build can be rebuilt and compared against this one).
              - **Debian / Ubuntu / Mint:** apt install ./<file>.deb
              - **Fedora / openSUSE / Rocky:** dnf install ./<file>.rpm
+             - **Arch / Manjaro / CachyOS:** sudo pacman -U ./<file>.pkg.tar.zst
              - **Portable:** unzip the zip and run the launcher in bin/.
              - **AppImage:** run the file directly (needs fuse3; without it: ./<file>.AppImage --appimage-extract-and-run).
              - **Flatpak:** flatpak install ./<file>.flatpak.
@@ -385,11 +391,12 @@ jobs:
           - **Windows installer** (.exe) – Complete build with all components (x86_64, 64-bit only).
           - **Debian / Ubuntu** (.deb) – Complete build for Debian-based distros (x86_64, 64-bit only).
           - **Fedora / openSUSE / Rocky** (.rpm) – Complete build for RPM-based distros (x86_64, 64-bit only).
+          - **Arch / Manjaro / CachyOS** (.pkg.tar.zst) – Prebuilt pacman binary package, installable with `sudo pacman -U` (x86_64, 64-bit only).
           - **Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
           - **AppImage** – Single-file build, no installation needed (x86_64, 64-bit only).
           - **Flatpak** – Flatpak build (x86_64, 64-bit only).
 
-          > ℹ️ All 6 artifacts are 64-bit only (x86_64).
+          > ℹ️ All 7 artifacts are 64-bit only (x86_64).
 
           ## 🔄 Update Policy
 
@@ -490,6 +497,7 @@ jobs:
                - **Windows:** run the installer (it is unsigned - Windows SmartScreen may warn; the source is public and any build can be rebuilt and compared against this one).
                - **Debian / Ubuntu / Mint:** apt install ./<file>.deb
                - **Fedora / openSUSE / Rocky:** dnf install ./<file>.rpm
+               - **Arch / Manjaro / CachyOS:** sudo pacman -U ./<file>.pkg.tar.zst
                - **Portable:** unzip the zip and run the launcher in bin/.
                - **AppImage:** run the file directly (needs fuse3; without it: ./<file>.AppImage --appimage-extract-and-run).
                - **Flatpak:** flatpak install ./<file>.flatpak.
@@ -503,11 +511,12 @@ jobs:
             - **Windows installer** (.exe) – Complete build with all components (x86_64, 64-bit only).
             - **Debian / Ubuntu** (.deb) – Complete build for Debian-based distros (x86_64, 64-bit only).
             - **Fedora / openSUSE / Rocky** (.rpm) – Complete build for RPM-based distros (x86_64, 64-bit only).
+            - **Arch / Manjaro / CachyOS** (.pkg.tar.zst) – Prebuilt pacman binary package, installable with `sudo pacman -U` (x86_64, 64-bit only).
             - **Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
             - **AppImage** – Single-file build, no installation needed (x86_64, 64-bit only).
             - **Flatpak** – Flatpak build (x86_64, 64-bit only).
 
-            > ℹ️ All 6 artifacts are 64-bit only (x86_64).
+            > ℹ️ All 7 artifacts are 64-bit only (x86_64).
 
             ## 🔄 Update Policy
 
@@ -526,6 +535,7 @@ jobs:
             - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/N-Zik.Desktop.Compagnon-${{ needs.versioning.outputs.downstream }}.exe
             - 📥 **Debian (.deb):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon_${{ needs.versioning.outputs.downstream }}-1_amd64.deb
             - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-1.x86_64.rpm
+            - 📥 **Arch (.pkg.tar.zst):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-1-x86_64.pkg.tar.zst
             - 📥 **Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-linux-portable.zip
             - 📥 **AppImage:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-x86_64.AppImage
             - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-x86_64.flatpak

@@ -47,10 +47,12 @@ import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.updater.models.InstallMode
 import app.n_zik.compagnon.updater.models.PackageManager
 import app.n_zik.compagnon.updater.models.currentInstallMode
-import app.n_zik.compagnon.updater.models.probePackageManager
+import app.n_zik.compagnon.updater.models.livePackageManager
 import app.n_zik.compagnon.updater.services.UpdateDownloadManager
 import app.n_zik.compagnon.updater.services.Updater
 import app.n_zik.compagnon.updater.ui.InstallStep
+import app.n_zik.compagnon.updater.ui.copyToClipboard
+import app.n_zik.compagnon.updater.ui.installCommand
 import app.n_zik.compagnon.updater.ui.openFileFolder
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.bold
@@ -125,7 +127,7 @@ object NewUpdateAvailableDialog {
         var packageManager by remember { mutableStateOf<PackageManager?>(null) }
         LaunchedEffect(installMode) {
             if (installMode == InstallMode.PACKAGE_MANAGED) {
-                packageManager = withContext(NzikDispatchers.DATA) { probePackageManager() }
+                packageManager = withContext(NzikDispatchers.DATA) { livePackageManager() }
             }
         }
 
@@ -230,10 +232,13 @@ object NewUpdateAvailableDialog {
                     is UpdateDownloadManager.DownloadState.Idle,
                     is UpdateDownloadManager.DownloadState.Starting -> {
                         if (build == null) {
-                            // Loop 2: no binary asset for this install mode (AUR — pacman builds
-                            // from source — or the release simply has no asset for this mode):
-                            // the manual/AUR hint card, no download button (the v1 code silently
-                            // offered a dead button).
+                            // No binary asset for this install mode (the probe failed, or the
+                            // release simply has no asset for this mode): the manual-commands
+                            // card, no download button (the v1 code silently offered a dead
+                            // button). An AUR install (pacman, no release marker) never reaches
+                            // this dialog — its updater is blocked by provenance before any
+                            // check (spec `spec-arch-binary-package-release`); a marked
+                            // release-pkg install gets its binary package asset instead.
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = CardDefaults.cardColors(
@@ -247,14 +252,7 @@ object NewUpdateAvailableDialog {
                                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                             ) {
                                 BasicText(
-                                    text = if (
-                                        installMode == InstallMode.PACKAGE_MANAGED &&
-                                        (packageManager == PackageManager.AUR || packageManager == null)
-                                    ) {
-                                        stringResource(Res.string.install_pkg_aur_hint)
-                                    } else {
-                                        stringResource(Res.string.install_pkg_manual)
-                                    },
+                                    text = stringResource(Res.string.install_pkg_manual),
                                     style = typography().xs.copy(color = colorPalette().textSecondary),
                                     modifier = Modifier.padding(16.dp),
                                 )
@@ -353,6 +351,10 @@ object NewUpdateAvailableDialog {
                         // Hoisted into composable scope: the click lambda below is neither suspend nor
                         // composable, so the non-composable `getString` cannot be called inside it
                         val windowsHelperError = stringResource(Res.string.error_windows_install_helper)
+                        // The exact command of this mode (`null` = the manual modes — the primary
+                        // action keeps the "Open folder" fallback instead of a misleading
+                        // "Install")
+                        val command = installCommand(installMode, packageManager, state.filePath)
                         InstallStep(
                             filePath = state.filePath,
                             installMode = installMode,
@@ -360,20 +362,29 @@ object NewUpdateAvailableDialog {
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         ActionRow(
-                            primaryLabel = if (installMode == InstallMode.WINDOWS) stringResource(Res.string.install_now) else stringResource(Res.string.install_open_folder),
+                            primaryLabel = when {
+                                installMode == InstallMode.WINDOWS -> stringResource(Res.string.install_now)
+                                command != null -> stringResource(Res.string.install_copy_command)
+                                else -> stringResource(Res.string.install_open_folder)
+                            },
                             onPrimary = {
-                                if (installMode == InstallMode.WINDOWS) {
-                                    if (UpdateDownloadManager.startWindowsInstall(state.filePath)) {
-                                        // Quit so the installer can replace the running files. `exitApplication()`
-                                        // is only reachable from the `application {}` scope in Main.kt, so a JVM
-                                        // exit is the way to quit from here (safe: dispatchers are daemon threads,
-                                        // no shutdown hooks, and the install helper is a detached process).
-                                        System.exit(0)
-                                    } else {
-                                        Toaster.e(windowsHelperError)
+                                when {
+                                    installMode == InstallMode.WINDOWS -> {
+                                        if (UpdateDownloadManager.startWindowsInstall(state.filePath)) {
+                                            // Quit so the installer can replace the running files. `exitApplication()`
+                                            // is only reachable from the `application {}` scope in Main.kt, so a JVM
+                                            // exit is the way to quit from here (safe: dispatchers are daemon threads,
+                                            // no shutdown hooks, and the install helper is a detached process).
+                                            System.exit(0)
+                                        } else {
+                                            Toaster.e(windowsHelperError)
+                                        }
                                     }
-                                } else {
-                                    openFileFolder(state.filePath)
+                                    // The command-managed modes (flatpak / apt / dnf / pacman): copy
+                                    // the exact command — the user runs it in their terminal
+                                    // (never auto-run, privilege)
+                                    command != null -> copyToClipboard(command, Res.string.command_copied)
+                                    else -> openFileFolder(state.filePath)
                                 }
                             },
                             onCancel = {

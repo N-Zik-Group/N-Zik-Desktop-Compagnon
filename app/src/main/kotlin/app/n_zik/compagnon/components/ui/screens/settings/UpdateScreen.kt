@@ -62,8 +62,9 @@ import app.n_zik.compagnon.updater.models.GithubRelease
 import app.n_zik.compagnon.updater.models.InstallMode
 import app.n_zik.compagnon.updater.models.PackageManager
 import app.n_zik.compagnon.updater.models.UpdaterConstants
+import app.n_zik.compagnon.updater.models.currentDistributionMarker
 import app.n_zik.compagnon.updater.models.currentInstallMode
-import app.n_zik.compagnon.updater.models.probePackageManager
+import app.n_zik.compagnon.updater.models.livePackageManager
 import app.n_zik.compagnon.updater.services.UpdateDownloadManager
 import app.n_zik.compagnon.updater.services.Updater
 import app.n_zik.compagnon.updater.services.updaterHttpClient
@@ -71,6 +72,8 @@ import app.n_zik.compagnon.updater.services.ChangelogTranslator
 import app.n_zik.compagnon.updater.ui.ChangelogCard
 import app.n_zik.compagnon.updater.ui.InstallStep
 import app.n_zik.compagnon.updater.ui.UpdateLanguage
+import app.n_zik.compagnon.updater.ui.copyToClipboard
+import app.n_zik.compagnon.updater.ui.installCommand
 import app.n_zik.compagnon.updater.ui.openFileFolder
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.Preferences
@@ -81,6 +84,7 @@ import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.openInBrowser
 import app.n_zik.compagnon.utils.semiBold
 import dev.rebelonion.translator.Language
+import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
@@ -143,12 +147,13 @@ fun UpdateScreen(
 
     // The install gesture of this instance (detected once — the mode does not change at runtime)
     val installMode = remember { currentInstallMode() }
-    // The package-manager probe is a blocking `--version` process scan — off the composition
-    // thread, `null` until it resolves (the shared [InstallStep] waits on it)
+    // The package-manager probe (memoized — the blocking `--version` scan runs once per
+    // process) — off the composition thread, `null` until it resolves (the shared [InstallStep]
+    // waits on it)
     var packageManager by remember { mutableStateOf<PackageManager?>(null) }
     LaunchedEffect(installMode) {
         if (installMode == InstallMode.PACKAGE_MANAGED) {
-            packageManager = withContext(NzikDispatchers.DATA) { probePackageManager() }
+            packageManager = withContext(NzikDispatchers.DATA) { livePackageManager() }
         }
     }
 
@@ -775,6 +780,10 @@ fun UpdateScreen(
                                         // same fix)
                                         val windowsHelperError =
                                             stringResource(Res.string.error_windows_install_helper)
+                                        // The exact command of this mode (`null` = the manual modes —
+                                        // the accent button keeps the "Open folder" fallback instead
+                                        // of a misleading "Install")
+                                        val command = installCommand(installMode, packageManager, state.filePath)
                                         // The per-mode install gesture (the shared card + the
                                         // phone's accent "Install" action)
                                         InstallStep(
@@ -788,16 +797,25 @@ fun UpdateScreen(
                                                 .fillMaxWidth()
                                                 .clip(uiRoundnessShape())
                                                 .clickable {
-                                                    if (installMode == InstallMode.WINDOWS) {
-                                                        if (UpdateDownloadManager.startWindowsInstall(state.filePath)) {
-                                                            // Quit so the installer can replace the running
-                                                            // files (the dialog's JVM-exit rationale)
-                                                            System.exit(0)
-                                                        } else {
-                                                            Toaster.e(windowsHelperError)
+                                                    when {
+                                                        installMode == InstallMode.WINDOWS -> {
+                                                            if (UpdateDownloadManager.startWindowsInstall(state.filePath)) {
+                                                                // Quit so the installer can replace the running
+                                                                // files (the dialog's JVM-exit rationale)
+                                                                System.exit(0)
+                                                            } else {
+                                                                Toaster.e(windowsHelperError)
+                                                            }
                                                         }
-                                                    } else {
-                                                        openFileFolder(state.filePath)
+                                                        // The command-managed modes (flatpak / apt /
+                                                        // dnf / pacman): copy the exact command — the
+                                                        // user runs it in their terminal (never
+                                                        // auto-run, privilege)
+                                                        command != null -> copyToClipboard(
+                                                            command,
+                                                            Res.string.command_copied,
+                                                        )
+                                                        else -> openFileFolder(state.filePath)
                                                     }
                                                 },
                                             colors = CardDefaults.cardColors(containerColor = colorPalette().accent),
@@ -818,7 +836,11 @@ fun UpdateScreen(
                                                 )
                                                 Spacer(modifier = Modifier.width(8.dp))
                                                 BasicText(
-                                                    text = stringResource(Res.string.install),
+                                                    text = when {
+                                                        installMode == InstallMode.WINDOWS -> stringResource(Res.string.install)
+                                                        command != null -> stringResource(Res.string.install_copy_command)
+                                                        else -> stringResource(Res.string.install_open_folder)
+                                                    },
                                                     modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                                                     maxLines = 1,
                                                     style = typography().s.bold.copy(color = Color.White),
@@ -1063,15 +1085,28 @@ private val releaseJson = Json { ignoreUnknownKeys = true }
  * mode (the package-manager probe, when still pending, is the blocking `--version` scan, so the
  * call site runs this off the composition thread). The download itself rides the shared
  * [UpdateDownloadManager] state (the page's bottom action shows its progression).
+ *
+ * [isReleasePackage] adopts the release marker (spec `spec-arch-binary-package-release`,
+ * loop 2 G14): a pacman install carries the 7th asset only when it is a release-pkg install —
+ * without the marker this gesture is a no-op, like every other check on an AUR install. The
+ * [client] and [changelogFetcher] are the test seams (the production defaults are
+ * [updaterHttpClient] and the fire-and-forget [Updater.fetchCurrentChangelog]).
  */
-internal suspend fun redownloadCurrentVersion(installMode: InstallMode, packageManager: PackageManager?) {
+internal suspend fun redownloadCurrentVersion(
+    installMode: InstallMode,
+    packageManager: PackageManager?,
+    isReleasePackage: Boolean = currentDistributionMarker() != null,
+    client: HttpClient = updaterHttpClient(),
+    changelogFetcher: () -> Unit = { Updater.fetchCurrentChangelog() },
+) {
     // The re-download re-fetches the RUNNING version's artifact — its changelog too, so the
     // "What's new" card shows the fresh (not cached) text of this version (spec AD-9; the
-    // page entry already does this, but a re-download implies the cached artifact was stale)
-    Updater.fetchCurrentChangelog()
+    // page entry already does this, but a re-download implies the cached artifact was stale).
+    // The seam (review loop 3 — L3-BH10): the tests pass a no-op so the unit test does no
+    // live network call
+    changelogFetcher()
     val version = AppVersion.versionName
     val tag = "${UpdaterConstants.PREFIX_VERSION}${version.removePrefix(UpdaterConstants.PREFIX_VERSION)}"
-    val client = updaterHttpClient()
     try {
         val response = client.get(
             "${UpdaterConstants.GITHUB_API}/repos/${UpdaterConstants.REPO}/releases/tags/$tag",
@@ -1082,8 +1117,8 @@ internal suspend fun redownloadCurrentVersion(installMode: InstallMode, packageM
             return
         }
         val release = releaseJson.decodeFromString<GithubRelease>(response.bodyAsText())
-        val pm = packageManager ?: probePackageManager()
-        val assetName = ArtifactNames.forMode(installMode, version, pm) ?: return
+        val pm = packageManager ?: livePackageManager()
+        val assetName = ArtifactNames.forMode(installMode, version, pm, isReleasePackage = isReleasePackage) ?: return
         val build = release.builds.firstOrNull { it.name == assetName } ?: return
         UpdateDownloadManager.startDownload(build.downloadUrl, version, build.name)
     } catch (e: Exception) {

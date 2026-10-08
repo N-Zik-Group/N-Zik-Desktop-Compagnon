@@ -32,6 +32,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,14 +64,21 @@ import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.updater.models.ArtifactNames
+import app.n_zik.compagnon.updater.models.InstallMode
 import app.n_zik.compagnon.updater.models.UpdaterConstants
+import app.n_zik.compagnon.updater.models.currentDistributionMarker
+import app.n_zik.compagnon.updater.models.currentInstallMode
+import app.n_zik.compagnon.updater.models.isAurBlocked
+import app.n_zik.compagnon.updater.models.livePackageManager
 import app.n_zik.compagnon.updater.services.Updater
 import app.n_zik.compagnon.utils.Preferences
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.bold
 import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.openInBrowser
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.semiBold
+import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import java.text.SimpleDateFormat
@@ -102,6 +110,24 @@ fun AboutScreen(
 ) {
     val settings by preferences.settings.collectAsState()
     val updaterEnabled = AppVersion.updaterEnabled
+    // The provenance block (spec `spec-arch-binary-package-release`): the install mode + the
+    // release marker are detected once (neither changes at runtime); the AUR block state
+    // resolves the package-manager probe OFF the composition thread — and only when it can
+    // matter (a package-managed install WITHOUT the marker — a marked release-pkg install or
+    // any other mode short-circuits, no probe spawn at all — loop 2 G13).
+    val installMode = remember { currentInstallMode() }
+    val distributionMarker = remember { currentDistributionMarker() }
+    var aurBlocked by remember { mutableStateOf(false) }
+    LaunchedEffect(installMode, distributionMarker) {
+        if (installMode == InstallMode.PACKAGE_MANAGED && distributionMarker == null) {
+            aurBlocked = withContext(NzikDispatchers.DATA) {
+                isAurBlocked(installMode, distributionMarker) { livePackageManager() }
+            }
+        } else {
+            aurBlocked = false
+        }
+    }
+    val cardEnabled = updaterEnabled && !aurBlocked
     val newVersion = Updater.githubRelease?.tagName ?: ""
     val hasUpdate = Updater.githubRelease != null &&
         Updater.isVersionNewer(newVersion, AppVersion.versionName)
@@ -312,7 +338,7 @@ fun AboutScreen(
                             .weight(1f)
                             .fillMaxHeight()
                             .clip(uiRoundnessShape())
-                            .then(if (updaterEnabled) Modifier.clickable { onOpenUpdate() } else Modifier)
+                            .then(if (cardEnabled) Modifier.clickable { onOpenUpdate() } else Modifier)
                             .shadow(elevation = 8.dp, shape = uiRoundnessShape(), spotColor = colorPalette().accent.copy(alpha = 0.3f)),
                         shape = uiRoundnessShape(),
                         colors = CardDefaults.cardColors(
@@ -331,7 +357,7 @@ fun AboutScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Top,
                         ) {
-                            if (updaterEnabled) {
+                            if (cardEnabled) {
                                 // Top content
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     // Update Icon
@@ -485,8 +511,14 @@ fun AboutScreen(
                                         modifier = Modifier.fillMaxWidth(),
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
+                                    // The disabled copy of the card (loop 2 G10): an AUR-blocked
+                                    // install is NOT a source build — its updater is present,
+                                    // blocked by provenance (the AUR entry owns the update), so
+                                    // it gets the AUR-specific copy, not the source-build one.
                                     BasicText(
-                                        text = stringResource(Res.string.update_check_off_build),
+                                        text = stringResource(
+                                            if (aurBlocked) Res.string.update_check_off_aur else Res.string.update_check_off_build
+                                        ),
                                         style = typography().xxs.copy(
                                             textAlign = TextAlign.Center,
                                             color = colorPalette().textSecondary.copy(alpha = 0.7f),

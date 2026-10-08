@@ -9,7 +9,8 @@
 #   ./build.sh test       run the tests only
 #   ./build.sh clean      clean, then compile + run all tests
 #   ./build.sh package <channel>   run the tests, then build the Linux .deb + .rpm + portable zip +
-#                                  AppImage + Flatpak for the channel (Linux/WSL host only).
+#                                  AppImage + Flatpak + Arch binary package (.pkg.tar.zst) for the
+#                                  channel (Linux/WSL host only).
 #                                  The channel is REQUIRED: stable | beta | dev (spec `spec-updater` —
 #                                  a packaging build never runs without an explicit channel)
 #
@@ -22,6 +23,8 @@
 #   - for `package`: the Flatpak task additionally needs the host's flatpak tools
 #     (`sudo apt install flatpak-builder` + one flatpak remote, once — see
 #     rules/BUILD.md "Flatpak (the 6th Linux path)")
+#   - for `package`: the Arch binary package task additionally needs the host's `zstd`
+#     (`sudo apt install zstd` — the .pkg.tar.zst compressor; the task fails loud without it)
 #
 # Note: the app also runs on Linux (`./gradlew :app:run`), pairing included
 # (keyring, or in-memory for the session when no keyring daemon is running).
@@ -67,10 +70,10 @@ case "${1:-build}" in
       exit 1
     fi
     # Linux artifacts only: on a non-Linux host the .deb/.rpm tasks are disabled by the Compose
-    # plugin (incompatible OS) and the AppImage/Flatpak tasks skip themselves (lifecycle
+    # plugin (incompatible OS) and the AppImage/Flatpak/Arch tasks skip themselves (lifecycle
     # message), so this is a Linux/WSL-host command. The artifacts are shipped only after the
     # tests pass (the packaging config is pinned by the JVM test suite).
-    ./gradlew :app:test :app:packageDeb :app:packageRpm :app:packageLinuxPortable :app:packageAppImage :app:packageFlatpak -Pchannel="$channel"
+    ./gradlew :app:test :app:packageDeb :app:packageRpm :app:packageLinuxPortable :app:packageAppImage :app:packageFlatpak :app:packageArch -Pchannel="$channel"
     ;;
   *)
     echo "Usage: ./build.sh [build|test|clean|package]" >&2

@@ -13,6 +13,8 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.security.MessageDigest
 import java.util.Base64
 
@@ -46,7 +48,7 @@ version = libs.versions.nzikVersionName.get()
 
 val channel = providers.gradleProperty("channel").orNull ?: "debug"
 
-// Which channel each packaging task accepts (AD-1): the seven packaging tasks take stable|beta|dev;
+// Which channel each packaging task accepts (AD-1): the eight packaging tasks take stable|beta|dev;
 // `createDistributable` + the portable zip additionally take `git` (AUR-git / source builds — no
 // release asset, updater off, badge "Git").
 val packagingTaskChannels = mapOf(
@@ -56,6 +58,7 @@ val packagingTaskChannels = mapOf(
     "packageLinuxPortable" to listOf("stable", "beta", "dev", "git"),
     "packageAppImage" to listOf("stable", "beta", "dev"),
     "packageFlatpak" to listOf("stable", "beta", "dev"),
+    "packageArch" to listOf("stable", "beta", "dev"),
     "packageInstaller" to listOf("stable", "beta", "dev"),
     "createDistributable" to listOf("stable", "beta", "dev", "git"),
 )
@@ -1021,6 +1024,58 @@ val flatpakAppId = if (channel == "dev") "com.nzik.desktop.compagnon.dev" else "
 // rename helper (AD-2).
 val flatpakFileName = channelArtifactName("${linuxPackageName}-${libs.versions.nzikVersionName.get()}-x86_64.flatpak")
 
+// The Arch binary package (spec spec-arch-binary-package-release): the 7th Linux artifact — a pacman
+// `.pkg.tar.zst` assembled from the SAME shared app-image as the other paths (no bundled VLC: the
+// package declares `vlc` as a dependency, exactly like the .deb/.rpm/AUR). Its layout is the release
+// entry's `package()` in packaging/aur/PKGBUILD (byte-identical by contract, pinned by
+// ArchPkgPinTest against that file) + the provenance marker `distribution.txt` that ONLY this task
+// adds (the PKGBUILDs carry it not — the marker is the single signal distinguishing a release-pkg
+// install from an AUR install for the in-app updater). The channel rides in the package name
+// (`-dev`) and in the artifact file name through the single rename helper (AD-2), like the other
+// six. Pinned by ArchPkgPinTest (exposed to the JVM tests as `arch.*`).
+val archMarkerContent = "github-release"
+// The PKGINFO v2 `pkgver`: the FULL version — `<base>[-channel suffix]-<pkgrel>` (the release number
+// is INSIDE the `pkgver`, as in makepkg — there is no `pkgrel` keyword; the dash is mandatory,
+// libalpm rejects a version without one). Pkgrel 1 = the jpackage `appRelease` single source.
+val archPkgver = appVersionName + "-1"
+val archFileName = channelArtifactName("${linuxPackageName}-${baseVersion}-1-x86_64.pkg.tar.zst")
+// The /usr/bin launcher: an absolute symlink to the app's bin/ launcher (the PKGBUILD's
+// `ln -sf "$launcher" ...` — the .desktop Exec resolves through it, and the kernel resolves the
+// symlink at exec time, which is exactly what the updater's live path resolution relies on).
+val archSymlinkTarget = "/opt/$linuxPackageName/bin/$channelDisplayName"
+// The PKGINFO `pkgdesc`: verbatim from the PKGBUILD (the layout's source of truth).
+val archPkgDesc = "Desktop companion for N-Zik: control your phone's library and playback from a large screen, and listen on your computer."
+val archUrl = "https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon"
+// The .desktop menu entry: the PKGBUILD's verbatim (Name carries the channel display name — the
+// jpackage launcher is named after the app name).
+val archDesktopContent = listOf(
+    "[Desktop Entry]",
+    "Type=Application",
+    "Name=$channelDisplayName",
+    "Comment=$archPkgDesc",
+    "Exec=/usr/bin/$linuxPackageName",
+    "Icon=$linuxPackageName",
+    "Terminal=false",
+    "Categories=Audio;",
+).joinToString("\n") + "\n"
+// The .PKGINFO (PKGINFO v2, pacman >= 6.1 — the exact schema makepkg produces; PKGINFO(5)): only the
+// two runtime values (`builddate`, `size`) are substituted by the task through the
+// `__BUILDDATE__`/`__SIZE__` placeholders; everything else is static at write time.
+val archPkginfoContent = listOf(
+    "pkgname = $linuxPackageName",
+    "pkgbase = $linuxPackageName",
+    "xdata = pkgtype=pkg",
+    "pkgver = $archPkgver",
+    "pkgdesc = $archPkgDesc",
+    "arch = x86_64",
+    "url = $archUrl",
+    "license = GPL-3.0-only",
+    "depend = vlc",
+    "builddate = __BUILDDATE__",
+    "packager = N-Zik Group CI",
+    "size = __SIZE__",
+).joinToString("\n") + "\n"
+
 // The committed Flatpak manifest template (spec spec-linux-flatpak): the reviewable, committed
 // build recipe (transparency of the manual build — the bundle is built with the host's
 // flatpak-builder, never from generated-only config). The build substitutes its three
@@ -1248,6 +1303,27 @@ project.afterEvaluate {
         systemProperty("flatpak.command", flatpakCommand)
         systemProperty("flatpak.libsecretUrl", flatpakLibsecretUrl)
         systemProperty("flatpak.libsecretSha256", flatpakLibsecretSha256)
+        // The Arch package contract (spec spec-arch-binary-package-release): the frozen layout
+        // (the PKGBUILD's package() as a package, pinned against it by ArchPkgPinTest), the full
+        // PKGINFO v2 (with the channel suffix in the pkgver — channel-aware, so `build.sh
+        // package beta|dev` stays green), the provenance marker (path + content) and the frozen
+        // artifact name. The two multi-line contents carry quotes/newlines: base64 keeps them
+        // command-line-safe (the pin test decodes).
+        systemProperty("arch.fileName", archFileName)
+        systemProperty("arch.pkgname", linuxPackageName)
+        systemProperty("arch.pkgver", archPkgver)
+        systemProperty("arch.pkgdesc", archPkgDesc)
+        systemProperty("arch.url", archUrl)
+        systemProperty("arch.optRoot", "opt/$linuxPackageName")
+        systemProperty("arch.symlinkPath", "usr/bin/$linuxPackageName")
+        systemProperty("arch.symlinkTarget", archSymlinkTarget)
+        systemProperty("arch.desktopPath", "usr/share/applications/$linuxPackageName.desktop")
+        systemProperty("arch.desktopContent", Base64.getEncoder().encodeToString(archDesktopContent.toByteArray()))
+        systemProperty("arch.iconPath", "usr/share/icons/hicolor/256x256/apps/$linuxPackageName.png")
+        systemProperty("arch.licensePath", "usr/share/licenses/$linuxPackageName/LICENSE")
+        systemProperty("arch.pkginfoContent", Base64.getEncoder().encodeToString(archPkginfoContent.toByteArray()))
+        systemProperty("arch.markerPath", "opt/$linuxPackageName/distribution.txt")
+        systemProperty("arch.markerContent", archMarkerContent)
         systemProperty("flatpak.wrapperExports", Base64.getEncoder().encodeToString(flatpakWrapperExports.joinToString("\u001f").toByteArray()))
     }
 
@@ -1774,6 +1850,158 @@ project.afterEvaluate {
             // The release chore publishes the Flatpak's SHA-256 next to its name: log it here so
             // it can be copied straight from the build output.
             logger.lifecycle("Flatpak SHA-256: ${sha256Of(target)}")
+        }
+    }
+
+    // The Arch binary package (spec spec-arch-binary-package-release) — the 7th Linux artifact:
+    // the same shared app-image (one source of truth, kept free of the VLC runtime — boundary
+    // below) assembled into a pacman `.pkg.tar.zst` with EXACTLY the release AUR entry's
+    // package() layout (/opt/<pkg>, the /usr/bin symlink, the .desktop, the icon, the LICENSE,
+    // `depends = vlc`) PLUS the provenance marker `distribution.txt` (`github-release`) at the
+    // app root — the single signal the in-app updater uses to tell a release-pkg install from an
+    // AUR install (the PKGBUILDs carry it not). No bundled VLC: the package declares `vlc` as a
+    // dependency, exactly like the .deb/.rpm/AUR. The naming rides the channel through
+    // `linuxPackageName` (the `-dev` base) + `channelArtifactName` (the file-name suffix).
+    // Linux host only; on Windows it is skipped like packageAppImage / packageFlatpak, so
+    // gradlew.bat build stays green.
+    tasks.register("packageArch") {
+        group = "n-zik"
+        description = "Builds the x86_64 pacman binary package (.pkg.tar.zst) from the app-image: PKGBUILD layout + distribution.txt marker."
+        enabled = isLinuxHost
+        if (!isLinuxHost) {
+            logger.lifecycle("packageArch: skipped on this non-Linux host — build it on a Linux/WSL host")
+        }
+        dependsOn(createDistributableImpl)
+        doLast {
+            val binaries = layout.buildDirectory.dir("compose/binaries").get().asFile
+            // The staging dir lives under the Gradle user home (local disk): the repo is on the 9P
+            // mount on the WSL build host, where thousands of small staging file ops + a ~160 MB
+            // tar are slow and the daemon can serve stale listings (the AppImage/Flatpak reasoning).
+            // Only the finished package is transferred back to the repo (step 7).
+            val workDir = File(gradle.gradleUserHomeDir, "caches/n-zik-compagnon/arch-pkg")
+
+            // 1. Fail-loud host prerequisite: `zstd` is the compressor behind `tar -I zstd`
+            //    (GNU tar + the system zstd binary — apt host tool, not a pinned artifact). The
+            //    check requires exit 0 of `--version`: a broken binary must not pass.
+            fun exitCodeOf(binary: String): Int =
+                runCatching {
+                    val process = ProcessBuilder(binary, "--version").redirectErrorStream(true).start()
+                    process.inputStream.readBytes()
+                    process.waitFor()
+                }.getOrDefault(-1)
+            if (exitCodeOf("zstd") != 0) {
+                throw GradleException(
+                    "zstd not found on the PATH (or its --version failed) — install it with: sudo apt install zstd"
+                )
+            }
+
+            // 2. Locate the app-image (the same dynamic detection as packageAppImage /
+            //    packageFlatpak) + the fail-loud boundary: the shared app-image must be free of
+            //    the embedded runtime — the Arch package plays through the system libvlc (the
+            //    `depend = vlc` in the .PKGINFO), so a resources/vlc leak would bundle VLC into
+            //    the package and contradict the frozen "no bundled VLC" contract.
+            val base = createDistributableImpl.get().destinationDir.get().asFile
+            val appImages = base.listFiles { f, _ -> f.isDirectory }
+                ?.filter { it.resolve("bin").isDirectory }
+                ?: throw GradleException("app-image output dir is missing or not a directory: $base")
+            require(appImages.size == 1) { "expected exactly one app-image directory (with a bin/) in $base, found ${appImages.size}" }
+            val image = appImages.first()
+            if (File(image, "lib/app/resources/vlc").exists()) {
+                throw GradleException(
+                    "the shared app-image carries lib/app/resources/vlc ($image) — the Arch package (like the .deb/.rpm/AUR) must stay on the system libvlc: only the AppImage and the Flatpak may embed the VLC runtime, and each into its own staging"
+                )
+            }
+
+            // 3. Stage the PKGBUILD's package() layout under pkgRoot: the app-image renamed to
+            //    the lowercase package name in /opt (single /opt install location across all the
+            //    Linux packages) + the provenance marker + the /usr/bin symlink (ABSOLUTE target,
+            //    like the PKGBUILD's `ln -sf "$launcher" ...` — the kernel resolves it at exec
+            //    time, which the updater's live path resolution relies on) + the .desktop + the
+            //    icon + the LICENSE (the repo root copy — the PKGBUILD downloads the same file).
+            val pkgRoot = File(workDir, "pkgroot")
+            delete(pkgRoot)
+            val optRoot = File(pkgRoot, "opt/$linuxPackageName")
+            optRoot.mkdirs()
+            copy { from(image); into(optRoot) }
+            File(optRoot, "distribution.txt").writeText(archMarkerContent)
+            File(pkgRoot, "usr/bin").mkdirs()
+            Files.createSymbolicLink(
+                File(pkgRoot, "usr/bin/$linuxPackageName").toPath(),
+                Paths.get(archSymlinkTarget)
+            )
+            File(pkgRoot, "usr/share/applications").mkdirs()
+            File(pkgRoot, "usr/share/applications/$linuxPackageName.desktop").writeText(archDesktopContent)
+            File(pkgRoot, "usr/share/icons/hicolor/256x256/apps").mkdirs()
+            linuxIcon.copyTo(File(pkgRoot, "usr/share/icons/hicolor/256x256/apps/$linuxPackageName.png"), overwrite = true)
+            File(pkgRoot, "usr/share/licenses/$linuxPackageName").mkdirs()
+            rootProject.file("LICENSE").copyTo(File(pkgRoot, "usr/share/licenses/$linuxPackageName/LICENSE"), overwrite = true)
+
+            // 4. Post-staging self-checks — fail-loud BEFORE the tar, so a regression of the
+            //    marker (e.g. written into pkgRoot instead of the app root), of the symlink
+            //    target or of the launcher layout fails the build instead of shipping a package
+            //    whose install would read "no marker" / broken Exec for the release-pkg users.
+            val launcher = File(optRoot, "bin/$channelDisplayName")
+            if (!launcher.isFile || !launcher.canExecute()) {
+                throw GradleException("launcher ${launcher.path} not found (or not executable) in the app-image — the .desktop Exec would be broken")
+            }
+            val marker = File(optRoot, "distribution.txt")
+            if (marker.readText().trim() != archMarkerContent) {
+                throw GradleException("distribution.txt marker is missing or wrong in the staged app root (${marker.path}): expected '$archMarkerContent'")
+            }
+            val symlink = File(pkgRoot, "usr/bin/$linuxPackageName").toPath()
+            if (!Files.isSymbolicLink(symlink) || Files.readSymbolicLink(symlink) != Paths.get(archSymlinkTarget)) {
+                throw GradleException("the staged /usr/bin symlink does not point at $archSymlinkTarget (expected the absolute app launcher path)")
+            }
+
+            // 5. The .PKGINFO (PKGINFO v2): substitute the two runtime values (builddate = unix
+            //    seconds, size = the staged payload total) and verify no placeholder survives.
+            //    The size is the payload measured BEFORE the .PKGINFO is written — the ~1 KB of
+            //    the file itself is not counted (pacman does not validate `size`: display only).
+            val size = pkgRoot.walkTopDown().filter { it.isFile }.sumOf { it.length() }
+            val pkginfo = archPkginfoContent
+                .replace("__BUILDDATE__", (System.currentTimeMillis() / 1000).toString())
+                .replace("__SIZE__", size.toString())
+            if (Regex("__[A-Z0-9_]+__").containsMatchIn(pkginfo)) {
+                throw GradleException("a __…__ placeholder survived the substitution in the .PKGINFO")
+            }
+            File(pkgRoot, ".PKGINFO").writeText(pkginfo)
+
+            // 6. Deterministic tar (top-level bare entries — no `./` prefix, verified against
+            //    pacman 7.1.0): sorted by name, owner/group 0, numeric owner — reproducible
+            //    ordering + properties for the same payload.
+            val produced = File(workDir, archFileName)
+            val tar = ProcessBuilder(
+                "tar", "-I", "zstd",
+                "--sort=name", "--owner=0", "--group=0", "--numeric-owner",
+                "-cf", produced.absolutePath,
+                "-C", pkgRoot.absolutePath,
+                ".PKGINFO", "opt", "usr"
+            ).redirectErrorStream(true)
+            val tarProcess = tar.start()
+            val tarOutput = tarProcess.inputStream.bufferedReader().readText()
+            val tarCode = tarProcess.waitFor()
+            if (tarCode != 0) {
+                logger.error("tar failed (exit $tarCode):\n$tarOutput")
+                throw GradleException("tar failed (exit $tarCode)")
+            }
+
+            // 7. Move the produced package to binaries/. The move is cross-device (local workdir
+            //    → the repo build dir), so renameTo is tried first with a copy fallback.
+            if (!produced.isFile) {
+                val found = workDir.listFiles()?.joinToString { it.name } ?: "(unreadable)"
+                throw GradleException("tar produced no package: expected ${produced.absolutePath} (dir contents: $found)")
+            }
+            binaries.mkdirs()
+            val target = File(binaries, archFileName)
+            if (target.exists()) target.delete()
+            if (!produced.renameTo(target)) {
+                produced.copyTo(target)
+                produced.delete()
+            }
+            logger.lifecycle("Arch package built: ${target.absolutePath}")
+            // The release chore publishes the package's SHA-256 next to its name: log it here so
+            // it can be copied straight from the build output.
+            logger.lifecycle("Arch package SHA-256: ${sha256Of(target)}")
         }
     }
 }
