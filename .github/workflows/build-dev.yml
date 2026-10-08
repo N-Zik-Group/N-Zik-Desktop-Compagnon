@@ -354,12 +354,18 @@ jobs:
           # A missing artifact fails the run loud: the CI never "fixes" the
           # packaging contract (it belongs to the build script).
           mkdir -p release
-          cp "artifacts/linux-artifacts/app/build/compose/binaries/main/deb/${DEB}" release/
-          cp "artifacts/linux-artifacts/app/build/compose/binaries/main/rpm/${RPM}" release/
-          cp "artifacts/linux-artifacts/app/build/compose/binaries/${ZIP}" release/
-          cp "artifacts/linux-artifacts/app/build/compose/binaries/${APPIMAGE}" release/
-          cp "artifacts/linux-artifacts/app/build/compose/binaries/${FLATPAK}" release/
-          cp "artifacts/windows-artifact/app/build/compose/binaries/main/exe/${EXE}" release/
+          # upload-artifact stores each file relative to the root directory it detects
+          # (the longest common prefix of the upload patterns is stripped from the stored
+          # tree): the linux root is app/build/compose/binaries (the deb/rpm keep their
+          # main/ sub-dir, the rest sits at the top level) and the windows root is
+          # app/build/compose/binaries/main/exe (the bare .exe at the top level) — the
+          # paths below are the actual downloaded tree, not the build-dir layout.
+          cp "artifacts/linux-artifacts/main/deb/${DEB}" release/
+          cp "artifacts/linux-artifacts/main/rpm/${RPM}" release/
+          cp "artifacts/linux-artifacts/${ZIP}" release/
+          cp "artifacts/linux-artifacts/${APPIMAGE}" release/
+          cp "artifacts/linux-artifacts/${FLATPAK}" release/
+          cp "artifacts/windows-artifact/${EXE}" release/
 
           cd release
           sha256sum "${EXE}" "${DEB}" "${RPM}" "${ZIP}" "${APPIMAGE}" "${FLATPAK}" > ../SHA256SUMS.txt
