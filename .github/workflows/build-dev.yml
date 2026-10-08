@@ -635,6 +635,16 @@ jobs:
                 - Does **not** receive Stable or Beta updates.
                 - Does **not** interfere with your Stable or Beta installation.
               - ⚠️ **Note:** This build is for testing and development only. May contain bugs and experimental features.
+
+            ## 🔗 Download & Info
+
+            - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/N-Zik.Desktop.Compagnon.Dev.-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}.exe
+            - 📥 **Debian (.deb):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev_${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1_amd64.deb
+            - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1.x86_64.rpm
+            - 📥 **Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-linux-portable.zip
+            - 📥 **AppImage:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-x86_64.AppImage
+            - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-x86_64.flatpak
+            - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}>
         run: |
           if [ -z "$WEBHOOK_URL" ]; then
             echo "❌ The DISCORD_WEBHOOK_URL secret is not set on this repo — the release was published, the Discord notification is skipped."

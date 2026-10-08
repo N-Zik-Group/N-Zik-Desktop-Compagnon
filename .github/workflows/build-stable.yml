@@ -511,7 +511,7 @@ jobs:
 
             ## 🔗 Changelog & Downloads
 
-            - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/N-Zik%20Desktop%20Compagnon-${{ needs.versioning.outputs.downstream }}.exe
+            - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/N-Zik.Desktop.Compagnon-${{ needs.versioning.outputs.downstream }}.exe
             - 📥 **Debian (.deb):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon_${{ needs.versioning.outputs.downstream }}-1_amd64.deb
             - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-1.x86_64.rpm
             - 📥 **Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-linux-portable.zip
