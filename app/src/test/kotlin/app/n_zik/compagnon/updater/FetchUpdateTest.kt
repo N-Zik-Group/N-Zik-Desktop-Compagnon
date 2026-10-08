@@ -65,6 +65,28 @@ class FetchUpdateTest {
             """.trimIndent()
         }
 
+    /**
+     * The staging carrier of the pinned Linux VLC tarball (spec `spec-vlc-tarball-ci`): the
+     * prerelease release `vlc-<v>-tarball` with its REAL asset name `vlc-<v>-linux-x64.tar.gz`.
+     * It is not an app release — the channel filter must never select it.
+     */
+    private fun tarballReleaseJson(version: String = "3.0.24"): String = """
+        {
+          "id": 99,
+          "tag_name": "vlc-$version-tarball",
+          "name": "VLC Linux tarball $version (staging)",
+          "body": "Staging release - consumed only by the version catalog, never by the in-app updater.",
+          "prerelease": true,
+          "assets": [
+            ${assetJson("vlc-$version-tarball", "vlc-$version-linux-x64.tar.gz")}
+          ]
+        }
+    """.trimIndent()
+
+    /** The app tags' releases list with the tarball prerelease appended (the carrier alongside the app releases). */
+    private fun releasesWithTarball(vararg tags: String): String =
+        releasesJson(*tags).dropLast(1) + ", " + tarballReleaseJson() + "]"
+
     private fun assetJson(tag: String, name: String): String = """
         {
           "id": 10,
@@ -151,6 +173,49 @@ class FetchUpdateTest {
         }
         assertNotNull(thrown)
         assertNull(Updater.githubRelease)
+    }
+
+    @Test
+    fun `the vlc tarball staging release does not change the channel pick`() = runTest {
+        // The tarball prerelease (its real asset name vlc-3.0.24-linux-x64.tar.gz) sits in the
+        // list alongside the app tags — the pick of every checking channel is unchanged (the
+        // filter is tag-based; the prerelease flag is never read by fetchUpdate)
+        val expectedPicks = linkedMapOf(
+            "stable" to "v0.0.2",
+            "beta" to "v0.0.2-beta",
+            "dev" to "v0.0.2-dev-20261002",
+        )
+        for ((channel, pick) in expectedPicks) {
+            val client = clientFor(
+                releasesWithTarball("v0.0.1", "v0.0.2", "v0.0.2-beta", "v0.0.2-dev-20261001", "v0.0.2-dev-20261002"),
+            )
+            try {
+                Updater.fetchUpdate(client, channel)
+            } finally {
+                client.close()
+            }
+            assertEquals(pick, Updater.githubRelease?.tagName, "channel $channel")
+        }
+    }
+
+    @Test
+    fun `a repo with only the vlc tarball staging release reports no update`() = runTest {
+        // The tarball prerelease is the ONLY release: `findBestRelease` returns null for every
+        // channel (the carrier is not same-channel), so `fetchUpdate` maps to the same
+        // "no update available" path as an empty list — it throws NoSuchFileException and the
+        // static state stays untouched (the actual behavior at Updater.fetchUpdate)
+        val client = clientFor("[" + tarballReleaseJson() + "]")
+        var thrown: NoSuchFileException? = null
+        try {
+            Updater.fetchUpdate(client, "stable")
+        } catch (e: NoSuchFileException) {
+            thrown = e
+        } finally {
+            client.close()
+        }
+        assertNotNull(thrown)
+        assertNull(Updater.githubRelease)
+        assertNull(Updater.build)
     }
 
     @Test

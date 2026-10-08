@@ -10,9 +10,10 @@ nzikVersionName = "0.0.1"
 # Linux AppImage pins (spec spec-linux-appimage) — SEPARATE from the Windows VLC pins (which live in
 # app/build.gradle.kts and are never touched by the AppImage). The Linux tarball is produced one-shot
 # from the official VideoLAN source (vlc-3.0.24.tar.xz, official SHA e7cab503d1d7d5849b89d2cf0e1ee60d0ef6d012407791b644b9cfc0cc225fdf)
-# by scripts/build-vlc-linux-tarball.sh; its own SHA-256 is pinned below and published with the release
-# asset (the URL points at that asset — the download task is cache-first until the upload chore lands).
-vlc-linux-tarball-url = "https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/download/v0.0.1/vlc-3.0.24-linux-x64.tar.gz"
+# by scripts/build-vlc-linux-tarball.sh; its own SHA-256 is pinned below, and the URL points at the
+# asset of the dedicated prerelease carrier release `vlc-3.0.24-tarball` — until that upload lands,
+# a fresh-host build fails loud (TARBALL_404) while the Gradle user home cache is used.
+vlc-linux-tarball-url = "https://github.com/N-Zik-Group/n-zik-desktop-compagnon/releases/download/vlc-3.0.24-tarball/vlc-3.0.24-linux-x64.tar.gz"
 # Re-pinned 2026-10-07 (approved): the original tarball was lost from the build cache and was
 # never uploaded to the release, so the original SHA is unrecoverable; the rebuild (same pinned
 # official source + same committed script + same audio subset) yields a different binary hash.

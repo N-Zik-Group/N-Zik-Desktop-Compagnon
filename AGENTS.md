@@ -1,6 +1,6 @@
 # AGENTS.md — N-Zik Desktop Compagnon
 
-**Version:** 1.1.0 | **Last updated:** 2026-10-07
+**Version:** 1.1.1 | **Last updated:** 2026-10-08
 
 **MANDATORY: Read this file + rules/*.md before any task.**
 
@@ -49,7 +49,7 @@
 - Use `GlobalScope`, or `runBlocking` in production code WITHOUT a justification comment (allowed only when a synchronous API forces it — every usage must carry a comment explaining why)
 - Introduce new raw `Dispatchers.IO`/`Dispatchers.Default`/`Dispatchers.Main` usages in app code (use `NzikDispatchers`), use a bare `Job()` for fire-and-forget/app-lifetime scopes (use `SupervisorJob` via `NzikDispatchers.fireAndForget()`), or `shutdown()`/close `NzikDispatchers` executors (app-lifetime, daemon threads — see rules/CODE.md "Coroutines & Dispatchers")
 - Use `!!` operator unless justified with comment explaining why
-- Commit VLC binaries (the runtime is downloaded at build time under `build/`) or change the pinned VLC SHA-256 without verification
+- Commit VLC binaries (the runtime is downloaded at build time under `build/`) or change the pinned VLC SHA-256 without verification — **sanctioned exception:** the Linux tarball pin (`vlc-linux-tarball-url` + `vlc-linux-tarball-sha256` in `gradle/libs.versions.toml`) may change through the bot PR opened by the `vlc-tarball-builder.yml` pipeline (catalog-only, branch `bot/vlc-pin-<v>`) — the **merge of that PR is the human verification** (review + merge; the bot never merges; rules/BUILD.md "VLC Linux tarball pipeline")
 - Edit `_bmad/` internals manually
 - Force push or delete committed history
 

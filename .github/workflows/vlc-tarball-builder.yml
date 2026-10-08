@@ -1,0 +1,222 @@
+name: VLC Linux Tarball Builder
+
+# Spec `spec-vlc-tarball-ci` — the 4th workflow (not a channel workflow): when the committed
+# scripts/build-vlc-linux-tarball.sh is bumped on main, this pipeline builds the tarball,
+# publishes the prerelease staging release vlc-<v>-tarball, and opens the catalog-only bot PR
+# bot/vlc-pin-<v> (exactly the 2 pin lines of gradle/libs.versions.toml). The bot never merges:
+# the merge is the human verification gate. Prerelease is mandatory — a non-prerelease would
+# become "latest" and shadow the app releases for the /releases/latest readers (the CI
+# version guards + the metrics); the in-app updater reads the full /releases list and is
+# protected by its same-channel tag filter, not by this flag.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/build-vlc-linux-tarball.sh'
+  workflow_dispatch:
+
+concurrency:
+  group: 'vlc-tarball-deploy'
+  cancel-in-progress: false
+
+jobs:
+  check-version:
+    name: Detect the VLC version change
+    runs-on: ubuntu-latest
+    outputs:
+      action: ${{ steps.decide.outputs.action }}
+      version: ${{ steps.decide.outputs.version }}
+      catalog-version: ${{ steps.decide.outputs.catalog-version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Parse the script version + the catalog version, decide build vs no-op
+        id: decide
+        run: |
+          set -euo pipefail
+          # The committed script is the producer's single source of truth (its VLC_VERSION line).
+          # Both sides reduce to the bare numeric version, so a quoted assignment cannot desync the compare.
+          # `|| true`: a missing line falls through to the curated guard below (set -e would
+          # otherwise abort the step at the parse line, making the explicit ERROR unreachable).
+          SCRIPT_VERSION="$(sed -n 's/^VLC_VERSION=//p' scripts/build-vlc-linux-tarball.sh | head -n1 | grep -oE '[0-9]+(\.[0-9]+)+' | head -n1 || true)"
+          # The current pin is derived from the catalog URL's asset name (vlc-<v>-linux-x64.tar.gz) — no further parse.
+          CATALOG_URL="$(sed -n 's/^vlc-linux-tarball-url *= *"\(.*\)" *$/\1/p' gradle/libs.versions.toml | head -n1)"
+          CATALOG_VERSION="$(basename "$CATALOG_URL")"
+          CATALOG_VERSION="${CATALOG_VERSION#vlc-}"
+          CATALOG_VERSION="${CATALOG_VERSION%-linux-x64.tar.gz}"
+          CATALOG_VERSION="$(echo "$CATALOG_VERSION" | grep -oE '[0-9]+(\.[0-9]+)+' | head -n1 || true)"
+          if [ -z "$SCRIPT_VERSION" ] || [ -z "$CATALOG_VERSION" ]; then
+            echo "ERROR: could not parse the VLC version (script='$SCRIPT_VERSION', catalog='$CATALOG_VERSION') — failing loud." >&2
+            exit 1
+          fi
+          echo "script version : $SCRIPT_VERSION"
+          echo "catalog version: $CATALOG_VERSION"
+          echo "version=$SCRIPT_VERSION" >> "$GITHUB_OUTPUT"
+          echo "catalog-version=$CATALOG_VERSION" >> "$GITHUB_OUTPUT"
+          if [ "$SCRIPT_VERSION" = "$CATALOG_VERSION" ]; then
+            echo "VLC version unchanged — no-op: the pin is already at $SCRIPT_VERSION, no release, no PR."
+            echo "action=skip" >> "$GITHUB_OUTPUT"
+          else
+            echo "VLC version bump detected: $CATALOG_VERSION -> $SCRIPT_VERSION — building the tarball."
+            echo "action=build" >> "$GITHUB_OUTPUT"
+          fi
+
+  build-tarball:
+    name: Build the tarball (the committed script, as-is)
+    needs: [check-version]
+    if: needs.check-version.outputs.action == 'build'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: "Run the committed script (fail-loud: source 404 / source SHA mismatch / missing plugin / rpath leftover)"
+        run: bash scripts/build-vlc-linux-tarball.sh
+
+      - name: Compute the tarball SHA-256
+        run: |
+          set -euo pipefail
+          VERSION="${{ needs.check-version.outputs.version }}"
+          TARBALL="$HOME/nzik-vlc-linux/vlc-${VERSION}-linux-x64.tar.gz"
+          if [ ! -f "$TARBALL" ]; then
+            echo "ERROR: tarball not found at $TARBALL" >&2
+            exit 1
+          fi
+          SHA="$(sha256sum "$TARBALL" | cut -d' ' -f1)"
+          cp "$TARBALL" "vlc-${VERSION}-linux-x64.tar.gz"
+          # The publish job reads the SHA from this file (the artifact) — the tarball's own hash
+          # is the value the bot PR will pin.
+          echo "$SHA" > vlc-tarball.sha256
+          echo "tarball ready: vlc-${VERSION}-linux-x64.tar.gz (SHA-256 $SHA)"
+
+      - name: Upload the tarball artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: vlc-tarball
+          path: |
+            vlc-${{ needs.check-version.outputs.version }}-linux-x64.tar.gz
+            vlc-tarball.sha256
+
+  publish-and-pin:
+    name: Publish the staging release + open the bot PR
+    needs: [check-version, build-tarball]
+    if: needs.check-version.outputs.action == 'build'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download the tarball artifact
+        uses: actions/download-artifact@v8.0.1
+        with:
+          name: vlc-tarball
+          path: release
+
+      - name: Write the release body (tarball + SHA-256)
+        run: |
+          set -euo pipefail
+          VERSION="${{ needs.check-version.outputs.version }}"
+          SHA="$(cat release/vlc-tarball.sha256)"
+          cat > release_body.md <<'BODY'
+          ## Linux VLC @VERSION@ runtime tarball (staging)
+
+          Built on GitHub Actions by the committed `scripts/build-vlc-linux-tarball.sh` (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped) — spec `spec-vlc-tarball-ci`.
+
+          - Asset: `vlc-@VERSION@-linux-x64.tar.gz`
+          - SHA-256: `@SHA@`
+
+          > This release is a **prerelease** on purpose: the `vlc-*-tarball` namespace never becomes "latest" (the `/releases/latest` readers — the CI version guards + the metrics — stay on the app releases; the in-app updater reads the full release list and is protected by its same-channel tag filter). It is consumed only by the version catalog (`vlc-linux-tarball-url`) once the bot's pin PR is reviewed and merged.
+          BODY
+          sed -i \
+            -e "s|@VERSION@|${VERSION}|g" \
+            -e "s|@SHA@|${SHA}|g" \
+            release_body.md
+
+      - name: Publish the staging release (prerelease — never "latest")
+        uses: softprops/action-gh-release@v3
+        with:
+          files: release/vlc-${{ needs.check-version.outputs.version }}-linux-x64.tar.gz
+          tag_name: vlc-${{ needs.check-version.outputs.version }}-tarball
+          name: "VLC Linux tarball ${{ needs.check-version.outputs.version }} (staging)"
+          prerelease: true
+          make_latest: false
+          delete_existing: true
+          bodyFile: release_body.md
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Close the open bot PRs (same version re-run or older version — deterministic replacement)
+        run: |
+          set -euo pipefail
+          # gh uses the runner's GITHUB_TOKEN automatically. The branch is fixed per version
+          # (bot/vlc-pin-<v> + git push -f), so the replacement is: close the open bot PRs,
+          # re-push the branch, re-create the PR (gh has no update-PR semantic). This also
+          # closes a bot PR left open for an OLDER version (superseded by this bump).
+          VERSION="${{ needs.check-version.outputs.version }}"
+          # set -e does not fire inside a for-loop word-list substitution — a failed list call
+          # must fail loud here, or the gh pr create below would die on the existing head branch.
+          OPEN_BOT_PRS="$(gh pr list --state open --limit 100 --json number,headRefName \
+              --jq '.[] | select(.headRefName | startswith("bot/vlc-pin-")) | .number')" || {
+            echo "ERROR: gh pr list failed — cannot verify the open bot PRs; failing loud (no publish)." >&2
+            exit 1
+          }
+          for n in $OPEN_BOT_PRS; do
+            echo "closing open bot PR #${n} (superseded by this run for ${VERSION})"
+            gh pr close "$n" --comment "Superseded by the VLC tarball run for ${VERSION} — the pin PR is re-created deterministically on branch bot/vlc-pin-<version>. This PR was never merged (the bot never merges — the merge is the human verification gate)."
+          done
+
+      - name: Prepare the catalog-only branch (exactly the 2 pin lines, nothing else)
+        run: |
+          set -euo pipefail
+          VERSION="${{ needs.check-version.outputs.version }}"
+          SHA="$(cat release/vlc-tarball.sha256)"
+          NEW_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download/vlc-${VERSION}-tarball/vlc-${VERSION}-linux-x64.tar.gz"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "bot/vlc-pin-${VERSION}"
+          sed -i -E "s|^(vlc-linux-tarball-url = ).*|\1\"${NEW_URL}\"|" gradle/libs.versions.toml
+          sed -i -E "s|^(vlc-linux-tarball-sha256 = ).*|\1\"${SHA}\"|" gradle/libs.versions.toml
+          # Catalog-only guard: exactly one file changed, and it is the catalog — anything else fails the run loud.
+          CHANGED="$(git diff --name-only)"
+          [ "$CHANGED" = "gradle/libs.versions.toml" ] || { echo "ERROR: the branch changes more than the catalog: $CHANGED" >&2; exit 1; }
+          [ "$(git diff --numstat | awk '{s+=$1+$2} END {print s}')" -le 10 ] || { echo "ERROR: the catalog diff is larger than the 2 pin lines" >&2; exit 1; }
+          git add gradle/libs.versions.toml
+          git commit -m "chore(catalog): pin the Linux VLC tarball to ${VERSION}"
+          git push -f origin "bot/vlc-pin-${VERSION}"
+
+      - name: Open the bot PR (catalog-only — the merge is the human verification gate)
+        run: |
+          set -euo pipefail
+          VERSION="${{ needs.check-version.outputs.version }}"
+          CATALOG_VERSION="${{ needs.check-version.outputs.catalog-version }}"
+          SHA="$(cat release/vlc-tarball.sha256)"
+          NEW_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download/vlc-${VERSION}-tarball/vlc-${VERSION}-linux-x64.tar.gz"
+          RELEASE_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/vlc-${VERSION}-tarball"
+          cat > pr_body.md <<'BODY'
+          Bumps the pinned Linux VLC runtime tarball **@CATALOG@ -> @VERSION@** — the committed `scripts/build-vlc-linux-tarball.sh` (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped) is the producer; this PR is its catalog-only output.
+
+          - New URL: `@URL@`
+          - New SHA-256: `@SHA@`
+          - Staging release: @RELEASE@ (prerelease — the `vlc-*-tarball` namespace never becomes "latest")
+
+          **Changed files:** exactly the 2 pin lines of `gradle/libs.versions.toml` (`vlc-linux-tarball-url` + `vlc-linux-tarball-sha256`) — nothing else.
+
+          **Optional local verification:** `bash scripts/build-vlc-linux-tarball.sh` (the same committed script) -> compare the printed SHA-256 with the one above.
+
+          > The bot never merges this PR — the merge is the human verification gate (rules/BUILD.md "VLC Linux tarball pipeline").
+          BODY
+          sed -i \
+            -e "s|@VERSION@|${VERSION}|g" \
+            -e "s|@CATALOG@|${CATALOG_VERSION}|g" \
+            -e "s|@URL@|${NEW_URL}|g" \
+            -e "s|@SHA@|${SHA}|g" \
+            -e "s|@RELEASE@|${RELEASE_URL}|g" \
+            pr_body.md
+          gh pr create \
+            --base main \
+            --head "bot/vlc-pin-${VERSION}" \
+            --title "chore(catalog): pin the Linux VLC tarball to ${VERSION}" \
+            --body-file pr_body.md
