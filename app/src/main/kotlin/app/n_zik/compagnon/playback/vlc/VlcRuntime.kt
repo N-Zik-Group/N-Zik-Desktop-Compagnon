@@ -8,7 +8,9 @@ import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery
  * The libvlc runtime for local playback — one rule for every build variant:
  *
  * the resources directory carrying this platform's libvlc → the embedded runtime (pointed at
- * through `jna.library.path`, then vlcj's [NativeDiscovery] loads it and sets the plugin path);
+ * through `jna.library.path`, then vlcj's [NativeDiscovery] loads it; the embedded plugin dir is
+ * pointed at through `VLC_PLUGIN_PATH`, which the Flatpak wrapper / the AppImage AppRun export —
+ * in VLC 3.0.24 the `--plugin-path` CLI option is gone, so the env var is the only lever);
  * no embedded runtime → the system libvlc (e.g. `sudo apt install vlc`) found by [NativeDiscovery]
  * alone; the embedded libvlc present but failing to load (corrupt) → the same system discovery
  * retried once.

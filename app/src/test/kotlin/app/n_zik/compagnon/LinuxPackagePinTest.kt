@@ -112,6 +112,25 @@ class LinuxPackagePinTest {
     }
 
     @Test
+    fun `the AppRun exports the vlc plugin dir`() {
+        // The AppImage shares the Flatpak's embedded VLC tarball, so its AppRun (the only place the
+        // AppDir environment can be set) must put the embedded plugin dir on VLC_PLUGIN_PATH:
+        // libvlc_new() loads its mandatory modules at instance creation, and in VLC 3.0.24 the
+        // --plugin-path CLI option is gone (the env var is the only lever) — without it libvlc_new
+        // returns NULL and every local playback fails. LD_LIBRARY_PATH (the libvlc.so DT_NEEDED) is
+        // the pre-existing export — keep it pinned too.
+        val exports = String(java.util.Base64.getDecoder().decode(appImageProp("linux.appImage.appRunExports"))).split("\u001f")
+        assertTrue(
+            exports.contains("export LD_LIBRARY_PATH=\"\$APPDIR/usr/lib/app/resources/vlc\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\""),
+            "the AppRun keeps the embedded runtime dir on LD_LIBRARY_PATH (libvlc.so's DT_NEEDED)"
+        )
+        assertTrue(
+            exports.contains("export VLC_PLUGIN_PATH=\"\$APPDIR/usr/lib/app/resources/vlc/plugins\${VLC_PLUGIN_PATH:+:\$VLC_PLUGIN_PATH}\""),
+            "the AppRun puts the embedded plugin dir on VLC_PLUGIN_PATH (libvlc_new loads its modules at creation; the CLI option is gone in 3.0.24)"
+        )
+    }
+
+    @Test
     fun `the package name matches the AUR pkgnames and the download URL`() {
         // Release entry: pkgname is the package identity.
         val releaseName = releasePkgbuild.readText().lineSequence()

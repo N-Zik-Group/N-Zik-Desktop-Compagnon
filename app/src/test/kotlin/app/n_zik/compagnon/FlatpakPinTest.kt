@@ -92,6 +92,31 @@ class FlatpakPinTest {
     }
 
     @Test
+    fun `the wrapper exports the vlc plugin dir and the jna search path`() {
+        // The wrapper (not the .desktop — flatpak ignores Env=) is the only place the sandbox
+        // environment can be set, so it must carry the two runtime fixes: VLC_PLUGIN_PATH puts
+        // the embedded plugin dir on libvlc's search path (libvlc_new() loads its mandatory
+        // modules at instance creation; the --plugin-path CLI option was removed in 3.0.24, the
+        // env var is the only lever — without it playback fails), and jna.library.path puts
+        // /app/lib on JNA's explicit search so the bundled libsecret resolves independent of the
+        // sandbox's host-dependent ld cache (the 2026-10-08 keyring regression). LD_LIBRARY_PATH
+        // (the libvlc.so DT_NEEDED) is the pre-existing export — keep it pinned too.
+        val exports = String(java.util.Base64.getDecoder().decode(flatpakProp("flatpak.wrapperExports"))).split("\u001f")
+        assertTrue(
+            exports.contains("export LD_LIBRARY_PATH=\"/app/lib/app/resources/vlc\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\""),
+            "the wrapper keeps the embedded runtime dir on LD_LIBRARY_PATH (libvlc.so's DT_NEEDED)"
+        )
+        assertTrue(
+            exports.contains("export VLC_PLUGIN_PATH=\"/app/lib/app/resources/vlc/plugins\${VLC_PLUGIN_PATH:+:\$VLC_PLUGIN_PATH}\""),
+            "the wrapper puts the embedded plugin dir on VLC_PLUGIN_PATH (libvlc_new loads its modules at creation; the CLI option is gone in 3.0.24)"
+        )
+        assertTrue(
+            exports.contains("export JAVA_TOOL_OPTIONS=\"-Djna.library.path=/app/lib\${JAVA_TOOL_OPTIONS:+ \$JAVA_TOOL_OPTIONS}\""),
+            "the wrapper puts /app/lib on jna.library.path (the bundled libsecret is found by JNA's explicit search, not the host ld cache)"
+        )
+    }
+
+    @Test
     fun `the libsecret module keeps the keyring client pinned`() {
         // The freedesktop runtime does not ship libsecret-1.so: without the module the app
         // falls back to the in-memory session store inside the sandbox and the token would
