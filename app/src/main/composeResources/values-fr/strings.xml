@@ -80,7 +80,7 @@
     <string name="connection_other_active">Un autre ordinateur (%1$s) est connecté au téléphone. Déconnectez-le du téléphone, puis réessayez.</string>
     <string name="reconnect">Se reconnecter</string>
     <!-- Player -->
-    <string name="player_nothing_playing">Nothing is playing</string>
+    <string name="player_nothing_playing">Rien ne se passe</string>
     <string name="player_unknown_artist">Artiste inconnu</string>
     <string name="player_untitled">Sans titre</string>
     <string name="player_play">Lire</string>
@@ -163,7 +163,7 @@
     <string name="unknown_artist">Artiste inconnu</string>
     <string name="playback">Lecture</string>
     <string name="management">Direction</string>
-    <string name="play_next">Musique suivante</string>
+    <string name="play_next">Lecture suivante</string>
     <string name="enqueue">Mettre en file d\'attente</string>
     <string name="shuffle">Aléatoire</string>
     <string name="play_all_local_songs">Écouter tous les titres stockés localement</string>
@@ -178,7 +178,7 @@
     <string name="bookmark">Ajouter aux favoris</string>
     <string name="info_bookmark_album">Ajouter l\'album à vos favoris</string>
     <string name="follow">Suivre</string>
-    <string name="following">Suit</string>
+    <string name="following">Suivant</string>
     <string name="item_select">Sélectionner</string>
     <string name="info_download_all_songs">Télécharger tous les titres</string>
     <string name="info_smart_recommendation">Recommandations Intelligentes</string>
@@ -207,20 +207,20 @@
     <string name="sort_date_liked">Date de mise en favoris</string>
     <string name="sort_downloaded">Téléchargés</string>
     <string name="sort_custom_order">Ordre personnalisé</string>
-    <string name="sort_songs_number">Numéro du titre</string>
+    <string name="sort_songs_number">Nombre de titres</string>
     <string name="sort_album_year">Année de l\'album</string>
-    <string name="match_album_audio_version">Version de l\'album/de l\'audio</string>
+    <string name="match_album_audio_version">Faire correspondre l\'album/la version audio</string>
     <string name="autosync_likes">Synchronisation automatique des morceaux aimés</string>
     <string name="statistics">Statistiques</string>
-    <string name="header_view_top_of">Voir le top %s de …</string>
+    <string name="header_view_top_of">Les %s meilleurs de…</string>
     <string name="today">Aujourd\'hui</string>
     <string name="_1_week">1 Semaine</string>
     <string name="_1_month">1 Mois</string>
     <string name="_3_month">3 Mois</string>
     <string name="_6_month">6 Mois</string>
-    <string name="_1_year">1 An </string>
+    <string name="_1_year">1 An</string>
     <!-- Compagnon-only chips (no phone equivalent) -->
-    <string name="download_pc">Download PC</string>
+    <string name="download_pc">Télécharger pour PC</string>
     <string name="cached_pc">Ordinateur en cache</string>
     <!-- Library: Compagnon only (no phone equivalent) -->
     <string name="library_none">Le téléphone ne partage aucune bibliothèque avec cet ordinateur.</string>
@@ -238,16 +238,16 @@
     <string name="controls_title_playback_speed">Vitesse de lecture</string>
     <string name="cd_background_image">Image d\'arrière-plan</string>
     <string name="cd_app_icon_in_player">icône de l\'application dans le lecteur</string>
-    <string name="cd_number_of_songs_in_queue">Nombre de chansons en file d\'attente</string>
+    <string name="cd_number_of_songs_in_queue">Nombre de titres dans la file d\'attente</string>
     <string name="cd_app_s_icon">Icône de l\'application</string>
     <string name="rewind">Rétrospective</string>
-    <string name="rewind_5_seconds">Revenir en arrière de 5 secondes</string>
-    <string name="rewind_30_seconds">Rembobine 30 secondes</string>
-    <string name="forward">Transférer</string>
-    <string name="forward_5_seconds">Avancer 5 secondes</string>
-    <string name="forward_30_seconds">Avancer 30 secondes</string>
+    <string name="rewind_5_seconds">Reculer de 5 secondes</string>
+    <string name="rewind_30_seconds">Reculer de 30 secondes</string>
+    <string name="forward">Avancer</string>
+    <string name="forward_5_seconds">Avancer de 5 secondes</string>
+    <string name="forward_30_seconds">Avancer de 30 secondes</string>
     <string name="remove_from_queue">Supprimer de la file d\'attente</string>
-    <string name="clean_queue_confirm">Voulez-vous vraiment nettoyer la file d\'attente ?</string>
+    <string name="clean_queue_confirm">Voulez-vous vraiment vider la file d\'attente ?</string>
     <string name="info_lock_unlock_reorder_songs">Verrouiller / Déverrouiller la réorganisation des titres</string>
     <string name="info_reorder_is_possible_only_in_ascending_sort">La réorganisation est possible uniquement dans le tri ascendant</string>
     <string name="repeat">Répéter</string>
@@ -268,7 +268,7 @@
     <string name="settings">Paramètres</string>
     <!-- App language (contract 1.9.0, `ui.language`); the per-locale translations arrive later through the Crowdin flow -->
     <string name="languages">Langues</string>
-    <string name="app_language">Langues de l\'application</string>
+    <string name="app_language">Langue de l\'application</string>
     <string name="profile_base_name">Fan de N-Zik</string>
     <string name="cd_blurred_background">arrière-plan flou</string>
     <string name="cd_origin_indicator">indicateur_origine</string>
@@ -277,7 +277,7 @@
     <string name="yt_playlists">YouTube / YouTube Music</string>
     <string name="delete_playlists_label">Supprimer des playlists</string>
     <string name="rewind_top_sort">Meilleures Rétrospectives</string>
-    <string name="renumber_songs_positions">Renuméroter les positions</string>
+    <string name="renumber_songs_positions">Mélanger l\'ordre des morceaux</string>
     <string name="information">Information</string>
     <string name="navigation">Navigation</string>
     <string name="listen_together">Écoutons Ensemble</string>
@@ -293,7 +293,7 @@
     <string name="update_artist_browse_id">Modifier l\'identifiant de navigation de l\'artiste</string>
     <string name="update">Mettre à jour</string>
     <string name="delete">Supprimer</string>
-    <string name="export_cached">Exporter en cache</string>
+    <string name="export_cached">Exporter la mémoire cache</string>
     <string name="edit_metadata">Modifier les métadonnées</string>
     <string name="rename_playlist">Renommer la playlist</string>
     <string name="download">Télécharger</string>
@@ -301,35 +301,35 @@
     <string name="tab_data">Données</string>
     <string name="data_settings_description">La section « Données » contient des paramètres qui modifient la manière dont l\'application gère les données en local et à distance.</string>
     <!-- The settings sub-tabs (spec `spec-settings-navigation`, NAV-9): the phone's keys and English values, verbatim -->
-    <string name="tab_general">Général</string>
+    <string name="tab_general">Généralités</string>
     <string name="tab_network">Réseau</string>
     <string name="tab_miscellaneous">Divers</string>
-    <string name="general_settings_description">La section « Général » contient les paramètres relatifs aux fonctionnalités générales de l\'application.</string>
-    <string name="network_settings_description">La section « Réseau » contient des paramètres permettant d\'optimiser les performances de l\'application et l\'utilisation des données.</string>
-    <string name="other_settings_description">La section « Divers » contient divers paramètres optionnels et utilitaires.</string>
+    <string name="general_settings_description">La section « Général » contient les paramètres relatifs aux fonctionnalités générales de l\'application</string>
+    <string name="network_settings_description">La section « Réseau » contient des paramètres permettant d\'optimiser les performances de l\'application et l\'utilisation des données</string>
+    <string name="other_settings_description">La section « Divers » contient divers paramètres optionnels et utilitaires</string>
     <string name="cache">Cache</string>
-    <string name="cache_cleared">Lorsque le cache manque d\'espace, les ressources qui n\'ont pas été consultées depuis le plus longtemps sont effacées</string>
+    <string name="cache_cleared">Lorsque l\'espace disponible dans le cache est épuisé, les ressources auxquelles on n\'a pas accédé depuis le plus longtemps sont supprimées</string>
     <string name="song_cache_max_size">Taille maximale du cache des titres</string>
-    <string name="turn_off">Desactivé</string>
+    <string name="turn_off">Désactiver</string>
     <string name="unlimited">Illimité</string>
     <string name="custom">Personnalisé</string>
     <string name="used">utilisé</string>
     <string name="set_custom_cache">Définir un cache personnalisé</string>
-    <string name="enter_value_in_mb">Entrez la valeur en Mo</string>
+    <string name="enter_value_in_mb">Entrez une valeur en Mo</string>
     <string name="do_you_really_want_to_delete_cache">Voulez-vous vraiment vider le cache ?</string>
     <string name="playback_blocked_match_first">Lecture bloquée, veuillez d\'abord faire correspondre</string>
-    <string name="unmatched_song">Chanson sans correspondance</string>
+    <string name="unmatched_song">Titre sans correspondance</string>
     <string name="value_cannot_be_empty">La valeur ne peut pas être vide</string>
     <string name="value_must_be_greater_than">La valeur doit être supérieure à</string>
     <string name="filter_by">Filtrer par</string>
     <string name="rewind_filter_month">Mois</string>
     <string name="rewind_filter_year">Année</string>
     <string name="added_to_favorites">Ajouté aux favoris</string>
-    <string name="added_to_dislikes">N\'a pas aimé %s</string>
-    <string name="removed_from_dislikes">Suppression de %s des « Je n\'aime pas »</string>
+    <string name="added_to_dislikes">Je n\'ai pas aimé %s</string>
+    <string name="removed_from_dislikes">%s a été supprimé de la liste des « Je n\'aime pas »</string>
     <string name="removed_from_favorites">Retiré des favoris</string>
     <string name="update_playlist_browse_id">Modifier l\'identifiant de navigation de la playlist</string>
-    <string name="cannot_bookmark_special_playlist">Impossible d\'ajouter à ses favoris la playlist « Titres ou épisodes appréciés »</string>
+    <string name="cannot_bookmark_special_playlist">Impossible d\'ajouter à ses favoris les titres ou les playlists d\'épisodes qu\'on a aimés</string>
     <!-- Compagnon only: the PC as an audio output -->
     <string name="this_pc">Cet ordinateur</string>
     <string name="local_playback_unavailable">Le son n\'est pas disponible sur cet ordinateur : le lecteur VLC intégré n\'a pas pu être chargé.</string>
@@ -342,12 +342,12 @@
     <string name="local_playback_failed">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
     <!-- App update (spec spec-updater: the in-app updater + the channel header badge) -->
     <string name="update_current_version">Version actuelle</string>
-    <string name="enable_check_for_update">Activer la vérification des mises à jour</string>
+    <string name="enable_check_for_update">Activer la vérification automatique des mises à jour</string>
     <string name="update_check_when_enabled">Lorsque cette option est activée, le système vérifie la disponibilité d\'une nouvelle version de cette chaîne au démarrage et la propose dans la boîte de dialogue de mise à jour.</string>
-    <string name="update_check_off_build">Si vous voyez ce message, cela signifie que votre version n\'a pas activé la mise à jour automatique, pls met à jour l\'application manuellement à partir de github</string>
-    <string name="info_check_update_now">Vérifiez maintenant</string>
-    <string name="update_available">Une mise à jour est disponible</string>
-    <string name="app_update_dialog_version">La nouvelle version %s peut être téléchargée !</string>
+    <string name="update_check_off_build">Si ce message s\'affiche, cela signifie que la mise à jour automatique n\'est pas activée pour votre version. Veuillez mettre à jour l\'application manuellement depuis GitHub.</string>
+    <string name="info_check_update_now">Vérifiez dès maintenant</string>
+    <string name="update_available">Mise à jour disponible</string>
+    <string name="app_update_dialog_version">La nouvelle version %s est disponible au téléchargement !</string>
     <string name="app_update_dialog_size">La taille du fichier est de %s</string>
     <string name="downloading_update">Téléchargement de la mise à jour</string>
     <string name="update_download_progress">Téléchargement de la mise à jour… %1$d%%</string>
@@ -355,7 +355,7 @@
     <string name="update_download_completed">Mise à jour téléchargée</string>
     <string name="error_update_check_failed">La vérification des mises à jour a échoué (%1$s)</string>
     <string name="error_update_download_failed">Le téléchargement de la mise à jour a échoué (%1$s)</string>
-    <string name="error_no_internet">Pas de réseau</string>
+    <string name="error_no_internet">Aucune connexion réseau</string>
     <string name="install_now">Installer maintenant</string>
     <string name="install_file_saved_at">Le fichier de mise à jour est enregistré à l\'emplacement suivant :</string>
     <string name="install_open_folder">Ouvrir le dossier</string>
@@ -377,14 +377,14 @@
     <string name="check_update">Vérifier les mises à jour</string>
     <string name="check_update_ask">Vérifier les mises à jour maintenant ?</string>
     <!-- The "ask" startup dialog (the phone's CheckForUpdateDialog, ported 1:1) -->
-    <string name="check_at_github_for_updates">Vérifier sur Github les mises à jour ?</string>
-    <string name="when_an_update_is_available_you_will_be_asked_if_you_want_to_install_info">Lorsqu\'une mise à jour est disponible, on vous demandera si vous voulez l\'installer. Il n\'y aura pas d\'installations automatiques, en arrière-plan.</string>
-    <string name="but_these_updates_would_not_go_through">Mais ces mises à jour ne passeraient pas par l\'examen supplémentaire effectué sur IzzyOnDroid ou F-Droid.</string>
-    <string name="you_can_still_turn_it_on_or_off_from_the_settings">Vous pouvez toujours l\'activer ou le désactiver à partir des paramètres.</string>
+    <string name="check_at_github_for_updates">Consulter GitHub pour voir s\'il y a des mises à jour ?</string>
+    <string name="when_an_update_is_available_you_will_be_asked_if_you_want_to_install_info">Lorsqu\'une mise à jour est disponible, le système vous demandera si vous souhaitez l\'installer. Il n\'y aura pas d\'installations automatiques à votre insu.</string>
+    <string name="but_these_updates_would_not_go_through">Mais ces mises à jour ne passeraient pas le contrôle supplémentaire effectué, par exemple, sur IzzyOnDroid ou F-Droid.</string>
+    <string name="you_can_still_turn_it_on_or_off_from_the_settings">Vous pouvez toujours l\'activer ou le désactiver depuis les paramètres.</string>
     <string name="checking_for_updates">Vérification des mises à jour…</string>
-    <string name="auto_update_enabled">Activé</string>
-    <string name="auto_update_ask">Demander</string>
-    <string name="auto_update_disabled">Désactivé</string>
+    <string name="auto_update_enabled">Mise à jour activée</string>
+    <string name="auto_update_ask">Demander à l\'utilisateur</string>
+    <string name="auto_update_disabled">Mise à jour désactivée</string>
     <string name="on">Activé</string>
     <string name="off">Désactivé</string>
     <string name="ask">Demander</string>
@@ -393,7 +393,7 @@
     <string name="never_checked">Jamais vérifié</string>
     <string name="last_check">Dernière vérification : %s</string>
     <string name="update_unknown">Inconnu</string>
-    <string name="update_not_available_yet">La mise à jour n\'est pas encore disponible ou la compilation est introuvable</string>
+    <string name="update_not_available_yet">La mise à jour n\'est pas encore disponible ou la version n\'a pas été trouvée</string>
     <string name="update_file_size">Taille du fichier : %s</string>
     <string name="downloading_actual_version">Réinstallation : %1$s (%2$s)</string>
     <string name="reinstalling_update">Réinstallation de la mise à jour</string>
