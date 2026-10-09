@@ -7,9 +7,10 @@ nzikVersionName = "0.0.1"
 # `spec-updater` Change Log + AD-8 superseded): the NSIS installer uses a registry-based
 # per-channel × per-scope version identity instead (app/packaging/windows/installer.nsi — the
 # registry key + the exit-code contract are pinned by InstallerContractTest).
-# Linux AppImage pins (spec spec-linux-appimage) — SEPARATE from the Windows VLC pins (which live in
-# app/build.gradle.kts and are never touched by the AppImage). The Linux tarball is produced one-shot
-# from the official VideoLAN source (vlc-3.0.24.tar.xz, official SHA e7cab503d1d7d5849b89d2cf0e1ee60d0ef6d012407791b644b9cfc0cc225fdf)
+# Linux VLC tarball pin (spec spec-linux-flatpak — the Flatpak is the only Linux artifact that
+# embeds the runtime) — SEPARATE from the Windows VLC pins (which live in app/build.gradle.kts and
+# are never touched by the Flatpak). The Linux tarball is produced one-shot from the official
+# VideoLAN source (vlc-3.0.24.tar.xz, official SHA e7cab503d1d7d5849b89d2cf0e1ee60d0ef6d012407791b644b9cfc0cc225fdf)
 # by scripts/build-vlc-linux-tarball.sh; its own SHA-256 is pinned below, and the URL points at the
 # asset of the dedicated prerelease carrier release `vlc-3.0.24-tarball` — until that asset is
 # live (the pipeline self-heals it: a dispatch or the Sunday run rebuilds + republishes it and
@@ -20,9 +21,6 @@ vlc-linux-tarball-url = "https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/
 # never uploaded to the release, so the original SHA is unrecoverable; the rebuild (same pinned
 # official source + same committed script + same audio subset) yields a different binary hash.
 vlc-linux-tarball-sha256 = "73e65bc7e019f53a92f2fee74d444d34862d4938e36b49c336881e6faf78e215"
-linuxdeploy-version = "1-alpha-20251107-1"
-linuxdeploy-url = "https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20251107-1/linuxdeploy-x86_64.AppImage"
-linuxdeploy-sha256 = "c20cd71e3a4e3b80c3483cef793cda3f4e990aca14014d23c544ca3ce1270b4d"
 kotlin = "2.4.20"
 compose-plugin = "1.13.0-alpha01"
 compose-material3 = "1.13.0-alpha01"

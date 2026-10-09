@@ -26,9 +26,9 @@ import org.junit.jupiter.api.io.TempDir
 
 /**
  * Pins the install-mode detection and the per-mode asset names (spec `spec-updater`, AD-4): the pure
- * [detectInstallMode] (Windows wins, then the Flatpak environment, then the AppImage mount, then the
- * package-managed `/opt` path, else portable) and [ArtifactNames.forMode] (the channel-suffixed asset
- * names of the release, `null` for the pacman / no-probe installs that carry no binary asset).
+ * [detectInstallMode] (Windows wins, then the Flatpak environment, then the package-managed `/opt`
+ * path, else portable) and [ArtifactNames.forMode] (the channel-suffixed asset names of the
+ * release, `null` for the pacman / no-probe installs that carry no binary asset).
  */
 class InstallModeDetectionTest {
 
@@ -76,14 +76,6 @@ class InstallModeDetectionTest {
     }
 
     @Test
-    fun `the appimage mount path is appimage`() {
-        assertEquals(
-            InstallMode.APPIMAGE,
-            detectInstallMode(LINUX, env, "/tmp/.mount_NZikDE/x86_64/N-Zik Desktop Compagnon"),
-        )
-    }
-
-    @Test
     fun `the package managed path is package managed`() {
         // The .deb / .rpm / AUR entries all share the single /opt location
         assertEquals(
@@ -93,7 +85,7 @@ class InstallModeDetectionTest {
         // The dev channel installs under its OWN /opt base (spec `spec-updater`, AD-8)
         assertEquals(
             InstallMode.PACKAGE_MANAGED,
-            detectInstallMode(LINUX, env, "/opt/n-zik-desktop-compagnon-dev/bin/N-Zik Desktop Compagnon (Dev)"),
+            detectInstallMode(LINUX, env, "/opt/n-zik-desktop-compagnon-dev/bin/N-Zik Desktop Compagnon DEV"),
         )
     }
 
@@ -110,16 +102,28 @@ class InstallModeDetectionTest {
     }
 
     @Test
+    fun `an appimage mount path falls through to portable`() {
+        // The 2026-10-09 rework removed the APPIMAGE mode from detection (spec
+        // `spec-channel-version-naming`): a legacy AppImage mount (`/tmp/.mount_*`) is no longer
+        // recognized — it falls through to the portable/generic path, so a legacy AppImage install
+        // gets the portable-zip gesture (accepted consequence, the "pas besoin" family: the
+        // releases no longer carry an AppImage asset)
+        assertEquals(
+            InstallMode.PORTABLE,
+            detectInstallMode(LINUX, env, "/tmp/.mount_NZikDE/x86_64/N-Zik Desktop Compagnon"),
+        )
+    }
+
+    @Test
     fun `the asset name per install mode follows the channel-suffixed convention`() {
         val version = "0.0.2-beta"
-        // The observed jpackage convention (no architecture suffix): base name + version + extension
-        // Loop 2 / AD-8 (documented deviation from the v1 pin): the beta installer carries the
-        // per-channel product name ("… (Beta)" — the jpackage app name the build sets)
-        assertEquals("N-Zik.Desktop.Compagnon.Beta.-$version.exe", ArtifactNames.forMode(InstallMode.WINDOWS, version, PackageManager.NONE))
+        // The 2026-10-09 naming rework / AD-8: the published .exe is the channel's Linux base
+        // (the CI renames the jpackage output — the spaced product name never appears in the
+        // asset name); the other assets carry the channel suffix after the base version
+        assertEquals("n-zik-desktop-compagnon-$version.exe", ArtifactNames.forMode(InstallMode.WINDOWS, version, PackageManager.NONE))
         assertEquals("n-zik-desktop-compagnon-$version-x86_64.flatpak", ArtifactNames.forMode(InstallMode.FLATPAK, version, PackageManager.NONE))
         assertEquals("n-zik-desktop-compagnon_$version-1_amd64.deb", ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, version, PackageManager.DEB))
         assertEquals("n-zik-desktop-compagnon-$version-1.x86_64.rpm", ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, version, PackageManager.RPM))
-        assertEquals("n-zik-desktop-compagnon-$version-x86_64.AppImage", ArtifactNames.forMode(InstallMode.APPIMAGE, version, PackageManager.NONE))
         assertEquals("n-zik-desktop-compagnon-$version-linux-portable.zip", ArtifactNames.forMode(InstallMode.PORTABLE, version, PackageManager.NONE))
     }
 
@@ -145,7 +149,7 @@ class InstallModeDetectionTest {
 
     @Test
     fun `a marked pacman install gets the arch package asset`() {
-        // The 7th asset: the pacman binary package, offered only when the install carries the
+        // The 6th asset: the pacman binary package, offered only when the install carries the
         // release marker (a release-pkg install)
         assertEquals(
             "n-zik-desktop-compagnon-0.0.2-beta-1-x86_64.pkg.tar.zst",
@@ -189,7 +193,6 @@ class InstallModeDetectionTest {
         assertFalse(isAurBlocked(InstallMode.PORTABLE, null, { PackageManager.AUR }))
         assertFalse(isAurBlocked(InstallMode.WINDOWS, null, { PackageManager.AUR }))
         assertFalse(isAurBlocked(InstallMode.FLATPAK, null, { PackageManager.AUR }))
-        assertFalse(isAurBlocked(InstallMode.APPIMAGE, null, { PackageManager.AUR }))
     }
 
     @Test
@@ -226,7 +229,7 @@ class InstallModeDetectionTest {
         // A package-managed launcher lives at <appRoot>/bin/<launcher> — the parent dir named
         // `bin` gives the app root, where the distribution.txt marker lives
         assertEquals("/opt/n-zik-desktop-compagnon", appRootOfResolvedPath("/opt/n-zik-desktop-compagnon/bin/N-Zik Desktop Compagnon"))
-        assertEquals("/opt/n-zik-desktop-compagnon-dev", appRootOfResolvedPath("/opt/n-zik-desktop-compagnon-dev/bin/N-Zik Desktop Compagnon (Dev)"))
+        assertEquals("/opt/n-zik-desktop-compagnon-dev", appRootOfResolvedPath("/opt/n-zik-desktop-compagnon-dev/bin/N-Zik Desktop Compagnon DEV"))
         // The UNRESOLVED launch path (/usr/bin/<pkg> — the symlink the .desktop Exec carries): the
         // parent is /usr, so no marker can be read from it — this is the loop-2 bug: the
         // production launch carries the SYMLINK path in its own cmdline

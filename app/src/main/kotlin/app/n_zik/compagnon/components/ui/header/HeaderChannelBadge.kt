@@ -113,9 +113,10 @@ fun HeaderChannelBadge(
             ),
     ) {
         // Uppercase per the phone's build-type badges ("BETA" / "DEV" / "MINIFIED" — the phone's
-        // build-type strings are uppercase; the desktop's mixed-case *_title strings are shared
-        // with mixed-case UI contexts, so the case is applied at render — round-4 audit MINOR-1,
-        // consistent with the About card badge and the update flow)
+        // build-type strings are uppercase; the desktop's *_title strings are uppercase in
+        // values/strings.xml, but the values-* locale copies stay mixed-case until the next
+        // Crowdin resync, so the case is applied at render — round-4 audit MINOR-1, consistent
+        // with the About card badge and the update flow)
         BasicText(
             text = badgeText.uppercase(),
             style = style,

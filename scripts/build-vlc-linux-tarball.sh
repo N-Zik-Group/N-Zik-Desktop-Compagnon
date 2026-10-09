@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #
 # build-vlc-linux-tarball.sh — one-shot producer of the pinned Linux VLC runtime tarball
-# (spec `spec-linux-appimage`).
+# (spec `spec-linux-flatpak`).
 #
 # VideoLAN publishes no prebuilt Linux runtime (source tarball + deb/rpm packages only), so the
-# AppImage's embedded runtime is built here, once, from the official VideoLAN source. The source
+# Flatpak's embedded runtime is built here, once, from the official VideoLAN source. The source
 # URL + SHA-256 are pinned below — this committed script IS the source of the pinned binary
 # (transparency): rebuilding it reproduces the same audio subset, and the tarball's own SHA-256
 # is what the build pins in `gradle/libs.versions.toml` (`vlc-linux-tarball-sha256`).
@@ -14,7 +14,7 @@
 #   vlc-3.0.24-linux-x64/
 #   ├── COPYING
 #   ├── libvlc.so            (unversioned name JNA looks for — VlcRuntime's platform libvlc)
-#   ├── libvlccore.so.9      (libvlc.so's DT_NEEDED soname; resolved via the AppImage's AppRun
+#   ├── libvlccore.so.9      (libvlc.so's DT_NEEDED soname; resolved via the Flatpak wrapper launcher
 #   │                          exporting the runtime dir on LD_LIBRARY_PATH — the build-time rpath
 #   │                          `make install` bakes in is stripped (step 4b), so no lib carries an
 #   │                          active rpath to the build host)
@@ -144,14 +144,14 @@ STAGE="${STAGE%.tar.gz}"   # vlc-3.0.24-linux-x64
 rm -rf "$STAGE"
 mkdir -p "$STAGE"
 
-# The license file (the source's COPYING — the AppImage carries the license next to the runtime).
+# The license file (the source's COPYING — the Flatpak carries the license next to the runtime).
 cp "$SRC/COPYING" "$STAGE/COPYING"
 
 # The runtime libraries:
 #   libvlc.so          — the unversioned name JNA looks for (a real file, not a symlink, so the
 #                        tarball stays self-contained wherever it is extracted);
 #   libvlccore.so.9    — libvlc.so's DT_NEEDED soname (a real file, resolved through the runtime
-#                        dir on LD_LIBRARY_PATH — see the AppImage's AppRun);
+#                        dir on LD_LIBRARY_PATH — see the Flatpak wrapper launcher);
 #   libvlc_pulse.so.0  — the PulseAudio output wrapper library the build produces next to the
 #                        plugins (installed under $PREFIX/lib/vlc/): `libpulse_plugin.so` has it in
 #                        its DT_NEEDED, so the tarball must carry it like any other runtime lib.
@@ -204,7 +204,7 @@ done
 # --- 4b. Strip the build-time rpath from every .so (a portable tarball) ---------------------------
 # `make install` leaves each module's rpath set to the build prefix (e.g. /home/<user>/prefix/lib):
 # machine-specific, so the pinned tarball must not carry an ACTIVE rpath to the build host. At
-# runtime the AppImage's AppRun exports the runtime dir on LD_LIBRARY_PATH, so the rpath is not
+# runtime the Flatpak wrapper launcher exports the runtime dir on LD_LIBRARY_PATH, so the rpath is not
 # needed. patchelf removes DT_RPATH and DT_RUNPATH. (The removed string may linger as dead,
 # unreferenced bytes in each lib's .dynstr — inert: no dynamic entry points to it, and it is
 # removed from the load path entirely.)

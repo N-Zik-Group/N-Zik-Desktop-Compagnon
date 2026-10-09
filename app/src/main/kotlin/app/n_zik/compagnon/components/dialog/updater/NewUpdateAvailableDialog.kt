@@ -74,7 +74,7 @@ import org.jetbrains.compose.resources.stringResource
  * (quit → the standard WiX UI shows: repair for the same version, an upgrade for a newer one —
  * the user sees progress and can cancel — the self-extracting exe then relaunches the app on a
  * 0 / 3010 exit), Flatpak = `flatpak install <file>`, package-managed = the exact command shown,
- * never auto-run (privilege), AppImage / portable = manual replacement.
+ * never auto-run (privilege), portable = manual replacement.
  */
 object NewUpdateAvailableDialog {
 
@@ -435,8 +435,10 @@ object NewUpdateAvailableDialog {
 
     /** The "BETA Update available" title prefix: the uppercase channel label + a space —
      *  stable is labeled too (the phone's strings are uppercase in the update flow — its
-     *  "BETA Update available"; the desktop's `beta_title`/`dev_title`/`git_title` strings
-     *  stay mixed-case because the header channel badge uses them as-is). */
+     *  "BETA Update available"). The desktop's `*_title` strings are uppercase in
+     *  `values/strings.xml`, but the `values-*` locale copies stay mixed-case until the next
+     *  Crowdin resync, so the case is applied at render (plain rendering/normalization, not a
+     *  safeguard — round-4 audit MINOR-1). */
     @Composable
     private fun channelLabel(): String = when (AppVersion.channel) {
         "beta" -> stringResource(Res.string.beta_title).uppercase() + " "

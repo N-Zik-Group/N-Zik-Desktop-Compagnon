@@ -194,8 +194,9 @@ fun UpdateScreen(
 
     // The "BETA/DEV/…" title prefix: the uppercase channel label + a space — stable is labeled
     // too (the phone shows "STABLE" on the stable channel as well; the phone's strings are
-    // uppercase in the update flow — `beta_title`/`dev_title`/`git_title`/`debug_title` stay
-    // mixed-case here because the header channel badge uses them as-is)
+    // uppercase in the update flow). The `*_title` strings are uppercase in values/strings.xml,
+    // but the values-* locale copies stay mixed-case until the next Crowdin resync — the
+    // .uppercase() is plain rendering/normalization, not a safeguard (round-4 audit MINOR-1)
     val channelLabel = when (channel) {
         "beta" -> stringResource(Res.string.beta_title).uppercase() + " "
         "stable" -> stringResource(Res.string.stable_title).uppercase() + " "

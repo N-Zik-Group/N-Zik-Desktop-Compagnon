@@ -20,8 +20,6 @@ enum class InstallMode {
     WINDOWS,
     /** Running inside a Flatpak sandbox: update in place with `flatpak install <file>`. */
     FLATPAK,
-    /** Running from an extracted AppImage mount (`/tmp/.mount_*`). */
-    APPIMAGE,
     /** Installed by a package manager under `/opt` (the .deb / .rpm / Arch pkg / AUR share the path). */
     PACKAGE_MANAGED,
     /** Any other path (the portable app-image unzipped anywhere). */
@@ -31,9 +29,9 @@ enum class InstallMode {
 /**
  * Detects the [InstallMode] (spec AD-4, pure; loop-2 refinement): a Windows host is always
  * [InstallMode.WINDOWS]; on Linux, the Flatpak environment wins — a NON-BLANK `FLATPAK_ID` or
- * the exact marker `container=flatpak` — then the AppImage mount path, then the package-managed
- * `/opt` path (stable or dev — the dev install lives in `/opt/n-zik-desktop-compagnon-dev`,
- * spec AD-8); anything else is portable.
+ * the exact marker `container=flatpak` — then the package-managed `/opt` path (stable or dev —
+ * the dev install lives in `/opt/n-zik-desktop-compagnon-dev`, spec AD-8); anything else is
+ * portable.
  *
  * @param osName `System.getProperty("os.name")`
  * @param env the process environment (`System.getenv()`)
@@ -44,7 +42,6 @@ enum class InstallMode {
 fun detectInstallMode(osName: String, env: Map<String, String>, executablePath: String): InstallMode = when {
     osName.startsWith("Windows", ignoreCase = true) -> InstallMode.WINDOWS
     env["FLATPAK_ID"].isNullOrBlank().not() || env["container"] == "flatpak" -> InstallMode.FLATPAK
-    executablePath.startsWith("/tmp/.mount_", ignoreCase = true) -> InstallMode.APPIMAGE
     executablePath.startsWith("/opt/n-zik-desktop-compagnon", ignoreCase = true) -> InstallMode.PACKAGE_MANAGED
     else -> InstallMode.PORTABLE
 }
@@ -185,18 +182,26 @@ fun updaterEffectivelyEnabled(
 
 /**
  * The release asset names of one channel (the build's rename convention, spec AD-2: the channel
- * suffix sits right after the base version, e.g. `…-0.0.2-beta-x86_64.AppImage`). The version
+ * suffix sits right after the base version, e.g. `…-0.0.2-beta-x86_64.flatpak`). The version
  * argument is the release version WITH its channel suffix.
  *
- * Channel-aware identity (spec AD-8, loop 2): the channel is INFERRED from the version suffix
- * (`-dev-*` → dev, `-beta` → beta, else stable) — the release's assets carry the channel in their
- * names. The Windows product name is per-channel ("… (Beta)" / "… (Dev)" — the jpackage app name
- * the build sets, mirrored here so the updater finds the renamed asset); the Linux dev channel
- * carries its own package base (`n-zik-desktop-compagnon-dev`). The functions take the channel
- * as a defaulted parameter so callers with an explicit channel can override the inference.
+ * Channel-aware identity (spec AD-8, loop 2 + the 2026-10-09 naming rework): the channel is
+ * INFERRED from the version suffix (`-dev-*` → dev, `-beta` → beta, else stable) — the release's
+ * assets carry the channel in their names. The product name is per-channel ("… BETA" / "… DEV"
+ * — the jpackage app name the build sets, mirrored here so the window title and the install
+ * identity agree); the Linux dev channel carries its own package base
+ * (`n-zik-desktop-compagnon-dev`). The published .exe file name is the channel's Linux base
+ * (`n-zik-desktop-compagnon[-dev]-<version>.exe` — the CI renames the jpackage output before
+ * the release upload), so the six artifacts of a channel share that base. The functions take
+ * the channel as a defaulted parameter so callers with an explicit channel can override the
+ * inference.
  */
 object ArtifactNames {
-    /** The display name (the jpackage package name — with its spaces, in the Windows installer). */
+    /**
+     * The display name (the jpackage package name — with its spaces; it rides in the window
+     * title and the install directory name, NOT in the published .exe file name — that one is
+     * the channel's Linux base, see [exe]).
+     */
     const val WINDOWS_PACKAGE_BASE = "N-Zik Desktop Compagnon"
 
     /** The jpackage linux package name (the frozen install identity — `/opt/n-zik-desktop-compagnon`). */
@@ -215,10 +220,13 @@ object ArtifactNames {
         else -> UpdaterConstants.TYPE_STABLE
     }
 
-    /** The per-channel product name (spec AD-8: the jpackage app name, the window title). */
+    /**
+     * The per-channel product name (spec AD-8: the jpackage app name — the window title, the
+     * install directory name, the Linux launcher, the Flatpak `exec`).
+     */
     fun productName(channel: String): String = when (channel) {
-        UpdaterConstants.TYPE_BETA -> "$WINDOWS_PACKAGE_BASE (Beta)"
-        UpdaterConstants.TYPE_DEV -> "$WINDOWS_PACKAGE_BASE (Dev)"
+        UpdaterConstants.TYPE_BETA -> "$WINDOWS_PACKAGE_BASE BETA"
+        UpdaterConstants.TYPE_DEV -> "$WINDOWS_PACKAGE_BASE DEV"
         else -> WINDOWS_PACKAGE_BASE
     }
 
@@ -226,19 +234,14 @@ object ArtifactNames {
         if (channel == UpdaterConstants.TYPE_DEV) LINUX_PACKAGE_BASE_DEV else LINUX_PACKAGE_BASE
 
     /**
-     * The release asset name of the Windows installer (spec AD-2 / AD-8): the CI renames
-     * jpackage's output (the spaced product name) to this exact name before upload — the GitHub
-     * asset upload sanitizes names (space → dot, "(" → "", ")" → ".") and the CI makes that
-     * transformation explicit instead of relying on it, so the release asset, the SHA-256 table
-     * and the in-app updater all agree on one name.
+     * The release asset name of the Windows installer (spec AD-2 / AD-8, the 2026-10-09 naming
+     * rework): the channel's Linux base + the version — the same base the five Linux artifacts
+     * of the channel share. The CI renames jpackage's output (the spaced product name) to this
+     * exact name before upload, so the release asset, the SHA-256 table and the in-app updater
+     * all agree on one name.
      */
     fun exe(version: String, channel: String = channelOf(version)): String =
-        "${publishedName(productName(channel))}-$version.exe"
-
-    /** GitHub's asset-name sanitization applied to the product name (the rule the CI applies
-     *  when it renames the jpackage output — keep the two in sync). */
-    private fun publishedName(name: String): String =
-        name.replace(" ", ".").replace("(", "").replace(")", ".")
+        "${linuxPackageBase(channel)}-$version.exe"
 
     fun deb(version: String, channel: String = channelOf(version)): String =
         "${linuxPackageBase(channel)}_$version-1_amd64.deb"
@@ -249,15 +252,12 @@ object ArtifactNames {
     fun portableZip(version: String, channel: String = channelOf(version)): String =
         "${linuxPackageBase(channel)}-$version-linux-portable.zip"
 
-    fun appImage(version: String, channel: String = channelOf(version)): String =
-        "${linuxPackageBase(channel)}-$version-x86_64.AppImage"
-
     fun flatpak(version: String, channel: String = channelOf(version)): String =
         "${linuxPackageBase(channel)}-$version-x86_64.flatpak"
 
     /**
      * The release asset name of the Arch binary package (spec
-     * `spec-arch-binary-package-release`): the 7th asset, the pacman `.pkg.tar.zst` built by
+     * `spec-arch-binary-package-release`): the 6th asset, the pacman `.pkg.tar.zst` built by
      * `:app:packageArch` — the PKGBUILD layout (the `<pkg>` base + the full version WITH the
      * channel suffix + release number 1 + the frozen x86_64 arch).
      */
@@ -289,7 +289,6 @@ object ArtifactNames {
             PackageManager.AUR -> if (isReleasePackage) archPkg(version, channel) else null
             PackageManager.NONE -> null
         }
-        InstallMode.APPIMAGE -> appImage(version, channel)
         InstallMode.PORTABLE -> portableZip(version, channel)
     }
 }

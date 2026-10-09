@@ -36,7 +36,6 @@ class InstallCommandTest {
         // The interactive Windows install, the manual-replacement modes, and the probe-failed
         // package-managed fallback (no command to show or copy — the card shows the manual hint)
         assertNull(installCommand(InstallMode.WINDOWS, null, filePath))
-        assertNull(installCommand(InstallMode.APPIMAGE, null, filePath))
         assertNull(installCommand(InstallMode.PORTABLE, null, filePath))
         assertNull(installCommand(InstallMode.PACKAGE_MANAGED, PackageManager.NONE, filePath))
         assertNull(installCommand(InstallMode.PACKAGE_MANAGED, null, filePath))

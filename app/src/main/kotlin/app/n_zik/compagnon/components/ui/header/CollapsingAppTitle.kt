@@ -141,7 +141,7 @@ private fun AppTitleExtras(
         modifier = modifier,
     ) {
         AppLogoText(onHome)
-        // The channel badge (Beta / Dev / Git / Debug — none for stable; spec `spec-updater` AD-6)
+        // The channel badge (BETA / DEV / GIT / DEBUG — none for stable; spec `spec-updater` AD-6)
         HeaderChannelBadge()
     }
 }

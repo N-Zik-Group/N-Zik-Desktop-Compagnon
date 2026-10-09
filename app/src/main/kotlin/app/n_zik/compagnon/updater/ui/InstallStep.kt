@@ -114,20 +114,6 @@ fun InstallStep(filePath: String, installMode: InstallMode, packageManager: Pack
                     )
                 }
 
-                InstallMode.APPIMAGE -> {
-                    BasicText(
-                        text = stringResource(Res.string.install_replacement_appimage),
-                        style = typography().xs.copy(color = colorPalette().textSecondary),
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    BasicText(
-                        text = stringResource(Res.string.old_install_path) + " ${oldInstallPath()}",
-                        style = typography().xs.semiBold.copy(color = colorPalette().text),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-
                 InstallMode.PORTABLE -> {
                     BasicText(
                         text = stringResource(Res.string.install_replacement_portable),
@@ -217,7 +203,7 @@ fun installCommand(installMode: InstallMode, packageManager: PackageManager?, fi
             PackageManager.NONE, null -> null
         }
 
-        InstallMode.APPIMAGE, InstallMode.PORTABLE -> null
+        InstallMode.PORTABLE -> null
     }
 
 /** Copies [text] to the clipboard (the desktop's "Copy" — a toast confirms it). */

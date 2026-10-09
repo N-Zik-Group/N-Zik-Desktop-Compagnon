@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
  * published), a drifted base runtime or a shrunken finish-args list would ship a bundle that
  * cannot reach the phone (network), the keyring (org.freedesktop.secrets) or the data dir (home) — all
  * with a green build. The build exposes the effective values (`systemProperty` in
- * `app/build.gradle.kts`, read from the committed template like `linux.appImage.*`) so this test
+ * `app/build.gradle.kts`, read from the committed template like `flatpak.*`) so this test
  * pins them, and the committed template itself is checked (valid JSON, exactly its two
  * placeholders) so the build cannot substitute anything it does not declare.
  */
@@ -58,7 +58,7 @@ class FlatpakPinTest {
         val pkgName = System.getProperty("linux.packageName") ?: error("linux.packageName is not exposed to the tests")
         val fileName = flatpakProp("flatpak.fileName")
         assertEquals("$pkgName-$version-x86_64.flatpak", fileName,
-            "the Flatpak name is <channel-aware package>-<channel-aware version>-x86_64.flatpak (the same frozen derivation as the AppImage)")
+            "the Flatpak name is <channel-aware package>-<channel-aware version>-x86_64.flatpak (the frozen derivation)")
     }
 
     @Test
@@ -196,7 +196,7 @@ class FlatpakPinTest {
             "the app module copies bin + lib + share into /app (dropping lib would ship an unlaunchable bundle)")
         // The launcher chmod must ride the placeholder, not a hardcoded product name: the
         // jpackage bin/ launcher is named after the channel display name ("N-Zik Desktop
-        // Compagnon (Dev)" on dev), and a stable-only name chmods a missing file → the dev
+        // Compagnon DEV" on dev), and a stable-only name chmods a missing file → the dev
         // and beta builds fail in flatpak-builder (2026-10-08 dev run).
         assertTrue(
             ((app?.get("build-commands") as? JsonArray)?.mapNotNull { it.jsonPrimitive.content }.orEmpty())

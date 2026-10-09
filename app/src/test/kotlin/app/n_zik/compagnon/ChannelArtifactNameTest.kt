@@ -15,8 +15,7 @@ import org.junit.jupiter.api.Test
  * semantics, the build's own values pin its implementation). Pinned: the version BOUNDARY check
  * (a base version that is a prefix of a longer version is never hit mid-number), the anti-RE-
  * SUFFIX guard (a stale suffixed artifact is rejected, never corrupted) and the effective
- * per-task artifact names the build exposes (`artifacts.*` system properties, same pattern as
- * `linux.appImage.fileName`).
+ * per-task artifact names the build exposes (`artifacts.*` system properties).
  */
 class ChannelArtifactNameTest {
 
@@ -76,8 +75,8 @@ class ChannelArtifactNameTest {
             channelArtifactName("n-zik-desktop-compagnon-0.0.2-linux-portable.zip", "0.0.2", "-beta", "-beta"),
         )
         assertEquals(
-            "N-Zik Desktop Compagnon (Dev)-0.0.2-dev-20261007.exe",
-            channelArtifactName("N-Zik Desktop Compagnon (Dev)-0.0.2.exe", "0.0.2", "-dev-20261007", "-dev-"),
+            "N-Zik Desktop Compagnon DEV-0.0.2-dev-20261007.exe",
+            channelArtifactName("N-Zik Desktop Compagnon DEV-0.0.2.exe", "0.0.2", "-dev-20261007", "-dev-"),
         )
     }
 

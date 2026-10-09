@@ -164,7 +164,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path $appimage | Out-Null
           Set-Content -Path (Join-Path $appimage 'smoke-placeholder.txt') -Value 'nsis-updater smoke compile stub'
           & $makensis `
-            "/DPRODUCT_NAME=N-Zik Desktop Compagnon (Dev)" `
+            "/DPRODUCT_NAME=N-Zik Desktop Compagnon DEV" `
             "/DCHANNEL=dev" `
             "/DAPP_VERSION=0.0.1-dev-20260101" `
             "/DVERSION_MAJOR=0" `
@@ -172,7 +172,7 @@ jobs:
             "/DVERSION_PATCH=1" `
             "/DVERSION_BUILD=20260101" `
             "/DAPPIMAGE_DIR=$appimage" `
-            "/DLAUNCHER_NAME=N-Zik Desktop Compagnon (Dev).exe" `
+            "/DLAUNCHER_NAME=N-Zik Desktop Compagnon DEV.exe" `
             "/DOUT_FILE=$(Join-Path $stub 'smoke-installer.exe')" `
             "/DICON_FILE=$(Resolve-Path 'assets/design/icon.ico')" `
             "/DVENDOR=N-Zik Group" `

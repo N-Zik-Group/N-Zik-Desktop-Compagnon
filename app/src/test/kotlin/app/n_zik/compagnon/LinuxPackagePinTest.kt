@@ -8,9 +8,10 @@ import org.junit.jupiter.api.Test
 /**
  * The Linux packaging contract lives in build config that no other test path touches: a plugin
  * upgrade that stops forwarding the jpackage `freeArgs` would ship a `.deb`/`.rpm` WITHOUT the
- * `vlc` dependency (the core contract — the `.deb`/`.rpm`/AUR/portable paths never bundle VLC; only
- * the AppImage and the Flatpak embed the runtime, each into its own staging), and a renamed `nzikPackageName` would desynchronize the `/opt`
- * dir from the portable zip name, the AUR `pkgname`s and the download URL — all with a green build.
+ * `vlc` dependency (the core contract — the `.deb`/`.rpm`/AUR/portable paths never bundle VLC;
+ * only the Flatpak embeds the runtime, into its own staging), and a renamed `nzikPackageName`
+ * would desynchronize the `/opt` dir from the portable zip name, the AUR `pkgname`s and the
+ * download URL — all with a green build.
  * The build exposes the effective values (`systemProperty` in `app/build.gradle.kts`, same pattern
  * as `windows.packageName`) so this test pins them. Channel-aware: the dev channel keeps its OWN
  * package base (`n-zik-desktop-compagnon-dev`, AD-8) and every artifact name carries the channel
@@ -25,10 +26,6 @@ class LinuxPackagePinTest {
     /** The channel-aware package name the running build generates (dev: its own `-dev` base, AD-8). */
     private fun pkgName(): String =
         System.getProperty("linux.packageName") ?: error("linux.packageName is not exposed to the tests")
-
-    /** The channel-aware in-app version the running build generates (stable/debug: the catalog base). */
-    private fun appVersionName(): String =
-        System.getProperty("appVersion.versionName") ?: error("appVersion.versionName is not exposed to the tests")
 
     @Test
     fun `both jpackage tasks carry the vlc dependency and the Audio menu group`() {
@@ -62,7 +59,7 @@ class LinuxPackagePinTest {
         assertTrue(zip.endsWith("-linux-portable.zip"), "the portable zip keeps its -linux-portable.zip suffix: $zip")
     }
 
-    private fun appImageProp(name: String): String =
+    private fun pinProp(name: String): String =
         System.getProperty(name) ?: error("$name is not exposed to the tests")
 
     private val sha256Regex = Regex("[0-9a-f]{64}")
@@ -73,73 +70,18 @@ class LinuxPackagePinTest {
     }
 
     @Test
-    fun `the AppImage tarball is pinned by url name and real sha256`() {
-        val url = appImageProp("linux.appImage.tarballUrl")
-        val name = appImageProp("linux.appImage.tarballName")
-        val sha = appImageProp("linux.appImage.tarballSha256")
+    fun `the Linux VLC tarball is pinned by url name and real sha256`() {
+        // The Flatpak is the only Linux artifact that embeds the runtime, so the tarball pin is
+        // exposed under the shared `linux.tarball.*` names.
+        val url = pinProp("linux.tarballUrl")
+        val name = pinProp("linux.tarballName")
+        val sha = pinProp("linux.tarballSha256")
         assertTrue(url.startsWith("https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/"),
             "the Linux tarball must be downloaded from the project's GitHub releases (the release asset it is published as): $url")
         assertTrue(url.endsWith("/$name"), "the tarball URL must point at the pinned file: $url vs $name")
         assertTrue(Regex("vlc-\\d+\\.\\d+\\.\\d+-linux-x64\\.tar\\.gz").matches(name),
             "the tarball name keeps the vlc-<version>-linux-x64.tar.gz shape: $name")
-        assertRealSha256("linux.appImage.tarballSha256", sha)
-    }
-
-    @Test
-    fun `the AppImage linuxdeploy is pinned by url version and real sha256`() {
-        val url = appImageProp("linux.appImage.linuxdeployUrl")
-        val sha = appImageProp("linux.appImage.linuxdeploySha256")
-        // The version is the catalog's linuxdeploy-version (the dead-pin guard: the URL must carry
-        // it, not just any linuxdeploy release) — read it from the toml like the frozen-name test.
-        val toml = File("../gradle/libs.versions.toml")
-        val version = Regex("""linuxdeploy-version\s*=\s*"?([^"\n]+)"?""")
-            .find(toml.readText())?.groupValues?.get(1)
-            ?: error("the catalog's linuxdeploy-version line is missing")
-        assertTrue(url.startsWith("https://github.com/linuxdeploy/linuxdeploy/releases/download/"),
-            "linuxdeploy must come from its official GitHub releases: $url")
-        assertTrue(url.contains("/$version/"), "the linuxdeploy URL must pin the catalog's linuxdeploy version ($version): $url")
-        assertTrue(url.endsWith("/linuxdeploy-x86_64.AppImage"), "the pinned linuxdeploy asset is the x86_64 AppImage: $url")
-        assertRealSha256("linux.appImage.linuxdeploySha256", sha)
-    }
-
-    @Test
-    fun `the AppImage file name is frozen to the package name and version`() {
-        // The version is the channel-aware in-app version (the catalog's nzikVersionName with the
-        // channel suffix — the single rename helper, AD-2) and the package name the channel-aware
-        // install identity — read them from the exposed contract so the test pins the derivation,
-        // not a copy of the string (a channel-blind pin reds `build.sh package beta|dev`).
-        val fileName = appImageProp("linux.appImage.fileName")
-        assertEquals("${pkgName()}-${appVersionName()}-x86_64.AppImage", fileName,
-            "the AppImage name is <channel-aware package>-<channel-aware version>-x86_64.AppImage (pinned through LDAI_OUTPUT in packageAppImage)")
-    }
-
-    @Test
-    fun `the AppImage and the Flatpak are the only Linux artifacts that inject resources vlc`() {
-        // The runtime goes into the AppDir's app resources dir (the cfg's $APPDIR/resources), and NO
-        // other Linux path gets it: the .deb/.rpm/AUR/portable app-image keeps its system-vlc contract.
-        val injection = appImageProp("linux.appImage.resourcesInjection")
-        assertTrue(injection.endsWith("resources/vlc"), "the runtime lands in the app's resources/vlc dir: $injection")
-        assertEquals("usr/lib/app/resources/vlc", injection,
-            "the AppDir mapping keeps the app-image layout 1:1 (usr/lib/app = the app-image's lib/app)")
-    }
-
-    @Test
-    fun `the AppRun exports the vlc plugin dir`() {
-        // The AppImage shares the Flatpak's embedded VLC tarball, so its AppRun (the only place the
-        // AppDir environment can be set) must put the embedded plugin dir on VLC_PLUGIN_PATH:
-        // libvlc_new() loads its mandatory modules at instance creation, and in VLC 3.0.24 the
-        // --plugin-path CLI option is gone (the env var is the only lever) — without it libvlc_new
-        // returns NULL and every local playback fails. LD_LIBRARY_PATH (the libvlc.so DT_NEEDED) is
-        // the pre-existing export — keep it pinned too.
-        val exports = String(java.util.Base64.getDecoder().decode(appImageProp("linux.appImage.appRunExports"))).split("\u001f")
-        assertTrue(
-            exports.contains("export LD_LIBRARY_PATH=\"\$APPDIR/usr/lib/app/resources/vlc\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\""),
-            "the AppRun keeps the embedded runtime dir on LD_LIBRARY_PATH (libvlc.so's DT_NEEDED)"
-        )
-        assertTrue(
-            exports.contains("export VLC_PLUGIN_PATH=\"\$APPDIR/usr/lib/app/resources/vlc/plugins\${VLC_PLUGIN_PATH:+:\$VLC_PLUGIN_PATH}\""),
-            "the AppRun puts the embedded plugin dir on VLC_PLUGIN_PATH (libvlc_new loads its modules at creation; the CLI option is gone in 3.0.24)"
-        )
+        assertRealSha256("linux.tarballSha256", sha)
     }
 
     @Test

@@ -9,16 +9,16 @@ import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery
  *
  * the resources directory carrying this platform's libvlc → the embedded runtime (pointed at
  * through `jna.library.path`, then vlcj's [NativeDiscovery] loads it; the embedded plugin dir is
- * pointed at through `VLC_PLUGIN_PATH`, which the Flatpak wrapper / the AppImage AppRun export —
+ * pointed at through `VLC_PLUGIN_PATH`, which the Flatpak wrapper exports —
  * in VLC 3.0.24 the `--plugin-path` CLI option is gone, so the env var is the only lever);
  * no embedded runtime → the system libvlc (e.g. `sudo apt install vlc`) found by [NativeDiscovery]
  * alone; the embedded libvlc present but failing to load (corrupt) → the same system discovery
  * retried once.
  *
- * That single decision covers the Windows build (embedded, `libvlc.dll`), the Linux AppImage
+ * That single decision covers the Windows build (embedded, `libvlc.dll`), the Linux Flatpak
  * (embedded, `libvlc.so`) and the other four Linux install paths (`.deb`/`.rpm`/the AUR entries/the
  * portable zip, whose app-image carries no `resources/vlc` — system libvlc, spec
- * `spec-linux-system-libvlc`; the AppImage exception is spec `spec-linux-appimage`).
+ * `spec-linux-system-libvlc`; the Flatpak exception is spec `spec-linux-flatpak`).
  *
  * No libvlc at all (neither embedded nor system) → playback is [Availability.Unavailable] and the
  * rest of the app keeps working.
@@ -100,7 +100,7 @@ object VlcRuntime {
     /**
      * The embedded runtime directory — the platform libvlc inside `<resourcesDir>/[RUNTIME_DIR]` —
      * or [null] when there is no embedded runtime: no resources dir, no `vlc` subfolder, or the
-     * platform libvlc is missing. One rule for all variants: the Windows build and the AppImage
+     * platform libvlc is missing. One rule for all variants: the Windows build and the Flatpak
      * carry `resources/vlc`; the `.deb`/`.rpm`/AUR/portable app-image does not, so their system
      * behavior is preserved by construction.
      */

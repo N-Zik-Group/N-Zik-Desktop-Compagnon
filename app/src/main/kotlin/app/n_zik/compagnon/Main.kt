@@ -68,7 +68,7 @@ fun main() = application {
     val backDispatcher = remember { BackDispatcher() }
     Window(
         onCloseRequest = ::exitApplication,
-        // The AD-8 per-channel product name (stable plain, beta "(Beta)", dev "(Dev)"); the source
+        // The AD-8 per-channel product name (stable plain, beta "… BETA", dev "… DEV"); the source
         // builds (debug / -git) keep the base name, the badge alone marking them
         title = ArtifactNames.productName(AppVersion.channel),
         icon = painterResource(Res.drawable.app_icon),

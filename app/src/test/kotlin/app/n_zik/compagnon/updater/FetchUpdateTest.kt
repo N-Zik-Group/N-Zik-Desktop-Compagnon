@@ -26,8 +26,8 @@ import org.junit.jupiter.api.Test
  * `spec-updater`, AD-1 / AD-3): the channel filter over the whole releases list, the dev date
  * tiebreak, the `NoSuchFileException` "no update available" mapping, the changelog fetch (the body
  * link / `dev.txt`) and the per-mode asset selection. Every release carries ALL the channel's
- * asset names (the uniform 7-asset matrix), so the assertion holds on any host (Windows exe,
- * Linux deb / rpm / zip / AppImage / flatpak / Arch pkg, or the pacman / none case with no asset).
+ * asset names (the uniform 6-asset matrix), so the assertion holds on any host (Windows exe,
+ * Linux deb / rpm / zip / flatpak / Arch pkg, or the pacman / none case with no asset).
  */
 class FetchUpdateTest {
 
@@ -60,7 +60,6 @@ class FetchUpdateTest {
                 ${assetJson(tag, ArtifactNames.deb(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.rpm(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.portableZip(tag.removePrefix("v")))},
-                ${assetJson(tag, ArtifactNames.appImage(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.flatpak(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.archPkg(tag.removePrefix("v")))}
               ]

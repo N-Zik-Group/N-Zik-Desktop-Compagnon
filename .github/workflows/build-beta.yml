@@ -78,28 +78,29 @@ jobs:
       - name: Align the runner OS timezone to Europe/Paris
         run: sudo ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
 
-      - name: Install the build prerequisites (jpackage tools + Flatpak + the AppImage runtime deps)
-        # The pinned Linux VLC tarball's audio subset links against the producer's system libraries
-        # (scripts/build-vlc-linux-tarball.sh installs the -dev packages), so linuxdeploy (the
-        # :app:packageAppImage bundler) must find every external soname on THIS host to deploy it into
-        # the AppDir. The producer runs on ubuntu-latest (noble), so exactly its apt packages are
-        # required:
-        #   libebml5        -> libebml.so.5      (the mkv demux plugin)
-        #   libmatroska7    -> libmatroska.so.7  (the mkv demux plugin)
-        #   libfaad2        -> libfaad.so.2      (the faad codec plugin)
-        #   libasound2t64   -> libasound.so.2    (the ALSA output plugin)
-        # The rest (libFLAC/libpulse/libogg/libopus/libvorbis/libmpg123/libsamplerate) are already in the
-        # base image. The ubuntu-latest image used to ship VLC (which pulled these in); the image dropped
-        # VLC, so the 2026-10-08 dev run failed with "Could not find dependency: libebml.so.5" — and
-        # libmatroska.so.7 surfaced next (linuxdeploy reports one missing dependency per file at a time,
-        # not the whole list). The tarball pinned then had been built on a WSL 26.04 dev machine and
-        # carried sonames noble does not have (libFLAC.so.14 vs noble's libFLAC.so.12) — it was
-        # self-heal-rebuilt on noble through the vlc-tarball-builder pipeline. Keep the producer and the
-        # consumer on the same distro.
+      - name: Install the build prerequisites (jpackage tools + Flatpak + the Linux VLC tarball's audio-dep sonames)
+         # The pinned Linux VLC tarball's audio subset links against the producer's system libraries
+         # (scripts/build-vlc-linux-tarball.sh installs the -dev packages), so the tarball carries
+         # external sonames it cannot resolve on its own. For the Flatpak they resolve at run time
+         # from the org.freedesktop.Platform base runtime (pre-installed in the step below);
+         # flatpak-builder does not scan or deploy host libraries, so nothing is deployed from this
+         # host. The producer runs on ubuntu-latest (noble), so the sonames it bakes in match noble:
+         #   libebml5        -> libebml.so.5      (the mkv demux plugin)
+         #   libmatroska7    -> libmatroska.so.7  (the mkv demux plugin)
+         #   libfaad2        -> libfaad.so.2      (the faad codec plugin)
+         #   libasound2t64   -> libasound.so.2    (the ALSA output plugin)
+         # The rest (libFLAC/libpulse/libogg/libopus/libvorbis/libmpg123/libsamplerate) are already in the
+         # base image. The four audio-dep packages above are kept on the build host as a safety margin
+         # for the Flatpak staging by the 2026-10-09 AppImage-removal decision (the host-soname scanning
+         # they used to feed was the removed AppImage bundler's job); their removal is a follow-up, so
+         # the apt-get line is unchanged. The tarball pinned on 2026-10-08 had been built on a WSL 26.04
+         # dev machine and carried sonames noble does not have (libFLAC.so.14 vs noble's libFLAC.so.12)
+         # — it was self-heal-rebuilt on noble through the vlc-tarball-builder pipeline. Keep the producer
+         # and the consumer on the same distro.
         run: |
           sudo apt-get update
-          # zstd: the .pkg.tar.zst compressor of :app:packageArch (the Arch binary package – the
-          # 7th Linux path; the task fails loud without it)
+          # zstd: the .pkg.tar.zst compressor of :app:packageArch (the Arch binary package – one of
+          # the five Linux paths; the task fails loud without it)
           sudo apt-get install -y fakeroot rpm flatpak flatpak-builder libebml5 libmatroska7 libfaad2 libasound2t64 zstd
 
       - name: Configure the Flathub remote
@@ -126,7 +127,7 @@ jobs:
           restore-keys: gradle-${{ runner.os }}-
 
       - name: Build with Gradle
-        run: ./gradlew :app:packageDeb :app:packageRpm :app:packageLinuxPortable :app:packageAppImage :app:packageFlatpak :app:packageArch -Pchannel=beta
+        run: ./gradlew :app:packageDeb :app:packageRpm :app:packageLinuxPortable :app:packageFlatpak :app:packageArch -Pchannel=beta
 
       - name: Upload the Linux artifacts
         uses: actions/upload-artifact@v7
@@ -134,7 +135,6 @@ jobs:
           name: linux-artifacts
           path: |
             app/build/compose/binaries/*.zip
-            app/build/compose/binaries/*.AppImage
             app/build/compose/binaries/*.flatpak
             app/build/compose/binaries/*.pkg.tar.zst
             app/build/compose/binaries/main/deb/*.deb
@@ -257,7 +257,7 @@ jobs:
         with:
           path: artifacts
 
-      - name: Collect the 7 artifacts and compute the SHA-256
+      - name: Collect the 6 artifacts and compute the SHA-256
         run: |
           set -euo pipefail
 
@@ -267,20 +267,17 @@ jobs:
 
           SUFFIX="-beta"
           PKG="n-zik-desktop-compagnon"
-          PRODUCT="N-Zik Desktop Compagnon (Beta)"
+          PRODUCT="N-Zik Desktop Compagnon BETA"
 
           EXE="${PRODUCT}-${BASE}${SUFFIX}.exe"
-          # The name GitHub stores the .exe as: the asset upload sanitizes the name
-          # (space -> dot, "(" -> "", ")" -> "."), so the collect renames the jpackage
-          # output to that exact name before upload — the release asset, the SHA-256
-          # table and the in-app updater (ArtifactNames.exe) all agree on it.
-          EXE_PUB="${EXE// /.}"
-          EXE_PUB="${EXE_PUB//(/}"
-          EXE_PUB="${EXE_PUB//)/.}"
+          # The name GitHub stores the .exe as: the CI renames the jpackage output (the
+          # spaced product name) to the channel's Linux base before upload — the release
+          # asset, the SHA-256 table and the in-app updater (ArtifactNames.exe) all agree
+          # on it (the six artifacts of the channel share that base).
+          EXE_PUB="${PKG}-${BASE}${SUFFIX}.exe"
           DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
           RPM="${PKG}-${BASE}${SUFFIX}-1.x86_64.rpm"
           ZIP="${PKG}-${BASE}${SUFFIX}-linux-portable.zip"
-          APPIMAGE="${PKG}-${BASE}${SUFFIX}-x86_64.AppImage"
           FLATPAK="${PKG}-${BASE}${SUFFIX}-x86_64.flatpak"
           ARCH="${PKG}-${BASE}${SUFFIX}-1-x86_64.pkg.tar.zst"
 
@@ -296,13 +293,12 @@ jobs:
           cp "artifacts/linux-artifacts/main/deb/${DEB}" release/
           cp "artifacts/linux-artifacts/main/rpm/${RPM}" release/
           cp "artifacts/linux-artifacts/${ZIP}" release/
-          cp "artifacts/linux-artifacts/${APPIMAGE}" release/
           cp "artifacts/linux-artifacts/${FLATPAK}" release/
           cp "artifacts/linux-artifacts/${ARCH}" release/
           cp "artifacts/windows-artifact/${EXE}" "release/${EXE_PUB}"
 
           cd release
-          sha256sum "${EXE_PUB}" "${DEB}" "${RPM}" "${ZIP}" "${APPIMAGE}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
+          sha256sum "${EXE_PUB}" "${DEB}" "${RPM}" "${ZIP}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
           cd ..
 
           # The markdown SHA-256 table (the artifacts are unsigned — this is
@@ -348,7 +344,6 @@ jobs:
              - **Fedora / openSUSE / Rocky:** dnf install ./<file>.rpm
              - **Arch / Manjaro / CachyOS:** sudo pacman -U ./<file>.pkg.tar.zst
              - **Portable:** unzip the zip and run the launcher in bin/.
-             - **AppImage:** run the file directly (needs fuse3; without it: ./<file>.AppImage --appimage-extract-and-run).
              - **Flatpak:** flatpak install ./<file>.flatpak.
 
           Please report any crashes, bugs, or unexpected behavior.
@@ -360,7 +355,6 @@ jobs:
           - **Fedora / openSUSE / Rocky** (.rpm) – Complete build for RPM-based distros (x86_64, 64-bit only).
           - **Arch / Manjaro / CachyOS** (.pkg.tar.zst) – Prebuilt pacman binary package, installable with `sudo pacman -U` (x86_64, 64-bit only).
           - **Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
-          - **AppImage** – Single-file build, no installation needed (x86_64, 64-bit only).
           - **Flatpak** – Flatpak build (x86_64, 64-bit only).
             ⚠️ May contain bugs or experimental features.
 
@@ -490,7 +484,6 @@ jobs:
                - **Fedora / openSUSE / Rocky:** dnf install ./<file>.rpm
                - **Arch / Manjaro / CachyOS:** sudo pacman -U ./<file>.pkg.tar.zst
                - **Portable:** unzip the zip and run the launcher in bin/.
-               - **AppImage:** run the file directly (needs fuse3; without it: ./<file>.AppImage --appimage-extract-and-run).
                - **Flatpak:** flatpak install ./<file>.flatpak.
 
             Please report any crashes, bugs, or unexpected behavior.
@@ -502,7 +495,6 @@ jobs:
             - **Fedora / openSUSE / Rocky** (.rpm) – Complete build for RPM-based distros (x86_64, 64-bit only).
             - **Arch / Manjaro / CachyOS** (.pkg.tar.zst) – Prebuilt pacman binary package, installable with `sudo pacman -U` (x86_64, 64-bit only).
             - **Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
-            - **AppImage** – Single-file build, no installation needed (x86_64, 64-bit only).
             - **Flatpak** – Flatpak build (x86_64, 64-bit only).
               ⚠️ May contain bugs or experimental features.
 
@@ -522,12 +514,11 @@ jobs:
 
             ## 🔗 Changelog & Downloads
 
-            - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-beta/N-Zik.Desktop.Compagnon.Beta.-${{ needs.versioning.outputs.downstream }}-beta.exe
+            - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-beta/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-beta.exe
             - 📥 **Debian (.deb):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-beta/n-zik-desktop-compagnon_${{ needs.versioning.outputs.downstream }}-beta-1_amd64.deb
             - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-beta/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-beta-1.x86_64.rpm
             - 📥 **Arch (.pkg.tar.zst):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-beta/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-beta-1-x86_64.pkg.tar.zst
             - 📥 **Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-beta/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-beta-linux-portable.zip
-            - 📥 **AppImage:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-beta/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-beta-x86_64.AppImage
             - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-beta/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-beta-x86_64.flatpak
             - 📄 **Changelog:** <https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/Updater/changelogs/${{ needs.versioning.outputs.code }}.txt>
             - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/v${{ needs.versioning.outputs.downstream }}-beta>
