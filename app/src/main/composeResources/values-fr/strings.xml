@@ -345,7 +345,7 @@
     <string name="enable_check_for_update">Activer la vérification automatique des mises à jour</string>
     <string name="update_check_when_enabled">Lorsque cette option est activée, le système vérifie la disponibilité d\'une nouvelle version de cette chaîne au démarrage et la propose dans la boîte de dialogue de mise à jour.</string>
     <string name="update_check_off_build">Si ce message s\'affiche, cela signifie que la mise à jour automatique n\'est pas activée pour votre version. Veuillez mettre à jour l\'application manuellement depuis GitHub.</string>
-    <string name="update_check_off_aur">This app was installed from the AUR: the in-app updater is disabled for this install. Update the AUR entry (n-zik-desktop-compagnon) with your AUR helper.</string>
+    <string name="update_check_off_aur">Cette application a été installée à partir de l\'AUR : le système de mise à jour intégré est désactivé pour cette installation. Mettez à jour l\'entrée AUR (n-zik-desktop-compagnon) à l\'aide de votre outil de gestion de l\'AUR.</string>
     <string name="info_check_update_now">Vérifiez dès maintenant</string>
     <string name="update_available">Mise à jour disponible</string>
     <string name="app_update_dialog_version">La nouvelle version %s est disponible au téléchargement !</string>
@@ -361,12 +361,12 @@
     <string name="install_file_saved_at">Le fichier de mise à jour est enregistré à l\'emplacement suivant :</string>
     <string name="install_open_folder">Ouvrir le dossier</string>
     <string name="install_copy_path">Copier le chemin d\'accès</string>
-    <string name="install_copy_command">Copy command</string>
+    <string name="install_copy_command">Copier la commande</string>
     <string name="path_copied">Chemin d\'accès copié</string>
-    <string name="command_copied">Command copied</string>
+    <string name="command_copied">Commande copiée</string>
     <string name="install_flatpak_command">Mise à jour effectuée avec :</string>
     <string name="install_pkg_command">Installez le pack à l\'aide de la commande suivante :</string>
-    <string name="install_pkg_pacman_command">Upgrade the package with:</string>
+    <string name="install_pkg_pacman_command">Mettez à jour le pack à l\'aide de la commande suivante :</string>
     <string name="install_pkg_manual">Aucun gestionnaire de packs n\'a été détecté. Installez manuellement le pack téléchargé.</string>
     <string name="install_replacement_appimage">Remplacez le fichier AppImage : placez le fichier téléchargé à l\'emplacement où se trouve le fichier actuel, puis relancez l\'application.</string>
     <string name="install_replacement_portable">Remplacer le dossier de l\'application : décompressez le fichier téléchargé dans le dossier actuel de l\'application, puis relancez celle-ci.</string>
