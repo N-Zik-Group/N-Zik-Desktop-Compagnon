@@ -368,14 +368,13 @@
     <string name="install_pkg_command">Installez le pack à l\'aide de la commande suivante :</string>
     <string name="install_pkg_pacman_command">Mettez à jour le pack à l\'aide de la commande suivante :</string>
     <string name="install_pkg_manual">Aucun gestionnaire de packs n\'a été détecté. Installez manuellement le pack téléchargé.</string>
-    <string name="install_replacement_appimage">Remplacez le fichier AppImage : placez le fichier téléchargé à l\'emplacement où se trouve le fichier actuel, puis relancez l\'application.</string>
     <string name="install_replacement_portable">Remplacer le dossier de l\'application : décompressez le fichier téléchargé dans le dossier actuel de l\'application, puis relancez celle-ci.</string>
     <string name="old_install_path">Installation actuelle :</string>
     <!-- The channel header badge (4 labels; stable shows no badge — the phone's rule) -->
-    <string name="beta_title">Bêta</string>
-    <string name="dev_title">Développeur</string>
-    <string name="git_title">Git</string>
-    <string name="debug_title">Débogage</string>
+    <string name="beta_title">BETA</string>
+    <string name="dev_title">DÉVELOPPEMENT</string>
+    <string name="git_title">GIT</string>
+    <string name="debug_title">DÉBOGAGE</string>
     <!-- Loop 2: the update page (spec spec-updater AD-9 revised) -->
     <string name="check_update">Vérifier les mises à jour</string>
     <string name="check_update_ask">Vérifier les mises à jour maintenant ?</string>
