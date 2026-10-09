@@ -368,14 +368,13 @@
     <string name="install_pkg_command">Install the package with:</string>
     <string name="install_pkg_pacman_command">Upgrade the package with:</string>
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_replacement_appimage">Replace the AppImage: put the downloaded file where the current one is, then relaunch.</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
     <string name="old_install_path">Current install:</string>
     <!-- The channel header badge (4 labels; stable shows no badge — the phone's rule) -->
-    <string name="beta_title">Beta</string>
-    <string name="dev_title">Dev</string>
-    <string name="git_title">Git</string>
-    <string name="debug_title">Debug</string>
+    <string name="beta_title">META</string>
+    <string name="dev_title">DEV</string>
+    <string name="git_title">GIT</string>
+    <string name="debug_title">DEBUG</string>
     <!-- Loop 2: the update page (spec spec-updater AD-9 revised) -->
     <string name="check_update">Se etter oppdatering</string>
     <string name="check_update_ask">Check for updates now?</string>
