@@ -345,6 +345,7 @@
     <string name="enable_check_for_update">Enable check for update</string>
     <string name="update_check_when_enabled">When enabled, a new version of this channel is checked at startup and the update dialog offers it.</string>
     <string name="update_check_off_build">Αν δείτε αυτό το μήνυμα σημαίνει ότι η κατασκευή σας δεν έχει ενεργοποιημένη αυτόματη ενημέρωση, pls ενημέρωση της εφαρμογής χειροκίνητα από το github</string>
+    <string name="update_check_off_aur">This app was installed from the AUR: the in-app updater is disabled for this install. Update the AUR entry (n-zik-desktop-compagnon) with your AUR helper.</string>
     <string name="info_check_update_now">Check Now</string>
     <string name="update_available">Update available</string>
     <string name="app_update_dialog_version">The new version %s can be downloaded!</string>
@@ -360,11 +361,13 @@
     <string name="install_file_saved_at">The update file is saved at:</string>
     <string name="install_open_folder">Open folder</string>
     <string name="install_copy_path">Copy path</string>
+    <string name="install_copy_command">Copy command</string>
     <string name="path_copied">Path copied</string>
+    <string name="command_copied">Command copied</string>
     <string name="install_flatpak_command">Update in place with:</string>
     <string name="install_pkg_command">Install the package with:</string>
+    <string name="install_pkg_pacman_command">Upgrade the package with:</string>
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_pkg_aur_hint">This machine uses pacman: update the AUR entry (n-zik-desktop-compagnon or n-zik-desktop-compagnon-git) with your AUR helper.</string>
     <string name="install_replacement_appimage">Replace the AppImage: put the downloaded file where the current one is, then relaunch.</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
     <string name="old_install_path">Current install:</string>
