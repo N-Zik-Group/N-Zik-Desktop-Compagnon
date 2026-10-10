@@ -159,6 +159,7 @@
     <string name="sort_artist_and_album">Artist, Album</string>
     <string name="sort_listening_time">Tempo di ascolto</string>
     <string name="no_items">Nessun elemento</string>
+    <string name="not_selectable">Non selezionabile</string>
     <string name="unknown_title">Titolo Sconosciuto</string>
     <string name="unknown_artist">Artista Sconosciuto</string>
     <string name="playback">Riproduzione</string>
@@ -173,6 +174,7 @@
     <string name="artist_songs_count_duration">Canzoni %1$d • %2$s</string>
     <string name="no_song_found">Nessuna canzone trovata</string>
     <string name="no_song_to_shuffle">Nessuna canzone da riprodurre in modalità casuale</string>
+    <string name="songs_shuffled">%d songs shuffled</string>
     <string name="info_no_songs_yet">Nessun brano disponibile</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Segnalibro</string>
@@ -213,6 +215,7 @@
     <string name="autosync_likes">Auto Sync Liked Songs</string>
     <string name="statistics">Statistiche</string>
     <string name="header_view_top_of">Top %s di …</string>
+    <string name="max_items_unlimited">Illimitato</string>
     <string name="today">Oggi</string>
     <string name="_1_week">1 Settimana</string>
     <string name="_1_month">1 Mese</string>
@@ -424,4 +427,15 @@
     <string name="translators">Traduttori</string>
     <string name="about_developers">Sviluppatori / Designers</string>
     <string name="in_alphabetical_order">In ordine alfabetico:</string>
+    <string name="do_you_really_want_to_download_all">Vuoi veramente scaricare tutto?</string>
+    <string name="do_you_really_want_to_delete_download">Vuoi eliminare il download?</string>
+    <string name="loading_songs_count">Loading %1$d songs…</string>
+    <string name="equalizer">Equalizzatore</string>
+    <string name="sleep_timer">Timer spegnimento</string>
+    <string name="listen_on">Ascolta su</string>
+    <string name="listen_on_youtube">Ascolta su YouTube</string>
+    <string name="deleted">Eliminato</string>
+    <string name="and">and</string>
+    <string name="sync">Sincronizza</string>
+    <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
 </resources>
