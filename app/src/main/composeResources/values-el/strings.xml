@@ -159,6 +159,7 @@
     <string name="sort_artist_and_album">Artist, Album</string>
     <string name="sort_listening_time">Listening Time</string>
     <string name="no_items">Δεν υπάρχουν στοιχεία</string>
+    <string name="not_selectable">Δεν είναι επιλέξιμο</string>
     <string name="unknown_title">Άγνωστος Τίτλος</string>
     <string name="unknown_artist">Άγνωστος Καλλιτέχνης</string>
     <string name="playback">Αναπαραγωγή</string>
@@ -173,6 +174,7 @@
     <string name="artist_songs_count_duration">%1$d Τραγούδια • %2$s</string>
     <string name="no_song_found">Δεν βρέθηκε τραγούδι</string>
     <string name="no_song_to_shuffle">No song to shuffle</string>
+    <string name="songs_shuffled">%d songs shuffled</string>
     <string name="info_no_songs_yet">No songs yet</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Bookmark</string>
@@ -213,6 +215,7 @@
     <string name="autosync_likes">Auto Sync Liked Songs</string>
     <string name="statistics">Στατιστικά</string>
     <string name="header_view_top_of">View top %s of …</string>
+    <string name="max_items_unlimited">Απεριόριστο</string>
     <string name="today">Σήμερα</string>
     <string name="_1_week">1 Εβδομάδα</string>
     <string name="_1_month">1 Μήνας</string>
@@ -424,4 +427,15 @@
     <string name="translators">Translators</string>
     <string name="about_developers">Developers / Designers</string>
     <string name="in_alphabetical_order">Με αλφαβητική σειρά:</string>
+    <string name="do_you_really_want_to_download_all">Do you really want to download all?</string>
+    <string name="do_you_really_want_to_delete_download">Θέλετε πραγματικά να διαγράψετε τις λήψεις;</string>
+    <string name="loading_songs_count">Loading %1$d songs…</string>
+    <string name="equalizer">Ισοσταθμιστής</string>
+    <string name="sleep_timer">Χρονόμετρο ύπνου</string>
+    <string name="listen_on">Ακρόαση</string>
+    <string name="listen_on_youtube">Ακούστε στο YouTube</string>
+    <string name="deleted">Deleted</string>
+    <string name="and">and</string>
+    <string name="sync">Συγχρονισμός</string>
+    <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
 </resources>
