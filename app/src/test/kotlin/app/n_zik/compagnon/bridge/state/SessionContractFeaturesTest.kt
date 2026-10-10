@@ -11,13 +11,9 @@ class SessionContractFeaturesTest {
 
     @Test
     fun `the sort menu and toolbar features are the phone's wire literals`() {
+        // Still advertised on the wire (the phone serves them); the PC no longer consumes them
+        // since the "remove UI sync" spec, but the literals stay pinned (phase 2 may re-consume).
         assertEquals("library.sortMenu", SessionContract.FEATURE_LIBRARY_SORT_MENU)
         assertEquals("library.toolbar", SessionContract.FEATURE_LIBRARY_TOOLBAR)
-    }
-
-    @Test
-    fun `the ui language feature is the phone's wire literal`() {
-        // Contract 1.9.0: the PC gates the "App language" wiring on this feature, never the version.
-        assertEquals("ui.language", SessionContract.FEATURE_UI_LANGUAGE)
     }
 }

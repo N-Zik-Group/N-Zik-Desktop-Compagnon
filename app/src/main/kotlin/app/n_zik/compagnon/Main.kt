@@ -108,15 +108,6 @@ fun App() {
             listenerFactory = { PairingListener(scope) },
             candidateProvider = { withContext(NzikDispatchers.DATA) { CandidateAddresses.select(SystemNetworkInterfaceSource) } },
             defaultDeviceName = defaultDeviceName(),
-            // Contract 1.9.0 (`ui.language`): the last persisted phone language, the `auto_tel`
-            // fallback of the "App language" setting. Only a non-null phone language is filed —
-            // a phone on `System` files its resolved locale tag; the PC's own OS locale is
-            // never filed as a phone language.
-            onPhoneLanguage = { fresh ->
-                preferences.update {
-                    if (it.lastPhoneLanguage == fresh) it else it.copy(lastPhoneLanguage = fresh)
-                }
-            },
         )
     }
     DisposableEffect(controller) {
@@ -129,23 +120,19 @@ fun App() {
             scope.cancel()
         }
     }
-    // Contract 1.9.0 (`ui.language`): the applied locale is the composition root's recomposition key
+    // The applied locale is the composition root's recomposition key
     // (`stringResource` is not locale-state-tracked on desktop, so [BridgeScreen] keys its content on
-    // the applied tag for the visible switch). An absent or unparseable tag keeps the OS locale.
+    // the applied tag for the visible switch): the PC's own "App language" setting — `system` keeps
+    // the OS locale, a BCP-47 code applies it, an unknown one falls back to the PC's `values/`.
     val settings by preferences.settings.collectAsState()
-    val phoneLanguage by controller.phoneLanguage.collectAsState()
     // Synchronous first apply during the root's first composition, before [BridgeScreen] reads the
     // tag: no startup null → tag re-key.
     remember {
-        AppLanguage.applyTag(
-            AppLanguage.resolveLanguageTag(settings.language, phoneLanguage, settings.lastPhoneLanguage),
-        )
+        AppLanguage.applyTag(AppLanguage.resolveLanguageTag(settings.language))
     }
-    // Re-apply on any change of the setting, the last persisted phone language, or a fresh `meta`.
-    LaunchedEffect(settings.language, settings.lastPhoneLanguage, phoneLanguage) {
-        AppLanguage.applyTag(
-            AppLanguage.resolveLanguageTag(settings.language, phoneLanguage, settings.lastPhoneLanguage),
-        )
+    // Re-apply when the PC's own setting changes.
+    LaunchedEffect(settings.language) {
+        AppLanguage.applyTag(AppLanguage.resolveLanguageTag(settings.language))
     }
     // The startup update check (spec `spec-updater` loop 2): the phone's 3-state
     // `CheckUpdateState` (replacing the v1 boolean), read once at startup on the updater-enabled

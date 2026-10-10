@@ -63,7 +63,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import app.n_zik.compagnon.bridge.ConnectionState
@@ -130,9 +132,9 @@ class AppearanceState(initial: Appearance) {
     var fadeFromAppearance by mutableStateOf<Appearance?>(null)
 
     /**
-     * The phone's UI settings last read by [MainActivity] (`ui.settings`), for the dialogs drawn at the
-     * window's root, outside its [LocalUiSettings] provider (the updater's, `Main.kt`): their PitchBlack
-     * background. The phone's defaults until a first read.
+     * The PC's effective UI settings ([MainActivity]: its coded defaults plus the phone's `topN` once
+     * read), for the dialogs drawn at the window's root, outside its [LocalUiSettings] provider (the
+     * updater's, `Main.kt`): their PitchBlack background.
      */
     var uiSettings by mutableStateOf(UiSettings())
 
@@ -328,10 +330,11 @@ internal data class NavPageState(
  * out ([LocalTopBarOffset], the content following it) and the floating bar and mini-player up to 240 dp down
  * ([LocalBottomBarOffset]); on release they snap in 150 ms to shown or hidden. Off while the player or the
  * queue is open; opening the player brings them back in 800 ms.
- * Since contract 1.10.0 (`ui.settings`, polled every [UI_SETTINGS_POLL_MS]): the phone's palette name and
- * mode, page / tab transitions, "Disable scrolling text"; the PC's own navigation bar stays the phone's
- * default floating bar (so the toasts, loader and mini-player shadow keep its offsets), and the phone's
- * `disableNavigationBackStack` is not mirrored (the PC's back always walks its page stack).
+ * Since contract 1.10.0 (`ui.settings`): the phone's UI settings are read at session start and on each
+ * `libraryChanged`; the PC consumes only `topN` from that read — its palette, page / tab transitions and
+ * every other appearance setting stay the PC's coded defaults. The PC's own navigation bar stays the
+ * phone's default floating bar (so the toasts, loader and mini-player shadow keep its offsets), and the
+ * phone's `disableNavigationBackStack` is not mirrored (the PC's back always walks its page stack).
  * Dropped: the navigation routes the contract has no data for, the player sheet's drag / fling (the full
  * player deploys from the mini-player in a 400 ms slide; no touch on the PC), the system bars.
  */
@@ -378,30 +381,17 @@ fun MainActivity(
         }
     }
 
-    // Since 1.10.0 (feature `ui.settings`, decision 3 of the 2026-10-09 audit): the phone's UI settings,
-    // read while the session is live — at its start, on each `libraryChanged` (§10.5) and every
-    // [UI_SETTINGS_POLL_MS] (the phone pushes no settings change). The last read value survives a
-    // reconnection; the phone's defaults until a first successful read (or without the feature)
-    var uiSettings by remember { mutableStateOf(UiSettings()) }
-    var uiSettingsLoaded by remember { mutableStateOf(false) }
+    // Since 1.10.0 (feature `ui.settings`): the phone's UI settings are fetched at session start and
+    // on each `libraryChanged` (§10.5) and applied through [UiSettingsHolder] — the PC consumes only
+    // `topN`, everything else stays the PC's coded defaults. The last read value survives a
+    // reconnection; the defaults until a first successful read (or without the feature)
+    val uiSettingsHolder = remember(library) { UiSettingsHolder(library) }
+    val uiSettings by uiSettingsHolder.settings.collectAsState()
     val sessionLive = connection == ConnectionState.Live
-    val uiSettingsRefresh = remember { kotlinx.coroutines.channels.Channel<Unit>(kotlinx.coroutines.channels.Channel.CONFLATED) }
-    LaunchedEffect(library, sessionLive) {
+    LaunchedEffect(repository, library, sessionLive) {
         if (sessionLive && SessionContract.FEATURE_UI_SETTINGS in library.features) {
-            while (true) {
-                library.uiSettings()?.let {
-                    uiSettings = it
-                    uiSettingsLoaded = true
-                }
-                withTimeoutOrNull(UI_SETTINGS_POLL_MS) { uiSettingsRefresh.receive() }
-            }
-        }
-    }
-    // The phone's "Disable scrolling text" drives the PC's own setting (its screens all read it there),
-    // once a value was actually read from the phone (never its default)
-    LaunchedEffect(uiSettings.disableScrollingText, uiSettingsLoaded) {
-        if (uiSettingsLoaded) {
-            preferences?.update { s -> if (s.disableScrollingText == uiSettings.disableScrollingText) s else s.copy(disableScrollingText = uiSettings.disableScrollingText) }
+            uiSettingsHolder.fetch()
+            repository.libraryChanged.collect { uiSettingsHolder.fetch() }
         }
     }
     val systemDark = isSystemInDarkTheme()
@@ -412,8 +402,6 @@ fun MainActivity(
         if (SessionContract.FEATURE_LIBRARY_LIVE in repository.features) {
             repository.libraryChanged.collect { kind ->
                 lists.onLibraryChanged(kind)
-                // Contract §10.5: the client re-reads the phone's UI settings on each `libraryChanged`
-                uiSettingsRefresh.trySend(Unit)
             }
         }
     }
@@ -617,7 +605,6 @@ fun MainActivity(
         LocalPlayerRepository provides repository,
         LocalLibraryActions provides actions,
         LocalUiSettings provides uiSettings,
-        app.n_zik.compagnon.bridge.state.LocalUiSettingsRead provides uiSettingsLoaded,
         app.n_zik.compagnon.core.navigation.LocalPlayerQueueState provides playerQueueState,
         app.n_zik.compagnon.core.navigation.LocalGoHome provides goHome,
         LocalCommandLauncher provides onCommand,
@@ -794,6 +781,23 @@ fun MainActivity(
     }
 }
 
+/**
+ * The PC's effective UI settings of the `GET /ui/settings` wire read (spec `spec-remove-ui-sync`): each
+ * fetch applies [UiSettings.toPcEffective] — only the phone's `topN` carries over, every other field
+ * stays the coded PC default (the wire's appearance fields are decoded but never mirrored). Fetched at
+ * session start and on each `libraryChanged` (contract §10.5); a failed read (or a phone without the
+ * feature) keeps the last value, the coded defaults until the first successful read.
+ */
+internal class UiSettingsHolder(private val library: LibraryRepository) {
+    private val _settings = MutableStateFlow(UiSettings())
+    val settings: StateFlow<UiSettings> = _settings.asStateFlow()
+
+    /** One fetch-and-apply; a `null` read keeps the last value. */
+    suspend fun fetch() {
+        library.uiSettings()?.let { _settings.value = it.toPcEffective() }
+    }
+}
+
 /** Text of a failure of the PC's own player (story 12), decided from its kind; shown as a toast. */
 private suspend fun localPlaybackNoticeText(notice: LocalPlaybackNotice): String = when (notice) {
     LocalPlaybackNotice.NotFound -> getString(Res.string.local_playback_not_found)
@@ -825,9 +829,6 @@ val LocalBottomBarOffset = staticCompositionLocalOf<State<Float>> { mutableState
 
 /** Pause after the last scroll before the bars snap shown or hidden. */
 internal const val BARS_SNAP_DELAY_MS = 150L
-
-/** How often the phone's UI settings are re-read (contract §10.5: the phone pushes no change). */
-internal const val UI_SETTINGS_POLL_MS = 15_000L
 
 /** The settings page's key in its [androidx.compose.runtime.saveable.SaveableStateHolder]. */
 private const val SETTINGS_STATE_KEY = "settings"

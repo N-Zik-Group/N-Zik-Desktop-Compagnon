@@ -3,15 +3,14 @@ package app.n_zik.compagnon.utils
 import java.nio.file.Files
 import java.nio.file.Path
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
 /**
- * The persisted "App language" fields (contract 1.9.0, `ui.language`) through the real
- * [Preferences] file I/O: a pre-1.9 `settings.json` (no `language` / `lastPhoneLanguage` key)
- * decodes with the defaults, and the `onPhoneLanguage` transform of the composition root
- * persists a fresh phone language alongside the pre-existing values.
+ * The PC's "App language" setting (spec `spec-remove-ui-sync`) through the real [Preferences] file
+ * I/O: a settings file without the `language` key decodes with the [AppLanguage.SYSTEM] default,
+ * and the one-time migration rewrites the old phone-mirroring sentinels (`auto_pc`, `auto_tel`) to
+ * `system`, preserving the pre-existing values.
  */
 class PreferencesTest {
 
@@ -20,8 +19,8 @@ class PreferencesTest {
 
     private fun file() = dir.resolve("settings.json")
 
-    /** A pre-1.9 `settings.json`: the old keys only, no `language` / `lastPhoneLanguage`. */
-    private fun writePre19() {
+    /** A settings file written before the spec: the old keys only, no `language`. */
+    private fun writeWithoutLanguage() {
         Files.writeString(
             file(),
             """{"exoPlayerCustomCache":48,"playbackVolume":0.7,"disableScrollingText":true}""",
@@ -29,36 +28,73 @@ class PreferencesTest {
     }
 
     @Test
-    fun `a pre-1_9 settings file decodes with the defaults for the language fields`() {
-        writePre19()
+    fun `a settings file without the language key decodes with the system default`() {
+        writeWithoutLanguage()
 
         val settings = Preferences(file()).settings.value
-        assertEquals(AppLanguage.AUTO_TEL, settings.language)
-        assertNull(settings.lastPhoneLanguage)
+        assertEquals(AppLanguage.SYSTEM, settings.language)
         // The pre-existing values are preserved.
-        assertEquals(48, settings.exoPlayerCustomCache)
-        assertEquals(0.7f, settings.playbackVolume)
-        assertEquals(true, settings.disableScrollingText)
+        assertPreserved(settings)
     }
 
     @Test
-    fun `the onPhoneLanguage transform persists the phone language alongside the pre-existing values`() {
-        writePre19()
-        val preferences = Preferences(file())
-        // The same transform the `App()` composition root applies (the `onPhoneLanguage` body in
-        // `Main.kt`): only a non-null phone language is filed, and an unchanged one is a no-op.
-        preferences.update {
-            if (it.lastPhoneLanguage == "fr") it else it.copy(lastPhoneLanguage = "fr")
-        }
+    fun `the migration rewrites the old auto_pc sentinel to system`() {
+        migrateFrom("auto_pc")
 
-        // Reloaded from the file (a fresh [Preferences] over the same path).
         val reloaded = Preferences(file()).settings.value
-        assertEquals("fr", reloaded.lastPhoneLanguage)
-        // The pre-existing values survive the write.
-        assertEquals(48, reloaded.exoPlayerCustomCache)
-        assertEquals(0.7f, reloaded.playbackVolume)
-        assertEquals(true, reloaded.disableScrollingText)
-        // The `auto_tel` fallback of the "App language" setting resolves to the persisted language.
-        assertEquals("fr", AppLanguage.resolveLanguageTag(reloaded.language, null, reloaded.lastPhoneLanguage))
+        assertEquals(AppLanguage.SYSTEM, reloaded.language)
+        assertPreserved(reloaded)
+    }
+
+    @Test
+    fun `the migration rewrites the old auto_tel sentinel to system`() {
+        migrateFrom("auto_tel")
+
+        val reloaded = Preferences(file()).settings.value
+        assertEquals(AppLanguage.SYSTEM, reloaded.language)
+        assertPreserved(reloaded)
+    }
+
+    @Test
+    fun `the migration is a no-op for a fresh or already-migrated file`() {
+        writeWithoutLanguage()
+        val preferences = Preferences(file()) // runs the migration on init (inert here)
+        val before = Files.readString(file())
+        // Nothing was written by the construction.
+        assertEquals(before, Files.readString(file()))
+        // A manual code is never touched.
+        preferences.update { it.copy(language = "fr") }
+        val reloaded = Preferences(file()).settings.value
+        assertEquals("fr", reloaded.language)
+        assertPreserved(reloaded)
+    }
+
+    @Test
+    fun `the migration is a no-op for an already-migrated file`() {
+        // A pre-spec file whose `language` already is the migrated `system` sentinel
+        Files.writeString(
+            file(),
+            """{"exoPlayerCustomCache":48,"playbackVolume":0.7,"disableScrollingText":true,"language":"system"}""",
+        )
+        val before = Files.readString(file())
+        val preferences = Preferences(file()) // runs the migration on init (inert here)
+        assertEquals(before, Files.readString(file())) // nothing was rewritten
+        assertEquals(AppLanguage.SYSTEM, preferences.settings.value.language)
+        assertPreserved(preferences.settings.value)
+    }
+
+    /** A pre-spec `settings.json`: the old keys plus the given `language` value. */
+    private fun migrateFrom(language: String) {
+        Files.writeString(
+            file(),
+            """{"exoPlayerCustomCache":48,"playbackVolume":0.7,"disableScrollingText":true,"language":"$language"}""",
+        )
+        Preferences(file()) // runs the migration on init
+    }
+
+    private fun assertPreserved(settings: UserSettings) {
+        assertEquals(48, settings.exoPlayerCustomCache)
+        assertEquals(0.7f, settings.playbackVolume)
+        assertEquals(true, settings.disableScrollingText)
     }
 }

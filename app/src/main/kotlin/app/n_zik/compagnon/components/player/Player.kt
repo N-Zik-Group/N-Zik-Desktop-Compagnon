@@ -111,7 +111,7 @@ internal val VIOLET_ACCENT = Color(0.54509807f, 0.36078432f, 0.9647059f)
  * stats for nerds, sleep timer, the video search sheet, the horizontal swipe on the cover (no touch swipe on the
  * PC), the system bar insets, the cover's tap / long press (lyrics / stats: not ported). Not read from
  * `/ui/settings` yet: the other player backgrounds (`playerBackgroundColors`, `bottomGradient`,
- * `blurDarkenFactor`) — deferred; the PC keeps AnimatedGradient + M3EMorphingCover.
+ * `blurDarkenFactor`) — deferred (phase 2); the PC keeps AnimatedGradient + M3EMorphingCover.
  * Not linked (audit 2026-10-10 pass 5): a click on the title / artists (the phone's `Modern.kt`
  * 172-180, 333-345: its album / artist route) does nothing — the open page needs the album / artist
  * header the player state does not carry; only the icons' routes are documented above.

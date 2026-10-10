@@ -54,14 +54,13 @@ val TopPeriod.labelId: StringResource
  * phone's `header_view_top_of` with its `MaxTopPlaylistItems`, read through `ui.settings` since 1.10.0)
  * and no selected highlight, as on the phone. [period] `null` keeps the
  * phone's own period (its default is `All`) and shows the `calendar_clear` icon. A click opens the menu
- * (the phone's selector has no direction arrow). Since 1.7.3 (feature `library.sortMenu`),
- * [options] follows the phone's Top tab menu — its periods in its order, its hidden ones dropped;
- * the native order stands in without it.
+ * (the phone's selector has no direction arrow). [options] is the phone's static periods in their
+ * native order (the wire's `sortMenu` is no longer consumed, since the "remove UI sync" spec).
  */
 class PeriodSelector(
     private val menuState: MenuState,
     private val period: TopPeriod?,
-    /** Since 1.7.3 (feature `library.sortMenu`): the phone's Top tab menu — its periods, its order. */
+    /** The phone's Top tab periods, in their native order (static since the "remove UI sync" spec). */
     private val options: List<TopPeriod> = TopPeriod.entries,
     private val onPeriodSelected: (TopPeriod) -> Unit,
 ) : MenuIcon, Descriptive {

@@ -38,7 +38,6 @@ const val chipSortsKey = "chipSorts"
 const val itemSizesKey = "itemSizes"
 const val disableScrollingTextKey = "disableScrollingText"
 const val languageKey = "language"
-const val lastPhoneLanguageKey = "lastPhoneLanguage"
 // The in-app updater (spec `spec-updater`, the phone's updater preference keys):
 const val checkUpdateStateKey = "checkUpdateState"
 const val updateCancelledKey = "updateCancelled"
@@ -94,16 +93,14 @@ data class UserSettings(
      * phone's per-tab sizes are not in the contract.
      */
     @SerialName(itemSizesKey) val itemSizes: Map<String, String> = emptyMap(),
-    /** The phone's "Disable scrolling text" (its `disableScrollingTextKey`): since contract 1.10.0 (`ui.settings`) mirrored from the phone once read, the PC's own value for an older phone. */
+    /** The PC's own "Disable scrolling text" (the phone's `disableScrollingTextKey` name is kept): stops the marquees of every text surface. */
     @SerialName(disableScrollingTextKey) val disableScrollingText: Boolean = false,
     /**
-     * The PC's own "App language" (contract 1.9.0, `ui.language`): the sentinel `auto_pc` (the PC's
-     * OS locale), `auto_tel` (the phone's language — the default) or a BCP-47 code of the phone's
-     * list; an unknown code falls back to the PC's `values/` (English), never a crash.
+     * The PC's own "App language": the sentinel [AppLanguage.SYSTEM] (the PC's OS locale — the
+     * default) or a BCP-47 code of the phone's list; an unknown code falls back to the PC's
+     * `values/` (English), never a crash.
      */
-    @SerialName(languageKey) val language: String = AppLanguage.AUTO_TEL,
-    /** The last phone language received in `meta` (contract 1.9.0): the `auto_tel` fallback. */
-    @SerialName(lastPhoneLanguageKey) val lastPhoneLanguage: String? = null,
+    @SerialName(languageKey) val language: String = AppLanguage.SYSTEM,
     /**
      * The in-app updater's three-state check choice (spec `spec-updater`, AD-9, loop 2 — the
      * phone's `checkUpdateState`, replacing the v1 boolean): the wire value "on" (automatic
@@ -148,6 +145,17 @@ class Preferences(private val file: Path = CredentialStore.appDirectory().resolv
 
     private val _settings = MutableStateFlow(load())
     val settings: StateFlow<UserSettings> = _settings.asStateFlow()
+
+    init {
+        // One-time migration (spec `spec-remove-ui-sync`): the old phone-mirroring sentinels are
+        // gone — `auto_pc` and `auto_tel` both resolve to the PC's OS locale, now the `system`
+        // sentinel. Idempotent: a fresh install or an already-migrated file decodes `system`
+        // directly, and nothing is written. A pre-spec file's orphaned `lastPhoneLanguage` key is
+        // ignored at decode (`ignoreUnknownKeys`) and dropped on the next write.
+        if (_settings.value.language in setOf("auto_pc", "auto_tel")) { // the persisted old values; their constants were deleted with the sentinels
+            update { it.copy(language = AppLanguage.SYSTEM) }
+        }
+    }
 
     fun update(transform: (UserSettings) -> UserSettings) {
         _settings.update(transform)

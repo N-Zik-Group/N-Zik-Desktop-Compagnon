@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
- * Contract 1.9.0 (`ui.language`): the resolver and the runtime application of the "App language"
- * setting. [AppLanguage.applyTag] mutates the JVM default locale, so `applyTag(null)` (which
+ * The PC's "App language" setting (spec `spec-remove-ui-sync`): the resolver and the runtime
+ * application. [AppLanguage.applyTag] mutates the JVM default locale, so `applyTag(null)` (which
  * restores the OS locale and resets the recomposition key) runs after every test.
  */
 class AppLanguageTest {
@@ -27,28 +27,18 @@ class AppLanguageTest {
     // ---- resolveLanguageTag (pure) ----------------------------------------------------------------
 
     @Test
-    fun `AUTO_PC resolves to the OS locale whatever the phone`() {
-        assertNull(AppLanguage.resolveLanguageTag(AppLanguage.AUTO_PC, "fr", "de"))
-    }
-
-    @Test
-    fun `AUTO_TEL prefers the phone's current language`() {
-        assertEquals("fr", AppLanguage.resolveLanguageTag(AppLanguage.AUTO_TEL, "fr", "de"))
-    }
-
-    @Test
-    fun `AUTO_TEL falls back to the last persisted phone language`() {
-        assertEquals("de", AppLanguage.resolveLanguageTag(AppLanguage.AUTO_TEL, null, "de"))
-    }
-
-    @Test
-    fun `AUTO_TEL with no phone language at all keeps the OS locale`() {
-        assertNull(AppLanguage.resolveLanguageTag(AppLanguage.AUTO_TEL, null, null))
+    fun `SYSTEM resolves to the OS locale`() {
+        assertNull(AppLanguage.resolveLanguageTag(AppLanguage.SYSTEM))
     }
 
     @Test
     fun `a manual code is used as is`() {
-        assertEquals("pt-BR", AppLanguage.resolveLanguageTag("pt-BR", "fr", "de"))
+        assertEquals("pt-BR", AppLanguage.resolveLanguageTag("pt-BR"))
+    }
+
+    @Test
+    fun `an unknown code resolves as a tag, never a crash`() {
+        assertEquals("xy", AppLanguage.resolveLanguageTag("xy"))
     }
 
     // ---- applyTag ----------------------------------------------------------------------------------
@@ -155,5 +145,18 @@ class AppLanguageTest {
     @Test
     fun `an unknown code labels itself`() {
         assertEquals("xy", AppLanguage.labelOf("xy"))
+    }
+
+    @Test
+    fun `the system sentinel labels itself`() {
+        assertEquals("System", AppLanguage.labelOf(AppLanguage.SYSTEM))
+    }
+
+    @Test
+    fun `the dialog values are System first then the phone's languages in order`() {
+        val values = AppLanguage.dialogValues()
+        assertEquals(AppLanguage.SYSTEM, values.first())
+        assertEquals(AppLanguage.LANGUAGES.map { it.first }, values.drop(1))
+        assertEquals(49, values.size)
     }
 }

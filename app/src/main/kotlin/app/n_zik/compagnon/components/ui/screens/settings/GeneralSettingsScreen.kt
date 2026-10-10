@@ -33,8 +33,8 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * The Général tab (phone's `GeneralSettings.kt` 281-302 + its Languages card 310-331): the tab-style
- * header, the description, the search, and the **Languages** card (contract 1.9.0 `ui.language`) with
- * the PC's "App language" entry (its dialog unchanged).
+ * header, the description, the search, and the **Languages** card with the PC's own "App language"
+ * entry: "System" (the PC's OS locale, the default) + the phone's languages.
  */
 @Composable
 fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (String) -> Unit) {
@@ -73,7 +73,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
         search.ToolBarButton()
         search.SearchBar()
 
-        // Language Section (contract 1.9.0, `ui.language`): the PC's own "App language"
+        // Language Section: the PC's own "App language"
         AnimatedVisibility(
             visible = languagesCtx,
             enter = fadeIn(animationSpec = tween(600)) + scaleIn(animationSpec = tween(600), initialScale = 0.9f),
@@ -84,7 +84,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                 content = {
                     OtherSettingsEntry(
                         title = stringResource(Res.string.app_language),
-                        text = languageLabel(settings.language),
+                        text = AppLanguage.labelOf(settings.language),
                         icon = Res.drawable.translate,
                         onClick = { showLanguageDialog = true },
                     )
@@ -97,25 +97,15 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
             // locale (the desktop's equivalent of the phone's system locale)
             ValueSelectorDialog(
                 title = stringResource(Res.string.app_language) + ": " + Locale.getDefault(),
-                values = remember { (listOf(AppLanguage.AUTO_PC, AppLanguage.AUTO_TEL) + AppLanguage.LANGUAGES.map { it.first }) },
+                values = remember { AppLanguage.dialogValues() },
                 selectedValue = settings.language,
                 onValueSelected = {
                     // The phone only stores the choice (its 338-340); the dialog closes itself on a pick
                     preferences.update { s -> s.copy(language = it) }
                 },
                 onDismiss = { showLanguageDialog = false },
-                valueText = { languageLabel(it) },
+                valueText = { value -> AppLanguage.labelOf(value) },
             )
         }
     }
-}
-
-/**
- * The label of an "App language" value: the two static sentinel labels (like the endonyms, they
- * are deliberately not localized), else the endonym of the phone's language ([AppLanguage.labelOf]).
- */
-private fun languageLabel(value: String): String = when (value) {
-    AppLanguage.AUTO_PC -> "Auto PC"
-    AppLanguage.AUTO_TEL -> "Auto Tel"
-    else -> AppLanguage.labelOf(value)
 }

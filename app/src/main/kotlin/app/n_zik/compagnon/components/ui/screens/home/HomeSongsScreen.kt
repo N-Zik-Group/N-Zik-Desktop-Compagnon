@@ -79,30 +79,25 @@ import org.jetbrains.compose.resources.stringResource
  * and "On device phone" is empty (the PC reads nothing from the phone's storage); "Cached PC" keeps the
  * tracks of the phone's list that sit in the Compagnon's local audio cache ([LibraryLists.songsPcCached]).
  *
- * Toolbar: the active chip's toolbar as-served by the phone since 1.8.0 (feature `library.toolbar`:
- * its `toolbar` of `GET /library/songs` — the user's order kept to the tab's visible buttons, the
- * hidden ones dropped, the locked ones always kept; the PC-only chips read it from their mobile
- * counterpart's probe), with the phone's show conditions (position lock only while the chip's sort
- * is `Custom`, match only while unmatched tracks are loaded, no YouTube sync on the PC), plus the
- * Compagnon's "Refresh". Until the first answered page — or on a phone before 1.8.0 — the phone's
- * default buttons of the active chip stand in ([HomeSongsToolbarSettingsDialog] `allButtonIds` /
- * `tabAvailableIds`). Wired: sort (or the period
- * selector on Top), search, locator, shuffle, play next and enqueue (since contract 1.10.0 on the phone's
- * WHOLE list — `queue.fullList` / `library.locate`, the phone's filters, cap and toasts; on the loaded tracks
- * before, and always on the PC-only chips); the rest
- * (position lock, match, download all / delete downloads, smart shuffle, item selector, add to
- * favorites / to a playlist, import / export, update, smart trash) are placeholders without a contract
- * route, a click does nothing; the buttons that do not fit the row go behind the "…" menu. The phone
- * reads its order synchronously from local preferences, so its tabs are always the chip's own toolbar;
- * the PC's served list is null while the chip's page loads — the chip's last served toolbar stands in
- * (the previously displayed one on a first visit in the session, the static default only before any
- * page at all), and the row crossfades on a change (the phone's 300 ms — its home tabs disable this
- * animation).
+ * Toolbar: the phone's default buttons of the active chip (its `HomeSongsToolbarSettingsDialog`
+ * `allButtonIds` / `tabAvailableIds`; the PC-only chips take the set of their phone twin), with the
+ * phone's show conditions (position lock only while the chip's sort is `Custom`, match only while
+ * unmatched tracks are loaded, no YouTube sync on the PC), plus the Compagnon's "Refresh". Since the
+ * "remove UI sync" spec the wire's `toolbar` (contract 1.8.0, feature `library.toolbar`) is no longer
+ * consumed: the toolbar is static, and the phone's own user order and hidden buttons stay on the phone.
+ * Wired: sort (or the period selector on Top), search, locator, shuffle, play next and enqueue (since
+ * contract 1.10.0 on the phone's WHOLE list — `queue.fullList` / `library.locate`, the phone's filters,
+ * cap and toasts; on the loaded tracks before, and always on the PC-only chips); the rest (position
+ * lock, match, download all / delete downloads, smart shuffle, item selector, add to favorites / to a
+ * playlist, import / export, update, smart trash) are placeholders without a contract route, a click
+ * does nothing; the buttons that do not fit the row go behind the "…" menu. The row crossfades on a
+ * chip change (the phone's 300 ms — its home tabs disable this animation).
  *
  * Sort: the phone keeps one sort per tab — the chip's sort and direction live in the user settings
  * (`chipSorts`, key `songs:<chip>`), applied to the chip's list on every change and on the first
- * composition (a cold start opens in the chip's own sort, not the list's default); the Liked / Disliked
- * chips default to the phone's `DateLiked` (its `HOME_SONGS_FAVORITES_SORT_BY` /
+ * composition (a cold start opens in the chip's own sort, not the list's default); the options are the
+ * phone's static ones (the wire's `sortMenu`, contract 1.7.3, is no longer consumed); the Liked /
+ * Disliked chips default to the phone's `DateLiked` (its `HOME_SONGS_FAVORITES_SORT_BY` /
  * `HOME_SONGS_DISLIKED_SORT_BY`); the Top chip replaces the sort with the phone's period selector
  * (`period`, the phone's own period when unset); the "Downloaded" option is hidden on the downloaded /
  * cached chips, as on the phone. On a phone without `library.sort` (contract < 1.6) the options without
@@ -112,9 +107,12 @@ import org.jetbrains.compose.resources.stringResource
  * active, as on the phone (its `itemsOnDisplayState.size`).
  *
  * Since 1.7.1: the phone's storage bar of the cached / downloaded chips (contract §10 `library.cache`,
- * the phone's `HomeSongsScreen.kt` 763-782; hidden while the phone's limit is `Unlimited`), the
- * `playCount` / `playTime` row overlays, and the sentinel alert of a track not matched to the phone's
- * library (a click is blocked with the phone's toast).
+ * the phone's `HomeSongsScreen.kt` 763-782; hidden while the phone's limit is `Unlimited` — its
+ * `maxBytes` is `null`), the `playCount` / `playTime` row overlays, and the sentinel alert of a track
+ * not matched to the phone's library (a click is blocked with the phone's toast). The bar's cap label
+ * is computed from the phone's `maxBytes` (the wire's `maxText` is no longer consumed, since the
+ * "remove UI sync" spec): the phone's `Disabled` cap ([PHONE_CACHE_DISABLED_MAX_BYTES] bytes) reads
+ * "Turn off" (its `ExoPlayerDiskCacheMaxSize.Disabled.text`), every other cap is formatted.
  *
  * Dropped (contract v1 or PC): YouTube likes sync, the chip visibility / order preferences, the
  * YouTube filter row, the smart-recommendation counter, the floating search / settings icon.
@@ -136,41 +134,6 @@ fun HomeSongsScreen(
     val activeList = lists.activeSongsList()
     val state by activeList.state.collectAsState()
     val searchText by lists.songsSearch.collectAsState()
-
-    // Since 1.7.3 (feature `library.sortMenu`): the phone's effective sort menu of the active chip —
-    // on the phone's chips it rides on the list's pages; on the PC-only chips it is read from their
-    // mobile counterpart ("Cached PC" ← Offline, "Download PC" ← Downloaded) with a one-track probe
-    val pcChipSortMenus by lists.pcChipSortMenus.collectAsState()
-    val sortMenu: List<String>? = when (chip) {
-        SongsChip.CachedPc, SongsChip.DownloadPc, SongsChip.OnDevice -> pcChipSortMenus[chip]
-        else -> state.sortMenu
-    }
-
-    // Since 1.8.0 (feature `library.toolbar`): the phone's effective Home Songs toolbar of the active
-    // chip — on the phone's chips it rides on the list's pages; on the PC-only chips it is read from
-    // their mobile counterpart with the same one-track probe as their sort menu
-    val pcChipToolbars by lists.pcChipToolbars.collectAsState()
-    val servedToolbar: List<String>? = when (chip) {
-        SongsChip.CachedPc, SongsChip.DownloadPc, SongsChip.OnDevice -> pcChipToolbars[chip]
-        else -> state.toolbar
-    }
-
-    // The phone reads its toolbar order synchronously from local preferences — its tabs never stand
-    // a default in while loading. The PC's served list is null while the chip's page loads (the
-    // list's reload resets it): the chip's last served toolbar stands in (a revisit shows the chip's
-    // own toolbar immediately, and the page's arrival is a no-op when it confirms it); on a first
-    // visit in the session, the previously displayed toolbar stands in — the static default is the
-    // last resort, only the very first chip of a session, before any page
-    var lastServedToolbars by remember { mutableStateOf<Map<SongsChip, List<String>?>>(emptyMap()) }
-    var previousToolbar by remember { mutableStateOf<List<String>?>(null) }
-    val toolbar = servedToolbar ?: lastServedToolbars[chip] ?: previousToolbar
-    LaunchedEffect(chip, servedToolbar) {
-        if (servedToolbar != null) {
-            lastServedToolbars = lastServedToolbars + (chip to servedToolbar)
-            previousToolbar = servedToolbar
-        }
-    }
-    val toolbarFeature = SessionContract.FEATURE_LIBRARY_TOOLBAR in lists.features
 
     // Since 1.7.1: the phone's disk caches (contract §10 `library.cache`), read on a tab switch;
     // `null` hides the cache bar
@@ -241,12 +204,6 @@ fun HomeSongsScreen(
     // the chip's own sort, not the list's default query (a no-op while the persisted sort is the default)
     LaunchedEffect(lists) { applyChipQuery(chip, settings?.chipSorts?.get(chip.key) ?: chip.defaultSort()) }
 
-    // Since 1.7.3: the PC-only chips read their sort menu from their mobile counterpart; a no-op on
-    // the phone's chips
-    LaunchedEffect(chip, lists) {
-        if (SessionContract.FEATURE_LIBRARY_SORT_MENU in lists.features) lists.loadPcChipSortMenu(chip)
-    }
-
     // The phone's `hasUnmatchedSongs` (HomeSongsScreen.kt 463, the phone's full check — `Track.unmatched`,
     // contract 1.7.1): a non-YT id or the zero-duration sentinel, the phone's `local:` files excluded —
     // the match button is shown when one is loaded
@@ -255,14 +212,14 @@ fun HomeSongsScreen(
     // The chip's sort button (the phone's per-tab sort). Top replaces it with the period selector;
     // Disliked keeps the arrow like on the phone (the phone's provider ignores the sort there)
     val sortButton: Button = if (chip == SongsChip.Top) {
-        // Since 1.7.3: the phone's Top tab menu — its periods in its order, its hidden ones dropped
-        PeriodSelector(menuState, chipSort.topPeriod, topPeriodOptions(sortMenu)) { period ->
+        // The phone's Top tab menu — its static periods in its order
+        PeriodSelector(menuState, chipSort.topPeriod, TopPeriod.entries) { period ->
             applyChipSort(chipSort.copy(period = period.wire))
         }
     } else if (sortsOnPhone) {
         Sort(
             menuState,
-            chipSortOptions(chip, sortsOnPhone, sortMenu),
+            chipSortOptions(chip, sortsOnPhone),
             chipSort.songSort,
             chipSort.reverse,
             onSortBy = { sort -> applyChipSort(chipSort.copy(sort = sort.wire)) },
@@ -271,7 +228,7 @@ fun HomeSongsScreen(
     } else {
         Sort(
             menuState,
-            chipSortOptions(chip, sortsOnPhone, sortMenu),
+            chipSortOptions(chip, sortsOnPhone),
             chipSort.songSort,
             chipSort.reverse,
             onSortBy = { sort -> applyChipSort(chipSort.copy(sort = sort.wire)) },
@@ -280,14 +237,13 @@ fun HomeSongsScreen(
         )
     }
 
-    // The active chip's toolbar, as-served by the phone since 1.8.0 (its user order and enabled
-    // toggles; the static default buttons stand in while the feature is absent or the served list
-    // is null/empty), with the phone's show conditions; the Compagnon's "Refresh" is added at the
+    // The active chip's toolbar: the phone's default buttons of the chip (the wire's `toolbar` is no
+    // longer consumed), with the phone's show conditions; the Compagnon's "Refresh" is added at the
     // end, always last. Wired: sort / period, search, locator, shuffle, play next, enqueue, refresh.
     // Placeholders (no contract route, a click does nothing): the rest. Built from the ids — the
     // button instances are fresh on every composition (reference equality), so the ids (value
     // equality) are the toolbar change's animation target (its `AnimatedContent`).
-    val toolbarIds = chipToolbarIds(chip, toolbarFeature, toolbar)
+    val toolbarIds = songsToolbarButtonIds(chip)
 
     @Composable
     fun toolbarButtons(ids: List<String>): List<Button> = buildList {
@@ -366,16 +322,14 @@ fun HomeSongsScreen(
                     // The chip change animates the toolbar row (the phone's `AnimatedContent`, its
                     // `TabToolBar.kt` 91-98): the target is the ids (value equality — the button
                     // instances are reference-fresh on every composition, so a plain `List<Button>`
-                    // would animate on every unrelated recomposition); the incoming row fades in
-                    // quickly and the outgoing one is removed immediately (no lingering of the
-                    // previous chip's toolbar while the new chip's page loads)
+                    // would animate on every unrelated recomposition); both rows crossfade over the
+                    // phone's 300 ms
                     AnimatedContent(
                         targetState = toolbarIds,
                         label = "SongsToolbarAnimation",
                         transitionSpec = {
-                            // A real crossfade on a change (both rows fade over the 300 ms, the
-                            // phone's default): only the page's arrival animates — while a chip's
-                            // page loads the row keeps the previous toolbar, so nothing lingers
+                            // A real crossfade on a chip change (both rows fade over the 300 ms, the
+                            // phone's default)
                             ContentTransform(fadeIn(tween(300)), fadeOut(tween(300)))
                         },
                     ) { ids ->
@@ -413,10 +367,11 @@ fun HomeSongsScreen(
                                     null -> CacheSpaceIndicator(
                                         usedBytes = phoneCache?.usedBytes ?: 0L,
                                         maxBytes = phoneCache?.maxBytes,
-                                        // Since 1.7.2: the phone's own label of its cap ("2GB", "Custom", "Turn off",
-                                        // its `ExoPlayerDiskCacheMaxSize.text`); a ≤ 1.7.1 phone does not send it,
-                                        // then the client formats its cap itself, as before
-                                        maxText = phoneCache?.maxText ?: formatShortFileSize(phoneCache?.maxBytes ?: 0L),
+                                        // The phone's label of its cap, computed from its `maxBytes` (the wire's
+                                        // `maxText` is no longer consumed): the `Disabled` cap reads "Turn off"
+                                        // (the phone's `Disabled.text`), every other cap is formatted
+                                        maxText = phoneCacheCapLabelId(phoneCache?.maxBytes)?.let { stringResource(it) }
+                                            ?: formatShortFileSize(phoneCache?.maxBytes ?: 0L),
                                     )
                                     else -> CacheSpaceIndicator(
                                         usedBytes = cache.totalBytes(),
@@ -479,7 +434,7 @@ private val SONGS_TOOLBAR_BUTTON_IDS = listOf(
  * .tabAvailableIds`). The PC chips take the set of their phone twin ("Download PC" ← "Downloaded",
  * "Cached PC" ← "Offline"); "sync_ytm_likes" never shows (no YouTube sync on the PC).
  */
-private fun songsToolbarButtonIds(chip: SongsChip): List<String> = when (chip) {
+internal fun songsToolbarButtonIds(chip: SongsChip): List<String> = when (chip) {
     SongsChip.All, SongsChip.Liked -> SONGS_TOOLBAR_BUTTON_IDS.filter { it != "export_cache" }
     SongsChip.Disliked -> SONGS_TOOLBAR_BUTTON_IDS.filter { it != "export_cache" && it != "sync_ytm_likes" && it != "import_menu" }
     SongsChip.Top -> SONGS_TOOLBAR_BUTTON_IDS.filter { it !in setOf("import_menu", "position_lock", "export_cache", "sync_ytm_likes") }
@@ -488,22 +443,6 @@ private fun songsToolbarButtonIds(chip: SongsChip): List<String> = when (chip) {
     SongsChip.OnDevice -> SONGS_TOOLBAR_BUTTON_IDS.filter {
         it !in setOf("import_menu", "export_dialog", "export_cache", "smart_trash", "match", "download_all", "delete_downloads", "sync_ytm_likes", "update")
     }
-}
-
-/**
- * The [chip]'s toolbar ids, in the order to build its buttons. Since 1.8.0 (feature
- * `library.toolbar`), the phone serves the chip's effective toolbar — its user order kept to its
- * tab's visible buttons (its hidden ones dropped, its locked ones always kept) — and it is shown
- * as-served; the static default buttons stand in while the feature is absent or the served list
- * is null/empty (a phone before 1.8.0, or before the first answered page). Ids the screen has no
- * button branch for are dropped by its `when`; "Refresh" is added by the caller, always last.
- */
-internal fun chipToolbarIds(chip: SongsChip, toolbarFeature: Boolean, served: List<String>?): List<String> {
-    if (!toolbarFeature) return songsToolbarButtonIds(chip)
-    return served
-        ?.filter { id -> id in SONGS_TOOLBAR_BUTTON_IDS }
-        ?.takeIf { it.isNotEmpty() }
-        ?: songsToolbarButtonIds(chip)
 }
 
 /** The chips that are filtered on the phone's own database and need `library.sort` (contract 1.6). */
@@ -520,33 +459,32 @@ private fun SongsChip.defaultSort(): ChipSort = when (this) {
 }
 
 /**
- * The Top chip's period options. Since 1.7.3 (feature `library.sortMenu`), the phone serves its
- * Top tab's periods — its content and order — and they are shown as-is; the static periods stand
- * in until the first page (or on a ≤ 1.7.2 phone).
+ * The [chip]'s sort options: the phone's static options (the wire's `sortMenu`, contract 1.7.3, is no
+ * longer consumed). "Downloaded" is hidden on the downloaded / cached chips, as on the phone; on a
+ * phone without `library.sort` (contract < 1.6), the options without a contract route are shown
+ * without effect (the phone's legacy options).
  */
-internal fun topPeriodOptions(sortMenu: List<String>?): List<TopPeriod> {
-    val options = sortMenu?.mapNotNull { id -> TopPeriod.entries.firstOrNull { period -> period.wire == id } }
-    return options?.takeIf { it.isNotEmpty() } ?: TopPeriod.entries
-}
-
-/**
- * The [chip]'s sort options. Since 1.7.3 (feature `library.sortMenu`), the phone serves the chip's
- * effective menu — its content and order (its saved order kept to its visible options) — and it is
- * shown as-is; the static options stand in until the first page (or on a ≤ 1.7.2 phone), and the
- * unknown ids (the phone's Top periods) are dropped, the PC's Top selector keeping them. "Downloaded"
- * is hidden on the downloaded / cached chips, as on the phone; on a phone without `library.sort`,
- * the options without a contract route are shown without effect.
- */
-internal fun chipSortOptions(chip: SongsChip, sortsOnPhone: Boolean, sortMenu: List<String>?): List<SortOption<SongSort>> {
-    val menu = if (sortsOnPhone) sortMenu else null
-    val options = when {
-        // The phone's menu: its ids in its order, the unknown ones dropped
-        !menu.isNullOrEmpty() ->
-            menu.mapNotNull { id -> songSortOptions.firstOrNull { option -> option.value == SongSort.fromWire(id) } }
-                .takeIf { it.isNotEmpty() } ?: songSortOptions
-        sortsOnPhone -> songSortOptions
-        else -> legacySongSortOptions
-    }
+internal fun chipSortOptions(chip: SongsChip, sortsOnPhone: Boolean): List<SortOption<SongSort>> {
+    val options = if (sortsOnPhone) songSortOptions else legacySongSortOptions
     if (chip !in setOf(SongsChip.DownloadTel, SongsChip.DownloadPc, SongsChip.CachedTel, SongsChip.CachedPc)) return options
     return options.filter { it.value != SongSort.Downloaded }
 }
+
+/** The phone's cache `maxBytes` while its "Song cache max size" is `Disabled` (its `ExoPlayerDiskCacheMaxSize.Disabled`). */
+internal const val PHONE_CACHE_DISABLED_MAX_BYTES = 1_000_000L
+
+/**
+ * The phone's cache cap is its `Disabled` value (its "Turn off"): the cache bar reads its label off
+ * the phone's `Disabled.text` instead of formatting the cap (the wire's `maxText` is no longer
+ * consumed, since the "remove UI sync" spec). `null` (the phone's `Unlimited`) hides the bar.
+ */
+internal fun isPhoneCacheDisabled(maxBytes: Long?): Boolean = maxBytes == PHONE_CACHE_DISABLED_MAX_BYTES
+
+/**
+ * The label of the phone's cache cap from its `maxBytes` (spec `spec-remove-ui-sync`):
+ * [Res.string.turn_off] — the string resource behind the phone's `ExoPlayerDiskCacheMaxSize.Disabled.text`
+ * — while the cap is the [PHONE_CACHE_DISABLED_MAX_BYTES] sentinel, `null` otherwise (the caller
+ * formats the bytes). `null` (the phone's `Unlimited`) hides the bar before the label.
+ */
+internal fun phoneCacheCapLabelId(maxBytes: Long?): StringResource? =
+    if (isPhoneCacheDisabled(maxBytes)) Res.string.turn_off else null

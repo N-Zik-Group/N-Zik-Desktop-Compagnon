@@ -146,8 +146,6 @@ class FullListContractTest {
         assertEquals(IconLikeType.Gift, decoded.likeIcon)
         assertNull(decoded.topN)
         assertEquals("Dynamic", decoded.colorPaletteName)
-        assertTrue(UiSettings().isFloatingNavigationBar)
-        assertEquals(PlayerBackgroundColors.AnimatedGradient, UiSettings(playerBackgroundColors = "?").playerBackground)
         assertTrue(UiSettings(colorPaletteName = "ModernBlack").isBlackPalette)
     }
 }

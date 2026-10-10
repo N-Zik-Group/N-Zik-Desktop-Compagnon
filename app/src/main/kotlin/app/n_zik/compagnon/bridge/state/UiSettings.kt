@@ -4,34 +4,33 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.serialization.Serializable
 
 /**
- * The phone's UI settings the PC mirrors (contract §10.5, since 1.10.0, feature `ui.settings`),
- * read from `GET /ui/settings`. Every field defaults to the phone's own default, so a phone without
- * the feature (or a failed read) keeps the PC on the phone's defaults — its behaviour before 1.10.0.
+ * The phone's UI settings seen by the PC (contract §10.5, since 1.10.0, feature `ui.settings`),
+ * read from `GET /ui/settings`. The PC consumes only [topN] (the Top chip's effective cap): every
+ * other field stays at its default, which is the phone's own default (the parity audit verified them
+ * one by one) — the phone's appearance is the phone's own UI, the PC renders on its coded defaults.
+ * A phone without the feature (or a failed read) keeps the PC on those defaults.
  * Enum values are the phone's enum names; the typed accessors map an unknown name to the default.
+ * Since the "remove UI sync" spec the model no longer carries the wire's `playerBackgroundColors`,
+ * `blurDarkenFactor`, `bottomGradient`, `maxTopPlaylistItems`, `menuStyle`, `disableScrollingText`
+ * and `navigationBarPosition` — the phone still serves them, they are ignored at decode, and they
+ * are re-added in phase 2.
  */
 @Serializable
 data class UiSettings(
     val colorPaletteName: String = "Dynamic",
     val colorPaletteMode: String = "Dark",
-    val playerBackgroundColors: String = "AnimatedGradient",
     val blurStrength: Float = 25f,
-    val blurDarkenFactor: Float = 0.2f,
     val playerBackdrop: Float = 0f,
     val rotatingAlbumCover: Boolean = false,
     val showThumbnail: Boolean = true,
     val noBlur: Boolean = true,
-    val bottomGradient: Boolean = false,
     val iconLikeType: String = "Essential",
     val playerInfoShowIcons: Boolean = true,
     val showSkipTimeButtons: Boolean = true,
     val textOutline: Boolean = false,
     val transitionEffect: String = "Fade",
-    val maxTopPlaylistItems: String = "10",
-    /** The phone's effective "Top N"; `null` = unlimited. */
+    /** The phone's effective "Top N"; `null` = unlimited. The only field the PC consumes. */
     val topN: Int? = 10,
-    val menuStyle: String = "List",
-    val disableScrollingText: Boolean = false,
-    val navigationBarPosition: String = "BottomFloating",
     /** The phone's now-playing indicator (`MusicAnimationType` name); `Bubbles`, its default, when unknown. */
     val nowPlayingIndicator: String = "Bubbles",
 ) {
@@ -40,26 +39,35 @@ data class UiSettings(
     val isSystemMode: Boolean get() = colorPaletteMode == "System"
     val isPitchBlack: Boolean get() = colorPaletteMode == "PitchBlack"
 
-    /** The phone's `ColorPaletteName.PureBlack` / `ModernBlack`: their black player branches. */
+    /**
+     * The phone's `ColorPaletteName.PureBlack` / `ModernBlack`: their black player branches.
+     * Decode-only since the "remove UI sync" spec: [toPcEffective] keeps the coded defaults, so this
+     * never carries the phone's value in the PC's effective settings.
+     */
     val isBlackPalette: Boolean get() = colorPaletteName == "PureBlack" || colorPaletteName == "ModernBlack"
 
-    /** `NavigationBarPosition.BottomFloating`: the toasts and the mini-player shadow depend on it. */
-    val isFloatingNavigationBar: Boolean get() = navigationBarPosition == "BottomFloating"
-
-    /** The phone's `TransitionEffect`, unknown → `Fade` (its default). */
+    /**
+     * The phone's `TransitionEffect`, unknown → `Fade` (its default). Decode-only since the "remove
+     * UI sync" spec: [toPcEffective] keeps the coded defaults, so this never carries the phone's
+     * value in the PC's effective settings.
+     */
     val transition: TransitionEffect
         get() = TransitionEffect.entries.firstOrNull { it.name == transitionEffect } ?: TransitionEffect.Fade
 
-    /** The phone's `IconLikeType`, unknown → `Essential` (its default). */
+    /**
+     * The phone's `IconLikeType`, unknown → `Essential` (its default). Decode-only since the "remove
+     * UI sync" spec: [toPcEffective] keeps the coded defaults, so this never carries the phone's
+     * value in the PC's effective settings.
+     */
     val likeIcon: IconLikeType
         get() = IconLikeType.entries.firstOrNull { it.name == iconLikeType } ?: IconLikeType.Essential
 
-    /** The phone's `PlayerBackgroundColors`, unknown → `AnimatedGradient` (its default). */
-    val playerBackground: PlayerBackgroundColors
-        get() = PlayerBackgroundColors.entries.firstOrNull { it.name == playerBackgroundColors } ?: PlayerBackgroundColors.AnimatedGradient
-
-    /** `MenuStyle.Grid` (the PC draws its list menus: the grid style is deferred). */
-    val isGridMenu: Boolean get() = menuStyle == "Grid"
+    /**
+     * The PC's effective settings of a wire read (spec `spec-remove-ui-sync`): only [topN] is
+     * consumed — a `null` (the phone's unlimited) stays `null`; every other field is reset to its
+     * (the phone's) default, so the wire's appearance never reaches the PC's UI.
+     */
+    fun toPcEffective(): UiSettings = UiSettings(topN = topN)
 }
 
 /** The phone's `TransitionEffect` (`AppNavigation.kt`). */
@@ -73,8 +81,5 @@ enum class PlayerBackgroundColors {
     CoverColor, ThemeColor, CoverColorGradient, ThemeColorGradient, BlurredCoverColor, ColorPalette, AnimatedGradient,
 }
 
-/** The phone's UI settings seen by every screen; the phone's defaults until the first read. */
+/** The PC's effective UI settings seen by every screen: its coded defaults, the phone's [UiSettings.topN] once read. */
 val LocalUiSettings = staticCompositionLocalOf { UiSettings() }
-
-/** Whether [LocalUiSettings] holds a value actually read from the phone (not its defaults). */
-val LocalUiSettingsRead = staticCompositionLocalOf { false }

@@ -105,9 +105,6 @@ object SessionContract {
     /** §5 / §10.1 (since 1.8.0): the `toolbar` of `GET /library/songs`: the phone's effective Home Songs toolbar of the chip. */
     const val FEATURE_LIBRARY_TOOLBAR = "library.toolbar"
 
-    /** §5 (since 1.9.0): the phone's effective UI language in the `meta` answer (`language`). */
-    const val FEATURE_UI_LANGUAGE = "ui.language"
-
     /**
      * §5 / §9 (since 1.10.0): `POST /queue/list` — the phone builds the queue from a WHOLE list
      * (a list reference, §10.4) with its own filters, `maxSongsInQueue` cap and toasts.
@@ -117,7 +114,11 @@ object SessionContract {
     /** §5 / §10.4 (since 1.10.0): `GET /library/locate`, a track's position in a whole list. */
     const val FEATURE_LIBRARY_LOCATE = "library.locate"
 
-    /** §5 / §10.5 (since 1.10.0): `GET /ui/settings`, the phone's UI settings the PC mirrors. */
+    /**
+     * §5 / §10.5 (since 1.10.0): `GET /ui/settings`. Since the "remove UI sync" spec the PC consumes
+     * only `topN` from the answer — the phone's other wire fields are still served, ignored at
+     * decode (the model no longer carries them), and re-added in phase 2.
+     */
     const val FEATURE_UI_SETTINGS = "ui.settings"
 
     /** §5 / §7.9 (since 1.10.0): the WS `toast` message, the phone's relayed toasts. */

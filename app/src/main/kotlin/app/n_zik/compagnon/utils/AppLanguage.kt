@@ -6,11 +6,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
- * The single locale authority of the Compagnon (contract 1.9.0, `ui.language`).
+ * The single locale authority of the Compagnon.
  *
- * The "App language" setting — [AUTO_PC] (the PC's OS locale), [AUTO_TEL] (the phone's language,
- * the default) or a BCP-47 code of the phone's list — is resolved with the phone's effective
- * language and the last persisted one into ONE locale tag ([resolveLanguageTag]) and applied at
+ * The PC's own "App language" setting — [SYSTEM] (the PC's OS locale, the default) or a BCP-47 code
+ * of the phone's list — is resolved into ONE locale tag ([resolveLanguageTag]) and applied at
  * runtime ([applyTag]): `Locale.setDefault` plus a bump of [appliedTag], the composition root's
  * recomposition key (`stringResource` is not locale-state-tracked on desktop). Nothing ever
  * requires an app restart; an absent or unparseable tag keeps the OS locale, and an unknown code
@@ -18,17 +17,14 @@ import kotlinx.coroutines.flow.asStateFlow
  */
 object AppLanguage {
 
-    /** "Auto PC": the PC's OS locale, the phone ignored. */
-    const val AUTO_PC = "auto_pc"
-
-    /** "Auto Tel" (the default): the phone's effective language, else the last persisted one, else the OS locale. */
-    const val AUTO_TEL = "auto_tel"
+    /** "System" (the default): the PC's OS locale. */
+    const val SYSTEM = "system"
 
     private val _appliedTag = MutableStateFlow<String?>(null)
 
     /**
      * The PC's OS locale, captured at initialisation (before any [applyTag] override): what the
-     * `auto_pc` setting and an absent or unparseable tag resolve back to.
+     * [SYSTEM] setting and an absent or unparseable tag resolve back to.
      */
     private val osLocale: Locale = Locale.getDefault()
 
@@ -39,17 +35,13 @@ object AppLanguage {
     val appliedTag: StateFlow<String?> = _appliedTag.asStateFlow()
 
     /**
-     * Pure resolution of the setting: [AUTO_PC] → `null` (the OS locale); [AUTO_TEL] → the
-     * phone's effective language, else the last persisted one, else `null` (the OS locale);
-     * anything else is a manual BCP-47 code used as is (an unknown code falls back to the PC's
-     * `values/`, the English one).
+     * Pure resolution of the setting: [SYSTEM] → `null` (the OS locale); anything else is a manual
+     * BCP-47 code used as is (an unknown code falls back to the PC's `values/`, the English one).
      */
-    fun resolveLanguageTag(setting: String, phoneLanguage: String?, lastPhoneLanguage: String?): String? =
-        when (setting) {
-            AUTO_PC -> null
-            AUTO_TEL -> phoneLanguage ?: lastPhoneLanguage
-            else -> setting
-        }
+    fun resolveLanguageTag(setting: String): String? = when (setting) {
+        SYSTEM -> null
+        else -> setting
+    }
 
     /**
      * Applies [tag] as the JVM default locale and bumps [appliedTag]. An undetermined tag (any
@@ -79,7 +71,7 @@ object AppLanguage {
      * `Languages.code` verbatim (`iw`, `in`, `sr-CS`…): the JVM normalizes the legacy ones
      * (`iw` → `he`, `in` → `id`) through [Locale.forLanguageTag]. The endonyms are each
      * language's own standard name — static on the PC (no per-locale strings, no wire); the
-     * phone's `System` entry is covered by [AUTO_PC] and stays out of the list.
+     * phone's `System` entry is covered by [SYSTEM] and stays out of the list.
      */
     val LANGUAGES: List<Pair<String, String>> = listOf(
         "af" to "Afrikaans",
@@ -132,6 +124,12 @@ object AppLanguage {
         "vi" to "Tiếng Việt",
     )
 
-    /** The endonym of a picker code; the code itself for a tag that is not in the phone's list. */
-    fun labelOf(code: String): String = LANGUAGES.firstOrNull { it.first == code }?.second ?: code
+    /** The endonym of a picker code, "System" for the [SYSTEM] sentinel; the code itself for a tag that is not in the phone's list. */
+    fun labelOf(code: String): String = when (code) {
+        SYSTEM -> "System"
+        else -> LANGUAGES.firstOrNull { it.first == code }?.second ?: code
+    }
+
+    /** The "App language" dialog's values: the [SYSTEM] sentinel first, then [LANGUAGES]' codes in their order. */
+    fun dialogValues(): List<String> = listOf(SYSTEM) + LANGUAGES.map { it.first }
 }

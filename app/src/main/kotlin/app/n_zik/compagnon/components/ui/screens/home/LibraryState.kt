@@ -299,8 +299,6 @@ class LibraryLists(
             "songs" -> {
                 if (isLoaded(songs)) songs.reload()
                 if (isLoaded(songsPcCached)) songsPcCached.reload()
-                // A no-op on the phone's chips (their menu rides on their pages)
-                loadPcChipSortMenu(activeSongsChip)
                 detailTrackLists().forEach { list -> if (isLoaded(list)) list.reload() }
             }
             "albums" -> if (isLoaded(albums)) albums.reload()
@@ -312,43 +310,6 @@ class LibraryLists(
 
     /** A list is loaded while its first page has answered ([PagedState.total] is set). */
     private fun isLoaded(list: PagedList<*, *>): Boolean = list.state.value.total != null
-
-    /**
-     * Since 1.7.3 (feature `library.sortMenu`): the sort menu of a PC-only chip, read from its
-     * mobile counterpart (its "Cached PC" the phone's Offline tab, its "Download PC" the phone's
-     * Downloaded tab, its "On Device" the phone's OnDevice tab) with a one-track page — only the
-     * menu counts. One entry per chip: a stale or out-of-order probe (the user switched chips
-     * while one was in flight) refreshes only its own chip's entry. A failed read keeps the
-     * last served menu (none, or the earlier one); a ≤ 1.7.2 phone serves `null`.
-     */
-    private val _pcChipSortMenus = MutableStateFlow<Map<SongsChip, List<String>?>>(emptyMap())
-    val pcChipSortMenus: StateFlow<Map<SongsChip, List<String>?>> = _pcChipSortMenus.asStateFlow()
-
-    /**
-     * Since 1.8.0 (feature `library.toolbar`): the toolbar of a PC-only chip, captured by the same
-     * one-track probe as its sort menu ([pcChipSortMenus]) — same call, same lifecycle (a failed
-     * read keeps the last served toolbar, none or the earlier one).
-     */
-    private val _pcChipToolbars = MutableStateFlow<Map<SongsChip, List<String>?>>(emptyMap())
-    val pcChipToolbars: StateFlow<Map<SongsChip, List<String>?>> = _pcChipToolbars.asStateFlow()
-
-    fun loadPcChipSortMenu(chip: SongsChip) {
-        val filter = when (chip) {
-            SongsChip.CachedPc -> SongFilter.Offline
-            SongsChip.DownloadPc -> SongFilter.Downloaded
-            SongsChip.OnDevice -> SongFilter.Local
-            else -> return
-        }
-        scope.launch {
-            when (val page = library.songs(0, 1, SongsQuery(null, filter))) {
-                is LibraryResult.Ok -> {
-                    _pcChipSortMenus.value = _pcChipSortMenus.value + (chip to page.page.sortMenu)
-                    _pcChipToolbars.value = _pcChipToolbars.value + (chip to page.page.toolbar)
-                }
-                else -> Unit
-            }
-        }
-    }
 
     /**
      * The phone's disk caches (contract §10, since 1.7.1), read on a tab switch: the Songs tab's cache

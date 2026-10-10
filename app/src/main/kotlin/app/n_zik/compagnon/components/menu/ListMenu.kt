@@ -46,8 +46,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * Port of the phone's `app/n_zik/android/components/menu/ListMenu.kt` (with `MenuConstants.kt`).
  * `CONTENT_HEIGHT_FRACTION` = 1: the sheet host bounds the height, and the content fills it (`weight(1f)`,
  * phone's 138). The optional `headerTrailing` slot is not ported (no library menu uses it).
- * Deferred (`deferred-work.md`): the phone's grid variant (`GridMenu.kt`) — its `menuStyle` is served since
- * contract 1.10.0 (`ui.settings`) but not read: the PC menus are always in the phone's default list style.
+ * Deferred (`deferred-work.md`): the phone's grid variant (`GridMenu.kt`) — since the "remove UI sync"
+ * spec the PC no longer reads `menuStyle` from `ui.settings` (phase 2): the PC menus are always in the
+ * phone's default list style.
  */
 object ListMenu {
 

@@ -24,13 +24,11 @@ import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.core.network.LibraryResult
 import app.n_zik.compagnon.core.network.WriteResult
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -184,39 +182,6 @@ class LibraryListsTest {
         override suspend fun cacheSpace(): LibraryCache? = null
     }
 
-    /** Serves the given `sortMenu` and `toolbar` on every songs read, recording the queries (the §7.2 live tests). */
-    private class MenuLibrary(
-        private val menu: List<String> = listOf("artist", "duration"),
-        private val toolbar: List<String> = listOf("locator", "search"),
-    ) : LibraryRepository {
-        val menuQueries = mutableListOf<SongsQuery>()
-        val menuPages = mutableListOf<Pair<Int, Int>>()
-        override val features: Set<String> = setOf("library.songs")
-        override suspend fun songs(offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track> {
-            menuQueries += query
-            menuPages += offset to limit
-            return LibraryResult.Ok(Page(emptyList(), 0, offset, limit, sortMenu = menu, toolbar = toolbar))
-        }
-        override suspend fun playlists(offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist> = error("unused")
-        override suspend fun albums(offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album> = error("unused")
-        override suspend fun artists(offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist> = error("unused")
-        override suspend fun collectionSongs(
-            collection: CollectionRef,
-            offset: Int,
-            limit: Int,
-            query: PlaylistSongsQuery?,
-        ): LibraryResult<Track> = error("unused")
-        override suspend fun songLike(songId: String, state: TrackLike): WriteResult = error("unused")
-        override suspend fun albumBookmark(albumId: String, bookmarked: Boolean): WriteResult = error("unused")
-        override suspend fun artistFollow(artistId: String, state: ArtistFollow): WriteResult = error("unused")
-        override suspend fun playlistPin(playlistId: String, pinned: Boolean): WriteResult = error("unused")
-        override suspend fun albumLike(albumId: String, state: AlbumLike): WriteResult = error("unused")
-        override suspend fun playlistBookmark(playlistId: String, bookmarked: Boolean): WriteResult = error("unused")
-        override suspend fun cacheSpace(): LibraryCache? = null
-        override suspend fun rewindState(): RewindState? = null
-        override suspend fun dislikeMode(): DislikeMode? = null
-    }
-
     // ---- Live (contract §7.2, since 1.7.3 `library.live`) ----
 
     @Test
@@ -260,167 +225,6 @@ class LibraryListsTest {
         lists.onLibraryChanged("lyrics")
         advanceUntilIdle()
         assertEquals(before, library.songQueries.size)
-    }
-
-    @Test
-    fun `a PC-only chip reads its sort menu from its mobile counterpart with a one-track page`() = runTest {
-        val library = MenuLibrary()
-        val lists = LibraryLists(library, this)
-
-        lists.loadPcChipSortMenu(SongsChip.CachedPc)
-        advanceUntilIdle()
-        assertEquals(listOf(SongFilter.Offline), library.menuQueries.map { it.filter })
-        assertEquals(listOf(0 to 1), library.menuPages, "a one-track probe: only the menu counts")
-        assertEquals(listOf("artist", "duration"), lists.pcChipSortMenus.value[SongsChip.CachedPc])
-        // Since 1.8.0: the same probe captures the served toolbar alongside the sort menu
-        assertEquals(listOf("locator", "search"), lists.pcChipToolbars.value[SongsChip.CachedPc])
-
-        lists.loadPcChipSortMenu(SongsChip.DownloadPc)
-        advanceUntilIdle()
-        assertEquals(listOf(SongFilter.Offline, SongFilter.Downloaded), library.menuQueries.map { it.filter })
-        assertEquals(listOf("locator", "search"), lists.pcChipToolbars.value[SongsChip.DownloadPc])
-
-        lists.loadPcChipSortMenu(SongsChip.OnDevice)
-        advanceUntilIdle()
-        assertEquals(
-            listOf(SongFilter.Offline, SongFilter.Downloaded, SongFilter.Local),
-            library.menuQueries.map { it.filter },
-        )
-        assertEquals(listOf("locator", "search"), lists.pcChipToolbars.value[SongsChip.OnDevice])
-
-        // The phone's chips do not probe
-        lists.loadPcChipSortMenu(SongsChip.All)
-        advanceUntilIdle()
-        assertEquals(3, library.menuQueries.size)
-        assertNull(lists.pcChipToolbars.value[SongsChip.All])
-    }
-
-    /** Answers each songs read with the next scripted result (the probe lifecycle tests). */
-    private class ProbeLibrary(private val answers: List<LibraryResult<Track>>) : LibraryRepository {
-        private var next = 0
-        override val features: Set<String> = setOf("library.songs")
-        override suspend fun songs(offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track> {
-            val result = answers[next]
-            next++
-            return result
-        }
-        override suspend fun playlists(offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist> = error("unused")
-        override suspend fun albums(offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album> = error("unused")
-        override suspend fun artists(offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist> = error("unused")
-        override suspend fun collectionSongs(
-            collection: CollectionRef,
-            offset: Int,
-            limit: Int,
-            query: PlaylistSongsQuery?,
-        ): LibraryResult<Track> = error("unused")
-        override suspend fun songLike(songId: String, state: TrackLike): WriteResult = error("unused")
-        override suspend fun albumBookmark(albumId: String, bookmarked: Boolean): WriteResult = error("unused")
-        override suspend fun artistFollow(artistId: String, state: ArtistFollow): WriteResult = error("unused")
-        override suspend fun playlistPin(playlistId: String, pinned: Boolean): WriteResult = error("unused")
-        override suspend fun albumLike(albumId: String, state: AlbumLike): WriteResult = error("unused")
-        override suspend fun playlistBookmark(playlistId: String, bookmarked: Boolean): WriteResult = error("unused")
-        override suspend fun cacheSpace(): LibraryCache? = null
-        override suspend fun rewindState(): RewindState? = null
-        override suspend fun dislikeMode(): DislikeMode? = null
-    }
-
-    @Test
-    fun `a probe page without a toolbar leaves a null entry, the sort menu still captured`() = runTest {
-        val library = ProbeLibrary(
-            listOf(
-                LibraryResult.Ok(Page(emptyList(), 0, 0, 1, sortMenu = listOf("artist", "duration"), toolbar = null)),
-            ),
-        )
-        val lists = LibraryLists(library, this)
-
-        lists.loadPcChipSortMenu(SongsChip.CachedPc)
-        advanceUntilIdle()
-
-        // Since 1.8.0: an Ok page without a toolbar (a phone before 1.8.0) leaves a null entry
-        assertNull(lists.pcChipToolbars.value[SongsChip.CachedPc])
-        // The same probe still captures the sort menu
-        assertEquals(listOf("artist", "duration"), lists.pcChipSortMenus.value[SongsChip.CachedPc])
-    }
-
-    @Test
-    fun `a failed probe after a served toolbar keeps the last served values`() = runTest {
-        val library = ProbeLibrary(
-            listOf(
-                LibraryResult.Ok(Page(emptyList(), 0, 0, 1, sortMenu = listOf("artist", "duration"), toolbar = listOf("locator", "search"))),
-                LibraryResult.Unreachable,
-            ),
-        )
-        val lists = LibraryLists(library, this)
-
-        lists.loadPcChipSortMenu(SongsChip.CachedPc)
-        advanceUntilIdle()
-        assertEquals(listOf("locator", "search"), lists.pcChipToolbars.value[SongsChip.CachedPc])
-        assertEquals(listOf("artist", "duration"), lists.pcChipSortMenus.value[SongsChip.CachedPc])
-
-        // The second probe fails: both maps keep their last served entries
-        lists.loadPcChipSortMenu(SongsChip.CachedPc)
-        advanceUntilIdle()
-        assertEquals(listOf("locator", "search"), lists.pcChipToolbars.value[SongsChip.CachedPc])
-        assertEquals(listOf("artist", "duration"), lists.pcChipSortMenus.value[SongsChip.CachedPc])
-    }
-
-    /** Serves a different menu per filter, and can answer slowly (to reorder in-flight probes). */
-    private class ChipMenuLibrary(
-        private val menus: Map<SongFilter, List<String>>,
-        private val delaysMs: Map<SongFilter, Long> = emptyMap(),
-    ) : LibraryRepository {
-        val menuQueries = mutableListOf<SongsQuery>()
-        override val features: Set<String> = setOf("library.songs")
-        override suspend fun songs(offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track> {
-            delaysMs[query.filter]?.let { delay(it) }
-            menuQueries += query
-            return LibraryResult.Ok(Page(emptyList(), 0, offset, limit, sortMenu = menus.getValue(query.filter)))
-        }
-        override suspend fun playlists(offset: Int, limit: Int, query: PlaylistsQuery): LibraryResult<Playlist> = error("unused")
-        override suspend fun albums(offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album> = error("unused")
-        override suspend fun artists(offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist> = error("unused")
-        override suspend fun collectionSongs(
-            collection: CollectionRef,
-            offset: Int,
-            limit: Int,
-            query: PlaylistSongsQuery?,
-        ): LibraryResult<Track> = error("unused")
-        override suspend fun songLike(songId: String, state: TrackLike): WriteResult = error("unused")
-        override suspend fun albumBookmark(albumId: String, bookmarked: Boolean): WriteResult = error("unused")
-        override suspend fun artistFollow(artistId: String, state: ArtistFollow): WriteResult = error("unused")
-        override suspend fun playlistPin(playlistId: String, pinned: Boolean): WriteResult = error("unused")
-        override suspend fun albumLike(albumId: String, state: AlbumLike): WriteResult = error("unused")
-        override suspend fun playlistBookmark(playlistId: String, bookmarked: Boolean): WriteResult = error("unused")
-        override suspend fun cacheSpace(): LibraryCache? = null
-        override suspend fun rewindState(): RewindState? = null
-        override suspend fun dislikeMode(): DislikeMode? = null
-    }
-
-    @Test
-    fun `each PC-only chip keeps its own menu even when a probe lands late`() = runTest {
-        val library = ChipMenuLibrary(
-            menus = mapOf(
-                SongFilter.Offline to listOf("week"),
-                SongFilter.Downloaded to listOf("month"),
-                SongFilter.Local to listOf("title"),
-            ),
-            delaysMs = mapOf(SongFilter.Offline to 100L, SongFilter.Downloaded to 10L),
-        )
-        val lists = LibraryLists(library, this)
-
-        // Switch chips while the first probe is still in flight: the Downloaded probe lands first,
-        // the Cached probe lands late — each entry is written by its own probe
-        lists.loadPcChipSortMenu(SongsChip.CachedPc)
-        lists.loadPcChipSortMenu(SongsChip.DownloadPc)
-        advanceUntilIdle()
-        assertEquals(listOf("month"), lists.pcChipSortMenus.value[SongsChip.DownloadPc])
-        assertEquals(listOf("week"), lists.pcChipSortMenus.value[SongsChip.CachedPc], "the late probe refreshed only its own chip")
-        assertNull(lists.pcChipSortMenus.value[SongsChip.OnDevice])
-
-        lists.loadPcChipSortMenu(SongsChip.OnDevice)
-        advanceUntilIdle()
-        assertEquals(listOf("title"), lists.pcChipSortMenus.value[SongsChip.OnDevice])
-        assertEquals(3, library.menuQueries.size)
     }
 
     @Test
