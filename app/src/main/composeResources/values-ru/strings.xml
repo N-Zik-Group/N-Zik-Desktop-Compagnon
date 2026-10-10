@@ -159,6 +159,7 @@
     <string name="sort_artist_and_album">Artist, Album</string>
     <string name="sort_listening_time">По времени прослушивания</string>
     <string name="no_items">Нет элементов</string>
+    <string name="not_selectable">Не выбрано</string>
     <string name="unknown_title">Неизвестное название</string>
     <string name="unknown_artist">Неизвестный художник</string>
     <string name="playback">Воспроизведение</string>
@@ -173,6 +174,7 @@
     <string name="artist_songs_count_duration">%1$d треки • %2$s</string>
     <string name="no_song_found">Песня не найдена</string>
     <string name="no_song_to_shuffle">No song to shuffle</string>
+    <string name="songs_shuffled">%d songs shuffled</string>
     <string name="info_no_songs_yet">Нет доступных песен</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Закладка</string>
@@ -213,6 +215,7 @@
     <string name="autosync_likes">Auto Sync Liked Songs</string>
     <string name="statistics">Статистика</string>
     <string name="header_view_top_of">Топ %s из …</string>
+    <string name="max_items_unlimited">Неограниченный</string>
     <string name="today">Сегодня</string>
     <string name="_1_week">1 неделя</string>
     <string name="_1_month">1 месяц</string>
@@ -424,4 +427,15 @@
     <string name="translators">Переводчики</string>
     <string name="about_developers">Разработчики / Дизайнеры</string>
     <string name="in_alphabetical_order">В алфавитном порядке:</string>
+    <string name="do_you_really_want_to_download_all">Вы действительно хотите загрузить все?</string>
+    <string name="do_you_really_want_to_delete_download">Вы действительно хотите удалить загрузку?</string>
+    <string name="loading_songs_count">Loading %1$d songs…</string>
+    <string name="equalizer">Эквалайзер</string>
+    <string name="sleep_timer">Таймер сна</string>
+    <string name="listen_on">Слушать в</string>
+    <string name="listen_on_youtube">Слушать в YouTube</string>
+    <string name="deleted">Удалено</string>
+    <string name="and">and</string>
+    <string name="sync">Синхронизация</string>
+    <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
 </resources>
