@@ -159,6 +159,7 @@
     <string name="sort_artist_and_album">Artist, Album</string>
     <string name="sort_listening_time">視聴時間</string>
     <string name="no_items">アイテムがありません</string>
+    <string name="not_selectable">選択不可</string>
     <string name="unknown_title">不明なタイトル</string>
     <string name="unknown_artist">不明なアーティスト</string>
     <string name="playback">再生</string>
@@ -173,6 +174,7 @@
     <string name="artist_songs_count_duration">%1$d 曲 • %2$s</string>
     <string name="no_song_found">曲が見つかりません</string>
     <string name="no_song_to_shuffle">No song to shuffle</string>
+    <string name="songs_shuffled">%d songs shuffled</string>
     <string name="info_no_songs_yet">利用可能な曲がありません</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">ブックマーク</string>
@@ -213,6 +215,7 @@
     <string name="autosync_likes">Auto Sync Liked Songs</string>
     <string name="statistics">統計情報</string>
     <string name="header_view_top_of">上位 %s / …</string>
+    <string name="max_items_unlimited">無制限</string>
     <string name="today">今日</string>
     <string name="_1_week">1週間</string>
     <string name="_1_month">1か月</string>
@@ -424,4 +427,15 @@
     <string name="translators">翻訳者</string>
     <string name="about_developers">開発者/デザイナー</string>
     <string name="in_alphabetical_order">アルファベット順:</string>
+    <string name="do_you_really_want_to_download_all">すべてダウンロードしてもよろしいですか？</string>
+    <string name="do_you_really_want_to_delete_download">本当にダウンロードを削除しますか？</string>
+    <string name="loading_songs_count">Loading %1$d songs…</string>
+    <string name="equalizer">イコライザ</string>
+    <string name="sleep_timer">スリープタイマー</string>
+    <string name="listen_on">別のサービス上で聴く</string>
+    <string name="listen_on_youtube">YouTubeで再生</string>
+    <string name="deleted">削除済み</string>
+    <string name="and">and</string>
+    <string name="sync">同期</string>
+    <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
 </resources>
