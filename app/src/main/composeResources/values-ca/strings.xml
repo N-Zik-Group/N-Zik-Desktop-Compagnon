@@ -159,6 +159,7 @@
     <string name="sort_artist_and_album">Artist, Album</string>
     <string name="sort_listening_time">Temps d\'escolta</string>
     <string name="no_items">No items</string>
+    <string name="not_selectable">Not selectable</string>
     <string name="unknown_title">Unknown Title</string>
     <string name="unknown_artist">Unknown Artist</string>
     <string name="playback">Playback</string>
@@ -173,6 +174,7 @@
     <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
     <string name="no_song_found">No song found</string>
     <string name="no_song_to_shuffle">No song to shuffle</string>
+    <string name="songs_shuffled">%d songs shuffled</string>
     <string name="info_no_songs_yet">Encara no hi ha cançons</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Marcador</string>
@@ -213,6 +215,7 @@
     <string name="autosync_likes">Auto Sync Liked Songs</string>
     <string name="statistics">Estadístiques</string>
     <string name="header_view_top_of">Mostra els %s principals de…</string>
+    <string name="max_items_unlimited">Il·limitat</string>
     <string name="today">Avui</string>
     <string name="_1_week">1 setmana</string>
     <string name="_1_month">1 mes</string>
@@ -424,4 +427,15 @@
     <string name="translators">Traductors</string>
     <string name="about_developers">Desenvolupadors / Dissenyadors</string>
     <string name="in_alphabetical_order">Per ordre alfabètic:</string>
+    <string name="do_you_really_want_to_download_all">De veritat vols descarregar-ho tot?</string>
+    <string name="do_you_really_want_to_delete_download">Realment voleu suprimir la descàrrega?</string>
+    <string name="loading_songs_count">Loading %1$d songs…</string>
+    <string name="equalizer">Equalitzador</string>
+    <string name="sleep_timer">Temporitzador d\'aturada</string>
+    <string name="listen_on">Escolta a</string>
+    <string name="listen_on_youtube">Escolta a YouTube</string>
+    <string name="deleted">Eliminat</string>
+    <string name="and">and</string>
+    <string name="sync">Sincronitza</string>
+    <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
 </resources>
