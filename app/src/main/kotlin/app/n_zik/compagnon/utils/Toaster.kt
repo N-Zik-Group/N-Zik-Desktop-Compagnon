@@ -43,7 +43,7 @@ import org.jetbrains.compose.resources.painterResource
 /**
  * Port of the phone's `Toaster` (`app/kreate/android/me/knighthat/utils/Toaster.kt`): the short messages of
  * the app, typed ([Type]: colours and icon) and shown one after the other at the bottom centre, 109 dp up
- * (the phone's offset with its default floating navigation bar).
+ * as with the phone's floating navigation bar — the bar the PC always draws (adaptation).
  *
  * The phone draws them with the `Toasty` library (`toast_layout.xml`, `toast_frame.9.png`): a pill tinted
  * with the type's colour at 90 % (the frame's alpha), 25 × 11 dp of padding, a 24 dp icon tinted with the
@@ -62,6 +62,7 @@ object Toaster {
 
     // floatingNavBarHeight (84.dp) + navBarBottomPadding (25.dp minimum)
     private const val FLOATING_BAR_HEIGHT_DP = 109
+
 
     /** `Toast.LENGTH_SHORT` / `Toast.LENGTH_LONG`, in ms. */
     const val LENGTH_SHORT = 2_000L
@@ -123,7 +124,10 @@ object Toaster {
             exit = fadeOut(),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = FLOATING_BAR_HEIGHT_DP.dp),
+                // Adaptation: the phone's `isFloatingBarActive()` (`Toaster.kt` 99-106) raises the toasts 109 dp only
+                // with a floating bar; the PC always draws that bar (frozen on the phone's defaults), so always 109 dp —
+                // the phone's own `navigationBarPosition` would put the toasts over the PC's bar
+                .padding(bottom = toastBottomPaddingDp(floatingBar = true).dp),
         ) {
             current?.let { ToastContent(it) }
         }
@@ -160,6 +164,12 @@ object Toaster {
     }
 
     private const val TOAST_FADE_MS = 300L
+
+    /** Android's default toast offset (`toast_y_offset`, 24 dp): the phone's toasts without the floating bar. */
+    private const val SYSTEM_TOAST_Y_OFFSET_DP = 24
+
+    /** The bottom offset of the toasts: 109 dp with the floating bar, the system's 24 dp otherwise. */
+    internal fun toastBottomPaddingDp(floatingBar: Boolean): Int = if (floatingBar) FLOATING_BAR_HEIGHT_DP else SYSTEM_TOAST_Y_OFFSET_DP
 
     /** Toasty's `sans-serif-condensed`, Roboto Condensed, read from the system when installed. */
     @OptIn(ExperimentalTextApi::class)

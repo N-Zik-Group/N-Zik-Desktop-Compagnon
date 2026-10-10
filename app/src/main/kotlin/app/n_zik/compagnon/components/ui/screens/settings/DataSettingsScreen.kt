@@ -183,7 +183,9 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     SettingsDescription(
                         text = "${formatShortFileSize(diskCacheSize)} ${stringResource(Res.string.used)} (${
-                            if (maxBytes != null && maxBytes > 0) "${diskCacheSize * 100 / maxBytes}%" else stringResource(Res.string.unlimited)
+                            // The phone's divisor (its `DataSettings.kt` 413): the setting's own `bytes` — the Custom entry's
+                            // nominal value, not the custom size, as on the phone
+                            if (exoPlayerDiskCacheMaxSize.bytes > 0) "${diskCacheSize * 100 / exoPlayerDiskCacheMaxSize.bytes}%" else stringResource(Res.string.unlimited)
                         })",
                     )
                 },

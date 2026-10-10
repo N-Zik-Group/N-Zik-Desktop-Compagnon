@@ -61,7 +61,7 @@ class Search private constructor(
     focusState: MutableState<Boolean>,
     private val lazyListState: LazyListState?,
     private val lazyGridState: LazyGridState?,
-) : MenuIcon {
+) : MenuIcon, app.n_zik.compagnon.components.tab.toolbar.Descriptive {
 
     companion object {
         @Composable
@@ -89,9 +89,11 @@ class Search private constructor(
     val inputValue: String
         get() = inputText
     override val iconId: DrawableResource = Res.drawable.search_circle
+    /** The phone's `Descriptive` message (`Search.kt` 107): shown on a right click (its long press). */
+    override val messageId: org.jetbrains.compose.resources.StringResource = Res.string.search
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.search)
+        get() = stringResource(messageId)
 
     var isVisible: Boolean by visibleState
     var isFocused: Boolean by focusState

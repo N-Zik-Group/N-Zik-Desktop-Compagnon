@@ -1,5 +1,12 @@
 package app.n_zik.compagnon.components.player
 
+import app.n_zik.compagnon.bridge.state.LocalUiSettings
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.getValue
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -21,17 +28,16 @@ import app.n_zik.compagnon.generated.resources.*
 import kotlin.math.sqrt
 import org.jetbrains.compose.resources.stringResource
 
-/** The phone's default blur strength (`BlurAdjuster`: `blurStrengthKey`, 25). */
-private const val BLUR_STRENGTH = 25f
-
-/** The phone's default backdrop (`BlurAdjuster`: `playerBackdropKey`, 0 %). */
-private const val BACKDROP_PERCENT = 0f
 
 /**
- * Port of `BlurredCover` (phone's `app/kreate/android/screens/player/background/BlurredCover.kt` 32-129) with
- * the default `BlurAdjuster` (strength 25, backdrop 0 %, no rotating cover) and the cover shown: the current
- * cover, fitted in a square of the screen's longest side, scaled to its diagonal, blurred by 25 dp, then the
- * black backdrop (transparent at 0 %). Drawn under the player's background (`Player.kt` 1418 and 1967).
+ * Port of `BlurredCover` (phone's `app/kreate/android/screens/player/background/BlurredCover.kt` 32-129): the
+ * current cover, fitted in a square of the screen's longest side, scaled to its diagonal, blurred by the
+ * phone's `BlurAdjuster` strength when the cover is shown (`showthumbnail`) or `noblur` is off — the phone's
+ * `showThumbnail || !noBlur` rule, no blur otherwise (lyrics and visualizer are not ported), turning in 30 s
+ * when its rotating
+ * cover is on, then the black backdrop. Since contract 1.10.0 (`ui.settings`) the adjuster is the phone's
+ * (`blurScale`, `playerBackdrop`, `rotatingAlbumCover`, `showthumbnail`, `noblur`); its defaults otherwise
+ * (strength 25, backdrop 0 %, no rotation). Drawn under the player's background (`Player.kt` 1418 and 1967).
  */
 @Composable
 fun BlurredCover(
@@ -63,8 +69,19 @@ private fun BlurFilter(
         sqrt(w * w + h * h) / s
     }
     Box(Modifier.requiredSize(size)) {
-        // showThumbnail (the default): the adjuster's strength
-        val blurRadius = BLUR_STRENGTH
+        val settings = LocalUiSettings.current
+        val blurRadius = if (settings.showThumbnail || !settings.noBlur) settings.blurStrength else 0f
+        // The infinite transition runs only while the phone's rotating cover is on
+        val angle = if (settings.rotatingAlbumCover) {
+            val rotation by rememberInfiniteTransition().animateFloat(
+                initialValue = 0f,
+                targetValue = 360f,
+                animationSpec = infiniteRepeatable(animation = tween(durationMillis = 30000, easing = LinearEasing)),
+            )
+            rotation
+        } else {
+            0f
+        }
         ImageCacheFactory.Thumbnail(
             key = key,
             contentDescription = stringResource(Res.string.cd_blurred_background),
@@ -74,10 +91,11 @@ private fun BlurFilter(
                 .fillMaxSize()
                 .then(if (blurRadius > 0f) Modifier.blur(blurRadius.dp) else Modifier)
                 .then(
-                    if (scale != 1f) {
+                    if (scale != 1f || angle != 0f) {
                         Modifier.graphicsLayer {
                             scaleX = scale
                             scaleY = scale
+                            rotationZ = angle
                         }
                     } else {
                         Modifier
@@ -89,6 +107,6 @@ private fun BlurFilter(
 
 @Composable
 private fun Backdrop(modifier: Modifier = Modifier) {
-    val backdropColor = Color.Black.copy(alpha = (BACKDROP_PERCENT / 100f).coerceIn(0f, 1f))
+    val backdropColor = Color.Black.copy(alpha = (LocalUiSettings.current.playerBackdrop / 100f).coerceIn(0f, 1f))
     Box(modifier.fillMaxSize().background(backdropColor))
 }

@@ -147,7 +147,7 @@ object NewUpdateAvailableDialog {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                 Color(0xFF1A1A1A) // Gray dark for pitch black themes
                             } else {
                                 colorPalette().background1
@@ -207,7 +207,7 @@ object NewUpdateAvailableDialog {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                 Color(0xFF1A1A1A) // Gray dark for pitch black themes
                             } else {
                                 colorPalette().background1
@@ -242,7 +242,7 @@ object NewUpdateAvailableDialog {
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = CardDefaults.cardColors(
-                                    containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                                    containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                         Color(0xFF1A1A1A) // Gray dark for pitch black themes
                                     } else {
                                         colorPalette().background1
@@ -278,7 +278,7 @@ object NewUpdateAvailableDialog {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(
-                                containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                                containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                     Color(0xFF1A1A1A) // Gray dark for pitch black themes
                                 } else {
                                     colorPalette().background1
@@ -318,7 +318,7 @@ object NewUpdateAvailableDialog {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(
-                                containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                                containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                     Color(0xFF1A1A1A) // Gray dark for pitch black themes
                                 } else {
                                     colorPalette().background1
@@ -398,7 +398,7 @@ object NewUpdateAvailableDialog {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(
-                                containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                                containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                     Color(0xFF1A1A1A) // Gray dark for pitch black themes
                                 } else {
                                     colorPalette().background1
@@ -457,7 +457,7 @@ object NewUpdateAvailableDialog {
                 .clip(uiRoundnessShape())
                 .clickable { onClick() },
             colors = CardDefaults.cardColors(
-                containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                     Color(0xFF1A1A1A) // Gray dark for pitch black themes
                 } else {
                     colorPalette().background1
@@ -496,7 +496,7 @@ object NewUpdateAvailableDialog {
                     .clip(uiRoundnessShape())
                     .clickable { onCancel() },
                 colors = CardDefaults.cardColors(
-                    containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                    containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                         Color(0xFF1A1A1A) // Gray dark for pitch black themes
                     } else {
                         colorPalette().background1

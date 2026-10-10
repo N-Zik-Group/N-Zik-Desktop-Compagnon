@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.player.timeline
 
+import app.n_zik.compagnon.bridge.state.LocalUiSettings
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -43,8 +44,9 @@ import org.jetbrains.compose.resources.stringResource
 
 /*
  * Port of the phone's `app/kreate/android/themed/rimusic/screen/player/timeline/DurationIndicator.kt`, with
- * its default preferences: skip buttons shown, remaining time shown, no pause between songs, no text outline.
- * Dropped: the pause between songs (`PauseBetweenSongs`, local playback only).
+ * the remaining time shown; since contract 1.10.0 (`ui.settings`) the phone's skip buttons
+ * (`showSkipTimeButtons`) and text outline (`textoutline`). Dropped: the pause between songs
+ * (`PauseBetweenSongs`, local playback only).
  */
 
 /** Skip button: a tap moves 5 s, a double tap 10 s, a long press 30 s, through `player/seek`. */
@@ -69,8 +71,7 @@ private fun RowScope.SkipTimeButton(
     fun seekTo(adjustment: Long) {
         // Phone's `DurationIndicator.kt` 93-113 (issue #881): the base is read at tap time, and the target
         // is held on the label / bar until the phone confirms it
-        val adjustedPosition = seekBasePosition().operation(adjustment)
-        val newPosition = valueSelector(adjustedPosition, comparedValue)
+        val newPosition = skipTarget(seekBasePosition(), adjustment, operation, valueSelector, comparedValue) ?: return
         if (enabled) onSeekIssued(newPosition)
         onCommand { seek(newPosition) }
     }
@@ -158,7 +159,8 @@ fun DurationIndicator(
         modifier = Modifier.padding(horizontal = 10.dp)
             .fillMaxWidth(),
     ) {
-        val showSkipTimeButtons = true
+        // The phone's `showSkipTimeButtons` (its 207), read since contract 1.10.0 (`ui.settings`)
+        val showSkipTimeButtons = LocalUiSettings.current.showSkipTimeButtons
         if (showSkipTimeButtons) {
             SkipTimeButton(
                 seekBasePosition, Long::minus, ::maxOf, 0, stringResource(Res.string.rewind), stringResource(Res.string.rewind_5_seconds),
@@ -169,7 +171,7 @@ fun DurationIndicator(
         }
 
         // textoutline: false by default
-        val outlineColor = durationOutlineColorOf(false, colorPalette())
+        val outlineColor = durationOutlineColorOf(LocalUiSettings.current.textOutline, colorPalette())
 
         // Scrubbing position
         Box(
@@ -206,10 +208,25 @@ fun DurationIndicator(
             Spacer(Modifier.width(5.dp))
 
             SkipTimeButton(
-                // An unknown duration (`TIME_UNSET`) puts no upper bound: the phone bounds the seek itself
-                seekBasePosition, Long::plus, ::minOf, if (duration > 0) duration else Long.MAX_VALUE, stringResource(Res.string.forward), stringResource(Res.string.forward_5_seconds),
+                // An unknown duration (`TIME_UNSET`, negative): the forward target is negative and nothing is sent (skipTarget)
+                seekBasePosition, Long::plus, ::minOf, duration, stringResource(Res.string.forward), stringResource(Res.string.forward_5_seconds),
                 stringResource(Res.string.forward_30_seconds), live, onSeekIssued = onSeekIssued,
             )
         }
     }
 }
+
+
+/**
+ * The phone's skip-button target (`DurationIndicator.kt` 96-112): [base] moved by [adjustment], bounded by
+ * [valueSelector] against [comparedValue] (the duration, `TIME_UNSET` while it loads). A negative target —
+ * the forward tap while the duration is still unknown — sends nothing (`null`), as the phone's
+ * `if (newPosition < 0) return`.
+ */
+internal fun skipTarget(
+    base: Long,
+    adjustment: Long,
+    operation: Long.(Long) -> Long,
+    valueSelector: (Long, Long) -> Long,
+    comparedValue: Long,
+): Long? = valueSelector(base.operation(adjustment), comparedValue).takeIf { it >= 0 }

@@ -89,7 +89,7 @@ fun Controls(
                 duration = duration,
                 mediaId = state.currentTrackId.orEmpty(),
                 // The phone's `shouldBePlaying` (utils/Player.kt 69): true while buffering too (contract 1.4)
-                shouldBePlaying = state.isPlaying || state.isBuffering,
+                shouldBePlaying = state.shouldBePlaying,
                 isPlaying = state.isPlaying,
                 live = live,
             )

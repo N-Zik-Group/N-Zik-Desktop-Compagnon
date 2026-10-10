@@ -1,5 +1,8 @@
 package app.n_zik.compagnon.bridge.library
 
+import app.n_zik.compagnon.bridge.state.ListRef
+import app.n_zik.compagnon.bridge.state.UiSettings
+
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.core.network.LibraryResult
@@ -57,6 +60,16 @@ interface LibraryRepository {
      * own default is the mode enabled.
      */
     suspend fun dislikeMode(): DislikeMode?
+
+    /**
+     * `GET /library/locate` (contract §10.4, since 1.10.0, `library.locate`): the position of [trackId]
+     * in the WHOLE list [list], `-1` when absent; `null` without the feature or on a failed read (the
+     * caller falls back on its loaded pages).
+     */
+    suspend fun locate(list: ListRef, trackId: String): Int? = null
+
+    /** `GET /ui/settings` (contract §10.5, since 1.10.0, `ui.settings`); `null` keeps the phone's defaults. */
+    suspend fun uiSettings(): UiSettings? = null
 
     /**
      * The tracks of [collection], paginated. [query] (a local playlist's `sort` and `reverse`, contract

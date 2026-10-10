@@ -66,11 +66,15 @@ import app.n_zik.compagnon.bridge.library.RewindState
 import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.playback.cache.AudioCache
+import app.n_zik.compagnon.bridge.library.toListRef
+import app.n_zik.compagnon.bridge.state.ListAction
+import app.n_zik.compagnon.bridge.state.ListRef
 import app.n_zik.compagnon.bridge.state.PlayerRepository
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
+import app.n_zik.compagnon.bridge.state.displayedLike
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.core.network.LibraryResult
 import app.n_zik.compagnon.core.network.WriteResult
@@ -636,6 +640,10 @@ class LibraryLists(
         }
     }
 
+    /** The count of every playlist (the `all` chip, no search): the phone's Playlists header counter. */
+    suspend fun allPlaylistsCount(): Int? =
+        (library.playlists(0, 1, PlaylistsQuery()) as? LibraryResult.Ok)?.page?.total
+
     /** First tracks of each playlist (`/songs?limit=4`, for the grid mosaic), memory only. */
     private val _playlistFirstTracks = MutableStateFlow<Map<String, List<Track>>>(emptyMap())
     val playlistFirstTracks: StateFlow<Map<String, List<Track>>> = _playlistFirstTracks.asStateFlow()
@@ -644,9 +652,17 @@ class LibraryLists(
     fun loadPlaylistFirstTracks(playlistId: String) {
         synchronized(requestedFirstTracks) { if (!requestedFirstTracks.add(playlistId)) return }
         scope.launch {
-            val result = library.collectionSongs(CollectionRef(CollectionKind.Playlist, playlistId), 0, MOSAIC_TRACKS)
+            // The phone's mosaic (`PlaylistItem.kt` 179-185): `sortSongsByPlayTime(...).takeLast(4)` — the
+            // last four of its play-time order, i.e. the first four of the reversed order, put back in order
+            val sorted = SessionContract.FEATURE_LIBRARY_SORT in library.features
+            val query = if (sorted) PlaylistSongsQuery(sort = app.n_zik.compagnon.bridge.library.PlaylistSongSort.PlayTime, reverse = true) else null
+            // The phone drops the tracks without a thumbnail BEFORE its takeLast(4): one page of the
+            // reversed order is scanned, its last four with an artwork kept (`playlistThumbnails`)
+            val limit = if (sorted) MOSAIC_SCAN_TRACKS else MOSAIC_TRACKS
+            val result = library.collectionSongs(CollectionRef(CollectionKind.Playlist, playlistId), 0, limit, query)
             if (result is LibraryResult.Ok) {
-                _playlistFirstTracks.value = _playlistFirstTracks.value + (playlistId to result.page.items)
+                val tracks = if (sorted) result.page.items.filter { it.hasArtwork }.take(MOSAIC_TRACKS).reversed() else result.page.items
+                _playlistFirstTracks.value = _playlistFirstTracks.value + (playlistId to tracks)
             } else {
                 // A failure is never cached: the cell asks again next time it is shown
                 synchronized(requestedFirstTracks) { requestedFirstTracks.remove(playlistId) }
@@ -675,6 +691,9 @@ class LibraryLists(
         const val SEARCH_DEBOUNCE_MS = 300L
         const val MOSAIC_TRACKS = 4
 
+        /** The tracks scanned for the mosaic (the phone filters its whole list; one page approximates it). */
+        const val MOSAIC_SCAN_TRACKS = 50
+
         /** The live reload's coalescing window (contract §7.2, since 1.7.3 `library.live`). */
         const val LIVE_RELOAD_DEBOUNCE_MS = 300L
     }
@@ -698,6 +717,14 @@ class LibraryActions(
     /** Without the `queue` feature, playback actions are hidden. */
     val available: Boolean get() = SessionContract.FEATURE_QUEUE in player.features
 
+    /**
+     * Since contract 1.10.0 (`queue.fullList`, decisions 1-2 of the 2026-10-09 audit): a list action on a
+     * list the phone can name (a [ListRef]) goes to the phone, which builds the queue from the WHOLE list
+     * with its own entries — its dislike filters, its `maxSongsInQueue` cap, `stopRadio` and its toasts.
+     * Without it, the loaded pages are sent (`queue/play` / `queue/add`, the behavior before 1.10.0).
+     */
+    val fullList: Boolean get() = SessionContract.FEATURE_QUEUE_FULL_LIST in player.features
+
     /** The §10.2 writes (since 1.7) need the phone's `library.write` feature: without it the actions stay inert. */
     val canWrite: Boolean get() = SessionContract.FEATURE_LIBRARY_WRITE in library.features
 
@@ -709,14 +736,31 @@ class LibraryActions(
     // optimistic update touched (they hold a state the phone never wrote).
 
     /** `POST /library/songs/{id}/like`; the optimistic state patches every loaded list of the track. */
-    fun likeSong(trackId: String, state: TrackLike) {
+    fun likeSong(trackId: String, state: TrackLike, onConfirmed: (TrackLike) -> Unit = {}) {
+        // The player's heart reads the player state, which a like alone does not move on the
+        // phone until its queue delta: patched at once too, rolled back on a failure
+        val previous = queuedLike(trackId)
         lists?.patchSongLike(trackId, state)
+        if (previous != null) player.patchTrackLike(trackId, state)
         scope.launch {
-            write(library.songLike(trackId, state), { if (it is WriteResult.SongLike) lists?.patchSongLike(trackId, it.state) }) {
+            write(library.songLike(trackId, state), {
+                if (it is WriteResult.SongLike) {
+                    lists?.patchSongLike(trackId, it.state)
+                    // A later tap already moved the heart: its own answer re-patches it
+                    if (previous != null && queuedLike(trackId) == state) player.patchTrackLike(trackId, it.state)
+                    // The phone toasts once its DB write is done (`YouTubeSync.kt` 106-116)
+                    onConfirmed(it.state)
+                }
+            }) {
                 lists?.reloadTrackLists(trackId)
+                // Rolled back only while the heart still shows this tap (a later tap wins)
+                if (previous != null && queuedLike(trackId) == state) player.patchTrackLike(trackId, previous)
             }
         }
     }
+
+    private fun queuedLike(trackId: String): TrackLike? =
+        player.state.value?.queue?.firstOrNull { it.id == trackId }?.displayedLike
 
     /** `POST /library/albums/{id}/bookmark`; the optimistic state patches the Albums list. */
     fun bookmarkAlbum(albumId: String, bookmarked: Boolean) {
@@ -739,12 +783,19 @@ class LibraryActions(
     }
 
     /** `POST /library/playlists/{id}/pin`; the optimistic state patches the Playlists list. */
-    fun pinPlaylist(playlistId: String, pinned: Boolean) {
+    fun pinPlaylist(playlistId: String, pinned: Boolean, onResult: (Boolean?) -> Unit = {}) {
         lists?.patchPlaylistPin(playlistId, pinned)
         scope.launch {
             write(library.playlistPin(playlistId, pinned), {
-                if (it is WriteResult.PlaylistPin) lists?.patchPlaylistPin(playlistId, it.pinned)
-            }, { lists?.playlists?.reload() })
+                if (it is WriteResult.PlaylistPin) {
+                    lists?.patchPlaylistPin(playlistId, it.pinned)
+                    onResult(it.pinned)
+                }
+            }, {
+                lists?.playlists?.reload()
+                // A failed write: the caller's optimistic state is rolled back
+                onResult(null)
+            })
         }
     }
 
@@ -759,12 +810,23 @@ class LibraryActions(
     }
 
     /** `POST /library/playlists/{id}/bookmark` (since 1.7.2); the optimistic state patches the Playlists list. */
-    fun bookmarkPlaylist(playlistId: String, bookmarked: Boolean) {
+    fun bookmarkPlaylist(
+        playlistId: String,
+        bookmarked: Boolean,
+        onFailed: () -> Unit = {},
+        onConfirmed: (Boolean) -> Unit = {},
+    ) {
         lists?.patchPlaylistBookmark(playlistId, bookmarked)
         scope.launch {
             write(library.playlistBookmark(playlistId, bookmarked), {
-                if (it is WriteResult.PlaylistBookmark) lists?.patchPlaylistBookmark(playlistId, it.bookmarked)
-            }, { lists?.playlists?.reload() })
+                if (it is WriteResult.PlaylistBookmark) {
+                    lists?.patchPlaylistBookmark(playlistId, it.bookmarked)
+                    onConfirmed(it.bookmarked)
+                }
+            }, {
+                lists?.playlists?.reload()
+                onFailed()
+            })
         }
     }
 
@@ -801,14 +863,26 @@ class LibraryActions(
     }
 
     /**
-     * A click on a track, as on the phone: the loaded list becomes the queue, from that track. All the
-     * loaded ids are handed over; `playTracks` keeps a window of 500 around the track and tells when it
-     * cut. [expectedId] is the id displayed on the clicked row: a list that changed meanwhile never plays
-     * another track.
+     * A click on a track, as on the phone: since contract 1.10.0 (`queue.fullList`) with a [listRef] the
+     * phone plays its WHOLE list from that track (its own click: `stopRadio` + `forcePlayAtIndex`, no cap);
+     * otherwise the loaded ids are handed over and `playTracks` keeps a window of 500 around the track, with
+     * a notice when it cut. [expectedId] is the id displayed on the clicked row: a list that changed
+     * meanwhile never plays another track.
      */
-    fun playFrom(tracks: List<Track>, index: Int, expectedId: String = tracks.getOrNull(index)?.id.orEmpty()) {
+    fun playFrom(
+        tracks: List<Track>,
+        index: Int,
+        expectedId: String = tracks.getOrNull(index)?.id.orEmpty(),
+        listRef: ListRef? = null,
+    ) {
         val at = if (tracks.getOrNull(index)?.id == expectedId) index else tracks.indexOfFirst { it.id == expectedId }
         if (at < 0) return
+        // Since 1.10.0: the phone plays its whole list from the clicked track (its click: stopRadio +
+        // forcePlayAtIndex); the track id wins over the index if the phone's list moved meanwhile
+        if (listRef != null && fullList) {
+            scope.launch { player.playList(listRef, ListAction.Play, at, expectedId) }
+            return
+        }
         scope.launch { player.playTracks(tracks.map { it.id }, at) }
     }
 
@@ -816,8 +890,17 @@ class LibraryActions(
         scope.launch { player.addTracks(listOf(track.id), position) }
     }
 
-    /** The toolbar's "Play next" / "Enqueue" on a whole list: its loaded tracks (500 at most, with a notice). */
-    fun addAll(tracks: List<Track>, position: QueuePosition, total: Int = tracks.size) {
+    /**
+     * The toolbar's "Play next" / "Enqueue" on a whole list: since 1.10.0 the phone's whole [listRef] through
+     * its own `addNextOffMain` / `enqueueOffMain` (its filters); before, the loaded tracks (500 at most, with
+     * a notice).
+     */
+    fun addAll(tracks: List<Track>, position: QueuePosition, total: Int = tracks.size, listRef: ListRef? = null) {
+        if (listRef != null && fullList) {
+            val action = if (position == QueuePosition.Next) ListAction.Next else ListAction.End
+            scope.launch { player.playList(listRef, action) }
+            return
+        }
         if (tracks.isEmpty()) return
         scope.launch { player.addTracks(tracks.map { it.id }, position, maxOf(total, tracks.size)) }
     }
@@ -826,7 +909,13 @@ class LibraryActions(
      * The toolbar's "Shuffle" on a whole list (`SongShuffler`): its loaded tracks shuffled on the PC, from
      * the first one. An empty list gives the phone's "No song to shuffle".
      */
-    fun playShuffled(tracks: List<Track>, total: Int = tracks.size) {
+    fun playShuffled(tracks: List<Track>, total: Int = tracks.size, listRef: ListRef? = null) {
+        // Since 1.10.0: the phone's `Shuffler.play` on its whole list — its filters, its `maxSongsInQueue`
+        // cap, `stopRadio` and its toasts (`songs_shuffled`, `no_song_to_shuffle`, relayed by `ui.toasts`)
+        if (listRef != null && fullList) {
+            scope.launch { player.playList(listRef, ListAction.Shuffle) }
+            return
+        }
         scope.launch {
             if (tracks.isEmpty()) {
                 (info ?: message)(getString(Res.string.no_song_to_shuffle))
@@ -842,11 +931,18 @@ class LibraryActions(
      * the `queue` feature. A list that changed meanwhile (reload) never adds another track: the entries act
      * only while the item at [index] still has [expectedId].
      */
-    fun trackActions(tracks: StateFlow<PagedState<Track>>, index: Int, expectedId: String, live: Boolean): ItemActions? {
-        if (!available) return null
+    fun trackActions(
+        tracks: StateFlow<PagedState<Track>>,
+        index: Int,
+        expectedId: String,
+        live: Boolean,
+        listRef: ListRef? = null,
+    ): ItemActions? {
+        // The phone always opens the song menu; without `queue` its playback entries stay inert
+        if (!available) return INERT_ACTIONS.copy(currentTrackList = tracks)
         fun shown(): Track? = tracks.value.items.getOrNull(index)?.takeIf { it.id == expectedId }
         return ItemActions(
-            onPlay = { if (shown() != null) playFrom(tracks.value.items, index, expectedId) },
+            onPlay = { if (shown() != null) playFrom(tracks.value.items, index, expectedId, listRef) },
             onPlayNext = { shown()?.let { add(it, QueuePosition.Next) } },
             onEnqueue = { shown()?.let { add(it, QueuePosition.End) } },
             enabled = live,
@@ -858,8 +954,29 @@ class LibraryActions(
         )
     }
 
+    /**
+     * The item menu's actions of a playlist, album or artist: the phone always opens the menu, so without
+     * the `queue` feature its playback entries are inert ([INERT_ACTIONS]).
+     */
+    fun collectionMenuActions(ref: CollectionRef, live: Boolean): ItemActions =
+        collectionActions(ref, live) ?: INERT_ACTIONS.copy(onShuffle = {})
+
     /** The actions of a playlist, album or artist; `null` (no actions) without the `queue` feature. */
-    fun collectionActions(ref: CollectionRef, live: Boolean): ItemActions? = if (!available) null else ItemActions(
+    fun collectionActions(
+        ref: CollectionRef,
+        live: Boolean,
+        /** The whole list as shown (a local playlist's sort and search); the collection's own order by default. */
+        listRef: () -> ListRef = { ref.toListRef() },
+    ): ItemActions? = if (!available) null else if (fullList) {
+        // Since 1.10.0: the phone's whole collection through its own queue entries
+        ItemActions(
+            enabled = live,
+            onPlay = { scope.launch { player.playList(listRef(), ListAction.Play, 0) } },
+            onPlayNext = { scope.launch { player.playList(listRef(), ListAction.Next) } },
+            onEnqueue = { scope.launch { player.playList(listRef(), ListAction.End) } },
+            onShuffle = { scope.launch { player.playList(listRef(), ListAction.Shuffle) } },
+        )
+    } else ItemActions(
         enabled = live,
         onPlay = { withTracks(ref) { ids, total -> player.playTracks(ids, 0, total) } },
         onPlayNext = { withTracks(ref) { ids, total -> player.addTracks(ids, QueuePosition.Next, total) } },
@@ -1047,3 +1164,5 @@ fun rememberPlaylistSongs(
     return list
 }
 
+/** Menu actions without effect (no `queue` feature): the entries are drawn disabled. */
+internal val INERT_ACTIONS = ItemActions(onPlay = {}, onPlayNext = {}, onEnqueue = {}, enabled = false)

@@ -42,7 +42,8 @@ import org.jetbrains.compose.resources.painterResource
  * palettes) with its header (32 dp accent badge holding an 18 dp icon, 12 dp, the accent title in
  * xs.semiBold), the optional description (xxs, `textSecondary`), the content, then 16 dp of space; it
  * appears and disappears with its expand / fade animation ([visible]).
- * The phone's `ColorPaletteMode.PitchBlack` check is not needed: the Compagnon always uses `Dark`.
+ * The phone's `ColorPaletteMode.PitchBlack` check is ported: the phone's mode, read since contract 1.10.0
+ * (`ui.settings`).
  */
 @Composable
 fun SettingsSectionCard(
@@ -70,7 +71,7 @@ fun SettingsSectionCard(
                     ),
                 shape = uiRoundnessShape(),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                    containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                         Color(0xFF1A1A1A) // Gray dark for pitch black themes
                     } else {
                         colorPalette().background1

@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.library.TopPeriod
 import app.n_zik.compagnon.components.menu.ListMenu
+import app.n_zik.compagnon.bridge.state.LocalUiSettings
+import app.n_zik.compagnon.components.tab.toolbar.Descriptive
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.uiRoundnessShape
@@ -47,9 +49,10 @@ val TopPeriod.labelId: StringResource
 /**
  * Port of the phone's `PeriodSelector` (`app/n_zik/android/components/song/PeriodSelector.kt`): the sort
  * slot of the Songs "Top" chip — a menu of the phone's `StatisticsType` periods (contract §10, since
- * 1.6: the chosen period travels as `period` of `/library/songs?filter=top`), its "Top N of ." title
- * (the phone's `header_view_top_of`, with the phone's default max items — its setting is phone-side
- * only, the PC cannot read it) and no selected highlight, as on the phone. [period] `null` keeps the
+ * 1.6: the chosen period travels as `period` of `/library/songs?filter=top`), the button titled
+ * `statistics` (its `Descriptive` message, shown on a right click), the menu titled "Top N of …" (the
+ * phone's `header_view_top_of` with its `MaxTopPlaylistItems`, read through `ui.settings` since 1.10.0)
+ * and no selected highlight, as on the phone. [period] `null` keeps the
  * phone's own period (its default is `All`) and shows the `calendar_clear` icon. A click opens the menu
  * (the phone's selector has no direction arrow). Since 1.7.3 (feature `library.sortMenu`),
  * [options] follows the phone's Top tab menu — its periods in its order, its hidden ones dropped;
@@ -61,13 +64,27 @@ class PeriodSelector(
     /** Since 1.7.3 (feature `library.sortMenu`): the phone's Top tab menu — its periods, its order. */
     private val options: List<TopPeriod> = TopPeriod.entries,
     private val onPeriodSelected: (TopPeriod) -> Unit,
-) : MenuIcon {
+) : MenuIcon, Descriptive {
 
     override val iconId: DrawableResource = period?.iconId ?: Res.drawable.calendar_clear
 
+    /** The phone's button title and `Descriptive` message (`PeriodSelector.kt` 72): `statistics`. */
+    override val messageId: StringResource = Res.string.statistics
     override val menuIconTitle: String
         @Composable
-        get() = formatText(stringResource(Res.string.header_view_top_of), "10")
+        get() = stringResource(messageId)
+
+    /**
+     * The menu title, the phone's "Top N of …" (`PeriodSelector.kt` 169-176) with its `MaxTopPlaylistItems`
+     * setting — read from the phone since contract 1.10.0 (`ui.settings`, `topN`, `null` = unlimited); the
+     * phone's default (10) without it.
+     */
+    @Composable
+    private fun menuTitle(): String {
+        val topN = LocalUiSettings.current.topN
+        val label = topN?.toString() ?: stringResource(Res.string.max_items_unlimited)
+        return formatText(stringResource(Res.string.header_view_top_of), label)
+    }
 
     override fun onShortClick() = openMenu()
 
@@ -75,7 +92,7 @@ class PeriodSelector(
 
     @Composable
     fun ListMenu() {
-        ListMenu.Menu(title = menuIconTitle) {
+        ListMenu.Menu(title = menuTitle()) {
             options.forEach { entry ->
                 ListMenu.Entry(
                     text = stringResource(entry.labelId),

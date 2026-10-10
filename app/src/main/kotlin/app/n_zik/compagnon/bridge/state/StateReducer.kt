@@ -31,7 +31,7 @@ object StateReducer {
             if (revision == null) Reduction(state) else revised(state, revision) { it }
         }
         is HeartbeatMessage -> heartbeat(state, message)
-        is PongMessage, is ErrorMessage, is ServerStoppedMessage -> Reduction(state)
+        is PongMessage, is ErrorMessage, is ServerStoppedMessage, is ToastMessage -> Reduction(state)
     }
 
     private inline fun revised(state: SyncState, revision: Long, apply: (PlayerState) -> PlayerState): Reduction {
@@ -66,6 +66,7 @@ object StateReducer {
         is PlaybackChangedMessage -> player.copy(
             isPlaying = delta.isPlaying,
             isBuffering = delta.isBuffering,
+            playWhenReady = delta.playWhenReady,
             durationMs = delta.durationMs,
             speed = delta.speed,
             positionMs = delta.positionMs,
@@ -77,6 +78,7 @@ object StateReducer {
             positionMs = delta.positionMs,
             isPlaying = delta.isPlaying,
             isBuffering = delta.isBuffering,
+            playWhenReady = delta.playWhenReady,
             durationMs = delta.durationMs,
             serverTimeMs = delta.serverTimeMs,
         )

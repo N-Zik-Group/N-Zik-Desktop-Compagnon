@@ -50,9 +50,8 @@ import org.jetbrains.compose.resources.stringResource
  * (the phone's `Skeleton.kt` call site, here the [app.n_zik.compagnon.App] startup effect),
  * replacing the v1 themed confirmation — the phone's full info card + its three option cards,
  * 1:1. Deliberate deviations (the desktop's conventions, as in [NewUpdateAvailableDialog]):
- * - the phone's `ColorPaletteMode.PitchBlack` check of the card-color branch is gone (the
- *   desktop's palettes have no pitch-black MODE — the Pure Black / Modern Black palettes keep
- *   the phone's `0xFF1A1A1A` card color);
+ * - the phone's `ColorPaletteMode.PitchBlack` check of the card-color branch is ported (the
+ *   phone's mode, read since contract 1.10.0 through `ui.settings`);
  * - the phone's `checkBetaUpdates` parameter is gone (the channel is a build-time decision —
  *   the check is [Updater.checkForUpdate]'s plain, non-forced one, dialog on result);
  * - the "Turn off" option writes [CheckUpdateState.Off] through [Updater.setCheckUpdateState]
@@ -94,7 +93,7 @@ object CheckForUpdateDialog {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                 Color(0xFF1A1A1A) // Gray dark for pitch black themes
                             } else {
                                 colorPalette().background1
@@ -202,7 +201,7 @@ object CheckForUpdateDialog {
                             .clip(uiRoundnessShape())
                             .clickable { onDismiss() },
                         colors = CardDefaults.cardColors(
-                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                 Color(0xFF1A1A1A) // Gray dark for pitch black themes
                             } else {
                                 colorPalette().background1
@@ -255,7 +254,7 @@ object CheckForUpdateDialog {
                                 onDismiss()
                             },
                         colors = CardDefaults.cardColors(
-                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                 Color(0xFF1A1A1A) // Gray dark for pitch black themes
                             } else {
                                 colorPalette().background1

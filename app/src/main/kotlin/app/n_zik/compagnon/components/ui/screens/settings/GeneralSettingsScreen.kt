@@ -100,8 +100,8 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                 values = remember { (listOf(AppLanguage.AUTO_PC, AppLanguage.AUTO_TEL) + AppLanguage.LANGUAGES.map { it.first }) },
                 selectedValue = settings.language,
                 onValueSelected = {
+                    // The phone only stores the choice (its 338-340); the dialog closes itself on a pick
                     preferences.update { s -> s.copy(language = it) }
-                    showLanguageDialog = false
                 },
                 onDismiss = { showLanguageDialog = false },
                 valueText = { languageLabel(it) },

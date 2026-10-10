@@ -1,5 +1,12 @@
 package app.n_zik.compagnon.components.ui.screens.album
 
+import app.n_zik.compagnon.components.tab.toolbar.NoRouteConfirmButton
+import androidx.compose.foundation.layout.height
+import app.n_zik.compagnon.utils.formatText
+import app.n_zik.compagnon.utils.UserSettings
+import app.n_zik.compagnon.utils.LocalPreferences
+import androidx.compose.foundation.lazy.items
+import app.n_zik.compagnon.bridge.library.toListRef
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.generated.resources.*
@@ -19,7 +26,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -100,12 +106,17 @@ const val DETAIL_COVER_SIZE_PX = 1200
  * `library.dislikeMode`) rotating (its `rotateLikeState`), off toggling (its `toggleBookmark`), toasting
  * the phone's `added_to_favorites` / `added_to_dislikes` / `removed_from_favorites` (its
  * `AlbumDetails.kt` 155-172); a phone before 1.7.2 keeps its 1.7 binary route; inert outside a `Live`
- * session, and the share icon at the top end of the cover (no action). While the first page is loading the
+ * session, and the share icon at the top end of the cover (not linked: the phone shares the album's
+ * `shareUrl`, which the contract's `Album` does not carry). While the first page is loading the
  * centred [Loader] replaces the list (`AlbumScreen.kt` 589-603).
+ * Adaptations: a click outside a `Live` session does nothing (no command can reach the phone); the top
+ * fade has no system-bar inset (none on the desktop).
  * Dropped (contract v1 or PC): the MusicBrainz "Info and community" block with
  * translation, the alternative versions, swipe actions, the floating shuffle icon.
  * Added by the Compagnon: the paging row (loading, error + "Retry"), "Nothing here." for an empty album.
- * The duration shows once all tracks are loaded (the contract gives no total duration).
+ * The duration comes whole from the phone since 1.10.0 (`totalDurationMs`), else once all tracks are
+ * loaded; the loader shows the phone's `loading_songs_count` with the album's announced size. A click and
+ * the locator act on the album's whole track list since 1.10.0 (`queue.fullList`, `library.locate`).
  */
 @Composable
 fun AlbumDetails(
@@ -131,7 +142,14 @@ fun AlbumDetails(
     val playbackEnabled = live && collection != null
 
     val shuffle = SongShuffler(enabled = playbackEnabled) { collection?.onShuffle?.invoke() }
-    val locator = Locator(lazyListState, { list.state.value.items }, indexOffset = ITEMS_BEFORE_SONGS) { id ->
+    // Since 1.10.0 (`library.locate`): the phone searches the album's whole track list
+    val locator = Locator(
+        lazyListState,
+        { list.state.value.items },
+        indexOffset = ITEMS_BEFORE_SONGS,
+        listRef = { header.ref.toListRef() },
+        pagedList = list,
+    ) { id ->
         scope.launch { onMessage(getString(id)) }
     }
     val playNext = PlayNext(enabled = playbackEnabled) { collection?.onPlayNext?.invoke() }
@@ -160,7 +178,9 @@ fun AlbumDetails(
     }
     val dislikeMode by (actions.lists?.dislikeMode ?: remember { MutableStateFlow<DislikeMode?>(null) })
         .collectAsState()
-    val bookmark = object : MenuIcon {
+    val bookmark = object : MenuIcon, app.n_zik.compagnon.components.tab.toolbar.Descriptive {
+        // The phone's bookmark is `Descriptive` (`info_bookmark_album`): a right click shows it
+        override val messageId: org.jetbrains.compose.resources.StringResource = Res.string.info_bookmark_album
         override val iconId: DrawableResource = when (likeState) {
             AlbumLike.Bookmarked -> Res.drawable.bookmark
             AlbumLike.Disliked -> Res.drawable.bookmark_slash
@@ -206,10 +226,20 @@ fun AlbumDetails(
     }
     // The phone's toolbar order; shuffle, locator, play next and enqueue are wired to the contract,
     // the rest are placeholders without a contract route (no action)
+    // The phone's download / remove buttons open their confirmations (as the artist's); NOT LINKED: no route
+    val downloadAll = NoRouteConfirmButton(
+        Res.drawable.downloaded, Res.string.download, Res.string.info_download_all_songs, Res.string.do_you_really_want_to_download_all,
+    )
+    val deleteDownloads = NoRouteConfirmButton(
+        Res.drawable.download, Res.string.info_remove_all_downloaded_songs, Res.string.info_remove_all_downloaded_songs,
+        Res.string.do_you_really_want_to_delete_download,
+    )
+    downloadAll.Render()
+    deleteDownloads.Render()
     val toolbar = buildList<Button> {
-        add(InertButton(Res.drawable.downloaded, Res.string.download))
-        add(InertButton(Res.drawable.download, Res.string.info_remove_all_downloaded_songs))
-        if (collection != null) add(shuffle) else add(InertButton(Res.drawable.shuffle, Res.string.info_shuffle))
+        add(downloadAll)
+        add(deleteDownloads)
+        if (collection != null) add(shuffle) else add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
         add(InertButton(Res.drawable.radio, Res.string.start_radio))
         add(locator)
         add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
@@ -226,7 +256,9 @@ fun AlbumDetails(
         add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
     }
 
-    val sectionTextModifier = Modifier
+    val albumSettings by (LocalPreferences.current?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
+    val scrollingTextDisabled = albumSettings.disableScrollingText
+        val sectionTextModifier = Modifier
         .padding(horizontal = 16.dp)
         .padding(top = 24.dp, bottom = 8.dp)
 
@@ -242,6 +274,15 @@ fun AlbumDetails(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Loader()
+                    // The phone's `loading_songs_count` (its 569-577): here the album's announced size,
+                    // the PC having no progressive count before the first page
+                    if (header.trackCount > 0) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        BasicText(
+                            text = formatText(stringResource(Res.string.loading_songs_count), header.trackCount),
+                            style = typography().xxs.copy(color = colorPalette().textDisabled),
+                        )
+                    }
                 }
               } else {
                 LazyColumn(
@@ -279,7 +320,8 @@ fun AlbumDetails(
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.align(Alignment.BottomCenter)
                                     .padding(horizontal = 30.dp)
-                                    .basicMarquee(iterations = Int.MAX_VALUE),
+                                    // The phone's `disableScrollingText` (its 646)
+                                    .then(if (scrollingTextDisabled) Modifier else Modifier.basicMarquee(iterations = Int.MAX_VALUE)),
                             )
 
                             HeaderIconButton(
@@ -300,7 +342,12 @@ fun AlbumDetails(
                             modifier = Modifier.fillMaxWidth(),
                         ) {
                             val songCount = "${state.total ?: items.size} ${stringResource(Res.string.songs)}"
-                            val totalDuration = if (state.endReached) formatAsTime(items.sumOf { it.durationMs ?: 0L }) else "…"
+                            // Since 1.10.0 the phone serves the whole album's duration at once (`totalDurationMs`)
+                            val totalDuration = when {
+                                state.totalDurationMs > 0L -> formatAsTime(state.totalDurationMs)
+                                state.endReached -> formatAsTime(items.sumOf { it.durationMs ?: 0L })
+                                else -> "…"
+                            }
 
                             BasicText(
                                 text = "$songCount - $totalDuration",
@@ -332,11 +379,12 @@ fun AlbumDetails(
                         )
                     }
 
-                    itemsIndexed(
-                        items = items,
-                        key = { index, song -> "$index:${song.id}" },
-                    ) { index, song ->
-                        val menu = actions.trackActions(list.state, index, song.id, live)
+                    items(
+                        items = items.withIndex().distinctBy { it.value.id },
+                        // The phone's keys: the track id, duplicates dropped (`distinctBy`)
+                        key = { it.value.id },
+                    ) { (index, song) ->
+                        val menu = actions.trackActions(list.state, index, song.id, live, header.ref.toListRef())
                         SongItem(
                             song = song,
                             showThumbnail = false,
@@ -359,7 +407,7 @@ fun AlbumDetails(
                                 )
                             },
                             onClick = {
-                                if (live && actions.available) actions.playFrom(list.state.value.items, index, song.id)
+                                if (live && actions.available) actions.playFrom(list.state.value.items, index, song.id, header.ref.toListRef())
                             },
                         )
                     }

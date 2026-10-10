@@ -102,6 +102,8 @@ import java.util.Locale
  * revised / AD-10). On the source builds (debug / -git — `AppVersion.updaterEnabled` false) the
  * card is the phone's `!IS_AUTOUPDATE` branch: disabled variant, an explanation, no navigation.
  * The tab has no search (the phone's `About.kt` has none — NAV-12).
+ * Dropped: the phone's easter egg (the click-count toasts on its app-info card and the games they
+ * open — no route on the PC).
  */
 @Composable
 fun AboutScreen(
@@ -190,7 +192,7 @@ fun AboutScreen(
                             .shadow(elevation = 8.dp, shape = uiRoundnessShape(), spotColor = colorPalette().accent.copy(alpha = 0.3f)),
                         shape = uiRoundnessShape(),
                         colors = CardDefaults.cardColors(
-                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                 Color(0xFF1A1A1A) // Gray dark for pitch black themes
                             } else {
                                 colorPalette().background1
@@ -342,7 +344,7 @@ fun AboutScreen(
                             .shadow(elevation = 8.dp, shape = uiRoundnessShape(), spotColor = colorPalette().accent.copy(alpha = 0.3f)),
                         shape = uiRoundnessShape(),
                         colors = CardDefaults.cardColors(
-                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                 Color(0xFF1A1A1A) // Gray dark for pitch black themes
                             } else {
                                 colorPalette().background1
@@ -686,6 +688,8 @@ fun AboutScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // The phone's `SettingsGroupSpacer(Dimensions.bottomSpacer)` (its `About.kt` 646-650); the
+        // phone's top spacer exists only with ViMusic + a side bar (not the PC's)
+        Spacer(modifier = Modifier.height(app.n_zik.compagnon.components.styling.Dimensions.bottomSpacer))
     }
 }

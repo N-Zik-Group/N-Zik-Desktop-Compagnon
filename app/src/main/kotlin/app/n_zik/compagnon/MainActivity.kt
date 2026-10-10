@@ -1,5 +1,7 @@
 package app.n_zik.compagnon
 
+import androidx.compose.animation.AnimatedContent
+import app.n_zik.compagnon.components.navigation.pageTransition
 import app.n_zik.compagnon.components.navigation.BarsScrollHide
 import androidx.compose.ui.ExperimentalComposeUiApi
 import app.n_zik.compagnon.core.navigation.backStep
@@ -55,10 +57,13 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import app.n_zik.compagnon.bridge.ConnectionState
@@ -89,12 +94,17 @@ import app.n_zik.compagnon.components.ui.header.AppHeader
 import app.n_zik.compagnon.components.ui.screens.bridge.ConnectionBanner
 import app.n_zik.compagnon.components.ui.screens.bridge.PhonePanel
 import app.n_zik.compagnon.components.ui.screens.bridge.noticeText
+import app.n_zik.compagnon.components.ui.screens.bridge.phoneToastType
 import app.n_zik.compagnon.components.ui.screens.home.HomeScreen
 import app.n_zik.compagnon.components.ui.screens.home.LibraryActions
 import app.n_zik.compagnon.components.ui.screens.home.LibraryLists
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.core.palette.toPaletteBitmap
 import app.n_zik.compagnon.enums.ColorPaletteMode
+import app.n_zik.compagnon.bridge.state.UiSettings
+import app.n_zik.compagnon.bridge.state.LocalUiSettings
+import app.n_zik.compagnon.components.theme.ColorPalette
+import app.n_zik.compagnon.components.theme.applyPitchBlack
 import app.n_zik.compagnon.enums.ColorPaletteName
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
@@ -119,25 +129,61 @@ class AppearanceState(initial: Appearance) {
     var appearance by mutableStateOf(initial)
     var fadeFromAppearance by mutableStateOf<Appearance?>(null)
 
+    /**
+     * The phone's UI settings last read by [MainActivity] (`ui.settings`), for the dialogs drawn at the
+     * window's root, outside its [LocalUiSettings] provider (the updater's, `Main.kt`): their PitchBlack
+     * background. The phone's defaults until a first read.
+     */
+    var uiSettings by mutableStateOf(UiSettings())
+
     fun updateAppearance(newAppearance: Appearance, animateGlobal: Boolean = false) {
         if (animateGlobal) fadeFromAppearance = appearance
         appearance = newAppearance
     }
 
     /**
-     * Port of `setDynamicPalette` (`MainActivity.kt` 1170-1300) with the default preferences (`Dynamic`
-     * palette, `Dark` mode): the palette of the current track's cover ([bitmap], read through the phone), or
-     * the dynamic palette of N-Zik's violet when there is no cover. The global palette changes in one step;
-     * the player's [PaletteFade] fades it.
+     * Port of `setDynamicPalette` (`MainActivity.kt` 1170-1300): with the phone's `Dynamic` palette, the
+     * palette of the current track's cover ([bitmap], read through the phone), or the dynamic palette of
+     * N-Zik's violet when there is no cover, in the phone's mode — dark for `Dark` / `PitchBlack` / a dark
+     * `System`, with the `PitchBlack` black backgrounds. Since contract 1.10.0 the palette name and mode
+     * are the phone's ([settings], `ui.settings`); another palette name keeps the static palette of
+     * [computeAppearance] (the phone returns early). The global palette changes in one step; the player's
+     * [PaletteFade] fades it.
      */
-    suspend fun setDynamicPalette(bitmap: ImageBitmap?, animateTheme: Boolean = false) {
-        val isDark = true
+    suspend fun setDynamicPalette(
+        bitmap: ImageBitmap?,
+        settings: UiSettings = UiSettings(),
+        isSystemInDarkTheme: Boolean = true,
+        animateTheme: Boolean = false,
+    ) {
+        val name = ColorPaletteName.entries.firstOrNull { it.name == settings.colorPaletteName } ?: ColorPaletteName.Dynamic
+        val mode = ColorPaletteMode.entries.firstOrNull { it.name == settings.colorPaletteMode } ?: ColorPaletteMode.Dark
+        if (name != ColorPaletteName.Dynamic) {
+            val static = staticColorPaletteOf(settings, isSystemInDarkTheme)
+            if (appearance.colorPalette != static) {
+                updateAppearance(appearance.copy(colorPalette = static, typography = appearance.typography.withColor(static.text)), animateTheme)
+            }
+            return
+        }
+        val isPitchBlack = mode == ColorPaletteMode.PitchBlack
+        val isDark = mode == ColorPaletteMode.Dark || isPitchBlack || (mode == ColorPaletteMode.System && isSystemInDarkTheme)
         val finalPalette = if (bitmap == null) {
             null
         } else {
             withContext(NzikDispatchers.MEDIA) { m3eDynamicColorPaletteOf(bitmap.toPaletteBitmap(), isDark) }
         }
-        val targetPalette = finalPalette ?: dynamicColorPaletteOf(VIOLET_ACCENT, isDark)
+        val targetPalette = when {
+            // The phone's cover palette in PitchBlack: black backgrounds, white text, dark
+            finalPalette != null && isPitchBlack -> finalPalette.applyPitchBlack
+            finalPalette != null -> finalPalette
+            else -> dynamicColorPaletteOf(VIOLET_ACCENT, isDark).let { violet ->
+                // The phone's violet fallback in PitchBlack: black backgrounds only
+                if (!isPitchBlack) violet else violet.copy(
+                    background0 = Color.Black, background1 = Color.Black, background2 = Color.Black,
+                    background3 = Color.Black, background4 = Color.Black,
+                )
+            }
+        }
         if (appearance.colorPalette == targetPalette) return
         updateAppearance(
             appearance.copy(
@@ -150,18 +196,48 @@ class AppearanceState(initial: Appearance) {
 }
 
 /**
- * Port of `computeAppearance` (`MainActivity.kt` 1085-1125) with the phone's default preferences: `Dynamic`
- * palette in `Dark` mode (its static start, `DefaultDarkColorPalette`, until the first cover), Rubik without
- * font padding, thumbnails at 12 dp (at most 25 %), artists in a circle (48 dp), UI at 25 dp (at most 40 %).
+ * The phone's static palette of `computeAppearance` (`MainActivity.kt` 1095-1111) for its palette name and
+ * mode (contract 1.10.0, `ui.settings`). PC adaptations: `MaterialYou` (the Android wallpaper's monet
+ * accent) and `CustomColor` (its custom colour, not in the contract) take N-Zik's violet dynamic palette in
+ * the phone's dark / light mode; `Customized` (its custom colour set, not in the contract) falls back to
+ * the default palette (`colorPaletteOf`). In `PitchBlack` the phone's preference listener blackens the
+ * static palette (`MainActivity.kt` 1517-1525: black backgrounds, white text) — the PC mirrors the
+ * phone's changes, so it applies the same.
  */
-fun computeAppearance(fontFamily: FontFamily): Appearance {
-    val colorPaletteName = ColorPaletteName.Dynamic
-    val colorPaletteMode = ColorPaletteMode.Dark
+fun staticColorPaletteOf(settings: UiSettings, isSystemInDarkTheme: Boolean): ColorPalette {
+    val name = ColorPaletteName.entries.firstOrNull { it.name == settings.colorPaletteName } ?: ColorPaletteName.Dynamic
+    val mode = ColorPaletteMode.entries.firstOrNull { it.name == settings.colorPaletteMode } ?: ColorPaletteMode.Dark
+    val palette = staticColorPaletteBase(name, mode, isSystemInDarkTheme)
+    return if (mode != ColorPaletteMode.PitchBlack) palette else palette.copy(
+        background0 = Color.Black, background1 = Color.Black, background2 = Color.Black,
+        background3 = Color.Black, background4 = Color.Black, text = Color.White,
+    )
+}
+
+private fun staticColorPaletteBase(name: ColorPaletteName, mode: ColorPaletteMode, isSystemInDarkTheme: Boolean): ColorPalette {
+    return when (name) {
+        // The phone's `dynamicColorPaletteOf(color, !lightTheme)`: dark from its chosen mode
+        ColorPaletteName.MaterialYou, ColorPaletteName.CustomColor -> dynamicColorPaletteOf(
+            VIOLET_ACCENT,
+            mode == ColorPaletteMode.Dark || mode == ColorPaletteMode.PitchBlack ||
+                (mode == ColorPaletteMode.System && isSystemInDarkTheme),
+        )
+        else -> colorPaletteOf(name, mode, isSystemInDarkTheme)
+    }
+}
+
+/**
+ * Port of `computeAppearance` (`MainActivity.kt` 1085-1125): the phone's palette name and mode ([settings],
+ * contract 1.10.0 `ui.settings`; the phone's defaults `Dynamic` / `Dark` without it — its static start,
+ * `DefaultDarkColorPalette`, until the first cover), Rubik without font padding, thumbnails at 12 dp (at
+ * most 25 %), artists in a circle (48 dp), UI at 25 dp (at most 40 %).
+ */
+fun computeAppearance(fontFamily: FontFamily, settings: UiSettings = UiSettings(), isSystemInDarkTheme: Boolean = true): Appearance {
     val thumbnailRoundnessDp = 12f
     val artistThumbnailRoundnessDp = 48f
     val uiRoundnessDp = 25f
 
-    val colorPalette = colorPaletteOf(colorPaletteName, colorPaletteMode, true)
+    val colorPalette = staticColorPaletteOf(settings, isSystemInDarkTheme)
 
     return Appearance(
         colorPalette = colorPalette,
@@ -216,7 +292,7 @@ internal data class NavPageState(
     /** The About tab's update card (NAV-4): the update page over the settings page, the tab on About. */
     fun openUpdate(): NavPageState = copy(updateOpen = true, settingsTab = ABOUT_TAB)
 
-    /** The logo (NAV-9): home, all the pages closed, the tab reset. */
+    /** All the pages closed, the tab reset (the home under the pages). */
     fun closeAll(): NavPageState = copy(settingsOpen = false, settingsTab = 0, updateOpen = false, phoneOpen = false)
 
     /**
@@ -252,6 +328,10 @@ internal data class NavPageState(
  * out ([LocalTopBarOffset], the content following it) and the floating bar and mini-player up to 240 dp down
  * ([LocalBottomBarOffset]); on release they snap in 150 ms to shown or hidden. Off while the player or the
  * queue is open; opening the player brings them back in 800 ms.
+ * Since contract 1.10.0 (`ui.settings`, polled every [UI_SETTINGS_POLL_MS]): the phone's palette name and
+ * mode, page / tab transitions, "Disable scrolling text"; the PC's own navigation bar stays the phone's
+ * default floating bar (so the toasts, loader and mini-player shadow keep its offsets), and the phone's
+ * `disableNavigationBackStack` is not mirrored (the PC's back always walks its page stack).
  * Dropped: the navigation routes the contract has no data for, the player sheet's drag / fling (the full
  * player deploys from the mini-player in a 400 ms slide; no touch on the PC), the system bars.
  */
@@ -289,15 +369,52 @@ fun MainActivity(
     LaunchedEffect(repository) {
         repository.notices.collect { notice ->
             val text = noticeText(notice)
-            if (notice is PlayerNotice.Truncated) Toaster.w(text) else Toaster.e(text)
+            when (notice) {
+                // Contract §7.9 (since 1.10.0): the phone's own toast, with its own type
+                is PlayerNotice.PhoneToast -> Toaster.toast(text, phoneToastType(notice.toastType))
+                is PlayerNotice.Truncated -> Toaster.w(text)
+                else -> Toaster.e(text)
+            }
         }
     }
+
+    // Since 1.10.0 (feature `ui.settings`, decision 3 of the 2026-10-09 audit): the phone's UI settings,
+    // read while the session is live — at its start, on each `libraryChanged` (§10.5) and every
+    // [UI_SETTINGS_POLL_MS] (the phone pushes no settings change). The last read value survives a
+    // reconnection; the phone's defaults until a first successful read (or without the feature)
+    var uiSettings by remember { mutableStateOf(UiSettings()) }
+    var uiSettingsLoaded by remember { mutableStateOf(false) }
+    val sessionLive = connection == ConnectionState.Live
+    val uiSettingsRefresh = remember { kotlinx.coroutines.channels.Channel<Unit>(kotlinx.coroutines.channels.Channel.CONFLATED) }
+    LaunchedEffect(library, sessionLive) {
+        if (sessionLive && SessionContract.FEATURE_UI_SETTINGS in library.features) {
+            while (true) {
+                library.uiSettings()?.let {
+                    uiSettings = it
+                    uiSettingsLoaded = true
+                }
+                withTimeoutOrNull(UI_SETTINGS_POLL_MS) { uiSettingsRefresh.receive() }
+            }
+        }
+    }
+    // The phone's "Disable scrolling text" drives the PC's own setting (its screens all read it there),
+    // once a value was actually read from the phone (never its default)
+    LaunchedEffect(uiSettings.disableScrollingText, uiSettingsLoaded) {
+        if (uiSettingsLoaded) {
+            preferences?.update { s -> if (s.disableScrollingText == uiSettings.disableScrollingText) s else s.copy(disableScrollingText = uiSettings.disableScrollingText) }
+        }
+    }
+    val systemDark = isSystemInDarkTheme()
 
     // Since 1.7.3 (feature `library.live`): the phone's library moved — the loaded lists of the
     // invalidated family re-read (coalesced in the lists)
     LaunchedEffect(repository, lists) {
         if (SessionContract.FEATURE_LIBRARY_LIVE in repository.features) {
-            repository.libraryChanged.collect { kind -> lists.onLibraryChanged(kind) }
+            repository.libraryChanged.collect { kind ->
+                lists.onLibraryChanged(kind)
+                // Contract §10.5: the client re-reads the phone's UI settings on each `libraryChanged`
+                uiSettingsRefresh.trySend(Unit)
+            }
         }
     }
 
@@ -306,15 +423,23 @@ fun MainActivity(
     }
 
     val track = state?.currentTrack
-    // Dynamic palette: the phone calls setDynamicPalette on each media item transition
-    LaunchedEffect(track?.id, track?.hasArtwork) {
+    // Dynamic palette: the phone calls setDynamicPalette on each media item transition (in one step) and
+    // on a palette name / mode or system theme change (animated: its `animateTheme` / `animateGlobal`,
+    // `MainActivity.kt` 1318, 1323, 1486, 1527)
+    val lastTheme = remember { arrayOfNulls<Any>(1) }
+    LaunchedEffect(track?.id, track?.hasArtwork, uiSettings.colorPaletteName, uiSettings.colorPaletteMode, systemDark) {
+        val theme = Triple(uiSettings.colorPaletteName, uiSettings.colorPaletteMode, systemDark)
+        val animate = lastTheme[0] != null && lastTheme[0] != theme
+        lastTheme[0] = theme
         val bitmap = if (track != null && track.hasArtwork) {
             repository.artwork(ArtworkKey.track(track.id, PLAYER_ARTWORK_SIZE_PX))
         } else {
             null
         }
-        appearanceState.setDynamicPalette(bitmap)
+        appearanceState.setDynamicPalette(bitmap, uiSettings, systemDark, animateTheme = animate)
     }
+    // The root dialogs (the updater's) read the phone's settings through the appearance state
+    androidx.compose.runtime.SideEffect { appearanceState.uiSettings = uiSettings }
 
     // Media presence grace: a transient null between two track changes must not drop the sheet
     // (port of the phone's 400 ms grace, phone's `MainActivity.kt` 2198-2223). Once the absence persists,
@@ -369,22 +494,57 @@ fun MainActivity(
         }
     }
 
-    // Back: one step per press, in the phone's order (menu, pages, queue, player, page)
+    // Whether the last navigation was a back (the phone's pop transitions) or a forward one (a click)
+    var navIsBack by remember { mutableStateOf(false) }
+    // The phone's home navigation (title click, the player's logo) PUSHES its home route: back returns to
+    // the page it left. One level kept (the page and navigation pages left), restored by the back
+    var homeReturn by remember { mutableStateOf<Pair<NavPageState, CollectionHeader?>?>(null) }
+    val goHome: () -> Unit = {
+        navIsBack = false
+        if (detail != null || pages.anyPageOpen) homeReturn = pages to detail
+        detail = null
+        pages = pages.closeAll()
+    }
+
+    // The settings page's state, kept while the update page covers it (the phone's back stack); a closed
+    // settings page starts afresh next time (the phone recreates its destination)
+    val settingsStateHolder = androidx.compose.runtime.saveable.rememberSaveableStateHolder()
+    LaunchedEffect(pages.settingsOpen) {
+        if (!pages.settingsOpen) settingsStateHolder.removeState(SETTINGS_STATE_KEY)
+    }
+
+    // The full player's inline queue, hoisted so the back closes it before the player (phone's BackHandler)
+    val playerQueueState = remember { mutableStateOf(false) }
+    LaunchedEffect(showPlayer) { if (!showPlayer) playerQueueState.value = false }
+
+    // Back: one step per press — the menu, the overlays drawn over the pages (queue, player's queue, player),
+    // then the navigation pages, then the open page
     val onBackPress: () -> Boolean = {
-        val step = backStep(menuState.isDisplayed, pages.anyPageOpen, showQueueOverlay, showPlayer, detail != null)
+        val step = backStep(
+            menuState.isDisplayed, pages.anyPageOpen, showQueueOverlay, showPlayer, detail != null, playerQueueState.value,
+            homeReturnPending = homeReturn != null,
+        )
+        if (step == BackStep.Panel || step == BackStep.Page || step == BackStep.HomeReturn) navIsBack = true
         when (step) {
-            BackStep.Menu -> menuState.hide()
+            BackStep.Menu -> menuState.pop()
             // The pages stack: update (innermost) -> settings (the tab reset) or Serveur PC
             BackStep.Panel -> {
-                // Back / Escape on the update page while a download is running cancels the
-                // download instead of navigating away mid-download (the loop-2 closure)
+                // Back / Escape on the update page while a download runs cancels the download, then closes
+                // the page (the phone's BackHandler: toast + cancel + leave, the loop-2 closure)
                 if (pages.updateOpen) cancelDownloadOnBack()
                 val closed = pages.back()
                 if (closed != null) pages = closed
             }
             BackStep.Queue -> showQueueOverlay = false
+            BackStep.PlayerQueue -> playerQueueState.value = false
             BackStep.Player -> showPlayer = false
             BackStep.Page -> detail = null
+            // The pushed home popped: the page the title click left
+            BackStep.HomeReturn -> homeReturn?.let { (returnPages, returnDetail) ->
+                pages = returnPages
+                detail = returnDetail
+                homeReturn = null
+            }
             null -> Unit
         }
         step != null
@@ -456,6 +616,10 @@ fun MainActivity(
     CompositionLocalProvider(
         LocalPlayerRepository provides repository,
         LocalLibraryActions provides actions,
+        LocalUiSettings provides uiSettings,
+        app.n_zik.compagnon.bridge.state.LocalUiSettingsRead provides uiSettingsLoaded,
+        app.n_zik.compagnon.core.navigation.LocalPlayerQueueState provides playerQueueState,
+        app.n_zik.compagnon.core.navigation.LocalGoHome provides goHome,
         LocalCommandLauncher provides onCommand,
         LocalMenuState provides menuState,
         LocalTopBarOffset provides topBarOffsetState,
@@ -504,49 +668,66 @@ fun MainActivity(
                     AppHeader(
                         isHome = detail == null && !pages.anyPageOpen,
                         onBack = { currentOnBackPress() },
-                        onHome = {
-                            detail = null
-                            pages = pages.closeAll()
-                        },
-                        onPhone = { pages = pages.onPhonePress() },
-                        onSettings = { pages = pages.onSettingsPress() },
+                        onHome = goHome,
+                        onPhone = { navIsBack = false; pages = pages.onPhonePress() },
+                        onSettings = { navIsBack = false; pages = pages.onSettingsPress() },
                     )
                 }
                 // The navigation pages replace the home (the connection banner and the lists are
                 // hidden with it — like the phone's destinations replacing the home content)
-                if (pages.anyPageOpen) {
-                    val prefs = preferences
-                    Box(modifier = Modifier.weight(1f)) {
-                        if (pages.phoneOpen) {
-                            PhonePanel(record, connection, onForget = onForget)
-                        } else if (prefs != null) {
-                            SettingsScreen(
-                                prefs,
-                                audioCache,
-                                pages.settingsTab,
-                                onTabChanged = { pages = pages.onTabChanged(it) },
-                                onOpenUpdate = { pages = pages.openUpdate() },
-                            )
-                            // The update page over the settings page (NAV-7): back closes it first,
-                            // the settings page stays open on its About tab
-                            if (pages.updateOpen) {
-                                UpdateScreen(prefs, onClose = { pages = pages.copy(updateOpen = false) })
+                // The phone's page transition (its `transitionEffect`, `ui.settings` since 1.10.0) between
+                // the home and the navigation pages, keyed on which page shows
+                AnimatedContent(
+                    targetState = pages,
+                    // Back (a page closed, or the update page left): the phone's pop transitions
+                    transitionSpec = { pageTransition(uiSettings.transition, navIsBack) },
+                    label = "navPages",
+                    // A sub-tab switch is not a page change: only the shown page animates
+                    contentKey = { Triple(it.phoneOpen, it.settingsOpen, it.updateOpen) },
+                    modifier = Modifier.weight(1f),
+                ) { shown ->
+                    if (shown.anyPageOpen) {
+                        val prefs = preferences
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            if (shown.phoneOpen) {
+                                PhonePanel(record, connection, onForget = onForget)
+                            } else if (prefs != null) {
+                                if (shown.updateOpen) {
+                                    // The update page replaces the settings page (NAV-7): back closes it
+                                    // first, landing on the settings' About tab
+                                    UpdateScreen(prefs, onClose = { navIsBack = true; pages = pages.copy(updateOpen = false) })
+                                } else {
+                                    // The phone keeps its settings destination in the back stack under the
+                                    // update page: its state (scroll, per-tab search) survives the visit
+                                    settingsStateHolder.SaveableStateProvider(SETTINGS_STATE_KEY) {
+                                        SettingsScreen(
+                                            prefs,
+                                            audioCache,
+                                            shown.settingsTab,
+                                            onTabChanged = { pages = pages.onTabChanged(it) },
+                                            onOpenUpdate = { navIsBack = false; pages = pages.openUpdate() },
+                                        )
+                                    }
+                                }
                             }
                         }
+                    } else Column(Modifier.fillMaxSize()) {
+                        ConnectionBanner(connection, onReconnect = repository::reconnect)
+                        HomeScreen(
+                            lists = lists,
+                            library = library,
+                            actions = actions,
+                            live = connection == ConnectionState.Live,
+                            onMessage = showMessage,
+                            detail = detail,
+                            onDetail = { navIsBack = false; detail = it },
+                            // A page closing itself ("not found", its back arrow): the phone's pop transition
+                            onDetailBack = { navIsBack = true; detail = null },
+                            isBackNavigation = navIsBack,
+                            onNavBarVisible = { navBarVisible = it },
+                            modifier = Modifier.weight(1f),
+                        )
                     }
-                } else {
-                    ConnectionBanner(connection, onReconnect = repository::reconnect)
-                    HomeScreen(
-                        lists = lists,
-                        library = library,
-                        actions = actions,
-                        live = connection == ConnectionState.Live,
-                        onMessage = showMessage,
-                        detail = detail,
-                        onDetail = { detail = it },
-                        onNavBarVisible = { navBarVisible = it },
-                        modifier = Modifier.weight(1f),
-                    )
                 }
             }
 
@@ -644,3 +825,9 @@ val LocalBottomBarOffset = staticCompositionLocalOf<State<Float>> { mutableState
 
 /** Pause after the last scroll before the bars snap shown or hidden. */
 internal const val BARS_SNAP_DELAY_MS = 150L
+
+/** How often the phone's UI settings are re-read (contract §10.5: the phone pushes no change). */
+internal const val UI_SETTINGS_POLL_MS = 15_000L
+
+/** The settings page's key in its [androidx.compose.runtime.saveable.SaveableStateHolder]. */
+private const val SETTINGS_STATE_KEY = "settings"

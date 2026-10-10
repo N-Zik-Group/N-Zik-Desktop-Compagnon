@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
+import app.n_zik.compagnon.components.navigation.tabTransition
 import app.n_zik.compagnon.LocalBottomBarOffset
 import app.n_zik.compagnon.components.navigation.nav.HorizontalNavigationBar
 import app.n_zik.compagnon.components.navigation.nav.NavigationTab
@@ -7,10 +8,6 @@ import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.utils.Preferences
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,9 +52,11 @@ import org.jetbrains.compose.resources.stringResource
  * page have none (the phone has none there).
  *
  * The settings logic (state, dialogs, the `CacheSpaceIndicator`) is unchanged from the v1 overlay —
- * only its container moved into the tabs. Dropped: the phone's 4 other tabs (search, AI
- * recommendations, accounts, UI), the image-cache / download-qualities / player-appearance entries,
- * the phone's settings search over its 9 tabs (here it is functional over the 4 ported ones).
+ * only its container moved into the tabs. Dropped (NAV-1, PC scope): 4 of the phone's 9 tabs — UI,
+ * Player appearance, AI recommendations, Accounts (`SettingsScreen.kt` 129-137) — the image-cache /
+ * download-qualities entries, the reset card and the deep links to a setting; the phone's settings search
+ * over its 9 tabs (here it is functional over the 4 ported ones). The tab switch follows the phone's
+ * `transitionEffect` (`EffectHandler.kt` `transition()`, `ui.settings` since 1.10.0).
  */
 @Composable
 fun SettingsScreen(
@@ -77,13 +76,18 @@ fun SettingsScreen(
     // the tabs only reading and writing their own
     var searchQueries by remember { mutableStateOf<Map<Int, String>>(emptyMap()) }
 
+    val tabEffect = app.n_zik.compagnon.bridge.state.LocalUiSettings.current.transition
+    val tabStates = androidx.compose.runtime.saveable.rememberSaveableStateHolder()
     Box(modifier = Modifier.fillMaxSize()) {
         AnimatedContent(
             targetState = settingsTab,
-            transitionSpec = { fadeIn(tween(350)) togetherWith fadeOut(tween(350)) },
+            // The phone's tab switch (`EffectHandler.kt` `transition()`): its `transitionEffect` (`ui.settings`)
+            transitionSpec = { tabTransition(tabEffect) },
             label = "settings tab",
             modifier = Modifier.fillMaxSize(),
         ) { tab ->
+            // Each tab keeps its state (scroll) across switches, as the phone's back-stack destinations
+            tabStates.SaveableStateProvider(key = tab) {
             when (tab) {
                 0 -> GeneralSettingsScreen(preferences, searchQueries[0].orEmpty()) { searchQueries = searchQueries + (0 to it) }
                 1 -> DataSettingsScreen(preferences, cache, searchQueries[1].orEmpty()) { searchQueries = searchQueries + (1 to it) }
@@ -91,6 +95,7 @@ fun SettingsScreen(
                 3 -> OtherSettingsScreen(preferences, searchQueries[3].orEmpty()) { searchQueries = searchQueries + (3 to it) }
                 4 -> AboutScreen(preferences, onOpenUpdate)
                 else -> Unit
+            }
             }
         }
 

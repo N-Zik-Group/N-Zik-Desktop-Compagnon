@@ -72,9 +72,10 @@ import org.jetbrains.compose.resources.stringResource
  * `bookmark` in favoritesIcon when followed, the phone's `bookmark_slash` in red when disliked,
  * `bookmark_outline` in text when neutral — and a tap rotates it (neutral → followed → disliked →
  * neutral, the phone's `rotateLikeState`) and writes the phone's target state (`library.write`);
- * without the feature it stays an inert indicator, as before. Since 1.7.2 (the lists' `dislikeMode`):
+ * without the feature it stays an inert indicator (no icon change, no toast). Since 1.7.2 (the lists' `dislikeMode`):
  * the phone's "disliked" mode off makes the tap a binary toggle (followed → neutral, otherwise →
- * followed, the phone's `toggleBookmark`, its `LocalArtistItemMenu.kt` 255-272). Share has no action.
+ * followed, the phone's `toggleBookmark`, its `LocalArtistItemMenu.kt` 255-272). Share copies the
+ * artist's YouTube Music channel link to the clipboard (the desktop's share).
  */
 class LocalArtistItemMenu(
     private val artist: Artist,
@@ -84,15 +85,24 @@ class LocalArtistItemMenu(
     @Composable
     fun ListMenu() = ListMenu.Menu(title = null, showDragHandle = false) {
         val menuState = LocalMenuState.current
-        val playAll = object : MenuIcon {
+        val playAll = object : MenuIcon, app.n_zik.compagnon.components.tab.toolbar.Descriptive {
             override val iconId: DrawableResource = Res.drawable.play
+            override val messageId: org.jetbrains.compose.resources.StringResource = Res.string.play_all_local_songs
             override val isEnabled: Boolean = actions.enabled
             override val menuIconTitle: String
-                @Composable get() = stringResource(Res.string.play_all_local_songs)
+                @Composable get() = stringResource(messageId)
 
+            // The phone's long press does nothing here (`onLongClick() {}`): no help toast
+            override fun onLongClick() {}
+
+            // The phone's 343-351: an artist without songs answers "No song found" and keeps the menu open
             override fun onShortClick() {
-                actions.onPlay()
-                menuState.hide()
+                if (artist.trackCount > 0) {
+                    actions.onPlay()
+                    menuState.hide()
+                } else {
+                    app.n_zik.compagnon.utils.Toaster.e(Res.string.no_song_found)
+                }
             }
         }
         ListMenu.SectionTitle(stringResource(Res.string.playback))
@@ -252,7 +262,8 @@ class LocalArtistItemMenu(
                             ArtistFollow.Neutral -> colorPalette().text
                         },
                         onClick = {
-                            if (actions.enabled) {
+                            // Inert without `library.write` (no icon change, no toast: nothing is written)
+                            if (actions.enabled && writes != null) {
                                 val target = if (rotationEnabled) followState.nextRotation() else followState.nextToggle()
                                 followState = target
                                 writes?.followArtist(artist.id, target)
@@ -268,7 +279,7 @@ class LocalArtistItemMenu(
                     IconButton(
                         icon = Res.drawable.share_social,
                         color = colorPalette().text,
-                        onClick = {},
+                        onClick = { app.n_zik.compagnon.components.player.ShareLinks.copy(app.n_zik.compagnon.components.player.ShareLinks.artist(artist.id)) },
                         modifier = Modifier
                             .padding(all = 4.dp)
                             .size(20.dp),

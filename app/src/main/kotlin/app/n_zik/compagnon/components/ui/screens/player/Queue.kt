@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.player
 
+import app.n_zik.compagnon.components.tab.ShuffleOkFlash
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -91,9 +92,11 @@ import org.jetbrains.compose.resources.stringResource
  * contract route, a click does nothing.
  * Dropped: the swipe actions (no swipe on the PC: "Remove from queue" moves to the item's menu, PC only), the
  * multi-selection, Discover, the radio's loading placeholders, the remembered scroll position across openings
- * (the list opens on the current track), the "Deleted" toast after clearing (the phone confirms it through
- * the WS).
- * Queue actions are hidden without the `queue` feature and do nothing outside a `Live` session.
+ * (the list opens on the current track). Clearing shows the phone's "Deleted" toast (its `Queue.kt` 301-303).
+ * Without the `queue` feature the item menu still opens (as on the phone) with inert entries; queue actions do
+ * nothing outside a `Live` session.
+ * The clear's "Deleted" toast (the phone's 301-303, after its local clear) is shown when the `clear`
+ * command is sent, before the phone answers (optimistic; a late failure toasts its own error).
  */
 @Composable
 fun Queue(
@@ -142,10 +145,12 @@ fun Queue(
         val repeat = Repeat(state, onCommand, actionsEnabled)
         val deleteDialog = DeleteFromQueue(actionsEnabled) {
             onCommand { clearQueue() }
+            // The phone's toast after clearing its queue (its `Queue.kt` 301-303)
+            Toaster.s(Res.string.deleted)
             onDismiss(repeat.type)
         }
         val queueArrow = QueueArrow { onDismiss(repeat.type) }
-        val locator = Locator(lazyListState, { windowsOnDisplay.map { it.value } }, onMessage = { Toaster.i(it) })
+        val locator = Locator(lazyListState, { windowsOnDisplay.map { it.value } }, dedupedRows = false, onMessage = { Toaster.i(it) })
 
         // Dialog renders
         deleteDialog.Render()
@@ -264,18 +269,16 @@ fun Queue(
                         SongItem(
                             song = song,
                             backgroundColor = itemBackground,
-                            onLongClick = if (queueFeature) {
-                                {
-                                    menuState.display {
-                                        SongItemMenu(
-                                            song = song,
-                                            actions = actions,
-                                            onRemoveFromQueue = { onCommand { remove(index, song.id) } },
-                                        ).MenuComponent()
-                                    }
+                            // The phone always opens `SongItemMenu` (its 549); without the `queue` feature its
+                            // entries stay inert (no "Remove from queue", the queue cannot change)
+                            onLongClick = {
+                                menuState.display {
+                                    SongItemMenu(
+                                        song = song,
+                                        actions = if (queueFeature) actions else actions.copy(enabled = false),
+                                        onRemoveFromQueue = if (queueFeature) ({ onCommand { remove(index, song.id) } }) else null,
+                                    ).MenuComponent()
                                 }
-                            } else {
-                                null
                             },
                             trailingContent = {
                                 if (!positionLock.isLocked()) {
@@ -286,7 +289,8 @@ fun Queue(
                             onClick = {
                                 if (!actionsEnabled) return@SongItem
                                 if (index == state.currentIndex && song.id == state.currentTrackId) {
-                                    if (state.isPlaying) {
+                                    // The phone's `shouldBePlaying` (`playWhenReady`): buffering counts as playing
+                                    if (state.shouldBePlaying) {
                                         onCommand { pause() }
                                     } else {
                                         onCommand { play() }
@@ -336,20 +340,22 @@ private fun targetIndex(state: LazyListState, from: Int, offset: Float): Int? {
  * Together lock plays the same role there).
  */
 
-/** Port of `Repeat`: the repeat mode, `off` → `one` → `all` (`player/repeat`). */
+/**
+ * Port of `Repeat`: the repeat mode, `off` → `one` → `all` (`player/repeat`). As the phone's (its `Queue.kt`
+ * 109-119) it is not `Descriptive`: no help on a long press / right click.
+ */
 class Repeat(
     state: PlayerState,
     private val onCommand: CommandLauncher,
     private val enabled: Boolean,
-) : MenuIcon, Descriptive {
+) : MenuIcon {
 
     val type: QueueLoopType = QueueLoopType.from(state.repeatMode)
 
     override val iconId: DrawableResource = Res.drawable.repeat
-    override val messageId: StringResource = Res.string.repeat
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(messageId)
+        get() = stringResource(Res.string.repeat)
     override val icon: Painter
         @Composable
         get() = painterResource(type.iconId)
@@ -367,7 +373,8 @@ class Repeat(
 /**
  * Port of `ShuffleQueue`: scrolls to the top then shuffles. The phone shuffles its queue; the contract turns
  * the shuffle mode on or off (`player/shuffle`, which reorders the queue), so the button toggles it.
- * Dropped: the selection (no multi-selection) and the confirmation flash of the icon.
+ * As on the phone (issue #866) a press lights the app-wide [ShuffleOkFlash]. Dropped: the selection (no
+ * multi-selection).
  */
 class ShuffleQueue(
     private val state: PlayerState,
@@ -377,7 +384,8 @@ class ShuffleQueue(
     private val enabled: Boolean,
 ) : MenuIcon, Descriptive {
 
-    override val iconId: DrawableResource = Res.drawable.shuffle
+    override val iconId: DrawableResource
+        get() = if (ShuffleOkFlash.active) Res.drawable.shuffle_ok else Res.drawable.shuffle
     override val messageId: StringResource = Res.string.shuffle
     override val menuIconTitle: String
         @Composable
@@ -388,6 +396,7 @@ class ShuffleQueue(
 
     override fun onShortClick() {
         if (!enabled) return
+        ShuffleOkFlash.trigger()
         val shuffled = !state.shuffle
         coroutineScope.launch {
             lazyListState.smoothScrollToTop()

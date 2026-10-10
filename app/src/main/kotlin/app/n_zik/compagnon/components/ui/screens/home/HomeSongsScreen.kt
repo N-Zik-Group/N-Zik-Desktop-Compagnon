@@ -1,5 +1,7 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import app.n_zik.compagnon.bridge.library.toListRef
+import app.n_zik.compagnon.bridge.state.ListRef
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
@@ -85,7 +87,9 @@ import org.jetbrains.compose.resources.stringResource
  * Compagnon's "Refresh". Until the first answered page — or on a phone before 1.8.0 — the phone's
  * default buttons of the active chip stand in ([HomeSongsToolbarSettingsDialog] `allButtonIds` /
  * `tabAvailableIds`). Wired: sort (or the period
- * selector on Top), search, locator, shuffle, play next and enqueue (on the loaded tracks); the rest
+ * selector on Top), search, locator, shuffle, play next and enqueue (since contract 1.10.0 on the phone's
+ * WHOLE list — `queue.fullList` / `library.locate`, the phone's filters, cap and toasts; on the loaded tracks
+ * before, and always on the PC-only chips); the rest
  * (position lock, match, download all / delete downloads, smart shuffle, item selector, add to
  * favorites / to a playlist, import / export, update, smart trash) are placeholders without a contract
  * route, a click does nothing; the buttons that do not fit the row go behind the "…" menu. The phone
@@ -183,7 +187,18 @@ fun HomeSongsScreen(
 
     val showText: (StringResource) -> Unit = { id -> scope.launch { onMessage(getString(id)) } }
     val search = Search(searchText, lists::onSongsSearch, lazyListState)
-    val locator = Locator(lazyListState, { activeList.state.value.items }, onMessage = showText)
+    // Since 1.10.0 (`queue.fullList`, `library.locate`): the whole list behind the active chip, named for
+    // the phone — only the phone's own chips (the PC-only ones are client-side lists, `null`)
+    val activeListRef: () -> ListRef? = {
+        if (lists.activeSongsChip.wireFilter != null && activeList === lists.songs) lists.songs.query.value.toListRef() else null
+    }
+    val locator = Locator(
+        lazyListState,
+        { activeList.state.value.items },
+        listRef = activeListRef,
+        pagedList = activeList,
+        onMessage = showText,
+    )
     val sortsOnPhone = SessionContract.FEATURE_LIBRARY_SORT in lists.features
     val playbackEnabled = live && actions.available
 
@@ -285,22 +300,22 @@ fun HomeSongsScreen(
                 "match" -> if (hasUnmatched) add(InertButton(Res.drawable.alert, Res.string.match_album_audio_version))
                 "search" -> add(search)
                 "locator" -> add(locator)
-                "download_all" -> add(InertButton(Res.drawable.downloaded, Res.string.download))
+                "download_all" -> add(InertButton(Res.drawable.downloaded, Res.string.download, descriptionId = Res.string.info_download_all_songs))
                 "delete_downloads" -> add(InertButton(Res.drawable.download, Res.string.info_remove_all_downloaded_songs))
                 "shuffle" -> if (actions.available) {
-                    add(SongShuffler(enabled = playbackEnabled) { activeList.state.value.let { items -> actions.playShuffled(items.items, items.total ?: items.items.size) } })
+                    add(SongShuffler(enabled = playbackEnabled) { activeList.state.value.let { items -> actions.playShuffled(items.items, items.total ?: items.items.size, activeListRef()) } })
                 } else {
-                    add(InertButton(Res.drawable.shuffle, Res.string.info_shuffle))
+                    add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
                 }
                 "smart_shuffle" -> add(InertButton(Res.drawable.smart_shuffle, Res.string.info_smart_recommendation))
                 "item_selector" -> add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
                 "play_next" -> if (actions.available) {
-                    add(PlayNext(enabled = playbackEnabled) { activeList.state.value.let { items -> actions.addAll(items.items, QueuePosition.Next, items.total ?: items.items.size) } })
+                    add(PlayNext(enabled = playbackEnabled) { activeList.state.value.let { items -> actions.addAll(items.items, QueuePosition.Next, items.total ?: items.items.size, activeListRef()) } })
                 } else {
                     add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
                 }
                 "enqueue" -> if (actions.available) {
-                    add(Enqueue(enabled = playbackEnabled) { activeList.state.value.let { items -> actions.addAll(items.items, QueuePosition.End, items.total ?: items.items.size) } })
+                    add(Enqueue(enabled = playbackEnabled) { activeList.state.value.let { items -> actions.addAll(items.items, QueuePosition.End, items.total ?: items.items.size, activeListRef()) } })
                 } else {
                     add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
                 }
@@ -381,36 +396,38 @@ fun HomeSongsScreen(
                                 onValueUpdate = { selectChip(it) },
                                 modifier = Modifier.padding(end = 12.dp),
                             )
+                            // Inside the chips column, as on the phone (`HomeSongsScreen.kt` 763-782):
+                            // the row's 16 dp side and 8 dp bottom padding apply to the bar too
+                            // The cache space bar (contract 1.7.1, phone's `HomeSongsScreen.kt` 763-782): on the
+                            // cached / downloaded chips, the phone's cache used over its configured cap; on the
+                            // "Cached PC" chip, the Compagnon's own audio cache (contract §8.3) used over its
+                            // ceiling — an unlimited cap hides the bar, like on the phone
+                            val phoneCache = when (chip) {
+                                SongsChip.CachedTel -> libraryCache?.cached
+                                SongsChip.DownloadTel -> libraryCache?.downloaded
+                                else -> null
+                            }
+                            val pcCache = if (chip == SongsChip.CachedPc) lists.audioCache else null
+                            AnimatedVisibility(visible = phoneCache?.maxBytes != null || pcCache?.ceiling != null) {
+                                when (val cache = pcCache) {
+                                    null -> CacheSpaceIndicator(
+                                        usedBytes = phoneCache?.usedBytes ?: 0L,
+                                        maxBytes = phoneCache?.maxBytes,
+                                        // Since 1.7.2: the phone's own label of its cap ("2GB", "Custom", "Turn off",
+                                        // its `ExoPlayerDiskCacheMaxSize.text`); a ≤ 1.7.1 phone does not send it,
+                                        // then the client formats its cap itself, as before
+                                        maxText = phoneCache?.maxText ?: formatShortFileSize(phoneCache?.maxBytes ?: 0L),
+                                    )
+                                    else -> CacheSpaceIndicator(
+                                        usedBytes = cache.totalBytes(),
+                                        maxBytes = cache.ceiling,
+                                        maxText = formatShortFileSize(cache.ceiling ?: 0L),
+                                    )
+                                }
+                            }
                         }
                     }
 
-                    // The cache space bar (contract 1.7.1, phone's `HomeSongsScreen.kt` 763-782): on the
-                    // cached / downloaded chips, the phone's cache used over its configured cap; on the
-                    // "Cached PC" chip, the Compagnon's own audio cache (contract §8.3) used over its
-                    // ceiling — an unlimited cap hides the bar, like on the phone
-                    val phoneCache = when (chip) {
-                        SongsChip.CachedTel -> libraryCache?.cached
-                        SongsChip.DownloadTel -> libraryCache?.downloaded
-                        else -> null
-                    }
-                    val pcCache = if (chip == SongsChip.CachedPc) lists.audioCache else null
-                    AnimatedVisibility(visible = phoneCache?.maxBytes != null || pcCache?.ceiling != null) {
-                        when (val cache = pcCache) {
-                            null -> CacheSpaceIndicator(
-                                usedBytes = phoneCache?.usedBytes ?: 0L,
-                                maxBytes = phoneCache?.maxBytes,
-                                // Since 1.7.2: the phone's own label of its cap ("2GB", "Custom", "Turn off",
-                                // its `ExoPlayerDiskCacheMaxSize.text`); a ≤ 1.7.1 phone does not send it,
-                                // then the client formats its cap itself, as before
-                                maxText = phoneCache?.maxText ?: formatShortFileSize(phoneCache?.maxBytes ?: 0L),
-                            )
-                            else -> CacheSpaceIndicator(
-                                usedBytes = cache.totalBytes(),
-                                maxBytes = cache.ceiling,
-                                maxText = formatShortFileSize(cache.ceiling ?: 0L),
-                            )
-                        }
-                    }
                     search.SearchBar()
                 }
             },
@@ -427,6 +444,7 @@ fun HomeSongsScreen(
                     // Since 1.7.1: the phone's listening-sort overlays and the Top chip's rank
                     sort = chipSort.songSort,
                     isTop = chip == SongsChip.Top,
+                    listRef = activeListRef,
                 )
             }
         }

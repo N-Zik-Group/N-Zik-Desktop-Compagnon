@@ -229,11 +229,15 @@ fun App() {
                     )
                     // The new-update dialog (spec `spec-updater` AD-6, the phone's `Skeleton.kt`
                     // call site): drawn at the root, above the bridge screen
-                    NewUpdateAvailableDialog.Render()
-                    // The "ask" startup dialog (spec AD-9, the phone's `CheckForUpdateDialog` —
-                    // the v1 confirmation is gone): the phone's info card + Check / Cancel /
-                    // Turn off, active once at startup when the choice is [CheckUpdateState.Ask]
-                    CheckForUpdateDialog.Render()
+                    // The root dialogs sit outside MainActivity's `LocalUiSettings`: the phone's
+                    // settings (PitchBlack) reach them through the appearance state
+                    CompositionLocalProvider(app.n_zik.compagnon.bridge.state.LocalUiSettings provides appearanceState.uiSettings) {
+                        NewUpdateAvailableDialog.Render()
+                        // The "ask" startup dialog (spec AD-9, the phone's `CheckForUpdateDialog` —
+                        // the v1 confirmation is gone): the phone's info card + Check / Cancel /
+                        // Turn off, active once at startup when the choice is [CheckUpdateState.Ask]
+                        CheckForUpdateDialog.Render()
+                    }
                 }
             }
           }

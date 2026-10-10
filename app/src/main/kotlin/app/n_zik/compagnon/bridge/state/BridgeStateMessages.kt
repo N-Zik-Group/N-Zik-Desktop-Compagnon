@@ -107,6 +107,21 @@ object SessionContract {
 
     /** §5 (since 1.9.0): the phone's effective UI language in the `meta` answer (`language`). */
     const val FEATURE_UI_LANGUAGE = "ui.language"
+
+    /**
+     * §5 / §9 (since 1.10.0): `POST /queue/list` — the phone builds the queue from a WHOLE list
+     * (a list reference, §10.4) with its own filters, `maxSongsInQueue` cap and toasts.
+     */
+    const val FEATURE_QUEUE_FULL_LIST = "queue.fullList"
+
+    /** §5 / §10.4 (since 1.10.0): `GET /library/locate`, a track's position in a whole list. */
+    const val FEATURE_LIBRARY_LOCATE = "library.locate"
+
+    /** §5 / §10.5 (since 1.10.0): `GET /ui/settings`, the phone's UI settings the PC mirrors. */
+    const val FEATURE_UI_SETTINGS = "ui.settings"
+
+    /** §5 / §7.9 (since 1.10.0): the WS `toast` message, the phone's relayed toasts. */
+    const val FEATURE_UI_TOASTS = "ui.toasts"
 }
 
 /** `RepeatMode` (contract §1.1); an unknown value reads as [Off]. */
@@ -345,6 +360,8 @@ data class SnapshotMessage(
     val shuffle: Boolean = false,
     /** Since 1.2; a 1.1 phone does not send it. */
     val audioOutput: AudioOutput = AudioOutput.Phone,
+    /** Since 1.10.0 (contract §7.1): the phone's `playWhenReady`; `null` from an older phone. */
+    val playWhenReady: Boolean? = null,
 ) : ServerMessage
 
 @Serializable
@@ -358,6 +375,8 @@ data class PlaybackChangedMessage(
     val durationMs: Long = PlayerState.DURATION_UNREPORTED,
     val speed: Float,
     val positionMs: Long,
+    /** Since 1.10.0 (contract §7.1): the phone's `playWhenReady`; `null` from an older phone. */
+    val playWhenReady: Boolean? = null,
 ) : DeltaMessage
 
 @Serializable
@@ -372,6 +391,8 @@ data class TrackChangedMessage(
     val isBuffering: Boolean = false,
     /** Since 1.5 (contract §7.2), the player's live duration (reset on a new track); a ≤ 1.4 phone does not send it. */
     val durationMs: Long = PlayerState.DURATION_UNREPORTED,
+    /** Since 1.10.0 (contract §7.1): the phone's `playWhenReady`; `null` from an older phone. */
+    val playWhenReady: Boolean? = null,
 ) : DeltaMessage
 
 @Serializable
@@ -437,6 +458,19 @@ data class ErrorMessage(
     val commandId: String? = null,
 ) : ServerMessage
 
+/**
+ * §7.9 (since 1.10.0, `ui.toasts`): a toast the phone showed. [key] is the phone's string resource
+ * name (the PC's `strings.xml` uses the same names), [args] its format arguments, [toastType] the
+ * phone's toast type, [message] the text the phone showed. Never affects the revision.
+ */
+@Serializable
+data class ToastMessage(
+    val key: String = "",
+    val args: List<String> = emptyList(),
+    val toastType: String = "normal",
+    val message: String = "",
+) : ServerMessage
+
 /** §7.7: last message of the session, followed by a `1001` close. */
 @Serializable
 data class ServerStoppedMessage(
@@ -467,6 +501,7 @@ object ServerMessages {
             "pong" -> PongMessage.serializer()
             "error" -> ErrorMessage.serializer()
             "serverStopped" -> ServerStoppedMessage.serializer()
+            "toast" -> ToastMessage.serializer()
             else -> {
                 val revision = (json["revision"] as? JsonPrimitive)?.takeIf { !it.isString }?.longOrNull
                 return UnknownMessage(type, revision)
@@ -546,6 +581,53 @@ object QueuePositionSerializer : KSerializer<QueuePosition> {
 @Serializable
 data class QueueAddCommandBody(val trackIds: List<String>, val position: QueuePosition, val commandId: String?)
 
+/**
+ * A reference to a whole track list of the phone (contract §10.4, since 1.10.0): the parameters of
+ * the list route, without pagination. [kind] is `songs`, `playlist`, `album` or `artist`.
+ */
+@Serializable
+data class ListRef(
+    val kind: String,
+    val id: String? = null,
+    val filter: String? = null,
+    val sort: String? = null,
+    val reverse: Boolean = false,
+    val period: String? = null,
+    val text: String? = null,
+) {
+    companion object {
+        const val KIND_SONGS = "songs"
+        const val KIND_PLAYLIST = "playlist"
+        const val KIND_ALBUM = "album"
+        const val KIND_ARTIST = "artist"
+    }
+}
+
+/** `action` of `/queue/list` (contract §9, since 1.10.0). */
+enum class ListAction(val wire: String) {
+    /** The phone's click on a list item. */
+    Play("play"),
+
+    /** The phone's shuffle button (its filters, `maxSongsInQueue`, toasts). */
+    Shuffle("shuffle"),
+
+    /** "Play next". */
+    Next("next"),
+
+    /** "Enqueue". */
+    End("end"),
+}
+
+/** `/queue/list` (contract §9, since 1.10.0): the phone resolves [list] and applies [action]. */
+@Serializable
+data class QueueListCommandBody(
+    val list: ListRef,
+    val action: String,
+    val startIndex: Int = 0,
+    val startTrackId: String? = null,
+    val commandId: String?,
+)
+
 /** Every command the Compagnon sends, with its route under `/api/v1`. */
 enum class CommandKind(val route: String) {
     Play("player/play"),
@@ -563,4 +645,7 @@ enum class CommandKind(val route: String) {
     Clear("queue/clear"),
     QueuePlay("queue/play"),
     QueueAdd("queue/add"),
+
+    /** Since 1.10.0 (`queue.fullList`): a whole list through the phone's own queue entries. */
+    QueueList("queue/list"),
 }

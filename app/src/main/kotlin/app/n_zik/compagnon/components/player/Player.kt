@@ -1,5 +1,7 @@
 package app.n_zik.compagnon.components.player
 
+import app.n_zik.compagnon.LocalLibraryActions
+import app.n_zik.compagnon.bridge.state.LocalUiSettings
 import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.animation.animateContentSize
@@ -91,7 +93,7 @@ internal val VIOLET_ACCENT = Color(0.54509807f, 0.36078432f, 0.9647059f)
  * - Background: the two rotating gradients of the cover's local palette and the theme, masked, then the
  *   M3E morphing shapes in the cover's saturated / darkened swatches while it plays.
  * - Top bar (90 % wide, 30 dp): the chevron that closes the player, the app logo (closes it too, the phone
- *   then goes home), the ⋮ menu (`SongItemMenu` of the current track).
+ *   then goes home), the ⋮ menu (the phone's `PlayerMenu` layout, `SongItemMenu(playerMenu = true)`).
  * - The cover ([Thumbnail]) shrinking while paused, the total queue time, [Controls], the [ActionBar].
  * - The queue: [QueuePanel] at 65 % of the window, opened from the action bar.
  * - The [BlurredCover] under the background (`Player.kt` 1418, 1967).
@@ -99,10 +101,20 @@ internal val VIOLET_ACCENT = Color(0.54509807f, 0.36078432f, 0.9647059f)
  *   cover in the left half (30 % thumbnail size), the controls bottom-aligned and the action bar on the right,
  *   no top bar (`Player.kt` 1300-1737).
  *
+ * - The cover's double tap rotates the like (`Player.kt` 1205-1215, both orientations); the cover shrinks
+ *   with `shouldBePlaying` (playing or buffering).
+ * - The back (Escape) closes the inline queue first, then the player (the phone's `BackHandler`, through the
+ *   window's `LocalPlayerQueueState`).
+ * - Since contract 1.10.0 (`ui.settings`): the phone's light / system / dark mode, its blur adjuster.
+ *
  * Dropped (contract v1 or PC): the `Modern` layout and the expanded player (not the default), lyrics, visualizer,
- * stats for nerds, sleep timer, the video search sheet, the horizontal swipe on the cover (no swipe on the PC),
- * the system bar insets, `BackHandler`. The phone's `PlayerMenu` is replaced by the song menu the Compagnon
- * has (`SongItemMenu`: play next, enqueue).
+ * stats for nerds, sleep timer, the video search sheet, the horizontal swipe on the cover (no touch swipe on the
+ * PC), the system bar insets, the cover's tap / long press (lyrics / stats: not ported). Not read from
+ * `/ui/settings` yet: the other player backgrounds (`playerBackgroundColors`, `bottomGradient`,
+ * `blurDarkenFactor`) — deferred; the PC keeps AnimatedGradient + M3EMorphingCover.
+ * Not linked (audit 2026-10-10 pass 5): a click on the title / artists (the phone's `Modern.kt`
+ * 172-180, 333-345: its album / artist route) does nothing — the open page needs the album / artist
+ * header the player state does not carry; only the icons' routes are documented above.
  */
 @Composable
 fun Player(
@@ -124,7 +136,9 @@ fun Player(
         animationSpec = tween(durationMillis = 200), label = "",
     )
 
-    val showQueueState = rememberSaveable { mutableStateOf(false) }
+    // Hoisted by the window (the back closes the queue first, the phone's BackHandler); local fallback
+    val localQueueState = rememberSaveable { mutableStateOf(false) }
+    val showQueueState = app.n_zik.compagnon.core.navigation.LocalPlayerQueueState.current ?: localQueueState
     var showQueue by showQueueState
 
     val state = playerState ?: return
@@ -148,8 +162,11 @@ fun Player(
     @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
     var coverSwatchesLoaded by remember { mutableStateOf(false) }
 
-    // ColorPaletteMode.Dark (the default)
-    val lightTheme = false
+    // The phone's `lightTheme` (`Player.kt`): `Light`, or `System` on a light desktop — its
+    // `colorPaletteMode`, read since contract 1.10.0 (`ui.settings`; `Dark` by default)
+    val uiSettings = LocalUiSettings.current
+    val systemDark = androidx.compose.foundation.isSystemInDarkTheme()
+    val lightTheme = uiSettings.isLightMode || (uiSettings.isSystemMode && !systemDark)
     fun saturate(color: Int): Color = m3eSaturate(color, lightTheme)
     fun Color.darkenBy(): Color = m3eDarkenBy(lightTheme)
 
@@ -232,8 +249,19 @@ fun Player(
             }
     }
 
+    val goHome = app.n_zik.compagnon.core.navigation.LocalGoHome.current
+    val likeWritesForCover = LocalLibraryActions.current?.takeIf { it.canWrite }
+    // Collected unconditionally (no conditional composable call): a remembered empty flow without the lists
+    val dislikeModeFlow = LocalLibraryActions.current?.lists?.dislikeMode
+        ?: remember { kotlinx.coroutines.flow.MutableStateFlow<app.n_zik.compagnon.bridge.library.DislikeMode?>(null) }
+    val likeRotationForCover = dislikeModeFlow.collectAsState().value?.songs != false
+    val onCoverDoubleTap: () -> Unit = {
+        if (live) state.currentTrack?.let { rotateTrackLike(it, likeWritesForCover, likeRotationForCover) }
+    }
     val title = mediaItem.title.ifBlank { stringResource(Res.string.unknown_title) }
-    val artist = mediaItem.artists?.takeIf { it.isNotBlank() } ?: stringResource(Res.string.unknown_artist)
+    // The phone's `cleanPrefix(artistTextWithFallback())` (its `Controls.kt` 120)
+    val artist = mediaItem.artists?.let { app.n_zik.compagnon.utils.cleanPrefix(it) }?.takeIf { it.isNotBlank() }
+        ?: stringResource(Res.string.unknown_artist)
 
     BoxWithConstraints(
         modifier = Modifier
@@ -251,6 +279,8 @@ fun Player(
         fun Controller(modifier: Modifier) = Controls(
             state = state,
             title = title,
+            // The phone's `MediaItem.isExplicit` (`Utils.kt` 405-411) counts the title's `e:` prefix too;
+            // the phone's bridge already folds it into `Track.isExplicit` (`TrackMapping.kt` 88)
             isExplicit = mediaItem.isExplicit || mediaItem.title.hasExplicitPrefix(),
             artist = artist,
             position = { positionAndDurationState.value.first },
@@ -280,19 +310,24 @@ fun Player(
                             .fillMaxHeight()
                             .animateContentSize(),
                     ) {
-                        Box(
+                        // The phone omits the whole cover box without its `showthumbnail` (`Player.kt` 1457)
+                        if (uiSettings.showThumbnail) Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxWidth(0.5f),
                         ) {
-                            Thumbnail(
-                                state = state,
-                                modifier = Modifier
-                                    // thumbnailSizeLDp = 30 (the default)
-                                    .padding(all = ((100f - 30f) * 0.5f).dp)
-                                    .thumbnailpause(
-                                        shouldBePlaying = state.isPlaying,
-                                    ),
-                            )
+                            run {
+                                Thumbnail(
+                                    state = state,
+                                    onDoubleTap = onCoverDoubleTap,
+                                    modifier = Modifier
+                                        // thumbnailSizeLDp = 30 (the default)
+                                        .padding(all = ((100f - 30f) * 0.5f).dp)
+                                        .thumbnailpause(
+                                            // The phone's `shouldBePlaying` (`playWhenReady`): playing, or buffering to play
+                                            shouldBePlaying = state.shouldBePlaying,
+                                        ),
+                                )
+                            }
                         }
                     }
                     Column(
@@ -313,6 +348,7 @@ fun Player(
                             showQueueState = showQueueState,
                             live = live && queueFeature,
                             showShuffle = playback,
+                            isLandscape = true,
                         )
                     }
                 }
@@ -348,7 +384,9 @@ fun Player(
                             contentDescription = stringResource(Res.string.cd_app_icon_in_player),
                             modifier = Modifier.size(24.dp)
                                 .clip(uiRoundnessShape()).clickable {
+                                    // The phone's logo: closes the player and goes home
                                     onDismiss()
+                                    goHome?.invoke()
                                 },
                         )
 
@@ -358,7 +396,8 @@ fun Player(
                             contentDescription = null,
                             colorFilter = ColorFilter.tint(colorPalette().collapsedPlayerProgressBar),
                             modifier = Modifier
-                                .clip(uiRoundnessShape()).clickable(enabled = queueFeature) {
+                                .clip(uiRoundnessShape()).clickable {
+                                    // Always opens, as on the phone; without `queue` its entries stay inert
                                     menuState.display {
                                         SongItemMenu(
                                             song = mediaItem,
@@ -366,8 +405,10 @@ fun Player(
                                                 onPlay = {},
                                                 onPlayNext = { onCommand { addTracks(listOf(mediaItem.id), QueuePosition.Next) } },
                                                 onEnqueue = { onCommand { addTracks(listOf(mediaItem.id), QueuePosition.End) } },
-                                                enabled = live,
+                                                enabled = live && queueFeature,
                                             ),
+                                            // The phone's ⋮ opens `PlayerMenu` (its `Player.kt` 2042-2055)
+                                            playerMenu = true,
                                         ).MenuComponent()
                                     }
                                 }
@@ -389,15 +430,21 @@ fun Player(
                         },
                     ) {
                         // showthumbnail, PlayerType.Essential: thumbnailContent()
-                        Thumbnail(
-                            state = state,
-                            modifier = Modifier
-                                // thumbnailSizeDp = 90 (the default)
-                                .padding(all = ((100f - 90f) * 1.5f).dp)
-                                .thumbnailpause(
-                                    shouldBePlaying = state.isPlaying,
-                                ),
-                        )
+                        // The phone shows the cover only with its `showthumbnail` (`Player.kt` 1457, 2104)
+                        if (uiSettings.showThumbnail) {
+                            Thumbnail(
+                                state = state,
+                                // The phone's double tap (`Player.kt` 1205-1215): the current track's like rotation
+                                onDoubleTap = onCoverDoubleTap,
+                                modifier = Modifier
+                                    // thumbnailSizeDp = 90 (the default)
+                                    .padding(all = ((100f - 90f) * 1.5f).dp)
+                                    .thumbnailpause(
+                                        // The phone's `shouldBePlaying` (`playWhenReady`): playing, or buffering to play
+                                        shouldBePlaying = state.shouldBePlaying,
+                                    ),
+                            )
+                        }
                     }
 
                     Column(
@@ -427,6 +474,22 @@ fun Player(
                                         TextStyle(
                                             textAlign = TextAlign.Center,
                                             color = colorPalette().text,
+                                        ),
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                                // The phone's text outline over the queue time (`Player.kt` 2305-2321)
+                                BasicText(
+                                    text = " ${formatAsTime(totalPlayTimes)}",
+                                    style = typography().xxs.semiBold.merge(
+                                        TextStyle(
+                                            textAlign = TextAlign.Center,
+                                            drawStyle = androidx.compose.ui.graphics.drawscope.Stroke(
+                                                width = 1f,
+                                                join = androidx.compose.ui.graphics.StrokeJoin.Round,
+                                            ),
+                                            color = durationOutlineColorOf(uiSettings.textOutline, colorPalette()),
                                         ),
                                     ),
                                     maxLines = 1,

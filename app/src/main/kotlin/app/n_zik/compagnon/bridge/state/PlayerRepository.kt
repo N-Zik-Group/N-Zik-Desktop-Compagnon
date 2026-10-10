@@ -42,6 +42,11 @@ sealed interface PlayerNotice {
 
     /** WS `error` frame (contract §7.6): a command already confirmed failed later. */
     data class LateError(override val command: CommandKind?, val code: String, val commandId: String?) : PlayerNotice
+
+    /** WS `toast` frame (contract §7.9, since 1.10.0): a toast the phone showed, shown on the PC too. */
+    data class PhoneToast(val key: String, val args: List<String>, val toastType: String, val message: String) : PlayerNotice {
+        override val command: CommandKind? get() = null
+    }
 }
 
 /**
@@ -106,8 +111,23 @@ interface PlayerRepository {
      */
     suspend fun playTracks(trackIds: List<String>, startIndex: Int = 0, total: Int = trackIds.size)
 
+    /**
+     * `/queue/list` (contract §9, since 1.10.0, feature `queue.fullList`): the phone resolves the WHOLE
+     * list [list] and hands it to its own queue entry for [action] (click / shuffle / play next /
+     * enqueue), with its filters, `maxSongsInQueue` cap and toasts. [startIndex] / [startTrackId] name
+     * the clicked item for [ListAction.Play]. Callers check the feature first.
+     */
+    suspend fun playList(list: ListRef, action: ListAction, startIndex: Int = 0, startTrackId: String? = null) {}
+
     /** `/queue/add` at [position]; over 500 ids, the first 500 only, with a [PlayerNotice.Truncated] (see [playTracks] for [total]). */
     suspend fun addTracks(trackIds: List<String>, position: QueuePosition, total: Int = trackIds.size)
+
+    /**
+     * The optimistic like of a §10.2 write (the player heart, the cover double-click, the player
+     * menu): patches the current track and the queue items of [trackId] at once, before the phone's
+     * queue delta confirms it — a like alone moves no player event. A no-op when not queued.
+     */
+    fun patchTrackLike(trackId: String, like: TrackLike) {}
 
     fun start()
 

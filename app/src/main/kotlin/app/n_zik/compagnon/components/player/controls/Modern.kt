@@ -1,5 +1,7 @@
 package app.n_zik.compagnon.components.player.controls
 
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
@@ -44,9 +46,12 @@ import org.jetbrains.compose.resources.stringResource
  *   m.bold (`person` for one artist, `people` otherwise, `unknown` without a text).
  * A long press (a right click on the PC) copies the text, with the phone's "copied" toast.
  *
- * The icons are shown like the phone's navigable case (text colour) but have no action: the contract gives
- * no album or artist id for a track. Dropped: the like button (`Modern` controls only, not the default); the
- * text outline, transparent by default.
+ * The icons follow the phone's `playerInfoShowIcons` (since contract 1.10.0, `ui.settings`). Adaptation: they
+ * are shown like the phone's navigable case (text colour) but have no action, and the phone's
+ * `logo_youtube` / `textDisabled` branches (no album / artist id) and its `artistIds.size` count cannot be
+ * decided — the contract's `Track` carries no album or artist ids (the artist icon counts the comma-separated
+ * names instead). The title and artists carry the phone's text outline (`textoutline`, since 1.10.0
+ * `ui.settings`). Dropped: the like button (`Modern` controls only, not the default).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -56,6 +61,11 @@ fun InfoAlbumAndArtistModern(
     isExplicit: Boolean,
     disableScrollingText: Boolean = false,
 ) {
+    val showInfoIcons = app.n_zik.compagnon.bridge.state.LocalUiSettings.current.playerInfoShowIcons
+    val outlineColor = app.n_zik.compagnon.components.player.durationOutlineColorOf(
+        app.n_zik.compagnon.bridge.state.LocalUiSettings.current.textOutline,
+        colorPalette(),
+    )
     val unknownTitle = stringResource(Res.string.unknown_title)
     val unknownArtist = stringResource(Res.string.unknown_artist)
     val clipboard = LocalClipboardManager.current
@@ -78,18 +88,21 @@ fun InfoAlbumAndArtistModern(
             modifier = Modifier.fillMaxWidth(),
         ) {
 
-            IconButton(
-                icon = if (title.isNullOrBlank() || title == unknownTitle || title == "Unknown Title") Res.drawable.unknown else Res.drawable.album,
-                color = colorPalette().text,
-                onClick = {},
-                modifier = Modifier
-                    .size(26.dp),
-            )
+            // The phone's `playerInfoShowIcon` (its 132, 149), read since contract 1.10.0 (`ui.settings`)
+            if (showInfoIcons) {
+                IconButton(
+                    icon = if (title.isNullOrBlank() || title == unknownTitle || title == "Unknown Title") Res.drawable.unknown else Res.drawable.album,
+                    color = colorPalette().text,
+                    onClick = {},
+                    modifier = Modifier
+                        .size(26.dp),
+                )
 
-            Spacer(
-                modifier = Modifier
-                    .width(8.dp),
-            )
+                Spacer(
+                    modifier = Modifier
+                        .width(8.dp),
+                )
+            }
 
             var modifierTitle = Modifier
                 .clip(uiRoundnessShape())
@@ -129,6 +142,20 @@ fun InfoAlbumAndArtistModern(
                         maxLines = 1,
                         modifier = modifierTitle,
                     )
+                    // The phone's text outline (`textoutline`, `Modern.kt` 226-238), since 1.10.0 `ui.settings`
+                    BasicText(
+                        text = cleanPrefix(title ?: ""),
+                        style = TextStyle(
+                            drawStyle = Stroke(width = 1.5f, join = StrokeJoin.Round),
+                            color = outlineColor,
+                            fontStyle = typography().l.bold.fontStyle,
+                            fontWeight = typography().l.bold.fontWeight,
+                            fontSize = typography().l.bold.fontSize,
+                            fontFamily = typography().l.bold.fontFamily,
+                        ),
+                        maxLines = 1,
+                        modifier = modifierTitle,
+                    )
                 }
             }
         }
@@ -147,23 +174,25 @@ fun InfoAlbumAndArtistModern(
             .fillMaxWidth(),
     ) {
 
-        IconButton(
-            icon = when {
-                artist.isNullOrBlank() || artist == unknownArtist || artist == "Unknown Artist" -> Res.drawable.unknown
-                artist.contains(",") -> Res.drawable.people
-                else -> Res.drawable.person
-            },
-            color = colorPalette().text,
-            onClick = {},
-            modifier = Modifier
-                .size(24.dp)
-                .padding(start = 2.dp),
-        )
+        if (showInfoIcons) {
+            IconButton(
+                icon = when {
+                    artist.isNullOrBlank() || artist == unknownArtist || artist == "Unknown Artist" -> Res.drawable.unknown
+                    artist.contains(",") -> Res.drawable.people
+                    else -> Res.drawable.person
+                },
+                color = colorPalette().text,
+                onClick = {},
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(start = 2.dp),
+            )
 
-        Spacer(
-            modifier = Modifier
-                .width(12.dp),
-        )
+            Spacer(
+                modifier = Modifier
+                    .width(12.dp),
+            )
+        }
 
         var modifierArtist = Modifier
             .clip(uiRoundnessShape())
@@ -181,6 +210,20 @@ fun InfoAlbumAndArtistModern(
                 text = artist ?: "",
                 style = TextStyle(
                     color = colorPalette().text,
+                    fontStyle = typography().m.bold.fontStyle,
+                    fontSize = typography().m.bold.fontSize,
+                    fontWeight = typography().m.bold.fontWeight,
+                    fontFamily = typography().m.bold.fontFamily,
+                ),
+                maxLines = 1,
+                modifier = modifierArtist,
+            )
+            // The phone's text outline (`Modern.kt` 377-389)
+            BasicText(
+                text = artist ?: "",
+                style = TextStyle(
+                    drawStyle = Stroke(width = 1.5f, join = StrokeJoin.Round),
+                    color = outlineColor,
                     fontStyle = typography().m.bold.fontStyle,
                     fontSize = typography().m.bold.fontSize,
                     fontWeight = typography().m.bold.fontWeight,

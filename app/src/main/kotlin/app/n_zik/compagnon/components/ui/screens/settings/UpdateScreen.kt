@@ -46,7 +46,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.themed.DropdownMenu
-import app.n_zik.compagnon.components.themed.HeaderWithIcon
 import app.n_zik.compagnon.components.themed.ValueSelectorDialog
 import app.n_zik.compagnon.generated.AppVersion
 import app.n_zik.compagnon.generated.resources.*
@@ -100,9 +99,9 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * The update page (spec `spec-settings-navigation` NAV-4 + `spec-updater` AD-9 revised — a 1:1
  * port of the phone's `updater/ui/UpdateScreen.kt`, adapted to the desktop conventions — the
- * navigation sub-page of the settings page (the settings page stays open underneath, back lands
- * on its About tab), the back-enabled [HeaderWithIcon] (the window header's back arrow too —
- * both close the page, [onClose]), the themed [DropdownMenu] /
+ * navigation sub-page of the settings page (the settings page's state is kept underneath, back
+ * lands on its About tab), no header of its own as the phone's Scaffold (the window header's back
+ * arrow closes the page, [onClose]), the themed [DropdownMenu] /
  * [ValueSelectorDialog], the per-channel [AppVersion.channel] instead of the phone's runtime
  * beta toggle, the shared [ChangelogCard] / [InstallStep]):
  *
@@ -115,6 +114,12 @@ import org.jetbrains.compose.resources.stringResource
  *  * the bottom action — the phone's bottomBar: the download progression (the wavy progress,
  *    the indeterminate byte counter) and the per-mode install gesture ([InstallStep], the
  *    Windows interactive install), the check-for-update action and the GitHub release link.
+ *
+ * Desktop adaptations (documented, audit 2026-10-09 zone 8): the phone's pre-install backup and its
+ * install warning dialog are replaced by [InstallStep] (the PC keeps no user data to back up); the phone's
+ * `MajorUpdateWarningDialog` / `BuildTransitionWarningDialog` (Android data-migration warnings shown at
+ * start-up) have no PC equivalent; the "Beta updates" toggle is the build channel; the GitHub button opens
+ * the new version's release when an update exists (a channel-suffixed version keeps its own tag).
  *
  * The language choice + the translation toggle are persisted in `settings.json` (the phone's
  * `rememberPreference` keys — the loop-2 closure replaced the v1 in-memory `remember`): the
@@ -207,22 +212,12 @@ fun UpdateScreen(
     }
 
     // The page structure (the phone's `updater/ui/UpdateScreen.kt` Scaffold: the fixed header, the
-    // scrollable content, the bottom action riding the end of the scroll)
+    // scrollable content, the bottom action fixed under it — the phone's bottomBar)
     Column(
         modifier = Modifier
             .background(colorPalette().background0)
             .fillMaxSize(),
     ) {
-        // Header (back-enabled: its arrow closes the page, the settings page stays open on About)
-        HeaderWithIcon(
-            title = stringResource(Res.string.update),
-            iconId = Res.drawable.update,
-            enabled = true,
-            showIcon = true,
-            modifier = Modifier,
-            onClick = onClose,
-        )
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -245,7 +240,7 @@ fun UpdateScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                 Color(0xFF1A1A1A) // Gray dark for pitch black themes
                             } else {
                                 colorPalette().background1
@@ -544,7 +539,7 @@ fun UpdateScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette) {
+                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
                                 Color(0xFF1A1A1A) // Gray dark for pitch black themes
                             } else {
                                 colorPalette().background1
@@ -620,359 +615,271 @@ fun UpdateScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+        }
 
-            // The bottom action (the phone's bottomBar, adapted into the scroll): the download
-            // / progression / install gesture, the check-for-update, the GitHub release link
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(colorPalette().background0.copy(alpha = 0.95f))
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-            ) {
-                when (val state = downloadState) {
-                    is UpdateDownloadManager.DownloadState.Starting,
-                    is UpdateDownloadManager.DownloadState.Downloading,
-                    is UpdateDownloadManager.DownloadState.DownloadingIndeterminate,
-                    is UpdateDownloadManager.DownloadState.Completed -> {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = colorPalette().background1),
-                            shape = uiRoundnessShape(),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        // The bottom action (the phone's fixed bottomBar, its `UpdateScreen.kt` ~352-480: outside the
+        // scrolling column, always visible): the download
+        // / progression / install gesture, the check-for-update, the GitHub release link
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorPalette().background0.copy(alpha = 0.95f))
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+        ) {
+            when (val state = downloadState) {
+                is UpdateDownloadManager.DownloadState.Starting,
+                is UpdateDownloadManager.DownloadState.Downloading,
+                is UpdateDownloadManager.DownloadState.DownloadingIndeterminate,
+                is UpdateDownloadManager.DownloadState.Completed -> {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = colorPalette().background1),
+                        shape = uiRoundnessShape(),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
                         ) {
-                            Column(
-                                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                            ) {
-                                when (state) {
-                                    is UpdateDownloadManager.DownloadState.Downloading -> {
-                                        val downloadStr = if (hasUpdate) {
-                                            stringResource(Res.string.downloading_update)
-                                        } else {
-                                            val extraInfo =
-                                                if (fileSize.isNotEmpty()) "$channelLabel.trim() - $fileSize" else channelLabel.trim()
-                                            formatText(
-                                                stringResource(Res.string.downloading_actual_version),
-                                                currentVersion,
-                                                extraInfo,
-                                            )
-                                        }
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-                                            Box(modifier = Modifier.weight(1f)) {
-                                                BasicText(
-                                                    text = downloadStr,
-                                                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
-                                                    maxLines = 1,
-                                                    style = typography().s.bold.copy(color = colorPalette().text),
-                                                )
-                                            }
+                            when (state) {
+                                is UpdateDownloadManager.DownloadState.Downloading -> {
+                                    val downloadStr = if (hasUpdate) {
+                                        stringResource(Res.string.downloading_update)
+                                    } else {
+                                        val extraInfo =
+                                            if (fileSize.isNotEmpty()) "$channelLabel.trim() - $fileSize" else channelLabel.trim()
+                                        formatText(
+                                            stringResource(Res.string.downloading_actual_version),
+                                            currentVersion,
+                                            extraInfo,
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Box(modifier = Modifier.weight(1f)) {
                                             BasicText(
-                                                text = "${(state.progress * 100).toInt()}%",
-                                                modifier = Modifier.padding(start = 8.dp).width(40.dp),
-                                                style = typography().s.copy(
-                                                    color = colorPalette().accent,
-                                                    textAlign = TextAlign.End,
-                                                ),
+                                                text = downloadStr,
+                                                modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+                                                maxLines = 1,
+                                                style = typography().s.bold.copy(color = colorPalette().text),
                                             )
                                         }
-                                        Spacer(modifier = Modifier.height(12.dp))
-                                        // The phone's LinearWavyProgressIndicator (the same
-                                        // material3 wavy widget — spec AD-9, the ported component)
-                                        LinearWavyProgressIndicator(
-                                            progress = { state.progress },
-                                            modifier = Modifier.fillMaxWidth().height(8.dp).clip(uiRoundnessShape()),
-                                            color = colorPalette().accent,
-                                            trackColor = colorPalette().background2,
-                                        )
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.End,
-                                        ) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .clip(uiRoundnessShape())
-                                                    .clickable {
-                                                        Toaster.i(Res.string.download_cancelled)
-                                                        UpdateDownloadManager.cancelDownload()
-                                                    }
-                                                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                                            ) {
-                                                BasicText(
-                                                    text = stringResource(Res.string.cancel),
-                                                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
-                                                    maxLines = 1,
-                                                    style = typography().s.semiBold.copy(color = colorPalette().red),
-                                                )
-                                            }
-                                        }
-                                    }
-
-                                    is UpdateDownloadManager.DownloadState.DownloadingIndeterminate -> {
-                                        // No Content-Length — the byte counter (loop 2)
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-                                            Box(modifier = Modifier.weight(1f)) {
-                                                BasicText(
-                                                    text = formatText(
-                                                        stringResource(Res.string.update_download_indeterminate),
-                                                        formatShortFileSize(state.bytesRead),
-                                                    ),
-                                                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
-                                                    maxLines = 1,
-                                                    style = typography().s.bold.copy(color = colorPalette().text),
-                                                )
-                                            }
-                                        }
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.End,
-                                        ) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .clip(uiRoundnessShape())
-                                                    .clickable {
-                                                        Toaster.i(Res.string.download_cancelled)
-                                                        UpdateDownloadManager.cancelDownload()
-                                                    }
-                                                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                                            ) {
-                                                BasicText(
-                                                    text = stringResource(Res.string.cancel),
-                                                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
-                                                    maxLines = 1,
-                                                    style = typography().s.semiBold.copy(color = colorPalette().red),
-                                                )
-                                            }
-                                        }
-                                    }
-
-                                    is UpdateDownloadManager.DownloadState.Starting -> {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-                                            Box(modifier = Modifier.weight(1f)) {
-                                                BasicText(
-                                                    text = stringResource(Res.string.starting),
-                                                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
-                                                    maxLines = 1,
-                                                    style = typography().s.bold.copy(color = colorPalette().text),
-                                                )
-                                            }
-                                            CircularWavyProgressIndicator(
-                                                modifier = Modifier.padding(start = 8.dp).size(20.dp),
+                                        BasicText(
+                                            text = "${(state.progress * 100).toInt()}%",
+                                            modifier = Modifier.padding(start = 8.dp).width(40.dp),
+                                            style = typography().s.copy(
                                                 color = colorPalette().accent,
-                                            )
-                                        }
-                                    }
-
-                                    is UpdateDownloadManager.DownloadState.Completed -> {
-                                        // Hoisted into composable scope: the click lambda is not composable,
-                                        // so `stringResource` cannot be called inside it (the dialog's
-                                        // same fix)
-                                        val windowsHelperError =
-                                            stringResource(Res.string.error_windows_install_helper)
-                                        // The exact command of this mode (`null` = the manual modes —
-                                        // the accent button keeps the "Open folder" fallback instead
-                                        // of a misleading "Install")
-                                        val command = installCommand(installMode, packageManager, state.filePath)
-                                        // The per-mode install gesture (the shared card + the
-                                        // phone's accent "Install" action)
-                                        InstallStep(
-                                            filePath = state.filePath,
-                                            installMode = installMode,
-                                            packageManager = packageManager,
+                                                textAlign = TextAlign.End,
+                                            ),
                                         )
-                                        Spacer(modifier = Modifier.height(12.dp))
-                                        Card(
+                                    }
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    // The phone's LinearWavyProgressIndicator (the same
+                                    // material3 wavy widget — spec AD-9, the ported component)
+                                    LinearWavyProgressIndicator(
+                                        progress = { state.progress },
+                                        modifier = Modifier.fillMaxWidth().height(8.dp).clip(uiRoundnessShape()),
+                                        color = colorPalette().accent,
+                                        trackColor = colorPalette().background2,
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End,
+                                    ) {
+                                        Box(
                                             modifier = Modifier
-                                                .fillMaxWidth()
                                                 .clip(uiRoundnessShape())
                                                 .clickable {
-                                                    when {
-                                                        installMode == InstallMode.WINDOWS -> {
-                                                            if (UpdateDownloadManager.startWindowsInstall(state.filePath)) {
-                                                                // Quit so the installer can replace the running
-                                                                // files (the dialog's JVM-exit rationale)
-                                                                System.exit(0)
-                                                            } else {
-                                                                Toaster.e(windowsHelperError)
-                                                            }
-                                                        }
-                                                        // The command-managed modes (flatpak / apt /
-                                                        // dnf / pacman): copy the exact command — the
-                                                        // user runs it in their terminal (never
-                                                        // auto-run, privilege)
-                                                        command != null -> copyToClipboard(
-                                                            command,
-                                                            Res.string.command_copied,
-                                                        )
-                                                        else -> openFileFolder(state.filePath)
-                                                    }
-                                                },
-                                            colors = CardDefaults.cardColors(containerColor = colorPalette().accent),
-                                            shape = uiRoundnessShape(),
+                                                    Toaster.i(Res.string.download_cancelled)
+                                                    UpdateDownloadManager.cancelDownload()
+                                                }
+                                                .padding(horizontal = 16.dp, vertical = 8.dp),
                                         ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(12.dp),
-                                                horizontalArrangement = Arrangement.Center,
-                                                verticalAlignment = Alignment.CenterVertically,
-                                            ) {
-                                                Icon(
-                                                    painter = painterResource(Res.drawable.checkmark),
-                                                    contentDescription = null,
-                                                    tint = Color.White,
-                                                    modifier = Modifier.size(24.dp),
-                                                )
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                BasicText(
-                                                    text = when {
-                                                        installMode == InstallMode.WINDOWS -> stringResource(Res.string.install)
-                                                        command != null -> stringResource(Res.string.install_copy_command)
-                                                        else -> stringResource(Res.string.install_open_folder)
-                                                    },
-                                                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
-                                                    maxLines = 1,
-                                                    style = typography().s.bold.copy(color = Color.White),
-                                                )
-                                            }
+                                            BasicText(
+                                                text = stringResource(Res.string.cancel),
+                                                modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+                                                maxLines = 1,
+                                                style = typography().s.semiBold.copy(color = colorPalette().red),
+                                            )
+                                        }
+                                    }
+                                }
+
+                                is UpdateDownloadManager.DownloadState.DownloadingIndeterminate -> {
+                                    // No Content-Length — the byte counter (loop 2)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Box(modifier = Modifier.weight(1f)) {
+                                            BasicText(
+                                                text = formatText(
+                                                    stringResource(Res.string.update_download_indeterminate),
+                                                    formatShortFileSize(state.bytesRead),
+                                                ),
+                                                modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+                                                maxLines = 1,
+                                                style = typography().s.bold.copy(color = colorPalette().text),
+                                            )
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End,
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(uiRoundnessShape())
+                                                .clickable {
+                                                    Toaster.i(Res.string.download_cancelled)
+                                                    UpdateDownloadManager.cancelDownload()
+                                                }
+                                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                                        ) {
+                                            BasicText(
+                                                text = stringResource(Res.string.cancel),
+                                                modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+                                                maxLines = 1,
+                                                style = typography().s.semiBold.copy(color = colorPalette().red),
+                                            )
+                                        }
+                                    }
+                                }
+
+                                is UpdateDownloadManager.DownloadState.Starting -> {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Box(modifier = Modifier.weight(1f)) {
+                                            BasicText(
+                                                text = stringResource(Res.string.starting),
+                                                modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+                                                maxLines = 1,
+                                                style = typography().s.bold.copy(color = colorPalette().text),
+                                            )
+                                        }
+                                        CircularWavyProgressIndicator(
+                                            modifier = Modifier.padding(start = 8.dp).size(20.dp),
+                                            color = colorPalette().accent,
+                                        )
+                                    }
+                                }
+
+                                is UpdateDownloadManager.DownloadState.Completed -> {
+                                    // Hoisted into composable scope: the click lambda is not composable,
+                                    // so `stringResource` cannot be called inside it (the dialog's
+                                    // same fix)
+                                    val windowsHelperError =
+                                        stringResource(Res.string.error_windows_install_helper)
+                                    // The exact command of this mode (`null` = the manual modes —
+                                    // the accent button keeps the "Open folder" fallback instead
+                                    // of a misleading "Install")
+                                    val command = installCommand(installMode, packageManager, state.filePath)
+                                    // The per-mode install gesture (the shared card + the
+                                    // phone's accent "Install" action)
+                                    InstallStep(
+                                        filePath = state.filePath,
+                                        installMode = installMode,
+                                        packageManager = packageManager,
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(uiRoundnessShape())
+                                            .clickable {
+                                                when {
+                                                    installMode == InstallMode.WINDOWS -> {
+                                                        if (UpdateDownloadManager.startWindowsInstall(state.filePath)) {
+                                                            // Quit so the installer can replace the running
+                                                            // files (the dialog's JVM-exit rationale)
+                                                            System.exit(0)
+                                                        } else {
+                                                            Toaster.e(windowsHelperError)
+                                                        }
+                                                    }
+                                                    // The command-managed modes (flatpak / apt /
+                                                    // dnf / pacman): copy the exact command — the
+                                                    // user runs it in their terminal (never
+                                                    // auto-run, privilege)
+                                                    command != null -> copyToClipboard(
+                                                        command,
+                                                        Res.string.command_copied,
+                                                    )
+                                                    else -> openFileFolder(state.filePath)
+                                                }
+                                            },
+                                        colors = CardDefaults.cardColors(containerColor = colorPalette().accent),
+                                        shape = uiRoundnessShape(),
+                                    ) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(12.dp),
+                                            horizontalArrangement = Arrangement.Center,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(Res.drawable.checkmark),
+                                                contentDescription = null,
+                                                tint = Color.White,
+                                                modifier = Modifier.size(24.dp),
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            BasicText(
+                                                text = when {
+                                                    installMode == InstallMode.WINDOWS -> stringResource(Res.string.install)
+                                                    command != null -> stringResource(Res.string.install_copy_command)
+                                                    else -> stringResource(Res.string.install_open_folder)
+                                                },
+                                                modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+                                                maxLines = 1,
+                                                style = typography().s.bold.copy(color = Color.White),
+                                            )
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                }
 
-                    is UpdateDownloadManager.DownloadState.Idle,
-                    is UpdateDownloadManager.DownloadState.Failed -> {
-                        if (state is UpdateDownloadManager.DownloadState.Failed) {
-                            LaunchedEffect(state) {
-                                Toaster.e(state.error)
-                                // The phone's reset (L345-349): back to Idle so the button
-                                // reads "Download" again, not "Retry"
-                                UpdateDownloadManager.resetState()
-                            }
+                is UpdateDownloadManager.DownloadState.Idle,
+                is UpdateDownloadManager.DownloadState.Failed -> {
+                    if (state is UpdateDownloadManager.DownloadState.Failed) {
+                        LaunchedEffect(state) {
+                            Toaster.e(state.error)
+                            // The phone's reset (L345-349): back to Idle so the button
+                            // reads "Download" again, not "Retry"
+                            UpdateDownloadManager.resetState()
                         }
+                    }
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        ) {
-                            if (hasUpdate) {
-                                if (Updater.build == null) {
-                                    // An update release exists but carries no downloadable build for
-                                    // this installation (the release lacks this channel's asset) —
-                                    // the card must not be a silent button: it shows the hint and
-                                    // re-checks on click
-                                    Card(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .clip(uiRoundnessShape())
-                                            .clickable {
-                                                Toaster.i(Res.string.checking_for_updates)
-                                                // The same forced check as the no-update card: the page re-renders
-                                                // its state from the result
-                                                Updater.checkForUpdate(isForced = true, showDialog = false)
-                                            },
-                                        colors = CardDefaults.cardColors(containerColor = colorPalette().background1),
-                                        shape = uiRoundnessShape(),
-                                        border = BorderStroke(1.dp, colorPalette().accent.copy(alpha = 0.5f)),
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(16.dp),
-                                            contentAlignment = Alignment.Center,
-                                        ) {
-                                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                                Icon(
-                                                    painter = painterResource(Res.drawable.update),
-                                                    contentDescription = null,
-                                                    tint = colorPalette().accent,
-                                                    modifier = Modifier.size(20.dp),
-                                                )
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                BasicText(
-                                                    text = stringResource(Res.string.update_not_available_yet),
-                                                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
-                                                    maxLines = 1,
-                                                    style = typography().s.semiBold.copy(color = colorPalette().accent),
-                                                )
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    Card(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .clip(uiRoundnessShape())
-                                            .clickable {
-                                                val build = Updater.build
-                                                if (build == null) {
-                                                    // The asset disappeared in the meantime (a recheck replaced the
-                                                    // release) — re-check instead of doing nothing
-                                                    Toaster.i(Res.string.checking_for_updates)
-                                                    Updater.checkForUpdate(isForced = true, showDialog = false)
-                                                } else {
-                                                    UpdateDownloadManager.startDownload(
-                                                        downloadUrl = build.downloadUrl,
-                                                        version = newVersion,
-                                                        assetName = build.name,
-                                                    )
-                                                }
-                                            },
-                                        colors = CardDefaults.cardColors(containerColor = colorPalette().accent),
-                                        shape = uiRoundnessShape(),
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(16.dp),
-                                            contentAlignment = Alignment.Center,
-                                        ) {
-                                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                                Icon(
-                                                    painter = painterResource(Res.drawable.download),
-                                                    contentDescription = null,
-                                                    tint = Color.White,
-                                                    modifier = Modifier.size(20.dp),
-                                                )
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                BasicText(
-                                                    text = if (state is UpdateDownloadManager.DownloadState.Failed) {
-                                                        stringResource(Res.string.retry)
-                                                    } else {
-                                                        stringResource(Res.string.download)
-                                                    },
-                                                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
-                                                    maxLines = 1,
-                                                    style = typography().s.bold.copy(color = Color.White),
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        if (hasUpdate) {
+                            if (Updater.build == null) {
+                                // An update release exists but carries no downloadable build for
+                                // this installation (the release lacks this channel's asset) —
+                                // the card must not be a silent button: it shows the hint and
+                                // re-checks on click
                                 Card(
                                     modifier = Modifier
                                         .weight(1f)
                                         .clip(uiRoundnessShape())
                                         .clickable {
                                             Toaster.i(Res.string.checking_for_updates)
-                                            // The phone's call (L402): the forced check WITHOUT
-                                            // the startup dialog — the page re-renders its
-                                            // "Update available" state instead of a dialog over it
+                                            // The same forced check as the no-update card: the page re-renders
+                                            // its state from the result
                                             Updater.checkForUpdate(isForced = true, showDialog = false)
                                         },
                                     colors = CardDefaults.cardColors(containerColor = colorPalette().background1),
@@ -994,7 +901,7 @@ fun UpdateScreen(
                                             )
                                             Spacer(modifier = Modifier.width(8.dp))
                                             BasicText(
-                                                text = stringResource(Res.string.check_update),
+                                                text = stringResource(Res.string.update_not_available_yet),
                                                 modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                                                 maxLines = 1,
                                                 style = typography().s.semiBold.copy(color = colorPalette().accent),
@@ -1002,16 +909,72 @@ fun UpdateScreen(
                                         }
                                     }
                                 }
+                            } else {
+                                Card(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(uiRoundnessShape())
+                                        .clickable {
+                                            val build = Updater.build
+                                            if (build == null) {
+                                                // The asset disappeared in the meantime (a recheck replaced the
+                                                // release) — re-check instead of doing nothing
+                                                Toaster.i(Res.string.checking_for_updates)
+                                                Updater.checkForUpdate(isForced = true, showDialog = false)
+                                            } else {
+                                                UpdateDownloadManager.startDownload(
+                                                    downloadUrl = build.downloadUrl,
+                                                    version = newVersion,
+                                                    assetName = build.name,
+                                                )
+                                            }
+                                        },
+                                    colors = CardDefaults.cardColors(containerColor = colorPalette().accent),
+                                    shape = uiRoundnessShape(),
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(
+                                                painter = painterResource(Res.drawable.download),
+                                                contentDescription = null,
+                                                tint = Color.White,
+                                                modifier = Modifier.size(20.dp),
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            BasicText(
+                                                text = if (state is UpdateDownloadManager.DownloadState.Failed) {
+                                                    stringResource(Res.string.retry)
+                                                } else {
+                                                    stringResource(Res.string.download)
+                                                },
+                                                modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+                                                maxLines = 1,
+                                                style = typography().s.bold.copy(color = Color.White),
+                                            )
+                                        }
+                                    }
+                                }
                             }
-
+                        } else {
                             Card(
                                 modifier = Modifier
                                     .weight(1f)
                                     .clip(uiRoundnessShape())
-                                    .clickable { openInBrowser(githubReleaseUrl(currentSuffix, currentVersion)) },
+                                    .clickable {
+                                        Toaster.i(Res.string.checking_for_updates)
+                                        // The phone's call (L402): the forced check WITHOUT
+                                        // the startup dialog — the page re-renders its
+                                        // "Update available" state instead of a dialog over it
+                                        Updater.checkForUpdate(isForced = true, showDialog = false)
+                                    },
                                 colors = CardDefaults.cardColors(containerColor = colorPalette().background1),
                                 shape = uiRoundnessShape(),
-                                border = BorderStroke(1.dp, colorPalette().textSecondary.copy(alpha = 0.5f)),
+                                border = BorderStroke(1.dp, colorPalette().accent.copy(alpha = 0.5f)),
                             ) {
                                 Box(
                                     modifier = Modifier
@@ -1021,27 +984,63 @@ fun UpdateScreen(
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(
-                                            painter = painterResource(Res.drawable.github_icon),
+                                            painter = painterResource(Res.drawable.update),
                                             contentDescription = null,
-                                            tint = colorPalette().text,
+                                            tint = colorPalette().accent,
                                             modifier = Modifier.size(20.dp),
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         BasicText(
-                                            text = stringResource(Res.string.github),
+                                            text = stringResource(Res.string.check_update),
                                             modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                                             maxLines = 1,
-                                            style = typography().s.semiBold.copy(color = colorPalette().text),
+                                            style = typography().s.semiBold.copy(color = colorPalette().accent),
                                         )
                                     }
+                                }
+                            }
+                        }
+
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(uiRoundnessShape())
+                                .clickable {
+                                    // The phone opens the NEW version's release when an update exists
+                                    // (its `UpdateScreen.kt` 436), else the installed one
+                                    val shown = if (hasUpdate) newVersion else currentVersion
+                                    openInBrowser(githubReleaseUrl(Updater.extractVersionSuffix(shown), shown))
+                                },
+                            colors = CardDefaults.cardColors(containerColor = colorPalette().background1),
+                            shape = uiRoundnessShape(),
+                            border = BorderStroke(1.dp, colorPalette().textSecondary.copy(alpha = 0.5f)),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.github_icon),
+                                        contentDescription = null,
+                                        tint = colorPalette().text,
+                                        modifier = Modifier.size(20.dp),
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    BasicText(
+                                        text = stringResource(Res.string.github),
+                                        modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+                                        maxLines = 1,
+                                        style = typography().s.semiBold.copy(color = colorPalette().text),
+                                    )
                                 }
                             }
                         }
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.KSerializer
@@ -106,10 +107,25 @@ class RemotePlayerRepository(
 
     // ---- State ------------------------------------------------------------------------------------
 
+    /** Serializes [patchTrackLike] (UI thread) and the reduction of [onMessage] (WS thread): no lost patch. */
+    private val syncLock = Any()
+
+    override fun patchTrackLike(trackId: String, like: TrackLike) {
+        // In the sync state too: a delta of another family (playback, modes) re-publishes it
+        // without reverting the patch; the phone's queue delta then replaces it
+        synchronized(syncLock) {
+            val patched = sync.updateAndGet { it.copy(player = it.player?.withTrackLike(trackId, like)) }
+            _state.value = patched.player
+        }
+    }
+
     private suspend fun onMessage(message: ServerMessage) {
-        val reduction = StateReducer.reduce(sync.value, message)
-        sync.value = reduction.state
-        _state.value = reduction.state.player
+        val reduction = synchronized(syncLock) {
+            StateReducer.reduce(sync.value, message).also {
+                sync.value = it.state
+                _state.value = it.state.player
+            }
+        }
         if (reduction.requestSnapshot) requestAwaitedSnapshot()
         if (!reduction.state.awaitingSnapshot) snapshotRetry?.cancel()
         if (message is ErrorMessage) {
@@ -119,6 +135,10 @@ class RemotePlayerRepository(
         // Only an applied delta re-reads a family: a rejected one (an out-of-order or duplicated
         // revision, contract §7.4) moved no state — no reload
         if (message is LibraryChangedMessage && reduction.applied) _libraryChanged.emit(message.kind)
+        // Contract §7.9 (since 1.10.0): the phone's relayed toast, shown on the PC as on the phone
+        if (message is ToastMessage && SessionContract.FEATURE_UI_TOASTS in features) {
+            _notices.emit(PlayerNotice.PhoneToast(message.key, message.args, message.toastType, message.message))
+        }
     }
 
     private fun requestAwaitedSnapshot() {
@@ -189,6 +209,14 @@ class RemotePlayerRepository(
             _notices.emit(PlayerNotice.Truncated(CommandKind.QueueAdd, sent.size, maxOf(total, trackIds.size)))
         }
         send(CommandKind.QueueAdd, QueueAddCommandBody.serializer()) { QueueAddCommandBody(sent, position, it) }
+    }
+
+    override suspend fun playList(list: ListRef, action: ListAction, startIndex: Int, startTrackId: String?) {
+        // `changed` is always false on this route: the phone's queue entries run asynchronously and their
+        // result shows through the usual deltas and its `toast` messages (contract §9)
+        send(CommandKind.QueueList, QueueListCommandBody.serializer()) {
+            QueueListCommandBody(list, action.wire, startIndex.coerceAtLeast(0), startTrackId, it)
+        }
     }
 
     private suspend fun <T> send(kind: CommandKind, serializer: KSerializer<T>, body: (commandId: String) -> T) {

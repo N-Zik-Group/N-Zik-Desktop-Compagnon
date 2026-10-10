@@ -18,9 +18,11 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 /**
- * Port of `MusicAnimation` (phone's `app/it/fast4x/rimusic/ui/components/MusicAnimations.kt` 41) with its
- * default indicator, `MusicAnimationType.Bubbles`. [isPlaying] comes from the phone's state (WS) instead
- * of a local player listener.
+ * Port of `MusicAnimation` (phone's `app/it/fast4x/rimusic/ui/components/MusicAnimations.kt` 41) with the
+ * phone's `nowPlayingIndicator` (`MusicAnimationType`, served by `ui.settings` since 1.10.0: Bubbles —
+ * its default —, Bars, CrazyBars, CrazyPoints; Disabled draws nothing). [isPlaying] is the contract's
+ * `isPlaying` (the phone's `onIsPlayingChanged`: false while paused or buffering) instead of a local
+ * player listener.
  */
 @Composable
 fun MusicAnimation(
@@ -28,7 +30,10 @@ fun MusicAnimation(
     isPlaying: Boolean,
     modifier: Modifier = Modifier,
     barWidth: Dp = 6.dp,
+    cornerRadius: Dp = 8.dp,
 ) {
+    val indicator = app.n_zik.compagnon.bridge.state.LocalUiSettings.current.nowPlayingIndicator
+    if (indicator == "Disabled") return
     val animatablesWithSteps = remember {
         listOf(
             Animatable(0f) to listOf(
@@ -72,10 +77,28 @@ fun MusicAnimation(
                         .fillMaxHeight()
                         .width(barWidth),
                 ) {
-                    drawCircle(
-                        color = color,
-                        radius = animatable.value * (size.height / 3),
-                    )
+                    when (indicator) {
+                        "Bars" -> drawRoundRect(
+                            color = color,
+                            topLeft = androidx.compose.ui.geometry.Offset(x = 0f, y = size.height * (1 - animatable.value)),
+                            size = size.copy(height = animatable.value * size.height),
+                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(cornerRadius.toPx()),
+                        )
+                        "CrazyBars", "CrazyPoints" -> drawLine(
+                            color = color,
+                            start = androidx.compose.ui.geometry.Offset(x = 0f, y = animatable.value * (size.height / 2)),
+                            end = androidx.compose.ui.geometry.Offset(
+                                x = animatable.value * (size.height / 2),
+                                y = if (indicator == "CrazyBars") size.height else animatable.value * (size.height / 2),
+                            ),
+                            strokeWidth = size.width,
+                        )
+                        // Bubbles, the phone's default (an unknown name too)
+                        else -> drawCircle(
+                            color = color,
+                            radius = animatable.value * (size.height / 3),
+                        )
+                    }
                 }
             }
         }

@@ -1,5 +1,8 @@
 package app.n_zik.compagnon.components.ui.screens.localplaylist
 
+import app.n_zik.compagnon.components.themed.PinPlaylist
+import androidx.compose.foundation.lazy.items
+import app.n_zik.compagnon.bridge.library.toListRef
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.generated.resources.*
@@ -19,7 +22,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
@@ -61,6 +63,7 @@ import app.n_zik.compagnon.components.tab.Search
 import app.n_zik.compagnon.components.tab.SongShuffler
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
+import app.n_zik.compagnon.components.tab.toolbar.NoRouteConfirmButton
 import app.n_zik.compagnon.components.themed.Bookmark
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.core.network.ArtworkKey
@@ -117,12 +120,19 @@ private const val PLAYLIST_CARD_SIZE_PX = 256
  * rewrites it).
  * Toolbar: the phone's twenty-one buttons in the phone's order
  * (`LocalPlaylistToolbarSettingsDialog.allButtonIds`), with the phone's show conditions — pin off on the
- * monthly-type rewind playlists, position lock and renumber only while the sort is `Custom` and off on the
+ * rewind and legacy `monthly:` playlists (since 1.10.0 the `monthly` origin), position lock and renumber only while the sort is `Custom` and off on the
  * rewind playlists, "match" only while some track is not matched to the phone's library (since 1.7.1
  * the phone's full check: an id that is not a YouTube one, or the zero-duration sentinel, the phone's
  * `local:` on-device files excluded), rename off on the rewind playlists,
- * and sync / listen on YouTube only with a YouTube browse id (none on the PC). Play next and enqueue are
- * wired to the contract; the rest are placeholders without a contract route, a click does nothing.
+ * and sync / listen on YouTube only with a YouTube browse id (the phone's 1372-1373: a non-blank
+ * `browseId`, the wire's since 1.7.2). Play next and enqueue are wired to the contract, and the pin
+ * (`PinPlaylist`, `library.write`); "listen on YouTube" pauses the phone and opens the playlist's
+ * `youtube.com` page in the desktop browser (the phone's 917-923, `ExternalUris.youtubePlaylist`); download
+ * all / remove downloads open the phone's confirmations (NOT LINKED: Confirm only closes them); the rest
+ * (sync included: YouTube Music sync is phone-only) are placeholders without a contract route, a click
+ * does nothing — "update" keeps the phone's `info_open_update_dialog` help. Contract adaptation: the phone's own toolbar order
+ * (`localPlaylistToolbarOrderKey`) and per-playlist hidden buttons (`pl_ts_<id>`) are phone preferences the
+ * contract does not serve: the default order and visibility are kept.
  * Since 1.7.1: the phone's play-count / play-time overlays of the `playCount` / `playTime` /
  * `relativePlayTime` sorts (phone's `LocalPlaylistSongs.kt` 1524-1551, the play time in the phone's `formattedTotalPlayTime` format), and the lock badge of a
  * non-editable YouTube playlist on the card.
@@ -132,10 +142,14 @@ private const val PLAYLIST_CARD_SIZE_PX = 256
  * playlists" refusal and toasts, inert without `library.write`), the phone's custom cover over the card's
  * mosaic (its `GET /library/playlists/{id}/artwork`) and the header's total duration sent whole (the
  * wire's `totalDurationMs`, the full list before pagination and before `text`).
+ * Adaptations: a click outside a `Live` session does nothing (no command can reach the phone); the top
+ * fade has no system-bar inset (none on the desktop).
  * Dropped (contract v1 or PC): smart recommendations (counter, related songs), swipe actions
- * (drag to reorder), the phone's auto-sync on open.
- * Added by the Compagnon: the paging row, "Nothing here." for an empty playlist. The duration shows once
- * all tracks are loaded. As on the phone, a track not matched to the phone's library carries its orange
+ * (drag to reorder), the phone's auto-sync on open, the floating multi-action icon (`showFloatingIcon`,
+ * off by default; deferred).
+ * Added by the Compagnon: the paging row, "Nothing here." for an empty playlist. The duration comes whole
+ * from the phone (`totalDurationMs`). Since 1.10.0 a click, the toolbar's shuffle / play next / enqueue and
+ * the locator act on the phone's whole list in its current sort and search (`queue.fullList`, `library.locate`). As on the phone, a track not matched to the phone's library carries its orange
  * 18 dp alert icon, and a click on it is blocked with the phone's `playback_blocked_match_first` toast.
  * The card's right column (smart-shuffle + shuffle) renders always, as on the phone.
  */
@@ -149,6 +163,10 @@ fun LocalPlaylistSongs(
     onBack: () -> Unit,
 ) {
     val playlist = header.playlist
+    // The pin state shown by the toolbar, following its own taps (the header is a snapshot)
+    var pinned by remember(playlist.id, playlist.isPinned) { mutableStateOf(playlist.isPinned) }
+    // The header bookmark's state, following its own writes (the header is a snapshot, never refreshed)
+    var bookmarked by remember(playlist.id, playlist.isBookmarked) { mutableStateOf(playlist.isBookmarked) }
     val lazyListState = rememberLazyListState()
     val menuState = LocalMenuState.current
     val scope = rememberCoroutineScope()
@@ -227,28 +245,73 @@ fun LocalPlaylistSongs(
         null
     }
 
-    val collection = actions.collectionActions(header.ref, live)
+    val collection = actions.collectionActions(header.ref, live) { header.ref.toListRef(list.query.value) }
     val playbackEnabled = live && collection != null
     val shuffle = SongShuffler(enabled = playbackEnabled) { collection?.onShuffle?.invoke() }
     val playNext = PlayNext(enabled = playbackEnabled) { collection?.onPlayNext?.invoke() }
     val enqueue = Enqueue(enabled = playbackEnabled) { collection?.onEnqueue?.invoke() }
-    val locator = Locator(lazyListState, { list.state.value.items }, indexOffset = 1) { id ->
+    // Since 1.10.0 (`library.locate`): the phone searches the playlist's whole list (its sort and search)
+    val locator = Locator(
+        lazyListState,
+        { list.state.value.items },
+        indexOffset = 1,
+        listRef = { header.ref.toListRef(list.query.value) },
+        pagedList = list,
+    ) { id ->
         scope.launch { onMessage(getString(id)) }
     }
     // The phone's "match" button appears while some track is not matched to the phone's library
     // (contract 1.7.1: the phone's full check — `Track.unmatched`)
     val hasUnmatchedSongs = items.any { it.unmatched() }
 
+    // The phone's download / remove buttons open their confirmations (as the album's); NOT LINKED: no route
+    val downloadAll = NoRouteConfirmButton(
+        Res.drawable.downloaded, Res.string.download, Res.string.info_download_all_songs, Res.string.do_you_really_want_to_download_all,
+    )
+    val deleteDownloads = NoRouteConfirmButton(
+        Res.drawable.download, Res.string.info_remove_all_downloaded_songs, Res.string.info_remove_all_downloaded_songs,
+        Res.string.do_you_really_want_to_delete_download,
+    )
+    downloadAll.Render()
+    deleteDownloads.Render()
+    // The phone's `ListenOnYouTube` (its 917-923): the phone paused, the playlist's page in the browser
+    val player = app.n_zik.compagnon.LocalPlayerRepository.current
+    val listenOnYouTube = object : app.n_zik.compagnon.components.tab.toolbar.MenuIcon,
+        app.n_zik.compagnon.components.tab.toolbar.Descriptive {
+        override val iconId = Res.drawable.play
+        override val messageId = Res.string.listen_on_youtube
+        override val menuIconTitle: String
+            @Composable
+            get() = stringResource(Res.string.listen_on_youtube)
+
+        override fun onShortClick() {
+            val browseId = playlist.browseId?.removePrefix("modified:")?.removePrefix("VL").orEmpty()
+            if (live) player?.let { p -> scope.launch { p.pause() } }
+            app.n_zik.compagnon.utils.openInBrowser("https://youtube.com/playlist?list=$browseId")
+        }
+    }
+
     // The phone's toolbar in the phone's order (`LocalPlaylistToolbarSettingsDialog.allButtonIds`),
     // with the phone's show conditions (pin / position lock / renumber / rename off on the rewind
     // playlists; position lock and renumber only while the sort is `Custom`; sync and listen on
-    // YouTube need a YouTube browse id: none on the PC). Play next and enqueue are wired to the
-    // contract; the rest are placeholders without a contract route (no action)
+    // YouTube need a YouTube browse id). Play next, enqueue and listen on YouTube are wired; the
+    // rest are placeholders without a contract route (no action)
     val toolbarButtons = buildList<Button> {
         LOCAL_PLAYLIST_TOOLBAR_BUTTON_IDS.forEach { id ->
             when (id) {
-                "pin" -> if (!isRewind) {
-                    add(InertButton(Res.drawable.pin_filled, Res.string.info_pin_unpin_playlist))
+                // The phone's `playlistNotMonthlyType` (its 1127-1130): no pin on a rewind or legacy monthly playlist
+                "pin" -> if (!isRewind && playlist.origin != PlaylistOrigin.Monthly) {
+                    // The phone's `PinPlaylist` (contract §10.2 `pin`, `library.write`); inert without it
+                    add(
+                        libraryWrites()?.let { w ->
+                            PinPlaylist(isPinned = pinned, enabled = live) {
+                                val previous = pinned
+                                pinned = !previous
+                                // The confirmed state wins; a failure rolls the toggle back
+                                w.pinPlaylist(playlist.id, !previous) { confirmed -> pinned = confirmed ?: previous }
+                            }
+                        } ?: InertButton(Res.drawable.pin_filled, Res.string.info_pin_unpin_playlist),
+                    )
                 }
                 // Since 1.7.2: the phone's search (its toolbar button, its header search bar and its `text`)
                 "search" -> add(search)
@@ -261,41 +324,54 @@ fun LocalPlaylistSongs(
                 "renumber" -> if (chipSort.sort == "custom" && !isRewind) {
                     add(InertButton(Res.drawable.position, Res.string.renumber_songs_positions))
                 }
-                "download_all" -> add(InertButton(Res.drawable.downloaded, Res.string.download))
-                "delete_downloads" -> add(InertButton(Res.drawable.download, Res.string.info_remove_all_downloaded_songs))
+                "download_all" -> add(downloadAll)
+                "delete_downloads" -> add(deleteDownloads)
                 "item_selector" -> add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
                 "play_next" -> if (collection != null) add(playNext) else add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
                 "enqueue" -> if (collection != null) add(enqueue) else add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
                 "add_to_favorite" -> add(InertButton(Res.drawable.heart, Res.string.add_to_favorites))
                 "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
-                // "sync" and "listen_on_yt" only exist with a YouTube browse id: none on the PC
+                // The phone's 1372-1373: only with a YouTube browse id
+                "sync" -> if (!playlist.browseId.isNullOrBlank()) add(InertButton(Res.drawable.sync, Res.string.sync))
+                "listen_on_yt" -> if (!playlist.browseId.isNullOrBlank()) add(listenOnYouTube)
                 "import_menu" -> add(InertButton(Res.drawable.import_outline, Res.string.import_playlist))
                 "rename" -> if (!isRewind) add(InertButton(Res.drawable.title_edit, Res.string.rename_playlist))
                 "delete" -> add(InertButton(Res.drawable.trash, Res.string.delete))
                 "export" -> add(InertButton(Res.drawable.export_outline, Res.string.export_playlist))
                 "thumbnail_picker" -> add(InertButton(Res.drawable.image, Res.string.edit_thumbnail))
                 "reset_thumbnail" -> add(InertButton(Res.drawable.image, Res.string.reset_thumbnail))
-                "update" -> add(InertButton(Res.drawable.refresh, Res.string.update))
+                "update" -> add(InertButton(Res.drawable.refresh, Res.string.update, descriptionId = Res.string.info_open_update_dialog))
             }
         }
     }
-    val thumbnails = playlistThumbnails(header.firstTracks ?: items.take(4).takeIf { it.size == 4 }, playlist.artworkTrackId, PLAYLIST_CARD_SIZE_PX)
+    // The phone's mosaic (`PlaylistItem.kt` 179-185: the last four by play time, with a thumbnail): the
+    // home's tracks when it opened the page, else the same read here (never the list's current sort)
+    val loadedFirstTracks = actions.lists?.playlistFirstTracks?.collectAsState()?.value?.get(playlist.id)
+    LaunchedEffect(playlist.id) {
+        if (header.firstTracks == null) actions.lists?.loadPlaylistFirstTracks(playlist.id)
+    }
+    val thumbnails = playlistThumbnails(header.firstTracks ?: loadedFirstTracks, playlist.artworkTrackId, PLAYLIST_CARD_SIZE_PX)
 
-    // The phone's `canBeBookmarked` (its `Playlist.kt` 28): a playlist whose browse id is not the
-    // "modified:" prefix (`null` counts)
+    // The phone's `canBeBookmarked` (its `Playlist.kt` 28): `browseId?.startsWith("modified:") == false`,
+    // so a playlist without a browse id (`null`) cannot be bookmarked
     val canBookmark = playlist.browseId?.startsWith("modified:") == false
 
     // The phone's header bookmark (its `LocalPlaylistSongs.kt` 343, 1326-1329, the 1.7.2 write): the
     // "special playlists" (their `browseId` minus the `VL` prefix is `LM` or `SE`) refuse it with the
     // phone's toast, otherwise the toggle, with the phone's toasts — inert without `library.write`
     val writes = libraryWrites()
-    val bookmark = Bookmark(isBookmarked = playlist.isBookmarked) {
+    val bookmark = Bookmark(isBookmarked = bookmarked) {
         if (playlist.browseId?.removePrefix("VL") in listOf("LM", "SE")) {
             Toaster.e(Res.string.cannot_bookmark_special_playlist)
         } else {
             writes?.let {
-                it.bookmarkPlaylist(playlist.id, !playlist.isBookmarked)
-                Toaster.s(if (playlist.isBookmarked) Res.string.removed_from_favorites else Res.string.added_to_favorites)
+                // The phone toasts once its write is done (its 345-371): after the confirmed `200`
+                val previous = bookmarked
+                bookmarked = !previous
+                it.bookmarkPlaylist(playlist.id, !previous, onFailed = { bookmarked = previous }) { confirmed ->
+                    bookmarked = confirmed
+                    Toaster.s(if (confirmed) Res.string.added_to_favorites else Res.string.removed_from_favorites)
+                }
             }
         }
     }
@@ -351,8 +427,9 @@ fun LocalPlaylistSongs(
                                 name = playlist.name,
                                 songCount = state.total ?: playlist.trackCount,
                                 origin = playlist.origin,
-                                isPinned = playlist.isPinned,
-                                isBookmarked = playlist.isBookmarked,
+                                // The local states (the header snapshot is never refreshed)
+                                isPinned = pinned,
+                                isBookmarked = bookmarked,
                                 isEditable = playlist.isEditable,
                                 thumbnails = thumbnails,
                                 // Since 1.7.2: the phone's custom cover (its `thumbnail/playlist_<id>`),
@@ -409,6 +486,8 @@ fun LocalPlaylistSongs(
                                         color = colorPalette().textDisabled,
                                         modifier = Modifier.clip(uiRoundnessShape()),
                                         onClick = {},
+                                        // The phone's long-press help (its 1314-1319)
+                                        onLongClick = { Toaster.i(Res.string.info_smart_recommendation) },
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(10.dp))
@@ -452,16 +531,17 @@ fun LocalPlaylistSongs(
                     }
                 }
 
-                itemsIndexed(
-                    items = items,
-                    key = { index, song -> "$index:${song.id}" },
-                ) { index, song ->
+                items(
+                    items = items.withIndex().distinctBy { it.value.id },
+                    // The phone's keys: the track id, duplicates dropped (`distinctBy`)
+                    key = { it.value.id },
+                ) { (index, song) ->
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .zIndex(2f),
                     ) {
-                        val menu = actions.trackActions(list.state, index, song.id, live)
+                        val menu = actions.trackActions(list.state, index, song.id, live, header.ref.toListRef(list.query.value))
                         SongItem(
                             song = song,
                             modifier = Modifier,
@@ -504,7 +584,7 @@ fun LocalPlaylistSongs(
                                 if (song.unmatched()) {
                                     Toaster.w(Res.string.playback_blocked_match_first)
                                 } else if (live && actions.available) {
-                                    actions.playFrom(list.state.value.items, index, song.id)
+                                    actions.playFrom(list.state.value.items, index, song.id, header.ref.toListRef(list.query.value))
                                 }
                             },
                         )

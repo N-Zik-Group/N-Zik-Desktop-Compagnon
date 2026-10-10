@@ -36,7 +36,7 @@ const val DURATION_INDICATOR_HEIGHT = 20
  * preferences: `PlayerTimelineType.Wavy`, transparent bar background. While the duration is unknown, a
  * progress line (indeterminate while the phone should be playing — the phone's `shouldBePlaying`,
  * `playWhenReady && state != ENDED`, phone's `utils/Player.kt` 69, true while buffering; derived from the
- * wire, contract 1.4, as `isPlaying || isBuffering`). The wave bar's `isActive` stays the phone's
+ * wire as `PlayerState.shouldBePlaying`: contract 1.4 `isBuffering`, 1.10.0 `playWhenReady`). The wave bar's `isActive` stays the phone's
  * `binder.player.isPlaying` (phone's 374): the wire's `isPlaying`. The scrubber follows the pointer while
  * dragging (the one local value of the player, as on the phone); `player/seek` is sent on release.
  * Port of the phone's held seek target (`GetSeekBarType.kt` 102-153, 332-366, 500-519, issue #881): on

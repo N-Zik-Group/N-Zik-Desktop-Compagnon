@@ -43,6 +43,9 @@ class InertSort<T>(
 
     override fun onShortClick() {}
 
+    /** As the phone's `Sort`: a long press (right click) opens the same menu. */
+    override fun onLongClick() = menuState.display { ListMenu() }
+
     @Composable
     private fun ListMenu() {
         ListMenu.Menu(title = menuIconTitle) {

@@ -12,9 +12,10 @@ class BackNavigationTest {
     @Test
     fun `each press closes the topmost open thing first`() {
         assertEquals(BackStep.Menu, backStep(menuOpen = true, panelOpen = true, queueOpen = true, playerOpen = true, pageOpen = true))
-        assertEquals(BackStep.Panel, backStep(false, panelOpen = true, queueOpen = true, playerOpen = true, pageOpen = true))
-        assertEquals(BackStep.Queue, backStep(false, false, queueOpen = true, playerOpen = true, pageOpen = true))
-        assertEquals(BackStep.Player, backStep(false, false, false, playerOpen = true, pageOpen = true))
+        // The sheets drawn over the pages close before the page under them
+        assertEquals(BackStep.Queue, backStep(false, panelOpen = true, queueOpen = true, playerOpen = true, pageOpen = true))
+        assertEquals(BackStep.Player, backStep(false, panelOpen = true, queueOpen = false, playerOpen = true, pageOpen = true))
+        assertEquals(BackStep.Panel, backStep(false, panelOpen = true, queueOpen = false, playerOpen = false, pageOpen = true))
         assertEquals(BackStep.Page, backStep(false, false, false, false, pageOpen = true))
     }
 

@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import app.n_zik.compagnon.components.tab.toolbar.Randomizer
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.background
@@ -74,6 +75,14 @@ import org.jetbrains.compose.resources.stringResource
 const val GRID_THUMBNAIL_SIZE_PX = 256
 
 /**
+ * The phone's `itemSize.size.px`: the grid thumbnails are asked at the item's own size in px (no blur on
+ * the large sizes), bounded by the contract's 64-1200 px.
+ */
+@androidx.compose.runtime.Composable
+fun gridThumbnailSizePx(itemSize: androidx.compose.ui.unit.Dp): Int =
+    with(androidx.compose.ui.platform.LocalDensity.current) { itemSize.roundToPx() }.coerceIn(64, 1200)
+
+/**
  * Port of `HomeAlbums` (phone's `app/n_zik/android/components/ui/screens/home/HomeAlbum.kt`, header
  * 440-603, grid 605-789).
  *
@@ -85,11 +94,12 @@ const val GRID_THUMBNAIL_SIZE_PX = 256
  * Toolbar: the phone's toolbar of the active tab — the same twelve buttons for the three chips, in the
  * phone's order (`HomeAlbumsToolbarSettingsDialog.allButtonIds`), with the phone's show conditions
  * (position lock only while the chip's sort is `Custom`, no YouTube sync on the PC) — then the
- * Compagnon's "Refresh". Wired: sort, refresh and item size (the per-tab grid size, a Compagnon-local
- * setting); the rest (search, randomizer, shuffle, item selector, play next, enqueue, add to playlist,
+ * Compagnon's "Refresh". Wired: sort, refresh, item size (the per-tab grid size, a Compagnon-local
+ * setting) and the randomizer (a random album of the shown list, client-side as on the phone); the rest
+ * (search — `/library/albums` has no `text` parameter —, position lock, shuffle, item selector, play next, enqueue, add to playlist,
  * export) are placeholders without a contract route —
- * the phone's search, shuffle, play next and enqueue act on the album's own songs, which the contract
- * does not serve, and a click does nothing.
+ * the phone's search, shuffle, play next and enqueue act on the songs of all the shown (or selected) albums — a set of lists the contract cannot name in one
+ * command (`/queue/list` takes one list) — and a click does nothing.
  *
  * Sort: the phone keeps one sort per tab — the chip's sort and direction live in the user settings
  * (`chipSorts`, key `albums:<chip>`), applied to the list on every change and on the first composition
@@ -100,12 +110,15 @@ const val GRID_THUMBNAIL_SIZE_PX = 256
  * the play count / listening time, the sorted value is shown over the thumbnail, like on the phone
  * (the multi-select check overlay is dropped — no contract route for the item selector).
  *
- * Dropped (contract v1): position lock (no client-side reorder on the PC), YouTube sync and its filter
+ * Dropped (contract v1): drag to reorder (the position lock is shown, inert), YouTube sync and its filter
  * chip and progress, pull-to-refresh, drag to reorder, the chip and toolbar order / visibility
  * preferences.
  * A click opens the album, a long press (right click) opens `AlbumItemMenu`. The bookmark badge comes
  * from contract 1.3 `isBookmarked`, in every filter; since 1.7.1 the contract's `isDisliked` shows
  * the phone's `bookmark_slash`.
+ * Pass 5 (audit 2026-10-10): dropped too — the landscape bars toggle (`landscapeBarsToggleButton`, the
+ * phone's 791: touch landscape only) and the floating multi-action icon (`showFloatingIcon`, its 798, off
+ * by default; deferred). Pull-to-refresh: the toolbar's Refresh instead (no touch on the PC).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -180,9 +193,10 @@ fun HomeAlbums(
                 "position_lock" -> if (chipSort.albumSort == AlbumSort.Custom) {
                     add(InertButton(Res.drawable.locked, Res.string.info_lock_unlock_reorder_songs))
                 }
+                // No contract search on `/library/albums` (no `text` parameter): inert, the phone's title
                 "search" -> add(InertButton(Res.drawable.search_circle, Res.string.search))
-                "randomizer" -> add(InertButton(Res.drawable.dice, Res.string.randomizer))
-                "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.info_shuffle))
+                "randomizer" -> add(Randomizer({ activeList.state.value.items }, onAlbumClick))
+                "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
                 "item_selector" -> add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
                 "play_next" -> add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
                 "enqueue" -> add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
@@ -257,11 +271,12 @@ fun HomeAlbums(
                     modifier = Modifier.background(colorPalette().background0).fillMaxSize(),
                 ) {
                     items(
-                        items = state.items.withIndex().toList(),
-                        key = { (index, album) -> "$index:${album.id}" },
+                        items = state.items.distinctBy { it.id }.withIndex().toList(),
+                        // The phone's keys: the id, duplicates dropped (`distinctBy`)
+                        key = { (_, album) -> album.id },
                     ) { (_, album) ->
                         Box(modifier = Modifier) {
-                            val menu = actions.collectionActions(CollectionHeader.OfAlbum(album).ref, live)
+                            val menu: ItemActions? = actions.collectionMenuActions(CollectionHeader.OfAlbum(album).ref, live)
                             val openMenu = menu?.let {
                                 {
                                     menuState.display {
@@ -274,7 +289,7 @@ fun HomeAlbums(
                                 showAuthors = true,
                                 album = album,
                                 thumbnailSizeDp = itemSize.value.dp,
-                                thumbnailSizePx = GRID_THUMBNAIL_SIZE_PX,
+                                thumbnailSizePx = gridThumbnailSizePx(itemSize.value.dp),
                                 thumbnailOverlay = {
                                     albumSortOverlay(albumQuery.sort, album)
                                 },

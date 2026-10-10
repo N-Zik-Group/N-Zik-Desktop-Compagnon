@@ -94,7 +94,7 @@ data class UserSettings(
      * phone's per-tab sizes are not in the contract.
      */
     @SerialName(itemSizesKey) val itemSizes: Map<String, String> = emptyMap(),
-    /** The phone's "Disable scrolling text" (its `disableScrollingTextKey`, not in the contract). */
+    /** The phone's "Disable scrolling text" (its `disableScrollingTextKey`): since contract 1.10.0 (`ui.settings`) mirrored from the phone once read, the PC's own value for an older phone. */
     @SerialName(disableScrollingTextKey) val disableScrollingText: Boolean = false,
     /**
      * The PC's own "App language" (contract 1.9.0, `ui.language`): the sentinel `auto_pc` (the PC's

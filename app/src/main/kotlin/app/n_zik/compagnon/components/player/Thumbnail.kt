@@ -1,5 +1,7 @@
 package app.n_zik.compagnon.components.player
 
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
@@ -50,14 +52,19 @@ private data class Window(val index: Int, val trackId: String, val hasArtwork: B
  * `ic_launcher_box` when there is no cover.
  *
  * Dropped: the lyrics, the visualizer, the stats for nerds and the playback errors shown over the cover (not
- * in the contract), the tap / long press / double tap (lyrics, stats, like), the rotating vinyl option (off by
- * default).
+ * in the contract), the tap / long press (lyrics, stats: not ported), the rotating vinyl option (off by
+ * default). The double tap is ported: [onDoubleTap], the like rotation (the phone's `onDoubleTap`).
+ * Adaptation (pass 5): no artwork retry button on a failed load (the phone's 218-228 retries its
+ * Coil request); the PC's artwork cache re-reads it on the next track change.
  */
 @Composable
 fun Thumbnail(
     state: PlayerState,
     modifier: Modifier = Modifier,
+    /** The phone's double tap on the cover (`Thumbnail.kt` 275-305): the like rotation. */
+    onDoubleTap: () -> Unit = {},
 ) {
+    val currentOnDoubleTap by androidx.compose.runtime.rememberUpdatedState(onDoubleTap)
     val track = state.currentTrack ?: return
     val window = Window(state.currentIndex, track.id, track.hasArtwork)
 
@@ -115,7 +122,10 @@ fun Thumbnail(
             .clip(thumbnailShape())
 
         Box(
-            modifier = modifierUiType,
+            modifier = modifierUiType.pointerInput(Unit) {
+                // The latest closure (state, session), not the first composition's
+                detectTapGestures(onDoubleTap = { currentOnDoubleTap() })
+            },
         ) {
             if (artImageAvailable) {
                 Image(

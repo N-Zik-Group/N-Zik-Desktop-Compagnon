@@ -59,6 +59,8 @@ import app.n_zik.compagnon.bridge.pairing.ValidateRequest
 import app.n_zik.compagnon.bridge.pairing.ValidateResponse
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.bridge.state.CommandResponse
+import app.n_zik.compagnon.bridge.state.ListRef
+import app.n_zik.compagnon.bridge.state.UiSettings
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
 
@@ -378,6 +380,34 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
         } ?: return null
         if (response.status != HttpStatusCode.OK) return null
         return response.decode(DislikeMode.serializer())
+    }
+
+    /** `GET /library/locate` (contract §10.4, since 1.10.0): `null` on any non-`200` answer. */
+    override suspend fun locate(address: ServerAddress, deviceToken: String, list: ListRef, trackId: String): LocateAnswer? {
+        val response = call(address, "library/locate") {
+            http.get("${address.apiBase}/library/locate") {
+                bearerAuth(deviceToken)
+                parameter("trackId", trackId)
+                parameter("kind", list.kind)
+                list.id?.let { parameter("id", it) }
+                list.filter?.let { parameter("filter", it) }
+                list.sort?.let { parameter("sort", it) }
+                parameter("reverse", list.reverse.toString())
+                list.period?.let { parameter("period", it) }
+                list.text?.let { parameter("text", it) }
+            }
+        } ?: return null
+        if (response.status != HttpStatusCode.OK) return null
+        return response.decode(LocateAnswer.serializer())
+    }
+
+    /** `GET /ui/settings` (contract §10.5, since 1.10.0): `null` on any non-`200` answer (the phone's defaults stay). */
+    override suspend fun uiSettings(address: ServerAddress, deviceToken: String): UiSettings? {
+        val response = call(address, "ui/settings") {
+            http.get("${address.apiBase}/ui/settings") { bearerAuth(deviceToken) }
+        } ?: return null
+        if (response.status != HttpStatusCode.OK) return null
+        return response.decode(UiSettings.serializer())
     }
 
     // ---- Library writes (contract §10.2, since 1.7): the explicit state, local Room only ----

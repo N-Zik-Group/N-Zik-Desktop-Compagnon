@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.menu
 
+import app.n_zik.compagnon.utils.onSecondaryClick
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -45,8 +46,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * Port of the phone's `app/n_zik/android/components/menu/ListMenu.kt` (with `MenuConstants.kt`).
  * `CONTENT_HEIGHT_FRACTION` = 1: the sheet host bounds the height, and the content fills it (`weight(1f)`,
  * phone's 138). The optional `headerTrailing` slot is not ported (no library menu uses it).
- * Dropped: the phone's menu style setting (`menuStyleKey`) and its grid variant (`GridMenu.kt`,
- * `MenuStyle.Menu`) — the PC menus are always in the phone's default list style.
+ * Deferred (`deferred-work.md`): the phone's grid variant (`GridMenu.kt`) — its `menuStyle` is served since
+ * contract 1.10.0 (`ui.settings`) but not read: the PC menus are always in the phone's default list style.
  */
 object ListMenu {
 
@@ -129,6 +130,8 @@ object ListMenu {
             modifier = modifier
                 .fillMaxWidth()
                 .clip(uiRoundnessShape())
+                // PC: a right click is the phone's long press (its help toast for a `Descriptive` entry)
+                .onSecondaryClick(onLongClick.takeIf { enabled })
                 .combinedClickable(
                     enabled = enabled,
                     onClick = onClick,

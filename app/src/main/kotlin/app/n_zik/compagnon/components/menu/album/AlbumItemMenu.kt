@@ -77,7 +77,9 @@ const val MENU_THUMBNAIL_SIZE_PX = 128
  * → disliked → neutral, the phone's `rotateLikeState`) or, with the phone's "disliked" mode off
  * (feature `library.dislikeMode`), toggles it, and writes the phone's target state (`POST
  * /library/albums/{id}/like`, with the phone's toasts); a phone before 1.7.2 keeps its 1.7 binary
- * route; without the `library.write` feature it stays an inert indicator, as before.
+ * route; without the `library.write` feature it stays an inert indicator (no icon change, no toast).
+ * The share icon copies the phone's fallback link (`music.youtube.com/browse/<id>`, its 405-414: the
+ * album's `shareUrl` is not in the contract) to the clipboard — the desktop's share.
  */
 class AlbumItemMenu(
     private val album: Album,
@@ -94,7 +96,7 @@ class AlbumItemMenu(
         // Section: Management
         ListMenu.SectionTitle(stringResource(Res.string.management))
         InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist).ListMenuItem()
-        InertMenuItem(Res.drawable.downloaded, Res.string.download).ListMenuItem()
+        InertMenuItem(Res.drawable.downloaded, Res.string.download, descriptionId = Res.string.info_download_all_songs).ListMenuItem()
         InertMenuItem(Res.drawable.download, Res.string.info_remove_all_downloaded_songs).ListMenuItem()
         InertMenuItem(Res.drawable.artists_edit, Res.string.update_authors).ListMenuItem()
         InertMenuItem(Res.drawable.cover_edit, Res.string.update_cover).ListMenuItem()
@@ -103,11 +105,11 @@ class AlbumItemMenu(
 
         // Section: Navigation
         ListMenu.SectionTitle(stringResource(Res.string.navigation))
-        val artistNames = splitArtistNames(album.artists)
+        val artistNames = splitArtistNames(album.artists, listOf(stringResource(Res.string.and)))
         if (artistNames.size <= 1) {
-            InertMenuItem(Res.drawable.people, Res.string.more_of, " ${album.artists.orEmpty()}").ListMenuItem()
+            InertMenuItem(Res.drawable.people, Res.string.more_of, " ${album.artists.orEmpty()}", descriptionId = Res.string.artists).ListMenuItem()
         } else {
-            artistNames.forEach { InertMenuItem(Res.drawable.people, Res.string.more_of, " $it").ListMenuItem() }
+            artistNames.forEach { InertMenuItem(Res.drawable.people, Res.string.more_of, " $it", descriptionId = Res.string.artists).ListMenuItem() }
         }
         InertMenuItem(Res.drawable.title_edit, Res.string.update_title).ListMenuItem()
     }
@@ -263,7 +265,8 @@ class AlbumItemMenu(
                             AlbumLike.Neutral -> colorPalette().text
                         },
                         onClick = {
-                            if (actions.enabled) {
+                            // Inert without `library.write` (no icon change, no toast: nothing is written)
+                            if (actions.enabled && writes != null) {
                                 val mode = dislikeMode
                                 val target = if (mode == null) {
                                     likeState.nextToggle()
@@ -292,10 +295,16 @@ class AlbumItemMenu(
                             .size(20.dp),
                     )
 
+                    // The phone's share (its 405-414): `shareUrl`, absent from the contract, so the
+                    // phone's fallback `music.youtube.com/browse/<id>`, copied to the clipboard
                     IconButton(
                         icon = Res.drawable.share_social,
                         color = colorPalette().text,
-                        onClick = {},
+                        onClick = {
+                            app.n_zik.compagnon.components.player.ShareLinks.copy(
+                                app.n_zik.compagnon.components.player.ShareLinks.album(album.id),
+                            )
+                        },
                         modifier = Modifier
                             .padding(all = 4.dp)
                             .size(20.dp),

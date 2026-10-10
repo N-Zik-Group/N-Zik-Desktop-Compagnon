@@ -23,7 +23,10 @@ import app.n_zik.compagnon.bridge.library.PlaylistsQuery
 import app.n_zik.compagnon.bridge.library.RewindState
 import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongsQuery
+import app.n_zik.compagnon.bridge.state.ListAction
+import app.n_zik.compagnon.bridge.state.ListRef
 import app.n_zik.compagnon.bridge.state.PlayerNotice
+import app.n_zik.compagnon.bridge.library.toListRef
 import app.n_zik.compagnon.bridge.state.PlayerRepository
 import app.n_zik.compagnon.bridge.state.PlayerState
 import app.n_zik.compagnon.bridge.state.AudioOutput
@@ -31,6 +34,7 @@ import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.RepeatMode
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
+import app.n_zik.compagnon.bridge.state.withTrackLike
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.core.network.LibraryResult
 import app.n_zik.compagnon.core.network.WriteResult
@@ -55,12 +59,23 @@ class LibraryActionsTest {
     private sealed interface Sent {
         data class Play(val ids: List<String>, val startIndex: Int, val total: Int) : Sent
         data class Add(val ids: List<String>, val position: QueuePosition, val total: Int) : Sent
+        data class WholeList(val list: ListRef, val action: ListAction, val startIndex: Int, val startTrackId: String?) : Sent
     }
 
     /** Records `queue/play` / `queue/add`; every other command is unused here. */
-    private class FakePlayer(override val features: Set<String> = setOf("playback", "queue")) : PlayerRepository {
+    private class FakePlayer(
+        override val features: Set<String> = setOf("playback", "queue"),
+        initial: PlayerState? = null,
+    ) : PlayerRepository {
         val sent = mutableListOf<Sent>()
-        override val state: StateFlow<PlayerState?> = MutableStateFlow(null)
+        private val mutableState = MutableStateFlow(initial)
+        override val state: StateFlow<PlayerState?> = mutableState
+        /** Every like patch, in order (the optimistic one, then the confirmed or the rollback). */
+        val likePatches = mutableListOf<Pair<String, TrackLike>>()
+        override fun patchTrackLike(trackId: String, like: TrackLike) {
+            likePatches += trackId to like
+            mutableState.value = mutableState.value?.withTrackLike(trackId, like)
+        }
         override val connection: StateFlow<ConnectionState> = MutableStateFlow(ConnectionState.Live)
         override val notices: SharedFlow<PlayerNotice> = MutableSharedFlow()
         override val libraryChanged: SharedFlow<String> = MutableSharedFlow()
@@ -86,6 +101,9 @@ class LibraryActionsTest {
         }
         override suspend fun addTracks(trackIds: List<String>, position: QueuePosition, total: Int) {
             sent += Sent.Add(trackIds, position, total)
+        }
+        override suspend fun playList(list: ListRef, action: ListAction, startIndex: Int, startTrackId: String?) {
+            sent += Sent.WholeList(list, action, startIndex, startTrackId)
         }
         override fun start() = Unit
         override fun reconnect() = Unit
@@ -218,10 +236,85 @@ class LibraryActionsTest {
     }
 
     @Test
-    fun `without the queue feature there is no menu`() = runTest {
+    fun `without the queue feature the menus open with inert entries, as on the phone`() = runTest {
         val actions = LibraryActions(FakePlayer(features = setOf("playback")), FakeLibrary(12), this) {}
         assertNull(actions.collectionActions(album, live = true))
-        assertNull(actions.trackActions(MutableStateFlow(PagedState(items = emptyList())), 0, "a", live = true))
+        assertFalse(actions.collectionMenuActions(album, live = true).enabled)
+        assertFalse(actions.trackActions(MutableStateFlow(PagedState(items = emptyList())), 0, "a", live = true)!!.enabled)
+    }
+
+    // ---- Contract 1.10.0 (`queue.fullList`): the phone builds the queue from the WHOLE list ----
+
+    private val fullListFeatures = setOf("playback", "queue", "queue.fullList")
+
+    @Test
+    fun `a click on a list of 2000 with 100 loaded hands the whole list to the phone`() = runTest {
+        val player = FakePlayer(fullListFeatures)
+        val actions = LibraryActions(player, FakeLibrary(2_000), this) {}
+        val loaded = List(100) { Track("t$it") }
+        val ref = SongsQuery(text = null, filter = SongFilter.Liked).toListRef()
+        actions.playFrom(loaded, 42, "t42", ref)
+        advanceUntilIdle()
+        assertEquals(listOf<Sent>(Sent.WholeList(ref, ListAction.Play, 42, "t42")), player.sent)
+    }
+
+    @Test
+    fun `shuffle, play next and enqueue go to the phone's own entries with the feature`() = runTest {
+        val player = FakePlayer(fullListFeatures)
+        val actions = LibraryActions(player, FakeLibrary(0), this) {}
+        val ref = SongsQuery().toListRef()
+        actions.playShuffled(emptyList(), 0, ref)
+        actions.addAll(emptyList(), QueuePosition.Next, 0, ref)
+        actions.addAll(emptyList(), QueuePosition.End, 0, ref)
+        advanceUntilIdle()
+        assertEquals(
+            listOf<Sent>(
+                Sent.WholeList(ref, ListAction.Shuffle, 0, null),
+                Sent.WholeList(ref, ListAction.Next, 0, null),
+                Sent.WholeList(ref, ListAction.End, 0, null),
+            ),
+            player.sent,
+        )
+    }
+
+    @Test
+    fun `without the feature the loaded pages are sent as before`() = runTest {
+        val player = FakePlayer()
+        val actions = LibraryActions(player, FakeLibrary(0), this) {}
+        val loaded = listOf(Track("a"), Track("b"))
+        actions.playFrom(loaded, 1, "b", SongsQuery().toListRef())
+        actions.addAll(loaded, QueuePosition.End, 2, SongsQuery().toListRef())
+        advanceUntilIdle()
+        assertEquals(listOf<Sent>(Sent.Play(listOf("a", "b"), 1, 2), Sent.Add(listOf("a", "b"), QueuePosition.End, 2)), player.sent)
+    }
+
+    @Test
+    fun `a PC-only list without a reference keeps the loaded pages even with the feature`() = runTest {
+        val player = FakePlayer(fullListFeatures)
+        val actions = LibraryActions(player, FakeLibrary(0), this) {}
+        actions.playFrom(listOf(Track("a")), 0, "a", listRef = null)
+        advanceUntilIdle()
+        assertEquals(listOf<Sent>(Sent.Play(listOf("a"), 0, 1)), player.sent)
+    }
+
+    @Test
+    fun `collection actions name the collection to the phone with the feature`() = runTest {
+        val player = FakePlayer(fullListFeatures)
+        val actions = LibraryActions(player, FakeLibrary(12), this) {}
+        val menu = actions.collectionActions(album, live = true)!!
+        menu.onPlay()
+        menu.onShuffle!!()
+        advanceUntilIdle()
+        val ref = ListRef(kind = "album", id = "MPREb_x")
+        assertEquals(listOf<Sent>(Sent.WholeList(ref, ListAction.Play, 0, null), Sent.WholeList(ref, ListAction.Shuffle, 0, null)), player.sent)
+    }
+
+    @Test
+    fun `list references carry the route parameters`() {
+        val songs = SongsQuery("abc", SongFilter.Top, app.n_zik.compagnon.bridge.library.SongSort.PlayCount, true, app.n_zik.compagnon.bridge.library.TopPeriod.Week).toListRef()
+        assertEquals(ListRef("songs", null, "top", "playCount", true, "week", "abc"), songs)
+        val playlist = CollectionRef(CollectionKind.Playlist, "7").toListRef(PlaylistSongsQuery(text = "x"))
+        assertEquals(ListRef("playlist", "7", null, "custom", false, null, "x"), playlist)
     }
 
     @Test
@@ -402,6 +495,100 @@ class LibraryActionsTest {
         assertEquals(listOf("MPREb_x" to true), fake.albumBookmarks)
         assertEquals(listOf("UC1" to ArtistFollow.Followed), fake.artistFollows)
         assertEquals(listOf("7" to true), fake.playlistPins)
+    }
+
+    // ---- The player's heart: a like alone moves no phone player event ----
+
+    private fun queued(): PlayerState = PlayerState(
+        queue = listOf(Track("t1"), Track("t5"), Track("t5"), Track("t7")),
+        currentIndex = 1,
+        currentTrackId = "t5",
+    )
+
+    @Test
+    fun `a like write patches the player's current track and its queue items at once`() = runTest {
+        val fake = FakeLibrary(12)
+        fake.songLikeAnswer = WriteResult.SongLike(TrackLike.Liked)
+        val player = FakePlayer(initial = queued())
+        val actions = LibraryActions(player, fake, this) {}
+
+        actions.likeSong("t5", TrackLike.Liked)
+        // Before the phone answers: the heart already reads the new like
+        val optimistic = player.state.value!!
+        assertEquals(TrackLike.Liked, optimistic.currentTrack?.like)
+        assertTrue(optimistic.currentTrack!!.isLiked)
+        assertEquals(listOf(TrackLike.Neutral, TrackLike.Liked, TrackLike.Liked, TrackLike.Neutral), optimistic.queue.map { it.like })
+
+        advanceUntilIdle()
+        assertEquals(listOf("t5" to TrackLike.Liked, "t5" to TrackLike.Liked), player.likePatches)
+        assertEquals(TrackLike.Liked, player.state.value!!.currentTrack?.like)
+    }
+
+    @Test
+    fun `a failed like write rolls the player's heart back`() = runTest {
+        val fake = FakeLibrary(12)
+        fake.songLikeAnswer = WriteResult.Failed(503, "SERVER_STOPPING")
+        val player = FakePlayer(initial = queued().withTrackLike("t5", TrackLike.Disliked))
+        val messages = mutableListOf<String>()
+        val actions = LibraryActions(player, fake, this) { messages += it }
+
+        actions.likeSong("t5", TrackLike.Liked)
+        assertEquals(TrackLike.Liked, player.state.value!!.currentTrack?.like)
+        advanceUntilIdle()
+        awaitMessages(messages)
+        assertEquals(TrackLike.Disliked, player.state.value!!.currentTrack?.like)
+        assertEquals(listOf("t5" to TrackLike.Liked, "t5" to TrackLike.Disliked), player.likePatches)
+    }
+
+    @Test
+    fun `the confirmation is reported once the phone answered, never on a failure`() = runTest {
+        val fake = FakeLibrary(12)
+        fake.songLikeAnswer = WriteResult.SongLike(TrackLike.Liked)
+        val actions = LibraryActions(FakePlayer(initial = queued()), fake, this) {}
+        val confirmed = mutableListOf<TrackLike>()
+
+        actions.likeSong("t5", TrackLike.Liked) { confirmed += it }
+        // The phone toasts after its DB write: nothing before the answer
+        assertTrue(confirmed.isEmpty())
+        advanceUntilIdle()
+        assertEquals(listOf(TrackLike.Liked), confirmed)
+
+        fake.songLikeAnswer = WriteResult.Failed(503, "SERVER_STOPPING")
+        val messages = mutableListOf<String>()
+        val failing = LibraryActions(FakePlayer(initial = queued()), fake, this) { messages += it }
+        failing.likeSong("t5", TrackLike.Disliked) { confirmed += it }
+        advanceUntilIdle()
+        awaitMessages(messages)
+        assertEquals(listOf(TrackLike.Liked), confirmed)
+    }
+
+    @Test
+    fun `a failed tap does not roll back a later tap's heart`() = runTest {
+        val fake = FakeLibrary(12)
+        fake.songLikeAnswer = WriteResult.Failed(503, "SERVER_STOPPING")
+        val player = FakePlayer(initial = queued())
+        val messages = mutableListOf<String>()
+        val actions = LibraryActions(player, fake, this) { messages += it }
+
+        actions.likeSong("t5", TrackLike.Liked)
+        // A second tap before the first answer: the heart shows it
+        player.patchTrackLike("t5", TrackLike.Disliked)
+        advanceUntilIdle()
+        awaitMessages(messages)
+        assertEquals(TrackLike.Disliked, player.state.value!!.currentTrack?.like)
+    }
+
+    @Test
+    fun `a like of a track outside the queue leaves the player state alone`() = runTest {
+        val fake = FakeLibrary(12)
+        fake.songLikeAnswer = WriteResult.SongLike(TrackLike.Liked)
+        val player = FakePlayer(initial = queued())
+        val actions = LibraryActions(player, fake, this) {}
+
+        actions.likeSong("t9", TrackLike.Liked)
+        advanceUntilIdle()
+        assertTrue(player.likePatches.isEmpty())
+        assertEquals(queued(), player.state.value)
     }
 
     @Test

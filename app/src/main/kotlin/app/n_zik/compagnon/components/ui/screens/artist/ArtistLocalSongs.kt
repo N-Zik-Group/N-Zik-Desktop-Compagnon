@@ -1,5 +1,8 @@
 package app.n_zik.compagnon.components.ui.screens.artist
 
+import app.n_zik.compagnon.components.themed.ConfirmationDialog
+import androidx.compose.foundation.lazy.items
+import app.n_zik.compagnon.bridge.library.toListRef
 import app.n_zik.compagnon.generated.resources.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,7 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -86,12 +88,23 @@ import org.jetbrains.compose.resources.stringResource
  * target (`library.write`), toasting the phone's `added_to_favorites` / `added_to_dislikes` /
  * `removed_from_favorites` (its `FollowButton.kt` 97-115), while without the feature it stays inert) and,
  * in the phone's order, the
- * download-all and remove-downloads placeholders (their toasts are the phone's long-press hints, on click
- * here) and the enqueue and shuffle buttons wired to the contract (greyed without the `queue` feature or
- * while the list is empty; the app-wide `shuffle_ok` flash, issue #866).
+ * download-all and remove-downloads buttons (a click opens the phone's confirmation dialog; NOT LINKED: no
+ * download route, so its Confirm starts nothing — the PC never fakes a download; a long press / right click
+ * shows the phone's help) and the enqueue and shuffle buttons wired to the contract (since 1.10.0 on the
+ * artist's whole list; greyed without the `queue` feature or while the list is empty; the app-wide
+ * `shuffle_ok` flash, issue #866), all with the phone's clipped ripple and help.
+ * "No songs yet" shows while the list is empty (loading too, the phone's `songs.isNullOrEmpty()`). The share
+ * icon copies the phone's share link (`music.youtube.com/channel/<id>`) to the clipboard (desktop
+ * adaptation of the Android share sheet). In landscape the header picture is hidden (no
+ * `DynamicOrientationLayout` on this tab, as on the phone).
+ * Adaptations: a click outside a `Live` session does nothing (no command can reach the phone); the top
+ * fade has no system-bar inset (none on the desktop).
  * Dropped (contract v1 or PC): the "Overview" tab and the subscribers line (the artist's online page),
- * share, swipe actions, the phone's confirmation dialogs (wire 1.7).
- * Added by the Compagnon: the back arrow, the paging row. The duration shows once all tracks are loaded.
+ * swipe actions.
+ * Added by the Compagnon: the back arrow, the paging row. The duration comes whole from the phone since
+ * 1.10.0 (`totalDurationMs`).
+ * Pass 5 (audit 2026-10-10): the floating multi-action icon (`showFloatingIcon`, off by default) is
+ * dropped (deferred).
  */
 @Composable
 fun ArtistLocalSongs(
@@ -110,7 +123,12 @@ fun ArtistLocalSongs(
     LoadMoreEffect(list, state, { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 })
 
     val songCount = state.total ?: songs.size
-    val totalDuration = if (state.endReached) (songs.sumOf { it.durationMs ?: 0L } / 1_000).toInt() else 0
+    // Since 1.10.0 the phone serves the whole list's duration at once (`totalDurationMs`)
+    val totalDuration = when {
+        state.totalDurationMs > 0L -> (state.totalDurationMs / 1_000).toInt()
+        state.endReached -> (songs.sumOf { it.durationMs ?: 0L } / 1_000).toInt()
+        else -> 0
+    }
     val totalDurationText = if (totalDuration > 0) {
         val hours = totalDuration / 3600
         val minutes = (totalDuration % 3600) / 60
@@ -157,7 +175,29 @@ fun ArtistLocalSongs(
         .collectAsState()
     val followRotationEnabled = dislikeMode?.artists != false
 
+    var showConfirmDownloadAllDialog by remember { mutableStateOf(false) }
+    var showConfirmDeleteDownloadDialog by remember { mutableStateOf(false) }
+
+    // The phone's confirmations (`ArtistLocalSongs.kt` 275-327), outside the lazy list so they show
+    // whatever the scroll position
+    if (showConfirmDownloadAllDialog) {
+        ConfirmationDialog(
+            text = stringResource(Res.string.do_you_really_want_to_download_all),
+            onDismiss = { showConfirmDownloadAllDialog = false },
+            onConfirm = { showConfirmDownloadAllDialog = false },
+        )
+    }
+    if (showConfirmDeleteDownloadDialog) {
+        ConfirmationDialog(
+            text = stringResource(Res.string.do_you_really_want_to_delete_download),
+            onDismiss = { showConfirmDeleteDownloadDialog = false },
+            onConfirm = { showConfirmDeleteDownloadDialog = false },
+        )
+    }
+
     Box(Modifier.fillMaxSize()) {
+        // The phone's Library tab (`ArtistLocalSongs.kt` 127-397) has no `DynamicOrientationLayout` (that
+        // is its Overview tab, `ArtistScreen.kt` 498): in landscape it only hides the header picture
         BoxWithConstraints(Modifier.fillMaxSize()) {
             val isLandscape = maxWidth > maxHeight
             LazyColumn(
@@ -165,7 +205,7 @@ fun ArtistLocalSongs(
                 contentPadding = PaddingValues(bottom = Dimensions.bottomSpacer),
                 modifier = Modifier.fillMaxSize(),
             ) {
-                item {
+                item(key = "header") {
                     ArtistHeader(header.artist, isLandscape)
                 }
                 item(key = "action_buttons") {
@@ -220,25 +260,34 @@ fun ArtistLocalSongs(
                             )
                         }
 
-                        // No contract route yet (wire 1.7): the phone's long-press hints, on click here
+                        // The phone's 216-271: a click asks the phone's confirmation, a long press (right
+                        // click) tells what the button does, the ripple is clipped to the UI roundness.
+                        // Contract adaptation: no download route — the confirmation's "Confirm" starts
+                        // nothing on the phone (the PC never fakes a download)
                         HeaderIconButton(
                             icon = Res.drawable.download,
                             color = colorPalette().text,
                             iconSize = 24.dp,
-                            onClick = { Toaster.i(Res.string.info_download_all_songs) },
+                            modifier = Modifier.clip(uiRoundnessShape()),
+                            onClick = { showConfirmDownloadAllDialog = true },
+                            onLongClick = { Toaster.i(Res.string.info_download_all_songs) },
                         )
                         HeaderIconButton(
                             icon = Res.drawable.downloaded,
                             color = colorPalette().text,
                             iconSize = 24.dp,
-                            onClick = { Toaster.i(Res.string.info_remove_all_downloaded_songs) },
+                            modifier = Modifier.clip(uiRoundnessShape()),
+                            onClick = { showConfirmDeleteDownloadDialog = true },
+                            onLongClick = { Toaster.i(Res.string.info_remove_all_downloaded_songs) },
                         )
                         HeaderIconButton(
                             icon = Res.drawable.enqueue,
                             color = if (playbackEnabled) colorPalette().text else colorPalette().textDisabled,
                             iconSize = 24.dp,
                             enabled = playbackEnabled,
+                            modifier = Modifier.clip(uiRoundnessShape()),
                             onClick = { collection?.onEnqueue?.invoke() },
+                            onLongClick = { Toaster.i(Res.string.info_enqueue_songs) },
                         )
                         HeaderIconButton(
                             // Issue #866: the app-wide shuffle confirmation flash
@@ -246,10 +295,12 @@ fun ArtistLocalSongs(
                             color = if (playbackEnabled) colorPalette().text else colorPalette().textDisabled,
                             iconSize = 24.dp,
                             enabled = playbackEnabled,
+                            modifier = Modifier.clip(uiRoundnessShape()),
                             onClick = {
                                 ShuffleOkFlash.trigger()
                                 collection?.onShuffle?.invoke()
                             },
+                            onLongClick = { Toaster.i(Res.string.info_shuffle) },
                         )
                     }
                 }
@@ -266,7 +317,8 @@ fun ArtistLocalSongs(
                         )
                     }
                 }
-                if (songs.isEmpty() && state.endReached) {
+                // The phone's `songs.isNullOrEmpty()` (its 343-353): "No songs yet" while loading too
+                if (songs.isEmpty() && state.error == null) {
                     item(key = "empty") {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             Text(
@@ -278,21 +330,22 @@ fun ArtistLocalSongs(
                         }
                     }
                 } else {
-                    itemsIndexed(
-                        items = songs,
-                        key = { index, song -> "$index:${song.id}" },
-                    ) { index, song ->
+                    items(
+                        items = songs.withIndex().distinctBy { it.value.id },
+                        // The phone's keys: the track id, duplicates dropped (`distinctBy`)
+                        key = { it.value.id },
+                    ) { (index, song) ->
                         Box(
                             Modifier
                                 .fillMaxWidth(),
                         ) {
-                            val menu = actions.trackActions(list.state, index, song.id, live)
+                            val menu = actions.trackActions(list.state, index, song.id, live, header.ref.toListRef())
                             SongItem(
                                 song = song,
                                 modifier = Modifier,
                                 onLongClick = menu?.let { { menuState.display { SongItemMenu(song, it).MenuComponent() } } },
                                 onClick = {
-                                    if (live && actions.available) actions.playFrom(list.state.value.items, index, song.id)
+                                    if (live && actions.available) actions.playFrom(list.state.value.items, index, song.id, header.ref.toListRef())
                                 },
                             )
                         }
@@ -362,7 +415,7 @@ fun ArtistHeader(artist: Artist, isLandscape: Boolean) {
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(top = 5.dp, end = 5.dp),
-            onClick = {},
+            onClick = { app.n_zik.compagnon.components.player.ShareLinks.copy(app.n_zik.compagnon.components.player.ShareLinks.artist(artist.id)) },
         )
     }
 }

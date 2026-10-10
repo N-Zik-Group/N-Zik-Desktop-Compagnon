@@ -12,6 +12,8 @@ data class PlayerState(
     val isPlaying: Boolean = false,
     /** Since 1.4 (contract §7.1): the phone's player is loading or rebuffering; a ≤ 1.3 phone reports `false`. */
     val isBuffering: Boolean = false,
+    /** Since 1.10.0 (contract §7.1): the phone's `playWhenReady`; `null` from an older phone. */
+    val playWhenReady: Boolean? = null,
     /** Since 1.5 (contract §7.1): the phone's player's live duration; [DURATION_UNREPORTED] when a ≤ 1.4 phone does not report it. */
     val durationMs: Long = DURATION_UNREPORTED,
     val speed: Float = 1f,
@@ -22,6 +24,17 @@ data class PlayerState(
     /** Where the phone's playback sounds (contract §8.5, since 1.2); [AudioOutput.Pc] = this PC's local player. */
     val audioOutput: AudioOutput = AudioOutput.Phone,
 ) {
+    /**
+     * The phone's `Player.shouldBePlaying` (`utils/Player.kt` 69: `playWhenReady && state != ENDED`):
+     * playing, or buffering while it should play. An older phone (no [playWhenReady]) counts buffering.
+     */
+    val shouldBePlaying: Boolean
+        get() = isPlaying || (isBuffering && playWhenReady != false)
+
+    /** The phone's buffering ring (`MiniPlayer.kt` 727, `Controls`): `isBuffering && playWhenReady`. */
+    val showsBuffering: Boolean
+        get() = isBuffering && playWhenReady != false
+
     /** The current track: the one at [currentIndex] when its id matches, else the first one with [currentTrackId]. */
     val currentTrack: Track?
         get() {
@@ -65,6 +78,7 @@ data class PlayerState(
             currentTrackId = snapshot.currentTrackId,
             isPlaying = snapshot.isPlaying,
             isBuffering = snapshot.isBuffering,
+            playWhenReady = snapshot.playWhenReady,
             durationMs = snapshot.durationMs,
             speed = snapshot.speed,
             positionMs = snapshot.positionMs,
@@ -85,3 +99,13 @@ data class SyncState(
     val last: Long? = null,
     val awaitingSnapshot: Boolean = true,
 )
+
+/**
+ * The state with every queue item of [trackId] (the current track among them) set to [like]: the
+ * optimistic patch of a §10.2 like write, re-synced by the phone's next queue delta. `this` when
+ * the track is not in the queue.
+ */
+fun PlayerState.withTrackLike(trackId: String, like: TrackLike): PlayerState {
+    if (queue.none { it.id == trackId }) return this
+    return copy(queue = queue.map { if (it.id == trackId) it.copy(like = like, isLiked = like == TrackLike.Liked) else it })
+}

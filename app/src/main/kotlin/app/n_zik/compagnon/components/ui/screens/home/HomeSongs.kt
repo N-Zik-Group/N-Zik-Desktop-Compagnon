@@ -1,5 +1,7 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import androidx.compose.foundation.lazy.items
+import app.n_zik.compagnon.bridge.state.ListRef
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -40,7 +41,8 @@ import org.jetbrains.compose.resources.stringResource
  * Port of the list of `HomeSongs` (phone's `app/n_zik/android/components/ui/screens/home/HomeSongs.kt`
  * 528-689): a `LazyColumn` of `SongItem` under the header, "No items" when empty.
  *
- * A click plays the loaded list from that track (`queue/play`, the phone's `forcePlayAtIndex`); a long
+ * A click plays the list from that track — since contract 1.10.0 (`queue.fullList`) the phone's WHOLE
+ * list through its own click (`stopRadio` + `forcePlayAtIndex`), before the loaded pages (`queue/play`); a long
  * press (right click) opens `SongItemMenu`. Pages are read while scrolling (contract §1), with the
  * Compagnon's loading / error + "Retry" row at the end.
  *
@@ -49,6 +51,8 @@ import org.jetbrains.compose.resources.stringResource
  * `PlayCount` sort, the total play time of the `PlayTime` / `RelativePlayTime` sorts in the phone's
  * `formattedTotalPlayTime` format (`45m` / `2h` / `3d`), and the rank on the Top chip.
  *
+ * Adaptations: a click outside a `Live` session does nothing (no command can reach the phone); the top
+ * fade has no system-bar inset (none on the desktop).
  * Dropped: swipe actions (play next / download / enqueue), drag to reorder (custom sort), haptics.
  */
 @Composable
@@ -64,6 +68,8 @@ fun HomeSongs(
     sort: SongSort = SongSort.Title,
     /** Since 1.7.1: the phone's Top chip, for the phone's rank overlay (the row's index + 1). */
     isTop: Boolean = false,
+    /** Since 1.10.0 (`queue.fullList`): the whole list the click hands to the phone; `null` for a PC-only chip. */
+    listRef: () -> ListRef? = { null },
 ) {
     val menuState = LocalMenuState.current
     LoadMoreEffect(list, state, { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 })
@@ -78,16 +84,17 @@ fun HomeSongs(
                 .background(colorPalette().background0)
                 .fillMaxSize(),
         ) {
-            itemsIndexed(
-                items = state.items,
-                key = { index, song -> "$index:${song.id}" },
-            ) { index, song ->
+            items(
+                items = state.items.withIndex().distinctBy { it.value.id },
+                // The phone's keys: the track id, duplicates dropped (`distinctBy`)
+                key = { it.value.id },
+            ) { (index, song) ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .zIndex(2f),
                 ) {
-                    val menu = actions.trackActions(list.state, index, song.id, live)
+                    val menu = actions.trackActions(list.state, index, song.id, live, listRef())
                     // Phone's `HomeSongs.kt` 587: the rows animate their placement
                     SongItem(
                         song = song,
@@ -126,7 +133,7 @@ fun HomeSongs(
                             if (song.unmatched()) {
                                 Toaster.w(Res.string.playback_blocked_match_first)
                             } else if (live && actions.available) {
-                                actions.playFrom(list.state.value.items, index, song.id)
+                                actions.playFrom(list.state.value.items, index, song.id, listRef())
                             }
                         },
                     )

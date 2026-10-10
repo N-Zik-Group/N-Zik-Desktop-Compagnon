@@ -1,5 +1,8 @@
 package app.n_zik.compagnon.components.player.controls
 
+import app.n_zik.compagnon.components.player.getLikedIcon
+import app.n_zik.compagnon.components.player.getUnlikedIcon
+import app.n_zik.compagnon.components.player.rotateTrackLike
 import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.generated.resources.*
 import androidx.compose.animation.core.LinearEasing
@@ -47,8 +50,6 @@ import app.n_zik.compagnon.bridge.state.RepeatMode
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.bridge.state.displayedLike
-import app.n_zik.compagnon.bridge.state.nextRotation
-import app.n_zik.compagnon.bridge.state.nextToggle
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.player.bounceClick
 import app.n_zik.compagnon.components.player.monochromeControlsColor
@@ -58,7 +59,6 @@ import app.n_zik.compagnon.enums.PlayerPlayButtonType
 import app.n_zik.compagnon.enums.QueueLoopType
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
-import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.onSecondaryClick
 import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -118,6 +118,7 @@ fun ControlsEssential(
     )
 
     val queueLoopType = QueueLoopType.from(repeatMode)
+    val uiSettingsForPlay = app.n_zik.compagnon.bridge.state.LocalUiSettings.current
 
     // The like button (contract 1.7): the phone's tri-state indicator (`heart_outline` in text, `heart`
     // in `favoritesIcon`, the phone's `heart_dislike` in red), and the phone's rotation when the phone
@@ -133,32 +134,12 @@ fun ControlsEssential(
         IconButton(
             color = if (like == TrackLike.Disliked) colorPalette().red else colorPalette().favoritesIcon,
             icon = when (like) {
-                TrackLike.Neutral -> Res.drawable.heart_outline
+                TrackLike.Neutral -> getUnlikedIcon()
                 TrackLike.Disliked -> Res.drawable.heart_dislike
-                TrackLike.Liked -> Res.drawable.heart
+                TrackLike.Liked -> getLikedIcon()
             },
             onClick = {
-                if (enabled) mediaItem?.let { mediaItem ->
-                    val next = if (rotationEnabled) like.nextRotation() else like.nextToggle()
-                    likeWrites?.likeSong(mediaItem.id, next)
-                    // The phone's toast of the resulting state (its `YouTubeSync.kt` 106-116, 174-183)
-                    val messageId = when {
-                        rotationEnabled -> when (next) {
-                            TrackLike.Liked -> Res.string.added_to_favorites
-                            TrackLike.Disliked -> Res.string.added_to_dislikes
-                            TrackLike.Neutral -> Res.string.removed_from_dislikes
-                        }
-                        next == TrackLike.Liked -> Res.string.added_to_favorites
-                        else -> Res.string.removed_from_favorites
-                    }
-                    if (mediaItem.title.isNotBlank()) {
-                        val label = mediaItem.artists?.takeIf { it.isNotBlank() }
-                            ?.let { "\"${mediaItem.title} - $it\"" } ?: "\"${mediaItem.title}\""
-                        Toaster.s(messageId, label)
-                    } else {
-                        Toaster.s(messageId)
-                    }
-                }
+                if (enabled) mediaItem?.let { rotateTrackLike(it, likeWrites, rotationEnabled) }
             },
             modifier = Modifier
                 .size(26.dp),
@@ -202,12 +183,18 @@ fun ControlsEssential(
             .bounceClick()
             .clip(uiRoundnessShape())
             .background(
-                // ColorPaletteName.Dynamic
-                when (playerPlayButtonType) {
-                    PlayerPlayButtonType.CircularRibbed, PlayerPlayButtonType.Disabled -> Color.Transparent
-                    else -> {
-                        if (isGradientBackgroundEnabled) colorPalette().background1
-                        else colorPalette().background2
+                // The phone's 524-543, its palette name read since contract 1.10.0 (`ui.settings`)
+                if (uiSettingsForPlay.isBlackPalette) {
+                    if (playerPlayButtonType == PlayerPlayButtonType.CircularRibbed) colorPalette().background1
+                    else if (playerPlayButtonType != PlayerPlayButtonType.Disabled) colorPalette().background4
+                    else Color.Transparent
+                } else {
+                    when (playerPlayButtonType) {
+                        PlayerPlayButtonType.CircularRibbed, PlayerPlayButtonType.Disabled -> Color.Transparent
+                        else -> {
+                            if (isGradientBackgroundEnabled) colorPalette().background1
+                            else colorPalette().background2
+                        }
                     }
                 },
             )
@@ -218,8 +205,10 @@ fun ControlsEssential(
         if (playerPlayButtonType == PlayerPlayButtonType.CircularRibbed) {
             Image(
                 painter = painterResource(Res.drawable.a13shape),
+                // The phone's 553-557: `background4` on the black palettes
                 colorFilter = ColorFilter.tint(
-                    if (isGradientBackgroundEnabled) colorPalette().background1
+                    if (uiSettingsForPlay.isBlackPalette) colorPalette().background4
+                    else if (isGradientBackgroundEnabled) colorPalette().background1
                     else colorPalette().background2,
                 ),
                 modifier = Modifier
@@ -247,7 +236,12 @@ fun ControlsEssential(
             Image(
                 painter = painterResource(if (shouldBePlaying) Res.drawable.pause else Res.drawable.play),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(if (playerPlayButtonType == PlayerPlayButtonType.Disabled) colorPalette().accent else controlsColor),
+                // The phone's 581: accent also with the Dynamic palette in PitchBlack
+                colorFilter = ColorFilter.tint(
+                    if (playerPlayButtonType == PlayerPlayButtonType.Disabled ||
+                        (uiSettingsForPlay.colorPaletteName == "Dynamic" && uiSettingsForPlay.isPitchBlack)
+                    ) colorPalette().accent else controlsColor,
+                ),
                 modifier = Modifier
                     .rotate(rotationAngle)
                     .align(Alignment.Center)

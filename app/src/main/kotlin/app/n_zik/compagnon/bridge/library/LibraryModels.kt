@@ -68,7 +68,10 @@ enum class PlaylistOrigin(val wire: String) {
     RewindYearly("rewind-yearly"),
     /** Since 1.7.1: the generated all-time rewind snapshot (the phone's `musical_notes` icon). */
     RewindAlltime("rewind-alltime"),
-    Rewind("rewind");
+    Rewind("rewind"),
+
+    /** Since 1.10.0: the legacy `monthly:` playlist (the phone's `stat_month` icon; not a rewind playlist). */
+    Monthly("monthly");
 
     companion object {
         fun fromWire(value: String?): PlaylistOrigin = entries.firstOrNull { it.wire == value } ?: Local
@@ -490,3 +493,36 @@ data class PlaylistSongsQuery(
     val reverse: Boolean = false,
     val text: String? = null,
 )
+
+
+/**
+ * The whole-list reference of this Songs query (contract §10.4, since 1.10.0): the same `filter`,
+ * `sort`, `reverse`, `period` and search the paged route gets, so an index in the PC's list is an
+ * index in the phone's resolved list.
+ */
+fun SongsQuery.toListRef(): app.n_zik.compagnon.bridge.state.ListRef =
+    app.n_zik.compagnon.bridge.state.ListRef(
+        kind = app.n_zik.compagnon.bridge.state.ListRef.KIND_SONGS,
+        filter = filter.wire,
+        sort = sort.wire,
+        reverse = reverse,
+        period = period?.wire,
+        text = text,
+    )
+
+/**
+ * The whole-list reference of a collection's tracks (contract §10.4, since 1.10.0); [query] is a
+ * local playlist's sort and search, `null` for albums and artists (the phone's fixed order).
+ */
+fun CollectionRef.toListRef(query: PlaylistSongsQuery? = null): app.n_zik.compagnon.bridge.state.ListRef =
+    app.n_zik.compagnon.bridge.state.ListRef(
+        kind = when (kind) {
+            CollectionKind.Playlist -> app.n_zik.compagnon.bridge.state.ListRef.KIND_PLAYLIST
+            CollectionKind.Album -> app.n_zik.compagnon.bridge.state.ListRef.KIND_ALBUM
+            CollectionKind.Artist -> app.n_zik.compagnon.bridge.state.ListRef.KIND_ARTIST
+        },
+        id = id,
+        sort = query?.sort?.wire,
+        reverse = query?.reverse ?: false,
+        text = query?.text,
+    )

@@ -17,6 +17,8 @@ import app.n_zik.compagnon.bridge.library.RewindState
 import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
+import app.n_zik.compagnon.bridge.state.ListRef
+import app.n_zik.compagnon.bridge.state.UiSettings
 import kotlinx.serialization.Serializable
 
 /** Outcome of a library read (contract §10), decided from the error `code`. */
@@ -83,6 +85,10 @@ sealed interface WriteResult {
     /** The phone did not answer. */
     data object Unreachable : WriteResult
 }
+
+/** `200` answer of `GET /library/locate` (contract §10.4, since 1.10.0): `-1` when the track is not in the list. */
+@Serializable
+data class LocateAnswer(val index: Int, val total: Int = 0)
 
 /** The `200` answer bodies of contract §10.2 (since 1.7): the resulting state. */
 @Serializable
@@ -173,4 +179,16 @@ interface LibraryApi {
      * pre-1.7.2 display (its default: the mode enabled, its chips shown).
      */
     suspend fun dislikeMode(address: ServerAddress, deviceToken: String): DislikeMode?
+
+    /**
+     * `GET /library/locate` (contract §10.4, since 1.10.0, feature `library.locate`): the position of
+     * [trackId] in the WHOLE list [list]; `-1` when absent, `null` on any non-`200` answer.
+     */
+    suspend fun locate(address: ServerAddress, deviceToken: String, list: ListRef, trackId: String): LocateAnswer? = null
+
+    /**
+     * `GET /ui/settings` (contract §10.5, since 1.10.0, feature `ui.settings`): the phone's UI settings.
+     * `null` on any non-`200` answer — the PC keeps the phone's defaults.
+     */
+    suspend fun uiSettings(address: ServerAddress, deviceToken: String): UiSettings? = null
 }

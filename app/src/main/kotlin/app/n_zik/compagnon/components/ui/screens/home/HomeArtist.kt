@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import app.n_zik.compagnon.components.tab.toolbar.Randomizer
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.background
@@ -82,11 +83,12 @@ import org.jetbrains.compose.resources.stringResource
  * Toolbar: the phone's toolbar of the active tab — the same twelve buttons for the three chips, in the
  * phone's order (`HomeArtistsToolbarSettingsDialog.allButtonIds`), with the phone's show conditions
  * (position lock only while the chip's sort is `Custom`, no YouTube sync on the PC) — then the
- * Compagnon's "Refresh". Wired: sort, refresh and item size (the per-tab grid size, a Compagnon-local
- * setting); the rest (search, randomizer, shuffle, item selector, play next, enqueue, add to playlist,
+ * Compagnon's "Refresh". Wired: sort, refresh, item size (the per-tab grid size, a Compagnon-local
+ * setting) and the randomizer (a random artist of the shown list, client-side as on the phone); the rest
+ * (search — `/library/artists` has no `text` parameter —, position lock, shuffle, item selector, play next, enqueue, add to playlist,
  * export) are placeholders without a contract route —
- * the phone's search, shuffle, play next and enqueue act on the artist's own songs, which the contract
- * does not serve, and a click does nothing.
+ * the phone's search, shuffle, play next and enqueue act on the songs of all the shown (or selected) artists — a set of lists the contract cannot name in one
+ * command (`/queue/list` takes one list) — and a click does nothing.
  *
  * Sort: the phone keeps one sort per tab — the chip's sort and direction live in the user settings
  * (`chipSorts`, key `artists:<chip>`), applied to the list on every change and on the first composition
@@ -98,6 +100,9 @@ import org.jetbrains.compose.resources.stringResource
  * (the multi-select check overlay is dropped — no contract route for the item selector).
  *
  * Dropped (contract v1): as `HomeAlbums`.
+ * Pass 5 (audit 2026-10-10): dropped — the phone's pull-to-refresh (its 409: the toolbar's Refresh
+ * instead, no touch on the PC), the landscape bars toggle (`landscapeBarsToggleButton`, its 755: touch
+ * landscape only) and the floating multi-action icon (`showFloatingIcon`, off by default; deferred).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -172,9 +177,10 @@ fun HomeArtists(
                 "position_lock" -> if (chipSort.artistSort == ArtistSort.Custom) {
                     add(InertButton(Res.drawable.locked, Res.string.info_lock_unlock_reorder_songs))
                 }
+                // No contract search on `/library/artists` (no `text` parameter): inert, the phone's title
                 "search" -> add(InertButton(Res.drawable.search_circle, Res.string.search))
-                "randomizer" -> add(InertButton(Res.drawable.dice, Res.string.randomizer))
-                "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.info_shuffle))
+                "randomizer" -> add(Randomizer({ activeList.state.value.items }, onArtistClick))
+                "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
                 "item_selector" -> add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
                 "play_next" -> add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
                 "enqueue" -> add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
@@ -249,11 +255,12 @@ fun HomeArtists(
                     contentPadding = PaddingValues(top = headerPadding, bottom = Dimensions.bottomSpacer),
                 ) {
                     items(
-                        items = state.items.withIndex().toList(),
-                        key = { (index, artist) -> "$index:${artist.id}" },
+                        items = state.items.distinctBy { it.id }.withIndex().toList(),
+                        // The phone's keys: the id, duplicates dropped (`distinctBy`)
+                        key = { (_, artist) -> artist.id },
                     ) { (_, artist) ->
                         Box(modifier = Modifier) {
-                            val menu = actions.collectionActions(CollectionHeader.OfArtist(artist).ref, live)
+                            val menu: ItemActions? = actions.collectionMenuActions(CollectionHeader.OfArtist(artist).ref, live)
                             val openMenu = menu?.let {
                                 {
                                     menuState.display {
@@ -264,7 +271,7 @@ fun HomeArtists(
                             ArtistItem(
                                 artist = artist,
                                 thumbnailSizeDp = itemSize.value.dp,
-                                thumbnailSizePx = GRID_THUMBNAIL_SIZE_PX,
+                                thumbnailSizePx = gridThumbnailSizePx(itemSize.value.dp),
                                 alternative = true,
                                 thumbnailOverlay = {
                                     artistSortOverlay(artistQuery.sort, artist)

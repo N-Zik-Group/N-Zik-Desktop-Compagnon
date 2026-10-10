@@ -57,15 +57,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 val FOUR_CORNERS = listOf(Alignment.TopStart, Alignment.TopEnd, Alignment.BottomStart, Alignment.BottomEnd)
 
 /**
- * The visual of a playlist: the mosaic of its first four tracks when all four have an artwork (the
- * phone takes four of its tracks), else the artwork of `artworkTrackId` (contract §1.1).
+ * The visual of a playlist, as the phone's `PlaylistItem.kt` 174-191: the mosaic of four tracks with an
+ * artwork (its last four by play time, see `LibraryLists.loadPlaylistFirstTracks`), else the first one,
+ * else the artwork of `artworkTrackId` (contract §1.1).
  */
 fun playlistThumbnails(firstTracks: List<Track>?, artworkTrackId: String?, sizePx: Int): List<ArtworkKey> {
-    val mosaic = firstTracks.orEmpty().take(4)
-    return if (mosaic.size == 4 && mosaic.all(Track::hasArtwork)) {
-        mosaic.map { ArtworkKey.track(it.id, sizePx / 2) }
-    } else {
-        listOfNotNull(artworkTrackId?.let { ArtworkKey.track(it, sizePx) })
+    // The phone keeps the tracks that have a thumbnail (`mapNotNull(Song::thumbnailUrl)`), then its
+    // `ThumbnailRenderer` draws a mosaic of four, else the first one
+    val withArtwork = firstTracks.orEmpty().filter(Track::hasArtwork).takeLast(4)
+    return when {
+        withArtwork.size == 4 -> withArtwork.map { ArtworkKey.track(it.id, sizePx / 2) }
+        withArtwork.isNotEmpty() -> listOf(ArtworkKey.track(withArtwork.first().id, sizePx))
+        else -> listOfNotNull(artworkTrackId?.let { ArtworkKey.track(it, sizePx) })
     }
 }
 
@@ -177,12 +180,12 @@ fun PlaylistItem(
                             isPinned -> Res.drawable.pin_filled to colorPalette().accent
                             else -> when (origin) {
                                 PlaylistOrigin.Local -> Res.drawable.ic_launcher to Color.Unspecified
-                                PlaylistOrigin.RewindMonthly -> Res.drawable.stat_month to colorPalette().accent
+                                PlaylistOrigin.RewindMonthly, PlaylistOrigin.Monthly -> Res.drawable.stat_month to colorPalette().accent
                                 PlaylistOrigin.RewindYearly -> Res.drawable.stat_year to colorPalette().accent
                                 PlaylistOrigin.RewindAlltime,
                                 PlaylistOrigin.Rewind,
                                 -> Res.drawable.musical_notes to colorPalette().accent
-                                PlaylistOrigin.Ytmusic -> Res.drawable.ytmusic to colorPalette().red
+                                PlaylistOrigin.Ytmusic -> Res.drawable.ytmusic to Color.Red
                                 PlaylistOrigin.Spotify -> Res.drawable.spotify to Color.Unspecified
                                 PlaylistOrigin.Ripley -> Res.drawable.riplay to Color.Unspecified
                             }

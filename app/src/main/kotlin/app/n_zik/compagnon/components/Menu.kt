@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,20 +50,43 @@ import app.n_zik.compagnon.topUiRoundnessShape
 import kotlinx.coroutines.launch
 
 /**
- * Port of `MenuState` (phone's `app/it/fast4x/rimusic/ui/components/Menu.kt` 32): the content of the menu
- * sheet. The phone's back stack of menus (`pop`) is not ported: no library menu opens a sub-menu.
+ * Port of `MenuState` (phone's `app/it/fast4x/rimusic/ui/components/Menu.kt` 32-70): the menu sheet's content
+ * stack — [display] pushes a menu (a sub-menu over the open one, a fresh stack when closed), [pop] goes back
+ * to the previous one or closes, [transitionKey] drives the horizontal slide (forward on a push, backward
+ * on a pop).
  */
 @Stable
 class MenuState {
-    var content: (@Composable () -> Unit)? by mutableStateOf(null)
-        private set
-
     var isDisplayed: Boolean by mutableStateOf(false)
         private set
 
+    var transitionKey by mutableStateOf(0)
+        private set
+
+    private val contentStack = mutableStateListOf<@Composable () -> Unit>()
+
+    /** The top of the stack, `null` when empty. */
+    val content: (@Composable () -> Unit)? get() = contentStack.lastOrNull()
+
+    val contentState: Pair<Int, @Composable () -> Unit>
+        get() = transitionKey to (contentStack.lastOrNull() ?: {})
+
+    val hasPrevious: Boolean get() = contentStack.size > 1
+
     fun display(content: @Composable () -> Unit) {
-        this.content = content
+        if (!isDisplayed) contentStack.clear()
+        contentStack.add(content)
+        transitionKey++
         isDisplayed = true
+    }
+
+    fun pop() {
+        if (contentStack.size > 1) {
+            contentStack.removeAt(contentStack.lastIndex)
+            transitionKey--
+        } else {
+            hide()
+        }
     }
 
     fun hide() {
@@ -150,7 +174,8 @@ fun BottomSheetMenu(state: MenuState, modifier: Modifier = Modifier) {
                     .clip(topUiRoundnessShape())
                     .onPreviewKeyEvent { event ->
                         if (event.type == KeyEventType.KeyDown && event.key == Key.Escape) {
-                            state.hide()
+                            // The phone's BackHandler(onBack = state::pop): back to the parent menu first
+                            state.pop()
                             true
                         } else {
                             false
@@ -160,15 +185,17 @@ fun BottomSheetMenu(state: MenuState, modifier: Modifier = Modifier) {
                     .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {},
             ) {
                 AnimatedContent(
-                    targetState = state.content,
+                    targetState = state.contentState,
                     transitionSpec = {
-                        slideInHorizontally(animationSpec = tween(300)) { width -> width / 2 } + fadeIn(animationSpec = tween(300)) togetherWith
-                            slideOutHorizontally(animationSpec = tween(300)) { width -> -width / 2 } + fadeOut(animationSpec = tween(300))
+                        // A pop (the key goes down) slides the other way
+                        val sign = if (targetState.first >= initialState.first) 1 else -1
+                        slideInHorizontally(animationSpec = tween(300)) { width -> sign * width / 2 } + fadeIn(animationSpec = tween(300)) togetherWith
+                            slideOutHorizontally(animationSpec = tween(300)) { width -> -sign * width / 2 } + fadeOut(animationSpec = tween(300))
                     },
                     label = "MenuContentTransition",
                 ) { target ->
                     Box(modifier = Modifier.fillMaxWidth()) {
-                        target?.invoke()
+                        target.second()
                     }
                 }
 

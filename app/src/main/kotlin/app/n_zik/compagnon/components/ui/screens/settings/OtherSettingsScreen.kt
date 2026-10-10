@@ -1,5 +1,7 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
+import app.n_zik.compagnon.LocalPlayerRepository
+import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.settings.SettingsDescription
 import app.n_zik.compagnon.components.settings.SettingsSectionCard
@@ -29,9 +31,9 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * The Autres tab (phone's `OtherSettings.kt` 215-237 + the PC's own entry): the tab-style header,
  * the description, the search, and the **Others** card — "Disable scrolling text" (the Compagnon's
- * local setting, not in the contract: it drops the `SongItem` title / artists marquee; its
- * [ToggleSettingsEntry] unchanged). The phone's "Disable scrolling text" sits in its Player Appearance
- * tab (not ported) — the user placed it here.
+ * setting that drops the marquees; its [ToggleSettingsEntry] unchanged). The phone's "Disable scrolling
+ * text" sits in its Player Appearance tab (not ported) — the user placed it here. Since contract 1.10.0
+ * (`ui.settings`) the phone's value drives it: the entry is then shown disabled, with that value.
  */
 @Composable
 fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (String) -> Unit) {
@@ -69,7 +71,14 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
         search.ToolBarButton()
         search.SearchBar()
 
-        // Others Section (the PC's "Disable scrolling text" — a Compagnon-local setting, not in the contract)
+        // Others Section (the PC's "Disable scrolling text"). The phone has it under Player appearance ›
+        // player_behavior_and_visuals (`AppearanceSettings.kt` 2129-2134), a tab the PC does not port: since
+        // contract 1.10.0 (`ui.settings`) the phone's own value drives the PC (mirrored by MainActivity), so
+        // the entry shows that value read-only (disabled: change it on the phone) once a value was actually
+        // read from the phone (MainActivity mirrors only then); before that, offline, or for an older phone
+        // it stays the PC's own setting
+        val phoneDrivesIt = SessionContract.FEATURE_UI_SETTINGS in LocalPlayerRepository.current?.features.orEmpty() &&
+            app.n_zik.compagnon.bridge.state.LocalUiSettingsRead.current
         AnimatedVisibility(
             visible = othersCtx,
             enter = fadeIn(animationSpec = tween(600)) + scaleIn(animationSpec = tween(600), initialScale = 0.9f),
@@ -83,6 +92,7 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
                         text = stringResource(Res.string.scrolling_text_is_used_for_long_texts),
                         icon = Res.drawable.text,
                         isChecked = settings.disableScrollingText,
+                        enabled = !phoneDrivesIt,
                         onCheckedChange = { enable ->
                             preferences.update { s -> s.copy(disableScrollingText = enable) }
                         },

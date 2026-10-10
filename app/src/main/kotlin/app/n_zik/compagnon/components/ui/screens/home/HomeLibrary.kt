@@ -71,6 +71,7 @@ import app.n_zik.compagnon.components.tab.Search
 import app.n_zik.compagnon.components.tab.TabHeader
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
+import app.n_zik.compagnon.components.tab.toolbar.NoRouteConfirmButton
 import app.n_zik.compagnon.components.tab.toolbar.InertSort
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.theme.onOverlay
@@ -110,8 +111,9 @@ import org.jetbrains.compose.resources.stringResource
  * the phone's order (`HomeLibraryToolbarSettingsDialog.allButtonIds`), with the phone's show
  * conditions (position lock only while the chip's sort is `Custom`, no YouTube sync on the PC) — then
  * the Compagnon's "Refresh". Wired: sort, refresh and item size (the per-tab grid size, a Compagnon-local
- * setting); the rest (search, shuffle, item selector, play next, enqueue, add to playlist, import,
- * export, delete playlists) are placeholders without a contract route — a click does nothing.
+ * setting) and search (the phone's `text`, since 1.7.2); the rest (shuffle, item selector, play next,
+ * enqueue, add to playlist, import, export, delete playlists) are placeholders without a contract route —
+ * a click does nothing.
  *
  * Sort: the phone keeps one sort per tab — the chip's sort and direction live in the user settings
  * (`chipSorts`, key `playlists:<chip>`), applied to the list on every change and on the first
@@ -119,8 +121,10 @@ import org.jetbrains.compose.resources.stringResource
  * (contract < 1.6) the arrow is inert (the phone sorts its tabs itself).
  *
  * Kept: the collapsible header (`TabHeader` "Playlists" + count, `TabToolBar`), the adaptive grid of
- * `PlaylistItem` (2×2 mosaic of the first four tracks, read with `/songs?limit=4`, else the artwork of
- * `artworkTrackId`), "No items", the scroll-to-top button. A click opens the playlist, a long press
+ * `PlaylistItem` (the phone's mosaic: its last four tracks with a thumbnail in play-time order, read with
+ * one reversed `playTime` page, else the artwork of `artworkTrackId`), "No items", the scroll-to-top
+ * button. The header counter is every playlist (the phone's `items.size`), the search bar sits right
+ * under the toolbar. A click opens the playlist, a long press
  * (right click) opens `LocalPlaylistItemMenu`.
  *
  * The sort overlays (contract 1.7.1, the phone's `HomeLibrary.kt` 872-919): while the chip's sort is
@@ -134,6 +138,10 @@ import org.jetbrains.compose.resources.stringResource
  * else the mosaic).
  *
  * Dropped (contract v1): sync and its progress, drag to reorder.
+ * Pass 5 (audit 2026-10-10): dropped — the phone's pull-to-refresh (its 505: the toolbar's Refresh
+ * instead, no touch on the PC), the landscape bars toggle (`landscapeBarsToggleButton`, its 955: touch
+ * landscape only) and the floating multi-action icon (`showFloatingIcon`, its 962, off by default;
+ * deferred). "Delete playlists" opens the phone's confirmation of the shown playlists (NOT LINKED).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -220,9 +228,19 @@ fun HomeLibrary(
         InertSort(menuState, playlistSortOptions)
     }
 
+    // The phone's "delete playlists" (its `HomeLibrary.kt` 367-375, 609-631): its confirmation of the shown
+    // playlists, no help on a right click — NOT LINKED, Confirm only closes it (no contract route)
+    val deletePlaylists = NoRouteConfirmButton(
+        Res.drawable.trash, Res.string.delete_playlists_label, null, Res.string.delete_playlists_confirm_all,
+        // The phone counts its shown playlists (`itemsOnDisplay`): the list's whole total here
+        dialogTextArg = state.total ?: state.items.distinctBy { it.id }.size,
+    )
+    deletePlaylists.Render()
+
     // The phone's toolbar of the active tab, in the phone's order, with the phone's show conditions
     // (position lock only while the chip's sort is Custom); the Compagnon's "Refresh" is added at the
-    // end. Wired: sort, refresh. Placeholders (no contract route, a click does nothing): the rest.
+    // end. Wired: sort, refresh; delete playlists opens its confirmation. Placeholders (no contract
+    // route, a click does nothing): the rest.
     val buttons = buildList<Button> {
         PLAYLISTS_TOOLBAR_BUTTON_IDS.forEach { id ->
             when (id) {
@@ -231,14 +249,14 @@ fun HomeLibrary(
                     add(InertButton(Res.drawable.locked, Res.string.info_lock_unlock_reorder_songs))
                 }
                 "search" -> add(search)
-                "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.info_shuffle))
+                "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
                 "item_selector" -> add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
                 "play_next" -> add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
                 "enqueue" -> add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
                 "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
                 "import_menu" -> add(InertButton(Res.drawable.import_outline, Res.string.import_playlist))
                 "export_dialog" -> add(InertButton(Res.drawable.export_outline, Res.string.export_playlist))
-                "delete_playlists" -> add(InertButton(Res.drawable.trash, Res.string.delete_playlists_label))
+                "delete_playlists" -> add(deletePlaylists)
                 "item_size" -> add(
                     ItemSize.init(itemSize) { size ->
                         preferences?.update { s -> s.copy(itemSizes = s.itemSizes + ("playlists" to size.wire)) }
@@ -266,6 +284,10 @@ fun HomeLibrary(
         }
     }
 
+    // The header counter: the phone's whole playlist list, read apart from the chip's page
+    var allPlaylistsCount by remember { mutableStateOf<Int?>(null) }
+    LaunchedEffect(lists, state.total) { allPlaylistsCount = lists.allPlaylistsCount() }
+
     LoadMoreEffect(activeList, state, { lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 })
 
     Box(
@@ -282,10 +304,13 @@ fun HomeLibrary(
                         Column {
                             CollapsibleTitleRow(titleOffsetState, titleHeightState) {
                                 TabHeader(stringResource(Res.string.playlists)) {
-                                    HeaderInfo((state.total ?: state.items.size).toString(), Res.drawable.playlist)
+                                    // The phone's `items.size` (`HomeLibrary.kt` 606): every playlist, whatever the chip
+                                    HeaderInfo((allPlaylistsCount ?: state.total ?: state.items.size).toString(), Res.drawable.playlist)
                                 }
                             }
                             TabToolBar.Buttons(buttons, disableAnimation = true)
+                            // The phone's search bar sits right under its toolbar (`HomeLibrary.kt` 638)
+                            search.SearchBar()
                         }
 
                         Column {
@@ -297,12 +322,14 @@ fun HomeLibrary(
                                     .padding(bottom = 8.dp)
                                     .fillMaxWidth(),
                             ) {
-                                ButtonsRow(
-                                    chips = chips,
-                                    currentValue = chip,
-                                    onValueUpdate = { selectChip(it) },
-                                    modifier = Modifier.weight(1f),
-                                )
+                                Box {
+                                    ButtonsRow(
+                                        chips = chips,
+                                        currentValue = chip,
+                                        onValueUpdate = { selectChip(it) },
+                                        modifier = Modifier.padding(end = 12.dp),
+                                    )
+                                }
                             }
 
                             // Since 1.7.2 (feature `library.rewind`, the phone's `HomeLibrary.kt` 659-729):
@@ -376,8 +403,6 @@ fun HomeLibrary(
                                 }
                             }
                         }
-
-                        search.SearchBar()
                     }
                 },
             ) { headerPadding ->
@@ -390,21 +415,27 @@ fun HomeLibrary(
                     contentPadding = PaddingValues(top = headerPadding, bottom = Dimensions.bottomSpacer),
                 ) {
                     items(
-                        items = state.items.withIndex().toList(),
-                        key = { (index, preview) -> "$index:${preview.id}" },
+                        items = state.items.distinctBy { it.id }.withIndex().toList(),
+                        // The phone's keys: the id, duplicates dropped (`distinctBy`)
+                        key = { (_, preview) -> preview.id },
                     ) { (_, preview) ->
                         LaunchedEffect(preview.id) { lists.loadPlaylistFirstTracks(preview.id) }
                         val tracks = firstTracks[preview.id]
                         Box(modifier = Modifier) {
-                            val menu = actions.collectionActions(CollectionHeader.OfPlaylist(preview, tracks).ref, live)
+                            val menu: ItemActions? = actions.collectionMenuActions(CollectionHeader.OfPlaylist(preview, tracks).ref, live)
                             val openMenu = menu?.let {
-                                { menuState.display { LocalPlaylistItemMenu(preview, tracks, it).MenuComponent() } }
+                                {
+                                    menuState.display {
+                                        // The header's "open" of a local playlist: its page (the phone's 315)
+                                        LocalPlaylistItemMenu(preview, tracks, it) { onPlaylistClick(preview, tracks) }.MenuComponent()
+                                    }
+                                }
                             }
                             PlaylistItem(
                                 thumbnailContent = {
                                     // Since 1.7.2: the phone's custom cover, else the mosaic
                                     playlistCover(preview.id) {
-                                        ThumbnailRenderer(playlistThumbnails(tracks, preview.artworkTrackId, GRID_THUMBNAIL_SIZE_PX))
+                                        ThumbnailRenderer(playlistThumbnails(tracks, preview.artworkTrackId, gridThumbnailSizePx(itemSize.value.dp)))
                                     }
                                 },
                                 thumbnailOverlay = {
@@ -501,7 +532,8 @@ private val PLAYLISTS_TOOLBAR_BUTTON_IDS = listOf(
 private fun BoxWithConstraintsScope.playlistCover(id: String, mosaic: @Composable () -> Unit) {
     var hasCover by remember { mutableStateOf(false) }
     val painter = ImageCacheFactory.Painter(
-        key = ArtworkKey.playlist(id, GRID_THUMBNAIL_SIZE_PX),
+        // The route serves the cover file as-is (no `size`): the item size only keys the cache
+        key = ArtworkKey.playlist(id, gridThumbnailSizePx(maxWidth)),
         onSuccess = { hasCover = true },
         onError = { hasCover = false },
     )

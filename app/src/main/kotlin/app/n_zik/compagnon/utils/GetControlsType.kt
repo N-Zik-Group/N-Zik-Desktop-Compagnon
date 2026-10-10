@@ -49,9 +49,10 @@ fun GetControls(
     ) {
         ControlsEssential(
             playbackSpeed = state.speed,
-            // The phone's `shouldBePlaying` (utils/Player.kt 69): true while buffering too (contract 1.4)
-            shouldBePlaying = state.isPlaying || state.isBuffering,
-            isBuffering = state.isBuffering,
+            // The phone's `shouldBePlaying` (utils/Player.kt 69) and its ring `isBuffering && shouldBePlaying`
+            // (contract 1.10.0 `playWhenReady`)
+            shouldBePlaying = state.shouldBePlaying,
+            isBuffering = state.showsBuffering,
             mediaItem = state.currentTrack,
             repeatMode = state.repeatMode,
             playerPlayButtonType = playerPlayButtonType,

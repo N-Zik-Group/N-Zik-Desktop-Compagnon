@@ -39,11 +39,10 @@ import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.libraryWrites
 import app.n_zik.compagnon.components.items.playlistThumbnails
 import app.n_zik.compagnon.components.menu.ListMenu
+import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.components.menu.album.MENU_THUMBNAIL_SIZE_PX
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.SongShuffler
-import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import app.n_zik.compagnon.components.themed.PinPlaylist
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.semiBold
@@ -70,48 +69,55 @@ import org.jetbrains.compose.resources.stringResource
  * Kept: the header (`PlaylistItemDisplay`: drag handle, 64 dp thumbnail — library icon, single image or
  * 2×2 grid —, name, "N Songs", the 48 dp trailing column with the "open" icon, divider) and, in the
  * phone's order, "Playback" (Shuffle, Play next) and "Management" (Enqueue, download, remove all
- * downloaded songs, rename, delete). Wired to the contract: shuffle, play next, enqueue; and since 1.7
- * "Pin/Unpin playlist" (the phone's toolbar `PinPlaylist`, `POST /library/playlists/{id}/pin`: a binary
- * toggle of the phone's `pinned:` name prefix) as the first Management entry, inert without the
- * `library.write` feature. The other entries and "open" have no contract route: shown, without action.
+ * downloaded songs, rename, delete). Wired to the contract: shuffle, play next, enqueue (on an empty
+ * playlist, the phone's `no_song_found` error with the menu kept open, its 392-423). No Pin entry:
+ * the phone's pin lives only in its `PlaylistsItemGridMenu` / toolbar (audit 2026-10-09, zone 4, fixed).
+ * The header's "open" (the phone's 306-317): a playlist without a browse id opens its local page
+ * ([onOpen]); a YouTube one opens the phone's online playlist route — NOT LINKED (no contract data), no
+ * action. The other entries have no contract route: shown, without action.
  * The phone's show conditions (its 479-488): rename off on the rewind playlists (their language-neutral
  * name) and on the non-editable playlists, change id and delete off on the non-editable playlists.
  * Since 1.7.2 (the wire's `browseId`): the header's bookmark toggle (the phone's `canBeBookmarked`: a
- * playlist whose browse id is not the `modified:` prefix — its `POST /library/playlists/{id}/bookmark`,
- * with the phone's "special playlists" refusal and toasts, inert without `library.write`), the change-id
+ * playlist whose browse id is not the `modified:` prefix — its `POST /library/playlists/{id}/bookmark`;
+ * the icon and badge follow a local state flipped on the tap, rolled back on a failure, the phone's toast
+ * after the confirmed write, its 429, 557-581; inert without `library.write`. As on the phone, the
+ * header has no "special playlists" refusal: only its toolbar / grid entry refuses `LM` / `SE` — the
+ * contract §1.1 lists the refusal for the write route, see the audit), the change-id
  * entry (the phone's 484-486: a bookmarked YouTube playlist or a browse id starting with its
  * `modified:` / `VL` prefix, inert — no contract route) and the custom cover over the thumbnail.
- * Dropped: listen on YouTube, auto-sync and the Navigation section (YouTube playlists only).
+ * The Navigation section of a YouTube playlist: "Listen on YouTube" opens its page in the desktop browser
+ * (the phone's 510-525). Dropped (adaptation): the auto-sync toggle (YouTube Music sync is phone-only). The
+ * entries without a contract route show the phone's help on a right click, except the ones whose phone long
+ * press is empty (download, remove all downloaded songs, rename, delete, listen on YouTube).
  */
 class LocalPlaylistItemMenu(
     private val playlist: Playlist,
     private val firstTracks: List<Track>?,
     private val actions: ItemActions,
+    /** The header's "open" of a playlist without a browse id: its local page (the phone's 315). */
+    private val onOpen: (() -> Unit)? = null,
 ) {
 
     @Composable
     fun ListMenu() = ListMenu.Menu(title = null, showDragHandle = false) {
         ListMenu.SectionTitle(stringResource(Res.string.playback))
         actions.onShuffle?.let { SongShuffler(enabled = actions.enabled, onShuffle = it).ListMenuItem() }
-        PlayNext(enabled = actions.enabled, onClick = actions.onPlayNext).ListMenuItem()
+        PlayNext(enabled = actions.enabled, isEmpty = playlist.trackCount == 0, onClick = actions.onPlayNext).ListMenuItem()
 
         ListMenu.SectionTitle(stringResource(Res.string.management))
-        // Pin/Unpin (contract 1.7): a binary toggle of the phone's `pinned:` name prefix
-        val pin: MenuIcon = libraryWrites()?.let {
-            PinPlaylist(enabled = actions.enabled) { it.pinPlaylist(playlist.id, !playlist.isPinned) }
-        } ?: InertMenuItem(Res.drawable.pin_filled, Res.string.info_pin_unpin_playlist)
-        pin.ListMenuItem()
-        Enqueue(enabled = actions.enabled, onClick = actions.onEnqueue).ListMenuItem()
-        InertMenuItem(Res.drawable.downloaded, Res.string.download).ListMenuItem()
-        InertMenuItem(Res.drawable.download, Res.string.info_remove_all_downloaded_songs).ListMenuItem()
+        Enqueue(enabled = actions.enabled, isEmpty = playlist.trackCount == 0, onClick = actions.onEnqueue).ListMenuItem()
+        InertMenuItem(Res.drawable.downloaded, Res.string.download, descriptionId = null).ListMenuItem()
+        InertMenuItem(Res.drawable.download, Res.string.info_remove_all_downloaded_songs, descriptionId = null).ListMenuItem()
         // The phone's show conditions (its 479-488): rename off on the rewind playlists (their
         // language-neutral name), change id and delete off on the non-editable playlists
         val isRewind = playlist.origin in REWIND_ORIGINS
         if (playlist.isEditable) {
             if (!isRewind) {
-                InertMenuItem(Res.drawable.title_edit, Res.string.rename_playlist).ListMenuItem()
+                InertMenuItem(Res.drawable.title_edit, Res.string.rename_playlist, descriptionId = null).ListMenuItem()
             }
-            // Since 1.7.2: change id on a bookmarked YouTube playlist or one whose browse id starts
+            // Since 1.7.2: change id on a YouTube playlist (the wire's `isBookmarked` IS the phone's
+            // `isYoutubePlaylist` column, `LibraryMapping.kt` 166 — the audit's "isBookmarked instead of
+            // isYoutubePlaylist" was checked: same condition) or one whose browse id starts
             // with the phone's "modified:" / "VL" prefix (its 484-486); inert — no contract route
             if (playlist.isBookmarked ||
                 playlist.browseId?.startsWith("modified:") == true ||
@@ -119,22 +125,43 @@ class LocalPlaylistItemMenu(
             ) {
                 InertMenuItem(Res.drawable.title_edit, Res.string.update_playlist_browse_id).ListMenuItem()
             }
-            InertMenuItem(Res.drawable.trash, Res.string.delete).ListMenuItem()
+            InertMenuItem(Res.drawable.trash, Res.string.delete, descriptionId = null).ListMenuItem()
+        }
+
+        // Section: Navigation — a YouTube playlist (the wire's `isBookmarked` = the phone's
+        // `isYoutubePlaylist`): "Listen on YouTube" opens its `music.youtube.com` page (the phone's 510-525)
+        val browseId = playlist.browseId
+        if (playlist.isBookmarked) {
+            ListMenu.SectionTitle(stringResource(Res.string.navigation))
+            ListenOnYouTube(browseId).ListMenuItem()
+        }
+    }
+
+    /** The phone's "Listen on YouTube" entry (no help: its long press is empty). */
+    private class ListenOnYouTube(private val browseId: String?) : MenuIcon {
+        override val iconId: org.jetbrains.compose.resources.DrawableResource = Res.drawable.play
+        override val menuIconTitle: String
+            @Composable
+            get() = stringResource(Res.string.listen_on_youtube)
+
+        override fun onShortClick() {
+            browseId?.let { app.n_zik.compagnon.utils.openInBrowser("https://music.youtube.com/playlist?list=$it") }
         }
     }
 
     /**
-     * The phone's header bookmark (its `LocalPlaylistItemMenu.kt` 435-463, the 1.7.2 write): the "special
-     * playlists" (their `browseId` minus the `VL` prefix is `LM` or `SE`) refuse it with the phone's
-     * toast; otherwise the toggle, with the phone's toasts — inert without `library.write`.
+     * The phone's header bookmark (its `LocalPlaylistItemMenu.kt` 557-581, the 1.7.2 write): no "special
+     * playlists" refusal there (only its toolbar / grid entry has one); the local state flips at once,
+     * the phone's toast follows the confirmed write, a failure rolls the state back — inert without
+     * `library.write`.
      */
-    private fun onBookmarkToggle(writes: LibraryActions?) {
-        if (playlist.browseId?.removePrefix("VL") in listOf("LM", "SE")) {
-            Toaster.e(Res.string.cannot_bookmark_special_playlist)
-            return
+    private fun onBookmarkToggle(writes: LibraryActions?, current: Boolean, onState: (Boolean) -> Unit) {
+        writes ?: return
+        onState(!current)
+        writes.bookmarkPlaylist(playlist.id, !current, onFailed = { onState(current) }) { confirmed ->
+            onState(confirmed)
+            Toaster.s(if (confirmed) Res.string.added_to_favorites else Res.string.removed_from_favorites)
         }
-        writes?.bookmarkPlaylist(playlist.id, !playlist.isBookmarked) ?: return
-        Toaster.s(if (playlist.isBookmarked) Res.string.removed_from_favorites else Res.string.added_to_favorites)
     }
 
     @Composable
@@ -152,6 +179,9 @@ class LocalPlaylistItemMenu(
 
         // The §10.2 writes (since 1.7.2), resolved here (the click callback is not composable)
         val writes = libraryWrites()
+        // The phone's `isBookmarked` state (its 429): seeded from the preview, flipped by the toggle
+        var isBookmarked by remember(playlist.id) { mutableStateOf(playlist.isBookmarked) }
+        val menuState = app.n_zik.compagnon.components.LocalMenuState.current
 
         // Since 1.7.2: the phone's custom cover (its `thumbnail/playlist_<id>`), read with
         // `GET /library/playlists/{id}/artwork`; a missing one keeps the mosaic, as on the phone
@@ -235,7 +265,7 @@ class LocalPlaylistItemMenu(
                     // The phone's header bookmark badge (its `LocalPlaylistItemMenu.kt` 257-265): 12 dp in
                     // `favoritesIcon` at the bottom start, outside the clip, of a bookmarked, bookmarkeable
                     // playlist
-                    if (canBookmark && playlist.isBookmarked) {
+                    if (canBookmark && isBookmarked) {
                         HeaderIconButton(
                             onClick = {},
                             icon = Res.drawable.bookmark,
@@ -277,9 +307,9 @@ class LocalPlaylistItemMenu(
                 ) {
                     if (canBookmark) {
                         IconButton(
-                            icon = if (playlist.isBookmarked) Res.drawable.bookmark else Res.drawable.bookmark_outline,
+                            icon = if (isBookmarked) Res.drawable.bookmark else Res.drawable.bookmark_outline,
                             color = colorPalette().favoritesIcon,
-                            onClick = { onBookmarkToggle(writes) },
+                            onClick = { onBookmarkToggle(writes, isBookmarked) { isBookmarked = it } },
                             modifier = Modifier
                                 .padding(all = 4.dp)
                                 .size(20.dp),
@@ -289,7 +319,14 @@ class LocalPlaylistItemMenu(
                     IconButton(
                         icon = Res.drawable.open,
                         color = colorPalette().text,
-                        onClick = {},
+                        onClick = {
+                            // The phone's 309-317: a YouTube playlist opens its online route (NOT
+                            // LINKED: no contract data, no action), a local one its local page
+                            if (playlist.browseId.isNullOrBlank() && onOpen != null) {
+                                menuState.hide()
+                                onOpen.invoke()
+                            }
+                        },
                         modifier = Modifier
                             .padding(all = 4.dp)
                             .size(20.dp),

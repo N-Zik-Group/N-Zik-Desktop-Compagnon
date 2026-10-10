@@ -2,7 +2,10 @@ package app.n_zik.compagnon.bridge.library
 
 import app.n_zik.compagnon.bridge.pairing.ActivePairing
 import app.n_zik.compagnon.bridge.pairing.RevocationPolicy
+import app.n_zik.compagnon.bridge.state.ListRef
+import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.Track
+import app.n_zik.compagnon.bridge.state.UiSettings
 import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.core.network.LibraryApi
 import app.n_zik.compagnon.core.network.LibraryResult
@@ -70,6 +73,12 @@ class RemoteLibraryRepository(
     override suspend fun rewindState(): RewindState? = api.rewindState(address, deviceToken)
 
     override suspend fun dislikeMode(): DislikeMode? = api.dislikeMode(address, deviceToken)
+
+    override suspend fun locate(list: ListRef, trackId: String): Int? =
+        if (SessionContract.FEATURE_LIBRARY_LOCATE in features) api.locate(address, deviceToken, list, trackId)?.index else null
+
+    override suspend fun uiSettings(): UiSettings? =
+        if (SessionContract.FEATURE_UI_SETTINGS in features) api.uiSettings(address, deviceToken) else null
 
     private suspend fun <T> guarded(call: suspend () -> LibraryResult<T>): LibraryResult<T> =
         revocation.confirmRest(call = call, isRevoked = { it is LibraryResult.Revoked }).result

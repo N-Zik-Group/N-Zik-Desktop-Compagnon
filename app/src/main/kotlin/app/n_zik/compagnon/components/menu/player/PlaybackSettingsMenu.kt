@@ -50,7 +50,7 @@ import org.jetbrains.compose.resources.stringResource
  * the "Volume" section with its "Playback volume" slider (story 12: the PC's own player, local and persisted,
  * contract §8.5).
  * Dropped (contract v1 has no such command, or nothing to apply it to on the PC): pitch, medley duration,
- * the device volume (Windows' volume), blur, bass boost, loudness and their sections, and the grid style.
+ * the device volume (Windows' volume), blur, bass boost, loudness and their sections; the grid style is deferred (served by `ui.settings` since 1.10.0, not read).
  * The speed slider has the phone's range (0.1–10, story 11c); the command stays bounded to the contract's
  * 0.25–4.0 (§9), so a value outside is sent at the nearest bound. PC only: the speed is sent when the slider
  * is released (the phone applies each step to its own player); while dragging, the slider shows the dragged

@@ -32,7 +32,7 @@ class ItemSize private constructor(
     private val menuState: MenuState,
     private val size: MutableState<HomeItemSize>,
     private val onSizeSelected: (HomeItemSize) -> Unit,
-) : MenuIcon {
+) : MenuIcon, app.n_zik.compagnon.components.tab.toolbar.Descriptive {
 
     companion object {
         @Composable
@@ -41,6 +41,9 @@ class ItemSize private constructor(
     }
 
     override val iconId: DrawableResource = Res.drawable.resize
+
+    /** The phone's `Descriptive` message (`ItemSize.kt` 43): shown on a right click (its long press). */
+    override val messageId: org.jetbrains.compose.resources.StringResource = Res.string.size
 
     override val menuIconTitle: String
         @Composable

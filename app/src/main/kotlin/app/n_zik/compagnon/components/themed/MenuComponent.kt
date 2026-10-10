@@ -1,5 +1,7 @@
 package app.n_zik.compagnon.components.themed
 
+import app.n_zik.compagnon.components.tab.toolbar.Descriptive
+import org.jetbrains.compose.resources.StringResource
 import androidx.compose.runtime.Composable
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.MenuState
@@ -16,10 +18,13 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun PlayNext(
     enabled: Boolean = true,
+    /** The phone's empty playlist (its `LocalPlaylistItemMenu.kt` 392-423): `no_song_found`, the menu kept open. */
+    isEmpty: Boolean = false,
     onClick: () -> Unit,
-): MenuIcon = object : MenuIcon {
+): MenuIcon = object : MenuIcon, Descriptive {
 
     val menuState: MenuState = LocalMenuState.current
+    override val messageId: StringResource = Res.string.play_next
     override val iconId: DrawableResource = Res.drawable.play_skip_forward
     override val isEnabled: Boolean = enabled
     override val menuIconTitle: String
@@ -27,6 +32,10 @@ fun PlayNext(
         get() = stringResource(Res.string.play_next)
 
     override fun onShortClick() {
+        if (isEmpty) {
+            app.n_zik.compagnon.utils.Toaster.e(Res.string.no_song_found)
+            return
+        }
         onClick()
         menuState.hide()
     }
@@ -35,10 +44,13 @@ fun PlayNext(
 @Composable
 fun Enqueue(
     enabled: Boolean = true,
+    /** The phone's empty playlist (its `LocalPlaylistItemMenu.kt` 392-423): `no_song_found`, the menu kept open. */
+    isEmpty: Boolean = false,
     onClick: () -> Unit,
-): MenuIcon = object : MenuIcon {
+): MenuIcon = object : MenuIcon, Descriptive {
 
     val menuState: MenuState = LocalMenuState.current
+    override val messageId: StringResource = Res.string.enqueue
     override val iconId: DrawableResource = Res.drawable.enqueue
     override val isEnabled: Boolean = enabled
     override val menuIconTitle: String
@@ -46,6 +58,10 @@ fun Enqueue(
         get() = stringResource(Res.string.enqueue)
 
     override fun onShortClick() {
+        if (isEmpty) {
+            app.n_zik.compagnon.utils.Toaster.e(Res.string.no_song_found)
+            return
+        }
         onClick()
         menuState.hide()
     }
@@ -59,7 +75,9 @@ fun Enqueue(
 fun AddToFavorites(
     enabled: Boolean = true,
     onClick: () -> Unit,
-): MenuIcon = object : MenuIcon {
+): MenuIcon = object : MenuIcon, Descriptive {
+    // The phone's button is `Descriptive`: a right click shows its description
+    override val messageId: StringResource = Res.string.add_to_favorites
 
     val menuState: MenuState = LocalMenuState.current
     override val iconId: DrawableResource = Res.drawable.heart
@@ -83,7 +101,9 @@ fun AddToFavorites(
 fun Bookmark(
     isBookmarked: Boolean,
     onClick: () -> Unit,
-): MenuIcon = object : MenuIcon {
+): MenuIcon = object : MenuIcon, Descriptive {
+    // The phone's button is `Descriptive` but its long press is empty (`onLongClick() {}`): no help
+    override val messageId: StringResource = Res.string.bookmark
 
     val menuState: MenuState = LocalMenuState.current
     override val iconId: DrawableResource = if (isBookmarked) Res.drawable.bookmark else Res.drawable.bookmark_outline
@@ -95,30 +115,33 @@ fun Bookmark(
         onClick()
         menuState.hide()
     }
+
+    override fun onLongClick() {}
 }
 
 /**
- * "Pin/Unpin playlist" (contract §10.2, since 1.7): the phone's `PinPlaylist` (its
- * `components/playlist/PinPlaylist.kt`, the `pinned:` name prefix) — a binary toggle; the PC shows it in
- * the playlist's item menu (the phone's toolbar) and keeps its label and pin icon.
+ * Port of the phone's toolbar `PinPlaylist` (`components/playlist/PinPlaylist.kt`, contract §10.2 since 1.7:
+ * the `pinned:` name prefix toggled through `POST /library/playlists/{id}/pin`): `pin_filled`, a
+ * `DynamicColor` (text when pinned, `textDisabled` otherwise), `Descriptive` (`info_pin_unpin_playlist`).
+ * Shown in the local playlist's toolbar; the phone has no pin entry in the playlist's item menu.
  */
 @Composable
 fun PinPlaylist(
+    isPinned: Boolean,
     enabled: Boolean = true,
     onClick: () -> Unit,
-): MenuIcon = object : MenuIcon {
-
-    val menuState: MenuState = LocalMenuState.current
+): MenuIcon = object : MenuIcon, app.n_zik.compagnon.components.tab.toolbar.DynamicColor, app.n_zik.compagnon.components.tab.toolbar.Descriptive {
     override val iconId: DrawableResource = Res.drawable.pin_filled
+    override val messageId: StringResource = Res.string.info_pin_unpin_playlist
     override val isEnabled: Boolean = enabled
+    override var isFirstColor: Boolean
+        get() = isPinned
+        set(_) {}
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.info_pin_unpin_playlist)
+        get() = stringResource(messageId)
 
-    override fun onShortClick() {
-        onClick()
-        menuState.hide()
-    }
+    override fun onShortClick() = onClick()
 }
 
 /**

@@ -1,5 +1,7 @@
 package app.n_zik.compagnon.components.menu.song
 
+import app.n_zik.compagnon.components.player.likeToastLabel
+import app.n_zik.compagnon.components.player.likeToastMessage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,7 +54,7 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Port of `SongItemMenu` (phone's `app/n_zik/android/components/menu/song/SongItemMenu.kt`), list style
- * (the phone's default `MenuStyle.List`).
+ * (the phone's default `MenuStyle.List`; its grid style, served by `ui.settings` since 1.10.0, is deferred).
  *
  * The header: drag handle, the song's `SongItem` on `background1` with its trailing column (`TOOLBAR_ICON_SIZE`
  * wide: the like heart, 20 dp with 4 dp of padding, `heart` in `favoritesIcon` when liked, the phone's
@@ -72,12 +74,22 @@ import org.jetbrains.compose.resources.stringResource
  * action. Dropped: the Last.fm section (scrobbling off by default) and the waveform refresh (not the
  * default timeline).
  * PC only: in the queue, [onRemoveFromQueue] adds "Remove from queue" (`queue/remove`) at the end of
- * Playback, the phone's swipe having no desktop equivalent.
+ * Playback, the phone's swipe having no desktop equivalent. The header's share copies the phone's link
+ * (`music.youtube.com/watch?v=<id>`) to the clipboard (the desktop's stand-in for the share sheet).
+ * [playerMenu] draws the player's ⋮ `PlayerMenu` sections (`PlayerItemMenu.kt` 175-246) with the same header
+ * (its share shown for a local song too). Without `library.write` the header heart is an indicator (no
+ * write, no toast). "Add to a playlist" is NOT LINKED (no contract route; the sub-menu mechanism exists).
  */
 class SongItemMenu(
     private val song: Track,
     private val actions: ItemActions,
     private val onRemoveFromQueue: (() -> Unit)? = null,
+    /**
+     * The player's ⋮ menu: the phone's `PlayerMenu` → `PlayerItemMenu` (`PlayerItemMenu.kt` 175-246), the
+     * same header with the player's sections (equalizer, sleep timer, "Listen on"). Equalizer and sleep
+     * timer are phone-side features without a contract route: shown, inert.
+     */
+    private val playerMenu: Boolean = false,
 ) {
 
     private val isLocal: Boolean get() = song.source == TrackSource.Local
@@ -100,11 +112,61 @@ class SongItemMenu(
         // entries are shown only when its build ships FFmpeg, as on the phone (its `SongItemMenu.kt`
         // 545, 625)
         val hasFfmpeg = SessionContract.FEATURE_LIBRARY_FFMPEG in (LocalLibraryActions.current?.library?.features ?: emptySet())
-        val exportCache = InertMenuItem(Res.drawable.export_outline, Res.string.info_export_cached_or_downloaded_song)
+        val exportCache = InertMenuItem(Res.drawable.export_outline, Res.string.export_cached, descriptionId = Res.string.info_export_cached_or_downloaded_song)
 
         // Section: Info
         ListMenu.SectionTitle(stringResource(Res.string.information))
-        InertMenuItem(Res.drawable.information, Res.string.information).ListMenuItem()
+        InertMenuItem(Res.drawable.information, Res.string.information, descriptionId = null).ListMenuItem()
+
+        if (playerMenu) {
+            val equalizer = InertMenuItem(Res.drawable.equalizer, Res.string.equalizer, descriptionId = null)
+            val sleepTimer = InertMenuItem(Res.drawable.sleep, Res.string.sleep_timer, descriptionId = null)
+            if (isLocal) {
+                // The phone's local order: Management (edit metadata), Playback (equalizer, sleep timer,
+                // favorites, playlist, album / artist ids), then delete / export
+                if (hasFfmpeg) {
+                    ListMenu.SectionTitle(stringResource(Res.string.management))
+                    InertMenuItem(Res.drawable.cover_edit, Res.string.edit_metadata).ListMenuItem()
+                }
+                ListMenu.SectionTitle(stringResource(Res.string.playback))
+                equalizer.ListMenuItem()
+                sleepTimer.ListMenuItem()
+                addToFavorite.ListMenuItem()
+                addToPlaylist.ListMenuItem()
+                InertMenuItem(Res.drawable.title_edit, Res.string.update_album_browse_id).ListMenuItem()
+                InertMenuItem(Res.drawable.title_edit, Res.string.update_artist_browse_id).ListMenuItem()
+                if (hasFfmpeg) exportCache.ListMenuItem()
+            } else {
+                // The phone's remote order: Playback (radio, equalizer, sleep timer), Listen Together,
+                // Management (title, authors, cover, favorites, playlist, update, ids, delete), Navigation
+                ListMenu.SectionTitle(stringResource(Res.string.playback))
+                startRadio.ListMenuItem()
+                equalizer.ListMenuItem()
+                sleepTimer.ListMenuItem()
+                ListMenu.SectionTitle(stringResource(Res.string.listen_together))
+                InertMenuItem(Res.drawable.people, Res.string.listen_together, descriptionId = null).ListMenuItem()
+                ListMenu.SectionTitle(stringResource(Res.string.management))
+                InertMenuItem(Res.drawable.title_edit, Res.string.update_title).ListMenuItem()
+                InertMenuItem(Res.drawable.artists_edit, Res.string.update_authors).ListMenuItem()
+                InertMenuItem(Res.drawable.cover_edit, Res.string.update_cover).ListMenuItem()
+                addToFavorite.ListMenuItem()
+                addToPlaylist.ListMenuItem()
+                InertMenuItem(Res.drawable.refresh, Res.string.update, descriptionId = Res.string.info_open_update_dialog).ListMenuItem()
+                InertMenuItem(Res.drawable.title_edit, Res.string.update_album_browse_id).ListMenuItem()
+                InertMenuItem(Res.drawable.title_edit, Res.string.update_artist_browse_id).ListMenuItem()
+                InertMenuItem(Res.drawable.trash, Res.string.delete).ListMenuItem()
+                ListMenu.SectionTitle(stringResource(Res.string.navigation))
+                InertMenuItem(Res.drawable.album, Res.string.go_to_album, descriptionId = null).ListMenuItem()
+                val names = splitArtistNames(cleanPrefix(song.artists.orEmpty()), listOf(stringResource(Res.string.and)))
+                if (names.size <= 1) {
+                    InertMenuItem(Res.drawable.people, Res.string.more_of, " ${cleanPrefix(song.artists.orEmpty())}", descriptionId = null).ListMenuItem()
+                } else {
+                    names.forEach { InertMenuItem(Res.drawable.people, Res.string.more_of, " $it", descriptionId = null).ListMenuItem() }
+                }
+                InertMenuItem(Res.drawable.play, Res.string.listen_on, descriptionId = null).ListMenuItem()
+            }
+            return@Menu
+        }
 
         if (isLocal) {
             // Section: Management (the phone shows it only with its FFmpeg builds)
@@ -133,7 +195,7 @@ class SongItemMenu(
 
             // Section: Listen Together
             ListMenu.SectionTitle(stringResource(Res.string.listen_together))
-            InertMenuItem(Res.drawable.people, Res.string.listen_together).ListMenuItem()
+            InertMenuItem(Res.drawable.people, Res.string.listen_together, descriptionId = null).ListMenuItem()
 
             // Section: Management
             ListMenu.SectionTitle(stringResource(Res.string.management))
@@ -144,18 +206,18 @@ class SongItemMenu(
             InertMenuItem(Res.drawable.title_edit, Res.string.update_artist_browse_id).ListMenuItem()
             addToFavorite.ListMenuItem()
             addToPlaylist.ListMenuItem()
-            InertMenuItem(Res.drawable.refresh, Res.string.info_open_update_dialog).ListMenuItem()
+            InertMenuItem(Res.drawable.refresh, Res.string.update, descriptionId = Res.string.info_open_update_dialog).ListMenuItem()
             InertMenuItem(Res.drawable.trash, Res.string.delete).ListMenuItem()
             if (hasFfmpeg) exportCache.ListMenuItem()
 
             // Section: Navigation
             ListMenu.SectionTitle(stringResource(Res.string.navigation))
             InertMenuItem(Res.drawable.album, Res.string.go_to_album).ListMenuItem()
-            val artistNames = splitArtistNames(cleanPrefix(song.artists.orEmpty()))
+            val artistNames = splitArtistNames(cleanPrefix(song.artists.orEmpty()), listOf(stringResource(Res.string.and)))
             if (artistNames.size <= 1) {
-                InertMenuItem(Res.drawable.people, Res.string.more_of, " ${cleanPrefix(song.artists.orEmpty())}").ListMenuItem()
+                InertMenuItem(Res.drawable.people, Res.string.more_of, " ${cleanPrefix(song.artists.orEmpty())}", descriptionId = Res.string.artists).ListMenuItem()
             } else {
-                artistNames.forEach { InertMenuItem(Res.drawable.people, Res.string.more_of, " $it").ListMenuItem() }
+                artistNames.forEach { InertMenuItem(Res.drawable.people, Res.string.more_of, " $it", descriptionId = null).ListMenuItem() }
             }
         }
     }
@@ -187,8 +249,9 @@ class SongItemMenu(
                         bottom = 10.dp,
                     ),
                     trailingContent = {
+                        // The player menu's header is an unconstrained Column (`PlayerItemMenu.kt` 848)
                         Column(
-                            Modifier.width(TabToolBar.TOOLBAR_ICON_SIZE),
+                            if (playerMenu) Modifier else Modifier.width(TabToolBar.TOOLBAR_ICON_SIZE),
                         ) {
                             // The like tri-state (contract 1.7), as on the phone: `heart` in `favoritesIcon`
                             // when liked, the phone's `heart_dislike` in red when disliked,
@@ -214,6 +277,15 @@ class SongItemMenu(
                                     likeState = listedTrack.displayedLike
                                 }
                             }
+                            // Outside a list (the queue, the player's own menu): the player state's
+                            // queued track, patched by the optimistic like and re-synced by the phone's
+                            // queue delta, so a like made elsewhere while the menu is open shows too
+                            val playerState by (app.n_zik.compagnon.LocalPlayerRepository.current?.state
+                                ?: remember { MutableStateFlow(null) }).collectAsState()
+                            val queuedLike = playerState?.queue?.firstOrNull { it.id == song.id }?.displayedLike
+                            LaunchedEffect(queuedLike) {
+                                if (listedTrack == null && queuedLike != null) likeState = queuedLike
+                            }
                             val like = likeState
                             val writes = libraryWrites()
                             val dislikeMode by (LocalLibraryActions.current?.lists?.dislikeMode
@@ -231,42 +303,34 @@ class SongItemMenu(
                                     TrackLike.Neutral -> colorPalette().text
                                 },
                                 onClick = {
-                                    if (actions.enabled) {
+                                    // Without `library.write` the heart is an indicator: no write, no toast
+                                    if (actions.enabled && writes != null) {
                                         val next = if (rotationEnabled) like.nextRotation() else like.nextToggle()
-                                        writes?.let {
-                                            it.likeSong(song.id, next)
-                                            // The heart follows the tap even when the write drops the row
-                                            // from the list (a chip its new state no longer matches)
-                                            likeState = next
+                                        // The phone's toast of the resulting state once its write is done (its
+                                        // `YouTubeSync.kt` 106-116, 174-183): the rotation's three messages or
+                                        // the toggle's two (the shared messages, title cleaned of the prefixes)
+                                        val label = likeToastLabel(song.title, song.artists)
+                                        writes.likeSong(song.id, next) { confirmed ->
+                                            val messageId = likeToastMessage(confirmed, rotationEnabled)
+                                            if (label != null) Toaster.s(messageId, label) else Toaster.s(messageId)
                                         }
-                                        // The phone's toast of the resulting state (its `YouTubeSync.kt` 106-116,
-                                        // 174-183): the rotation's three messages or the toggle's two
-                                        val messageId = when {
-                                            rotationEnabled -> when (next) {
-                                                TrackLike.Liked -> Res.string.added_to_favorites
-                                                TrackLike.Disliked -> Res.string.added_to_dislikes
-                                                TrackLike.Neutral -> Res.string.removed_from_dislikes
-                                            }
-                                            next == TrackLike.Liked -> Res.string.added_to_favorites
-                                            else -> Res.string.removed_from_favorites
-                                        }
-                                        if (song.title.isNotBlank()) {
-                                            val label = song.artists?.takeIf { it.isNotBlank() }
-                                                ?.let { "\"${song.title} - $it\"" } ?: "\"${song.title}\""
-                                            Toaster.s(messageId, label)
-                                        } else {
-                                            Toaster.s(messageId)
-                                        }
+                                        // The heart follows the tap even when the write drops the row
+                                        // from the list (a chip its new state no longer matches)
+                                        likeState = next
                                     }
                                 },
                                 modifier = Modifier.padding(all = 4.dp).size(20.dp),
                             )
 
-                            if (!isLocal) {
+                            // The song menu hides the share for a local song; the player menu always shows it
+                            // (`PlayerItemMenu.kt` 872)
+                            if (!isLocal || playerMenu) {
                                 IconButton(
                                     icon = Res.drawable.share_social,
                                     color = colorPalette().text,
-                                    onClick = {},
+                                    // The phone's player menu shows it for a local track too, but its `watch?v=local:…` link is
+                                    // invalid: the PC copies nothing for a local id
+                                    onClick = { if (!isLocal) app.n_zik.compagnon.components.player.ShareLinks.copy(app.n_zik.compagnon.components.player.ShareLinks.song(song.id)) },
                                     modifier = Modifier.padding(all = 4.dp).size(20.dp),
                                 )
                             }

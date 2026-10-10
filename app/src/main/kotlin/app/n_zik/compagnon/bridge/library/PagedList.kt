@@ -6,6 +6,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /** Why a page could not be read; the screen shows a message and "Retry". */
@@ -103,6 +104,24 @@ class PagedList<Q, T>(
                 val result = fetch(requestQuery, offset, pageSize)
                 apply(requestGeneration, offset, result)
             }
+        }
+    }
+
+    /**
+     * Reads pages until the item at [index] is loaded (the locator's scroll target beyond the loaded
+     * pages, contract §10.4 since 1.10.0). `false` when the list ends, fails or changes first.
+     */
+    suspend fun loadThrough(index: Int): Boolean {
+        while (true) {
+            val current = state.value
+            if (current.items.size > index) return true
+            if (current.error != null || current.endReached || current.notFound || current.revoked) return false
+            val before = current.items.size
+            // loadMore marks the list loading synchronously: wait for that page to settle
+            loadMore()
+            val settled = state.first { !it.loading }
+            // No progress (refused, failed, emptied by a reload): stop rather than loop
+            if (settled.items.size <= before) return settled.items.size > index
         }
     }
 

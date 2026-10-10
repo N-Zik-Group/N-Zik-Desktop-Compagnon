@@ -23,6 +23,7 @@ import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.formatMessage
 import app.n_zik.compagnon.utils.formatText
+import app.n_zik.compagnon.utils.Toaster
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
@@ -144,6 +145,7 @@ suspend fun commandName(command: CommandKind?): String = getString(
         CommandKind.QueuePlay -> Res.string.command_queue_play
         CommandKind.QueueAdd -> Res.string.command_queue_add
         CommandKind.Output -> Res.string.command_output
+        CommandKind.QueueList -> Res.string.command_queue_play
         null -> Res.string.command_unknown
     },
 )
@@ -166,5 +168,31 @@ suspend fun noticeText(notice: PlayerNotice): String {
             formatMessage(Res.string.notice_failed, name, notice.status, notice.code ?: getString(Res.string.error_unknown_code))
         is PlayerNotice.LateError ->
             formatMessage(Res.string.notice_late_error, name, notice.code, notice.commandId?.take(8) ?: getString(Res.string.error_unknown_code))
+        is PlayerNotice.PhoneToast -> phoneToastText(notice.key, notice.args, notice.message)
     }
+}
+
+/**
+ * Contract limit (NOT LINKED): §7.9 carries no duration nor custom icon, so a relayed toast is always shown
+ * short with its type's icon (the phone's `LENGTH_LONG` / custom-icon toasts lose those).
+ *
+ * Text of a relayed phone toast (contract §7.9, since 1.10.0): the PC's own string of the phone's
+ * [key] (same resource names), formatted with [args] — numeric ones as numbers, the phone's `%d` —
+ * else the [message] the phone showed (its language). A format that does not apply falls back to
+ * [message] too.
+ */
+suspend fun phoneToastText(key: String, args: List<String>, message: String): String {
+    val resource = Res.allStringResources[key] ?: return message
+    val raw = getString(resource)
+    val formatted = formatText(raw, *args.map<String, Any> { it.toLongOrNull() ?: it }.toTypedArray())
+    return if (args.isNotEmpty() && formatted == raw) message.ifEmpty { raw } else formatted
+}
+
+/** The PC [Toaster.Type] of a relayed phone toast's `toastType`; an unknown one is `normal` (contract §7.9). */
+fun phoneToastType(toastType: String): Toaster.Type = when (toastType) {
+    "success" -> Toaster.Type.SUCCESS
+    "info" -> Toaster.Type.INFO
+    "warning" -> Toaster.Type.WARNING
+    "error" -> Toaster.Type.ERROR
+    else -> Toaster.Type.NORMAL
 }

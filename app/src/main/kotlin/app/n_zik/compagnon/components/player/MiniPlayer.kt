@@ -76,7 +76,6 @@ import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.TIME_UNSET
 import app.n_zik.compagnon.utils.cleanPrefix
-import app.n_zik.compagnon.utils.hasExplicitPrefix
 import app.n_zik.compagnon.utils.onSecondaryClick
 import app.n_zik.compagnon.utils.positionAndDurationState
 import app.n_zik.compagnon.utils.semiBold
@@ -117,7 +116,8 @@ const val MINIPLAYER_APPEAR_FADE_SKIPPED_FRAMES = 2
  * phone's queue route intercepted into its overlay).
  * The buffering ring (contract 1.4: `currentState.isBuffering`) replaces the play / pause icon while the
  * phone buffers (phone's 727-737: `CircularWavyProgressIndicator` in accent over the text track, 24 dp,
- * stroke 2 dp; the phone's `&& shouldBePlaying` is implied — `STATE_BUFFERING` only happens while it plays).
+ * stroke 2 dp, with the phone's `&& shouldBePlaying`: the contract 1.10.0 `playWhenReady` — a seek while
+ * paused buffers without the ring; an older phone sends no `playWhenReady`, every buffering shows it).
  * Kept as a drag: the phone's swipe-down (its `MainActivity.kt` 2298-2306) stops the phone's playback
  * (`stopRadio + clearMediaItems + stopService`) and the player auto-closes in its 400 ms grace; here
  * the same gesture is a downward drag on the bar (beyond its 80 dp dismissed zone), sending the
@@ -128,7 +128,8 @@ const val MINIPLAYER_APPEAR_FADE_SKIPPED_FRAMES = 2
  * frames skipped) and its animated leave (the phone's `dismiss()`, slide + fade, removed once
  * settled) — both at the sheet level in `MainActivity`, as on the phone. The phone's
  * `disableClosingPlayerSwipingDown` setting is outside the contract, so the PC's bar always answers
- * the drag. Dropped: the swipe actions (like / previous / next: no swipe on the PC), the other
+ * the drag. Dropped (adaptation): the horizontal swipe actions (like / previous / next — a mouse has the
+ * buttons and the menu for them; only the vertical dismiss drag is kept), the other
  * optional buttons (off by default), the rotation effect (off by default), the mini-player's own
  * cover palette (only used by the non-default `Cover` controls colour).
  * The "audio output" button (`MiniPlayerButton.AudioOutput`, on by default, phone's 997-1040) opens the
@@ -164,9 +165,9 @@ fun MiniPlayer(
     val lastTrack = remember { mutableStateOf<Track?>(null) }
     LaunchedEffect(currentTrack?.id) { currentTrack?.let { lastTrack.value = it } }
     val mediaItem = currentTrack ?: lastTrack.value ?: return
-    // The phone's `Player.shouldBePlaying` (utils/Player.kt 69): true while buffering too
-    // (`STATE_BUFFERING` implies `playWhenReady`) — contract 1.4 `isBuffering`.
-    val shouldBePlaying = currentState.isPlaying || currentState.isBuffering
+    // The phone's `Player.shouldBePlaying` (utils/Player.kt 69): buffering counts only while it should
+    // play (contract 1.10.0 `playWhenReady`; an older phone counts every buffering)
+    val shouldBePlaying = currentState.shouldBePlaying
 
     // PlayerControlsColors.Monochrome follows the effective palette tone
     val controlsColorText = monochromeControlsColor(colorPalette())
@@ -213,6 +214,7 @@ fun MiniPlayer(
             .offset { IntOffset(0, animatedDragY.roundToInt()) }
             .alpha(dismissAlpha)
             .padding(horizontal = 16.dp)
+            // The phone's 528: the 8 dp shadow with its floating navigation bar — the bar the PC always draws
             .shadow(elevation = 8.dp, shape = shape)
             .clip(shape),
     ) {
@@ -298,7 +300,8 @@ fun MiniPlayer(
                             .fillMaxSize(),
                     )
 
-                    NowPlayingSongIndicator(isPlaying = shouldBePlaying, containerSize = 48.dp)
+                    // The phone's `MusicAnimation` follows `player.isPlaying` only (false while buffering)
+                    NowPlayingSongIndicator(isPlaying = currentState.isPlaying, containerSize = 48.dp)
 
                     // The like tri-state indicator (contract 1.7, phone's `MiniPlayer.kt` 565-568):
                     // nothing for neutral, `heart` in `favoritesIcon` when liked, the phone's
@@ -308,7 +311,7 @@ fun MiniPlayer(
                     if (like != TrackLike.Neutral) {
                         HeaderIconButton(
                             onClick = {},
-                            icon = if (like == TrackLike.Disliked) Res.drawable.heart_dislike else Res.drawable.heart,
+                            icon = if (like == TrackLike.Disliked) Res.drawable.heart_dislike else getLikedIcon(),
                             color = if (like == TrackLike.Disliked) colorPalette().red else colorPalette().favoritesIcon,
                             iconSize = 10.dp,
                             modifier = Modifier.align(Alignment.BottomStart)
@@ -328,7 +331,8 @@ fun MiniPlayer(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (mediaItem.isExplicit || mediaItem.title.hasExplicitPrefix()) {
+                    // The phone's `isExplicit` alone (its 670)
+                    if (mediaItem.isExplicit) {
                         // The explicit badge (phone's 14 dp icon, text colour), before the title (contract 1.3
                         // `Track.isExplicit`: the phone sends the cleaned title)
                         IconButton(
@@ -396,8 +400,8 @@ fun MiniPlayer(
                             .background(colorPalette().background2)
                             .size(42.dp),
                     ) {
-                        if (currentState.isBuffering) {
-                            // The phone's buffering ring (phone's 727-737, contract 1.4)
+                        if (currentState.showsBuffering) {
+                            // The phone's buffering ring (phone's 727-737: `isBuffering && shouldBePlaying`)
                             CircularWavyProgressIndicator(
                                 color = colorPalette().accent,
                                 trackColor = colorPalette().text,
