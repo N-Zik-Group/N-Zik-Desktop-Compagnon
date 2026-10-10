@@ -159,6 +159,7 @@
     <string name="sort_artist_and_album">Artist, Album</string>
     <string name="sort_listening_time">재생 시간</string>
     <string name="no_items">No items</string>
+    <string name="not_selectable">Not selectable</string>
     <string name="unknown_title">Unknown Title</string>
     <string name="unknown_artist">Unknown Artist</string>
     <string name="playback">Playback</string>
@@ -173,6 +174,7 @@
     <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
     <string name="no_song_found">No song found</string>
     <string name="no_song_to_shuffle">No song to shuffle</string>
+    <string name="songs_shuffled">%d songs shuffled</string>
     <string name="info_no_songs_yet">No songs available</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">북마크</string>
@@ -213,6 +215,7 @@
     <string name="autosync_likes">Auto Sync Liked Songs</string>
     <string name="statistics">통계</string>
     <string name="header_view_top_of">Top %s of …</string>
+    <string name="max_items_unlimited">무제한</string>
     <string name="today">오늘</string>
     <string name="_1_week">주간</string>
     <string name="_1_month">월간</string>
@@ -424,4 +427,15 @@
     <string name="translators">번역가들</string>
     <string name="about_developers">개발자 / 디자이너</string>
     <string name="in_alphabetical_order">알파벳 순:</string>
+    <string name="do_you_really_want_to_download_all">정말로 모든 곡을 다운로드하실 건가요?</string>
+    <string name="do_you_really_want_to_delete_download">정말로 다운로드를 삭제하실건가요?</string>
+    <string name="loading_songs_count">Loading %1$d songs…</string>
+    <string name="equalizer">이퀄라이저</string>
+    <string name="sleep_timer">수면 타이머</string>
+    <string name="listen_on">다른 곳에서 듣기</string>
+    <string name="listen_on_youtube">YouTube에서 듣기</string>
+    <string name="deleted">삭제됨</string>
+    <string name="and">and</string>
+    <string name="sync">동기화</string>
+    <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
 </resources>
