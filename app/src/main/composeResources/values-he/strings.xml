@@ -27,7 +27,7 @@
     <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
     <string name="manual_submit">Pair</string>
     <!-- Validation -->
-    <string name="validating">Pairing with your phone…</string>
+    <string name="validating">מתאם עם הטלפון שלך…</string>
     <!-- Errors -->
     <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
     <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
