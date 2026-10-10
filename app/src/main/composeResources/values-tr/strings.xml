@@ -159,6 +159,7 @@
     <string name="sort_artist_and_album">Sanatçı, Albüm</string>
     <string name="sort_listening_time">Dinleme Süresi</string>
     <string name="no_items">Öğe yok</string>
+    <string name="not_selectable">Seçilemez</string>
     <string name="unknown_title">Bilinmeyen Başlık</string>
     <string name="unknown_artist">Bilinmeyen Sanatçı</string>
     <string name="playback">Geri oynat</string>
@@ -173,6 +174,7 @@
     <string name="artist_songs_count_duration">%1$d Şarkı • %2$s</string>
     <string name="no_song_found">Şarkı bulunamadı</string>
     <string name="no_song_to_shuffle">Karıştırılacak şarkı yok</string>
+    <string name="songs_shuffled">%d şarkı rastgele çalındı</string>
     <string name="info_no_songs_yet">Şarkılar bulunamadı</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Yer imi</string>
@@ -213,6 +215,7 @@
     <string name="autosync_likes">Beğenilen Şarkıları Otomatik Olarak Senkronize Et</string>
     <string name="statistics">İstatistikler</string>
     <string name="header_view_top_of">… içindeki en iyi %s</string>
+    <string name="max_items_unlimited">Sınırsız</string>
     <string name="today">Bugün</string>
     <string name="_1_week">1 Hafta</string>
     <string name="_1_month">1 Ay</string>
@@ -345,7 +348,7 @@
     <string name="enable_check_for_update">Otomatik güncelleme kontrolünü etkinleştir</string>
     <string name="update_check_when_enabled">Etkinleştirildiğinde, başlangıçta bu kanalın yeni bir sürümü kontrol edilir ve güncelleme iletişim kutusu bunu sunar.</string>
     <string name="update_check_off_build">Bu mesajı görüyorsanız, derlemenizde otomatik güncelleme özelliği etkin değil demektir, lütfen uygulamayı GitHub\'dan manuel olarak güncelleyin.</string>
-    <string name="update_check_off_aur">This app was installed from the AUR: the in-app updater is disabled for this install. Update the AUR entry (n-zik-desktop-compagnon) with your AUR helper.</string>
+    <string name="update_check_off_aur">Bu uygulama AUR\'dan yüklendi: Bu yükleme için uygulama içi güncelleyici devre dışı bırakılmıştır. AUR yardımcı programınızı kullanarak AUR girdisini (n-zik-desktop-compagnon) güncelleyin.</string>
     <string name="info_check_update_now">Şimdi kontrol et</string>
     <string name="update_available">Güncelleme mevcut</string>
     <string name="app_update_dialog_version">Yeni sürüm %s indirilebilir!</string>
@@ -361,21 +364,20 @@
     <string name="install_file_saved_at">Güncelleme dosyası şu konuma kaydedilir:</string>
     <string name="install_open_folder">Klasörü aç</string>
     <string name="install_copy_path">Yolu kopyala</string>
-    <string name="install_copy_command">Copy command</string>
+    <string name="install_copy_command">Komutu kopyala</string>
     <string name="path_copied">Yol kopyalandı</string>
-    <string name="command_copied">Command copied</string>
+    <string name="command_copied">Komut kopyalandı</string>
     <string name="install_flatpak_command">Aşağıdakilerle güncelleme yapıldı:</string>
     <string name="install_pkg_command">Paketi şu komutla yükleyin:</string>
-    <string name="install_pkg_pacman_command">Upgrade the package with:</string>
+    <string name="install_pkg_pacman_command">Paketi şu komutla güncelleyin:</string>
     <string name="install_pkg_manual">Herhangi bir paket yöneticisi algılanmadı. İndirdiğiniz paketi manuel olarak yükleyin.</string>
-    <string name="install_replacement_appimage">AppImage’ı değiştirin: İndirdiğiniz dosyayı mevcut dosyanın bulunduğu yere yerleştirin, ardından uygulamayı yeniden başlatın.</string>
     <string name="install_replacement_portable">Uygulama klasörünü değiştirin: indirdiğiniz dosyayı mevcut uygulama klasörünün üzerine açın, ardından uygulamayı yeniden başlatın.</string>
     <string name="old_install_path">Mevcut kurulum:</string>
     <!-- The channel header badge (4 labels; stable shows no badge — the phone's rule) -->
-    <string name="beta_title">Beta</string>
-    <string name="dev_title">Geliştirici</string>
-    <string name="git_title">Git</string>
-    <string name="debug_title">Hata ayıklama</string>
+    <string name="beta_title">BETA</string>
+    <string name="dev_title">GELİŞTİRİCİ</string>
+    <string name="git_title">GIT</string>
+    <string name="debug_title">HATA AYIKLAMA</string>
     <!-- Loop 2: the update page (spec spec-updater AD-9 revised) -->
     <string name="check_update">Güncellemeyi kontrol et</string>
     <string name="check_update_ask">Şimdi güncellemeleri kontrol etmek ister misiniz?</string>
@@ -425,4 +427,15 @@
     <string name="translators">Çevirmenler</string>
     <string name="about_developers">Geliştiriciler / Tasarımcılar</string>
     <string name="in_alphabetical_order">Alfabetik sırada:</string>
+    <string name="do_you_really_want_to_download_all">Tümünü gerçekten indirmek istiyor musunuz?</string>
+    <string name="do_you_really_want_to_delete_download">İndirmeyi gerçekten silmek istiyor musunuz?</string>
+    <string name="loading_songs_count">%1$d şarkı yükleniyor…</string>
+    <string name="equalizer">Ekolayzer</string>
+    <string name="sleep_timer">Uyku zamanlayıcısı</string>
+    <string name="listen_on">Dinle</string>
+    <string name="listen_on_youtube">YouTube\'da dinle</string>
+    <string name="deleted">Silindi</string>
+    <string name="and">ve</string>
+    <string name="sync">Senkronize et</string>
+    <string name="delete_playlists_confirm_all">%d adet çalma listesinin TÜMÜNÜ silmek istediğinizden emin misiniz?</string>
 </resources>

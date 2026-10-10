@@ -159,6 +159,7 @@
     <string name="sort_artist_and_album">Artist, Album</string>
     <string name="sort_listening_time">Durata redării</string>
     <string name="no_items">Niciun articol</string>
+    <string name="not_selectable">Nu este selectabil</string>
     <string name="unknown_title">Titlu necunoscut</string>
     <string name="unknown_artist">Artist Necunoscut</string>
     <string name="playback">Redare</string>
@@ -173,6 +174,7 @@
     <string name="artist_songs_count_duration">%1$d melodii • %2$s</string>
     <string name="no_song_found">Nicio melodie găsită</string>
     <string name="no_song_to_shuffle">No song to shuffle</string>
+    <string name="songs_shuffled">%d songs shuffled</string>
     <string name="info_no_songs_yet">Nu sunt melodii disponibile</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Marchează</string>
@@ -213,6 +215,7 @@
     <string name="autosync_likes">Auto Sync Liked Songs</string>
     <string name="statistics">Statistici</string>
     <string name="header_view_top_of">Top %s din …</string>
+    <string name="max_items_unlimited">Nelimitat</string>
     <string name="today">Astăzi</string>
     <string name="_1_week">1 săptămână</string>
     <string name="_1_month">1 lună</string>
@@ -368,14 +371,13 @@
     <string name="install_pkg_command">Install the package with:</string>
     <string name="install_pkg_pacman_command">Upgrade the package with:</string>
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_replacement_appimage">Replace the AppImage: put the downloaded file where the current one is, then relaunch.</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
     <string name="old_install_path">Current install:</string>
     <!-- The channel header badge (4 labels; stable shows no badge — the phone's rule) -->
-    <string name="beta_title">Beta</string>
-    <string name="dev_title">Dev</string>
-    <string name="git_title">Git</string>
-    <string name="debug_title">Debug</string>
+    <string name="beta_title">BETA</string>
+    <string name="dev_title">DEV</string>
+    <string name="git_title">GIT</string>
+    <string name="debug_title">DEBUG</string>
     <!-- Loop 2: the update page (spec spec-updater AD-9 revised) -->
     <string name="check_update">Verifică actualizarea</string>
     <string name="check_update_ask">Check for updates now?</string>
@@ -425,4 +427,15 @@
     <string name="translators">Traducători</string>
     <string name="about_developers">Dezvoltatori / Designeri</string>
     <string name="in_alphabetical_order">În ordine alfabetică:</string>
+    <string name="do_you_really_want_to_download_all">Vrei cu adevărat să descarci toate melodiile?</string>
+    <string name="do_you_really_want_to_delete_download">Vrei cu adevărat să ștergi descărcările?</string>
+    <string name="loading_songs_count">Loading %1$d songs…</string>
+    <string name="equalizer">Egalizator</string>
+    <string name="sleep_timer">Temporizator de somn</string>
+    <string name="listen_on">Ascultă pe</string>
+    <string name="listen_on_youtube">Ascultă pe YouTube</string>
+    <string name="deleted">Șters</string>
+    <string name="and">and</string>
+    <string name="sync">Sincronizează</string>
+    <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
 </resources>

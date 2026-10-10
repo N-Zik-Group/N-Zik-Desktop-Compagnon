@@ -159,6 +159,7 @@
     <string name="sort_artist_and_album">Artist, Album</string>
     <string name="sort_listening_time">聆聽時間</string>
     <string name="no_items">没有项目</string>
+    <string name="not_selectable">不可选择</string>
     <string name="unknown_title">未知标题</string>
     <string name="unknown_artist">未知艺人</string>
     <string name="playback">回放</string>
@@ -173,6 +174,7 @@
     <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
     <string name="no_song_found">未找到歌曲</string>
     <string name="no_song_to_shuffle">No song to shuffle</string>
+    <string name="songs_shuffled">%d songs shuffled</string>
     <string name="info_no_songs_yet">尚無歌曲</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">收藏</string>
@@ -213,6 +215,7 @@
     <string name="autosync_likes">Auto Sync Liked Songs</string>
     <string name="statistics">統計</string>
     <string name="header_view_top_of">View top %s of …</string>
+    <string name="max_items_unlimited">無限制</string>
     <string name="today">今日</string>
     <string name="_1_week">一星期</string>
     <string name="_1_month">一個月</string>
@@ -368,14 +371,13 @@
     <string name="install_pkg_command">Install the package with:</string>
     <string name="install_pkg_pacman_command">Upgrade the package with:</string>
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_replacement_appimage">Replace the AppImage: put the downloaded file where the current one is, then relaunch.</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
     <string name="old_install_path">Current install:</string>
     <!-- The channel header badge (4 labels; stable shows no badge — the phone's rule) -->
-    <string name="beta_title">Beta</string>
-    <string name="dev_title">Dev</string>
-    <string name="git_title">Git</string>
-    <string name="debug_title">除錯</string>
+    <string name="beta_title"> Beta</string>
+    <string name="dev_title">DEV</string>
+    <string name="git_title">GIT</string>
+    <string name="debug_title">DEBUG</string>
     <!-- Loop 2: the update page (spec spec-updater AD-9 revised) -->
     <string name="check_update">檢查更新</string>
     <string name="check_update_ask">Check for updates now?</string>
@@ -425,4 +427,15 @@
     <string name="translators">翻譯人員</string>
     <string name="about_developers">開發者 / 設計師</string>
     <string name="in_alphabetical_order">依照字母排序:</string>
+    <string name="do_you_really_want_to_download_all">你真的要全部下載嗎?</string>
+    <string name="do_you_really_want_to_delete_download">你真的要移除下載嗎?</string>
+    <string name="loading_songs_count">Loading %1$d songs…</string>
+    <string name="equalizer">等化器</string>
+    <string name="sleep_timer">睡眠定時器</string>
+    <string name="listen_on">在其它平台上收聽</string>
+    <string name="listen_on_youtube">在YouTube上收聽</string>
+    <string name="deleted">已刪除</string>
+    <string name="and">and</string>
+    <string name="sync">同步</string>
+    <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
 </resources>

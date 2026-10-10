@@ -159,6 +159,7 @@
     <string name="sort_artist_and_album">Artist, Album</string>
     <string name="sort_listening_time">Час прослуховування</string>
     <string name="no_items">Товарів немає</string>
+    <string name="not_selectable">Не вибране</string>
     <string name="unknown_title">Невідомий заголовок</string>
     <string name="unknown_artist">Невідомий виконавець</string>
     <string name="playback">Відтворення</string>
@@ -173,6 +174,7 @@
     <string name="artist_songs_count_duration">%1$d пісні • %2$s</string>
     <string name="no_song_found">Пісню не знайдено</string>
     <string name="no_song_to_shuffle">No song to shuffle</string>
+    <string name="songs_shuffled">%d songs shuffled</string>
     <string name="info_no_songs_yet">Немає доступних пісень</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Закладка</string>
@@ -213,6 +215,7 @@
     <string name="autosync_likes">Auto Sync Liked Songs</string>
     <string name="statistics">Статистика</string>
     <string name="header_view_top_of">Найпопулярніший %s з …</string>
+    <string name="max_items_unlimited">Необмежено</string>
     <string name="today">Сьогодні</string>
     <string name="_1_week">1 тиждень</string>
     <string name="_1_month">1 місяць</string>
@@ -368,14 +371,13 @@
     <string name="install_pkg_command">Install the package with:</string>
     <string name="install_pkg_pacman_command">Upgrade the package with:</string>
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_replacement_appimage">Replace the AppImage: put the downloaded file where the current one is, then relaunch.</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
     <string name="old_install_path">Current install:</string>
     <!-- The channel header badge (4 labels; stable shows no badge — the phone's rule) -->
-    <string name="beta_title">Beta</string>
-    <string name="dev_title">Dev</string>
-    <string name="git_title">Git</string>
-    <string name="debug_title">Debug</string>
+    <string name="beta_title">БЕТА</string>
+    <string name="dev_title">DEV</string>
+    <string name="git_title">GIT</string>
+    <string name="debug_title">DEBUG</string>
     <!-- Loop 2: the update page (spec spec-updater AD-9 revised) -->
     <string name="check_update">Перевірити оновлення</string>
     <string name="check_update_ask">Check for updates now?</string>
@@ -425,4 +427,15 @@
     <string name="translators">Перекладачі</string>
     <string name="about_developers">Розробники / Дизайнери</string>
     <string name="in_alphabetical_order">В алфавітному порядку:</string>
+    <string name="do_you_really_want_to_download_all">Ви дійсно хочете завантажити все?</string>
+    <string name="do_you_really_want_to_delete_download">Ви дійсно хочете видалити завантаження?</string>
+    <string name="loading_songs_count">Loading %1$d songs…</string>
+    <string name="equalizer">Еквалайзер</string>
+    <string name="sleep_timer">Таймер сну</string>
+    <string name="listen_on">Слухайте на</string>
+    <string name="listen_on_youtube">Слухати на YouTube</string>
+    <string name="deleted">Видалено</string>
+    <string name="and">and</string>
+    <string name="sync">Синхронізувати</string>
+    <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
 </resources>

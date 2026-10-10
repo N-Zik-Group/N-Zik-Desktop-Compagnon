@@ -159,6 +159,7 @@
     <string name="sort_artist_and_album">Artist, Album</string>
     <string name="sort_listening_time">শোনার সময়ে</string>
     <string name="no_items">No items</string>
+    <string name="not_selectable">Not selectable</string>
     <string name="unknown_title">Unknown Title</string>
     <string name="unknown_artist">Unknown Artist</string>
     <string name="playback">Playback</string>
@@ -173,6 +174,7 @@
     <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
     <string name="no_song_found">No song found</string>
     <string name="no_song_to_shuffle">No song to shuffle</string>
+    <string name="songs_shuffled">%d songs shuffled</string>
     <string name="info_no_songs_yet">কোনো গান নাই এখনো</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Bookmark</string>
@@ -213,6 +215,7 @@
     <string name="autosync_likes">Auto Sync Liked Songs</string>
     <string name="statistics">পরিসংখ্যান</string>
     <string name="header_view_top_of">View top %s of …</string>
+    <string name="max_items_unlimited">আনলিমিটেড</string>
     <string name="today">আজ</string>
     <string name="_1_week">১ সপ্তাহ</string>
     <string name="_1_month">১ মাস</string>
@@ -368,14 +371,13 @@
     <string name="install_pkg_command">Install the package with:</string>
     <string name="install_pkg_pacman_command">Upgrade the package with:</string>
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_replacement_appimage">Replace the AppImage: put the downloaded file where the current one is, then relaunch.</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
     <string name="old_install_path">Current install:</string>
     <!-- The channel header badge (4 labels; stable shows no badge — the phone's rule) -->
-    <string name="beta_title">Beta</string>
-    <string name="dev_title">Dev</string>
-    <string name="git_title">Git</string>
-    <string name="debug_title">ডিবাগ</string>
+    <string name="beta_title"> Beta</string>
+    <string name="dev_title">DEV</string>
+    <string name="git_title">GIT</string>
+    <string name="debug_title">DEBUG</string>
     <!-- Loop 2: the update page (spec spec-updater AD-9 revised) -->
     <string name="check_update">আপডেট চেক করুন</string>
     <string name="check_update_ask">Check for updates now?</string>
@@ -425,4 +427,15 @@
     <string name="translators">Translators</string>
     <string name="about_developers">Developers / Designers</string>
     <string name="in_alphabetical_order">বর্ণক্রম অনুযায়ী</string>
+    <string name="do_you_really_want_to_download_all">আপনি কি সত্যি সবগুলো ডাওনলোড করতে চান?</string>
+    <string name="do_you_really_want_to_delete_download">আপনি কি সত্যি ডাওনলোড মুছতে চান?</string>
+    <string name="loading_songs_count">Loading %1$d songs…</string>
+    <string name="equalizer">ইকুয়ালাইজার</string>
+    <string name="sleep_timer">স্লিপ টাইমার</string>
+    <string name="listen_on">শুনুন</string>
+    <string name="listen_on_youtube">ইউটিউবে শুনুন</string>
+    <string name="deleted">Deleted</string>
+    <string name="and">and</string>
+    <string name="sync">সিঙ্ক</string>
+    <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
 </resources>
