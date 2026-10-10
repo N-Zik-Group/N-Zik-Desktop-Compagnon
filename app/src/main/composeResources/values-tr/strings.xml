@@ -159,6 +159,7 @@
     <string name="sort_artist_and_album">Sanatçı, Albüm</string>
     <string name="sort_listening_time">Dinleme Süresi</string>
     <string name="no_items">Öğe yok</string>
+    <string name="not_selectable">Seçilemez</string>
     <string name="unknown_title">Bilinmeyen Başlık</string>
     <string name="unknown_artist">Bilinmeyen Sanatçı</string>
     <string name="playback">Geri oynat</string>
@@ -173,6 +174,7 @@
     <string name="artist_songs_count_duration">%1$d Şarkı • %2$s</string>
     <string name="no_song_found">Şarkı bulunamadı</string>
     <string name="no_song_to_shuffle">Karıştırılacak şarkı yok</string>
+    <string name="songs_shuffled">%d şarkı rastgele çalındı</string>
     <string name="info_no_songs_yet">Şarkılar bulunamadı</string>
     <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Yer imi</string>
@@ -213,6 +215,7 @@
     <string name="autosync_likes">Beğenilen Şarkıları Otomatik Olarak Senkronize Et</string>
     <string name="statistics">İstatistikler</string>
     <string name="header_view_top_of">… içindeki en iyi %s</string>
+    <string name="max_items_unlimited">Sınırsız</string>
     <string name="today">Bugün</string>
     <string name="_1_week">1 Hafta</string>
     <string name="_1_month">1 Ay</string>
@@ -424,4 +427,15 @@
     <string name="translators">Çevirmenler</string>
     <string name="about_developers">Geliştiriciler / Tasarımcılar</string>
     <string name="in_alphabetical_order">Alfabetik sırada:</string>
+    <string name="do_you_really_want_to_download_all">Tümünü gerçekten indirmek istiyor musunuz?</string>
+    <string name="do_you_really_want_to_delete_download">İndirmeyi gerçekten silmek istiyor musunuz?</string>
+    <string name="loading_songs_count">%1$d şarkı yükleniyor…</string>
+    <string name="equalizer">Ekolayzer</string>
+    <string name="sleep_timer">Uyku zamanlayıcısı</string>
+    <string name="listen_on">Dinle</string>
+    <string name="listen_on_youtube">YouTube\'da dinle</string>
+    <string name="deleted">Silindi</string>
+    <string name="and">ve</string>
+    <string name="sync">Senkronize et</string>
+    <string name="delete_playlists_confirm_all">%d adet çalma listesinin TÜMÜNÜ silmek istediğinizden emin misiniz?</string>
 </resources>
