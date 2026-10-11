@@ -182,6 +182,7 @@
     <string name="follow">Follow</string>
     <string name="following">Following</string>
     <string name="item_select">Select</string>
+    <string name="item_deselect">Deselect</string>
     <string name="info_download_all_songs">Download all songs</string>
     <string name="info_smart_recommendation">Smart recommendation</string>
     <string name="import_playlist">Import playlist</string>
