@@ -95,8 +95,8 @@ fun gridThumbnailSizePx(itemSize: androidx.compose.ui.unit.Dp): Int =
  *
  * Toolbar: the phone's toolbar of the active tab — the same twelve buttons for the three chips, in the
  * phone's order (`HomeAlbumsToolbarSettingsDialog.allButtonIds`), with the phone's show conditions
- * (position lock only while the chip's sort is `Custom`, no YouTube sync on the PC) — then the
- * Compagnon's "Refresh". Wired: sort, refresh, item size (the per-tab grid size, a Compagnon-local
+ * (position lock only while the chip's sort is `Custom`; "Auto Sync Saved Albums" never shows — the
+ * phone gates it on its YouTube sync, which the PC has no route for, spec #43) — then the Compagnon's "Refresh". Wired: sort, refresh, item size (the per-tab grid size, a Compagnon-local
  * setting) and the randomizer (a random album of the shown list, client-side as on the phone); the rest
  * (search — `/library/albums` has no `text` parameter —, position lock, shuffle, item selector, play next, enqueue, add to playlist,
  * export) are placeholders without a contract route —
@@ -112,9 +112,14 @@ fun gridThumbnailSizePx(itemSize: androidx.compose.ui.unit.Dp): Int =
  * the play count / listening time, the sorted value is shown over the thumbnail, like on the phone
  * (the multi-select check overlay is dropped — no contract route for the item selector).
  *
- * Dropped (contract v1): drag to reorder (the position lock is shown, inert), YouTube sync and its filter
- * chip and progress, pull-to-refresh, drag to reorder, the chip and toolbar order / visibility
- * preferences.
+ * The phone's "Filter by" chip (its `HomeAlbum.kt` 526-570) is not ported: the phone shows it only
+ * while its YouTube sync is enabled (spec `spec-fill-pc-ui-gaps-menus` #40, renegotiated) — the PC
+ * has no YouTube sync, so it never shows.
+ *
+ * Dropped (contract v1): drag to reorder (the position lock is shown, inert), the YouTube sync itself
+ * and its progress (the sync button and the filter chip are never shown — the phone gates them on its
+ * YouTube sync, spec #40-#43), pull-to-refresh,
+ * the chip and toolbar order / visibility preferences.
  * A click opens the album, a long press (right click) opens `AlbumItemMenu`. The bookmark badge comes
  * from contract 1.3 `isBookmarked`, in every filter; since 1.7.1 the contract's `isDisliked` shows
  * the phone's `bookmark_slash`.
@@ -200,6 +205,12 @@ fun HomeAlbums(
                 }
                 // No contract search on `/library/albums` (no `text` parameter): inert, the phone's title
                 "search" -> add(InertButton(Res.drawable.search_circle, Res.string.search))
+                // The phone's "Auto Sync Saved Albums" (its `HomeAlbum.kt` 466, icon `sync`): the
+                // phone shows it only while its YouTube sync is enabled — never on the PC (no
+                // YouTube sync, no contract route — spec `spec-fill-pc-ui-gaps-menus` #43,
+                // renegotiated: not shown)
+                "sync" -> {
+                }
                 "randomizer" -> add(Randomizer({ activeList.state.value.items }, onAlbumClick))
                 "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
                 "item_selector" -> add(itemSelector)

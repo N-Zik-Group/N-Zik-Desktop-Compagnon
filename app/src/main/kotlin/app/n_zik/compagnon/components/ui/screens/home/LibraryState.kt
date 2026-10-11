@@ -1,6 +1,7 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
 import app.n_zik.compagnon.LocalLibraryActions
+import app.n_zik.compagnon.components.themed.Loader
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.formatMessage
 import app.n_zik.compagnon.utils.formatText
@@ -10,9 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -1057,8 +1056,10 @@ fun <T> LoadMoreEffect(list: PagedList<*, T>, state: PagedState<T>, lastVisibleI
 }
 
 /**
- * What a list shows besides its items (no phone equivalent): a spinner while a page loads, or the error
- * with "Retry" (`5xx`, unreachable, another PC active; the pages already loaded stay above).
+ * What a list shows besides its items (no phone equivalent): the phone's big [Loader] while a page loads
+ * (renegotiated 2026-10-11 — the PC's page loads show the phone's big loader, like its album details, not
+ * a small circular), or the error with "Retry" (`5xx`, unreachable, another PC active; the pages already
+ * loaded stay above).
  */
 @Composable
 fun PagedStatus(state: PagedState<*>, onRetry: () -> Unit, modifier: Modifier = Modifier) {
@@ -1077,9 +1078,7 @@ fun PagedStatus(state: PagedState<*>, onRetry: () -> Unit, modifier: Modifier = 
                 Text(stringResource(Res.string.retry), style = typography().xs.semiBold, color = colorPalette().accent)
             }
         }
-        state.loading -> Box(modifier = modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp, color = colorPalette().accent)
-        }
+        state.loading -> Loader(modifier = modifier.fillMaxWidth())
     }
 }
 

@@ -21,10 +21,15 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Port of `HamburgerMenu` (phone's `app/it/fast4x/rimusic/ui/components/navigation/header/ActionBar.kt`
- * 50-193): the `DropdownMenu` on `background0` at 90 %, with the entries the PC can do: "PC server"
- * (`devices`, the "Phone" panel, [onPhone]), the divider, "Settings" (the Compagnon's settings,
- * [onSettings]). Dropped: history, statistics, rewind, Listen Together, profiles, picture in picture,
- * debug logs, maintenance and the rescue center (phone features without a contract route).
+ * 50-193): the `DropdownMenu` on `background0` at 90 %, with the entries in the phone's order
+ * (its 78-169) — the phone's nine entries, ported inert (spec `spec-fill-pc-ui-gaps-menus` #30-#38:
+ * history 78, statistics 85, rewind 95 — the phone shows it by default, its `rewindEnabled` true;
+ * Listen Together 103, profiles 117, picture in picture 124 — default off on the phone, visible and
+ * inert anyway; debug logs 141 — the phone's default is off, so the static "Enable debug logs" label,
+ * maintenance 152, rescue center 163: phone features without a contract route, shown, without
+ * action) — interleaved with the entries the PC can do: "PC server" (`devices`, the "Phone" panel,
+ * [onPhone]) between Listen Together and profiles, the divider before "Settings" (the Compagnon's
+ * settings, [onSettings]) between picture in picture and debug logs.
  */
 @Composable
 private fun HamburgerMenu(
@@ -38,6 +43,16 @@ private fun HamburgerMenu(
         containerColor = colorPalette().background0.copy(0.90f),
         onDismissRequest = onDismissRequest,
     )
+    // The phone's inert entries (spec `spec-fill-pc-ui-gaps-menus` #30-#38, its `ActionBar.kt`
+    // 78-163): shown in the phone's order, without action — no contract route
+    // History (its 78-83)
+    menu.add(DropdownMenu.Item(Res.drawable.history, Res.string.history) {})
+    // Statistics (its 85-92)
+    menu.add(DropdownMenu.Item(Res.drawable.stats_chart, Res.string.statistics) {})
+    // Rewind (its 95-101): the phone shows it by default (its `rewindEnabled`, default true)
+    menu.add(DropdownMenu.Item(Res.drawable.ic_launcher_monochrome, Res.string.rewind) {})
+    // Listen Together (its 103-108)
+    menu.add(DropdownMenu.Item(Res.drawable.people, Res.string.listen_together) {})
     // PC server button
     menu.add(
         DropdownMenu.Item(
@@ -45,6 +60,10 @@ private fun HamburgerMenu(
             Res.string.bridge_server,
         ) { onPhone() },
     )
+    // Profiles (its 117-122)
+    menu.add(DropdownMenu.Item(Res.drawable.person, Res.string.profiles) {})
+    // Picture in picture (its 124-129, default off on the phone): visible and inert
+    menu.add(DropdownMenu.Item(Res.drawable.images_sharp, Res.string.menu_go_to_picture_in_picture) {})
     menu.add { HorizontalDivider() }
     // Settings button
     menu.add(
@@ -53,6 +72,12 @@ private fun HamburgerMenu(
             Res.string.settings,
         ) { onSettings() },
     )
+    // Debug logs (its 141-149): the phone's default is off — the static "Enable debug logs" label
+    menu.add(DropdownMenu.Item(Res.drawable.bugs, Res.string.enable_log_debug) {})
+    // Maintenance (its 152-158)
+    menu.add(DropdownMenu.Item(Res.drawable.shield_checkmark, Res.string.maintenance) {})
+    // Rescue center (its 163-169)
+    menu.add(DropdownMenu.Item(Res.drawable.shortcut_rescue, Res.string.rescue_center) {})
     menu.Draw()
 }
 

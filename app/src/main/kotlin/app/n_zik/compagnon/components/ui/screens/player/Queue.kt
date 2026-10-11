@@ -47,6 +47,7 @@ import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.SongItem
+import app.n_zik.compagnon.components.menu.playlist.PlaylistsMenu
 import app.n_zik.compagnon.components.menu.song.SongItemMenu
 import app.n_zik.compagnon.components.player.QueueToolBarState
 import app.n_zik.compagnon.components.styling.Dimensions
@@ -88,11 +89,13 @@ import org.jetbrains.compose.resources.stringResource
  * confirms, no optimistic UI); the toolbar's Locator, Search (local filter on the cleaned title / artists,
  * like the phone), reorder lock,
  * Repeat, Shuffle and "Remove from queue" (empties the queue after the phone's confirmation, `queue/clear`).
- * The toolbar holds the phone's full order (discover is hidden by the phone's default preferences): the
- * download buttons, the item selector, "Add to playlist" and the CSV export are placeholders without a
- * contract route, a click does nothing.
+ * The toolbar holds the phone's full order, Discover included (hidden by the phone's default
+ * preferences, shown here — spec #46): the download buttons, the item selector and the CSV export are
+ * placeholders without a contract route, a click does nothing; "Add to playlist" opens the
+ * [PlaylistsMenu] layer (spec #47, the phone's `Queue.kt` 43-72): the playlists already read, everything
+ * inert there.
  * Dropped: the swipe actions (no swipe on the PC: "Remove from queue" moves to the item's menu, PC only), the
- * multi-selection, Discover, the radio's loading placeholders, the remembered scroll position across openings
+ * multi-selection, the radio's loading placeholders, the remembered scroll position across openings
  * (the list opens on the current track). Clearing shows the phone's "Deleted" toast (its `Queue.kt` 301-303).
  * Without the `queue` feature the item menu still opens (as on the phone) with inert entries; queue actions do
  * nothing outside a `Live` session.
@@ -164,6 +167,9 @@ fun Queue(
         val buttonsList = buildList {
             add(locator)
             add(search)
+            // Spec #46: the phone's "Discover" (its `Queue.kt` 345-350, 3rd position — the phone's default
+            // preferences hide it): inert — no contract route, no discovery on the PC
+            add(InertButton(Res.drawable.discover, Res.string.discover, descriptionId = Res.string.discoverinfo))
             add(InertButton(Res.drawable.downloaded, Res.string.info_download_all_songs))
             add(InertButton(Res.drawable.download, Res.string.info_remove_all_downloaded_songs))
             if (queueFeature) {
@@ -175,7 +181,15 @@ fun Queue(
             if (queueFeature) {
                 add(deleteDialog)
             }
-            add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
+            // Spec #47: the phone's "Add to playlist" (its `Queue.kt` 43-72): opens the [PlaylistsMenu]
+            // layer — the playlists already read, everything inert there (no add route in the contract)
+            add(
+                InertButton(
+                    Res.drawable.add_in_playlist,
+                    Res.string.add_to_playlist,
+                    onOpen = { menuState.display { PlaylistsMenu() } },
+                ),
+            )
             add(InertButton(Res.drawable.export_outline, Res.string.export_playlist))
         }
 

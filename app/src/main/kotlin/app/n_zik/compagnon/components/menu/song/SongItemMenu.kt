@@ -33,9 +33,11 @@ import app.n_zik.compagnon.bridge.state.displayedLike
 import app.n_zik.compagnon.bridge.state.nextRotation
 import app.n_zik.compagnon.bridge.state.nextToggle
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.SongItem
 import app.n_zik.compagnon.components.menu.InertMenuItem
 import app.n_zik.compagnon.components.menu.ListMenu
+import app.n_zik.compagnon.components.menu.playlist.PlaylistsMenu
 import app.n_zik.compagnon.components.menu.splitArtistNames
 import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
@@ -61,24 +63,35 @@ import org.jetbrains.compose.resources.stringResource
  * `heart_dislike` in red when disliked (since 1.7.1, read from the track's live list — a confirmed like
  * write patches it, as on the phone) or `heart_outline` in text when neutral, then the share icon for an
  * online song, 700-760), the divider.
- * The sections in the phone's order (158-231):
- * - online song: Information (information), Playback (start radio, play next, enqueue), Listen Together,
- *   Management (change title / authors / cover, album / artist browse ids, add to favorites / to a playlist,
- *   update, delete, export cached — since 1.7.2 only with the phone's `library.ffmpeg`), Navigation (go to
- *   album, "More of" each artist);
+ * The sections in the phone's order (148-240):
+ * - online song: Information (information), Playback (start radio, play next, enqueue), Listen Together
+ *   (the room entry, then "Suggest to host"), Management (change title / authors / cover, album / artist
+ *   browse ids, add to favorites / to a playlist, update, delete, export cached — since 1.7.2 only with
+ *   the phone's `library.ffmpeg` — then the waveform refresh), Navigation (go to album, "More of" each
+ *   artist), Last.fm (love, unlove);
  * - local song: Information, Management (edit metadata — since 1.7.2 only with the phone's `library.ffmpeg`),
- *   Playback (start radio, play next, enqueue, add to favorites / to a playlist), export cached (same gate).
+ *   Playback (start radio, play next, enqueue, add to favorites / to a playlist, then the waveform
+ *   refresh), export cached (same gate).
  * Wired to the contract: play next and enqueue (`queue/add` `next` / `end`), and since 1.7 the header's
  * like heart (the phone's rotation, `POST /library/songs/{id}/like`) and "Add to favorites" (an explicit
  * `liked` write) when the phone has `library.write`. The others have no contract route: shown, without
- * action. Dropped: the Last.fm section (scrobbling off by default) and the waveform refresh (not the
- * default timeline).
+ * action. Ported inert (spec `spec-fill-pc-ui-gaps-menus`):
+ * - "Update waveform" (the phone's `refreshBtn`, its `SongItemMenu.kt` 354-389) — spec #1, #3, #7, #9:
+ *   inert, the waveform cache lives on the phone and the contract has no route for it;
+ * - "Suggest to host" (`listen_together_suggest`, its `SongItemMenu.kt` 497-532, remote songs only) —
+ *   spec #2, #8: inert, there is no Listen Together contract route and the PC is never a guest;
+ * - the Last.fm section (love / unlove, its `SongItemMenu.kt` 637-662, remote songs only) — spec #4-#6,
+ *   #10-#12: inert, scrobbling is a phone-side network feature with no contract route; the phone gates
+ *   it on its scrobbling settings while the spec's "entrées visibles et inertes" shows it unconditionally;
+ * - "Add to a playlist" and the "Listen Together" room entry open their sub-menus ([PlaylistsMenu],
+ *   [ListenTogetherMenu] — spec #47, #48), PC ports of the phone's sheets, inert in turn.
  * PC only: in the queue, [onRemoveFromQueue] adds "Remove from queue" (`queue/remove`) at the end of
  * Playback, the phone's swipe having no desktop equivalent. The header's share copies the phone's link
  * (`music.youtube.com/watch?v=<id>`) to the clipboard (the desktop's stand-in for the share sheet).
  * [playerMenu] draws the player's ⋮ `PlayerMenu` sections (`PlayerItemMenu.kt` 175-246) with the same header
- * (its share shown for a local song too). Without `library.write` the header heart is an indicator (no
- * write, no toast). "Add to a playlist" is NOT LINKED (no contract route; the sub-menu mechanism exists).
+ * (its share shown for a local song too): the waveform refresh leads Playback (local) or Management
+ * (remote), as on the phone. Without `library.write` the header heart is an indicator (no write, no
+ * toast).
  */
 class SongItemMenu(
     private val song: Track,
@@ -96,6 +109,7 @@ class SongItemMenu(
 
     @Composable
     fun ListMenu() = ListMenu.Menu(title = null, showDragHandle = false) {
+        val menuState = LocalMenuState.current
         val playNext = PlayNext(enabled = actions.enabled, onClick = actions.onPlayNext)
         val enqueue = Enqueue(enabled = actions.enabled, onClick = actions.onEnqueue)
         val startRadio = InertMenuItem(Res.drawable.radio, Res.string.start_radio)
@@ -107,7 +121,24 @@ class SongItemMenu(
                 Toaster.s(Res.string.done)
             }
         } ?: InertMenuItem(Res.drawable.heart, Res.string.add_to_favorites)
-        val addToPlaylist = InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist)
+        // Spec #47: opens the phone's "Add to playlist" sheet, ported as [PlaylistsMenu] (inert in turn)
+        val addToPlaylist = InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist) {
+            menuState.display { PlaylistsMenu() }
+        }
+        // Spec #1, #3, #7, #9: the phone's waveform refresh (`SongItemMenu.kt` 354-389), inert — the
+        // waveform cache lives on the phone, no contract route
+        val updateWaveform = InertMenuItem(Res.drawable.playing_indicator, Res.string.update_waveform)
+        // Spec #2, #8: the phone's "Suggest to host" (`SongItemMenu.kt` 497-532), remote songs only,
+        // inert — no Listen Together contract route, the PC is never a guest
+        val suggestToHost = InertMenuItem(Res.drawable.musical_notes, Res.string.listen_together_suggest)
+        // Spec #48: the room entry opens the phone's room page, ported as [ListenTogetherMenu] (inert in turn)
+        val listenTogetherEntry = InertMenuItem(Res.drawable.people, Res.string.listen_together, descriptionId = null) {
+            menuState.display { ListenTogetherMenu() }
+        }
+        // Spec #4-#6, #10-#12: the phone's Last.fm entries (`SongItemMenu.kt` 637-662), inert — scrobbling
+        // is a phone-side network feature, no contract route
+        val lastFmLove = InertMenuItem(Res.drawable.heart, Res.string.lastfm_love)
+        val lastFmUnlove = InertMenuItem(Res.drawable.heart_dislike, Res.string.lastfm_unlove)
         // Since 1.7.2 (feature `library.ffmpeg`): the phone's "edit metadata" and "export cached"
         // entries are shown only when its build ships FFmpeg, as on the phone (its `SongItemMenu.kt`
         // 545, 625)
@@ -129,6 +160,7 @@ class SongItemMenu(
                     InertMenuItem(Res.drawable.cover_edit, Res.string.edit_metadata).ListMenuItem()
                 }
                 ListMenu.SectionTitle(stringResource(Res.string.playback))
+                updateWaveform.ListMenuItem()
                 equalizer.ListMenuItem()
                 sleepTimer.ListMenuItem()
                 addToFavorite.ListMenuItem()
@@ -144,8 +176,10 @@ class SongItemMenu(
                 equalizer.ListMenuItem()
                 sleepTimer.ListMenuItem()
                 ListMenu.SectionTitle(stringResource(Res.string.listen_together))
-                InertMenuItem(Res.drawable.people, Res.string.listen_together, descriptionId = null).ListMenuItem()
+                listenTogetherEntry.ListMenuItem()
+                suggestToHost.ListMenuItem()
                 ListMenu.SectionTitle(stringResource(Res.string.management))
+                updateWaveform.ListMenuItem()
                 InertMenuItem(Res.drawable.title_edit, Res.string.update_title).ListMenuItem()
                 InertMenuItem(Res.drawable.artists_edit, Res.string.update_authors).ListMenuItem()
                 InertMenuItem(Res.drawable.cover_edit, Res.string.update_cover).ListMenuItem()
@@ -164,6 +198,9 @@ class SongItemMenu(
                     names.forEach { InertMenuItem(Res.drawable.people, Res.string.more_of, " $it", descriptionId = null).ListMenuItem() }
                 }
                 InertMenuItem(Res.drawable.play, Res.string.listen_on, descriptionId = null).ListMenuItem()
+                ListMenu.SectionTitle(stringResource(Res.string.social_lastfm))
+                lastFmLove.ListMenuItem()
+                lastFmUnlove.ListMenuItem()
             }
             return@Menu
         }
@@ -182,6 +219,7 @@ class SongItemMenu(
             enqueue.ListMenuItem()
             addToFavorite.ListMenuItem()
             addToPlaylist.ListMenuItem()
+            updateWaveform.ListMenuItem()
             RemoveFromQueueItem()
 
             if (hasFfmpeg) exportCache.ListMenuItem()
@@ -195,7 +233,8 @@ class SongItemMenu(
 
             // Section: Listen Together
             ListMenu.SectionTitle(stringResource(Res.string.listen_together))
-            InertMenuItem(Res.drawable.people, Res.string.listen_together, descriptionId = null).ListMenuItem()
+            listenTogetherEntry.ListMenuItem()
+            suggestToHost.ListMenuItem()
 
             // Section: Management
             ListMenu.SectionTitle(stringResource(Res.string.management))
@@ -209,6 +248,7 @@ class SongItemMenu(
             InertMenuItem(Res.drawable.refresh, Res.string.update, descriptionId = Res.string.info_open_update_dialog).ListMenuItem()
             InertMenuItem(Res.drawable.trash, Res.string.delete).ListMenuItem()
             if (hasFfmpeg) exportCache.ListMenuItem()
+            updateWaveform.ListMenuItem()
 
             // Section: Navigation
             ListMenu.SectionTitle(stringResource(Res.string.navigation))
@@ -219,6 +259,9 @@ class SongItemMenu(
             } else {
                 artistNames.forEach { InertMenuItem(Res.drawable.people, Res.string.more_of, " $it", descriptionId = null).ListMenuItem() }
             }
+            ListMenu.SectionTitle(stringResource(Res.string.social_lastfm))
+            lastFmLove.ListMenuItem()
+            lastFmUnlove.ListMenuItem()
         }
     }
 

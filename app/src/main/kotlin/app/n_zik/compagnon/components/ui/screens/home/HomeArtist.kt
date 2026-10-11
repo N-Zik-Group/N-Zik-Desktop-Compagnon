@@ -84,7 +84,8 @@ import org.jetbrains.compose.resources.stringResource
  *
  * Toolbar: the phone's toolbar of the active tab — the same twelve buttons for the three chips, in the
  * phone's order (`HomeArtistsToolbarSettingsDialog.allButtonIds`), with the phone's show conditions
- * (position lock only while the chip's sort is `Custom`, no YouTube sync on the PC) — then the
+ * (position lock only while the chip's sort is `Custom`; "Auto Sync Channels" never shows — the
+ * phone gates it on its YouTube sync, which the PC has no route for, spec #44) — then the
  * Compagnon's "Refresh". Wired: sort, refresh, item size (the per-tab grid size, a Compagnon-local
  * setting) and the randomizer (a random artist of the shown list, client-side as on the phone); the rest
  * (search — `/library/artists` has no `text` parameter —, position lock, shuffle, item selector, play next, enqueue, add to playlist,
@@ -101,7 +102,14 @@ import org.jetbrains.compose.resources.stringResource
  * the play count / listening time, the sorted value is shown over the thumbnail, like on the phone
  * (the multi-select check overlay is dropped — no contract route for the item selector).
  *
- * Dropped (contract v1): as `HomeAlbums`.
+ * The phone's "Filter by" chip (its `HomeArtist.kt` 508-552) is not ported: the phone shows it only
+ * while its YouTube sync is enabled (spec `spec-fill-pc-ui-gaps-menus` #41, renegotiated) — the PC
+ * has no YouTube sync, so it never shows.
+ *
+ * Dropped (contract v1): drag to reorder (the position lock is shown, inert), the YouTube sync itself
+ * and its progress (the sync button and the filter chip are never shown — the phone gates them on its
+ * YouTube sync, spec #41-#44), pull-to-refresh,
+ * the chip and toolbar order / visibility preferences.
  * Pass 5 (audit 2026-10-10): dropped — the phone's pull-to-refresh (its 409: the toolbar's Refresh
  * instead, no touch on the PC), the landscape bars toggle (`landscapeBarsToggleButton`, its 755: touch
  * landscape only) and the floating multi-action icon (`showFloatingIcon`, off by default; deferred).
@@ -184,6 +192,12 @@ fun HomeArtists(
                 }
                 // No contract search on `/library/artists` (no `text` parameter): inert, the phone's title
                 "search" -> add(InertButton(Res.drawable.search_circle, Res.string.search))
+                // The phone's "Auto Sync Channels" (its `HomeArtist.kt` 448, icon `sync`): the
+                // phone shows it only while its YouTube sync is enabled — never on the PC (no
+                // YouTube sync, no contract route — spec `spec-fill-pc-ui-gaps-menus` #44,
+                // renegotiated: not shown)
+                "sync" -> {
+                }
                 "randomizer" -> add(Randomizer({ activeList.state.value.items }, onArtistClick))
                 "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
                 "item_selector" -> add(itemSelector)

@@ -325,7 +325,7 @@ enum class PlaylistsFilter(val wire: String) {
 
 /**
  * `rewind` of `GET /library/playlists` (contract §10, since 1.7.2): the phone's Month / Year / All
- * row of its Rewind chip; an unknown value reads as [Month] (the phone's default).
+ * row of its Rewind chip; an unknown value reads as [All] (the phone's default).
  */
 @Serializable(with = RewindFilterSerializer::class)
 enum class RewindFilter(val wire: String) {
@@ -334,7 +334,7 @@ enum class RewindFilter(val wire: String) {
     All("all");
 
     companion object {
-        fun fromWire(value: String?): RewindFilter = entries.firstOrNull { it.wire == value } ?: Month
+        fun fromWire(value: String?): RewindFilter = entries.firstOrNull { it.wire == value } ?: All
     }
 }
 
@@ -356,8 +356,8 @@ data class RewindState(
     val monthlyEnabled: Boolean = true,
     /** The phone's yearly rewind playlist creation toggle (default `true`). */
     val yearlyEnabled: Boolean = true,
-    /** The phone's current Month / Year / All filter (default [RewindFilter.Month]). */
-    val filter: RewindFilter = RewindFilter.Month,
+    /** The phone's current Month / Year / All filter (default [RewindFilter.All]). */
+    val filter: RewindFilter = RewindFilter.All,
 ) {
     /** The phone's `RewindPlaylists.rowVisible`: the row exists only while both toggles are on. */
     val rowVisible: Boolean get() = monthlyEnabled && yearlyEnabled

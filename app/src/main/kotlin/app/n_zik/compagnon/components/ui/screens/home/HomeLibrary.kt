@@ -111,7 +111,8 @@ import org.jetbrains.compose.resources.stringResource
  *
  * Toolbar: the phone's toolbar of the active tab — the same thirteen buttons for the four chips, in
  * the phone's order (`HomeLibraryToolbarSettingsDialog.allButtonIds`), with the phone's show
- * conditions (position lock only while the chip's sort is `Custom`, no YouTube sync on the PC) — then
+ * conditions (position lock only while the chip's sort is `Custom`; "Auto Sync" never shows — the
+ * phone gates it on its YouTube sync, which the PC has no route for, spec #45) — then
  * the Compagnon's "Refresh". Wired: sort, refresh and item size (the per-tab grid size, a Compagnon-local
  * setting) and search (the phone's `text`, since 1.7.2); the rest (shuffle, item selector, play next,
  * enqueue, add to playlist, import, export, delete playlists) are placeholders without a contract route —
@@ -139,7 +140,8 @@ import org.jetbrains.compose.resources.stringResource
  * persisted by the phone) and the custom cover of a playlist (its `GET /library/playlists/{id}/artwork`,
  * else the mosaic).
  *
- * Dropped (contract v1): sync and its progress, drag to reorder.
+ * Dropped (contract v1): the YouTube sync itself and its progress (the sync button is never shown —
+ * the phone gates it on its YouTube sync, spec #45), drag to reorder.
  * Pass 5 (audit 2026-10-10): dropped — the phone's pull-to-refresh (its 505: the toolbar's Refresh
  * instead, no touch on the PC), the landscape bars toggle (`landscapeBarsToggleButton`, its 955: touch
  * landscape only) and the floating multi-action icon (`showFloatingIcon`, its 962, off by default;
@@ -254,6 +256,11 @@ fun HomeLibrary(
                     add(InertButton(Res.drawable.locked, Res.string.info_lock_unlock_reorder_songs))
                 }
                 "search" -> add(search)
+                // The phone's "Auto Sync" (its `HomeLibrary.kt` 547, icon `sync`): the phone shows it
+                // only while its YouTube sync is enabled — never on the PC (no YouTube sync, no
+                // contract route — spec `spec-fill-pc-ui-gaps-menus` #45, renegotiated: not shown)
+                "sync" -> {
+                }
                 "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
                 "item_selector" -> add(itemSelector)
                 "play_next" -> add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))

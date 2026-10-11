@@ -11,6 +11,11 @@ import org.jetbrains.compose.resources.stringResource
  * icon and label (plus [suffix], e.g. the artist of "More of"), clickable, without effect. Like the phone's
  * entries it is `Descriptive`: a long press / right click shows its description ([descriptionId], the title
  * by default — the phone's `messageId`; `null` where the phone's entry has an empty long press).
+ *
+ * [onOpen] (default: no-op) is called on a short click when the entry opens a sub-menu that exists on the
+ * PC (`PlaylistsMenu` for the phone's "Add to playlist" sheet, `ListenTogetherMenu` for the phone's room
+ * page — spec `spec-fill-pc-ui-gaps-menus` #47/#48): the short click is still inert otherwise, no contract
+ * route is called.
  */
 class InertMenuItem(
     override val iconId: DrawableResource,
@@ -18,6 +23,7 @@ class InertMenuItem(
     private val suffix: String = "",
     /** `null` where the phone's entry overrides its long press with nothing (no help toast). */
     private val descriptionId: StringResource? = title,
+    private val onOpen: () -> Unit = {},
 ) : MenuIcon, app.n_zik.compagnon.components.tab.toolbar.Descriptive {
     override val messageId: StringResource get() = descriptionId ?: title
 
@@ -29,7 +35,7 @@ class InertMenuItem(
         @Composable
         get() = stringResource(title) + suffix
 
-    override fun onShortClick() {}
+    override fun onShortClick() = onOpen()
 }
 
 /**

@@ -50,6 +50,7 @@ import app.n_zik.compagnon.components.SortOption
 import app.n_zik.compagnon.components.baseRotation
 import app.n_zik.compagnon.components.legacySongSortOptions
 import app.n_zik.compagnon.components.songSortOptions
+import app.n_zik.compagnon.enums.onDeviceSongSortOptions
 import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.tab.Locator
 import app.n_zik.compagnon.components.tab.Refresh
@@ -93,7 +94,8 @@ import org.jetbrains.compose.resources.stringResource
  * Toolbar: the phone's default buttons of the active chip (its `HomeSongsToolbarSettingsDialog`
  * `allButtonIds` / `tabAvailableIds`; the PC-only chips take the set of their phone twin), with the
  * phone's show conditions (position lock only while the chip's sort is `Custom`, match only while
- * unmatched tracks are loaded, no YouTube sync on the PC), plus the Compagnon's "Refresh". Since the
+ * unmatched tracks are loaded; "Auto Sync Liked Songs" never shows — the phone gates it on its
+ * YouTube sync, which the PC has no route for, spec #42), plus the Compagnon's "Refresh". Since the
  * "remove UI sync" spec the wire's `toolbar` (contract 1.8.0, feature `library.toolbar`) is no longer
  * consumed: the toolbar is static, and the phone's own user order and hidden buttons stay on the phone.
  * Wired: sort (or the period selector on Top), search, locator, shuffle, play next and enqueue (since
@@ -114,8 +116,14 @@ import org.jetbrains.compose.resources.stringResource
  * cached chips, as on the phone. On a phone without `library.sort` (contract < 1.6) the options without
  * a route are shown without effect, the direction is applied client-side, and the Disliked / Cached / Top
  * chips are inert (they are filtered on the phone's own database, which the contract cannot reach before
- * 1.6). The header's count is live: the wire's `total` is the post-search count while a search is
- * active, as on the phone (its `itemsOnDisplayState.size`).
+ * 1.6). The "On device phone" chip offers the phone's five `OnDeviceSongSortBy` options (spec
+ * `spec-fill-pc-ui-gaps-menus` écart 1), not the twelve `SongSortBy`. The header's count is live:
+ * the wire's `total` is the post-search count while a search is active, as on the phone (its
+ * `itemsOnDisplayState.size`).
+ *
+ * The phone's "Filter by" chip (its `HomeSongsScreen.kt` 724-761) is not ported: the phone shows it
+ * only on its Liked / Disliked chips while its YouTube sync is enabled (spec
+ * `spec-fill-pc-ui-gaps-menus` #39, renegotiated) — the PC has no YouTube sync, so it never shows.
  *
  * Since 1.7.1: the phone's storage bar of the cached / downloaded chips (contract §10 `library.cache`,
  * the phone's `HomeSongsScreen.kt` 763-782; hidden while the phone's limit is `Unlimited` — its
@@ -132,8 +140,10 @@ import org.jetbrains.compose.resources.stringResource
  * recommendation is computed on the PC). The item selector toggles the rows' selection boxes (unchecked,
  * inert: no group action on the PC).
  *
- * Dropped (contract v1 or PC): YouTube likes sync, the chip visibility / order preferences, the
- * YouTube filter row, the recommendations' loading spinner (the phone does not send it), the floating
+ * Dropped (contract v1 or PC): the YouTube likes sync itself and its button (the phone gates it on
+ * its YouTube sync, never on the PC, spec #42), the chip visibility / order preferences, the filter
+ * chip and its menu (the phone gates them on its YouTube sync, never shown on the PC, spec #39),
+ * the recommendations' loading spinner (the phone does not send it), the floating
  * search / settings icon.
  */
 @Composable
@@ -287,6 +297,12 @@ fun HomeSongsScreen(
                     add(InertButton(Res.drawable.locked, Res.string.info_lock_unlock_reorder_songs))
                 }
                 "match" -> if (hasUnmatched) add(InertButton(Res.drawable.alert, Res.string.match_album_audio_version))
+                // The phone's "Auto Sync Liked Songs" (its `HomeSongsScreen.kt` 553, icon `sync`):
+                // the phone shows it on its Liked chip only while its YouTube sync is enabled —
+                // never on the PC (no YouTube sync, no contract route — spec
+                // `spec-fill-pc-ui-gaps-menus` #42, renegotiated: not shown)
+                "sync_ytm_likes" -> {
+                }
                 "search" -> add(search)
                 "locator" -> add(locator)
                 "download_all" -> add(InertButton(Res.drawable.downloaded, Res.string.download, descriptionId = Res.string.info_download_all_songs))
@@ -499,7 +515,7 @@ private val SONGS_TOOLBAR_BUTTON_IDS = listOf(
 /**
  * The buttons of the [chip]'s toolbar, in the phone's order (`HomeSongsToolbarSettingsDialog
  * .tabAvailableIds`). The PC chips take the set of their phone twin ("Download PC" ← "Downloaded",
- * "Cached PC" ← "Offline"); "sync_ytm_likes" never shows (no YouTube sync on the PC).
+ * "Cached PC" ← "Offline"); "sync_ytm_likes" never shows (no YouTube sync on the PC, spec #42).
  */
 internal fun songsToolbarButtonIds(chip: SongsChip): List<String> = when (chip) {
     SongsChip.All, SongsChip.Liked -> SONGS_TOOLBAR_BUTTON_IDS.filter { it != "export_cache" }
@@ -527,11 +543,14 @@ private fun SongsChip.defaultSort(): ChipSort = when (this) {
 
 /**
  * The [chip]'s sort options: the phone's static options (the wire's `sortMenu`, contract 1.7.3, is no
- * longer consumed). "Downloaded" is hidden on the downloaded / cached chips, as on the phone; on a
- * phone without `library.sort` (contract < 1.6), the options without a contract route are shown
- * without effect (the phone's legacy options).
+ * longer consumed). The "On device" chip offers the phone's five [onDeviceSongSortOptions] (spec
+ * `spec-fill-pc-ui-gaps-menus` écart 1: the phone's `OnDeviceSongSortBy`, not the twelve `SongSortBy`);
+ * "Downloaded" is hidden on the downloaded / cached chips, as on the phone; on a phone without
+ * `library.sort` (contract < 1.6), the options without a contract route are shown without effect
+ * (the phone's legacy options).
  */
 internal fun chipSortOptions(chip: SongsChip, sortsOnPhone: Boolean): List<SortOption<SongSort>> {
+    if (chip == SongsChip.OnDevice) return onDeviceSongSortOptions
     val options = if (sortsOnPhone) songSortOptions else legacySongSortOptions
     if (chip !in setOf(SongsChip.DownloadTel, SongsChip.DownloadPc, SongsChip.CachedTel, SongsChip.CachedPc)) return options
     return options.filter { it.value != SongSort.Downloaded }

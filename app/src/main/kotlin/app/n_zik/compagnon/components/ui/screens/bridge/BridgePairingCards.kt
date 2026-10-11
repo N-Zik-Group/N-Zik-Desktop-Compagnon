@@ -10,7 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +32,7 @@ import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 /** Not paired, QR mode (contract §4.2–§4.4): QR, editable PC name, status, "Manual entry". */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PairPcCard(
     state: PairingState.Unpaired,
@@ -56,7 +58,15 @@ fun PairPcCard(
                     QrCodeImage(payload.toJson(), size = 240.dp)
                 } else {
                     Box(modifier = Modifier.size(288.dp), contentAlignment = Alignment.Center) {
-                        if (state.validDeviceName != null) CircularProgressIndicator(color = palette.accent)
+                        if (state.validDeviceName != null) {
+                            // The phone's big loader (its `themed/Loader.kt` 20-40: the Expressive
+                            // `LoadingIndicator`, 100 dp, `accent`) — renegotiated 2026-10-11, the PC's
+                            // page loads show it, not a small circular
+                            LoadingIndicator(
+                                color = palette.accent,
+                                modifier = Modifier.size(100.dp),
+                            )
+                        }
                     }
                 }
                 Text(

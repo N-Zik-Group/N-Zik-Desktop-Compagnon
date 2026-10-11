@@ -85,10 +85,18 @@ import org.jetbrains.compose.resources.stringResource
  * contract §1.1 lists the refusal for the write route, see the audit), the change-id
  * entry (the phone's 484-486: a bookmarked YouTube playlist or a browse id starting with its
  * `modified:` / `VL` prefix, inert — no contract route) and the custom cover over the thumbnail.
- * The Navigation section of a YouTube playlist: "Listen on YouTube" opens its page in the desktop browser
- * (the phone's 510-525). Dropped (adaptation): the auto-sync toggle (YouTube Music sync is phone-only). The
- * entries without a contract route show the phone's help on a right click, except the ones whose phone long
- * press is empty (download, remove all downloaded songs, rename, delete, listen on YouTube).
+ * The Navigation section of a YouTube playlist: "More of" (the phone's channel entry, no suffix — spec
+ * #18, its `OnlinePlaylistItemMenu.kt` 482-493; no channel name on the PC), "Listen on YouTube" (opens its
+ * page in the desktop browser, the phone's 510-525), then the auto-sync toggle — spec #14, the phone's
+ * `LocalPlaylistItemMenu.kt` 529-545: shown non-checkable, static title, no effect (the per-playlist
+ * auto-sync is a phone-side feature, no contract route).
+ * Ported inert from the phone's online playlist menu (its `OnlinePlaylistItemMenu.kt`, spec #15-#17):
+ * "Add to a playlist" (#16, 386-398 — opens [PlaylistsMenu], spec #47) and "Import playlist" (#17,
+ * 448-462, icon `add_in_playlist`) at the end of Management, and the header's share (#15, 292-306) at the
+ * end of the trailing column — inert, no contract route.
+ * The entries without a contract route show the phone's help on a right click, except the ones whose phone long
+ * press is empty (download, remove all downloaded songs, rename, delete, listen on YouTube, add to a
+ * playlist, import, more of, auto-sync, share).
  */
 class LocalPlaylistItemMenu(
     private val playlist: Playlist,
@@ -100,6 +108,7 @@ class LocalPlaylistItemMenu(
 
     @Composable
     fun ListMenu() = ListMenu.Menu(title = null, showDragHandle = false) {
+        val menuState = app.n_zik.compagnon.components.LocalMenuState.current
         ListMenu.SectionTitle(stringResource(Res.string.playback))
         actions.onShuffle?.let { SongShuffler(enabled = actions.enabled, onShuffle = it).ListMenuItem() }
         PlayNext(enabled = actions.enabled, isEmpty = playlist.trackCount == 0, onClick = actions.onPlayNext).ListMenuItem()
@@ -127,13 +136,26 @@ class LocalPlaylistItemMenu(
             }
             InertMenuItem(Res.drawable.trash, Res.string.delete, descriptionId = null).ListMenuItem()
         }
+        // Spec #16-#17: the phone's online playlist entries (`OnlinePlaylistItemMenu.kt` 386-398,
+        // 448-462), at the end of Management, phone order (add to a playlist, then import): inert — no
+        // contract route; "Add to a playlist" opens [PlaylistsMenu] (spec #47)
+        InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist) {
+            menuState.display { PlaylistsMenu() }
+        }.ListMenuItem()
+        InertMenuItem(Res.drawable.add_in_playlist, Res.string.import_playlist).ListMenuItem()
 
         // Section: Navigation — a YouTube playlist (the wire's `isBookmarked` = the phone's
         // `isYoutubePlaylist`): "Listen on YouTube" opens its `music.youtube.com` page (the phone's 510-525)
         val browseId = playlist.browseId
         if (playlist.isBookmarked) {
             ListMenu.SectionTitle(stringResource(Res.string.navigation))
+            // Spec #18: the phone's channel "More of" (its `OnlinePlaylistItemMenu.kt` 482-493), no suffix
+            // — no channel name on the PC; inert, no contract route
+            InertMenuItem(Res.drawable.people, Res.string.more_of).ListMenuItem()
             ListenOnYouTube(browseId).ListMenuItem()
+            // Spec #14: the phone's per-playlist auto-sync toggle (its `LocalPlaylistItemMenu.kt` 529-545),
+            // non-checkable, static title, inert — phone-side feature, no contract route
+            InertMenuItem(Res.drawable.sync, Res.string.sync_per_playlist_auto).ListMenuItem()
         }
     }
 
@@ -327,6 +349,18 @@ class LocalPlaylistItemMenu(
                                 onOpen.invoke()
                             }
                         },
+                        modifier = Modifier
+                            .padding(all = 4.dp)
+                            .size(20.dp),
+                    )
+
+                    // Spec #15: the phone's online playlist header share (its
+                    // `OnlinePlaylistItemMenu.kt` 292-306), inert — the share sheet has no desktop
+                    // equivalent here, no contract route
+                    IconButton(
+                        icon = Res.drawable.share_social,
+                        color = colorPalette().text,
+                        onClick = {},
                         modifier = Modifier
                             .padding(all = 4.dp)
                             .size(20.dp),

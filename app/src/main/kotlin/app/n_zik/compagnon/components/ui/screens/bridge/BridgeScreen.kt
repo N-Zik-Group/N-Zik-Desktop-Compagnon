@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -210,6 +212,7 @@ private fun Header() {
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun Progress(text: String) {
     Column(
@@ -217,7 +220,13 @@ private fun Progress(text: String) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        CircularProgressIndicator(color = colorPalette().accent)
+        // The phone's big loader (its `themed/Loader.kt` 20-40: the Expressive `LoadingIndicator`,
+        // 100 dp, `accent`) — renegotiated 2026-10-11, the PC's page loads show it, not a small
+        // circular
+        LoadingIndicator(
+            color = colorPalette().accent,
+            modifier = Modifier.size(100.dp),
+        )
         Text(text, style = typography().s, color = colorPalette().textSecondary)
     }
 }

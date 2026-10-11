@@ -11,7 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,6 +39,7 @@ import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 /** Paired: phone name, connection status, "Retry" when it makes sense, "Forget this phone". */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PairedScreen(state: PairingState.Paired, onRetry: () -> Unit, onForget: () -> Unit) {
     val palette = colorPalette()
@@ -55,11 +57,19 @@ fun PairedScreen(state: PairingState.Paired, onRetry: () -> Unit, onForget: () -
                     Text(stringResource(Res.string.paired_session_only), style = typography().xs, color = palette.textSecondary)
                 }
                 when (val status = state.status) {
-                    PairedStatus.Checking -> Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    PairedStatus.Checking -> Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        // The phone's LT connecting state (its `ListenTogetherScreen.kt` 579-583,
+                        // `InlineLoader` 1135-1140: the same 100 dp `LoadingIndicator`, centred in
+                        // full width) — renegotiated 2026-10-11, the PC's page loads show the big
+                        // loader, not a small circular
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
-                        CircularProgressIndicator(color = palette.accent, strokeWidth = 2.dp, modifier = Modifier.size(16.dp))
+                        LoadingIndicator(
+                            color = palette.accent,
+                            modifier = Modifier.size(100.dp),
+                        )
                         Text(stringResource(Res.string.paired_checking), style = typography().xs, color = palette.textSecondary)
                     }
                     PairedStatus.Ok -> Text(stringResource(Res.string.paired_ok), style = typography().xs, color = palette.accent)

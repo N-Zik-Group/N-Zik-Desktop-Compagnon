@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalLibraryActions
+import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.bridge.library.Album
 import app.n_zik.compagnon.bridge.library.AlbumLike
 import app.n_zik.compagnon.bridge.library.DislikeMode
@@ -39,6 +40,7 @@ import app.n_zik.compagnon.bridge.library.PagedState
 import app.n_zik.compagnon.bridge.library.nextRotation
 import app.n_zik.compagnon.bridge.library.nextToggle
 import app.n_zik.compagnon.components.menu.ListMenu
+import app.n_zik.compagnon.components.menu.playlist.PlaylistsMenu
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.tab.SongShuffler
@@ -70,7 +72,9 @@ const val MENU_THUMBNAIL_SIZE_PX = 128
  * Playback (Shuffle, Play next, Enqueue: wired to the contract), Management (add to playlist, download,
  * remove all downloaded songs, change authors / cover, album / artist browse ids), Navigation ("More of" each
  * artist, then "Change Title": the phone's index ranges put it there). Entries without a contract route
- * are shown without action. Since 1.7.2, the bookmark icon is the phone's tri-state (its
+ * are shown without action; "Add to playlist" opens the [PlaylistsMenu] layer (spec
+ * `spec-fill-pc-ui-gaps-menus` #47): the playlists already read, everything inert there. Since 1.7.2,
+ * the bookmark icon is the phone's tri-state (its
  * `AlbumItemMenu.kt` 332-399: `bookmark` in `favoritesIcon` when bookmarked, the phone's
  * `bookmark_slash` in red when disliked, `bookmark_outline` in text when neutral — with the phone's
  * 12 dp badge of a non-neutral album on the thumbnail): a tap rotates the state (neutral → bookmarked
@@ -88,6 +92,7 @@ class AlbumItemMenu(
 
     @Composable
     fun ListMenu() = ListMenu.Menu(title = null, showDragHandle = false) {
+        val menuState = LocalMenuState.current
         ListMenu.SectionTitle(stringResource(Res.string.playback))
         actions.onShuffle?.let { SongShuffler(enabled = actions.enabled, onShuffle = it).ListMenuItem() }
         PlayNext(enabled = actions.enabled, onClick = actions.onPlayNext).ListMenuItem()
@@ -95,7 +100,10 @@ class AlbumItemMenu(
 
         // Section: Management
         ListMenu.SectionTitle(stringResource(Res.string.management))
-        InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist).ListMenuItem()
+        // Spec #47: opens the phone's "Add to playlist" sheet, ported as [PlaylistsMenu] (inert in turn)
+        InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist) {
+            menuState.display { PlaylistsMenu() }
+        }.ListMenuItem()
         InertMenuItem(Res.drawable.downloaded, Res.string.download, descriptionId = Res.string.info_download_all_songs).ListMenuItem()
         InertMenuItem(Res.drawable.download, Res.string.info_remove_all_downloaded_songs).ListMenuItem()
         InertMenuItem(Res.drawable.artists_edit, Res.string.update_authors).ListMenuItem()

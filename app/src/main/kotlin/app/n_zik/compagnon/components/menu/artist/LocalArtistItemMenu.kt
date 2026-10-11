@@ -106,6 +106,10 @@ class LocalArtistItemMenu(
             }
         }
         ListMenu.SectionTitle(stringResource(Res.string.playback))
+        // Spec #13: the phone's online artist "Start radio" (`OnlineArtistItemMenu.kt` 385-417,
+        // `start_radio`, empty long press), ported at the head of Playback: inert — the radio is a
+        // phone-side playback feature, no contract route
+        InertMenuItem(Res.drawable.radio, Res.string.start_radio).ListMenuItem()
         playAll.ListMenuItem()
         actions.onShuffle?.let { SongShuffler(enabled = actions.enabled, onShuffle = it).ListMenuItem() }
 

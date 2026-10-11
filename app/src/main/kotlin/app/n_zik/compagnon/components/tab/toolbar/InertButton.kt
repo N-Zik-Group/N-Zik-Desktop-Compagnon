@@ -14,6 +14,10 @@ import org.jetbrains.compose.resources.stringResource
  * button's `Descriptive.messageId`), so the [EllipsisMenuComponent] lists it like the phone's buttons —
  * labelled — when it overflows the row. Its right click shows that title as the phone's long-click
  * description (`Descriptive`).
+ *
+ * [onOpen] (default: no-op) is called on a short click when the button opens a sub-menu that exists on the
+ * PC (`PlaylistsMenu` for the phone's "Add to playlist" sheet — spec `spec-fill-pc-ui-gaps-menus` #47):
+ * the short click is still inert otherwise, no contract route is called.
  */
 class InertButton(
     override val iconId: DrawableResource,
@@ -23,6 +27,7 @@ class InertButton(
     /** The phone button's `Descriptive.messageId` when it differs from its title (e.g. `SongShuffler`). */
     /** `null` where the phone's button has no help on a long press. */
     private val descriptionId: StringResource? = titleId,
+    private val onOpen: () -> Unit = {},
 ) : MenuIcon, Descriptive {
     /** The phone's own button is `Descriptive`: a right click shows the same description. */
     override val messageId: StringResource get() = descriptionId ?: titleId
@@ -39,5 +44,5 @@ class InertButton(
         @Composable
         get() = stringResource(titleId)
 
-    override fun onShortClick() {}
+    override fun onShortClick() = onOpen()
 }
