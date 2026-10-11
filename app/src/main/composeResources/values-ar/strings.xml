@@ -249,6 +249,8 @@
     <string name="cd_app_icon_in_player">أيقونة التطبيق في المشغل</string>
     <string name="cd_number_of_songs_in_queue">عدد الأغاني في قائمة الانتظار</string>
     <string name="cd_app_s_icon">أيقونة التطبيق</string>
+    <string name="cd_song_album_cover">غلاف ألبوم الأغنية</string>
+    <string name="cd_disc_background">خلفية القرص</string>
     <string name="rewind">Rewind</string>
     <string name="history">History</string>
     <string name="profiles">Profiles</string>
@@ -483,7 +485,9 @@
     <string name="lastfm_love">Love on Last.fm</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
     <string name="deleted">Deleted</string>
+    <string name="deleted_item">تم حذف %1$s</string>
     <string name="and">and</string>
     <string name="sync">مزامنة</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="visualizer">المؤثرات المرئية</string>
 </resources>
