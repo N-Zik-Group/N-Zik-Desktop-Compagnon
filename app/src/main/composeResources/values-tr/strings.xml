@@ -249,6 +249,8 @@
     <string name="cd_app_icon_in_player">oynatıcıdaki uygulama simgesi</string>
     <string name="cd_number_of_songs_in_queue">Kuyrukta bulunan şarkı sayısı</string>
     <string name="cd_app_s_icon">Uygulamanın simgesi</string>
+    <string name="cd_song_album_cover">albüm kapağını göster</string>
+    <string name="cd_disc_background">şarkı sözü arka planı</string>
     <string name="rewind">Geri Sarma</string>
     <string name="history">Geçmiş</string>
     <string name="profiles">Profiller</string>
@@ -483,7 +485,9 @@
     <string name="lastfm_love">Last.fm\'de beğen</string>
     <string name="lastfm_unlove">Last.fm\'de beğenme</string>
     <string name="deleted">Silindi</string>
+    <string name="deleted_item">%1$s silindi</string>
     <string name="and">ve</string>
     <string name="sync">Senkronize et</string>
     <string name="delete_playlists_confirm_all">%d adet çalma listesinin TÜMÜNÜ silmek istediğinizden emin misiniz?</string>
+    <string name="visualizer">Görselleştirme</string>
 </resources>
