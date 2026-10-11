@@ -490,4 +490,23 @@
     <string name="sync">সিঙ্ক</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
     <string name="visualizer">ভিজ্যুয়ালাইজার</string>
+    <!-- Home screens (spec spec-fill-pc-ui-gaps-home, step 3 G2): keys and texts of the phone (N-Zik strings.xml) -->
+    <string name="swipe_to_action">সোয়াইপ অ্যাকশন</string>
+    <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">গানের ডান বামে সোয়াইপ করে একশন মেনু চালু করুন</string>
+    <string name="navigation_bar_position">নেভিগেশন বারের পজিশন</string>
+    <string name="navigation_bar_type">ন্যাভিগেশন বারের ধরন</string>
+    <string name="direction_left">বামে</string>
+    <string name="direction_right">ডানে</string>
+    <string name="direction_top">উপর</string>
+    <string name="direction_bottom">নিচ</string>
+    <string name="direction_bottom_floating">Bottom Floating</string>
+    <string name="icon_and_text">আইকন ও টেক্সট</string>
+    <string name="only_icon">শুধু আইকন</string>
+    <string name="default_page">ডিফল্ট পাতা</string>
+    <string name="quick_picks">কুইক পিকস</string>
+    <string name="syncing_item">Syncing: %1$s</string>
+    <string name="syncing_progress">%1$d / %2$d</string>
+    <string name="syncing_failed">Sync failed</string>
+    <string name="txt_settings">সেটিংস</string>
+    <string name="none">কোনটি নয়</string>
 </resources>
