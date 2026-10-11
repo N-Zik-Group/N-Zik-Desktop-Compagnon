@@ -490,4 +490,23 @@
     <string name="sync">Синхронизация</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
     <string name="visualizer">Визуализация</string>
+    <!-- Home screens (spec spec-fill-pc-ui-gaps-home, step 3 G2): keys and texts of the phone (N-Zik strings.xml) -->
+    <string name="swipe_to_action">Свайп для действия</string>
+    <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">Выполнять действия, свайпом влево или вправо на песню из вертикального списка песен</string>
+    <string name="navigation_bar_position">Положение панели навигации</string>
+    <string name="navigation_bar_type">Стиль панели навигации</string>
+    <string name="direction_left">Слева</string>
+    <string name="direction_right">Справа</string>
+    <string name="direction_top">Сверху</string>
+    <string name="direction_bottom">Снизу</string>
+    <string name="direction_bottom_floating">Нижний плавающий</string>
+    <string name="icon_and_text">Иконки и текст</string>
+    <string name="only_icon">Только иконки</string>
+    <string name="default_page">Начальная страница</string>
+    <string name="quick_picks">Быстрые ответы</string>
+    <string name="syncing_item">Syncing: %1$s</string>
+    <string name="syncing_progress">%1$d / %2$d</string>
+    <string name="syncing_failed">Sync failed</string>
+    <string name="txt_settings">Настройки</string>
+    <string name="none">Нет</string>
 </resources>
