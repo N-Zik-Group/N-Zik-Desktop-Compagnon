@@ -297,7 +297,6 @@
     <string name="pinned_playlists">Fixate</string>
     <string name="new_playlist">Playlist nou</string>
     <string name="create_new_playlist">Creează un playlist nou</string>
-    <string name="sync_per_playlist_auto">Per-Playlist Auto-Sync</string>
     <string name="yt_playlists">YT/YTM</string>
     <string name="delete_playlists_label">Delete playlists</string>
     <string name="rewind_top_sort">Rewind Top</string>
