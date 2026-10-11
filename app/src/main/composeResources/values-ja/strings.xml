@@ -354,6 +354,14 @@
     <string name="tab_network">ネットワーク</string>
     <string name="tab_miscellaneous">その他</string>
     <string name="general_settings_description">一般セクションには、アプリの一般的な機能のための設定が含まれています</string>
+    <!-- The system tray + the window close behavior (spec `spec-tray-taskbar-media-controls`) -->
+    <string name="tray_open">Open</string>
+    <string name="tray_quit">Quit</string>
+    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
+    <string name="window">Window</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
     <string name="network_settings_description">ネットワークセクションには、アプリのパフォーマンスとデータ使用量を最適化するための設定が含まれています</string>
     <string name="other_settings_description">その他のセクションには、さまざまなオプション設定とユーティリティが含まれています</string>
     <string name="cache">キャッシュ</string>
