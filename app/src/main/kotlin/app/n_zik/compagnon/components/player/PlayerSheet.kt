@@ -246,6 +246,9 @@ fun PlayerSheet(
                     hidePlayer = { onShowPlayer(false) },
                     onShowQueue = onShowQueue,
                     phoneName = phoneName,
+                    // The bar is kept composed and hit-testable at alpha 0 until fully expanded: its
+                    // horizontal swipe is off while this progress is non-zero (the phone's gate)
+                    sheetProgress = progress,
                 )
             }
         }

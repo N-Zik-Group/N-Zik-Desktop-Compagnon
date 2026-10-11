@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +26,10 @@ import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.UserSettings
 import kotlin.math.sqrt
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.stringResource
 
 
@@ -36,8 +40,10 @@ import org.jetbrains.compose.resources.stringResource
  * `showThumbnail || !noBlur` rule, no blur otherwise (lyrics and visualizer are not ported), turning in 30 s
  * when its rotating
  * cover is on, then the black backdrop. Since contract 1.10.0 (`ui.settings`) the adjuster is the phone's
- * (`blurScale`, `playerBackdrop`, `rotatingAlbumCover`, `showthumbnail`, `noblur`); its defaults otherwise
- * (strength 25, backdrop 0 %, no rotation). Drawn under the player's background (`Player.kt` 1418 and 1967).
+ * (`blurScale`, `playerBackdrop`, `showthumbnail`, `noblur`); its defaults otherwise (strength 25,
+ * backdrop 0 %). The rotation is the phone's `rotatingAlbumCover` key in the PC's `UserSettings` (spec
+ * `spec-fill-pc-ui-gaps-player`), off by default. Drawn under the player's background (`Player.kt` 1418
+ * and 1967).
  */
 @Composable
 fun BlurredCover(
@@ -69,10 +75,15 @@ private fun BlurFilter(
         sqrt(w * w + h * h) / s
     }
     Box(Modifier.requiredSize(size)) {
-        val settings = LocalUiSettings.current
-        val blurRadius = if (settings.showThumbnail || !settings.noBlur) settings.blurStrength else 0f
+        val uiSettings = LocalUiSettings.current
+        val blurRadius = if (uiSettings.showThumbnail || !uiSettings.noBlur) uiSettings.blurStrength else 0f
+        // The rotation is the phone's `rotatingAlbumCover` (spec `spec-fill-pc-ui-gaps-player`): the PC's
+        // local `UserSettings` key, read with the same pattern as the other player appearance keys. The
+        // remaining blur adjuster settings stay on the phone's `LocalUiSettings`.
+        val preferences = LocalPreferences.current
+        val localSettings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
         // The infinite transition runs only while the phone's rotating cover is on
-        val angle = if (settings.rotatingAlbumCover) {
+        val angle = if (localSettings.rotatingAlbumCover) {
             val rotation by rememberInfiniteTransition().animateFloat(
                 initialValue = 0f,
                 targetValue = 360f,

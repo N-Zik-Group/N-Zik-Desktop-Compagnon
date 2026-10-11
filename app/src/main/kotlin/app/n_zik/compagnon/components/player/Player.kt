@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -56,42 +57,64 @@ import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalCommandLauncher
 import app.n_zik.compagnon.LocalPlayerRepository
 import app.n_zik.compagnon.bridge.ConnectionState
+import app.n_zik.compagnon.bridge.state.PlayerBackgroundColors
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.menu.song.SongItemMenu
+import app.n_zik.compagnon.components.player.background.Shader
+import app.n_zik.compagnon.components.player.background.animatedGradient
+import app.n_zik.compagnon.components.player.background.shaderBackground
+import app.n_zik.compagnon.components.player.background.shaders.BlackCherryCosmos
+import app.n_zik.compagnon.components.player.background.shaders.GlossyGradients
+import app.n_zik.compagnon.components.player.background.shaders.GoldenMagma
+import app.n_zik.compagnon.components.player.background.shaders.GradientFlow
+import app.n_zik.compagnon.components.player.background.shaders.IceReflection
+import app.n_zik.compagnon.components.player.background.shaders.InkFlow
+import app.n_zik.compagnon.components.player.background.shaders.MeshGradient
+import app.n_zik.compagnon.components.player.background.shaders.MesmerizingLens
+import app.n_zik.compagnon.components.player.background.shaders.OilFlow
+import app.n_zik.compagnon.components.player.background.shaders.PurpleLiquid
+import app.n_zik.compagnon.components.player.background.shaders.Stage
 import app.n_zik.compagnon.components.theme.collapsedPlayerProgressBar
 import app.n_zik.compagnon.components.theme.dynamicColorPaletteOf
 import app.n_zik.compagnon.components.themed.animateBrushRotation
 import app.n_zik.compagnon.components.ui.screens.home.ItemActions
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.core.palette.toPaletteBitmap
+import app.n_zik.compagnon.enums.AnimatedGradient
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.hasExplicitPrefix
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.formatAsTime
 import app.n_zik.compagnon.utils.positionAndDurationState
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import kotlin.random.Random
 
 /** The phone's default violet, the accent of the dynamic palette when there is no cover (`MainActivity.kt` 1090). */
 internal val VIOLET_ACCENT = Color(0.54509807f, 0.36078432f, 0.9647059f)
 
 /**
- * Port of the full `Player` (phone's `app/it/fast4x/rimusic/ui/screens/player/Player.kt` 390-2523) with the
- * default preferences: `PlayerType.Essential`, `PlayerBackgroundColors.AnimatedGradient`
- * with `AnimatedGradient.M3EMorphingCover`, top actions bar shown, cover shown, total queue time shown, the
- * `Modern` queue opened in its inline panel.
+ * Port of the full `Player` (phone's `app/it/fast4x/rimusic/ui/screens/player/Player.kt` 390-2523):
+ * `PlayerType.Essential`, top actions bar shown, cover shown, total queue time shown, the `Modern` queue
+ * opened in its inline panel. The player's appearance keys (spec `spec-fill-pc-ui-gaps-player`) come from
+ * `UserSettings` with the phone's defaults, so the default render is the phone's
+ * `PlayerBackgroundColors.AnimatedGradient` with `AnimatedGradient.M3EMorphingCover`.
  *
- * - Background: the two rotating gradients of the cover's local palette and the theme, masked, then the
- *   M3E morphing shapes in the cover's saturated / darkened swatches while it plays.
+ * - Background: the phone's six modes (`Player.kt` 906-1184) — blurred cover, palette, cover colour, theme
+ *   colour, the two gradients and the animated gradient (its 17 styles: the fluid / M3E brush rotations,
+ *   the 30 s linear rotation and the phone's HypnoticCanvas shaders).
  * - Top bar (90 % wide, 30 dp): the chevron that closes the player, the app logo (closes it too, the phone
  *   then goes home), the ⋮ menu (the phone's `PlayerMenu` layout, `SongItemMenu(playerMenu = true)`).
  * - The cover ([Thumbnail]) shrinking while paused, the total queue time, [Controls], the [ActionBar].
@@ -107,11 +130,13 @@ internal val VIOLET_ACCENT = Color(0.54509807f, 0.36078432f, 0.9647059f)
  *   window's `LocalPlayerQueueState`).
  * - Since contract 1.10.0 (`ui.settings`): the phone's light / system / dark mode, its blur adjuster.
  *
- * Dropped (contract v1 or PC): the `Modern` layout and the expanded player (not the default), lyrics, visualizer,
- * stats for nerds, sleep timer, the video search sheet, the horizontal swipe on the cover (no touch swipe on the
- * PC), the system bar insets, the cover's tap / long press (lyrics / stats: not ported). Not read from
- * `/ui/settings` yet: the other player backgrounds (`playerBackgroundColors`, `bottomGradient`,
- * `blurDarkenFactor`) — deferred (phase 2); the PC keeps AnimatedGradient + M3EMorphingCover.
+ * Dropped (contract v1 or PC): the `Modern` layout and the expanded player (not the default), lyrics,
+ * visualizer, stats for nerds, sleep timer, the video search sheet, the system bar insets, the cover's tap /
+ * long press (lyrics / stats: not ported). The cover's horizontal swipe is ported (right = previous, left =
+ * next, the phone's `playerSwipeSensitivity`, its `Player.kt` 942-974, 1218-1241) beside the double tap.
+ * Not in `UserSettings` (the phone's keys, off by default): `bottomGradient` / `blackgradient` (the PC
+ * renders their false branches) and `shakeSensitivityTheme` (its shape perturbation is ported in
+ * [shakeShapes], never triggered — no accelerometer on a PC).
  * Not linked (audit 2026-10-10 pass 5): a click on the title / artists (the phone's `Modern.kt`
  * 172-180, 333-345: its album / artist route) does nothing — the open page needs the album / artist
  * header the player state does not carry; only the icons' routes are documented above.
@@ -196,57 +221,9 @@ fun Player(
         }
     }
 
-    var sizeShader by remember { mutableStateOf(Size.Zero) }
-
     var totalPlayTimes = 0L
     state.queue.forEach {
         totalPlayTimes += it.durationMs ?: 0
-    }
-
-    var containerModifier: Modifier = Modifier
-        .padding(bottom = 0.dp)
-
-    // PlayerBackgroundColors.AnimatedGradient + AnimatedGradient.M3EMorphingCover
-    run {
-        val shaderFrom = Offset(sizeShader.width / 2f, 0f)
-        val shaderTo = Offset(sizeShader.width / 2f, sizeShader.height)
-        val brushA by animateBrushRotation(
-            shaderFrom, shaderTo,
-            listOf(dynamicColorPalette.background2, colorPalette().background2),
-            listOf(0f, 1f), sizeShader, 20_000, true,
-        )
-        val brushB by animateBrushRotation(
-            shaderFrom, shaderTo,
-            listOf(colorPalette().background1, dynamicColorPalette.accent),
-            listOf(0f, 1f), sizeShader, 12_000, false,
-        )
-        val brushMask by animateBrushRotation(
-            shaderFrom, shaderTo,
-            listOf(colorPalette().background2, Color.Transparent),
-            listOf(0f, 1f), sizeShader, 15_000, true,
-        )
-
-        containerModifier = containerModifier
-            .drawBehind {
-                drawRect(brush = brushA)
-                drawRect(brush = brushMask, blendMode = BlendMode.DstOut)
-                drawRect(brush = brushB, blendMode = BlendMode.DstAtop)
-            }
-            .animatedM3EBackground(
-                animating = state.isPlaying,
-                D = saturate(dominant).darkenBy(),
-                V = saturate(vibrant).darkenBy(),
-                LV = saturate(lightVibrant).darkenBy(),
-                DV = saturate(darkVibrant).darkenBy(),
-                M = saturate(muted).darkenBy(),
-                LM = saturate(lightMuted).darkenBy(),
-                DM = saturate(darkMuted).darkenBy(),
-                skipToken = state.currentTrackId,
-            )
-            .background(Color.Transparent)
-            .onSizeChanged {
-                sizeShader = Size(it.width.toFloat(), it.height.toFloat())
-            }
     }
 
     val goHome = app.n_zik.compagnon.core.navigation.LocalGoHome.current
@@ -274,6 +251,264 @@ fun Player(
         val screenHeight = maxHeight
 
         val isLandscape = isPlayerLandscape(screenWidth, screenHeight)
+
+        // The player's appearance (the phone's preference keys in `UserSettings`, spec
+        // `spec-fill-pc-ui-gaps-player`): the background mode and its animated-gradient style
+        val preferences = LocalPreferences.current
+        val settings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
+        val playerBackgroundColors = settings.playerBackgroundColorsValue
+        val animatedGradient = settings.animatedGradientValue
+        // The phone's `isGradientBackgroundEnabled` (its `Player.kt` 809-812)
+        val isGradientBackgroundEnabled = playerBackgroundColors in setOf(
+            PlayerBackgroundColors.ThemeColorGradient,
+            PlayerBackgroundColors.CoverColorGradient,
+            PlayerBackgroundColors.AnimatedGradient,
+        )
+
+        // The phone's `valueGrad` / `tempGradient` (its `Player.kt` 883-902): `Random` picks a style per
+        // track — its indices 2..13 (`M3EMorphingTheme`..`Stage`), never a fluid gradient nor another `Random`
+        var valueGrad by remember { mutableStateOf(2) }
+        var tempGradient by remember { mutableStateOf(AnimatedGradient.Linear) }
+        if (animatedGradient == AnimatedGradient.Random) {
+            LaunchedEffect(mediaItem.id) {
+                valueGrad = (2..13).random()
+            }
+            tempGradient = AnimatedGradient.entries[valueGrad]
+        }
+
+        var sizeShader by remember { mutableStateOf(Size.Zero) }
+        var containerModifier: Modifier = Modifier
+            .padding(bottom = 0.dp)
+
+        if (!isGradientBackgroundEnabled) {
+            when (playerBackgroundColors) {
+                // The phone's condition `playerType == Essential || (showthumbnail && !albumCoverRotation)`:
+                // the PC is Essential (its only layout), so the branch is unconditional. The phone's
+                // `bottomgradient` is off by default and has no PC setting entry: the gradient renders its
+                // false branch (transparent), the swipe stays.
+                PlayerBackgroundColors.BlurredCoverColor -> {
+                    containerModifier = containerModifier
+                        .background(
+                            Brush.verticalGradient(
+                                0.0f to Color.Transparent,
+                                1.0f to Color.Transparent,
+                                startY = if (isLandscape) 600f else 950f,
+                                endY = Float.POSITIVE_INFINITY,
+                            )
+                        )
+                        .background(Color.Transparent)
+                        .clip(uiRoundnessShape())
+                        .playerCoverSwipe(settings.playerSwipeSensitivityValue.threshold) { direction ->
+                            // The live gate every other player command site carries: outside a Live
+                            // session the commands would not be sent, so the swipe is inert
+                            if (live) {
+                                if (direction == CoverSwipeDirection.Previous) {
+                                    onCommand { previous() }
+                                } else {
+                                    onCommand { next() }
+                                }
+                            }
+                        }
+                }
+                PlayerBackgroundColors.ColorPalette -> {
+                    containerModifier = containerModifier
+                        .drawBehind {
+                            val colors = listOf(
+                                Color(dominant), Color(vibrant), Color(lightVibrant), Color(darkVibrant),
+                                Color(muted), Color(lightMuted), Color(darkMuted),
+                            )
+                            val boxheight = (size.height) / 7
+                            colors.forEachIndexed { i, _ ->
+                                drawRect(
+                                    color = colors[i],
+                                    topLeft = Offset(0f, i * boxheight),
+                                    size = Size(size.width, boxheight),
+                                )
+                            }
+                        }
+                }
+                // The flat background renders the cover's dominant swatch; until the swatches load (or the
+                // artwork failed) it falls back to the local dynamic palette's background
+                PlayerBackgroundColors.CoverColor -> {
+                    containerModifier = containerModifier
+                        .background(
+                            if (coverSwatchesLoaded) m3eCoverBackgroundColor(dominant, lightTheme)
+                            else dynamicColorPalette.background1,
+                        )
+                }
+                PlayerBackgroundColors.ThemeColor -> {
+                    containerModifier = containerModifier
+                        .background(color.background1)
+                }
+                // Defensive: its gradient values are excluded above and render in the other branch
+                else -> {}
+            }
+        } else {
+            when (playerBackgroundColors) {
+                PlayerBackgroundColors.AnimatedGradient -> {
+                    var background by remember {
+                        mutableStateOf(Color.Transparent)
+                    }
+                    // The phone's `shaderCondition` is its `!appRunningInBackground`: always true on the PC
+                    var shaderCondition by remember {
+                        mutableStateOf(true)
+                    }
+                    var shader: Shader? by remember {
+                        mutableStateOf(null)
+                    }
+                    val type = remember(animatedGradient, tempGradient) {
+                        if (animatedGradient == AnimatedGradient.Random)
+                            tempGradient
+                        else
+                            animatedGradient
+                    }
+
+                    when (type) {
+                        // The phone's shared branch (its `Player.kt` 1024-1081): the two rotating gradients
+                        // of the cover's local palette and the theme, masked, then the M3E morphing shapes
+                        // in the cover's saturated / darkened swatches for the M3E styles
+                        AnimatedGradient.FluidThemeColorGradient, AnimatedGradient.FluidCoverColorGradient,
+                        AnimatedGradient.M3EMorphingTheme, AnimatedGradient.M3EMorphingCover -> {
+                            val shaderFrom = Offset(sizeShader.width / 2f, 0f)
+                            val shaderTo = Offset(sizeShader.width / 2f, sizeShader.height)
+                            val brushA by animateBrushRotation(
+                                shaderFrom, shaderTo,
+                                listOf(dynamicColorPalette.background2, color.background2),
+                                listOf(0f, 1f), sizeShader, 20_000, true,
+                            )
+                            val brushB by animateBrushRotation(
+                                shaderFrom, shaderTo,
+                                listOf(color.background1, dynamicColorPalette.accent),
+                                listOf(0f, 1f), sizeShader, 12_000, false,
+                            )
+                            val brushMask by animateBrushRotation(
+                                shaderFrom, shaderTo,
+                                listOf(color.background2, Color.Transparent),
+                                listOf(0f, 1f), sizeShader, 15_000, true,
+                            )
+
+                            containerModifier = containerModifier
+                                .drawBehind {
+                                    drawRect(brush = brushA)
+                                    drawRect(brush = brushMask, blendMode = BlendMode.DstOut)
+                                    drawRect(brush = brushB, blendMode = BlendMode.DstAtop)
+                                }
+
+                            if (type == AnimatedGradient.M3EMorphingTheme || type == AnimatedGradient.M3EMorphingCover) {
+                                val isTheme = type == AnimatedGradient.M3EMorphingTheme
+                                containerModifier = containerModifier.animatedM3EBackground(
+                                    animating = state.isPlaying,
+                                    D = if (isTheme) color.background1 else saturate(dominant).darkenBy(),
+                                    V = if (isTheme) color.background2 else saturate(vibrant).darkenBy(),
+                                    LV = if (isTheme) dynamicColorPalette.background2 else saturate(lightVibrant).darkenBy(),
+                                    DV = if (isTheme) color.background1 else saturate(darkVibrant).darkenBy(),
+                                    M = if (isTheme) dynamicColorPalette.background1 else saturate(muted).darkenBy(),
+                                    LM = if (isTheme) dynamicColorPalette.accent else saturate(lightMuted).darkenBy(),
+                                    DM = if (isTheme) color.background2 else saturate(darkMuted).darkenBy(),
+                                    skipToken = state.currentTrackId,
+                                )
+                            }
+                        }
+                        AnimatedGradient.Linear -> {
+                            containerModifier = containerModifier.animatedGradient(
+                                state.isPlaying,
+                                saturate(dominant).darkenBy(),
+                                saturate(vibrant).darkenBy(),
+                                saturate(lightVibrant).darkenBy(),
+                                saturate(darkVibrant).darkenBy(),
+                                saturate(muted).darkenBy(),
+                                saturate(lightMuted).darkenBy(),
+                                saturate(darkMuted).darkenBy(),
+                            )
+                        }
+                        AnimatedGradient.Mesh -> {
+                            shader = MeshGradient(
+                                colors = arrayOf(
+                                    saturate(vibrant).darkenBy(),
+                                    saturate(lightVibrant).darkenBy(),
+                                    saturate(darkVibrant).darkenBy(),
+                                    saturate(muted).darkenBy(),
+                                    saturate(lightMuted).darkenBy(),
+                                    saturate(darkMuted).darkenBy(),
+                                    saturate(dominant).darkenBy(),
+                                ),
+                                scale = 1f,
+                            )
+                        }
+                        AnimatedGradient.MesmerizingLens -> shader = MesmerizingLens
+                        AnimatedGradient.GlossyGradients -> {
+                            if (!lightTheme)
+                                background = Color.Black.copy(0.2f)
+                            shader = GlossyGradients
+                        }
+                        AnimatedGradient.GradientFlow -> {
+                            if (!lightTheme)
+                                background = Color.Black.copy(0.2f)
+                            shader = GradientFlow
+                        }
+                        AnimatedGradient.PurpleLiquid -> shader = PurpleLiquid
+                        AnimatedGradient.InkFlow -> {
+                            if (lightTheme)
+                                background = Color.White.copy(0.4f)
+                            shader = InkFlow
+                        }
+                        AnimatedGradient.OilFlow -> {
+                            if (lightTheme)
+                                background = Color.White.copy(0.4f)
+                            shader = OilFlow
+                        }
+                        AnimatedGradient.IceReflection -> {
+                            background = if (!lightTheme) Color.Black.copy(0.3f) else Color.White.copy(0.4f)
+                            shader = IceReflection
+                        }
+                        AnimatedGradient.Stage -> {
+                            if (!lightTheme)
+                                background = Color.Black.copy(0.3f)
+                            shader = Stage
+                        }
+                        AnimatedGradient.GoldenMagma -> {
+                            background = if (!lightTheme) Color.Black.copy(0.2f) else Color.White.copy(0.3f)
+                            shader = GoldenMagma
+                        }
+                        AnimatedGradient.BlackCherryCosmos -> {
+                            if (lightTheme)
+                                background = Color.White.copy(0.35f)
+                            shader = BlackCherryCosmos
+                        }
+                        // if [animatedGradient] is [AnimatedGradient.Random] then it should choose
+                        // [tempGradient]. If [tempGradient] is [AnimatedGradient.Random], you have
+                        // a problem.
+                        AnimatedGradient.Random -> throw IllegalStateException("Anything but this")
+                    }
+
+                    containerModifier = containerModifier
+                        .conditional(shaderCondition && shader != null) {
+                            shaderBackground(shader!!)
+                        }
+                        .background(background)
+                        .onSizeChanged {
+                            sizeShader = Size(it.width.toFloat(), it.height.toFloat())
+                        }
+                }
+                // The phone's `blackgradient` is off by default and has no PC setting entry: the gradient
+                // renders its false branch
+                else -> {
+                    containerModifier = containerModifier
+                        .background(
+                            Brush.verticalGradient(
+                                0.5f to if (playerBackgroundColors == PlayerBackgroundColors.CoverColorGradient)
+                                    (if (coverSwatchesLoaded) m3eCoverBackgroundColor(dominant, lightTheme) else dynamicColorPalette.background1)
+                                else color.background1,
+                                1.0f to if (playerBackgroundColors == PlayerBackgroundColors.CoverColorGradient)
+                                    (if (coverSwatchesLoaded) m3eCoverBackgroundColor(dominant, lightTheme) else dynamicColorPalette.background2)
+                                else color.background2,
+                                startY = 0.0f,
+                                endY = 1500.0f,
+                            ),
+                        )
+                }
+            }
+        }
 
         @Composable
         fun Controller(modifier: Modifier) = Controls(
@@ -319,6 +554,23 @@ fun Player(
                                 Thumbnail(
                                     state = state,
                                     onDoubleTap = onCoverDoubleTap,
+                                    // The phone's horizontal swipe on the cover (its `Player.kt` 1218-1241)
+                                    swipeThreshold = settings.playerSwipeSensitivityValue.threshold,
+                                    onCoverSwipe = { direction ->
+                                        // The live gate every other player command site carries
+                                        if (live) {
+                                            if (direction == CoverSwipeDirection.Previous) {
+                                                onCommand { previous() }
+                                            } else {
+                                                onCommand { next() }
+                                            }
+                                        }
+                                    },
+                                    // The phone's rotating cover (its `Thumbnail.kt` 175, 269-288) and its disc style
+                                    coverAnimationEnabled = settings.showCoverThumbnailAnimation,
+                                    coverStyle = settings.coverThumbnailAnimationValue,
+                                    // The phone's `swipeAnimationsNoThumbnail`: the track-change transition
+                                    swipeAnimation = settings.swipeAnimationsNoThumbnailValue,
                                     modifier = Modifier
                                         // thumbnailSizeLDp = 30 (the default)
                                         .padding(all = ((100f - 30f) * 0.5f).dp)
@@ -436,6 +688,23 @@ fun Player(
                                 state = state,
                                 // The phone's double tap (`Player.kt` 1205-1215): the current track's like rotation
                                 onDoubleTap = onCoverDoubleTap,
+                                // The phone's horizontal swipe on the cover (its `Player.kt` 1218-1241)
+                                swipeThreshold = settings.playerSwipeSensitivityValue.threshold,
+                                onCoverSwipe = { direction ->
+                                    // The live gate every other player command site carries
+                                    if (live) {
+                                        if (direction == CoverSwipeDirection.Previous) {
+                                            onCommand { previous() }
+                                        } else {
+                                            onCommand { next() }
+                                        }
+                                    }
+                                },
+                                // The phone's rotating cover (its `Thumbnail.kt` 175, 269-288) and its disc style
+                                coverAnimationEnabled = settings.showCoverThumbnailAnimation,
+                                coverStyle = settings.coverThumbnailAnimationValue,
+                                // The phone's `swipeAnimationsNoThumbnail`: the track-change transition
+                                swipeAnimation = settings.swipeAnimationsNoThumbnailValue,
                                 modifier = Modifier
                                     // thumbnailSizeDp = 90 (the default)
                                     .padding(all = ((100f - 90f) * 1.5f).dp)
@@ -568,3 +837,14 @@ fun Player(
  * orientation test (`Configuration.ORIENTATION_LANDSCAPE`).
  */
 internal fun isPlayerLandscape(width: Dp, height: Dp): Boolean = width > height
+
+/** The phone's `Modifier.conditional` (its `Player.kt` 888-895): applies a composable modifier only when [condition]. */
+@Composable
+private fun Modifier.conditional(
+    condition: Boolean,
+    modifier: @Composable Modifier.() -> Modifier,
+): Modifier = if (condition) {
+    then(modifier(Modifier))
+} else {
+    this
+}

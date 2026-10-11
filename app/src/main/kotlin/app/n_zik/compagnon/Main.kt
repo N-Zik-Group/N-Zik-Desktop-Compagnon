@@ -10,8 +10,8 @@ import androidx.compose.foundation.LocalIndication
 import app.n_zik.compagnon.core.navigation.isBackKey
 import app.n_zik.compagnon.core.navigation.LocalBackDispatcher
 import app.n_zik.compagnon.core.navigation.BackDispatcher
-import java.net.InetAddress
 import java.awt.Window as AwtWindow
+import java.net.InetAddress
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -26,9 +26,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
@@ -210,9 +212,16 @@ fun App(awtWindow: AwtWindow) {
             )
             // The AWT window background follows the same animated color as the root Box below: the
             // pixels the OS erases while the window is resized then match the app (including
-            // during a palette fade) instead of flashing until the next frame
+            // during a palette fade) instead of flashing until the next frame. The apply runs only
+            // when the color actually changed: the palette fade repaints every frame, and the AWT
+            // tree walk behind applyWindowBackground (idempotent, set up once in main) is not worth
+            // re-running on each of them
+            val appliedWindowBackground = remember { mutableStateOf<Color?>(null) }
             SideEffect(rootBackgroundColor) {
-                applyWindowBackground(awtWindow, rootBackgroundColor)
+                if (rootBackgroundColor != appliedWindowBackground.value) {
+                    appliedWindowBackground.value = rootBackgroundColor
+                    applyWindowBackground(awtWindow, rootBackgroundColor)
+                }
             }
             Box(modifier = Modifier.fillMaxSize().background(rootBackgroundColor)) {
                 CompositionLocalProvider(LocalPreferences provides preferences) {

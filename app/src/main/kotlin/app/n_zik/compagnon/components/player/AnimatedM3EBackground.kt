@@ -35,8 +35,11 @@ import kotlin.random.Random
  * Port of the phone's `app/n_zik/android/components/player/AnimatedM3EBackground.kt` (the default player
  * background, `AnimatedGradient.M3EMorphingCover`): 20 shapes in the cover's colours drifting and morphing
  * behind the player while it plays, exploding on a track change.
- * Dropped: the shake detection (no accelerometer on a PC; it is off by default on the phone). The Android
- * `Morph.toPath` / `Matrix` drawing is rebuilt on a Compose `Path` from the same cubics (`pathFromCubics`).
+ * The phone's shake perturbation is ported as the inert `shakeShapes` (its factor 1.2, its
+ * `AnimatedM3EBackground.kt` 152-155); it is never triggered on the PC — no accelerometer, and the
+ * phone's `shakeSensitivityTheme` has no PC setting entry (spec `spec-fill-pc-ui-gaps-player`). The
+ * Android `Morph.toPath` / `Matrix` drawing is rebuilt on a Compose `Path` from the same cubics
+ * (`pathFromCubics`).
  */
 
 internal fun m3eVisibilityTarget(
@@ -123,6 +126,19 @@ fun Modifier.animatedM3EBackground(
         shapes.forEach { shape ->
             shape.vx += (Random.nextFloat() - 0.5f) * 1.0f
             shape.vy += (Random.nextFloat() - 0.5f) * 1.0f
+        }
+    }
+
+    /**
+     * The phone's shake perturbation (its `AnimatedM3EBackground.kt` 152-155): the same kick as
+     * [explodeShapes] with its factor 1.2. Inert on the PC — the phone's accelerometer listener is not
+     * registered (no accelerometer, no `shakeSensitivityTheme` setting entry).
+     */
+    @Suppress("unused")
+    fun shakeShapes() {
+        shapes.forEach { shape ->
+            shape.vx += (Random.nextFloat() - 0.5f) * 1.2f
+            shape.vy += (Random.nextFloat() - 0.5f) * 1.2f
         }
     }
 

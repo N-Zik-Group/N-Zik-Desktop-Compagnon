@@ -31,6 +31,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
@@ -39,17 +40,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import app.n_zik.compagnon.CommandLauncher
 import app.n_zik.compagnon.LocalCommandLauncher
+import app.n_zik.compagnon.LocalLibraryActions
 import app.n_zik.compagnon.LocalPlayerRepository
 import app.n_zik.compagnon.bridge.ConnectionState
+import app.n_zik.compagnon.bridge.library.DislikeMode
 import app.n_zik.compagnon.bridge.state.PlayerState
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.SongItem
+import app.n_zik.compagnon.components.SongItemPlaceholder
 import app.n_zik.compagnon.components.menu.playlist.PlaylistsMenu
 import app.n_zik.compagnon.components.menu.song.SongItemMenu
 import app.n_zik.compagnon.components.player.QueueToolBarState
+import app.n_zik.compagnon.components.player.rotateTrackLike
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.Locator
 import app.n_zik.compagnon.components.tab.PositionLock
@@ -62,14 +67,20 @@ import app.n_zik.compagnon.components.tab.toolbar.InertButton
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
 import app.n_zik.compagnon.components.themed.IconButton
+import app.n_zik.compagnon.components.themed.SwipeableRow
 import app.n_zik.compagnon.components.ui.screens.home.ItemActions
 import app.n_zik.compagnon.enums.QueueLoopType
+import app.n_zik.compagnon.enums.QueueSwipeAction
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.cleanPrefix
+import app.n_zik.compagnon.utils.shimmer
 import app.n_zik.compagnon.utils.smoothScrollToTop
 import kotlin.math.abs
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
@@ -94,9 +105,19 @@ import org.jetbrains.compose.resources.stringResource
  * placeholders without a contract route, a click does nothing; "Add to playlist" opens the
  * [PlaylistsMenu] layer (spec #47, the phone's `Queue.kt` 43-72): the playlists already read, everything
  * inert there.
- * Dropped: the swipe actions (no swipe on the PC: "Remove from queue" moves to the item's menu, PC only), the
- * multi-selection, the radio's loading placeholders, the remembered scroll position across openings
- * (the list opens on the current track). Clearing shows the phone's "Deleted" toast (its `Queue.kt` 301-303).
+ * Kept: the swipe actions (phone's `SwipeableContent.kt` 82-155, 158-269, ported as
+ * [SwipeableRow]: the 25 % positional threshold, always snap-back, the revealed icon by the
+ * phone's `queueSwipeLeftAction` / `queueSwipeRightAction` keys, off with the phone's
+ * `isSwipeToActionEnabled` key — left `RemoveFromQueue` resolves the row's actual index by id at
+ * the swipe then removes it and toasts the phone's "deleted" of the cleaned title, right
+ * `PlayNext` moves the row after the current track (the phone's `moveMediaItem(index, current + 1)`
+ * with its after / before cases), `Enqueue` appends it, `Favourite` likes it (the rotation, a no-op
+ * without `library.write`), `Download` is a no-op (no download on the PC)). "Remove from queue"
+ * also moves to the item's menu (PC only, no swipe there).
+ * Dropped: the multi-selection, the radio's loading placeholders (kept rendered, the condition
+ * `false` — the wire carries no radio loading state, the radio plays like any track), the
+ * remembered scroll position across openings (the list opens on the current track). Clearing shows
+ * the phone's "Deleted" toast (its `Queue.kt` 301-303).
  * Without the `queue` feature the item menu still opens (as on the phone) with inert entries; queue actions do
  * nothing outside a `Live` session.
  * The clear's "Deleted" toast (the phone's 301-303, after its local clear) is shown when the `clear`
@@ -117,6 +138,22 @@ fun Queue(
     val live = connection == ConnectionState.Live
     // Without a live session no delta can confirm a change: queue actions wait for the reconnection
     val actionsEnabled by rememberUpdatedState(queueFeature && live)
+
+    // The phone's `queueSwipeLeftActionKey` / `queueSwipeRightActionKey` / `isSwipeToActionEnabledKey`
+    val preferences = LocalPreferences.current
+    val settings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
+    val queueSwipeLeftAction = settings.queueSwipeLeftActionValue
+    val queueSwipeRightAction = settings.queueSwipeRightActionValue
+    val isSwipeToActionEnabled = settings.isSwipeToActionEnabled
+
+    // The like of the `Favourite` swipe (the phone's `YouTubeSync.rotateSongLikeState`, its
+    // `SwipeableContent.kt` 224-228): the rotation, the phone's "disliked" mode deciding it (its
+    // `Player.kt` heart pattern), a no-op without `library.write`
+    val likeWrites = LocalLibraryActions.current?.takeIf { it.canWrite }
+    // Collected unconditionally (no conditional composable call): a remembered empty flow without the lists
+    val dislikeModeFlow = LocalLibraryActions.current?.lists?.dislikeMode
+        ?: remember { MutableStateFlow<DislikeMode?>(null) }
+    val likeRotation = dislikeModeFlow.collectAsState().value?.songs != false
 
     val rippleIndication = ripple(bounded = false)
 
@@ -284,6 +321,53 @@ fun Queue(
                             onEnqueue = { onCommand { addTracks(listOf(song.id), QueuePosition.End) } },
                             enabled = actionsEnabled,
                         )
+                        // The phone's `SwipeableQueueItem` (its `Queue.kt` 469-575): the row behind its
+                        // swipe, the drag handle staying in front of it
+                        SwipeableRow(
+                            song = song,
+                            swipeLeftAction = queueSwipeLeftAction,
+                            swipeRightAction = queueSwipeRightAction,
+                            swipeEnabled = isSwipeToActionEnabled,
+                            onPlayNext = {
+                                // The phone's "Play next" swipe (its `Queue.kt` 477-494): a move after
+                                // the current track — if the song is already after the current, only
+                                // when it is not already in the next position
+                                if (actionsEnabled) {
+                                    val currentIndex = state.currentIndex
+                                    val targetIndex = currentIndex + 1
+                                    if (index > currentIndex) {
+                                        if (index != targetIndex) {
+                                            onCommand { move(index, targetIndex, song.id) }
+                                        }
+                                    } else {
+                                        // If it's before or in the current position, move it to the next
+                                        onCommand { move(index, targetIndex, song.id) }
+                                    }
+                                }
+                            },
+                            onEnqueue = {
+                                if (actionsEnabled) {
+                                    onCommand { addTracks(listOf(song.id), QueuePosition.End) }
+                                }
+                            },
+                            onRemoveFromQueue = {
+                                // The phone's removal (its `Queue.kt` 504-530): the actual index is
+                                // resolved by id at the swipe (the row's captured index can be stale),
+                                // then the phone's "deleted" toast of the cleaned title
+                                if (actionsEnabled) {
+                                    val actualIndex = state.queue.indexOfFirst { it.id == song.id }
+                                    if (actualIndex in state.queue.indices) {
+                                        onCommand { remove(actualIndex, song.id) }
+                                        Toaster.s(Res.string.deleted_item, cleanPrefix(song.title))
+                                    }
+                                }
+                            },
+                            onFavourite = {
+                                if (live) {
+                                    rotateTrackLike(song, likeWrites, likeRotation)
+                                }
+                            },
+                        ) {
                         SongItem(
                             song = song,
                             backgroundColor = itemBackground,
@@ -321,6 +405,21 @@ fun Queue(
                                 search.hideIfEmpty()
                             },
                         )
+                        }
+                    }
+                }
+
+                // The phone's radio loading placeholders (its `Queue.kt` 580-588): the wire carries no
+                // radio loading state (the radio plays like any track), so the condition is always
+                // `false` on the PC
+                val isLoadingRadio = false
+                if (isLoadingRadio) {
+                    item {
+                        Column(Modifier.shimmer()) {
+                            repeat(3) { index ->
+                                SongItemPlaceholder(Modifier.alpha(1f - index * 0.125f))
+                            }
+                        }
                     }
                 }
             }

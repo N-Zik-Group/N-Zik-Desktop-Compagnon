@@ -1,0 +1,50 @@
+package app.n_zik.compagnon.components.player.background.shaders
+
+import app.n_zik.compagnon.components.player.background.Shader
+
+/** Port of `com.mikepenz.hypnoticcanvas` 0.4.1's `OilFlow` (HypnoticCanvas, CC BY-NC-SA 3.0). */
+object OilFlow : Shader {
+    override val name: String
+        get() = "OilFlow"
+
+    override val authorName: String
+        get() = "TAKUSAKU"
+
+    override val authorUrl: String
+        get() = "https://www.shadertoy.com/user/TAKUSAKU"
+
+    override val credit: String
+        get() = "https://www.shadertoy.com/view/Wd2fDW"
+
+    override val license: String
+        get() = "Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License"
+
+    override val licenseUrl: String
+        get() = "https://www.shadertoy.com/terms"
+
+    override val sksl = """
+uniform float uTime;
+uniform vec3 uResolution;
+
+vec4 main( vec2 fragCoord )
+{
+
+    vec2 uv = fragCoord/uResolution.xy;
+
+    uv *= 6.5;
+    
+    float len;
+    for(int i = 0; i < 3; i++) {
+        len = length(uv);
+        uv.x +=  sin(uv.y + uTime * 0.3)*5.;
+        uv.y +=  cos(uv.x + uTime * 0.1 + cos(len * 2.0))*2.;
+    }
+    
+    vec3 col = vec3(cos(len + 0.3), cos(len + 0.1), cos(len - 0.1));
+    
+    return vec4(col,1.0);
+    
+}
+
+    """
+}

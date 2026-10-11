@@ -69,6 +69,7 @@ import app.n_zik.compagnon.utils.formatAsDuration
 import app.n_zik.compagnon.utils.hasExplicitPrefix
 import app.n_zik.compagnon.utils.onSecondaryClick
 import app.n_zik.compagnon.utils.secondary
+import app.n_zik.compagnon.utils.shimmer
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -389,5 +390,82 @@ fun songSortOverlay(text: String?, rank: Int?) {
                 .padding(horizontal = 8.dp, vertical = 4.dp)
                 .align(alignment),
         )
+    }
+}
+
+/**
+ * Port of `SongItemPlaceholder` (phone's `app/it/fast4x/rimusic/ui/items/SongItem.kt` 734-802): the
+ * radio's loading row — a shimmering thumbnail, a shimmering title and artist, the "0:00" duration
+ * and a disabled `download` icon. Dropped: the phone's `DownloadedStateMedia` state (no download on
+ * the PC — the disabled `download` icon is the phone's `NOT_CACHED_OR_DOWNLOADED` one).
+ */
+@Composable
+fun SongItemPlaceholder(
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = modifier.fillMaxWidth()
+            .padding(
+                vertical = 8.dp,
+                horizontal = 16.dp,
+            ),
+    ) {
+        Box(
+            Modifier.size(Dimensions.thumbnails.song)
+                .clip(uiRoundnessShape())
+                .shimmer(),
+        )
+
+        Column(
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(.7f),
+            ) {
+                BasicText(
+                    text = "",
+                    style = typography().xs.semiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f).shimmer(),
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(Modifier.weight(1f).fillMaxWidth()) {
+                    BasicText(
+                        text = "",
+                        style = typography().xs.semiBold.secondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Clip,
+                        modifier = Modifier.fillMaxWidth(.3f).shimmer(),
+                    )
+                }
+
+                BasicText(
+                    text = "0:00",
+                    style = typography().xxs.secondary.medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+
+                Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+
+                IconButton(
+                    onClick = {},
+                    icon = Res.drawable.download,
+                    color = colorPalette().textDisabled,
+                    modifier = Modifier.size(20.dp),
+                    enabled = false,
+                )
+            }
+        }
     }
 }

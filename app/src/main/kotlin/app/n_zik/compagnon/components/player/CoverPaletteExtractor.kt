@@ -14,8 +14,8 @@ import app.n_zik.compagnon.core.palette.from
  * extraction of the player, the mini-player and the app's dynamic theme) and of `computePlayerDynamicPalette`
  * (`app/it/fast4x/rimusic/ui/screens/player/Player.kt` 321-380). The bitmap is the cover's pixels
  * ([PaletteBitmap]), read through the same `Palette` algorithm (`app.n_zik.compagnon.core.palette`).
- * Dropped (used by features the Compagnon does not have): `lyricsThemeColor`, `m3eCoverBackgroundColor`
- * and `m3eCoverForegroundArgb` (lyrics, visualizer, the non-default "cover color" backgrounds).
+ * Dropped (used by features the Compagnon does not have): `lyricsThemeColor` and
+ * `m3eCoverForegroundArgb` (lyrics, visualizer).
  */
 
 /** The 7 raw swatches of an album cover extracted from the capped [Palette] (`maximumColorCount(8)`). ARGB ints. */
@@ -190,6 +190,10 @@ fun m3eSaturate(color: Int, lightTheme: Boolean): Color {
     hsl[2] = if (lightTheme) hsl[2].coerceIn(0.5f, 1f) else hsl[2]
     return Color.hsl(hsl[0], hsl[1], hsl[2])
 }
+
+/** The phone's `m3eCoverBackgroundColor`: the cover's dominant swatch, saturated and darkened (the flat background of its `CoverColor`). */
+fun m3eCoverBackgroundColor(dominant: Int, lightTheme: Boolean): Color =
+    m3eSaturate(dominant, lightTheme).m3eDarkenBy(lightTheme)
 
 /** Pure copy of `Player.Color.darkenBy()`: RGB × 0.5 in a dark theme, untouched in a light theme. */
 fun Color.m3eDarkenBy(lightTheme: Boolean): Color {

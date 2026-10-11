@@ -8,8 +8,15 @@ import app.n_zik.compagnon.bridge.library.PlaylistSort
 import app.n_zik.compagnon.bridge.library.SongSort
 import app.n_zik.compagnon.bridge.library.TopPeriod
 import app.n_zik.compagnon.bridge.pairing.CredentialStore
+import app.n_zik.compagnon.bridge.state.PlayerBackgroundColors
+import app.n_zik.compagnon.enums.AnimatedGradient
 import app.n_zik.compagnon.enums.AudioQualityFormat
 import app.n_zik.compagnon.enums.ExoPlayerDiskCacheMaxSize
+import app.n_zik.compagnon.enums.PlayerSwipeSensitivity
+import app.n_zik.compagnon.enums.PlayerTimelineType
+import app.n_zik.compagnon.enums.QueueSwipeAction
+import app.n_zik.compagnon.enums.SwipeAnimationNoThumbnail
+import app.n_zik.compagnon.enums.ThumbnailCoverType
 import app.n_zik.compagnon.updater.models.CheckUpdateState
 import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
@@ -48,6 +55,20 @@ const val changelogCacheVersionKey = "cached_changelog_version"
 // The updater's changelog translation (the phone's updater translation preference keys, spec AD-9):
 const val otherLanguageAppUpdateKey = "otherLanguageAppUpdate"
 const val updateTranslationActiveKey = "updateTranslationActive"
+// The player's appearance (spec `spec-fill-pc-ui-gaps-player`): the phone's preference keys, same names and defaults
+const val rotatingAlbumCoverKey = "rotatingAlbumCover"
+const val showCoverThumbnailAnimationKey = "showCoverThumbnailAnimation"
+const val coverThumbnailAnimationKey = "coverThumbnailAnimation"
+const val playerBackgroundColorsKey = "playerBackgroundColors"
+const val animatedGradientKey = "animatedGradient"
+const val playerTimelineTypeKey = "playerTimelineType"
+const val swipeAnimationsNoThumbnailKey = "swipeAnimationsNoThumbnail"
+const val playerSwipeSensitivityKey = "playerSwipeSensitivity"
+const val showMiniPlayerDiscoverKey = "showMiniPlayerDiscover"
+const val showMiniPlayerVisualizerKey = "showMiniPlayerVisualizer"
+const val queueSwipeLeftActionKey = "queueSwipeLeftAction"
+const val queueSwipeRightActionKey = "queueSwipeRightAction"
+const val isSwipeToActionEnabledKey = "isSwipeToActionEnabled"
 
 /**
  * The sort state of one library chip (contract §10, since 1.6): as on the phone, every chip of a
@@ -136,12 +157,79 @@ data class UserSettings(
      * its default is the phone's — active when the app language is not English (decided at the read site).
      */
     @SerialName(updateTranslationActiveKey) val updateTranslationActive: Boolean? = null,
+    /** The phone's "Rotating album cover" (its `rotatingAlbumCoverKey`): the blurred cover background turns in 30 s. */
+    @SerialName(rotatingAlbumCoverKey) val rotatingAlbumCover: Boolean = false,
+    /** The phone's "Show cover thumbnail animation" (its `showCoverThumbnailAnimationKey`): the central cover turns while it plays. */
+    @SerialName(showCoverThumbnailAnimationKey) val showCoverThumbnailAnimation: Boolean = false,
+    /** The phone's cover style name (its `coverThumbnailAnimationKey`); an unknown name reads as [ThumbnailCoverType.Vinyl]. */
+    @SerialName(coverThumbnailAnimationKey) val coverThumbnailAnimation: String = ThumbnailCoverType.Vinyl.name,
+    /** The phone's player background name (its `playerBackgroundColorsKey`); an unknown name reads as [PlayerBackgroundColors.AnimatedGradient]. */
+    @SerialName(playerBackgroundColorsKey) val playerBackgroundColors: String = PlayerBackgroundColors.AnimatedGradient.name,
+    /** The phone's animated gradient name (its `animatedGradientKey`); an unknown name reads as [AnimatedGradient.M3EMorphingCover]. */
+    @SerialName(animatedGradientKey) val animatedGradient: String = AnimatedGradient.M3EMorphingCover.name,
+    /** The phone's timeline name (its `playerTimelineTypeKey`); an unknown name reads as [PlayerTimelineType.Wavy]. */
+    @SerialName(playerTimelineTypeKey) val playerTimelineType: String = PlayerTimelineType.Wavy.name,
+    /** The phone's cover transition name (its `swipeAnimationsNoThumbnailKey`); an unknown name reads as [SwipeAnimationNoThumbnail.Sliding]. */
+    @SerialName(swipeAnimationsNoThumbnailKey) val swipeAnimationsNoThumbnail: String = SwipeAnimationNoThumbnail.Sliding.name,
+    /** The phone's cover swipe sensitivity name (its `playerSwipeSensitivityKey`); an unknown name reads as [PlayerSwipeSensitivity.Medium]. */
+    @SerialName(playerSwipeSensitivityKey) val playerSwipeSensitivity: String = PlayerSwipeSensitivity.Medium.name,
+    /**
+     * The phone's mini-player "Discover" button (its `showMiniPlayerDiscoverKey`, off by default on the
+     * phone): visible by default on the PC — decision 1 of the PC UI gaps plan: the items behind an off
+     * phone setting are visible until the PC has its own setting entry.
+     */
+    @SerialName(showMiniPlayerDiscoverKey) val showMiniPlayerDiscover: Boolean = true,
+    /** The phone's mini-player "Visualizer" button (its `showMiniPlayerVisualizerKey`, off by default on the phone); visible by default on the PC (decision 1 of the plan). */
+    @SerialName(showMiniPlayerVisualizerKey) val showMiniPlayerVisualizer: Boolean = true,
+    /** The queue rows' left swipe action (the phone's `queueSwipeLeftActionKey`); an unknown name reads as [QueueSwipeAction.RemoveFromQueue]. */
+    @SerialName(queueSwipeLeftActionKey) val queueSwipeLeftAction: String = QueueSwipeAction.RemoveFromQueue.name,
+    /** The queue rows' right swipe action (the phone's `queueSwipeRightActionKey`); an unknown name reads as [QueueSwipeAction.PlayNext]. */
+    @SerialName(queueSwipeRightActionKey) val queueSwipeRightAction: String = QueueSwipeAction.PlayNext.name,
+    /** The phone's swipe actions toggle (its `isSwipeToActionEnabledKey`); off makes the queue rows non-swipeable. */
+    @SerialName(isSwipeToActionEnabledKey) val isSwipeToActionEnabled: Boolean = true,
 ) {
     /** Ceiling of the audio cache: `0` disabled, `null` unlimited. */
     val songCacheMaxBytes: Long? get() = exoPlayerDiskCacheMaxSize.cacheBytes(exoPlayerCustomCache)
 
     /** The [checkUpdateState] wire value decoded to the typed choice (unknown → [CheckUpdateState.On]). */
     val checkUpdateStateValue: CheckUpdateState get() = CheckUpdateState.fromWire(checkUpdateState)
+
+    /** The [coverThumbnailAnimation] name decoded to its style (unknown → [ThumbnailCoverType.Vinyl]). */
+    val coverThumbnailAnimationValue: ThumbnailCoverType
+        get() = ThumbnailCoverType.entries.firstOrNull { it.name == coverThumbnailAnimation } ?: ThumbnailCoverType.Vinyl
+
+    /** The [playerBackgroundColors] name decoded to its background (unknown → [PlayerBackgroundColors.AnimatedGradient]). */
+    val playerBackgroundColorsValue: PlayerBackgroundColors
+        get() = PlayerBackgroundColors.entries.firstOrNull { it.name == playerBackgroundColors }
+            ?: PlayerBackgroundColors.AnimatedGradient
+
+    /** The [animatedGradient] name decoded to its style (unknown → [AnimatedGradient.M3EMorphingCover]). */
+    val animatedGradientValue: AnimatedGradient
+        get() = AnimatedGradient.entries.firstOrNull { it.name == animatedGradient } ?: AnimatedGradient.M3EMorphingCover
+
+    /** The [playerTimelineType] name decoded to its timeline (unknown → [PlayerTimelineType.Wavy]). */
+    val playerTimelineTypeValue: PlayerTimelineType
+        get() = PlayerTimelineType.entries.firstOrNull { it.name == playerTimelineType } ?: PlayerTimelineType.Wavy
+
+    /** The [swipeAnimationsNoThumbnail] name decoded to its transition (unknown → [SwipeAnimationNoThumbnail.Sliding]). */
+    val swipeAnimationsNoThumbnailValue: SwipeAnimationNoThumbnail
+        get() = SwipeAnimationNoThumbnail.entries.firstOrNull { it.name == swipeAnimationsNoThumbnail }
+            ?: SwipeAnimationNoThumbnail.Sliding
+
+    /** The [playerSwipeSensitivity] name decoded to its sensitivity (unknown → [PlayerSwipeSensitivity.Medium]). */
+    val playerSwipeSensitivityValue: PlayerSwipeSensitivity
+        get() = PlayerSwipeSensitivity.entries.firstOrNull { it.name == playerSwipeSensitivity }
+            ?: PlayerSwipeSensitivity.Medium
+
+    /** The [queueSwipeLeftAction] name decoded to its action (unknown → [QueueSwipeAction.RemoveFromQueue]). */
+    val queueSwipeLeftActionValue: QueueSwipeAction
+        get() = QueueSwipeAction.entries.firstOrNull { it.name == queueSwipeLeftAction }
+            ?: QueueSwipeAction.RemoveFromQueue
+
+    /** The [queueSwipeRightAction] name decoded to its action (unknown → [QueueSwipeAction.PlayNext]). */
+    val queueSwipeRightActionValue: QueueSwipeAction
+        get() = QueueSwipeAction.entries.firstOrNull { it.name == queueSwipeRightAction }
+            ?: QueueSwipeAction.PlayNext
 }
 
 /**

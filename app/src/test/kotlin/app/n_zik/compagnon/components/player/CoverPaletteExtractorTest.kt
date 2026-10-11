@@ -54,4 +54,12 @@ class CoverPaletteExtractorTest {
         val dark = saturated.m3eDarkenBy(lightTheme = false)
         assertEquals(saturated.red * 0.5f, dark.red, 0.005f)
     }
+
+    @Test
+    fun `m3eCoverBackgroundColor is the dominant swatch saturated then darkened`() {
+        val dominant = 0xFF4D7399.toInt()
+        for (lightTheme in listOf(false, true)) {
+            assertEquals(m3eSaturate(dominant, lightTheme).m3eDarkenBy(lightTheme), m3eCoverBackgroundColor(dominant, lightTheme))
+        }
+    }
 }
