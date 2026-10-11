@@ -182,6 +182,7 @@
     <string name="follow">Sledovat</string>
     <string name="following">Sledovaní</string>
     <string name="item_select">Vybrat</string>
+    <string name="item_deselect">Odznačit</string>
     <string name="info_download_all_songs">Stáhnout všechny skladby</string>
     <string name="info_smart_recommendation">Chytré doporučení</string>
     <string name="import_playlist">Importovat playlist</string>
