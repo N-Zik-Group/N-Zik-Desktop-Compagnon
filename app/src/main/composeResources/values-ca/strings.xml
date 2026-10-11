@@ -182,6 +182,7 @@
     <string name="follow">Segueix</string>
     <string name="following">Seguint</string>
     <string name="item_select">Selecciona</string>
+    <string name="item_deselect">Desselecciona</string>
     <string name="info_download_all_songs">Descarrega totes les cançons</string>
     <string name="info_smart_recommendation">Recomanació intel·ligent</string>
     <string name="import_playlist">Importa la llista de reproducció</string>
