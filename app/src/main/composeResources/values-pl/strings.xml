@@ -182,6 +182,7 @@
     <string name="follow">Subskrybuj</string>
     <string name="following">Subskrybujesz</string>
     <string name="item_select">Włącz zaznacznie</string>
+    <string name="item_deselect">Odznacz</string>
     <string name="info_download_all_songs">Pobierz wszystkie utwory</string>
     <string name="info_smart_recommendation">Inteligentne rekomendacje</string>
     <string name="import_playlist">Importuj playlistę</string>
