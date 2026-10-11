@@ -20,6 +20,15 @@ import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery
  * portable zip, whose app-image carries no `resources/vlc` — system libvlc, spec
  * `spec-linux-system-libvlc`; the Flatpak exception is spec `spec-linux-flatpak`).
  *
+ * The Flatpak's embedded runtime is the pinned Linux tarball (built by
+ * `scripts/build-vlc-linux-tarball.sh`), and it is SELF-CONTAINED: it carries the plugins AND the
+ * three runtime libs the Flatpak's 24.08 runtime does not ship — `libmatroska.so.7` +
+ * `libebml.so.5` (the webm demux `libmkv_plugin.so`'s DT_NEEDED — the format the phone streams)
+ * and `libfaad.so.2` (`libfaad_plugin.so`'s, aac — measured in the sandbox 2026-10-11) — at the
+ * tarball root, so they resolve from the wrapper's `LD_LIBRARY_PATH` without a system package; a
+ * build-host distro drift breaks the producer loud (its frozen external-dependency contract),
+ * never the bundle.
+ *
  * No libvlc at all (neither embedded nor system) → playback is [Availability.Unavailable] and the
  * rest of the app keeps working.
  */

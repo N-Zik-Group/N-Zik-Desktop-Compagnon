@@ -96,19 +96,23 @@ class FlatpakPinTest {
     }
 
     @Test
-    fun `the wrapper exports the vlc plugin dir and the jna search path`() {
+    fun `the wrapper exports the vlc plugin dir, the jna search path and the library search path`() {
         // The wrapper (not the .desktop — flatpak ignores Env=) is the only place the sandbox
-        // environment can be set, so it must carry the two runtime fixes: VLC_PLUGIN_PATH puts
+        // environment can be set, so it must carry the runtime fixes: VLC_PLUGIN_PATH puts
         // the embedded plugin dir on libvlc's search path (libvlc_new() loads its mandatory
         // modules at instance creation; the --plugin-path CLI option was removed in 3.0.24, the
-        // env var is the only lever — without it playback fails), and jna.library.path puts
-        // /app/lib on JNA's explicit search so the bundled libsecret resolves independent of the
-        // sandbox's host-dependent ld cache (the 2026-10-08 keyring regression). LD_LIBRARY_PATH
-        // (the libvlc.so DT_NEEDED) is the pre-existing export — keep it pinned too.
+        // env var is the only lever — without it playback fails), jna.library.path puts
+        // /app/lib on JNA's explicit file search (the 2026-10-08 keyring fix), and
+        // LD_LIBRARY_PATH keeps both the embedded runtime dir AND /app/lib — JNA's first
+        // attempt (the bare dlopen of the unversioned libsecret name) reads this var, so the
+        // bundled libsecret resolves on any build host, independent of the sandbox's
+        // host-dependent ld cache (the 2026-10-11 keyring regression: the libdir default
+        // drifted with the build host's flatpak-builder — lib vs lib64 — until the manifest's
+        // libsecret module normalized the install dir to /app/lib).
         val exports = String(java.util.Base64.getDecoder().decode(flatpakProp("flatpak.wrapperExports"))).split("\u001f")
         assertTrue(
-            exports.contains("export LD_LIBRARY_PATH=\"/app/lib/app/resources/vlc\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\""),
-            "the wrapper keeps the embedded runtime dir on LD_LIBRARY_PATH (libvlc.so's DT_NEEDED)"
+            exports.contains("export LD_LIBRARY_PATH=\"/app/lib/app/resources/vlc:/app/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\""),
+            "the wrapper keeps the embedded runtime dir AND /app/lib on LD_LIBRARY_PATH (libvlc.so's DT_NEEDED + the bare dlopen of the bundled libsecret)"
         )
         assertTrue(
             exports.contains("export VLC_PLUGIN_PATH=\"/app/lib/app/resources/vlc/plugins\${VLC_PLUGIN_PATH:+:\$VLC_PLUGIN_PATH}\""),
@@ -186,7 +190,16 @@ class FlatpakPinTest {
         assertEquals(
             listOf("-Dvapi=false", "-Dintrospection=false", "-Dgtk_doc=false", "-Dmanpage=false"),
             (libsecret?.get("config-opts") as? JsonArray)?.mapNotNull { it.jsonPrimitive.content },
-            "the libsecret config-opts stay as committed (gtk_doc is the known gi-docgen build failure, manpage/vapi/introspection are not shipped)")
+            "the libsecret config-opts stay as committed (gtk_doc is the known gi-docgen build failure, manpage/vapi/introspection are not shipped; libdir is NOT pinned here — flatpak-builder auto-passes --libdir to meson, and a -Dlibdir config-opt next to it makes meson fail with 'Got argument libdir as both -Dlibdir and --libdir'; the install dir is normalized by the build-command below)")
+        // The install-dir normalization (the 2026-10-11 keyring regression): the libdir default
+        // drifts with the build host's flatpak-builder (same manifest: one host → /app/lib,
+        // another → /app/lib64), and /app/lib64 is covered by neither of the wrapper's search
+        // paths — so whenever the module installed into lib64, a build-command moves it to
+        // /app/lib (a no-op when the build already installed into lib).
+        assertEquals(
+            listOf("if [ -d /app/lib64 ]; then mkdir -p /app/lib && cp -a /app/lib64/. /app/lib/ && rm -rf /app/lib64; fi"),
+            (libsecret?.get("build-commands") as? JsonArray)?.mapNotNull { it.jsonPrimitive.content },
+            "the libsecret module normalizes its install dir to /app/lib (deterministic on any build host — the 2026-10-11 keyring regression)")
         val app = modules?.first { (it as? JsonObject)?.get("name")?.jsonPrimitive?.content == "app" } as? JsonObject
         assertEquals("simple", app?.get("buildsystem")?.jsonPrimitive?.content,
             "the app module is the no-compiler simple type (its build-commands copy the staged app-image)")

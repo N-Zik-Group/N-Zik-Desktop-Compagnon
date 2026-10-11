@@ -151,12 +151,16 @@ class LinuxSecretStore private constructor(
          * daemon cannot be reached (the probe lookup below reports a `GError`) — the caller
          * then falls back to [SessionSecretStore]. Where JNA finds `libsecret`: on the distro
          * install paths the system `libsecret` lives in the standard library dirs JNA's search
-         * already covers; in the Flatpak sandbox the bundled `libsecret` is staged in `/app/lib`,
-         * and JNA's first attempt — a bare `dlopen` of the unversioned name — succeeds only where
-         * the host ld cache happens to cover it (host-dependent, not guaranteed — the 2026-10-08
-         * keyring regression). The deterministic path is the explicit file search on the
-         * `jna.library.path` the Flatpak wrapper exports, where a `secret-1` request matches the
-         * versioned soname `libsecret-1.so.0`.
+         * already covers; in the Flatpak sandbox the bundled `libsecret` is installed into
+         * `/app/lib` (the manifest's libsecret module normalizes its install dir there with a
+         * build-command — the libdir default drifts with the build host's flatpak-builder,
+         * lib vs lib64, the 2026-10-11 keyring regression; an explicit `-Dlibdir` config-opt is
+         * impossible, meson refuses it next to flatpak-builder's own `--libdir`), and BOTH of
+         * the wrapper's exports cover that dir deterministically: `LD_LIBRARY_PATH`
+         * (which JNA's first attempt — the bare `dlopen` of the unversioned name — reads) and
+         * `jna.library.path` (JNA's explicit file search, where a `secret-1` request matches the
+         * versioned soname `libsecret-1.so.0`) — independent of the sandbox's host-dependent
+         * ld cache.
          */
         fun create(): LinuxSecretStore? = runCatching {
             val api = Native.load("secret-1", SecretApi::class.java)

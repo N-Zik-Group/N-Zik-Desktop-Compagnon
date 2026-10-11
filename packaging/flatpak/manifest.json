@@ -25,6 +25,9 @@
         "-Dgtk_doc=false",
         "-Dmanpage=false"
       ],
+      "build-commands": [
+        "if [ -d /app/lib64 ]; then mkdir -p /app/lib && cp -a /app/lib64/. /app/lib/ && rm -rf /app/lib64; fi"
+      ],
       "sources": [
         {
           "type": "archive",

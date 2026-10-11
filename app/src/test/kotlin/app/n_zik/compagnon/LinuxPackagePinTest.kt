@@ -85,6 +85,101 @@ class LinuxPackagePinTest {
     }
 
     @Test
+    fun `the Linux VLC runtime file list pins the self-contained subset`() {
+        // The extraction allow-list (app/build.gradle.kts vlcLinuxRuntimeFiles) must stay in
+        // sync with the producer (scripts/build-vlc-linux-tarball.sh — 35 entries), and this
+        // guard runs on every host that runs the test suite, including the ones where the
+        // tarball is never extracted (the release CI does not run :app:test — the local
+        // `gradlew build` gate and `build.sh package` are where it executes). The frozen set
+        // is pinned EXACTLY (order-sensitive, like the libsecret config-opts pin): a
+        // count-plus-spot check cannot catch a one-for-one swap (a dropped non-anchored entry
+        // + a duplicate keeps the size 35 and the anchors intact, and the extraction silently
+        // ships a dead subset — e.g. without the PulseAudio output, the sandbox's only audio
+        // path), so an exact list equality is the only guard that fails the swap where the
+        // tests run.
+        val files = pinProp("linux.tarballRuntimeFiles").split("\u001f")
+        assertEquals(
+            listOf(
+                "COPYING",
+                "libvlc.so",
+                "libvlccore.so.9",
+                "libvlc_pulse.so.0",
+                "libmatroska.so.7",
+                "libebml.so.5",
+                "libfaad.so.2",
+                "plugins/access/libfilesystem_plugin.so",
+                "plugins/access/libhttps_plugin.so",
+                "plugins/audio_filter/libaudio_format_plugin.so",
+                "plugins/audio_filter/libsamplerate_plugin.so",
+                "plugins/audio_filter/libscaletempo_plugin.so",
+                "plugins/audio_filter/libtrivial_channel_mixer_plugin.so",
+                "plugins/audio_filter/libugly_resampler_plugin.so",
+                "plugins/audio_mixer/libfloat_mixer_plugin.so",
+                "plugins/audio_mixer/libinteger_mixer_plugin.so",
+                "plugins/audio_output/libalsa_plugin.so",
+                "plugins/audio_output/libpulse_plugin.so",
+                "plugins/codec/libfaad_plugin.so",
+                "plugins/codec/libflac_plugin.so",
+                "plugins/codec/libmpg123_plugin.so",
+                "plugins/codec/libopus_plugin.so",
+                "plugins/codec/libvorbis_plugin.so",
+                "plugins/control/libdummy_plugin.so",
+                "plugins/demux/libes_plugin.so",
+                "plugins/demux/libflacsys_plugin.so",
+                "plugins/demux/libmkv_plugin.so",
+                "plugins/demux/libmp4_plugin.so",
+                "plugins/demux/libogg_plugin.so",
+                "plugins/packetizer/libpacketizer_flac_plugin.so",
+                "plugins/packetizer/libpacketizer_mpeg4audio_plugin.so",
+                "plugins/packetizer/libpacketizer_mpegaudio_plugin.so",
+                "plugins/stream_filter/libcache_read_plugin.so",
+                "plugins/stream_filter/libprefetch_plugin.so",
+                "plugins/stream_filter/libskiptags_plugin.so",
+            ),
+            files,
+            "the runtime file list is the frozen 35-entry subset (the producer's 32 audio files + libmatroska.so.7 / libebml.so.5 / libfaad.so.2 — the 24.08 runtime's missing libs, measured in the sandbox 2026-10-11); a swap or duplicate must fail here, not on the Linux host at extraction time"
+        )
+    }
+
+    @Test
+    fun `the extraction allow-list stays in sync with the producer script`() {
+        // The tarball's CONTENT is defined by the committed producer (scripts/build-vlc-linux-tarball.sh
+        // — the source of the pinned binary; its two staged lists are the single source of truth). The
+        // exact pin above freezes the gradle allow-list, but it cannot see a one-sided edit: if the
+        // producer's list changes (a plugin swapped at a future VLC bump) and only the tarball is
+        // re-pinned through the catalog PR, the diff is SHA-only — the file-list drift is invisible in
+        // it. So this test parses the producer's staged lists (the four single-cp root files + the
+        // RUNTIME_LIBS sonames + the AUDIO_SUBSET plugins) and compares them with the extraction
+        // allow-list: a drift fails the suite on EVERY host, before the catalog PR. (Order is
+        // irrelevant — both sides are file SETS, compared as sorted sets.)
+        val script = File("../scripts/build-vlc-linux-tarball.sh").readText()
+        val audioSubset = script
+            .substringAfter("AUDIO_SUBSET=\"")
+            .substringBefore("\n\"")
+            .trim()
+            .lineSequence()
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .toList()
+        val runtimeLibs = script
+            .substringAfter("RUNTIME_LIBS=\"")
+            .substringBefore("\n\"")
+            .trim()
+            .lineSequence()
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .map { it.substringBefore(' ') } // line format: "<soname> <staged needer>"
+            .toList()
+        val producerStaged = (listOf("COPYING", "libvlc.so", "libvlccore.so.9", "libvlc_pulse.so.0")
+            + runtimeLibs + audioSubset).toSortedSet()
+        assertEquals(
+            producerStaged,
+            pinProp("linux.tarballRuntimeFiles").split("\u001f").toSortedSet(),
+            "the producer's staged file set (scripts/build-vlc-linux-tarball.sh) and the extraction allow-list must match exactly — a one-sided edit (producer or gradle list) must fail here, not surface as a bundle whose tarball and its allow-list disagree"
+        )
+    }
+
+    @Test
     fun `the package name matches the AUR pkgnames and the download URL`() {
         // The committed AUR entries are STABLE-ONLY (the dev channel is a parallel product — its
         // own -dev package base): compare against the base name, whatever the channel is.

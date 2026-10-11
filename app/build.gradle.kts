@@ -834,6 +834,16 @@ val vlcLinuxRuntimeFiles = listOf(
     // The PulseAudio output's wrapper library (libpulse_plugin.so's DT_NEEDED — built by the same
     // configure as the plugins, installed under the prefix's lib/vlc/ like a runtime lib).
     "libvlc_pulse.so.0",
+    // The three runtime libs the Flatpak's 24.08 runtime does NOT ship (measured in the sandbox,
+    // 2026-10-11): libmatroska.so.7 + libebml.so.5 are libmkv_plugin.so's DT_NEEDED (the webm
+    // demux — the format the phone streams) and libfaad.so.2 is libfaad_plugin.so's DT_NEEDED
+    // (aac). The producer (scripts/build-vlc-linux-tarball.sh) bundles them at the tarball root
+    // under the frozen external-dependency contract — the wrapper's LD_LIBRARY_PATH already
+    // covers the runtime dir, so the bundle stays self-contained without any wrapper change.
+    // This list MUST stay in sync with the producer's subset + bundled libs (35 entries).
+    "libmatroska.so.7",
+    "libebml.so.5",
+    "libfaad.so.2",
     "plugins/access/libfilesystem_plugin.so",
     "plugins/access/libhttps_plugin.so",
     "plugins/audio_filter/libaudio_format_plugin.so",
@@ -1038,17 +1048,22 @@ val flatpakLibsecretSha256 = flatpakLibsecretSource["sha256"] as String
 
 // The Flatpak wrapper's channel-independent env exports (spec spec-linux-flatpak, AD-3 — the
 // 2026-10-08 flatpak audio/keyring fix). LD_LIBRARY_PATH lets libvlc.so's DT_NEEDED (the
-// libvlccore soname) and the plugins' own DT_NEEDED resolve from the embedded runtime.
+// libvlccore soname) and the plugins' own DT_NEEDED resolve from the embedded runtime — and it
+// also carries /app/lib, where the libsecret module installs the keyring client (the module's
+// build-command normalizes that install dir to /app/lib — the libdir default drifts with the
+// build host's flatpak-builder, lib vs lib64, and an explicit -Dlibdir config-opt is impossible:
+// flatpak-builder auto-passes --libdir and meson refuses the double specification): JNA's first
+// attempt — the bare dlopen of the unversioned name — reads LD_LIBRARY_PATH, so the bundled
+// libsecret resolves on any build host, independent of the sandbox's host-dependent ld cache
+// (the 2026-10-11 keyring regression).
 // VLC_PLUGIN_PATH points libvlc at the embedded plugin dir: libvlc_new() loads its mandatory
 // modules (audio, clock, access) at instance creation, and in VLC 3.0.24 the --plugin-path CLI
 // option is gone (the env var is the only lever) — without it libvlc_new returns NULL and every
-// local playback fails. jna.library.path makes the bundled libsecret (staged in /app/lib by the
-// libsecret module) resolvable by JNA's explicit search, independent of the sandbox's
-// host-dependent ld cache: the unversioned libsecret-1.so is installed by meson, but it is found
-// only through JNA's explicit path or the host ld cache, and that coverage is not guaranteed
-// across flatpak versions (the 2026-10-08 keyring regression).
+// local playback fails. jna.library.path is the second deterministic cover for the bundled
+// libsecret (installed into /app/lib): JNA's explicit file search, where a secret-1 request
+// matches the versioned soname libsecret-1.so.0 — the 2026-10-08 keyring fix.
 val flatpakWrapperExports = listOf(
-    "export LD_LIBRARY_PATH=\"/app/lib/app/resources/vlc\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\"",
+    "export LD_LIBRARY_PATH=\"/app/lib/app/resources/vlc:/app/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\"",
     "export VLC_PLUGIN_PATH=\"/app/lib/app/resources/vlc/plugins\${VLC_PLUGIN_PATH:+:\$VLC_PLUGIN_PATH}\"",
     "export JAVA_TOOL_OPTIONS=\"-Djna.library.path=/app/lib\${JAVA_TOOL_OPTIONS:+ \$JAVA_TOOL_OPTIONS}\"",
 )
@@ -1222,6 +1237,13 @@ project.afterEvaluate {
         systemProperty("linux.tarballUrl", vlcLinuxTarballUrl)
         systemProperty("linux.tarballName", vlcLinuxTarballName)
         systemProperty("linux.tarballSha256", vlcLinuxTarballSha256)
+        // The extraction allow-list itself (the producer/extract sync, spec
+        // spec-flatpak-keyring-matroska): the list (joined with the unit separator, no
+        // metacharacters in the file names, so no base64) is the cross-platform guard of the
+        // tarball content (LinuxPackagePinTest) — it runs on every host that runs the test
+        // suite (the local `gradlew build` gate + `build.sh package`; the release CI does not
+        // run :app:test), including the hosts where the tarball is never extracted.
+        systemProperty("linux.tarballRuntimeFiles", vlcLinuxRuntimeFiles.joinToString("\u001f"))
         // The Flatpak contract (spec spec-linux-flatpak): the frozen app-id (AD-1), the base
         // runtime + version (AD-2), the finish-args (the sandbox contract: network = pairing
         // listener, SecretService = keyring, home = the data dir, …), the frozen bundle name and
