@@ -362,6 +362,13 @@
     <string name="close_behavior">Close behavior</string>
     <string name="close_behavior_minimize">Minimize to tray</string>
     <string name="close_behavior_quit">Quit the app</string>
+    <!-- The app shortcuts (the phone's launcher shortcuts, shown in the tray menu) — the phone's strings verbatim -->
+    <string name="app_shortcuts_settings">App shortcuts</string>
+    <string name="app_shortcuts_settings_description">Choose and reorder launcher shortcuts</string>
+    <string name="app_shortcuts_rescue_locked">Rescue cannot be disabled</string>
+    <string name="reset">Nollaa</string>
+    <string name="home">Koti</string>
+    <string name="toast_preference_saved">Asetukset Tallennettu</string>
     <string name="network_settings_description">Verkkososio sisältää asetuksia sovelluksen suorituskyvyn ja datan käytön optimoimiseksi</string>
     <string name="other_settings_description">Sekalainen osa sisältää erilaisia valinnaisia asetuksia ja apuohjelmia</string>
     <string name="cache">Välimuisti</string>
