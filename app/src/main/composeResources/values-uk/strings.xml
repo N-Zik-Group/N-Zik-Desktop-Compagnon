@@ -249,6 +249,8 @@
     <string name="cd_app_icon_in_player">іконка додатка в плеєрі</string>
     <string name="cd_number_of_songs_in_queue">Кількість пісень у черзі</string>
     <string name="cd_app_s_icon">Значок додатка</string>
+    <string name="cd_song_album_cover">обкладинка пісні</string>
+    <string name="cd_disc_background">дисковий фон</string>
     <string name="rewind">Rewind</string>
     <string name="history">Історія</string>
     <string name="profiles">Profiles</string>
@@ -483,7 +485,9 @@
     <string name="lastfm_love">Love on Last.fm</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
     <string name="deleted">Видалено</string>
+    <string name="deleted_item">%1$s видалено</string>
     <string name="and">and</string>
     <string name="sync">Синхронізувати</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="visualizer">Візуалізатор</string>
 </resources>
