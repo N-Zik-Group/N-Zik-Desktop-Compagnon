@@ -182,6 +182,7 @@
     <string name="follow">অনুসরণ করুন</string>
     <string name="following">অনুসরণ করা হচ্ছে</string>
     <string name="item_select">নির্বাচন করুন</string>
+    <string name="item_deselect">ডি-সিলেক্ট</string>
     <string name="info_download_all_songs">সব গান ডাউনলোড করুন</string>
     <string name="info_smart_recommendation">স্মার্ট রেকমেন্ডেশন</string>
     <string name="import_playlist">প্লেলিস্ট আমদানি করুন</string>
