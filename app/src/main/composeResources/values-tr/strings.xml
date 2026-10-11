@@ -362,6 +362,13 @@
     <string name="close_behavior">Close behavior</string>
     <string name="close_behavior_minimize">Minimize to tray</string>
     <string name="close_behavior_quit">Quit the app</string>
+    <!-- The app shortcuts (the phone's launcher shortcuts, shown in the tray menu) — the phone's strings verbatim -->
+    <string name="app_shortcuts_settings">Uygulama kısayolları</string>
+    <string name="app_shortcuts_settings_description">Başlatıcı kısayollarını seçin ve sırasını değiştirin</string>
+    <string name="app_shortcuts_rescue_locked">Kurtarma işlevi devre dışı bırakılamaz</string>
+    <string name="reset">Sıfırla</string>
+    <string name="home">Ana Sayfa</string>
+    <string name="toast_preference_saved">Tercih Kaydedildi</string>
     <string name="network_settings_description">Ağ bölümü, uygulamanın performansını ve veri kullanımını optimize etmeye yönelik ayarları içerir</string>
     <string name="other_settings_description">Çeşitli bölümü, çeşitli isteğe bağlı ayarları ve yardımcı programları içerir</string>
     <string name="cache">Önbellek</string>
