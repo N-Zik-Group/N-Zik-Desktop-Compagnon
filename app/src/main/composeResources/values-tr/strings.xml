@@ -297,7 +297,6 @@
     <string name="pinned_playlists">Sabitlenmiş</string>
     <string name="new_playlist">Yeni çalma listesi</string>
     <string name="create_new_playlist">Yeni çalma listesi oluştur</string>
-    <string name="sync_per_playlist_auto">Çalma Listesi Başına Otomatik Senkronizasyon</string>
     <string name="yt_playlists">YT/YTM</string>
     <string name="delete_playlists_label">Çalma listelerini sil</string>
     <string name="rewind_top_sort">Geri Sarma Üst</string>
