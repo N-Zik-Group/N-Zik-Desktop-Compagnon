@@ -122,6 +122,9 @@ import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.playback.services.LocalPlayback
 import app.n_zik.compagnon.playback.services.LocalPlaybackNotice
 import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.components.ui.screens.home.LibraryTab
+import app.n_zik.compagnon.tray.AppShortcutRequests
+import app.n_zik.compagnon.tray.ShortcutDestination
 import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.getString
 
@@ -498,6 +501,21 @@ fun MainActivity(
         pages = pages.closeAll()
     }
 
+    // A tray app shortcut (Home / Songs / Albums / Artists / Playlists): back home — the player and
+    // the queue closed — then the shortcut's tab, if any, handed to the home screen. The shortcuts without a PC
+    // destination only re-showed the window (the tray did that) and are dropped here
+    var requestedTab by remember { mutableStateOf<LibraryTab?>(null) }
+    val pendingShortcut by AppShortcutRequests.pending.collectAsState()
+    LaunchedEffect(pendingShortcut) {
+        val shortcut = pendingShortcut ?: return@LaunchedEffect
+        AppShortcutRequests.pending.value = null
+        val destination = shortcut.destination ?: return@LaunchedEffect
+        showPlayer = false
+        showQueueOverlay = false
+        goHome()
+        if (destination is ShortcutDestination.Tab) requestedTab = destination.tab
+    }
+
     // The settings page's state, kept while the update page covers it (the phone's back stack); a closed
     // settings page starts afresh next time (the phone recreates its destination)
     val settingsStateHolder = androidx.compose.runtime.saveable.rememberSaveableStateHolder()
@@ -716,6 +734,8 @@ fun MainActivity(
                             onDetailBack = { navIsBack = true; detail = null },
                             isBackNavigation = navIsBack,
                             onNavBarVisible = { navBarVisible = it },
+                            requestedTab = requestedTab,
+                            onRequestedTabShown = { requestedTab = null },
                             modifier = Modifier.weight(1f),
                         )
                     }

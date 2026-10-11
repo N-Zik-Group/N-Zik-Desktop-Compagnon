@@ -43,6 +43,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
     val settings by preferences.settings.collectAsState()
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showCloseBehaviorDialog by remember { mutableStateOf(false) }
+    var showShortcutsDialog by remember { mutableStateOf(false) }
     val search = Search(query, onQuery, lazyListState = null)
     val languagesCtx = settingsSearchCtx(
         search.inputValue,
@@ -123,6 +124,33 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                     },
                 )
             }
+        }
+
+        // The app shortcuts (the phone's General « App shortcuts » card): the tray menu's shortcuts —
+        // hidden where no tray exists
+        val shortcutsCtx = settingsSearchCtx(search.inputValue, stringResource(Res.string.app_shortcuts_settings))
+        if (traySupported) {
+            AnimatedVisibility(
+                visible = shortcutsCtx,
+                enter = fadeIn(animationSpec = tween(1050)) + scaleIn(animationSpec = tween(1050), initialScale = 0.9f),
+            ) {
+                SettingsSectionCard(
+                    title = stringResource(Res.string.app_shortcuts_settings),
+                    icon = Res.drawable.shortcut_rescue,
+                    content = {
+                        OtherSettingsEntry(
+                            title = stringResource(Res.string.app_shortcuts_settings),
+                            text = stringResource(Res.string.app_shortcuts_settings_description),
+                            icon = Res.drawable.shortcut_rescue,
+                            onClick = { showShortcutsDialog = true },
+                        )
+                    },
+                )
+            }
+        }
+
+        if (showShortcutsDialog) {
+            AppShortcutsDialog(preferences, onDismiss = { showShortcutsDialog = false })
         }
 
         if (showLanguageDialog) {

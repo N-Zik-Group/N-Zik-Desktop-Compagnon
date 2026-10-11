@@ -89,6 +89,9 @@ const val multiFloatActionIconOffsetXKey = "multiFloatActionIconOffsetX"
 const val multiFloatActionIconOffsetYKey = "multiFloatActionIconOffsetY"
 // The window's close behavior (spec `spec-tray-taskbar-media-controls`):
 const val closeBehaviorKey = "closeBehavior"
+// The app shortcuts in the tray menu (the phone's `ShortcutIconSync.kt` keys, same CSV values):
+const val appShortcutsOrderKey = "appShortcutsOrder"
+const val appShortcutsEnabledKey = "appShortcutsEnabled"
 
 /**
  * The sort state of one library chip (contract §10, since 1.6): as on the phone, every chip of a
@@ -248,6 +251,10 @@ data class UserSettings(
      * the setting — there the X quits regardless).
      */
     @SerialName(closeBehaviorKey) val closeBehavior: String = CloseBehavior.MinimizeToTray.wire,
+    /** The app shortcuts' order, the phone's comma-separated ids (`null` = the default order). */
+    @SerialName(appShortcutsOrderKey) val appShortcutsOrder: String? = null,
+    /** The enabled app shortcuts, the phone's comma-separated ids (`null` = the phone's defaults). */
+    @SerialName(appShortcutsEnabledKey) val appShortcutsEnabled: String? = null,
 ) {
     /** Ceiling of the audio cache: `0` disabled, `null` unlimited. */
     val songCacheMaxBytes: Long? get() = exoPlayerDiskCacheMaxSize.cacheBytes(exoPlayerCustomCache)

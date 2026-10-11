@@ -79,6 +79,9 @@ fun HomeScreen(
     /** A page closing itself (its back, "not found"): a back navigation. */
     onDetailBack: () -> Unit = { onDetail(null) },
     onNavBarVisible: (Boolean) -> Unit,
+    /** A tab the tray's app shortcut asked for; [onRequestedTabShown] once switched to (or absent). */
+    requestedTab: LibraryTab? = null,
+    onRequestedTabShown: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val saveableStateHolder = rememberSaveableStateHolder()
@@ -101,6 +104,14 @@ fun HomeScreen(
             tabIndex = newTab
             preferences?.update { it.copy(homeScreenTabIndex = newTab) }
         }
+    }
+
+    // A tray app shortcut: its tab when the phone serves it (a missing tab leaves the current one)
+    LaunchedEffect(requestedTab) {
+        val tab = requestedTab ?: return@LaunchedEffect
+        val index = tabs.indexOf(tab)
+        if (index >= 0) changeTab(index)
+        onRequestedTabShown()
     }
 
     // The phone's tabs are always fresh (its own database): the tab that just became visible is re-read

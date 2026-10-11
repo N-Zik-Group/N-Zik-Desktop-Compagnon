@@ -58,6 +58,7 @@ import app.n_zik.compagnon.playback.services.LocalPlayback
 import app.n_zik.compagnon.platform.TaskbarMediaControls
 import app.n_zik.compagnon.platform.WindowController
 import app.n_zik.compagnon.platform.TaskbarMediaControls.Companion.createTaskbarMediaControls
+import app.n_zik.compagnon.tray.TrayMenuAppearance
 import app.n_zik.compagnon.tray.TraySetup
 import app.n_zik.compagnon.tray.isSystemTraySupported
 import app.n_zik.compagnon.tray.shouldMinimizeOnClose
@@ -142,7 +143,7 @@ private fun runApplication() = application {
     // The system tray, application level (not window content); a no-op where the platform has no
     // tray (Wayland) — composed once the first frame has registered the graphics implementation
     if (trayReady) {
-        TraySetup(windowController = windowController, onQuit = ::exitApplication)
+        TraySetup(windowController = windowController, preferences = preferences, onQuit = ::exitApplication)
     }
 }
 
@@ -245,6 +246,9 @@ fun App(
         fadeFrom = appearanceState.fadeFromAppearance,
         onFadeComplete = { appearanceState.fadeFromAppearance = null },
     ) { appearance ->
+        // The tray's styled menu is its own window, outside this composition: it reads the live
+        // appearance from here (the palette, the roundness, the fonts)
+        SideEffect { TrayMenuAppearance.current.value = appearance }
         // The phone draws its Material components without a `MaterialTheme`: the default light scheme, with
         // Android's Roboto (story 11c); the app ripple is bounded, in the palette's text colour
         // (phone's `MainActivity.kt` 1595-1598, 2072-2074)

@@ -1,7 +1,6 @@
 package app.n_zik.compagnon.platform
 
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.toPixelMap
 import app.n_zik.compagnon.generated.AppVersion
 import app.n_zik.compagnon.bridge.ConnectionState
 import app.n_zik.compagnon.bridge.state.PlayerState
@@ -9,8 +8,6 @@ import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.pairing.CredentialStore
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
-import java.awt.image.BufferedImage
-import kotlin.math.roundToInt
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.logging.Logger
@@ -399,20 +396,7 @@ class MprisMediaControls(
 
     /** The [bitmap] as a PNG in the app directory (`mpris-artwork.png`, overwritten per track). */
     private fun writeArtworkFile(bitmap: ImageBitmap): Path {
-        val pixelMap = bitmap.toPixelMap()
-        val image = BufferedImage(pixelMap.width, pixelMap.height, BufferedImage.TYPE_INT_ARGB)
-        for (y in 0 until pixelMap.height) {
-            for (x in 0 until pixelMap.width) {
-                // Compose's `Color` has no `toArgb()` — build the 0xAARRGGBB word from its components;
-                // `PixelMap` is indexed by (x, y), not a flat index
-                val c = pixelMap[x, y]
-                val argb = ((c.alpha * 255f).roundToInt() shl 24) or
-                    ((c.red * 255f).roundToInt() shl 16) or
-                    ((c.green * 255f).roundToInt() shl 8) or
-                    (c.blue * 255f).roundToInt()
-                image.setRGB(x, y, argb)
-            }
-        }
+        val image = bitmap.toBufferedImage()
         val dir = CredentialStore.appDirectory()
         Files.createDirectories(dir)
         val file = dir.resolve(ART_FILE_NAME)

@@ -2,6 +2,11 @@ package app.n_zik.compagnon.platform
 
 import app.n_zik.compagnon.bridge.ConnectionState
 import app.n_zik.compagnon.bridge.state.PlayerState
+import app.n_zik.compagnon.bridge.state.SessionContract
+import app.n_zik.compagnon.core.network.ArtworkKey
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import com.sun.jna.Callback
 import com.sun.jna.CallbackReference
 import com.sun.jna.Function
@@ -98,6 +103,27 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
     // backstop for a state push that raced a (re)created thumbnail button
     private var stateRetimer: Timer? = null
 
+    // The « Now Playing » panel (SMTC) on the same window — bound right after the taskbar setup.
+    // AD-1: its buttons only forward to the attached repository
+    private val smtc = WindowsSmtc(log) { button ->
+        when (button) {
+            SmtcButton.Play -> forward { play() }
+            SmtcButton.Pause -> forward { pause() }
+            SmtcButton.Next -> forward { next() }
+            SmtcButton.Previous -> forward { previous() }
+        }
+    }
+
+    // The last state push (EDT) — the SMTC artwork is fetched for its current track
+    private var lastState: PlayerState? = null
+    private var lastConnection: ConnectionState = ConnectionState.Connecting
+    private var lastFeatures: Set<String> = emptySet()
+
+    // The SMTC artwork: latest-wins per track, PNG bytes streamed to the panel
+    private val artScope = NzikDispatchers.fireAndForget(NzikDispatchers.DATA)
+    private var artJob: Job? = null
+    private var artForTrackId: String? = null
+
     override fun onPlatformSetup() {
         onEdt {
             if (taskbar == null) setup()
@@ -117,6 +143,12 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         // Kept even before the setup: the first addButtons then carries the live state, not the
         // disabled defaults (a push that lands before the setup would otherwise be lost)
         specs = thumbBarSpecs(state, connection, features)
+        lastState = state
+        lastConnection = connection
+        lastFeatures = features
+        // The panel keeps the view until its setup when it is not up yet
+        smtc.show(smtcView(mprisSnapshot(state, connection, features, artUrl = null)))
+        scheduleSmtcArtwork()
         if (taskbar == null) {
             // The window may not have been realized when the first attach ran the setup (a session
             // auto-reconnects at startup, before the window's first show): retry on each state push
@@ -133,6 +165,11 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
     }
 
     override fun onSessionEnded() {
+        lastState = null
+        lastConnection = ConnectionState.Connecting
+        lastFeatures = emptySet()
+        smtc.show(smtcView(stoppedSnapshot()))
+        scheduleSmtcArtwork()
         if (taskbar == null) return
         // The session is gone: the buttons stay on the thumbnail, disabled (the frozen spec's WIN_NO_SESSION row)
         specs = thumbBarSpecs(null, ConnectionState.Connecting, emptySet())
@@ -196,6 +233,8 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
             addButtons()
             if (window.isShowing) recreateTaskbarButton() else firstShowPending = true
             log.info("ThumbBar: taskbar media buttons installed")
+            // The Now Playing panel on the same window (its own failure keeps the taskbar buttons up)
+            if (smtc.setup(hwnd)) scheduleSmtcArtwork()
         } catch (t: Throwable) {
             // A native failure (e.g. an `UnsatisfiedLinkError` for a function this Windows build does
             // not export) is permanent — it used to escape into the EDT and kill the event thread.
@@ -391,6 +430,35 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         log.info("ThumbBar: taskbar button recreated after the first show — delete=0x${Integer.toHexString(deleted)}, add=0x${Integer.toHexString(added)}")
         // Belt-and-braces: the taskbar may create the fresh button a beat later
         scheduleRepushRetry("first show")
+    }
+
+    /** Keeps the SMTC artwork on the current track (EDT): fetched through the phone (gated by
+     *  `FEATURE_ARTWORK` + `hasArtwork`, like MPRIS), latest-wins — a superseded fetch drops its result. */
+    private fun scheduleSmtcArtwork() {
+        if (!smtc.isUp) return
+        val track = lastState?.currentTrack
+        val wantsArtwork = lastConnection is ConnectionState.Live &&
+            SessionContract.FEATURE_ARTWORK in lastFeatures &&
+            track != null && track.hasArtwork
+        if (!wantsArtwork) {
+            if (artForTrackId != null) {
+                artJob?.cancel()
+                artForTrackId = null
+                smtc.setThumbnail(null)
+            }
+            return
+        }
+        if (artForTrackId == track.id) return
+        val repo = attachedRepository ?: return
+        artJob?.cancel()
+        artForTrackId = track.id
+        artJob = artScope.launch {
+            val png = runCatching { repo.artwork(ArtworkKey.track(track.id)) }.getOrNull()
+                ?.let { bitmap -> runCatching { bitmap.toPngBytes() }.getOrNull() }
+            onEdt {
+                if (artForTrackId == track.id) smtc.setThumbnail(png)
+            }
+        }
     }
 
     /** The first show after a pre-show setup: the button is recreated once the show has settled —
