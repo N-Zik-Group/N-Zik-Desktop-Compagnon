@@ -249,6 +249,8 @@
     <string name="cd_app_icon_in_player">icona app nel giocatore</string>
     <string name="cd_number_of_songs_in_queue">Numero di brani in coda</string>
     <string name="cd_app_s_icon">Icona dell\'app</string>
+    <string name="cd_song_album_cover">copertina album brani</string>
+    <string name="cd_disc_background">sfondo disco</string>
     <string name="rewind">Rewind</string>
     <string name="history">Cronologia</string>
     <string name="profiles">Profiles</string>
@@ -483,7 +485,9 @@
     <string name="lastfm_love">Love on Last.fm</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
     <string name="deleted">Eliminato</string>
+    <string name="deleted_item">%1$s eliminato</string>
     <string name="and">and</string>
     <string name="sync">Sincronizza</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="visualizer">Visualizzazione</string>
 </resources>
