@@ -86,6 +86,8 @@ private fun runApplication() = application {
         state = rememberWindowState(width = 1100.dp, height = 800.dp),
         onPreviewKeyEvent = { event -> isBackKey(event) && backDispatcher.dispatch() },
     ) {
+        // The desktop layout's floor (Spotify's), capped to the screen the window opens on
+        remember(window) { applyWindowMinimumSize(window) }
         CompositionLocalProvider(LocalBackDispatcher provides backDispatcher) {
             // The AWT window behind the content scope: its layers are painted with the app's
             // background color so a resize never exposes the layer defaults (black canvas

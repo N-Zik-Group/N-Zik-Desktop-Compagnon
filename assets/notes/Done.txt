@@ -1,4 +1,11 @@
 Added:
+- feat(window): a minimum window size — Spotify desktop's 1000 x 750 (logical pixels), capped to the screen so it never overflows a small or scaled display
+  - `WindowMinimumSize.kt`: `PREFERRED_MINIMUM_WINDOW_SIZE` (1000 x 750, the Spotify desktop floor reported at any display scale) and the pure `windowMinimumSize(usableArea)` capping it per axis to the usable screen; `applyWindowMinimumSize(window)` measures the screen the window opens on (its `GraphicsConfiguration` bounds minus the taskbar insets) and sets the AWT `minimumSize` — no screen readable → no minimum, no failure
+  - `Main.kt`: applied once from the `Window { }` scope (`remember(window)`); the default window stays 1100 x 800
+  - Why capped: Spotify's own fixed floor overflows small or heavily scaled screens (e.g. 1080p at 175 % = 1097 x 617 logical pixels) — here the height drops to 617 there instead
+  - Limit: computed once on the opening screen — moving the window to a smaller monitor does not recompute it
+  - Tests: new `WindowMinimumSizeTest` (4: large screen, short screen caps the height only, narrow screen caps the width only, the 1000 x 750 value); `gradlew.bat build` on HEAD + these files — 663 tests, the only failure the known pre-existing `ParityPassThreeTest` case
+  - Verified by the user on Windows (2026-10-11)
 - fix(window): no more white / black flash on the pixels a window resize exposes — they now show the app's background color (spec `spec-smooth-window-resize`)
   - Root cause, found by elimination: the flash came from Windows / native AWT, not from Skiko — every rendered Skiko frame already starts on the app background, and forcing `skiko.renderApi=SOFTWARE_FAST` (no D3D at all) kept the white + black, while `-Dsun.awt.erasebackgroundonresize=true` alone removed both (user-tested). Without that AWT Windows-toolkit property the newly exposed area shows the window class's white brush and the compositor's black fill until the next Compose frame (JetBrains CMP-3420 / CMP-7700)
   - `Main.kt` `main()`: sets `sun.awt.erasebackgroundonresize=true` (`ERASE_BACKGROUND_ON_RESIZE_PROPERTY`) before the AWT toolkit loads (the property is read once at toolkit init), then runs the former `application { }` body (`runApplication()`); ignored by the Linux X11 toolkit
