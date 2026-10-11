@@ -1,7 +1,12 @@
 package app.n_zik.compagnon.utils
 
 import app.n_zik.compagnon.bridge.state.PlayerBackgroundColors
+import app.n_zik.compagnon.enums.AlbumSwipeAction
 import app.n_zik.compagnon.enums.AnimatedGradient
+import app.n_zik.compagnon.enums.HomeScreenTabs
+import app.n_zik.compagnon.enums.NavigationBarPosition
+import app.n_zik.compagnon.enums.NavigationBarType
+import app.n_zik.compagnon.enums.PlaylistSwipeAction
 import app.n_zik.compagnon.enums.PlayerSwipeSensitivity
 import app.n_zik.compagnon.enums.PlayerTimelineType
 import app.n_zik.compagnon.enums.QueueSwipeAction
@@ -182,6 +187,93 @@ class PreferencesTest {
         assertEquals(PlayerSwipeSensitivity.Medium, settings.playerSwipeSensitivityValue)
         assertEquals(QueueSwipeAction.RemoveFromQueue, settings.queueSwipeLeftActionValue)
         assertEquals(QueueSwipeAction.PlayNext, settings.queueSwipeRightActionValue)
+    }
+
+    @Test
+    fun `the home keys decode with the phone defaults`() {
+        Files.writeString(file(), """{"exoPlayerCustomCache":48}""")
+
+        val settings = Preferences(file()).settings.value
+        assertEquals(NavigationBarPosition.BottomFloating.name, settings.navigationBarPosition)
+        assertEquals(NavigationBarType.IconOnly.name, settings.navigationBarType)
+        assertEquals(HomeScreenTabs.Default.name, settings.indexNavigationTab)
+        // Never written: the start tab applies, until the home tab change writes it
+        assertEquals(null, settings.homeScreenTabIndex)
+        assertEquals(PlaylistSwipeAction.Favourite.name, settings.playlistSwipeLeftAction)
+        assertEquals(PlaylistSwipeAction.PlayNext.name, settings.playlistSwipeRightAction)
+        assertEquals(AlbumSwipeAction.PlayNext.name, settings.albumSwipeLeftAction)
+        assertEquals(AlbumSwipeAction.Bookmark.name, settings.albumSwipeRightAction)
+        // On by default on the PC (off on the phone)
+        assertEquals(true, settings.showFloatingIcon)
+        assertEquals(0f, settings.multiFloatActionIconOffsetX)
+        assertEquals(0f, settings.multiFloatActionIconOffsetY)
+    }
+
+    @Test
+    fun `the home keys round-trip through encode and decode`() {
+        Preferences(file()).update {
+            it.copy(
+                navigationBarPosition = NavigationBarPosition.Left.name,
+                navigationBarType = NavigationBarType.IconAndText.name,
+                indexNavigationTab = HomeScreenTabs.Playlists.name,
+                homeScreenTabIndex = 2,
+                playlistSwipeLeftAction = PlaylistSwipeAction.Enqueue.name,
+                playlistSwipeRightAction = PlaylistSwipeAction.Download.name,
+                albumSwipeLeftAction = AlbumSwipeAction.Enqueue.name,
+                albumSwipeRightAction = AlbumSwipeAction.NoAction.name,
+                showFloatingIcon = false,
+                multiFloatActionIconOffsetX = 12.5f,
+                multiFloatActionIconOffsetY = -3f,
+            )
+        }
+
+        val reloaded = Preferences(file()).settings.value
+        assertEquals(NavigationBarPosition.Left.name, reloaded.navigationBarPosition)
+        assertEquals(NavigationBarPosition.Left, reloaded.navigationBarPositionValue)
+        assertEquals(NavigationBarType.IconAndText.name, reloaded.navigationBarType)
+        assertEquals(NavigationBarType.IconAndText, reloaded.navigationBarTypeValue)
+        assertEquals(HomeScreenTabs.Playlists.name, reloaded.indexNavigationTab)
+        assertEquals(HomeScreenTabs.Playlists, reloaded.indexNavigationTabValue)
+        assertEquals(2, reloaded.homeScreenTabIndex)
+        assertEquals(PlaylistSwipeAction.Enqueue.name, reloaded.playlistSwipeLeftAction)
+        assertEquals(PlaylistSwipeAction.Enqueue, reloaded.playlistSwipeLeftActionValue)
+        assertEquals(PlaylistSwipeAction.Download.name, reloaded.playlistSwipeRightAction)
+        assertEquals(PlaylistSwipeAction.Download, reloaded.playlistSwipeRightActionValue)
+        assertEquals(AlbumSwipeAction.Enqueue.name, reloaded.albumSwipeLeftAction)
+        assertEquals(AlbumSwipeAction.Enqueue, reloaded.albumSwipeLeftActionValue)
+        assertEquals(AlbumSwipeAction.NoAction.name, reloaded.albumSwipeRightAction)
+        assertEquals(AlbumSwipeAction.NoAction, reloaded.albumSwipeRightActionValue)
+        assertEquals(false, reloaded.showFloatingIcon)
+        assertEquals(12.5f, reloaded.multiFloatActionIconOffsetX)
+        assertEquals(-3f, reloaded.multiFloatActionIconOffsetY)
+    }
+
+    @Test
+    fun `unknown home enum names keep the raw string and decode to the phone defaults`() {
+        Files.writeString(
+            file(),
+            """{"navigationBarPosition":"bogus","navigationBarType":"bogus","indexNavigationTab":"bogus",
+                "playlistSwipeLeftAction":"bogus","playlistSwipeRightAction":"bogus",
+                "albumSwipeLeftAction":"bogus","albumSwipeRightAction":"bogus"}""",
+        )
+
+        val settings = Preferences(file()).settings.value
+        // The raw names are kept exactly as written.
+        assertEquals("bogus", settings.navigationBarPosition)
+        assertEquals("bogus", settings.navigationBarType)
+        assertEquals("bogus", settings.indexNavigationTab)
+        assertEquals("bogus", settings.playlistSwipeLeftAction)
+        assertEquals("bogus", settings.playlistSwipeRightAction)
+        assertEquals("bogus", settings.albumSwipeLeftAction)
+        assertEquals("bogus", settings.albumSwipeRightAction)
+        // The decode getters fall back to the phone defaults.
+        assertEquals(NavigationBarPosition.BottomFloating, settings.navigationBarPositionValue)
+        assertEquals(NavigationBarType.IconOnly, settings.navigationBarTypeValue)
+        assertEquals(HomeScreenTabs.Default, settings.indexNavigationTabValue)
+        assertEquals(PlaylistSwipeAction.Favourite, settings.playlistSwipeLeftActionValue)
+        assertEquals(PlaylistSwipeAction.PlayNext, settings.playlistSwipeRightActionValue)
+        assertEquals(AlbumSwipeAction.PlayNext, settings.albumSwipeLeftActionValue)
+        assertEquals(AlbumSwipeAction.Bookmark, settings.albumSwipeRightActionValue)
     }
 
     /** A pre-spec `settings.json`: the old keys plus the given `language` value. */

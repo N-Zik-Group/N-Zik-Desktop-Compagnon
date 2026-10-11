@@ -14,6 +14,7 @@ import app.n_zik.compagnon.components.player.MINIPLAYER_APPEAR_FADE_SKIPPED_FRAM
 import app.n_zik.compagnon.components.player.MINIPLAYER_POP_ANIMATION_MS
 import kotlinx.coroutines.Job
 import kotlin.math.roundToInt
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.layout.layout
@@ -108,7 +109,10 @@ import app.n_zik.compagnon.bridge.state.LocalUiSettings
 import app.n_zik.compagnon.components.theme.ColorPalette
 import app.n_zik.compagnon.components.theme.applyPitchBlack
 import app.n_zik.compagnon.enums.ColorPaletteName
+import app.n_zik.compagnon.enums.NavigationBarPosition
+import app.n_zik.compagnon.enums.NavigationBarType
 import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.formatMessage
 import app.n_zik.compagnon.components.ui.screens.settings.SettingsScreen
@@ -718,16 +722,22 @@ fun MainActivity(
                 }
             }
 
-            // PlayerPosition.Bottom with the floating bar: the sheet sits above the bar when it is shown —
-            // the home's navigation bar (reported by [HomeScreen]) or the settings page's sub-tab bar
-            // (the Serveur PC page and the update page have none)
+            // The mini-player's bottom padding (the phone's `Skeleton.kt` 317-332): above the bar when
+            // it is shown — the home's navigation bar (reported by [HomeScreen]) or the settings
+            // page's sub-tab bar (the Serveur PC page and the update page have none). With the
+            // home's bar it follows its position: the floating bar's height (icon-only / with
+            // labels) plus its 25 dp padding and the phone's 4 dp gap, the fixed bottom bar's
+            // `standardNavBarHeight` plus the 4 dp, 5 dp with the top or side bars; without it, the
+            // floating bar's 25 dp padding (5 dp with a fixed bar).
             val barUnderMiniPlayer = if (pages.anyPageOpen) pages.settingsOpen && !pages.updateOpen else navBarVisible
+            val settings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
             val playerPadBottom by animateDpAsState(
-                targetValue = if (barUnderMiniPlayer) {
-                    Dimensions.floatingNavBarIconOnlyHeight + Dimensions.navBarBottomPadding + 4.dp
-                } else {
-                    Dimensions.navBarBottomPadding
-                },
+                targetValue = playerPadBottomDp(
+                    barUnderMiniPlayer = barUnderMiniPlayer,
+                    anyPageOpen = pages.anyPageOpen,
+                    position = settings.navigationBarPositionValue,
+                    type = settings.navigationBarTypeValue,
+                ),
                 animationSpec = tween(250, easing = FastOutSlowInEasing),
                 label = "playerPadBottom",
             )
@@ -819,6 +829,35 @@ internal const val MEDIA_ABSENCE_GRACE_MS = 400L
 internal suspend fun mediaAbsencePersists(currentTrack: () -> Any?): Boolean {
     delay(MEDIA_ABSENCE_GRACE_MS)
     return currentTrack() == null
+}
+
+/**
+ * The mini-player's bottom padding under the navigation bar (the `playerPadBottom` branch table of
+ * the composable, without its state reads): over the settings page's own bar (the only bar drawn
+ * while a page is open) the floating icon-only height plus its 25 dp padding and the phone's 4 dp
+ * gap; over the floating bar its own height (icon-only / with labels) plus its padding and the 4
+ * dp; over the fixed bottom bar the `standardNavBarHeight` plus the 4 dp; over the other fixed
+ * bars (top, left, right) a flat 5 dp; without a bar under the mini-player, the floating bar's
+ * 25 dp padding (5 dp with a fixed bar).
+ */
+internal fun playerPadBottomDp(
+    barUnderMiniPlayer: Boolean,
+    anyPageOpen: Boolean,
+    position: NavigationBarPosition,
+    type: NavigationBarType,
+): Dp = when {
+    barUnderMiniPlayer && anyPageOpen ->
+        Dimensions.floatingNavBarIconOnlyHeight + Dimensions.navBarBottomPadding + 4.dp
+    barUnderMiniPlayer && position.isFloating -> {
+        val barHeight = if (type == NavigationBarType.IconOnly)
+            Dimensions.floatingNavBarIconOnlyHeight else Dimensions.floatingNavBarHeight
+        barHeight + Dimensions.navBarBottomPadding + 4.dp
+    }
+    barUnderMiniPlayer && position == NavigationBarPosition.Bottom ->
+        Dimensions.standardNavBarHeight + 4.dp
+    barUnderMiniPlayer -> 5.dp
+    position.isFloating -> Dimensions.navBarBottomPadding
+    else -> 5.dp
 }
 
 /** The scroll-hide offset of the header, in px (0 shown, −64 dp hidden): phone's `LocalTopBarOffset`. */
