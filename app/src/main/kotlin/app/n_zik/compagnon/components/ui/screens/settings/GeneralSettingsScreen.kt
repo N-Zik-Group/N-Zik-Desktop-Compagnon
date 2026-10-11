@@ -7,7 +7,9 @@ import app.n_zik.compagnon.components.settings.SettingsSectionCard
 import app.n_zik.compagnon.components.tab.Search
 import app.n_zik.compagnon.components.themed.HeaderWithIcon
 import app.n_zik.compagnon.components.themed.ValueSelectorDialog
+import app.n_zik.compagnon.enums.CloseBehavior
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.tray.isSystemTraySupported
 import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.Preferences
 import androidx.compose.animation.AnimatedVisibility
@@ -40,11 +42,20 @@ import org.jetbrains.compose.resources.stringResource
 fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (String) -> Unit) {
     val settings by preferences.settings.collectAsState()
     var showLanguageDialog by remember { mutableStateOf(false) }
+    var showCloseBehaviorDialog by remember { mutableStateOf(false) }
     val search = Search(query, onQuery, lazyListState = null)
     val languagesCtx = settingsSearchCtx(
         search.inputValue,
         stringResource(Res.string.languages),
         stringResource(Res.string.app_language),
+    )
+    // The window close-behavior setting only exists where a tray exists (the frozen spec: on Wayland
+    // the card is hidden and the X quits the app — the decision lives in the window's onCloseRequest)
+    val traySupported = isSystemTraySupported()
+    val windowCtx = settingsSearchCtx(
+        search.inputValue,
+        stringResource(Res.string.window),
+        stringResource(Res.string.close_behavior),
     )
 
     Column(
@@ -92,6 +103,28 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
             )
         }
 
+        // The window's close behavior (spec `spec-tray-taskbar-media-controls`): "minimize to tray"
+        // is the default, "quit" closes the app; hidden where no tray exists (Wayland)
+        if (traySupported) {
+            AnimatedVisibility(
+                visible = windowCtx,
+                enter = fadeIn(animationSpec = tween(600)) + scaleIn(animationSpec = tween(600), initialScale = 0.9f),
+            ) {
+                SettingsSectionCard(
+                    title = stringResource(Res.string.window),
+                    icon = Res.drawable.close,
+                    content = {
+                        OtherSettingsEntry(
+                            title = stringResource(Res.string.close_behavior),
+                            text = stringResource(settings.closeBehaviorValue.textId),
+                            icon = Res.drawable.close,
+                            onClick = { showCloseBehaviorDialog = true },
+                        )
+                    },
+                )
+            }
+        }
+
         if (showLanguageDialog) {
             // The phone's title (its `GeneralSettings.kt` 218/336): the label + the current
             // locale (the desktop's equivalent of the phone's system locale)
@@ -105,6 +138,20 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                 },
                 onDismiss = { showLanguageDialog = false },
                 valueText = { value -> AppLanguage.labelOf(value) },
+            )
+        }
+
+        if (showCloseBehaviorDialog) {
+            ValueSelectorDialog(
+                title = stringResource(Res.string.close_behavior),
+                values = remember { CloseBehavior.entries.toList() },
+                selectedValue = settings.closeBehaviorValue,
+                onValueSelected = {
+                    // The window's onCloseRequest reads the wire value straight from the settings
+                    preferences.update { s -> s.copy(closeBehavior = it.wire) }
+                },
+                onDismiss = { showCloseBehaviorDialog = false },
+                valueText = { value -> stringResource(value.textId) },
             )
         }
     }

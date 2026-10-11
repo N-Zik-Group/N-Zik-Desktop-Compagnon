@@ -33,6 +33,9 @@ okhttp3 = "5.5.0"
 kotlinx-serialization = "1.11.0"
 kotlinx-coroutines = "1.11.0"
 jna = "5.19.1"
+# Linux MPRIS media controls (spec `spec-tray-taskbar-media-controls`, user approval 2026-10-11):
+# the D-Bus session bus client + the native unix-socket transport (MIT — GPL-3.0 compatible).
+dbus-java = "5.2.0"
 zxing = "3.5.4"
 graphics-shapes = "1.1.0"
 vlcj = "4.12.1"
@@ -60,6 +63,8 @@ okhttp3-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref 
 translator = { group = "com.github.rebelonion", name = "translator", version.ref = "translator" }
 zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
 jna-platform = { group = "net.java.dev.jna", name = "jna-platform", version.ref = "jna" }
+dbus-java-core = { group = "com.github.hypfvieh", name = "dbus-java-core", version.ref = "dbus-java" }
+dbus-java-transport-native-unixsocket = { group = "com.github.hypfvieh", name = "dbus-java-transport-native-unixsocket", version.ref = "dbus-java" }
 androidx-graphics-shapes = { group = "androidx.graphics", name = "graphics-shapes", version.ref = "graphics-shapes" }
 vlcj = { group = "uk.co.caprica", name = "vlcj", version.ref = "vlcj" }
 

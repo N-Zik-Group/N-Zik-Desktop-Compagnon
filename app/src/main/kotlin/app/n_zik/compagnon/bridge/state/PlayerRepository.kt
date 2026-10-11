@@ -134,5 +134,12 @@ interface PlayerRepository {
     /** "Reconnect" / "Retry": a user action, never automatic. */
     fun reconnect()
 
+    /**
+     * Registers a one-shot callback run when [close] performs its real close (after the already-closed
+     * gate) — the taskbar media surface's detach (spec `spec-tray-taskbar-media-controls`) hooks it,
+     * so an implementation whose session ends outside [close] may keep the default no-op.
+     */
+    fun onClosed(handler: () -> Unit) {}
+
     fun close()
 }

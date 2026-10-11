@@ -3,6 +3,7 @@ package app.n_zik.compagnon.utils
 import app.n_zik.compagnon.bridge.state.PlayerBackgroundColors
 import app.n_zik.compagnon.enums.AlbumSwipeAction
 import app.n_zik.compagnon.enums.AnimatedGradient
+import app.n_zik.compagnon.enums.CloseBehavior
 import app.n_zik.compagnon.enums.HomeScreenTabs
 import app.n_zik.compagnon.enums.NavigationBarPosition
 import app.n_zik.compagnon.enums.NavigationBarType
@@ -108,8 +109,8 @@ class PreferencesTest {
         assertEquals(PlayerTimelineType.Wavy.name, settings.playerTimelineType)
         assertEquals(SwipeAnimationNoThumbnail.Sliding.name, settings.swipeAnimationsNoThumbnail)
         assertEquals(PlayerSwipeSensitivity.Medium.name, settings.playerSwipeSensitivity)
-        assertEquals(true, settings.showMiniPlayerDiscover)
-        assertEquals(true, settings.showMiniPlayerVisualizer)
+        assertEquals(false, settings.showMiniPlayerDiscover)
+        assertEquals(false, settings.showMiniPlayerVisualizer)
         assertEquals(QueueSwipeAction.RemoveFromQueue.name, settings.queueSwipeLeftAction)
         assertEquals(QueueSwipeAction.PlayNext.name, settings.queueSwipeRightAction)
         assertEquals(true, settings.isSwipeToActionEnabled)
@@ -127,8 +128,8 @@ class PreferencesTest {
                 playerTimelineType = PlayerTimelineType.AudioWaves.name,
                 swipeAnimationsNoThumbnail = SwipeAnimationNoThumbnail.Fade.name,
                 playerSwipeSensitivity = PlayerSwipeSensitivity.High.name,
-                showMiniPlayerDiscover = false,
-                showMiniPlayerVisualizer = false,
+                showMiniPlayerDiscover = true,
+                showMiniPlayerVisualizer = true,
                 queueSwipeLeftAction = QueueSwipeAction.Enqueue.name,
                 queueSwipeRightAction = QueueSwipeAction.Favourite.name,
                 isSwipeToActionEnabled = false,
@@ -150,8 +151,8 @@ class PreferencesTest {
         assertEquals(SwipeAnimationNoThumbnail.Fade, reloaded.swipeAnimationsNoThumbnailValue)
         assertEquals(PlayerSwipeSensitivity.High.name, reloaded.playerSwipeSensitivity)
         assertEquals(PlayerSwipeSensitivity.High, reloaded.playerSwipeSensitivityValue)
-        assertEquals(false, reloaded.showMiniPlayerDiscover)
-        assertEquals(false, reloaded.showMiniPlayerVisualizer)
+        assertEquals(true, reloaded.showMiniPlayerDiscover)
+        assertEquals(true, reloaded.showMiniPlayerVisualizer)
         assertEquals(QueueSwipeAction.Enqueue.name, reloaded.queueSwipeLeftAction)
         assertEquals(QueueSwipeAction.Enqueue, reloaded.queueSwipeLeftActionValue)
         assertEquals(QueueSwipeAction.Favourite.name, reloaded.queueSwipeRightAction)
@@ -204,7 +205,7 @@ class PreferencesTest {
         assertEquals(AlbumSwipeAction.PlayNext.name, settings.albumSwipeLeftAction)
         assertEquals(AlbumSwipeAction.Bookmark.name, settings.albumSwipeRightAction)
         // On by default on the PC (off on the phone)
-        assertEquals(true, settings.showFloatingIcon)
+        assertEquals(false, settings.showFloatingIcon)
         assertEquals(0f, settings.multiFloatActionIconOffsetX)
         assertEquals(0f, settings.multiFloatActionIconOffsetY)
     }
@@ -221,7 +222,7 @@ class PreferencesTest {
                 playlistSwipeRightAction = PlaylistSwipeAction.Download.name,
                 albumSwipeLeftAction = AlbumSwipeAction.Enqueue.name,
                 albumSwipeRightAction = AlbumSwipeAction.NoAction.name,
-                showFloatingIcon = false,
+                showFloatingIcon = true,
                 multiFloatActionIconOffsetX = 12.5f,
                 multiFloatActionIconOffsetY = -3f,
             )
@@ -243,7 +244,7 @@ class PreferencesTest {
         assertEquals(AlbumSwipeAction.Enqueue, reloaded.albumSwipeLeftActionValue)
         assertEquals(AlbumSwipeAction.NoAction.name, reloaded.albumSwipeRightAction)
         assertEquals(AlbumSwipeAction.NoAction, reloaded.albumSwipeRightActionValue)
-        assertEquals(false, reloaded.showFloatingIcon)
+        assertEquals(true, reloaded.showFloatingIcon)
         assertEquals(12.5f, reloaded.multiFloatActionIconOffsetX)
         assertEquals(-3f, reloaded.multiFloatActionIconOffsetY)
     }
@@ -274,6 +275,36 @@ class PreferencesTest {
         assertEquals(PlaylistSwipeAction.PlayNext, settings.playlistSwipeRightActionValue)
         assertEquals(AlbumSwipeAction.PlayNext, settings.albumSwipeLeftActionValue)
         assertEquals(AlbumSwipeAction.Bookmark, settings.albumSwipeRightActionValue)
+    }
+
+    // ---- Close behavior (spec `spec-tray-taskbar-media-controls`) ------------------------------------------
+
+    @Test
+    fun `a settings file without the closeBehavior key decodes with the minimize-to-tray default`() {
+        Files.writeString(file(), """{"exoPlayerCustomCache":48}""")
+
+        val settings = Preferences(file()).settings.value
+        assertEquals(CloseBehavior.MinimizeToTray.wire, settings.closeBehavior)
+        assertEquals(CloseBehavior.MinimizeToTray, settings.closeBehaviorValue)
+    }
+
+    @Test
+    fun `the close behavior round-trips through encode and decode`() {
+        Preferences(file()).update { it.copy(closeBehavior = CloseBehavior.Quit.wire) }
+
+        val reloaded = Preferences(file()).settings.value
+        assertEquals(CloseBehavior.Quit.wire, reloaded.closeBehavior)
+        assertEquals(CloseBehavior.Quit, reloaded.closeBehaviorValue)
+    }
+
+    @Test
+    fun `an unknown closeBehavior value is read as the minimize-to-tray default`() {
+        Files.writeString(file(), """{"closeBehavior":"bogus"}""")
+
+        val settings = Preferences(file()).settings.value
+        // The raw string is kept (no rewrite on read); the decode falls back to the default.
+        assertEquals("bogus", settings.closeBehavior)
+        assertEquals(CloseBehavior.MinimizeToTray, settings.closeBehaviorValue)
     }
 
     /** A pre-spec `settings.json`: the old keys plus the given `language` value. */

@@ -140,6 +140,8 @@ val generateAppVersion = tasks.register("generateAppVersion") {
     inputs.property("channel", channel)
     inputs.property("versionName", appVersionName)
     inputs.property("versionCode", libs.versions.nzikVersionCode.get())
+    // The MPRIS DesktopEntry (spec `spec-tray-taskbar-media-controls`): the Linux package name
+    inputs.property("linuxPackageName", linuxPackageName)
     outputs.file(output)
     doLast {
         output.get().asFile.parentFile.mkdirs()
@@ -164,6 +166,8 @@ val generateAppVersion = tasks.register("generateAppVersion") {
             |    /** The in-app updater is enabled on stable / beta / dev only: debug and -git are
             |     |  source builds (no check at startup, the settings entry is forced disabled — anti-downgrade). */
             |    const val updaterEnabled: Boolean = ${channel in listOf("stable", "beta", "dev")}
+            |    /** The Linux package name (spec `spec-tray-taskbar-media-controls`): the MPRIS `DesktopEntry`. */
+            |    const val linuxPackageName: String = "$linuxPackageName"
             |}
             """.trimMargin()
         )
@@ -258,6 +262,9 @@ dependencies {
     implementation(libs.translator)
     implementation(libs.zxing.core)
     implementation(libs.jna.platform)
+    // Linux MPRIS media controls (spec `spec-tray-taskbar-media-controls`): the D-Bus session bus
+    implementation(libs.dbus.java.core)
+    implementation(libs.dbus.java.transport.native.unixsocket)
     implementation(libs.androidx.graphics.shapes)
     // vlcj-natives comes transitively and is never overridden. It brings JNA as the `-jpms` artifacts
     // (5.16.0): the same classes as the catalog's `jna` 5.17.0 under another name, so they are excluded to

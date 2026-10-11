@@ -12,6 +12,7 @@ import app.n_zik.compagnon.bridge.state.PlayerBackgroundColors
 import app.n_zik.compagnon.enums.AlbumSwipeAction
 import app.n_zik.compagnon.enums.AnimatedGradient
 import app.n_zik.compagnon.enums.AudioQualityFormat
+import app.n_zik.compagnon.enums.CloseBehavior
 import app.n_zik.compagnon.enums.ExoPlayerDiskCacheMaxSize
 import app.n_zik.compagnon.enums.HomeScreenTabs
 import app.n_zik.compagnon.enums.NavigationBarPosition
@@ -86,6 +87,8 @@ const val albumSwipeRightActionKey = "albumSwipeRightAction"
 const val showFloatingIconKey = "showFloatingIcon"
 const val multiFloatActionIconOffsetXKey = "multiFloatActionIconOffsetX"
 const val multiFloatActionIconOffsetYKey = "multiFloatActionIconOffsetY"
+// The window's close behavior (spec `spec-tray-taskbar-media-controls`):
+const val closeBehaviorKey = "closeBehavior"
 
 /**
  * The sort state of one library chip (contract §10, since 1.6): as on the phone, every chip of a
@@ -192,12 +195,12 @@ data class UserSettings(
     @SerialName(playerSwipeSensitivityKey) val playerSwipeSensitivity: String = PlayerSwipeSensitivity.Medium.name,
     /**
      * The phone's mini-player "Discover" button (its `showMiniPlayerDiscoverKey`, off by default on the
-     * phone): visible by default on the PC — decision 1 of the PC UI gaps plan: the items behind an off
-     * phone setting are visible until the PC has its own setting entry.
+     * phone; off on the PC too — user decision 2026-10-11: the default mini-player row is the transport
+     * controls plus the audio output only).
      */
-    @SerialName(showMiniPlayerDiscoverKey) val showMiniPlayerDiscover: Boolean = true,
-    /** The phone's mini-player "Visualizer" button (its `showMiniPlayerVisualizerKey`, off by default on the phone); visible by default on the PC (decision 1 of the plan). */
-    @SerialName(showMiniPlayerVisualizerKey) val showMiniPlayerVisualizer: Boolean = true,
+    @SerialName(showMiniPlayerDiscoverKey) val showMiniPlayerDiscover: Boolean = false,
+    /** The phone's mini-player "Visualizer" button (its `showMiniPlayerVisualizerKey`, off by default on the phone; off on the PC too — user decision 2026-10-11). */
+    @SerialName(showMiniPlayerVisualizerKey) val showMiniPlayerVisualizer: Boolean = false,
     /** The queue rows' left swipe action (the phone's `queueSwipeLeftActionKey`); an unknown name reads as [QueueSwipeAction.RemoveFromQueue]. */
     @SerialName(queueSwipeLeftActionKey) val queueSwipeLeftAction: String = QueueSwipeAction.RemoveFromQueue.name,
     /** The queue rows' right swipe action (the phone's `queueSwipeRightActionKey`); an unknown name reads as [QueueSwipeAction.PlayNext]. */
@@ -231,14 +234,20 @@ data class UserSettings(
     @SerialName(albumSwipeRightActionKey) val albumSwipeRightAction: String = AlbumSwipeAction.Bookmark.name,
     /**
      * The home's floating actions container toggle (the phone's `showFloatingIconKey`, off by default on
-     * the phone): visible by default on the PC — decision 1 of the PC UI gaps plan: the items behind an
-     * off phone setting are visible until the PC has its own setting entry.
+     * the phone; off on the PC too — user decision 2026-10-11).
      */
-    @SerialName(showFloatingIconKey) val showFloatingIcon: Boolean = true,
+    @SerialName(showFloatingIconKey) val showFloatingIcon: Boolean = false,
     /** The FAB's drag-repositioning x offset in px, persisted on long-press drag (the phone's `multiFloatActionIconOffsetXKey`). */
     @SerialName(multiFloatActionIconOffsetXKey) val multiFloatActionIconOffsetX: Float = 0f,
     /** The FAB's drag-repositioning y offset in px, persisted on long-press drag (the phone's `multiFloatActionIconOffsetYKey`). */
     @SerialName(multiFloatActionIconOffsetYKey) val multiFloatActionIconOffsetY: Float = 0f,
+    /**
+     * The window's close button (X) behavior (spec `spec-tray-taskbar-media-controls`): the [CloseBehavior]
+     * wire string — "minimize_to_tray" (the default) hides the window to the system tray, "quit" closes
+     * the app; an unknown value reads as the default. Only meaningful where a tray exists (Wayland hides
+     * the setting — there the X quits regardless).
+     */
+    @SerialName(closeBehaviorKey) val closeBehavior: String = CloseBehavior.MinimizeToTray.wire,
 ) {
     /** Ceiling of the audio cache: `0` disabled, `null` unlimited. */
     val songCacheMaxBytes: Long? get() = exoPlayerDiskCacheMaxSize.cacheBytes(exoPlayerCustomCache)
@@ -317,6 +326,8 @@ data class UserSettings(
     val albumSwipeRightActionValue: AlbumSwipeAction
         get() = AlbumSwipeAction.entries.firstOrNull { it.name == albumSwipeRightAction }
             ?: AlbumSwipeAction.Bookmark
+    /** The [closeBehavior] wire value decoded to its choice (unknown → [CloseBehavior.MinimizeToTray]). */
+    val closeBehaviorValue: CloseBehavior get() = CloseBehavior.fromWire(closeBehavior)
 }
 
 /**

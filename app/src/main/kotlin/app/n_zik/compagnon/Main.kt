@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -54,6 +55,12 @@ import app.n_zik.compagnon.core.network.CandidateAddresses
 import app.n_zik.compagnon.core.network.SystemNetworkInterfaceSource
 import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.playback.services.LocalPlayback
+import app.n_zik.compagnon.platform.TaskbarMediaControls
+import app.n_zik.compagnon.platform.WindowController
+import app.n_zik.compagnon.platform.TaskbarMediaControls.Companion.createTaskbarMediaControls
+import app.n_zik.compagnon.tray.TraySetup
+import app.n_zik.compagnon.tray.isSystemTraySupported
+import app.n_zik.compagnon.tray.shouldMinimizeOnClose
 import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.Toaster
@@ -79,8 +86,35 @@ fun main() {
 private fun runApplication() = application {
     // The window's Escape key is the phone's system back (story 11c), routed to the paired screen
     val backDispatcher = remember { BackDispatcher() }
+    // The app-lifetime singletons hoist to the application scope: the tray and the close-button
+    // decision act on them from outside the window's content, and the taskbar media surface
+    // (spec `spec-tray-taskbar-media-controls`) lives longer than any session
+    val preferences = remember { Preferences() }
+    val windowController = remember { WindowController() }
+    val taskbar = remember { createTaskbarMediaControls(windowController, ::exitApplication) }
+    // The frozen matrix's WIN_NO_SESSION / MPRIS Stopped rows: the media surface exists (disabled)
+    // from start-up, before any session starts — a first-session attach then reuses it
+    remember { taskbar.setupPlatform() }
+    // The taskbar's thumbnail toolbar must be (re)added BEFORE the window's re-show — the taskbar's
+    // thumbnail button reads the stored toolbar only when it (re)creates itself on the show
+    // (live-verified 2026-10-11); showAndFocus invokes this right before setVisible(true)
+    remember { windowController.onShowHook = { taskbar.onWindowShow() } }
+    // The system tray (frozen spec's menu « Ouvrir / actions extensibles / Quitter ») composes only
+    // after the window's first frame: Compose's Tray turns its Painter icon into an AWT image, and
+    // that conversion needs the Compose graphics implementation — the window's scene registers it
+    // on its first frame. Composing it at the application's first composition (before any frame)
+    // dies with "No Compose UI graphics implementation is registered" (observed live on Windows)
+    var trayReady by remember { mutableStateOf(false) }
     Window(
-        onCloseRequest = ::exitApplication,
+        onCloseRequest = {
+            // Frozen spec: the X minimizes to the tray by default, configurable in the general
+            // settings; where no tray exists (Wayland) the decision falls back to quitting
+            if (shouldMinimizeOnClose(preferences.settings.value.closeBehaviorValue, isSystemTraySupported())) {
+                windowController.hideToTray()
+            } else {
+                exitApplication()
+            }
+        },
         // The AD-8 per-channel product name (stable plain, beta "… BETA", dev "… DEV"); the source
         // builds (debug / -git) keep the base name, the badge alone marking them
         title = ArtifactNames.productName(AppVersion.channel),
@@ -88,27 +122,44 @@ private fun runApplication() = application {
         state = rememberWindowState(width = 1100.dp, height = 800.dp),
         onPreviewKeyEvent = { event -> isBackKey(event) && backDispatcher.dispatch() },
     ) {
+        // The AWT window the tray / MPRIS Raise / close decision act on, attached once the window exists
+        remember(window) { windowController.attach(window) }
         // The desktop layout's floor (Spotify's), capped to the screen the window opens on
         remember(window) { applyWindowMinimumSize(window) }
+        // The window's first frame registers the Compose graphics implementation the tray's icon
+        // conversion needs (see trayReady) — the tray composes only once a frame has been drawn
+        LaunchedEffect(window) {
+            withFrameNanos { }
+            trayReady = true
+        }
         CompositionLocalProvider(LocalBackDispatcher provides backDispatcher) {
             // The AWT window behind the content scope: its layers are painted with the app's
             // background color so a resize never exposes the layer defaults (black canvas
             // clear, light Swing "Panel.background" — the black / white flash)
-            App(awtWindow = window)
+            App(awtWindow = window, preferences = preferences, taskbar = taskbar)
         }
+    }
+    // The system tray, application level (not window content); a no-op where the platform has no
+    // tray (Wayland) — composed once the first frame has registered the graphics implementation
+    if (trayReady) {
+        TraySetup(windowController = windowController, onQuit = ::exitApplication)
     }
 }
 
 @Composable
-fun App(awtWindow: AwtWindow) {
+fun App(
+    awtWindow: AwtWindow,
+    // Hoisted to the application scope (the tray and the close-button decision share it — see runApplication)
+    preferences: Preferences,
+    // The system media surface (frozen spec): one per process, attached to each session repository
+    taskbar: TaskbarMediaControls,
+) {
     // The app scope carries only non-UI work (pairing machine, pairing listener, the WS session):
     // it runs on the data dispatcher, never on the Swing EDT, and an unhandled failure is logged
     // by the shared fire-and-forget handler instead of dying uncaught on a pool thread.
     val scope = remember { NzikDispatchers.fireAndForget(NzikDispatchers.DATA) }
     val client = remember { BridgeClient() }
     val wsClient = remember { BridgeSession.httpClient() }
-    // Story 12: user settings (`settings.json`) and the local audio cache, both next to `pairing.json`
-    val preferences = remember { Preferences() }
     // The updater's settings binding (spec `spec-updater` AD-6): its state lives in `settings.json`
     // — the desktop equivalent of the phone's global `appContext().preferences` (attached once)
     remember { Updater.attach(preferences) }
@@ -227,7 +278,15 @@ fun App(awtWindow: AwtWindow) {
                 CompositionLocalProvider(LocalPreferences provides preferences) {
                     BridgeScreen(
                         controller = controller,
-                        playerFactory = { active -> RemotePlayerRepository.create(active, client, wsClient, controller.revocation, scope) },
+                        playerFactory = { active ->
+                            val repository = RemotePlayerRepository.create(active, client, wsClient, controller.revocation, scope)
+                            // The system media surface (frozen spec): its buttons forward to THIS
+                            // repository, and the identity-guarded detach lands when the
+                            // DisposableEffect (or "Forget this phone") closes it
+                            taskbar.attach(repository)
+                            repository.onClosed { taskbar.detachIfAttached(repository) }
+                            repository
+                        },
                         libraryFactory = { active -> RemoteLibraryRepository.create(active, client, controller.revocation) },
                         localPlaybackFactory = { active, repository, engine, playbackScope ->
                             LocalPlayback(

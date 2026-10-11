@@ -37,6 +37,7 @@ import app.n_zik.compagnon.core.network.BridgeClient
 import app.n_zik.compagnon.core.network.LibraryResult
 import app.n_zik.compagnon.core.network.ServerAddress
 import app.n_zik.compagnon.core.network.WriteResult
+import app.n_zik.compagnon.utils.AppLanguage
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.HttpRequestData
@@ -48,6 +49,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -58,6 +60,13 @@ class ParityPassThreeTest {
 
     private val token = "T".repeat(43)
     private val address = ServerAddress("192.168.1.14", 42420)
+
+    // `applyTag("en")` mutates the JVM default locale (the toast test pins English); `applyTag(null)`
+    // restores the OS locale after every test, as in AppLanguageTest.
+    @AfterEach
+    fun restoreDefaultLocale() {
+        AppLanguage.applyTag(null)
+    }
 
     private fun client(requests: MutableList<HttpRequestData>, status: HttpStatusCode, body: String) =
         BridgeClient(
@@ -129,6 +138,10 @@ class ParityPassThreeTest {
 
     @Test
     fun `a relayed toast uses the PC string of its key, numbers formatted, else the phone's text`() = runTest {
+        // `getString` resolves through the JVM locale, and Crowdin now ships locale copies (the French
+        // `songs_shuffled` reads "12 titres en lecture aléatoire" on a French host): pin English for the
+        // exact-text assertion, whatever the host's language.
+        AppLanguage.applyTag("en")
         val texts = withContext(Dispatchers.Default) {
             withTimeoutOrNull(5_000) {
                 listOf(
@@ -137,7 +150,6 @@ class ParityPassThreeTest {
                 )
             }
         }
-        // `songs_shuffled` has no locale copy yet: its English text whatever the host's language
         assertEquals(listOf("12 songs shuffled", "Texte du téléphone"), texts)
     }
 

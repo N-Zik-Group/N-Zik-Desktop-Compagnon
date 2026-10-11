@@ -68,7 +68,9 @@ class FlatpakPinTest {
         // data dir (~/N-Zik Desktop Compagnon/), org.freedesktop.secrets = the keyring (the
         // current Secret Service spec bus name — the only D-Bus name the app may reach,
         // through the flatpak runtime's D-Bus proxy, no raw bus socket; the legacy
-        // org.freedesktop.SecretService name is no longer registered by modern keyrings).
+        // org.freedesktop.SecretService name is no longer registered by modern keyrings),
+        // org.mpris.MediaPlayer2.nzik_compagnon = the MPRIS bus name the app owns for the
+        // desktop media controls (spec `spec-tray-taskbar-media-controls`).
         // Exposed from the committed template, joined with the unit separator. Note: the socket
         // types are validated by flatpak at build time (`--socket=ipc` is rejected — ipc is a
         // `--share=` type; `dri` is a `--device=` type), so a wrong entry fails the build too.
@@ -81,8 +83,9 @@ class FlatpakPinTest {
             "--device=dri",
             "--filesystem=home",
             "--talk-name=org.freedesktop.secrets",
+            "--own-name=org.mpris.MediaPlayer2.nzik_compagnon",
         )) {
-            assertTrue(args.contains(arg), "the Flatpak sandbox needs $arg (a missing one breaks pairing, the keyring or the data dir)")
+            assertTrue(args.contains(arg), "the Flatpak sandbox needs $arg (a missing one breaks pairing, the keyring, the data dir or the MPRIS name)")
         }
     }
 
@@ -173,6 +176,7 @@ class FlatpakPinTest {
                 "--device=dri",
                 "--filesystem=home",
                 "--talk-name=org.freedesktop.secrets",
+                "--own-name=org.mpris.MediaPlayer2.nzik_compagnon",
             ),
             finishArgs?.mapNotNull { it.jsonPrimitive.content }?.toSet(),
             "the finish-args are exactly the frozen sandbox contract (an added permission must go through the spec, not the template)")

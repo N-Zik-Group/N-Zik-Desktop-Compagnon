@@ -87,8 +87,15 @@ class RemotePlayerRepository(
     private var snapshotRetry: Job? = null
     @Volatile private var closed = false
 
+    /** The [onClosed] one-shot — invoked by [close] after the real close, on the closing thread. */
+    @Volatile private var closedHandler: (() -> Unit)? = null
+
     override fun start() = channel.start(::onMessage)
     override fun reconnect() = channel.reconnect()
+
+    override fun onClosed(handler: () -> Unit) {
+        closedHandler = handler
+    }
 
     override fun close() {
         if (closed) return
@@ -96,6 +103,7 @@ class RemotePlayerRepository(
         snapshotRetry?.cancel()
         channel.close()
         artworkLoader.clear()
+        closedHandler?.invoke()
     }
 
     override fun serverNowMs(): Long = channel.clock.serverNowMs()

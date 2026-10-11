@@ -117,9 +117,9 @@ const val MINIPLAYER_APPEAR_FADE_SKIPPED_FRAMES = 2
  * 8 dp shadow, UI roundness), `background2`, the progress drawn under the content in `favoritesOverlay`
  * (`BackgroundProgress.MiniPlayer`), `Monochrome` controls, the scrolling texts (dropped when the
  * "Disable scrolling text" setting is on, the phone's `MiniPlayer.kt` 518, 685, 695), the default buttons
- * (previous, play / pause in its 42 dp box, next, audio output, and — visible by default on the PC,
- * decision 1 of the plan, `showMiniPlayerDiscover` / `showMiniPlayerVisualizer` true — discover and
- * visualizer).
+ * (previous, play / pause in its 42 dp box, next, audio output — discover and visualizer are off by
+ * default on the PC too, user decision 2026-10-11: the default row is the transport controls plus the
+ * audio output only).
  *
  * Kept: the 48 dp cover in the thumbnail shape with the now-playing animation and the like heart (10 dp,
  * -5 dp at the bottom left, the tri-state indicator of contract 1.7: nothing when neutral, `heart` in
