@@ -354,6 +354,14 @@
     <string name="tab_network">الشبكة</string>
     <string name="tab_miscellaneous">Miscellaneous</string>
     <string name="general_settings_description">القسم العام يحتوي على إعدادات للوظيفة العامة للتطبيق</string>
+    <!-- The system tray + the window close behavior (spec `spec-tray-taskbar-media-controls`) -->
+    <string name="tray_open">Open</string>
+    <string name="tray_quit">Quit</string>
+    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
+    <string name="window">Window</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
     <string name="network_settings_description">قسم الشبكة يحتوي على إعدادات لتحسين أداء التطبيق واستخدام البيانات</string>
     <string name="other_settings_description">ويتضمن القسم المتنوع مختلف الإعدادات الاختيارية والمنافع</string>
     <string name="cache">ذاكرة التخزين المؤقت</string>
