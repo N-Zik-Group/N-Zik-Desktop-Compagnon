@@ -354,6 +354,14 @@
     <string name="tab_network">Ağ</string>
     <string name="tab_miscellaneous">Çeşitli</string>
     <string name="general_settings_description">Genel bölümü, uygulamanın genel işlevlerine ilişkin ayarları içerir</string>
+    <!-- The system tray + the window close behavior (spec `spec-tray-taskbar-media-controls`) -->
+    <string name="tray_open">Açık</string>
+    <string name="tray_quit">Quit</string>
+    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
+    <string name="window">Window</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
     <string name="network_settings_description">Ağ bölümü, uygulamanın performansını ve veri kullanımını optimize etmeye yönelik ayarları içerir</string>
     <string name="other_settings_description">Çeşitli bölümü, çeşitli isteğe bağlı ayarları ve yardımcı programları içerir</string>
     <string name="cache">Önbellek</string>
