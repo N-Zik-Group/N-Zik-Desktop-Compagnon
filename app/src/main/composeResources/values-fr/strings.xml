@@ -249,7 +249,7 @@
     <string name="cd_app_icon_in_player">icône de l\'application dans le lecteur</string>
     <string name="cd_number_of_songs_in_queue">Nombre de titres dans la file d\'attente</string>
     <string name="cd_app_s_icon">Icône de l\'application</string>
-    <string name="cd_song_album_cover">pochette de l\'album de la chanson</string>
+    <string name="cd_song_album_cover">pochette d\'album</string>
     <string name="cd_disc_background">fond de disque</string>
     <string name="rewind">Rétrospective</string>
     <string name="history">Historique</string>
