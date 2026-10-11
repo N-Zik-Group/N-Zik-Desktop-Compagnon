@@ -182,6 +182,7 @@
     <string name="follow">Følg</string>
     <string name="following">Følger</string>
     <string name="item_select">Velg</string>
+    <string name="item_deselect">Velg bort</string>
     <string name="info_download_all_songs">Last ned alle sanger</string>
     <string name="info_smart_recommendation">Smarte anbefalinger</string>
     <string name="import_playlist">Importer spilleliste</string>
