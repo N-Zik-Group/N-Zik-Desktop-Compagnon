@@ -249,6 +249,8 @@
     <string name="cd_app_icon_in_player">sovelluksen kuvake soittimessa</string>
     <string name="cd_number_of_songs_in_queue">Jonossa olevien kappaleiden määrä</string>
     <string name="cd_app_s_icon">Sovelluksen kuvake</string>
+    <string name="cd_song_album_cover">kappaleen albumin kansi</string>
+    <string name="cd_disc_background">levyn tausta</string>
     <string name="rewind">Rewind</string>
     <string name="history">Historia</string>
     <string name="profiles">Profiles</string>
@@ -483,7 +485,9 @@
     <string name="lastfm_love">Love on Last.fm</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
     <string name="deleted">Poistettu</string>
+    <string name="deleted_item">%1$s poistettu</string>
     <string name="and">and</string>
     <string name="sync">Synkronoi</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="visualizer">Visualisointi</string>
 </resources>
