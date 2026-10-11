@@ -356,12 +356,19 @@
     <string name="general_settings_description">La section « Général » contient les paramètres relatifs aux fonctionnalités générales de l\'application</string>
     <!-- The system tray + the window close behavior (spec `spec-tray-taskbar-media-controls`) -->
     <string name="tray_open">Ouvrir</string>
-    <string name="tray_quit">Quit</string>
+    <string name="tray_quit">Quitter</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
-    <string name="window">Window</string>
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
+    <string name="window">Fenêtre</string>
+    <string name="close_behavior">Comportement de fermeture</string>
+    <string name="close_behavior_minimize">Réduire dans la barre des tâches</string>
+    <string name="close_behavior_quit">Quitter l\'application</string>
+    <!-- The app shortcuts (the phone's launcher shortcuts, shown in the tray menu) — the phone's strings verbatim -->
+    <string name="app_shortcuts_settings">Raccourcis vers les applications</string>
+    <string name="app_shortcuts_settings_description">Sélectionner et réorganiser les raccourcis du lanceur d\'applications</string>
+    <string name="app_shortcuts_rescue_locked">La fonction « Rescue » ne peut pas être désactivée</string>
+    <string name="reset">Réinitialiser</string>
+    <string name="home">Accueil</string>
+    <string name="toast_preference_saved">Préférence enregistrée</string>
     <string name="network_settings_description">La section « Réseau » contient des paramètres permettant d\'optimiser les performances de l\'application et l\'utilisation des données</string>
     <string name="other_settings_description">La section « Divers » contient divers paramètres optionnels et utilitaires</string>
     <string name="cache">Cache</string>
