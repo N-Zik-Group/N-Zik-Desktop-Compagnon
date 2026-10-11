@@ -490,4 +490,23 @@
     <string name="sync">Synkroniser</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
     <string name="visualizer">Visualisering</string>
+    <!-- Home screens (spec spec-fill-pc-ui-gaps-home, step 3 G2): keys and texts of the phone (N-Zik strings.xml) -->
+    <string name="swipe_to_action">Stryg for handling</string>
+    <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">Aktivér handlingsmenuen ved at stryge sangen til venstre eller højre</string>
+    <string name="navigation_bar_position">Navigationslinjeposition</string>
+    <string name="navigation_bar_type">Navigationslinjetype</string>
+    <string name="direction_left">Venstre</string>
+    <string name="direction_right">Højre</string>
+    <string name="direction_top">Op</string>
+    <string name="direction_bottom">Ned</string>
+    <string name="direction_bottom_floating">Nederst Flydende</string>
+    <string name="icon_and_text">Ikon og tekst</string>
+    <string name="only_icon">Kun ikon</string>
+    <string name="default_page">Standardside</string>
+    <string name="quick_picks">Hurtige valg</string>
+    <string name="syncing_item">Syncing: %1$s</string>
+    <string name="syncing_progress">%1$d / %2$d</string>
+    <string name="syncing_failed">Sync failed</string>
+    <string name="txt_settings">Indstillinger</string>
+    <string name="none">Ingen</string>
 </resources>
