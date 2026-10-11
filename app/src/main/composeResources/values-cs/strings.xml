@@ -249,6 +249,8 @@
     <string name="cd_app_icon_in_player">ikona aplikace v přehrávači</string>
     <string name="cd_number_of_songs_in_queue">Počet skladeb ve frontě</string>
     <string name="cd_app_s_icon">Ikona aplikace</string>
+    <string name="cd_song_album_cover">Obal alba skladby</string>
+    <string name="cd_disc_background">pozadí disku</string>
     <string name="rewind">Rewind</string>
     <string name="history">Historie</string>
     <string name="profiles">Profiles</string>
@@ -483,7 +485,9 @@
     <string name="lastfm_love">Love on Last.fm</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
     <string name="deleted">Odstraněno</string>
+    <string name="deleted_item">%1$s smazán</string>
     <string name="and">and</string>
     <string name="sync">Synchronizovat</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="visualizer">Vizualizér</string>
 </resources>
