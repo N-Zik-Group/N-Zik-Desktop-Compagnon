@@ -182,6 +182,7 @@
     <string name="follow">Takip et</string>
     <string name="following">Takip ediliyor</string>
     <string name="item_select">Seç</string>
+    <string name="item_deselect">Seçimi kaldır</string>
     <string name="info_download_all_songs">Tüm şarkıları indir</string>
     <string name="info_smart_recommendation">Akıllı öneriler</string>
     <string name="import_playlist">Çalma listesini içe aktar</string>
