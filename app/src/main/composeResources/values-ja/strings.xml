@@ -490,4 +490,23 @@
     <string name="sync">同期</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
     <string name="visualizer">ビジュアライザー</string>
+    <!-- Home screens (spec spec-fill-pc-ui-gaps-home, step 3 G2): keys and texts of the phone (N-Zik strings.xml) -->
+    <string name="swipe_to_action">スワイプしてアクション</string>
+    <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">曲の垂直リスト内の曲を左右にスワイプして操作を実行</string>
+    <string name="navigation_bar_position">ナビゲーションバーの位置</string>
+    <string name="navigation_bar_type">ナビゲーションバーのスタイル</string>
+    <string name="direction_left">左</string>
+    <string name="direction_right">右</string>
+    <string name="direction_top">Direction Top</string>
+    <string name="direction_bottom">Direction bottom</string>
+    <string name="direction_bottom_floating">下部のフローティング</string>
+    <string name="icon_and_text">アイコンとテキスト</string>
+    <string name="only_icon">アイコンのみ</string>
+    <string name="default_page">起動に表示するページ</string>
+    <string name="quick_picks">クイックピック</string>
+    <string name="syncing_item">Syncing: %1$s</string>
+    <string name="syncing_progress">%1$d / %2$d</string>
+    <string name="syncing_failed">Sync failed</string>
+    <string name="txt_settings">設定</string>
+    <string name="none">なし</string>
 </resources>
