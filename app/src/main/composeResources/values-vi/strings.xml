@@ -249,6 +249,8 @@
     <string name="cd_app_icon_in_player">app icon in player</string>
     <string name="cd_number_of_songs_in_queue">Number of songs in queue</string>
     <string name="cd_app_s_icon">App\'s icon</string>
+    <string name="cd_song_album_cover">song album cover</string>
+    <string name="cd_disc_background">disc background</string>
     <string name="rewind">Rewind</string>
     <string name="history">History</string>
     <string name="profiles">Profiles</string>
@@ -483,7 +485,9 @@
     <string name="lastfm_love">Love on Last.fm</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
     <string name="deleted">Deleted</string>
+    <string name="deleted_item">%1$s deleted</string>
     <string name="and">and</string>
     <string name="sync">Đồng bộ</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="visualizer">Visualizer</string>
 </resources>
