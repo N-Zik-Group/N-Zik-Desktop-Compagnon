@@ -11,6 +11,7 @@ import app.n_zik.compagnon.core.navigation.isBackKey
 import app.n_zik.compagnon.core.navigation.LocalBackDispatcher
 import app.n_zik.compagnon.core.navigation.BackDispatcher
 import java.net.InetAddress
+import java.awt.Window as AwtWindow
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -22,6 +23,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -63,7 +65,16 @@ import app.n_zik.compagnon.updater.services.UpdateDownloadManager
 import app.n_zik.compagnon.updater.services.Updater
 import androidx.compose.runtime.CompositionLocalProvider
 
-fun main() = application {
+fun main() {
+    // Must run before the AWT toolkit loads: on Windows, the pixels a window resize exposes
+    // are then erased natively with the window's background color (see applyWindowBackground)
+    // the moment the OS reports the new size, instead of showing white / black until the next
+    // Compose frame
+    System.setProperty(ERASE_BACKGROUND_ON_RESIZE_PROPERTY, "true")
+    runApplication()
+}
+
+private fun runApplication() = application {
     // The window's Escape key is the phone's system back (story 11c), routed to the paired screen
     val backDispatcher = remember { BackDispatcher() }
     Window(
@@ -76,13 +87,16 @@ fun main() = application {
         onPreviewKeyEvent = { event -> isBackKey(event) && backDispatcher.dispatch() },
     ) {
         CompositionLocalProvider(LocalBackDispatcher provides backDispatcher) {
-            App()
+            // The AWT window behind the content scope: its layers are painted with the app's
+            // background color so a resize never exposes the layer defaults (black canvas
+            // clear, light Swing "Panel.background" — the black / white flash)
+            App(awtWindow = window)
         }
     }
 }
 
 @Composable
-fun App() {
+fun App(awtWindow: AwtWindow) {
     // The app scope carries only non-UI work (pairing machine, pairing listener, the WS session):
     // it runs on the data dispatcher, never on the Swing EDT, and an unhandled failure is logged
     // by the shared fire-and-forget handler instead of dying uncaught on a pool thread.
@@ -192,6 +206,12 @@ fun App() {
                 animationSpec = tween(350, easing = FastOutSlowInEasing),
                 label = "rootBackground",
             )
+            // The AWT window background follows the same animated color as the root Box below: the
+            // pixels the OS erases while the window is resized then match the app (including
+            // during a palette fade) instead of flashing until the next frame
+            SideEffect(rootBackgroundColor) {
+                applyWindowBackground(awtWindow, rootBackgroundColor)
+            }
             Box(modifier = Modifier.fillMaxSize().background(rootBackgroundColor)) {
                 CompositionLocalProvider(LocalPreferences provides preferences) {
                     BridgeScreen(
