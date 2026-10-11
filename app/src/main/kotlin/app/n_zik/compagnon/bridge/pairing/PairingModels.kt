@@ -9,7 +9,9 @@ import kotlinx.serialization.json.Json
  */
 object BridgeContract {
     const val API_PREFIX = "/api/v1"
-    const val SUPPORTED_MAJOR = "1"
+
+    /** §5: the exact `contractVersion` the client accepts — identical to the contract frontmatter, bumped with every adopted contract. */
+    const val SUPPORTED_CONTRACT_VERSION = "1.12.0"
 
     const val QR_VERSION = 1
     const val QR_TYPE = "nzik-pair"
@@ -140,10 +142,9 @@ data class ApiError(
 /** Contract-level helpers that are pure functions, kept here so every caller agrees. */
 object PairingRules {
     private val IPV4 = Regex("""^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$""")
-    private val MAJOR_ONE = Regex("""^1\.\d+""")
 
-    /** §5: the v1 client accepts any `contractVersion` of the form `1.x`. */
-    fun isSupportedContractVersion(version: String): Boolean = MAJOR_ONE.containsMatchIn(version.trim())
+    /** §5: exact match — the client accepts a phone only when its `contractVersion` equals the one it was developed against. */
+    fun isExactContractVersion(version: String): Boolean = version.trim() == BridgeContract.SUPPORTED_CONTRACT_VERSION
 
     /** §4.1: upper case, spaces and dashes removed. */
     fun normalizeCode(raw: String): String = raw.uppercase().filterNot { it.isWhitespace() || it == '-' }

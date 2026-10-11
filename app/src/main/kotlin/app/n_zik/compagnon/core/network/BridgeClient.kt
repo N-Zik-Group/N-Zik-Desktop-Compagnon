@@ -73,7 +73,7 @@ data class ServerAddress(val ip: String, val port: Int) {
 /** Outcome of `GET /api/v1/meta` (contract §5). */
 sealed interface MetaResult {
     data class Ok(val meta: MetaResponse) : MetaResult
-    /** Major version other than 1: "phone version incompatible", nothing paired. */
+    /** `contractVersion` not identical to [BridgeContract.SUPPORTED_CONTRACT_VERSION]: "phone version incompatible", nothing paired. */
     data class Incompatible(val contractVersion: String) : MetaResult
     data object Unreachable : MetaResult
     data class Failed(val status: Int, val code: String?) : MetaResult
@@ -130,7 +130,7 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
         val response = call(address, "meta") { http.get("${address.apiBase}/meta") } ?: return MetaResult.Unreachable
         if (response.status != HttpStatusCode.OK) return MetaResult.Failed(response.status.value, response.errorBody()?.code)
         val meta = response.decode(MetaResponse.serializer()) ?: return MetaResult.Failed(response.status.value, null)
-        return if (PairingRules.isSupportedContractVersion(meta.contractVersion)) MetaResult.Ok(meta)
+        return if (PairingRules.isExactContractVersion(meta.contractVersion)) MetaResult.Ok(meta)
         else MetaResult.Incompatible(meta.contractVersion)
     }
 

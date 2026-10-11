@@ -22,7 +22,7 @@ sealed interface PairingError {
     data object CodeRejected : PairingError
     /** `429 RATE_LIMITED`: wait [retryAfterMs]. */
     data class RateLimited(val retryAfterMs: Long) : PairingError
-    /** `contractVersion` not `1.x`: "phone version incompatible", nothing paired. */
+    /** `contractVersion` not identical to [BridgeContract.SUPPORTED_CONTRACT_VERSION]: "phone version incompatible", nothing paired. */
     data class IncompatibleVersion(val contractVersion: String) : PairingError
     data object PhoneUnreachable : PairingError
     /** The credential could not be stored (Credential Manager unavailable…). */

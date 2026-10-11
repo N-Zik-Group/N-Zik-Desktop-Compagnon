@@ -29,28 +29,36 @@ class BridgeClientTest {
         respond(body, status, headersOf(HttpHeaders.ContentType, "application/json; charset=utf-8"))
 
     @Test
-    fun `meta accepts any 1_x contract and ignores unknown fields`() = runTest {
+    fun `meta with the exact contract version is ok and ignores unknown fields`() = runTest {
         val result = client {
-            json("""{"contractVersion":"1.7","serverName":"Pixel 8","serverTimeMs":1,"features":["pairing.qr"],"newField":{}}""")
+            json("""{"contractVersion":"1.12.0","serverName":"Pixel 8","serverTimeMs":1,"features":["pairing.qr"],"newField":{}}""")
         }.meta(address)
         assertTrue(result is MetaResult.Ok)
         assertEquals("http://192.168.1.14:42420/api/v1/meta", requests.single().url.toString())
     }
 
     @Test
-    fun `meta since 1_9 decodes the phone language`() = runTest {
+    fun `meta trims the contract version before the exact comparison`() = runTest {
+        val result = client {
+            json("""{"contractVersion":" 1.12.0 ","serverName":"Pixel 8","serverTimeMs":1,"features":[]}""")
+        }.meta(address)
+        assertTrue(result is MetaResult.Ok)
+    }
+
+    @Test
+    fun `meta decodes the phone language since 1_9`() = runTest {
         val result = client {
             json(
-                """{"contractVersion":"1.9","serverName":"Pixel 8","serverTimeMs":1,"features":["ui.language"],"language":"pt-BR"}""",
+                """{"contractVersion":"1.12.0","serverName":"Pixel 8","serverTimeMs":1,"features":["ui.language"],"language":"pt-BR"}""",
             )
         }.meta(address)
         assertEquals("pt-BR", (result as MetaResult.Ok).meta.language)
     }
 
     @Test
-    fun `meta before 1_9 without the language field stays null`() = runTest {
+    fun `meta without the language field stays null`() = runTest {
         val result = client {
-            json("""{"contractVersion":"1.8","serverName":"Pixel 8","serverTimeMs":1,"features":["playback"]}""")
+            json("""{"contractVersion":"1.12.0","serverName":"Pixel 8","serverTimeMs":1,"features":["playback"]}""")
         }.meta(address)
         assertNull((result as MetaResult.Ok).meta.language)
     }
@@ -60,7 +68,7 @@ class BridgeClientTest {
         // The phone's encoder always sends the field (`encodeDefaults`): `System` is a null on the wire.
         val result = client {
             json(
-                """{"contractVersion":"1.9","serverName":"Pixel 8","serverTimeMs":1,"features":["ui.language"],"language":null}""",
+                """{"contractVersion":"1.12.0","serverName":"Pixel 8","serverTimeMs":1,"features":["ui.language"],"language":null}""",
             )
         }.meta(address)
         assertNull((result as MetaResult.Ok).meta.language)
@@ -70,6 +78,23 @@ class BridgeClientTest {
     fun `meta with another major is incompatible`() = runTest {
         val result = client { json("""{"contractVersion":"2.0","serverName":"Pixel 8","serverTimeMs":1,"features":[]}""") }.meta(address)
         assertEquals(MetaResult.Incompatible("2.0"), result)
+    }
+
+    @Test
+    fun `meta with a different version of the same major is incompatible`() = runTest {
+        // The gate is an exact match: an older, a patch-level or a newer phone is blocked.
+        assertEquals(
+            MetaResult.Incompatible("1.11.0"),
+            client { json("""{"contractVersion":"1.11.0","serverName":"Pixel 8","serverTimeMs":1,"features":[]}""") }.meta(address),
+        )
+        assertEquals(
+            MetaResult.Incompatible("1.12.1"),
+            client { json("""{"contractVersion":"1.12.1","serverName":"Pixel 8","serverTimeMs":1,"features":[]}""") }.meta(address),
+        )
+        assertEquals(
+            MetaResult.Incompatible("1.13.0"),
+            client { json("""{"contractVersion":"1.13.0","serverName":"Pixel 8","serverTimeMs":1,"features":[]}""") }.meta(address),
+        )
     }
 
     @Test
