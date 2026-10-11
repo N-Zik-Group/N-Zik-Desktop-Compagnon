@@ -490,4 +490,23 @@
     <string name="sync">Sincronizează</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
     <string name="visualizer">Vizualizator</string>
+    <!-- Home screens (spec spec-fill-pc-ui-gaps-home, step 3 G2): keys and texts of the phone (N-Zik strings.xml) -->
+    <string name="swipe_to_action">Glisează pentru acțiune</string>
+    <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">Efectuează acțiuni glisând la stânga sau la dreapta pe o melodie</string>
+    <string name="navigation_bar_position">Poziția barei de navigare</string>
+    <string name="navigation_bar_type">Stilul barei de navigare</string>
+    <string name="direction_left">Stânga</string>
+    <string name="direction_right">Dreapta</string>
+    <string name="direction_top">Sus</string>
+    <string name="direction_bottom">Jos</string>
+    <string name="direction_bottom_floating">Plutitoare de jos</string>
+    <string name="icon_and_text">Iconițe și text</string>
+    <string name="only_icon">Doar iconițe</string>
+    <string name="default_page">Pagina implicită</string>
+    <string name="quick_picks">Selecții rapide</string>
+    <string name="syncing_item">Syncing: %1$s</string>
+    <string name="syncing_progress">%1$d / %2$d</string>
+    <string name="syncing_failed">Sync failed</string>
+    <string name="txt_settings">Setări</string>
+    <string name="none">Niciunul</string>
 </resources>
