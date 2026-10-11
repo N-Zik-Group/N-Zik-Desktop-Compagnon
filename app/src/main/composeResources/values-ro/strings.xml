@@ -182,6 +182,7 @@
     <string name="follow">Urmărește</string>
     <string name="following">Urmărit</string>
     <string name="item_select">Selectează</string>
+    <string name="item_deselect">Deselectează</string>
     <string name="info_download_all_songs">Descarcă toate melodiile</string>
     <string name="info_smart_recommendation">Recomandări inteligente</string>
     <string name="import_playlist">Importă playlist-ul</string>
