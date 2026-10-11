@@ -4,6 +4,7 @@ import app.n_zik.compagnon.bridge.ConnectionState
 import app.n_zik.compagnon.bridge.state.PlayerState
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.Track
+import org.freedesktop.dbus.DBusPath
 import org.freedesktop.dbus.types.Variant
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -186,7 +187,10 @@ class MprisMappingTest {
     fun `the wire map carries the frozen entries, the xesam artist as an as array`() {
         val map = MprisMetadata(trackId = "t42", title = "Song", artist = listOf("N-Zik"), lengthUs = 20_000_000L, artUrl = "file:///art.png").toDBusMap()
         assertEquals(5, map.size)
-        assertEquals("t42", map[MprisMetadata.TRACK_ID]?.value)
+        // An object path (`o`), as MPRIS requires — KDE's seek (`SetPosition`) matches it
+        val trackId = map[MprisMetadata.TRACK_ID]
+        assertEquals("o", trackId?.sig)
+        assertEquals(mprisTrackPath("t42"), (trackId?.value as DBusPath).path)
         assertEquals("Song", map[MprisMetadata.TITLE]?.value)
         val artist = map[MprisMetadata.ARTIST]
         assertEquals("as", artist?.sig)
@@ -204,5 +208,44 @@ class MprisMappingTest {
         assertEquals(emptyList<String>(), artist?.value)
         assertNull(map[MprisMetadata.LENGTH])
         assertNull(map[MprisMetadata.ART_URL])
+    }
+
+    // ---- Progress bar (Position / CanSeek / Rate / Seeked) ---------------------------------------------------
+
+    @Test
+    fun `the track path is a valid object path and keeps two ids distinct`() {
+        val path = mprisTrackPath("a-b/é")
+        assertTrue(path.matches(Regex("(/[A-Za-z0-9_]+)+")), path)
+        assertFalse(mprisTrackPath("a-b") == mprisTrackPath("a_b"))
+    }
+
+    @Test
+    fun `a known duration with the playback feature can seek and carries the speed`() {
+        val state = stateOf(track(durationMs = 20_000L), isPlaying = true).copy(speed = 1.5f)
+        val snapshot = mprisSnapshot(state, ConnectionState.Live, playbackFeatures, null)
+        assertTrue(snapshot.canSeek)
+        assertEquals(1.5, snapshot.rate)
+        // No duration → no timeline end → no seek; no feature → no seek
+        assertFalse(mprisSnapshot(stateOf(track(durationMs = null), isPlaying = true), ConnectionState.Live, playbackFeatures, null).canSeek)
+        assertFalse(mprisSnapshot(state, ConnectionState.Live, emptySet(), null).canSeek)
+        assertTrue("CanSeek" in propertiesChanged(stoppedSnapshot(), snapshot) && "Rate" in propertiesChanged(stoppedSnapshot(), snapshot))
+    }
+
+    @Test
+    fun `the position is the phone's extrapolated one in microseconds while live`() {
+        val state = stateOf(track(), isPlaying = true).copy(positionMs = 1_000L, serverTimeMs = 10_000L)
+        assertEquals(3_000_000L, mprisPositionUs(state, ConnectionState.Live, serverNowMs = 12_000L))
+        assertEquals(0L, mprisPositionUs(state, ConnectionState.Connecting, serverNowMs = 12_000L))
+    }
+
+    @Test
+    fun `a jump on the same track is a seek, a track change is not`() {
+        val before = stateOf(track(), isPlaying = true).copy(positionMs = 1_000L, serverTimeMs = 10_000L)
+        val sameRun = before.copy(positionMs = 2_000L, serverTimeMs = 11_000L) // the normal progress
+        val seeked = before.copy(positionMs = 15_000L, serverTimeMs = 11_000L)
+        val otherTrack = stateOf(track(id = "t2"), isPlaying = true).copy(positionMs = 0L, serverTimeMs = 11_000L)
+        assertFalse(positionJumped(before, sameRun, serverNowMs = 11_000L))
+        assertTrue(positionJumped(before, seeked, serverNowMs = 11_000L))
+        assertFalse(positionJumped(before, otherTrack, serverNowMs = 11_000L))
     }
 }

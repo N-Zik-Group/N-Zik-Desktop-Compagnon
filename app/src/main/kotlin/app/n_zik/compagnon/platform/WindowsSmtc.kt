@@ -10,6 +10,7 @@ import com.sun.jna.Pointer
 import com.sun.jna.WString
 import com.sun.jna.platform.win32.Guid
 import com.sun.jna.ptr.IntByReference
+import com.sun.jna.ptr.LongByReference
 import com.sun.jna.ptr.PointerByReference
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -30,10 +31,15 @@ data class SmtcView(
     val canPause: Boolean,
     val canNext: Boolean,
     val canPrevious: Boolean,
+    /** The progress bar: the position, the duration (`null` = unknown — no bar), seekable or not, the rate. */
+    val positionMs: Long = 0L,
+    val durationMs: Long? = null,
+    val canSeek: Boolean = false,
+    val rate: Double = 1.0,
 )
 
-/** The [SmtcView] of an MPRIS [snapshot] — `Stopped` (no session) disables the controls. */
-fun smtcView(snapshot: MprisSnapshot): SmtcView {
+/** The [SmtcView] of an MPRIS [snapshot] at [positionMs] — `Stopped` (no session) disables the controls. */
+fun smtcView(snapshot: MprisSnapshot, positionMs: Long = 0L): SmtcView {
     val live = snapshot.playbackStatus != STOPPED
     return SmtcView(
         enabled = live,
@@ -48,6 +54,10 @@ fun smtcView(snapshot: MprisSnapshot): SmtcView {
         canPause = snapshot.canPause,
         canNext = snapshot.canGoNext,
         canPrevious = snapshot.canGoPrevious,
+        positionMs = if (live) positionMs else 0L,
+        durationMs = snapshot.metadata?.lengthUs?.let { it / 1000L },
+        canSeek = snapshot.canSeek,
+        rate = snapshot.rate,
     )
 }
 
@@ -87,8 +97,14 @@ internal enum class SmtcButton(val code: Int) {
 internal class WindowsSmtc(
     private val log: Logger,
     private val onButton: (SmtcButton) -> Unit,
+    /** A seek on the panel's progress bar, in ms (a WinRT worker thread — thread-safe forward only). */
+    private val onSeek: (Long) -> Unit,
 ) {
     private var smtc: Pointer? = null
+    // The progress bar (`ISystemMediaTransportControls2` + a timeline object) — `null` when this
+    // Windows build lacks them: the panel then simply shows no bar
+    private var smtc2: Pointer? = null
+    private var timeline: Pointer? = null
     private var updater: Pointer? = null
     private var music: Pointer? = null
     private var streamStatics: Pointer? = null
@@ -98,9 +114,8 @@ internal class WindowsSmtc(
     private var lastView: SmtcView? = null
 
     // The handler COM object — every piece kept for the app's lifetime (see the class KDoc)
-    private var handlerObject: Memory? = null
-    private var handlerVtable: Memory? = null
-    private var callbacks: List<Callback> = emptyList()
+    // (one entry per registered handler: the buttons, the progress-bar seek)
+    private val handlers = mutableListOf<Any>()
 
     /** `true` once the panel is up. */
     val isUp: Boolean get() = smtc != null
@@ -127,8 +142,9 @@ internal class WindowsSmtc(
             check(vcall(updaterPtr, SLOT_UPDATER_GET_MUSIC_PROPERTIES, musicRef) == S_OK && musicRef.value != null) { "no music properties" }
 
             val token = Memory(8)
-            val addHr = vcall(smtcPtr, SLOT_SMTC_ADD_BUTTON_PRESSED, buildHandler(), token)
+            val addHr = vcall(smtcPtr, SLOT_SMTC_ADD_BUTTON_PRESSED, buildHandler(IID_BUTTON_PRESSED_HANDLER, ::onButtonPressed), token)
             if (addHr != S_OK) log.warning("SMTC: ButtonPressed registration failed (0x${Integer.toHexString(addHr)}) — the panel shows, its buttons do nothing")
+            setupTimeline(smtcPtr)
 
             smtc = smtcPtr
             updater = updaterPtr
@@ -143,6 +159,39 @@ internal class WindowsSmtc(
             smtc = null
             log.log(Level.WARNING, "SMTC: setup failed permanently — the Now Playing panel stays off", t)
             return false
+        }
+    }
+
+    /** The progress bar: `ISystemMediaTransportControls2` (QueryInterface), a timeline object, the seek handler. */
+    private fun setupTimeline(smtcPtr: Pointer) {
+        guarded("timeline setup") {
+            val smtc2Ref = PointerByReference()
+            if (vcall(smtcPtr, SLOT_QUERY_INTERFACE, guid(IID_SMTC2), smtc2Ref) != S_OK || smtc2Ref.value == null) {
+                log.warning("SMTC: no ISystemMediaTransportControls2 — no progress bar")
+                return@guarded
+            }
+            val inspectable = PointerByReference()
+            var hr = E_FAIL
+            withHString(CLASS_TIMELINE) { hr = CombaseApi.INSTANCE.RoActivateInstance(it, inspectable) }
+            if (hr != S_OK || inspectable.value == null) {
+                log.warning("SMTC: no timeline properties object (0x${Integer.toHexString(hr)}) — no progress bar")
+                release(smtc2Ref.value)
+                return@guarded
+            }
+            val timelineRef = PointerByReference()
+            val qi = vcall(inspectable.value, SLOT_QUERY_INTERFACE, guid(IID_TIMELINE), timelineRef)
+            release(inspectable.value)
+            if (qi != S_OK || timelineRef.value == null) {
+                log.warning("SMTC: no ISystemMediaTransportControlsTimelineProperties — no progress bar")
+                release(smtc2Ref.value)
+                return@guarded
+            }
+            val token = Memory(8)
+            val addHr = vcall(smtc2Ref.value, SLOT_SMTC2_ADD_POSITION_CHANGE_REQUESTED, buildHandler(IID_POSITION_CHANGE_HANDLER, ::onPositionChangeRequested), token)
+            if (addHr != S_OK) log.warning("SMTC: PlaybackPositionChangeRequested registration failed (0x${Integer.toHexString(addHr)}) — the bar shows, seeking does nothing")
+            smtc2 = smtc2Ref.value
+            timeline = timelineRef.value
+            log.info("SMTC: progress bar enabled")
         }
     }
 
@@ -201,6 +250,35 @@ internal class WindowsSmtc(
         withHString(view.title) { vcall(musicPtr, SLOT_MUSIC_PUT_TITLE, it) }
         withHString(view.artist) { vcall(musicPtr, SLOT_MUSIC_PUT_ARTIST, it) }
         updater?.let { vcall(it, SLOT_UPDATER_UPDATE) }
+        applyTimeline(view)
+    }
+
+    /** The progress bar: TimeSpans are 100 ns ticks; an unknown duration publishes an empty timeline (no bar). */
+    private fun applyTimeline(view: SmtcView) {
+        val smtc2Ptr = smtc2 ?: return
+        val timelinePtr = timeline ?: return
+        val durationMs = view.durationMs ?: 0L
+        val endTicks = durationMs * TICKS_PER_MS
+        val positionTicks = view.positionMs.coerceIn(0L, durationMs) * TICKS_PER_MS
+        vcall(timelinePtr, SLOT_TIMELINE_PUT_START_TIME, 0L)
+        vcall(timelinePtr, SLOT_TIMELINE_PUT_END_TIME, endTicks)
+        vcall(timelinePtr, SLOT_TIMELINE_PUT_MIN_SEEK_TIME, 0L)
+        vcall(timelinePtr, SLOT_TIMELINE_PUT_MAX_SEEK_TIME, if (view.canSeek) endTicks else 0L)
+        vcall(timelinePtr, SLOT_TIMELINE_PUT_POSITION, positionTicks)
+        vcall(smtc2Ptr, SLOT_SMTC2_PUT_PLAYBACK_RATE, view.rate)
+        vcall(smtc2Ptr, SLOT_SMTC2_UPDATE_TIMELINE_PROPERTIES, timelinePtr)
+    }
+
+    /** ButtonPressed (a WinRT worker thread): the pressed button, forwarded. */
+    private fun onButtonPressed(args: Pointer) {
+        val button = IntByReference()
+        if (vcall(args, SLOT_ARGS_GET_BUTTON, button) == S_OK) SmtcButton.of(button.value)?.let(onButton)
+    }
+
+    /** PlaybackPositionChangeRequested (a WinRT worker thread): the requested position, forwarded as a seek. */
+    private fun onPositionChangeRequested(args: Pointer) {
+        val ticks = LongByReference()
+        if (vcall(args, SLOT_ARGS_GET_REQUESTED_POSITION, ticks) == S_OK) onSeek((ticks.value / TICKS_PER_MS).coerceAtLeast(0L))
     }
 
     private inline fun guarded(what: String, block: () -> Unit) {
@@ -217,9 +295,9 @@ internal class WindowsSmtc(
         return false
     }
 
-    /** The `TypedEventHandler<SMTC, ButtonPressedEventArgs>` COM object: QueryInterface / AddRef / Release / Invoke. */
-    private fun buildHandler(): Pointer {
-        val handlerIid = guidBytes(IID_BUTTON_PRESSED_HANDLER)
+    /** A `TypedEventHandler<SMTC, TArgs>` COM object (QueryInterface / AddRef / Release / Invoke) answering [iid]; [onInvoke] reads the args. */
+    private fun buildHandler(iid: String, onInvoke: (Pointer) -> Unit): Pointer {
+        val handlerIid = guidBytes(iid)
         val acceptedIids = listOf(guidBytes(IID_IUNKNOWN), guidBytes(IID_IAGILE_OBJECT), handlerIid)
         val queryInterface = object : QueryInterfaceCallback {
             override fun invoke(self: Pointer?, riid: Pointer?, ppv: Pointer?): Int {
@@ -243,15 +321,11 @@ internal class WindowsSmtc(
         }
         val invoke = object : InvokeCallback {
             override fun invoke(self: Pointer?, sender: Pointer?, args: Pointer?): Int {
-                // A WinRT worker thread: read the pressed button, forward, never throw into native code
+                // A WinRT worker thread: read the args, forward, never throw into native code
                 try {
-                    val argsPtr = args ?: return S_OK
-                    val button = IntByReference()
-                    if (vcall(argsPtr, SLOT_ARGS_GET_BUTTON, button) == S_OK) {
-                        SmtcButton.of(button.value)?.let(onButton)
-                    }
+                    args?.let(onInvoke)
                 } catch (t: Throwable) {
-                    log.warning("SMTC: button press handling failed (${t::class.simpleName})")
+                    log.warning("SMTC: event handling failed (${t::class.simpleName})")
                 }
                 return S_OK
             }
@@ -260,9 +334,7 @@ internal class WindowsSmtc(
         val vtable = Memory(all.size.toLong() * POINTER_SIZE)
         all.forEachIndexed { index, cb -> vtable.setPointer(index.toLong() * POINTER_SIZE, CallbackReference.getFunctionPointer(cb)) }
         val obj = Memory(POINTER_SIZE.toLong()).apply { setPointer(0, vtable) }
-        callbacks = all
-        handlerVtable = vtable
-        handlerObject = obj
+        handlers.addAll(listOf(all, vtable, obj))
         return obj
     }
 
@@ -281,6 +353,8 @@ internal class WindowsSmtc(
     @Suppress("FunctionName")
     private interface CombaseApi : Library {
         fun RoGetActivationFactory(activatableClassId: Pointer?, iid: Pointer, factory: PointerByReference): Int
+
+        fun RoActivateInstance(activatableClassId: Pointer?, instance: PointerByReference): Int
 
         fun WindowsCreateString(sourceString: WString?, length: Int, string: PointerByReference): Int
 
@@ -360,15 +434,20 @@ internal class WindowsSmtc(
         // ---- Classes / IIDs (SDK 10.0.26100.0) ----------------------------------------------------------
         const val CLASS_SMTC = "Windows.Media.SystemMediaTransportControls"
         const val CLASS_STREAM_REFERENCE = "Windows.Storage.Streams.RandomAccessStreamReference"
+        const val CLASS_TIMELINE = "Windows.Media.SystemMediaTransportControlsTimelineProperties"
         const val IID_SMTC_INTEROP = "{DDB0472D-C911-4A1F-86D9-DC3D71A95F5A}"
         const val IID_SMTC = "{99FA3FF4-1742-42A6-902E-087D41F965EC}"
         const val IID_STREAM_REFERENCE_STATICS = "{857309DC-3FBF-4E7D-986F-EF3B1A07A964}"
         const val IID_RANDOM_ACCESS_STREAM = "{905A0FE1-BC53-11DF-8C49-001E4FC686DA}"
         const val IID_BUTTON_PRESSED_HANDLER = "{0557E996-7B23-5BAE-AA81-EA0D671143A4}"
+        const val IID_SMTC2 = "{EA98D2F6-7F3C-4AF2-A586-72889808EFB1}"
+        const val IID_TIMELINE = "{5125316A-C3A2-475B-8507-93534DC88F15}"
+        const val IID_POSITION_CHANGE_HANDLER = "{44E34F15-BDC0-50A7-ACE4-39E91FB753F1}"
         const val IID_IUNKNOWN = "{00000000-0000-0000-C000-000000000046}"
         const val IID_IAGILE_OBJECT = "{94EA2B94-E9CC-49E0-C0FF-EE64CA8F5B90}"
 
         // ---- vtable slots (IUnknown 0-2, IInspectable 3-5, own methods from 6) --------------------------
+        const val SLOT_QUERY_INTERFACE = 0
         const val SLOT_RELEASE = 2
         const val SLOT_INTEROP_GET_FOR_WINDOW = 6
         const val SLOT_SMTC_PUT_PLAYBACK_STATUS = 7
@@ -387,6 +466,18 @@ internal class WindowsSmtc(
         const val SLOT_MUSIC_PUT_ARTIST = 11
         const val SLOT_STATICS_CREATE_FROM_STREAM = 8
         const val SLOT_ARGS_GET_BUTTON = 6
+        const val SLOT_SMTC2_PUT_PLAYBACK_RATE = 11
+        const val SLOT_SMTC2_UPDATE_TIMELINE_PROPERTIES = 12
+        const val SLOT_SMTC2_ADD_POSITION_CHANGE_REQUESTED = 13
+        const val SLOT_TIMELINE_PUT_START_TIME = 7
+        const val SLOT_TIMELINE_PUT_END_TIME = 9
+        const val SLOT_TIMELINE_PUT_MIN_SEEK_TIME = 11
+        const val SLOT_TIMELINE_PUT_MAX_SEEK_TIME = 13
+        const val SLOT_TIMELINE_PUT_POSITION = 15
+        const val SLOT_ARGS_GET_REQUESTED_POSITION = 6
+
+        /** A WinRT `TimeSpan` counts 100 ns ticks. */
+        const val TICKS_PER_MS = 10_000L
 
         const val MEDIA_PLAYBACK_TYPE_MUSIC = 1
         const val BSOS_DEFAULT = 0

@@ -49,6 +49,17 @@ class SmtcViewTest {
     }
 
     @Test
+    fun `the progress bar carries the position, the duration, the seek gate and the rate`() {
+        val view = smtcView(mprisSnapshot(playing(true), ConnectionState.Live, playback, artUrl = null), positionMs = 4_000L)
+        assertEquals(4_000L, view.positionMs)
+        assertEquals(20_000L, view.durationMs)
+        assertTrue(view.canSeek)
+        assertEquals(1.0, view.rate)
+        // No session: no position
+        assertEquals(0L, smtcView(stoppedSnapshot(), positionMs = 4_000L).positionMs)
+    }
+
+    @Test
     fun `the buttons map the sdk codes`() {
         assertEquals(SmtcButton.Play, SmtcButton.of(0))
         assertEquals(SmtcButton.Pause, SmtcButton.of(1))
@@ -59,5 +70,5 @@ class SmtcViewTest {
     }
 
     private fun playing(isPlaying: Boolean) =
-        PlayerState(queue = listOf(Track(id = "t1", title = "Title", artists = "Artist")), currentIndex = 0, isPlaying = isPlaying)
+        PlayerState(queue = listOf(Track(id = "t1", title = "Title", artists = "Artist", durationMs = 20_000L)), currentIndex = 0, isPlaying = isPlaying)
 }

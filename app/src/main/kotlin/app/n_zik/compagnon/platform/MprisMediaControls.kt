@@ -14,6 +14,8 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import app.n_zik.compagnon.updater.models.ArtifactNames
+import org.freedesktop.dbus.DBusPath
 import org.freedesktop.dbus.annotations.DBusBoundProperty
 import org.freedesktop.dbus.annotations.DBusInterfaceName
 import org.freedesktop.dbus.annotations.DBusMemberName
@@ -98,6 +100,22 @@ interface MPRISPlayer : DBusInterface {
     @get:DBusBoundProperty
     val canControl: Boolean
 
+    /** The live position (µs) — never in `PropertiesChanged` (the MPRIS rule): a jump is announced by `Seeked`. */
+    @get:DBusBoundProperty
+    val position: Long
+
+    @get:DBusBoundProperty
+    val canSeek: Boolean
+
+    @get:DBusBoundProperty
+    val rate: Double
+
+    @DBusMemberName("Seek")
+    fun seek(offset: Long)
+
+    @DBusMemberName("SetPosition")
+    fun setPosition(trackId: DBusPath, position: Long)
+
     @DBusMemberName("Next")
     fun next()
 
@@ -152,8 +170,11 @@ class MprisMediaControls(
     @Volatile
     private var noBusLogged = false
 
-    // The last state the state stream pushed (the EDT fields — every push lands there)
+    // The last state the state stream pushed (written on the EDT — every push lands there; read by the
+    // `Position` getter / `Seek` on dbus-java's receiving threads, hence `@Volatile`)
+    @Volatile
     private var lastState: PlayerState? = null
+    @Volatile
     private var lastConnection: ConnectionState = ConnectionState.Connecting
     private var lastFeatures: Set<String> = emptySet()
 
@@ -171,7 +192,8 @@ class MprisMediaControls(
 
         // ---- org.mpris.MediaPlayer2 (the root) --------------------------------------------------------
 
-        override val identity: String get() = MPRIS_IDENTITY
+        // The per-channel product name — the same name the Windows panel shows (the installed shortcut's)
+        override val identity: String get() = ArtifactNames.productName(AppVersion.channel)
         override val desktopEntry: String get() = AppVersion.linuxPackageName
         override val canRaise: Boolean get() = true
         override val canQuit: Boolean get() = true
@@ -193,6 +215,26 @@ class MprisMediaControls(
         override val canPlay: Boolean get() = snapshot.canPlay
         override val canPause: Boolean get() = snapshot.canPause
         override val canControl: Boolean get() = snapshot.canControl
+        override val position: Long get() = currentPositionUs()
+        override val canSeek: Boolean get() = snapshot.canSeek
+        override val rate: Double get() = snapshot.rate
+
+        /** `Seek(offset)`: relative, from the live position, clamped to the track (dbus-java's thread). */
+        override fun seek(offset: Long) {
+            if (!snapshot.canSeek) return
+            val lengthUs = snapshot.metadata?.lengthUs ?: return
+            val targetUs = (currentPositionUs() + offset).coerceIn(0L, lengthUs)
+            forward { seek(targetUs / 1000L) }
+        }
+
+        /** `SetPosition(trackId, position)`: absolute, ignored when the track is no longer the current one (the MPRIS rule). */
+        override fun setPosition(trackId: DBusPath, position: Long) {
+            if (!snapshot.canSeek) return
+            val metadata = snapshot.metadata ?: return
+            val lengthUs = metadata.lengthUs ?: return
+            if (trackId.path != mprisTrackPath(metadata.trackId) || position !in 0L..lengthUs) return
+            forward { seek(position / 1000L) }
+        }
 
         // AD-1: the transport controls only forward to the attached repository (no-op when detached)
         override fun next() = forward { next() }
@@ -226,11 +268,38 @@ class MprisMediaControls(
     }
 
     override fun onStateChanged(state: PlayerState?, connection: ConnectionState, features: Set<String>) {
+        val previous = lastState
+        val serverNow = attachedRepository?.serverNowMs()
         lastState = state
         lastConnection = connection
         lastFeatures = features
         scheduleArtwork() // clears the stale artwork (and pushes) before the fresh push below
         pushCurrentSnapshot()
+        // A seek (from the phone or any client): the clients extrapolate from Position + Rate, so the
+        // discontinuity is announced
+        if (serverNow != null && connection is ConnectionState.Live && positionJumped(previous, state, serverNow)) {
+            emitSeeked(currentPositionUs())
+        }
+    }
+
+    /** The live position (µs) for `Position` / `Seek` — any thread (reads the `@Volatile` state). */
+    private fun currentPositionUs(): Long {
+        val serverNow = attachedRepository?.serverNowMs() ?: return 0L
+        return mprisPositionUs(lastState, lastConnection, serverNow)
+    }
+
+    /** The `Seeked(x)` signal of the `.Player` interface. */
+    private fun emitSeeked(positionUs: Long) {
+        val conn = connection ?: return
+        if (!busNameOwned) return
+        val signal = try {
+            conn.getMessageFactory().createSignal(MPRIS_BUS_NAME, MPRIS_OBJECT_PATH, MPRIS_PLAYER_IFACE, SEEKED, "x", positionUs)
+        } catch (e: DBusException) {
+            log.warning("MPRIS: could not build the $SEEKED signal (${e::class.simpleName})")
+            return
+        }
+        runCatching { conn.sendMessage(signal) }
+            .onFailure { log.warning("MPRIS: could not send $SEEKED (${it::class.simpleName})") }
     }
 
     override fun onSessionEnded() {
@@ -298,7 +367,7 @@ class MprisMediaControls(
         emitPropertiesChanged(changed, snapshot)
     }
 
-    /** One `PropertiesChanged` (`.Player` interface, no invalidated properties — all seven always exist). */
+    /** One `PropertiesChanged` (`.Player` interface, no invalidated properties — every one always exists). */
     private fun emitPropertiesChanged(changed: List<String>, snapshot: MprisSnapshot) {
         val conn = connection ?: return
         val changedValues = changed.associateWith { name -> variantFor(name, snapshot) }
@@ -330,6 +399,8 @@ class MprisMediaControls(
         "CanPlay" -> Variant(snapshot.canPlay)
         "CanPause" -> Variant(snapshot.canPause)
         "CanControl" -> Variant(snapshot.canControl)
+        "CanSeek" -> Variant(snapshot.canSeek)
+        "Rate" -> Variant(snapshot.rate)
         else -> throw IllegalStateException("Unknown MPRIS property $name")
     }
 
@@ -407,7 +478,8 @@ class MprisMediaControls(
 
 /** The [metadata]`s `Metadata` dictionary as a D-Bus `a{sv}` — the frozen spec's wire entries only. */
 internal fun MprisMetadata.toDBusMap(): Map<String, Variant<out Any>> = buildMap {
-    put(MprisMetadata.TRACK_ID, Variant(trackId))
+    // An object path (`o`), as MPRIS requires — KDE's seek (`SetPosition`) matches it
+    put(MprisMetadata.TRACK_ID, Variant(DBusPath(mprisTrackPath(trackId))))
     put(MprisMetadata.TITLE, Variant(title))
     // MPRIS's `xesam:artist` is an array of STRINGS (`as` — review 2026-10-11: `a{vs}` is not a valid
     // wire signature for the entry and KDE clients drop it) — the phone's artists verbatim, blank-free;
@@ -429,6 +501,6 @@ private const val MPRIS_ROOT_IFACE = "org.mpris.MediaPlayer2"
 private const val MPRIS_PLAYER_IFACE = "org.mpris.MediaPlayer2.Player"
 private const val PROPERTIES_IFACE = "org.freedesktop.DBus.Properties"
 private const val PROPERTIES_CHANGED = "PropertiesChanged"
-private const val MPRIS_IDENTITY = "N-Zik"
+private const val SEEKED = "Seeked"
 private const val METADATA_SIG = "a{sv}"
 private const val ART_FILE_NAME = "mpris-artwork.png"

@@ -41,6 +41,10 @@ data class MprisSnapshot(
     val canPlay: Boolean,
     val canPause: Boolean,
     val canControl: Boolean,
+    /** The progress bar can seek: the `playback` feature AND a known duration (the timeline needs an end). */
+    val canSeek: Boolean = false,
+    /** The playback rate (the phone's speed) — MPRIS clients extrapolate the position from it. */
+    val rate: Double = 1.0,
 )
 
 /**
@@ -79,6 +83,8 @@ fun mprisSnapshot(
         canPlay = canPlay,
         canPause = canPause,
         canControl = canPlay || canPause,
+        canSeek = playback && metadata?.lengthUs != null,
+        rate = (state?.speed ?: 1f).toDouble(),
     )
 }
 
@@ -107,6 +113,8 @@ val ALL_PLAYER_PROPERTIES: List<String> = listOf(
     "CanPlay",
     "CanPause",
     "CanControl",
+    "CanSeek",
+    "Rate",
 )
 
 /**
@@ -126,7 +134,38 @@ fun propertiesChanged(old: MprisSnapshot?, new: MprisSnapshot): List<String> {
             "CanPlay" -> old.canPlay != new.canPlay
             "CanPause" -> old.canPause != new.canPause
             "CanControl" -> old.canControl != new.canControl
+            "CanSeek" -> old.canSeek != new.canSeek
+            "Rate" -> old.rate != new.rate
             else -> false
         }
     }
 }
+
+/**
+ * The MPRIS `mpris:trackid` of a phone track: an OBJECT PATH, as the MPRIS spec requires (KDE's
+ * `SetPosition` — the progress bar's seek — matches it and ignores a plain string). The phone's id is
+ * hex-encoded: an object path element only allows `[A-Za-z0-9_]`, and the encoding keeps two ids distinct.
+ */
+fun mprisTrackPath(trackId: String): String =
+    MPRIS_TRACK_PATH_PREFIX + trackId.toByteArray(Charsets.UTF_8).joinToString("") { "%02x".format(it) }
+
+/** The current position for MPRIS `Position` (µs): the phone's extrapolated position while live, 0 otherwise. */
+fun mprisPositionUs(state: PlayerState?, connection: ConnectionState, serverNowMs: Long): Long =
+    if (connection is ConnectionState.Live && state != null) state.extrapolatedPositionMs(serverNowMs) * 1000L else 0L
+
+/**
+ * Whether the position jumped between two pushes of the SAME track (a seek, from the phone or another
+ * client): MPRIS clients extrapolate from `Position` + `Rate`, so a discontinuity must be announced with
+ * `Seeked`. A track change is not a seek (the clients reset on the new `Metadata`).
+ */
+fun positionJumped(old: PlayerState?, new: PlayerState?, serverNowMs: Long): Boolean {
+    if (old == null || new == null) return false
+    val track = new.currentTrack ?: return false
+    if (old.currentTrack?.id != track.id) return false
+    return kotlin.math.abs(old.extrapolatedPositionMs(serverNowMs) - new.extrapolatedPositionMs(serverNowMs)) > POSITION_JUMP_MS
+}
+
+private const val MPRIS_TRACK_PATH_PREFIX = "/app/n_zik/compagnon/track/t"
+
+/** The drift beyond which a position change is a seek, not the extrapolation's own jitter. */
+private const val POSITION_JUMP_MS = 1500L

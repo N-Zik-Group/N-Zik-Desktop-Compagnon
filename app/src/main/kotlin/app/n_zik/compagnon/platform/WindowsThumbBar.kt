@@ -105,14 +105,19 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
 
     // The « Now Playing » panel (SMTC) on the same window — bound right after the taskbar setup.
     // AD-1: its buttons only forward to the attached repository
-    private val smtc = WindowsSmtc(log) { button ->
-        when (button) {
-            SmtcButton.Play -> forward { play() }
-            SmtcButton.Pause -> forward { pause() }
-            SmtcButton.Next -> forward { next() }
-            SmtcButton.Previous -> forward { previous() }
-        }
-    }
+    private val smtc = WindowsSmtc(
+        log,
+        onButton = { button ->
+            when (button) {
+                SmtcButton.Play -> forward { play() }
+                SmtcButton.Pause -> forward { pause() }
+                SmtcButton.Next -> forward { next() }
+                SmtcButton.Previous -> forward { previous() }
+            }
+        },
+        // The panel's progress bar: a seek forwarded like the app's own seek bar
+        onSeek = { positionMs -> forward { seek(positionMs) } },
+    )
 
     // The last state push (EDT) — the SMTC artwork is fetched for its current track
     private var lastState: PlayerState? = null
@@ -147,7 +152,10 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         lastConnection = connection
         lastFeatures = features
         // The panel keeps the view until its setup when it is not up yet
-        smtc.show(smtcView(mprisSnapshot(state, connection, features, artUrl = null)))
+        // The progress bar's position: the phone's position extrapolated to now (the panel then runs
+        // the bar on its own from the rate, until the next push)
+        val positionMs = attachedRepository?.serverNowMs()?.let { now -> state?.extrapolatedPositionMs(now) } ?: 0L
+        smtc.show(smtcView(mprisSnapshot(state, connection, features, artUrl = null), positionMs))
         scheduleSmtcArtwork()
         if (taskbar == null) {
             // The window may not have been realized when the first attach ran the setup (a session
