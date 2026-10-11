@@ -354,6 +354,14 @@
     <string name="tab_network">Rețea</string>
     <string name="tab_miscellaneous">Diverse</string>
     <string name="general_settings_description">Secțiunea generală conține setări pentru funcționalitatea generală a aplicației</string>
+    <!-- The system tray + the window close behavior (spec `spec-tray-taskbar-media-controls`) -->
+    <string name="tray_open">Open</string>
+    <string name="tray_quit">Quit</string>
+    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
+    <string name="window">Window</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
     <string name="network_settings_description">Secțiunea de rețea conține setări pentru a optimiza performanța aplicației și utilizarea datelor</string>
     <string name="other_settings_description">Secţiunea diverse conţine diverse setări opţionale şi utilităţi</string>
     <string name="cache">Cache</string>
