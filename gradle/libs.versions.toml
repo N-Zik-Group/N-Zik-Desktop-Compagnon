@@ -20,7 +20,7 @@ vlc-linux-tarball-url = "https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/
 # Re-pinned 2026-10-07 (approved): the original tarball was lost from the build cache and was
 # never uploaded to the release, so the original SHA is unrecoverable; the rebuild (same pinned
 # official source + same committed script + same audio subset) yields a different binary hash.
-vlc-linux-tarball-sha256 = "73e65bc7e019f53a92f2fee74d444d34862d4938e36b49c336881e6faf78e215"
+vlc-linux-tarball-sha256 = "808bd3a33a70939aa95772bedd665ceafac04fe0a231e88f203af157e1e384f2"
 kotlin = "2.4.20"
 compose-plugin = "1.13.0-alpha01"
 compose-material3 = "1.13.0-alpha01"
