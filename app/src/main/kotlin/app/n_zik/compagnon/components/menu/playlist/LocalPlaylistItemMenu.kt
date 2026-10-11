@@ -87,16 +87,16 @@ import org.jetbrains.compose.resources.stringResource
  * `modified:` / `VL` prefix, inert — no contract route) and the custom cover over the thumbnail.
  * The Navigation section of a YouTube playlist: "More of" (the phone's channel entry, no suffix — spec
  * #18, its `OnlinePlaylistItemMenu.kt` 482-493; no channel name on the PC), "Listen on YouTube" (opens its
- * page in the desktop browser, the phone's 510-525), then the auto-sync toggle — spec #14, the phone's
- * `LocalPlaylistItemMenu.kt` 529-545: shown non-checkable, static title, no effect (the per-playlist
- * auto-sync is a phone-side feature, no contract route).
+ * page in the desktop browser, the phone's 510-525). Not shown: the per-playlist auto-sync toggle (spec
+ * #14, the phone's `LocalPlaylistItemMenu.kt` 529-545) — the phone gates it on its YouTube sync, which
+ * the PC never has (as the "Filter by" chip and the toolbars' sync buttons).
  * Ported inert from the phone's online playlist menu (its `OnlinePlaylistItemMenu.kt`, spec #15-#17):
  * "Add to a playlist" (#16, 386-398 — opens [PlaylistsMenu], spec #47) and "Import playlist" (#17,
  * 448-462, icon `add_in_playlist`) at the end of Management, and the header's share (#15, 292-306) at the
  * end of the trailing column — inert, no contract route.
  * The entries without a contract route show the phone's help on a right click, except the ones whose phone long
  * press is empty (download, remove all downloaded songs, rename, delete, listen on YouTube, add to a
- * playlist, import, more of, auto-sync, share).
+ * playlist, import, more of, share).
  */
 class LocalPlaylistItemMenu(
     private val playlist: Playlist,
@@ -153,9 +153,9 @@ class LocalPlaylistItemMenu(
             // — no channel name on the PC; inert, no contract route
             InertMenuItem(Res.drawable.people, Res.string.more_of).ListMenuItem()
             ListenOnYouTube(browseId).ListMenuItem()
-            // Spec #14: the phone's per-playlist auto-sync toggle (its `LocalPlaylistItemMenu.kt` 529-545),
-            // non-checkable, static title, inert — phone-side feature, no contract route
-            InertMenuItem(Res.drawable.sync, Res.string.sync_per_playlist_auto).ListMenuItem()
+            // Spec #14: no per-playlist auto-sync toggle — the phone gates it on `isYouTubeSyncEnabled()` (its
+            // `LocalPlaylistItemMenu.kt` 529-545), never true on the PC (no YouTube sync), like the filter chip
+            // and the toolbars' sync buttons
         }
     }
 
