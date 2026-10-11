@@ -182,6 +182,7 @@
     <string name="follow">Volgen</string>
     <string name="following">Gevolgd</string>
     <string name="item_select">Selecteren</string>
+    <string name="item_deselect">Deselecteer</string>
     <string name="info_download_all_songs">Download all songs</string>
     <string name="info_smart_recommendation">Slimme aanbevelingen</string>
     <string name="import_playlist">Afspeellijst importeren</string>
