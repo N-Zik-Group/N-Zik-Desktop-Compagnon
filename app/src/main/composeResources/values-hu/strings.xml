@@ -182,6 +182,7 @@
     <string name="follow">Követés</string>
     <string name="following">Követve</string>
     <string name="item_select">Kiválaszt</string>
+    <string name="item_deselect">Törölje a kijelölést</string>
     <string name="info_download_all_songs">Összes zene letöltése</string>
     <string name="info_smart_recommendation">Smart recommendations</string>
     <string name="import_playlist">Lejátszási lista importálása</string>
