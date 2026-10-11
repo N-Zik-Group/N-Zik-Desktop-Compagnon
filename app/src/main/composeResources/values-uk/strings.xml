@@ -182,6 +182,7 @@
     <string name="follow">Підписатися</string>
     <string name="following">Підписаний</string>
     <string name="item_select">Вибрати</string>
+    <string name="item_deselect">Скасовувати виділення</string>
     <string name="info_download_all_songs">Завантажити всі пісні</string>
     <string name="info_smart_recommendation">Розумні рекомендації</string>
     <string name="import_playlist">Імпортувати плейлист</string>
