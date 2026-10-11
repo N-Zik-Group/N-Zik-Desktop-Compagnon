@@ -485,6 +485,6 @@
     <string name="lastfm_unlove">Retirer des favoris sur Last.fm</string>
     <string name="deleted">Supprimé</string>
     <string name="and">et</string>
-    <string name="sync">Synchronise</string>
+    <string name="sync">Synchronisation</string>
     <string name="delete_playlists_confirm_all">Êtes-vous sûr de vouloir supprimer TOUTES les %d playlists ?</string>
 </resources>
