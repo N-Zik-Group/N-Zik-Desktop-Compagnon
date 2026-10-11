@@ -182,6 +182,7 @@
     <string name="follow">Seuraa</string>
     <string name="following">Seuraan tätä</string>
     <string name="item_select">Valitse</string>
+    <string name="item_deselect">Poista valinnat</string>
     <string name="info_download_all_songs">Lataa kaikki kappaleet</string>
     <string name="info_smart_recommendation">Älykkäät suositukset</string>
     <string name="import_playlist">Tuo soittolista</string>
