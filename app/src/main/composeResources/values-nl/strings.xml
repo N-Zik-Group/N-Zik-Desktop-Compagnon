@@ -354,6 +354,14 @@
     <string name="tab_network">Netwerk</string>
     <string name="tab_miscellaneous">Diversen</string>
     <string name="general_settings_description">De algemene sectie bevat instellingen voor de algemene functionaliteit van de app</string>
+    <!-- The system tray + the window close behavior (spec `spec-tray-taskbar-media-controls`) -->
+    <string name="tray_open">Open</string>
+    <string name="tray_quit">Quit</string>
+    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
+    <string name="window">Window</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
     <string name="network_settings_description">De netwerksectie bevat instellingen om de prestaties en gegevensgebruik van de app te optimaliseren</string>
     <string name="other_settings_description">De diverse sectie bevat verschillende optionele instellingen en toepassingen</string>
     <string name="cache">Cache</string>
