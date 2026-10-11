@@ -490,4 +490,23 @@
     <string name="sync">Senkronize et</string>
     <string name="delete_playlists_confirm_all">%d adet çalma listesinin TÜMÜNÜ silmek istediğinizden emin misiniz?</string>
     <string name="visualizer">Görselleştirme</string>
+    <!-- Home screens (spec spec-fill-pc-ui-gaps-home, step 3 G2): keys and texts of the phone (N-Zik strings.xml) -->
+    <string name="swipe_to_action">İşlem için kaydır</string>
+    <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">Dikey şarkı listesinde bir şarkıyı sola veya sağa kaydırarak işlemleri gerçekleştirin</string>
+    <string name="navigation_bar_position">Gezinme çubuğu konumu</string>
+    <string name="navigation_bar_type">Gezinme çubuğu stili</string>
+    <string name="direction_left">Sol</string>
+    <string name="direction_right">Sağ</string>
+    <string name="direction_top">Üst</string>
+    <string name="direction_bottom">Alt</string>
+    <string name="direction_bottom_floating">Alt Yüzer</string>
+    <string name="icon_and_text">Simge ve metin</string>
+    <string name="only_icon">Sadece simge</string>
+    <string name="default_page">Varsayılan sayfa</string>
+    <string name="quick_picks">Hızlı Seçimler</string>
+    <string name="syncing_item">Senkronizasyon: %1$s</string>
+    <string name="syncing_progress">%1$d / %2$d</string>
+    <string name="syncing_failed">Senkronizasyon başarısız oldu</string>
+    <string name="txt_settings">Ayarlar</string>
+    <string name="none">Yok</string>
 </resources>
