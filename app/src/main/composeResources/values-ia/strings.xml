@@ -182,6 +182,7 @@
     <string name="follow">Sequer</string>
     <string name="following">Sequinte</string>
     <string name="item_select">Seliger</string>
+    <string name="item_deselect">Disselectionar</string>
     <string name="info_download_all_songs">Discargar tote le cantos</string>
     <string name="info_smart_recommendation">Smart recommendations</string>
     <string name="import_playlist">Importar un lista de reproduction</string>
