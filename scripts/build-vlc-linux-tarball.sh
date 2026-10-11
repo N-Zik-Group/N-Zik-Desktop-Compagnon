@@ -19,8 +19,19 @@
 #   │                          `make install` bakes in is stripped (step 4b), so no lib carries an
 #   │                          active rpath to the build host)
 #   ├── libvlc_pulse.so.0    (the PulseAudio output's wrapper lib — libpulse_plugin.so's DT_NEEDED)
+#   ├── libmatroska.so.7     (the webm/mkv demux's dep — NOT in the 24.08 runtime; bundled by step 4a)
+#   ├── libebml.so.5         (matroska's dep — same)
+#   ├── libfaad.so.2         (the AAC codec's dep — same)
 #   └── plugins/…            (access / audio_filter / audio_mixer / audio_output / codec /
 #                             control / demux / packetizer / stream_filter — audio only)
+#
+# Self-containment (steps 4a + 4c): the 24.08 Flatpak base runtime ships most of the codec stack
+# (FLAC, mpg123, opus, vorbis, ogg, samplerate) plus pulse/alsa/z/glibc/libstdc++, but NOT the
+# matroska pair nor faad — without them the webm/mkv demux (the phone's streaming format) and the
+# AAC codec fail to load in the sandbox. Step 4a bundles those three from the build host (resolved
+# by ldd, verified by SONAME); step 4c enforces the frozen external-dependency contract: every
+# DT_NEEDED of every staged lib must be tarball-carried or 24.08-runtime-provided, else the build
+# fails loud (a distro whose packages drifted — e.g. a future libFLAC.so.14 — never ships).
 #
 # After the script finishes:
 #   1. pin the printed SHA-256 in `gradle/libs.versions.toml` (`vlc-linux-tarball-sha256`);
@@ -201,6 +212,42 @@ for plugin in $AUDIO_SUBSET; do
   cp "$src" "$STAGE/$plugin"
 done
 
+# --- 4a. Bundle the runtime libs the Flatpak base runtime does NOT provide --------------------------
+# The 24.08 base runtime ships the codec stack (FLAC, mpg123, opus, vorbis, ogg, samplerate) plus
+# pulse/alsa/z/glibc/libstdc++ — but NOT the matroska pair nor faad. Without them, libmkv_plugin.so
+# (the webm/mkv demux — the phone's streaming format) and libfaad_plugin.so (AAC) fail to load in
+# the sandbox ("no demux modules matched"). So the tarball carries them itself, at the tarball root —
+# the dir the Flatpak wrapper launcher already exports on LD_LIBRARY_PATH (zero wrapper change).
+#
+# Each name below is pinned by SONAME and stays in sync with `vlcLinuxRuntimeFiles` in
+# `app/build.gradle.kts`. The lib is resolved on the build host via ldd against the staged plugin
+# that needs it (distro-agnostic), verified by its OWN SONAME, and copied as a real file
+# (readlink -f follows the distro's symlink farm). A missing or drifted lib fails loud — never a
+# tarball that plays webm/opus on one host and not in the sandbox.
+# Format: "<soname> <staged needer>"
+RUNTIME_LIBS="
+libmatroska.so.7 plugins/demux/libmkv_plugin.so
+libebml.so.5     plugins/demux/libmkv_plugin.so
+libfaad.so.2     plugins/codec/libfaad_plugin.so
+"
+echo "== bundling the runtime libs the Flatpak base runtime lacks =="
+while read -r soname needer; do
+  [ -n "$soname" ] || continue
+  path="$(ldd "$STAGE/$needer" | awk -v n="$soname" '$1 == n { print $3; exit }')"
+  if [ -z "$path" ] || [ "$path" = "not found" ] || [ ! -f "$path" ]; then
+    echo "ERROR: $soname (DT_NEEDED of $needer) was not found on the build host — cannot bundle it; the tarball would not play webm/opus (or AAC) in the sandbox." >&2
+    exit 1
+  fi
+  real="$(readlink -f "$path")"
+  got="$(readelf -d "$real" | awk -F'[][]' '/SONAME/ {print $2}')"
+  if [ "$got" != "$soname" ]; then
+    echo "ERROR: $real carries SONAME '${got:-<none>}', not the expected $soname — the staged plugins would not link against it. The build host's packages drifted from the Flatpak runtime contract." >&2
+    exit 1
+  fi
+  cp "$real" "$STAGE/$soname"
+  echo "bundled $soname (from $real)"
+done <<< "$RUNTIME_LIBS"
+
 # --- 4b. Strip the build-time rpath from every .so (a portable tarball) ---------------------------
 # `make install` leaves each module's rpath set to the build prefix (e.g. /home/<user>/prefix/lib):
 # machine-specific, so the pinned tarball must not carry an ACTIVE rpath to the build host. At
@@ -222,6 +269,52 @@ if [ "$leftover" -gt 0 ]; then
   echo "ERROR: rpath/runpath still present in $leftover staged lib(s)" >&2
   exit 1
 fi
+
+# --- 4c. Verify the external-dependency contract (fail-loud, before the tar) -----------------------
+# Every DT_NEEDED of every staged lib must resolve to either a lib the tarball itself carries (the
+# staged set — transitive deps of the bundled libs included) or a lib the 24.08 Flatpak base
+# runtime provides. The allow-list below is the frozen contract — the runtime coverage MEASURED
+# inside the sandbox (ldconfig -p) on 2026-10-11 (spec `spec-flatpak-keyring-matroska`). A build
+# host whose distro packages drift from that contract (e.g. a future libFLAC.so.14) fails LOUD here
+# instead of publishing a tarball whose codecs silently break in the sandbox. Extend RUNTIME_PROVIDED
+# only with a re-measured runtime coverage — never from memory.
+RUNTIME_PROVIDED="
+libc.so.6
+libm.so.6
+libgcc_s.so.1
+libstdc++.so.6
+ld-linux-x86-64.so.2
+libz.so.1
+libpulse.so.0
+libasound.so.2
+libFLAC.so.12
+libmpg123.so.0
+libopus.so.0
+libvorbis.so.0
+libogg.so.0
+libsamplerate.so.0
+"
+echo "== verifying the external-dependency contract =="
+provided=" "
+while read -r n; do [ -n "$n" ] && provided+="$n "; done <<< "$RUNTIME_PROVIDED"
+staged=" "
+while IFS= read -r -d '' so; do staged+="$(basename "$so") "; done < <(find "$STAGE" -name '*.so*' -type f -print0)
+violations=""
+while IFS= read -r -d '' so; do
+  while read -r dep; do
+    [ -n "$dep" ] || continue
+    case "$provided" in *" $dep "*) continue ;; esac
+    case "$staged"  in *" $dep "*) continue ;; esac
+    violations+="$(basename "$so") needs $dep; "
+  done < <(readelf -d "$so" | awk -F'[][]' '/NEEDED/ {print $2}')
+done < <(find "$STAGE" -name '*.so*' -type f -print0)
+if [ -n "$violations" ]; then
+  echo "ERROR: external-dependency contract violated — DT_NEEDED neither carried by the tarball nor provided by the 24.08 runtime:" >&2
+  echo "  $violations" >&2
+  echo "Re-measure the 24.08 runtime coverage (sandbox ldconfig -p) and update RUNTIME_PROVIDED / the bundled RUNTIME_LIBS accordingly." >&2
+  exit 1
+fi
+echo "contract OK: every DT_NEEDED resolves (tarball-carried or 24.08-runtime-provided)"
 
 # --- 5. Tar it (reproducible: sorted entries, fixed owner/mtime, gzip -n) -------------------------
 # The tar root is the staging dir's basename (relative, from $WORK) so the archive contains a single

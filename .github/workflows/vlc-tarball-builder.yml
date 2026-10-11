@@ -97,7 +97,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: "Run the committed script (fail-loud: source 404 / source SHA mismatch / missing plugin / rpath leftover)"
+      - name: "Run the committed script (fail-loud: source 404 / source SHA mismatch / missing plugin / unbundlable runtime lib / SONAME drift / rpath leftover / external-dependency contract violation)"
         run: bash scripts/build-vlc-linux-tarball.sh
 
       - name: Compute the tarball SHA-256
@@ -153,7 +153,7 @@ jobs:
           cat > release_body.md <<'BODY'
           ## Linux VLC @VERSION@ runtime tarball (staging)
 
-          Built on GitHub Actions by the committed scripts/build-vlc-linux-tarball.sh (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped).
+          Built on GitHub Actions by the committed scripts/build-vlc-linux-tarball.sh (the official VideoLAN source, the 35-file audio subset — including the 3 runtime libs the 24.08 base runtime lacks: the matroska pair + faad — the build-time rpath stripped, every DT_NEEDED verified against the frozen external-dependency contract).
 
           - Asset: vlc-@VERSION@-linux-x64.tar.gz
           - SHA-256: @SHA@
@@ -232,9 +232,9 @@ jobs:
           # announces the re-publication (same version — the SHA is what moves, the producer is
           # not byte-reproducible).
           if [ "$REASON" = "self-heal" ]; then
-            LEAD="Re-publishes the pinned Linux VLC runtime tarball **@VERSION@** (the release asset was MISSING on GitHub — self-heal; the version is unchanged, the SHA is what moves: the producer is not byte-reproducible) — the committed scripts/build-vlc-linux-tarball.sh (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped) is the producer; this PR is its catalog-only output."
+            LEAD="Re-publishes the pinned Linux VLC runtime tarball **@VERSION@** (the release asset was MISSING on GitHub — self-heal; the version is unchanged, the SHA is what moves: the producer is not byte-reproducible) — the committed scripts/build-vlc-linux-tarball.sh (the official VideoLAN source, the 35-file audio subset including the 3 runtime libs the 24.08 base runtime lacks, the build-time rpath stripped) is the producer; this PR is its catalog-only output."
           else
-            LEAD="Bumps the pinned Linux VLC runtime tarball **@CATALOG@ -> @VERSION@** — the committed scripts/build-vlc-linux-tarball.sh (the official VideoLAN source, the 32-file audio subset, the build-time rpath stripped) is the producer; this PR is its catalog-only output."
+            LEAD="Bumps the pinned Linux VLC runtime tarball **@CATALOG@ -> @VERSION@** — the committed scripts/build-vlc-linux-tarball.sh (the official VideoLAN source, the 35-file audio subset including the 3 runtime libs the 24.08 base runtime lacks, the build-time rpath stripped) is the producer; this PR is its catalog-only output."
           fi
           cat > pr_body.md <<'BODY'
           @LEAD@
