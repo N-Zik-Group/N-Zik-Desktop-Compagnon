@@ -354,6 +354,14 @@
     <string name="tab_network">Мережа</string>
     <string name="tab_miscellaneous">Інше</string>
     <string name="general_settings_description">Загальний розділ містить налаштування для загального функціоналу програми</string>
+    <!-- The system tray + the window close behavior (spec `spec-tray-taskbar-media-controls`) -->
+    <string name="tray_open">Open</string>
+    <string name="tray_quit">Quit</string>
+    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
+    <string name="window">Window</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
     <string name="network_settings_description">Мережевий розділ містить параметри для оптимізації використання та використання даних додатку</string>
     <string name="other_settings_description">Різний розділ містить різні додаткові параметри і комунальні послуги</string>
     <string name="cache">Кеш</string>
