@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,12 +15,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,12 +33,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import app.n_zik.compagnon.bridge.library.Album
+import app.n_zik.compagnon.bridge.library.AlbumLike
 import app.n_zik.compagnon.bridge.library.AlbumSort
 import app.n_zik.compagnon.bridge.library.AlbumsQuery
 import app.n_zik.compagnon.bridge.library.CollectionFilter
+import app.n_zik.compagnon.bridge.library.DislikeMode
+import app.n_zik.compagnon.bridge.library.nextRotation
+import app.n_zik.compagnon.bridge.library.nextToggle
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.components.ButtonsRow
 import app.n_zik.compagnon.components.LocalMenuState
@@ -48,6 +57,7 @@ import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.styling.HomeItemSize
 import app.n_zik.compagnon.components.tab.CardSelectionBox
 import app.n_zik.compagnon.components.tab.ItemSize
+import app.n_zik.compagnon.components.tab.PositionLock
 import app.n_zik.compagnon.components.tab.Refresh
 import app.n_zik.compagnon.components.tab.TabHeader
 import app.n_zik.compagnon.components.tab.rememberItemSelector
@@ -66,11 +76,16 @@ import app.n_zik.compagnon.utils.formatAsTime
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
 import app.n_zik.compagnon.components.themed.HeaderInfo
+import app.n_zik.compagnon.components.themed.MultiFloatingActionsContainer
+import app.n_zik.compagnon.components.themed.SwipeableAlbumRow
+import app.n_zik.compagnon.enums.AlbumSwipeAction
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.ChipSort
 import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.onSecondaryClick
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /** Grid cells are `HomeItemSize.SMALL` = 100 dp: `size` ≈ 2× in px (contract §10.1). */
@@ -124,8 +139,30 @@ fun gridThumbnailSizePx(itemSize: androidx.compose.ui.unit.Dp): Int =
  * from contract 1.3 `isBookmarked`, in every filter; since 1.7.1 the contract's `isDisliked` shows
  * the phone's `bookmark_slash`.
  * Pass 5 (audit 2026-10-10): dropped too — the landscape bars toggle (`landscapeBarsToggleButton`, the
- * phone's 791: touch landscape only) and the floating multi-action icon (`showFloatingIcon`, its 798, off
- * by default; deferred). Pull-to-refresh: the toolbar's Refresh instead (no touch on the PC).
+ * phone's 791: touch landscape only). Pull-to-refresh: the toolbar's Refresh instead (no touch on the PC).
+ *
+ * Spec `spec-fill-pc-ui-gaps-home` #61: the phone's swipe actions of the cards (its
+ * `SwipeableAlbumItem`, the phone's `albumSwipeLeftActionKey` / `albumSwipeRightActionKey`, the
+ * phone's `isSwipeToActionEnabled` toggle) — a swipe to the left plays the album next, one to the
+ * right rotates its bookmark (the phone's "disliked" mode deciding the rotation, the menu's
+ * pattern).
+ *
+ * Spec #63: the toolbar's position lock (the phone's `HomeAlbum.kt` 448) is a real local-state
+ * toggle — no command, nothing persisted; the lock is re-created on a sort-direction change (the
+ * phone's remember key), so its color always reflects the sort direction (a tap while descending
+ * toasts the phone's "reorder is only possible in ascending sort"). The cards' reorder handle (the
+ * phone's `HomeAlbum.kt` 641-670) is shown while the lock is off, the chip's sort custom and
+ * ascending — its drag is inert (no contract route for the list order: one toast per gesture,
+ * nothing persisted).
+ *
+ * Spec #65: the phone's sync banner (its `HomeSyncState`, `HomeAlbum.kt` 571-600) under the chips —
+ * the sync state is not in the contract, so it never shows on the PC (the component is present,
+ * never displayed).
+ *
+ * Spec #64: the phone's floating multi-action icon (its `HomeAlbum.kt` 798-805; on by default on
+ * the PC): "Recherche" is inert here (the albums search is a placeholder — `/library/albums` has
+ * no `text` parameter) — "Réglages" is inert too (no contract route, a long press toasts its
+ * title).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -196,12 +233,24 @@ fun HomeAlbums(
     // The phone's item selector (a local toggle, never persisted): the cards' selection boxes
     val itemSelector = rememberItemSelector()
 
+    // Spec #63: the phone's position lock (its `remember(sort.sortOrder) { PositionLock(sort.sortOrder) }`):
+    // a local-state toggle — no command, nothing persisted; re-created on a sort-direction change
+    // (the phone's remember key), so its color always reflects the current direction (a tap while
+    // descending toasts the phone's "reorder is only possible in ascending sort")
+    val positionLock = remember(chipSort.reverse) {
+        PositionLock(mutableStateOf(!chipSort.reverse)) { true }
+    }
+
+    // Spec #63: the phone's handle condition (its `HomeAlbum.kt` 641)
+    val showReorderHandle = chipSort.albumSort == AlbumSort.Custom && !chipSort.reverse && !positionLock.isLocked()
+
     val buttons = buildList<Button> {
         ALBUMS_TOOLBAR_BUTTON_IDS.forEach { id ->
             when (id) {
                 "sort" -> add(sortButton)
+                // Spec #63: the phone's lock — a local-state toggle, its color the sort direction
                 "position_lock" -> if (chipSort.albumSort == AlbumSort.Custom) {
-                    add(InertButton(Res.drawable.locked, Res.string.info_lock_unlock_reorder_songs))
+                    add(positionLock)
                 }
                 // No contract search on `/library/albums` (no `text` parameter): inert, the phone's title
                 "search" -> add(InertButton(Res.drawable.search_circle, Res.string.search))
@@ -277,6 +326,14 @@ fun HomeAlbums(
                                 )
                             }
                         }
+
+                        // Spec #65: the phone's sync banner (its `HomeSyncState`): the sync state is
+                        // not in the contract, so it never shows on the PC — the component is
+                        // present, never displayed
+                        val isSyncing = false
+                        if (isSyncing) {
+                            HomeSyncBanner(currentName = "", currentIndex = 0, total = 0, failed = 0, progress = 0f)
+                        }
                     }
                 },
             ) { headerPadding ->
@@ -291,41 +348,88 @@ fun HomeAlbums(
                         // The phone's keys: the id, duplicates dropped (`distinctBy`)
                         key = { (_, album) -> album.id },
                     ) { (_, album) ->
-                        Box(modifier = Modifier) {
-                            val menu: ItemActions? = actions.collectionMenuActions(CollectionHeader.OfAlbum(album).ref, live)
-                            val openMenu = menu?.let {
-                                {
-                                    menuState.display {
-                                        AlbumItemMenu(album, it).MenuComponent()
+                        val albumActions = actions.collectionActions(CollectionHeader.OfAlbum(album).ref, live)
+                        // Spec #61: the phone's swipe actions of the cards (its `SwipeableAlbumItem`)
+                        SwipeableAlbumRow(
+                            bookmarkedState = album.isBookmarked,
+                            swipeLeftAction = settings?.albumSwipeLeftActionValue ?: AlbumSwipeAction.PlayNext,
+                            swipeRightAction = settings?.albumSwipeRightActionValue ?: AlbumSwipeAction.Bookmark,
+                            swipeEnabled = settings?.isSwipeToActionEnabled == true,
+                            onPlayNext = { if (live) albumActions?.onPlayNext?.invoke() },
+                            onEnqueue = { if (live) albumActions?.onEnqueue?.invoke() },
+                            // The phone's album tri-state rotation (the menu's pattern, its
+                            // `AlbumItemMenu`): the "disliked" mode decides the rotation, inert
+                            // without `library.write`
+                            onBookmark = {
+                                if (actions.canWrite) {
+                                    when (val decision = albumSwipeDecision(album.isDisliked, album.isBookmarked, dislikeMode)) {
+                                        is AlbumSwipeDecision.Bookmark -> actions.bookmarkAlbum(album.id, decision.bookmarked)
+                                        is AlbumSwipeDecision.Like -> actions.likeAlbum(album.id, decision.state)
+                                    }
+                                }
+                            },
+                        ) {
+                            Box(modifier = Modifier) {
+                                val menu: ItemActions? = actions.collectionMenuActions(CollectionHeader.OfAlbum(album).ref, live)
+                                val openMenu = menu?.let {
+                                    {
+                                        menuState.display {
+                                            AlbumItemMenu(album, it).MenuComponent()
+                                        }
+                                    }
+                                }
+                                AlbumItem(
+                                    alternative = true,
+                                    showAuthors = true,
+                                    album = album,
+                                    thumbnailSizeDp = itemSize.value.dp,
+                                    thumbnailSizePx = gridThumbnailSizePx(itemSize.value.dp),
+                                    thumbnailOverlay = {
+                                        // The phone's selection box takes the overlay's place while active (inert)
+                                        if (itemSelector.isActive) CardSelectionBox() else albumSortOverlay(albumQuery.sort, album)
+                                    },
+                                    // Contract 1.3 `isBookmarked`, in every filter (a 1.2 phone only gives it through the
+                                    // filter); since 1.7.1 the contract's `isDisliked` gives the phone's `bookmark_slash`
+                                    likeState = when {
+                                        album.isDisliked -> false
+                                        album.isBookmarked || albumQuery.filter == CollectionFilter.Bookmarked -> true
+                                        else -> null
+                                    },
+                                    modifier = Modifier
+                                        .clip(uiRoundnessShape())
+                                        .onSecondaryClick(openMenu)
+                                        .combinedClickable(
+                                            onLongClick = { openMenu?.invoke() },
+                                            onClick = { onAlbumClick(album) },
+                                        )
+                                        .clip(thumbnailShape()),
+                                )
+                                // Spec #63: the phone's reorder handle (its `HomeAlbum.kt` 641-670) —
+                                // its drag is inert (no contract route for the list order)
+                                if (showReorderHandle) {
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(4.dp)
+                                            .size(32.dp)
+                                            .align(Alignment.TopEnd)
+                                            .zIndex(2f)
+                                            .pointerInput(album.id) {
+                                                detectDragGesturesAfterLongPress(
+                                                    onDrag = { change, _ -> change.consume() },
+                                                    // One toast per inert drag gesture: the order is the phone's, never written here
+                                                    onDragEnd = { Toaster.i(Res.string.info_lock_unlock_reorder_songs) },
+                                                )
+                                            },
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(Res.drawable.reorder),
+                                            contentDescription = null,
+                                            tint = colorPalette().textDisabled,
+                                        )
                                     }
                                 }
                             }
-                            AlbumItem(
-                                alternative = true,
-                                showAuthors = true,
-                                album = album,
-                                thumbnailSizeDp = itemSize.value.dp,
-                                thumbnailSizePx = gridThumbnailSizePx(itemSize.value.dp),
-                                thumbnailOverlay = {
-                                    // The phone's selection box takes the overlay's place while active (inert)
-                                    if (itemSelector.isActive) CardSelectionBox() else albumSortOverlay(albumQuery.sort, album)
-                                },
-                                // Contract 1.3 `isBookmarked`, in every filter (a 1.2 phone only gives it through the
-                                // filter); since 1.7.1 the contract's `isDisliked` gives the phone's `bookmark_slash`
-                                likeState = when {
-                                    album.isDisliked -> false
-                                    album.isBookmarked || albumQuery.filter == CollectionFilter.Bookmarked -> true
-                                    else -> null
-                                },
-                                modifier = Modifier
-                                    .clip(uiRoundnessShape())
-                                    .onSecondaryClick(openMenu)
-                                    .combinedClickable(
-                                        onLongClick = { openMenu?.invoke() },
-                                        onClick = { onAlbumClick(album) },
-                                    )
-                                    .clip(thumbnailShape()),
-                            )
                         }
                     }
                     item(key = "status", span = { GridItemSpan(maxLineSpan) }) {
@@ -340,6 +444,12 @@ fun HomeAlbums(
         }
 
         FloatingActionsContainerWithScrollToTop(lazyGridState = lazyGridState)
+
+        // Spec #64: the phone's floating multi-action icon (its `HomeAlbum.kt` 798-805):
+        // "Recherche" is inert here (the albums search is a placeholder — no contract route)
+        if (settings?.showFloatingIcon == true) {
+            MultiFloatingActionsContainer(onClickSearch = { /* inert — no album search on the PC */ })
+        }
     }
 }
 
@@ -372,6 +482,40 @@ private fun albumSortOverlay(sort: AlbumSort, album: Album) {
                 .basicMarquee(iterations = Int.MAX_VALUE),
         )
     }
+}
+
+/**
+ * The write of the Albums cards' bookmark swipe (spec `spec-fill-pc-ui-gaps-home` #61) — the
+ * menu's pattern (the phone's `AlbumItemMenu`): without the "disliked" mode ([mode] `null`, the
+ * pre-1.7.2 display) the phone's `bookmark` endpoint, the binary [AlbumLike.nextToggle]; with a
+ * mode covering the albums (`mode.albums`) the `like` endpoint, the tri-state
+ * [AlbumLike.nextRotation]; with a mode off for the albums the binary toggle through the `like`
+ * endpoint.
+ */
+internal sealed interface AlbumSwipeDecision {
+    /** The mode-less write: the phone's `bookmark` endpoint (contract 1.3). */
+    data class Bookmark(val bookmarked: Boolean) : AlbumSwipeDecision
+
+    /** The mode's write: the phone's `like` endpoint (1.7.2), the target state. */
+    data class Like(val state: AlbumLike) : AlbumSwipeDecision
+}
+
+/** The [AlbumSwipeDecision] of an album card from its wire flags and the "disliked" mode. */
+internal fun albumSwipeDecision(
+    isDisliked: Boolean,
+    isBookmarked: Boolean,
+    mode: DislikeMode?,
+): AlbumSwipeDecision {
+    val likeState = when {
+        isDisliked -> AlbumLike.Disliked
+        isBookmarked -> AlbumLike.Bookmarked
+        else -> AlbumLike.Neutral
+    }
+    val target = if (mode == null) likeState.nextToggle()
+    else if (mode.albums) likeState.nextRotation()
+    else likeState.nextToggle()
+    return if (mode == null) AlbumSwipeDecision.Bookmark(target == AlbumLike.Bookmarked)
+    else AlbumSwipeDecision.Like(target)
 }
 
 /** The phone's `AlbumsType` label of the [chip]. */

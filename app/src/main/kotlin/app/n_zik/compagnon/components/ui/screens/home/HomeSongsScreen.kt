@@ -50,9 +50,11 @@ import app.n_zik.compagnon.components.SortOption
 import app.n_zik.compagnon.components.baseRotation
 import app.n_zik.compagnon.components.legacySongSortOptions
 import app.n_zik.compagnon.components.songSortOptions
+import app.n_zik.compagnon.enums.PlaylistSwipeAction
 import app.n_zik.compagnon.enums.onDeviceSongSortOptions
 import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.tab.Locator
+import app.n_zik.compagnon.components.tab.PositionLock
 import app.n_zik.compagnon.components.tab.Refresh
 import app.n_zik.compagnon.components.tab.Search
 import app.n_zik.compagnon.components.tab.SongShuffler
@@ -66,6 +68,7 @@ import app.n_zik.compagnon.components.themed.CacheSpaceIndicator
 import app.n_zik.compagnon.components.themed.Enqueue
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
 import app.n_zik.compagnon.components.themed.HeaderInfo
+import app.n_zik.compagnon.components.themed.MultiFloatingActionsContainer
 import app.n_zik.compagnon.components.themed.PlayNext
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.ChipSort
@@ -143,8 +146,19 @@ import org.jetbrains.compose.resources.stringResource
  * Dropped (contract v1 or PC): the YouTube likes sync itself and its button (the phone gates it on
  * its YouTube sync, never on the PC, spec #42), the chip visibility / order preferences, the filter
  * chip and its menu (the phone gates them on its YouTube sync, never shown on the PC, spec #39),
- * the recommendations' loading spinner (the phone does not send it), the floating
- * search / settings icon.
+ * the recommendations' loading spinner (the phone does not send it).
+ *
+ * Spec `spec-fill-pc-ui-gaps-home` #63: the toolbar's position lock (the phone's
+ * `HomeSongsScreen.kt` 490-499) is a real local-state toggle — no command, nothing persisted; the
+ * lock is re-created on a sort-direction change (the phone's remember key), so its color always
+ * reflects the sort direction (a tap while descending toasts the phone's "reorder is only possible
+ * in ascending sort"). The rows' reorder handle is shown while the lock is off, the chip's sort
+ * custom and ascending, off the Top chip — its drag is inert (no contract route for the list
+ * order: one toast per gesture, nothing persisted).
+ *
+ * Spec #64: the phone's floating multi-action icon (its `HomeSongsScreen.kt` 835-842; on by default
+ * on the PC): "Recherche" runs the tab's own search — "Réglages" is inert (no contract route, a
+ * long press toasts its title).
  */
 @Composable
 fun HomeSongsScreen(
@@ -207,6 +221,14 @@ fun HomeSongsScreen(
     )
     val sortsOnPhone = SessionContract.FEATURE_LIBRARY_SORT in lists.features
     val playbackEnabled = live && actions.available
+
+    // Spec #63: the phone's position lock (its `remember(sort.sortOrder) { PositionLock(sort.sortOrder) }`):
+    // a local-state toggle — no command, nothing persisted; re-created on a sort-direction change
+    // (the phone's remember key), so its color always reflects the current direction (a tap while
+    // descending toasts the phone's "reorder is only possible in ascending sort")
+    val positionLock = remember(chipSort.reverse) {
+        PositionLock(mutableStateOf(!chipSort.reverse)) { true }
+    }
 
     /** The [target]'s list query: its own sort (the persisted [sort]) and the current search text. */
     fun applyChipQuery(target: SongsChip, sort: ChipSort) {
@@ -293,8 +315,9 @@ fun HomeSongsScreen(
         ids.forEach { id ->
             when (id) {
                 "sort" -> add(sortButton)
+                // Spec #63: the phone's lock — a local-state toggle, its color the sort direction
                 "position_lock" -> if (chipSort.songSort == SongSort.Custom) {
-                    add(InertButton(Res.drawable.locked, Res.string.info_lock_unlock_reorder_songs))
+                    add(positionLock)
                 }
                 "match" -> if (hasUnmatched) add(InertButton(Res.drawable.alert, Res.string.match_album_audio_version))
                 // The phone's "Auto Sync Liked Songs" (its `HomeSongsScreen.kt` 553, icon `sync`):
@@ -458,10 +481,24 @@ fun HomeSongsScreen(
                     chipFilter = chipFilter,
                     searchText = SongsQuery.normalizeText(searchText),
                     itemSelector = itemSelector,
+                    // Spec #60 / #62: the phone's swipe actions of the rows and their toggle
+                    swipeLeftAction = settings?.playlistSwipeLeftActionValue ?: PlaylistSwipeAction.Favourite,
+                    swipeRightAction = settings?.playlistSwipeRightActionValue ?: PlaylistSwipeAction.PlayNext,
+                    swipeEnabled = settings?.isSwipeToActionEnabled == true,
+                    // Spec #60: the phone's "disliked" mode (its `DislikeMode.songs`)
+                    likeRotationEnabled = dislikeMode?.songs != false,
+                    // Spec #63: the phone's handle condition (its `HomeSongs.kt` 660)
+                    showReorderHandle = chip != SongsChip.Top && chipSort.songSort == SongSort.Custom && !chipSort.reverse && !positionLock.isLocked(),
                 )
             }
         }
         FloatingActionsContainerWithScrollToTop(lazyListState = lazyListState)
+
+        // Spec #64: the phone's floating multi-action icon (its `HomeSongsScreen.kt` 835-842):
+        // "Recherche" runs this tab's search — "Réglages" is inert (no contract route)
+        if (settings?.showFloatingIcon == true) {
+            MultiFloatingActionsContainer(onClickSearch = { search.onShortClick() })
+        }
     }
 }
 

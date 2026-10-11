@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,12 +15,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,8 +33,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import app.n_zik.compagnon.bridge.library.Artist
 import app.n_zik.compagnon.bridge.library.ArtistSort
 import app.n_zik.compagnon.bridge.library.ArtistsQuery
@@ -48,6 +53,7 @@ import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.styling.HomeItemSize
 import app.n_zik.compagnon.components.tab.CardSelectionBox
 import app.n_zik.compagnon.components.tab.ItemSize
+import app.n_zik.compagnon.components.tab.PositionLock
 import app.n_zik.compagnon.components.tab.Refresh
 import app.n_zik.compagnon.components.tab.TabHeader
 import app.n_zik.compagnon.components.tab.rememberItemSelector
@@ -65,12 +71,15 @@ import app.n_zik.compagnon.utils.formatAsTime
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
 import app.n_zik.compagnon.components.themed.HeaderInfo
+import app.n_zik.compagnon.components.themed.MultiFloatingActionsContainer
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.ChipSort
+import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.onSecondaryClick
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -112,7 +121,24 @@ import org.jetbrains.compose.resources.stringResource
  * the chip and toolbar order / visibility preferences.
  * Pass 5 (audit 2026-10-10): dropped — the phone's pull-to-refresh (its 409: the toolbar's Refresh
  * instead, no touch on the PC), the landscape bars toggle (`landscapeBarsToggleButton`, its 755: touch
- * landscape only) and the floating multi-action icon (`showFloatingIcon`, off by default; deferred).
+ * landscape only).
+ *
+ * Spec `spec-fill-pc-ui-gaps-home` #63: the toolbar's position lock (the phone's `HomeArtist.kt` 448)
+ * is a real local-state toggle — no command, nothing persisted; the lock is re-created on a
+ * sort-direction change (the phone's remember key), so its color always reflects the sort direction
+ * (a tap while descending toasts the phone's "reorder is only possible in ascending sort"). The
+ * cards' reorder handle (the phone's `HomeArtist.kt` 620-649) is shown while the lock is off, the
+ * chip's sort custom and ascending — its drag is inert (no contract route for the list order: one
+ * toast per gesture, nothing persisted).
+ *
+ * Spec #65: the phone's sync banner (its `HomeSyncState`, `HomeArtist.kt` 553-578) under the chips —
+ * the sync state is not in the contract, so it never shows on the PC (the component is present,
+ * never displayed).
+ *
+ * Spec #64: the phone's floating multi-action icon (its `HomeArtist.kt` 762-769; on by default on
+ * the PC): "Recherche" is inert here (the artists search is a placeholder — `/library/artists` has
+ * no `text` parameter) — "Réglages" is inert too (no contract route, a long press toasts its
+ * title).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -183,12 +209,24 @@ fun HomeArtists(
     // The phone's item selector (a local toggle, never persisted): the cards' selection boxes
     val itemSelector = rememberItemSelector()
 
+    // Spec #63: the phone's position lock (its `remember(sort.sortOrder) { PositionLock(sort.sortOrder) }`):
+    // a local-state toggle — no command, nothing persisted; re-created on a sort-direction change
+    // (the phone's remember key), so its color always reflects the current direction (a tap while
+    // descending toasts the phone's "reorder is only possible in ascending sort")
+    val positionLock = remember(chipSort.reverse) {
+        PositionLock(mutableStateOf(!chipSort.reverse)) { true }
+    }
+
+    // Spec #63: the phone's handle condition (its `HomeArtist.kt` 620)
+    val showReorderHandle = chipSort.artistSort == ArtistSort.Custom && !chipSort.reverse && !positionLock.isLocked()
+
     val buttons = buildList<Button> {
         ARTISTS_TOOLBAR_BUTTON_IDS.forEach { id ->
             when (id) {
                 "sort" -> add(sortButton)
+                // Spec #63: the phone's lock — a local-state toggle, its color the sort direction
                 "position_lock" -> if (chipSort.artistSort == ArtistSort.Custom) {
-                    add(InertButton(Res.drawable.locked, Res.string.info_lock_unlock_reorder_songs))
+                    add(positionLock)
                 }
                 // No contract search on `/library/artists` (no `text` parameter): inert, the phone's title
                 "search" -> add(InertButton(Res.drawable.search_circle, Res.string.search))
@@ -264,6 +302,14 @@ fun HomeArtists(
                                 )
                             }
                         }
+
+                        // Spec #65: the phone's sync banner (its `HomeSyncState`): the sync state is
+                        // not in the contract, so it never shows on the PC — the component is
+                        // present, never displayed
+                        val isSyncing = false
+                        if (isSyncing) {
+                            HomeSyncBanner(currentName = "", currentIndex = 0, total = 0, failed = 0, progress = 0f)
+                        }
                     }
                 },
             ) { headerPadding ->
@@ -310,6 +356,31 @@ fun HomeArtists(
                                         onLongClick = { openMenu?.invoke() },
                                     ),
                             )
+                            // Spec #63: the phone's reorder handle (its `HomeArtist.kt` 620-649) —
+                            // its drag is inert (no contract route for the list order)
+                            if (showReorderHandle) {
+                                Box(
+                                    modifier = Modifier
+                                        .padding(4.dp)
+                                        .size(32.dp)
+                                        .align(Alignment.TopEnd)
+                                        .zIndex(2f)
+                                        .pointerInput(artist.id) {
+                                            detectDragGesturesAfterLongPress(
+                                                onDrag = { change, _ -> change.consume() },
+                                                // One toast per inert drag gesture: the order is the phone's, never written here
+                                                onDragEnd = { Toaster.i(Res.string.info_lock_unlock_reorder_songs) },
+                                            )
+                                        },
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.reorder),
+                                        contentDescription = null,
+                                        tint = colorPalette().textDisabled,
+                                    )
+                                }
+                            }
                         }
                     }
                     item(key = "status", span = { GridItemSpan(maxLineSpan) }) {
@@ -324,6 +395,12 @@ fun HomeArtists(
         }
 
         FloatingActionsContainerWithScrollToTop(lazyGridState = lazyGridState)
+
+        // Spec #64: the phone's floating multi-action icon (its `HomeArtist.kt` 762-769):
+        // "Recherche" is inert here (the artists search is a placeholder — no contract route)
+        if (settings?.showFloatingIcon == true) {
+            MultiFloatingActionsContainer(onClickSearch = { /* inert — no artists search on the PC */ })
+        }
     }
 }
 

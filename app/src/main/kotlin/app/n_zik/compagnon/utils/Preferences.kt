@@ -9,11 +9,16 @@ import app.n_zik.compagnon.bridge.library.SongSort
 import app.n_zik.compagnon.bridge.library.TopPeriod
 import app.n_zik.compagnon.bridge.pairing.CredentialStore
 import app.n_zik.compagnon.bridge.state.PlayerBackgroundColors
+import app.n_zik.compagnon.enums.AlbumSwipeAction
 import app.n_zik.compagnon.enums.AnimatedGradient
 import app.n_zik.compagnon.enums.AudioQualityFormat
 import app.n_zik.compagnon.enums.ExoPlayerDiskCacheMaxSize
+import app.n_zik.compagnon.enums.HomeScreenTabs
+import app.n_zik.compagnon.enums.NavigationBarPosition
+import app.n_zik.compagnon.enums.NavigationBarType
 import app.n_zik.compagnon.enums.PlayerSwipeSensitivity
 import app.n_zik.compagnon.enums.PlayerTimelineType
+import app.n_zik.compagnon.enums.PlaylistSwipeAction
 import app.n_zik.compagnon.enums.QueueSwipeAction
 import app.n_zik.compagnon.enums.SwipeAnimationNoThumbnail
 import app.n_zik.compagnon.enums.ThumbnailCoverType
@@ -69,6 +74,18 @@ const val showMiniPlayerVisualizerKey = "showMiniPlayerVisualizer"
 const val queueSwipeLeftActionKey = "queueSwipeLeftAction"
 const val queueSwipeRightActionKey = "queueSwipeRightAction"
 const val isSwipeToActionEnabledKey = "isSwipeToActionEnabled"
+// The home screens (spec `spec-fill-pc-ui-gaps-home`): the phone's preference keys, same names and defaults
+const val navigationBarPositionKey = "navigationBarPosition"
+const val navigationBarTypeKey = "navigationBarType"
+const val indexNavigationTabKey = "indexNavigationTab"
+const val homeScreenTabIndexKey = "homeScreenTabIndex"
+const val playlistSwipeLeftActionKey = "playlistSwipeLeftAction"
+const val playlistSwipeRightActionKey = "playlistSwipeRightAction"
+const val albumSwipeLeftActionKey = "albumSwipeLeftAction"
+const val albumSwipeRightActionKey = "albumSwipeRightAction"
+const val showFloatingIconKey = "showFloatingIcon"
+const val multiFloatActionIconOffsetXKey = "multiFloatActionIconOffsetX"
+const val multiFloatActionIconOffsetYKey = "multiFloatActionIconOffsetY"
 
 /**
  * The sort state of one library chip (contract §10, since 1.6): as on the phone, every chip of a
@@ -187,6 +204,41 @@ data class UserSettings(
     @SerialName(queueSwipeRightActionKey) val queueSwipeRightAction: String = QueueSwipeAction.PlayNext.name,
     /** The phone's swipe actions toggle (its `isSwipeToActionEnabledKey`); off makes the queue rows non-swipeable. */
     @SerialName(isSwipeToActionEnabledKey) val isSwipeToActionEnabled: Boolean = true,
+    /** The home's navigation bar position name (the phone's `navigationBarPositionKey`); an unknown name reads as [NavigationBarPosition.BottomFloating]. */
+    @SerialName(navigationBarPositionKey) val navigationBarPosition: String = NavigationBarPosition.BottomFloating.name,
+    /** The home's navigation bar style name (the phone's `navigationBarTypeKey`); an unknown name reads as [NavigationBarType.IconOnly]. */
+    @SerialName(navigationBarTypeKey) val navigationBarType: String = NavigationBarType.IconOnly.name,
+    /**
+     * The home's start tab name (the phone's `indexNavigationTabKey`): [HomeScreenTabs.Default] or one of
+     * the four visible tabs; an unknown name reads as [HomeScreenTabs.Default]. Applies on the next
+     * launch, until [homeScreenTabIndex] is written (the phone's `rememberPreference` semantics).
+     */
+    @SerialName(indexNavigationTabKey) val indexNavigationTab: String = HomeScreenTabs.Default.name,
+    /**
+     * The last home tab used, persisted on tab change (the phone's `homeScreenTabIndexKey`): `null` =
+     * never written, so the [indexNavigationTab] start tab applies; any value (including 0) then takes
+     * precedence over it, as on the phone. `null` — not `0` — is the default: a persisted 0 is a valid
+     * tab index and would otherwise hide the start tab on the first launch.
+     */
+    @SerialName(homeScreenTabIndexKey) val homeScreenTabIndex: Int? = null,
+    /** The Songs rows' left swipe action name (the phone's `playlistSwipeLeftActionKey`); an unknown name reads as [PlaylistSwipeAction.Favourite]. */
+    @SerialName(playlistSwipeLeftActionKey) val playlistSwipeLeftAction: String = PlaylistSwipeAction.Favourite.name,
+    /** The Songs rows' right swipe action name (the phone's `playlistSwipeRightActionKey`); an unknown name reads as [PlaylistSwipeAction.PlayNext]. */
+    @SerialName(playlistSwipeRightActionKey) val playlistSwipeRightAction: String = PlaylistSwipeAction.PlayNext.name,
+    /** The Albums cards' left swipe action name (the phone's `albumSwipeLeftActionKey`); an unknown name reads as [AlbumSwipeAction.PlayNext]. */
+    @SerialName(albumSwipeLeftActionKey) val albumSwipeLeftAction: String = AlbumSwipeAction.PlayNext.name,
+    /** The Albums cards' right swipe action name (the phone's `albumSwipeRightActionKey`); an unknown name reads as [AlbumSwipeAction.Bookmark]. */
+    @SerialName(albumSwipeRightActionKey) val albumSwipeRightAction: String = AlbumSwipeAction.Bookmark.name,
+    /**
+     * The home's floating actions container toggle (the phone's `showFloatingIconKey`, off by default on
+     * the phone): visible by default on the PC — decision 1 of the PC UI gaps plan: the items behind an
+     * off phone setting are visible until the PC has its own setting entry.
+     */
+    @SerialName(showFloatingIconKey) val showFloatingIcon: Boolean = true,
+    /** The FAB's drag-repositioning x offset in px, persisted on long-press drag (the phone's `multiFloatActionIconOffsetXKey`). */
+    @SerialName(multiFloatActionIconOffsetXKey) val multiFloatActionIconOffsetX: Float = 0f,
+    /** The FAB's drag-repositioning y offset in px, persisted on long-press drag (the phone's `multiFloatActionIconOffsetYKey`). */
+    @SerialName(multiFloatActionIconOffsetYKey) val multiFloatActionIconOffsetY: Float = 0f,
 ) {
     /** Ceiling of the audio cache: `0` disabled, `null` unlimited. */
     val songCacheMaxBytes: Long? get() = exoPlayerDiskCacheMaxSize.cacheBytes(exoPlayerCustomCache)
@@ -230,6 +282,41 @@ data class UserSettings(
     val queueSwipeRightActionValue: QueueSwipeAction
         get() = QueueSwipeAction.entries.firstOrNull { it.name == queueSwipeRightAction }
             ?: QueueSwipeAction.PlayNext
+
+    /** The [navigationBarPosition] name decoded to its position (unknown → [NavigationBarPosition.BottomFloating]). */
+    val navigationBarPositionValue: NavigationBarPosition
+        get() = NavigationBarPosition.entries.firstOrNull { it.name == navigationBarPosition }
+            ?: NavigationBarPosition.BottomFloating
+
+    /** The [navigationBarType] name decoded to its style (unknown → [NavigationBarType.IconOnly]). */
+    val navigationBarTypeValue: NavigationBarType
+        get() = NavigationBarType.entries.firstOrNull { it.name == navigationBarType }
+            ?: NavigationBarType.IconOnly
+
+    /** The [indexNavigationTab] name decoded to its tab (unknown → [HomeScreenTabs.Default]). */
+    val indexNavigationTabValue: HomeScreenTabs
+        get() = HomeScreenTabs.entries.firstOrNull { it.name == indexNavigationTab }
+            ?: HomeScreenTabs.Default
+
+    /** The [playlistSwipeLeftAction] name decoded to its action (unknown → [PlaylistSwipeAction.Favourite]). */
+    val playlistSwipeLeftActionValue: PlaylistSwipeAction
+        get() = PlaylistSwipeAction.entries.firstOrNull { it.name == playlistSwipeLeftAction }
+            ?: PlaylistSwipeAction.Favourite
+
+    /** The [playlistSwipeRightAction] name decoded to its action (unknown → [PlaylistSwipeAction.PlayNext]). */
+    val playlistSwipeRightActionValue: PlaylistSwipeAction
+        get() = PlaylistSwipeAction.entries.firstOrNull { it.name == playlistSwipeRightAction }
+            ?: PlaylistSwipeAction.PlayNext
+
+    /** The [albumSwipeLeftAction] name decoded to its action (unknown → [AlbumSwipeAction.PlayNext]). */
+    val albumSwipeLeftActionValue: AlbumSwipeAction
+        get() = AlbumSwipeAction.entries.firstOrNull { it.name == albumSwipeLeftAction }
+            ?: AlbumSwipeAction.PlayNext
+
+    /** The [albumSwipeRightAction] name decoded to its action (unknown → [AlbumSwipeAction.Bookmark]). */
+    val albumSwipeRightActionValue: AlbumSwipeAction
+        get() = AlbumSwipeAction.entries.firstOrNull { it.name == albumSwipeRightAction }
+            ?: AlbumSwipeAction.Bookmark
 }
 
 /**
