@@ -182,6 +182,7 @@
     <string name="follow">עקוב</string>
     <string name="following">במעקב</string>
     <string name="item_select">בחר</string>
+    <string name="item_deselect">ביטול הבחירה</string>
     <string name="info_download_all_songs">הורד את כל השירים</string>
     <string name="info_smart_recommendation">Smart recommendations</string>
     <string name="import_playlist">ייבוא ​​רשימת השמעה</string>
