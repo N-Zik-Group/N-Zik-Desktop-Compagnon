@@ -182,6 +182,7 @@
     <string name="follow">팔로우</string>
     <string name="following">팔로잉</string>
     <string name="item_select">선택</string>
+    <string name="item_deselect">선택 해제</string>
     <string name="info_download_all_songs">모든 곡 다운로드</string>
     <string name="info_smart_recommendation">Smart recommendations</string>
     <string name="import_playlist">재생목록 가져오기</string>
