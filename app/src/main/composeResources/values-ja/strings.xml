@@ -182,6 +182,7 @@
     <string name="follow">フォロー</string>
     <string name="following">フォロー中</string>
     <string name="item_select">選択</string>
+    <string name="item_deselect">選択を解除</string>
     <string name="info_download_all_songs">すべての曲をダウンロード</string>
     <string name="info_smart_recommendation">スマートレコメンデーション</string>
     <string name="import_playlist">プレイリストをインポート</string>
