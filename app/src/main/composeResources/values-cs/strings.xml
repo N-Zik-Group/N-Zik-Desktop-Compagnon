@@ -354,6 +354,14 @@
     <string name="tab_network">Síť</string>
     <string name="tab_miscellaneous">Různé</string>
     <string name="general_settings_description">Obecná část obsahuje nastavení pro obecnou funkčnost aplikace</string>
+    <!-- The system tray + the window close behavior (spec `spec-tray-taskbar-media-controls`) -->
+    <string name="tray_open">Open</string>
+    <string name="tray_quit">Quit</string>
+    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
+    <string name="window">Window</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
     <string name="network_settings_description">Sekce sítě obsahuje nastavení pro optimalizaci výkonu aplikace a využití dat</string>
     <string name="other_settings_description">Různá část obsahuje různá volitelná nastavení a nástroje</string>
     <string name="cache">Mezipaměť</string>
