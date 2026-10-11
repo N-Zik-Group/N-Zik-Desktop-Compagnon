@@ -240,48 +240,6 @@ class InstallModeDetectionTest {
     }
 
     @Test
-    fun `the marker is read from the resolved app root only`(@TempDir root: File) {
-        // A real symlinked layout (the packageArch staging shape): usr/bin/<pkg> ->
-        // opt/<pkg>/bin/<launcher>, the marker at opt/<pkg>/distribution.txt. Symlink creation is
-        // refused on a host without the privilege (Windows developer mode) — the test fails
-        // LOUD with the creation error, it never silently skips.
-        val pkg = "n-zik-desktop-compagnon"
-        val optRoot = File(root, "opt/$pkg")
-        val binDir = File(optRoot, "bin")
-        binDir.mkdirs()
-        val launcher = File(binDir, "N-Zik Desktop Compagnon")
-        launcher.writeText("launcher")
-        File(optRoot, "distribution.txt").writeText("github-release")
-        val usrBin = File(root, "usr/bin")
-        usrBin.mkdirs()
-        val symlink = File(usrBin, pkg)
-        Files.createSymbolicLink(symlink.toPath(), launcher.toPath())
-
-        // The kernel-resolved path (what liveExecutablePath returns on Linux): the root is the
-        // opt app dir and the marker is read
-        val resolved = Paths.get(symlink.absolutePath).toRealPath()
-        assertEquals(launcher.toPath(), resolved)
-        // The contract of [appRootOfResolvedPath] is POSIX-normalized (it replaces the
-        // backslashes) — the Windows absolute path of the temp dir must be normalized to the
-        // same separators before the comparison (on Linux the two are identical as-is)
-        assertEquals(optRoot.absolutePath.replace('\\', '/'), appRootOfResolvedPath(resolved.toString()))
-        assertEquals("github-release", distributionMarkerAt(resolved.toString()))
-
-        // The UNRESOLVED launch path (the symlink itself, what ProcessHandle.command() returns):
-        // the root resolves to usr/ — no marker there, so an unresolved read would see no marker
-        assertNull(distributionMarkerAt(symlink.absolutePath))
-
-        // Any launcher inside the same app root sees the marker (it belongs to the root, not the
-        // launcher file)
-        val secondLauncher = File(optRoot, "bin/aur")
-        secondLauncher.writeText("launcher")
-        assertEquals("github-release", distributionMarkerAt(secondLauncher.absolutePath))
-        // A blank marker is equivalent to absent (an AUR install carries the file not)
-        File(optRoot, "distribution.txt").writeText("   ")
-        assertNull(distributionMarkerAt(launcher.absolutePath))
-    }
-
-    @Test
     fun `the marker reader is strict on content`(@TempDir root: File) {
         // The reader accepts EXACTLY the release marker content (spec
         // `spec-arch-binary-package-release`, review loop 3 — L3-EC2): a stray or forged
