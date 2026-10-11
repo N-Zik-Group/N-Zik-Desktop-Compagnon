@@ -490,4 +490,23 @@
     <string name="sync">Szinkronizálás</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
     <string name="visualizer">Vizualizáció</string>
+    <!-- Home screens (spec spec-fill-pc-ui-gaps-home, step 3 G2): keys and texts of the phone (N-Zik strings.xml) -->
+    <string name="swipe_to_action">Swipe for action</string>
+    <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">Perform actions by swiping left or right on a song within vertical list of songs</string>
+    <string name="navigation_bar_position">Navigációs sáv pozíciója</string>
+    <string name="navigation_bar_type">Navigation bar style</string>
+    <string name="direction_left">Balra</string>
+    <string name="direction_right">Jobbra</string>
+    <string name="direction_top">Fel</string>
+    <string name="direction_bottom">Alulra</string>
+    <string name="direction_bottom_floating">Bottom Floating</string>
+    <string name="icon_and_text">Ikon és szöveg</string>
+    <string name="only_icon">Csak ikon</string>
+    <string name="default_page">Alapértelmezett oldal</string>
+    <string name="quick_picks">Quick Picks</string>
+    <string name="syncing_item">Syncing: %1$s</string>
+    <string name="syncing_progress">%1$d / %2$d</string>
+    <string name="syncing_failed">Sync failed</string>
+    <string name="txt_settings">Beállítások</string>
+    <string name="none">Nincs</string>
 </resources>
