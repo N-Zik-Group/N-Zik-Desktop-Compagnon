@@ -24,9 +24,9 @@ jobs:
             // (mirrors the phone repo, which uses one bug report template per channel)
             const pcChannelLabels = ["stable pc", "beta pc", "dev pc"];
             const osLabels = ["Windows", "Linux"];
-            const telBuildTypeLabels = [
-              "tel dev", "tel dev32", "tel beta", "tel beta32",
-              "tel full", "tel full32", "tel minified", "tel minified32", "tel foss",
+            const phoneBuildTypeLabels = [
+              "phone dev", "phone dev32", "phone beta", "phone beta32",
+              "phone full", "phone full32", "phone minified", "phone minified32", "phone foss",
             ];
 
             function detectChannel(title) {
@@ -52,15 +52,15 @@ jobs:
               if (!match) return null;
               const value = match[1].trim();
               // 32-bit variants first so they are not shadowed by their non-32 siblings.
-              if (/^Dev32/i.test(value)) return "tel dev32";
-              if (/^Full32/i.test(value)) return "tel full32";
-              if (/^Minified32/i.test(value)) return "tel minified32";
-              if (/^Beta32/i.test(value)) return "tel beta32";
-              if (/^Dev/i.test(value)) return "tel dev";
-              if (/^Full/i.test(value)) return "tel full";
-              if (/^Minified/i.test(value)) return "tel minified";
-              if (/^Beta/i.test(value)) return "tel beta";
-              if (/^Foss/i.test(value)) return "tel foss";
+              if (/^Dev32/i.test(value)) return "phone dev32";
+              if (/^Full32/i.test(value)) return "phone full32";
+              if (/^Minified32/i.test(value)) return "phone minified32";
+              if (/^Beta32/i.test(value)) return "phone beta32";
+              if (/^Dev/i.test(value)) return "phone dev";
+              if (/^Full/i.test(value)) return "phone full";
+              if (/^Minified/i.test(value)) return "phone minified";
+              if (/^Beta/i.test(value)) return "phone beta";
+              if (/^Foss/i.test(value)) return "phone foss";
               return null;
             }
 
@@ -108,7 +108,7 @@ jobs:
               }
               await applyLabel(issueNumber, channel, pcChannelLabels);
               await applyLabel(issueNumber, os, osLabels);
-              await applyLabel(issueNumber, phoneBuildType, telBuildTypeLabels);
+              await applyLabel(issueNumber, phoneBuildType, phoneBuildTypeLabels);
             }
 
             if (context.eventName === "workflow_dispatch") {
