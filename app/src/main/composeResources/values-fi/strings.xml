@@ -490,4 +490,23 @@
     <string name="sync">Synkronoi</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
     <string name="visualizer">Visualisointi</string>
+    <!-- Home screens (spec spec-fill-pc-ui-gaps-home, step 3 G2): keys and texts of the phone (N-Zik strings.xml) -->
+    <string name="swipe_to_action">Pyyhkäise toimintoa varten</string>
+    <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">Suorita toiminnot pyyhkäisemällä kappale vasemmalle tai oikealle pystysuoran kappaleiden listan sisällä</string>
+    <string name="navigation_bar_position">Navigointipalkin sijainti</string>
+    <string name="navigation_bar_type">Navigointipalkin tyyli</string>
+    <string name="direction_left">Vasen</string>
+    <string name="direction_right">Oikea</string>
+    <string name="direction_top">Ylhäällä</string>
+    <string name="direction_bottom">Alhaalla</string>
+    <string name="direction_bottom_floating">Alhaalla Kelluva</string>
+    <string name="icon_and_text">Kuvake ja teksti</string>
+    <string name="only_icon">Vain kuvake</string>
+    <string name="default_page">Oletussivu</string>
+    <string name="quick_picks">Nopeat Valinnat</string>
+    <string name="syncing_item">Syncing: %1$s</string>
+    <string name="syncing_progress">%1$d / %2$d</string>
+    <string name="syncing_failed">Sync failed</string>
+    <string name="txt_settings">Asetukset</string>
+    <string name="none">Ei yhtään</string>
 </resources>
