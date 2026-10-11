@@ -46,9 +46,11 @@ import app.n_zik.compagnon.components.menu.album.AlbumItemMenu
 import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.styling.HomeItemSize
+import app.n_zik.compagnon.components.tab.CardSelectionBox
 import app.n_zik.compagnon.components.tab.ItemSize
 import app.n_zik.compagnon.components.tab.Refresh
 import app.n_zik.compagnon.components.tab.TabHeader
+import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
 import app.n_zik.compagnon.components.tab.toolbar.InertSort
@@ -186,6 +188,9 @@ fun HomeAlbums(
     // The phone's toolbar of the active tab, in the phone's order, with the phone's show conditions
     // (position lock only while the chip's sort is Custom); the Compagnon's "Refresh" is added at the
     // end. Wired: sort, refresh. Placeholders (no contract route, a click does nothing): the rest.
+    // The phone's item selector (a local toggle, never persisted): the cards' selection boxes
+    val itemSelector = rememberItemSelector()
+
     val buttons = buildList<Button> {
         ALBUMS_TOOLBAR_BUTTON_IDS.forEach { id ->
             when (id) {
@@ -197,7 +202,7 @@ fun HomeAlbums(
                 "search" -> add(InertButton(Res.drawable.search_circle, Res.string.search))
                 "randomizer" -> add(Randomizer({ activeList.state.value.items }, onAlbumClick))
                 "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
-                "item_selector" -> add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
+                "item_selector" -> add(itemSelector)
                 "play_next" -> add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
                 "enqueue" -> add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
                 "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
@@ -291,7 +296,8 @@ fun HomeAlbums(
                                 thumbnailSizeDp = itemSize.value.dp,
                                 thumbnailSizePx = gridThumbnailSizePx(itemSize.value.dp),
                                 thumbnailOverlay = {
-                                    albumSortOverlay(albumQuery.sort, album)
+                                    // The phone's selection box takes the overlay's place while active (inert)
+                                    if (itemSelector.isActive) CardSelectionBox() else albumSortOverlay(albumQuery.sort, album)
                                 },
                                 // Contract 1.3 `isBookmarked`, in every filter (a 1.2 phone only gives it through the
                                 // filter); since 1.7.1 the contract's `isDisliked` gives the phone's `bookmark_slash`

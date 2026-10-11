@@ -38,6 +38,7 @@ const val chipSortsKey = "chipSorts"
 const val itemSizesKey = "itemSizes"
 const val disableScrollingTextKey = "disableScrollingText"
 const val languageKey = "language"
+const val playlistindicatorKey = "playlistindicator"
 // The in-app updater (spec `spec-updater`, the phone's updater preference keys):
 const val checkUpdateStateKey = "checkUpdateState"
 const val updateCancelledKey = "updateCancelled"
@@ -101,6 +102,13 @@ data class UserSettings(
      * `values/` (English), never a crash.
      */
     @SerialName(languageKey) val language: String = AppLanguage.SYSTEM,
+    /**
+     * The phone's "Show playlist indicator" (its `playlistindicatorKey`): the song rows' "in a playlist"
+     * badge (contract 1.12.0 `Track.inPlaylist`). Shown by default on the PC — the phone's default is off
+     * (decision 1 of the PC UI gaps plan: the items behind an off phone setting are visible until the PC
+     * has its own setting entry).
+     */
+    @SerialName(playlistindicatorKey) val playlistIndicator: Boolean = true,
     /**
      * The in-app updater's three-state check choice (spec `spec-updater`, AD-9, loop 2 — the
      * phone's `checkUpdateState`, replacing the v1 boolean): the wire value "on" (automatic

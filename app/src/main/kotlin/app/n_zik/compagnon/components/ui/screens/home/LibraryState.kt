@@ -72,6 +72,7 @@ import app.n_zik.compagnon.bridge.state.ListRef
 import app.n_zik.compagnon.bridge.state.PlayerRepository
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SessionContract
+import app.n_zik.compagnon.bridge.state.SongRecommendations
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.bridge.state.displayedLike
@@ -297,6 +298,7 @@ class LibraryLists(
     private fun reloadLibraryFamily(kind: String) {
         when (kind) {
             "songs" -> {
+                reloadSongRecommendations()
                 if (isLoaded(songs)) songs.reload()
                 if (isLoaded(songsPcCached)) songsPcCached.reload()
                 detailTrackLists().forEach { list -> if (isLoaded(list)) list.reload() }
@@ -306,6 +308,24 @@ class LibraryLists(
             "playlists" -> if (isLoaded(playlists)) playlists.reload()
             else -> Unit // a family the contract does not name: no loaded list answers it
         }
+    }
+
+    // ---- Smart shuffle (contract §10.1, since 1.12.0 `library.recommendations`) --------------------
+
+    private val _songRecommendations = MutableStateFlow<SongRecommendations?>(null)
+
+    /**
+     * The phone's smart-shuffle recommendations of its Songs tab, inserted in the same chip of the PC's
+     * Songs tab ([songRows]); `null` without the feature, before the first read or after a failed one.
+     */
+    val songRecommendations: StateFlow<SongRecommendations?> = _songRecommendations.asStateFlow()
+    private var recommendationsJob: Job? = null
+
+    /** Re-reads [songRecommendations]: on the Songs tab's load and on every `libraryChanged` `songs`. */
+    fun reloadSongRecommendations() {
+        if (SessionContract.FEATURE_LIBRARY_RECOMMENDATIONS !in library.features) return
+        recommendationsJob?.cancel()
+        recommendationsJob = scope.launch { _songRecommendations.value = library.songRecommendations() }
     }
 
     /** A list is loaded while its first page has answered ([PagedState.total] is set). */
@@ -849,6 +869,29 @@ class LibraryActions(
 
     fun add(track: Track, position: QueuePosition) {
         scope.launch { player.addTracks(listOf(track.id), position) }
+    }
+
+    /**
+     * A click on a smart-shuffle recommendation (contract §10.1, since 1.12.0): the track is not in the
+     * phone's list, so only this track is played (`queue/play`).
+     */
+    fun playSingle(track: Track) {
+        scope.launch { player.playTracks(listOf(track.id)) }
+    }
+
+    /**
+     * The song menu of a smart-shuffle recommendation (contract §10.1, since 1.12.0): the track is outside
+     * the phone's list, so its entries act on the track alone. The phone always opens the song menu: without
+     * the `queue` feature its playback entries stay inert, as on [trackActions].
+     */
+    fun singleTrackActions(track: Track, live: Boolean): ItemActions {
+        if (!available) return INERT_ACTIONS
+        return ItemActions(
+            onPlay = { playSingle(track) },
+            onPlayNext = { add(track, QueuePosition.Next) },
+            onEnqueue = { add(track, QueuePosition.End) },
+            enabled = live,
+        )
     }
 
     /**

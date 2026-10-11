@@ -1,6 +1,7 @@
 package app.n_zik.compagnon.bridge.library
 
 import app.n_zik.compagnon.bridge.state.ListRef
+import app.n_zik.compagnon.bridge.state.SongRecommendations
 import app.n_zik.compagnon.bridge.state.UiSettings
 
 import app.n_zik.compagnon.bridge.state.Track
@@ -70,6 +71,12 @@ interface LibraryRepository {
 
     /** `GET /ui/settings` (contract §10.5, since 1.10.0, `ui.settings`); `null` keeps the phone's defaults. */
     suspend fun uiSettings(): UiSettings? = null
+
+    /**
+     * `GET /library/songs/recommendations` (contract §10.1, since 1.12.0, `library.recommendations`): the
+     * smart-shuffle recommendations of the phone's Songs tab; `null` without the feature or on a failed read.
+     */
+    suspend fun songRecommendations(): SongRecommendations? = null
 
     /**
      * The tracks of [collection], paginated. [query] (a local playlist's `sort` and `reverse`, contract

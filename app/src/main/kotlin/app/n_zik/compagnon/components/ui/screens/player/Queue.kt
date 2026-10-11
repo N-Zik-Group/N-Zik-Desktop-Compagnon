@@ -53,6 +53,7 @@ import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.Locator
 import app.n_zik.compagnon.components.tab.PositionLock
 import app.n_zik.compagnon.components.tab.Search
+import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.ConfirmDialog
 import app.n_zik.compagnon.components.tab.toolbar.Descriptive
 import app.n_zik.compagnon.components.tab.toolbar.Icon
@@ -155,6 +156,9 @@ fun Queue(
         // Dialog renders
         deleteDialog.Render()
 
+        // The phone's item selector (a local toggle, never persisted): the rows' selection boxes
+        val itemSelector = rememberItemSelector()
+
         // The phone's toolbar order; Locator, Search, position lock, Repeat, Shuffle and "Remove from
         // queue" are wired to the contract, the rest are placeholders without a contract route
         val buttonsList = buildList {
@@ -167,7 +171,7 @@ fun Queue(
                 add(repeat)
                 add(shuffle)
             }
-            add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
+            add(itemSelector)
             if (queueFeature) {
                 add(deleteDialog)
             }
@@ -269,6 +273,7 @@ fun Queue(
                         SongItem(
                             song = song,
                             backgroundColor = itemBackground,
+                            itemSelector = itemSelector,
                             // The phone always opens `SongItemMenu` (its 549); without the `queue` feature its
                             // entries stay inert (no "Remove from queue", the queue cannot change)
                             onLongClick = {

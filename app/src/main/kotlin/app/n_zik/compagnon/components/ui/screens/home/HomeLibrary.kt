@@ -65,10 +65,12 @@ import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.playlistSortOptions
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.styling.HomeItemSize
+import app.n_zik.compagnon.components.tab.CardSelectionBox
 import app.n_zik.compagnon.components.tab.ItemSize
 import app.n_zik.compagnon.components.tab.Refresh
 import app.n_zik.compagnon.components.tab.Search
 import app.n_zik.compagnon.components.tab.TabHeader
+import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
 import app.n_zik.compagnon.components.tab.toolbar.NoRouteConfirmButton
@@ -241,6 +243,9 @@ fun HomeLibrary(
     // (position lock only while the chip's sort is Custom); the Compagnon's "Refresh" is added at the
     // end. Wired: sort, refresh; delete playlists opens its confirmation. Placeholders (no contract
     // route, a click does nothing): the rest.
+    // The phone's item selector (a local toggle, never persisted): the cards' selection boxes
+    val itemSelector = rememberItemSelector()
+
     val buttons = buildList<Button> {
         PLAYLISTS_TOOLBAR_BUTTON_IDS.forEach { id ->
             when (id) {
@@ -250,7 +255,7 @@ fun HomeLibrary(
                 }
                 "search" -> add(search)
                 "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
-                "item_selector" -> add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
+                "item_selector" -> add(itemSelector)
                 "play_next" -> add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
                 "enqueue" -> add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
                 "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
@@ -439,7 +444,8 @@ fun HomeLibrary(
                                     }
                                 },
                                 thumbnailOverlay = {
-                                    playlistSortOverlay(chipSort.playlistSort, preview)
+                                    // The phone's selection box takes the overlay's place while active (inert)
+                                    if (itemSelector.isActive) CardSelectionBox() else playlistSortOverlay(chipSort.playlistSort, preview)
                                 },
                                 songCount = preview.trackCount,
                                 name = preview.name,

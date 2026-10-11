@@ -60,6 +60,7 @@ import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.Locator
 import app.n_zik.compagnon.components.tab.Search
+import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.SongShuffler
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
@@ -296,6 +297,9 @@ fun LocalPlaylistSongs(
     // playlists; position lock and renumber only while the sort is `Custom`; sync and listen on
     // YouTube need a YouTube browse id). Play next, enqueue and listen on YouTube are wired; the
     // rest are placeholders without a contract route (no action)
+    // The phone's item selector (a local toggle, never persisted): the rows' selection boxes
+    val itemSelector = rememberItemSelector()
+
     val toolbarButtons = buildList<Button> {
         LOCAL_PLAYLIST_TOOLBAR_BUTTON_IDS.forEach { id ->
             when (id) {
@@ -326,7 +330,7 @@ fun LocalPlaylistSongs(
                 }
                 "download_all" -> add(downloadAll)
                 "delete_downloads" -> add(deleteDownloads)
-                "item_selector" -> add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
+                "item_selector" -> add(itemSelector)
                 "play_next" -> if (collection != null) add(playNext) else add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
                 "enqueue" -> if (collection != null) add(enqueue) else add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
                 "add_to_favorite" -> add(InertButton(Res.drawable.heart, Res.string.add_to_favorites))
@@ -545,6 +549,9 @@ fun LocalPlaylistSongs(
                         SongItem(
                             song = song,
                             modifier = Modifier,
+                            // The phone hides its "in a playlist" indicator on a playlist's own screen
+                            showInPlaylistIndicator = false,
+                            itemSelector = itemSelector,
                             // The phone's listening-sort overlays (contract 1.7.1, phone's
                             // `LocalPlaylistSongs.kt` 1524-1551): the play count of the `playCount`
                             // sort, the total play time of the `playTime` / `relativePlayTime` sorts in

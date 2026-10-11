@@ -16,7 +16,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Icon
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +56,7 @@ import app.n_zik.compagnon.components.tab.Refresh
 import app.n_zik.compagnon.components.tab.Search
 import app.n_zik.compagnon.components.tab.SongShuffler
 import app.n_zik.compagnon.components.tab.TabHeader
+import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
 import app.n_zik.compagnon.utils.formatShortFileSize
@@ -62,6 +69,10 @@ import app.n_zik.compagnon.components.themed.PlayNext
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.ChipSort
 import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.color
+import app.n_zik.compagnon.utils.semiBold
+import app.n_zik.compagnon.typography
+import org.jetbrains.compose.resources.painterResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
@@ -114,8 +125,16 @@ import org.jetbrains.compose.resources.stringResource
  * "remove UI sync" spec): the phone's `Disabled` cap ([PHONE_CACHE_DISABLED_MAX_BYTES] bytes) reads
  * "Turn off" (its `ExoPlayerDiskCacheMaxSize.Disabled.text`), every other cap is formatted.
  *
+ * Since 1.12.0 (`library.recommendations`): while the phone's smart shuffle is on in the same chip, its
+ * recommendations are inserted in the list ([HomeSongs]) and the phone's counter (its `smart_shuffle` icon
+ * and the count, `HomeSongsScreen.kt` 581-611) shows under the header's count; they are read on the tab's
+ * load and on every `libraryChanged` `songs`. The PC's own smart-shuffle button stays inert (no
+ * recommendation is computed on the PC). The item selector toggles the rows' selection boxes (unchecked,
+ * inert: no group action on the PC).
+ *
  * Dropped (contract v1 or PC): YouTube likes sync, the chip visibility / order preferences, the
- * YouTube filter row, the smart-recommendation counter, the floating search / settings icon.
+ * YouTube filter row, the recommendations' loading spinner (the phone does not send it), the floating
+ * search / settings icon.
  */
 @Composable
 fun HomeSongsScreen(
@@ -148,6 +167,16 @@ fun HomeSongsScreen(
     // chip shown)
     val dislikeMode by lists.dislikeMode.collectAsState()
 
+    // Since 1.12.0 (`library.recommendations`): the phone's smart shuffle, read on the tab's load (then on
+    // every `libraryChanged` `songs`, by the lists); inserted only in the phone's own chip
+    LaunchedEffect(lists) { lists.reloadSongRecommendations() }
+    val recommendations by lists.songRecommendations.collectAsState()
+    val chipFilter = if (activeList === lists.songs) chip.wireFilter else null
+    val recommendationCount = matchingRecommendations(recommendations, chipFilter).size
+
+    // The phone's item selector (a local toggle, never persisted): the rows' selection boxes
+    val itemSelector = rememberItemSelector()
+
     val showText: (StringResource) -> Unit = { id -> scope.launch { onMessage(getString(id)) } }
     val search = Search(searchText, lists::onSongsSearch, lazyListState)
     // Since 1.10.0 (`queue.fullList`, `library.locate`): the whole list behind the active chip, named for
@@ -155,9 +184,13 @@ fun HomeSongsScreen(
     val activeListRef: () -> ListRef? = {
         if (lists.activeSongsChip.wireFilter != null && activeList === lists.songs) lists.songs.query.value.toListRef() else null
     }
+    // The phone's locator searches its displayed list: the loaded rows with the recommendations inserted
     val locator = Locator(
         lazyListState,
-        { activeList.state.value.items },
+        {
+            songRows(activeList.state.value.items, recommendations, chipFilter, SongsQuery.normalizeText(searchText))
+                .map { it.track }
+        },
         listRef = activeListRef,
         pagedList = activeList,
         onMessage = showText,
@@ -264,7 +297,7 @@ fun HomeSongsScreen(
                     add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
                 }
                 "smart_shuffle" -> add(InertButton(Res.drawable.smart_shuffle, Res.string.info_smart_recommendation))
-                "item_selector" -> add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
+                "item_selector" -> add(itemSelector)
                 "play_next" -> if (actions.available) {
                     add(PlayNext(enabled = playbackEnabled) { activeList.state.value.let { items -> actions.addAll(items.items, QueuePosition.Next, items.total ?: items.items.size, activeListRef()) } })
                 } else {
@@ -314,6 +347,11 @@ fun HomeSongsScreen(
                             Column {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     HeaderInfo((state.total ?: state.items.size).toString(), Res.drawable.musical_notes)
+                                }
+                                // The phone's smart-shuffle counter (`HomeSongsScreen.kt` 581-611): its icon
+                                // and the count of the recommendations of this chip
+                                if (recommendationCount > 0) {
+                                    RecommendationCounter(recommendationCount)
                                 }
                             }
                         }
@@ -400,10 +438,39 @@ fun HomeSongsScreen(
                     sort = chipSort.songSort,
                     isTop = chip == SongsChip.Top,
                     listRef = activeListRef,
+                    recommendations = recommendations,
+                    chipFilter = chipFilter,
+                    searchText = SongsQuery.normalizeText(searchText),
+                    itemSelector = itemSelector,
                 )
             }
         }
         FloatingActionsContainerWithScrollToTop(lazyListState = lazyListState)
+    }
+}
+
+/**
+ * The phone's smart-shuffle counter under its Songs header (`HomeSongsScreen.kt` 586-611): the 12 dp
+ * `smart_shuffle` icon in `textSecondary`, then the [count] in `xxxs` semi-bold `textSecondary` with 4 dp
+ * before it, and the phone's 5 dp spacer after.
+ */
+@Composable
+private fun RecommendationCounter(count: Int) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            painter = painterResource(Res.drawable.smart_shuffle),
+            contentDescription = null,
+            tint = colorPalette().textSecondary,
+            modifier = Modifier.size(12.dp),
+        )
+        BasicText(
+            text = count.toString(),
+            style = typography().xxxs.semiBold.color(colorPalette().textSecondary),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(start = 4.dp),
+        )
+        Spacer(modifier = Modifier.width(5.dp))
     }
 }
 

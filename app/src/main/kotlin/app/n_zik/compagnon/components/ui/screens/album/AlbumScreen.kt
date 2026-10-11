@@ -56,6 +56,7 @@ import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.Locator
 import app.n_zik.compagnon.components.tab.SongShuffler
+import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.utils.medium
@@ -236,13 +237,15 @@ fun AlbumDetails(
     )
     downloadAll.Render()
     deleteDownloads.Render()
+    // The phone's item selector (a local toggle, never persisted): the rows' selection boxes
+    val itemSelector = rememberItemSelector()
     val toolbar = buildList<Button> {
         add(downloadAll)
         add(deleteDownloads)
         if (collection != null) add(shuffle) else add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
         add(InertButton(Res.drawable.radio, Res.string.start_radio))
         add(locator)
-        add(InertButton(Res.drawable.unchecked_outline, Res.string.item_select))
+        add(itemSelector)
         add(InertButton(Res.drawable.title_edit, Res.string.update_title))
         add(InertButton(Res.drawable.artists_edit, Res.string.update_authors))
         add(InertButton(Res.drawable.cover_edit, Res.string.update_cover))
@@ -389,6 +392,7 @@ fun AlbumDetails(
                             song = song,
                             showThumbnail = false,
                             modifier = Modifier,
+                            itemSelector = itemSelector,
                             onLongClick = menu?.let { { menuState.display { SongItemMenu(song, it).MenuComponent() } } },
                             thumbnailOverlay = {
                                 BasicText(

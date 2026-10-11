@@ -42,6 +42,8 @@ import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.bridge.state.TrackSource
 import app.n_zik.compagnon.bridge.state.displayedLike
 import app.n_zik.compagnon.components.styling.Dimensions
+import app.n_zik.compagnon.components.tab.ItemSelector
+import app.n_zik.compagnon.components.tab.SongRowSelectionBox
 import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.theme.favoritesOverlay
 import app.n_zik.compagnon.components.theme.onOverlay
@@ -129,6 +131,14 @@ fun SongText(
 )
 
 /**
+ * The phone's "in a playlist" indicator rule (its `SongItem.kt` 306-325): the track is in a playlist
+ * (contract 1.12.0 `Track.inPlaylist`), the `playlistindicator` setting is on, and the row is not on a
+ * playlist's own screen ([showOnScreen] `false` there).
+ */
+fun showsPlaylistIndicator(setting: Boolean, showOnScreen: Boolean, inPlaylist: Boolean): Boolean =
+    setting && showOnScreen && inPlaylist
+
+/**
  * Port of `SongItem` (phone's `app/n_zik/android/components/SongItem.kt` 186).
  *
  * Kept: the 54 dp thumbnail, the now-playing animation and highlight, the 12 dp heart at -8 dp
@@ -139,10 +149,15 @@ fun SongText(
  * (`downloaded` in `text`, `download` in `textDisabled`, the phone's `download_progress` while queued,
  * the phone's 18 dp wavy ring with its progress while downloading), the 18 dp explicit [SongIndicator]
  * before the title (accent, `Track.isExplicit` of contract 1.3), followed by its 6 dp spacer.
+ * Since contract 1.12.0, before the explicit one (the phone's `SongItem.kt` 300-325): the `smart_shuffle`
+ * indicator of a smart-shuffle recommendation ([isRecommended]) and the `playlist` indicator of a track in
+ * one of the phone's playlists (`Track.inPlaylist`), behind the PC's `playlistindicator` setting and
+ * hidden on a playlist's own screen ([showInPlaylistIndicator] `false`). While [itemSelector] is active,
+ * the phone's selection box before [trailingContent] (`SongItem.kt` 438-461), unchecked and inert: the PC
+ * has no group action.
  * Dropped (contract v1 or PC): the download action (no download in the PC: the icon is information
- * only), the "recommended" and "in a playlist" indicators (not exposed by the contract), the
- * multi-selection checkbox, the haptic feedback. [onLongClick] opens the item's menu (a right click
- * too, desktop stand-in for the long press).
+ * only), the checking of the selection box, the haptic feedback. [onLongClick] opens the item's menu (a
+ * right click too, desktop stand-in for the long press).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -154,6 +169,12 @@ fun SongItem(
     onLongClick: (() -> Unit)? = null,
     trailingContent: @Composable (RowScope.() -> Unit)? = null,
     thumbnailOverlay: @Composable BoxScope.() -> Unit = {},
+    /** Since 1.12.0: a smart-shuffle recommendation of the phone (its `smart_shuffle` indicator). */
+    isRecommended: Boolean = false,
+    /** `false` on a playlist's own screen: the phone hides its "in a playlist" indicator there. */
+    showInPlaylistIndicator: Boolean = true,
+    /** The screen's selection toggle; its unchecked box shows while it is active. */
+    itemSelector: ItemSelector? = null,
     onClick: () -> Unit = {},
 ) {
     val colorPalette = colorPalette()
@@ -229,6 +250,15 @@ fun SongItem(
             modifier = Modifier.weight(1f),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
+                // Contract 1.12.0: the phone's smart-shuffle recommendation (its `SongItem.kt` 300-304)
+                if (isRecommended) {
+                    SongIndicator(icon = Res.drawable.smart_shuffle)
+                }
+                // Contract 1.12.0 `Track.inPlaylist`: the phone's "in a playlist" indicator, behind its
+                // `playlistindicator` setting, except on a playlist's own screen (`SongItem.kt` 306-325)
+                if (showsPlaylistIndicator(settings.playlistIndicator, showInPlaylistIndicator, song.inPlaylist)) {
+                    SongIndicator(icon = Res.drawable.playlist)
+                }
                 // Contract 1.3 `Track.isExplicit` (the phone sends the cleaned title); the prefix test keeps
                 // the phone's own check (`SongItem.kt` 327) for a title that still carries `e:`
                 if (song.isExplicit || song.title.hasExplicitPrefix()) {
@@ -318,6 +348,11 @@ fun SongItem(
                     }
                 }
             }
+        }
+
+        // The phone's selection box (`SongItem.kt` 438-461), unchecked and inert
+        if (itemSelector?.isActive == true) {
+            SongRowSelectionBox()
         }
 
         trailingContent?.invoke(this)

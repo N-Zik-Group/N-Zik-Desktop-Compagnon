@@ -4,6 +4,7 @@ import app.n_zik.compagnon.bridge.pairing.ActivePairing
 import app.n_zik.compagnon.bridge.pairing.RevocationPolicy
 import app.n_zik.compagnon.bridge.state.ListRef
 import app.n_zik.compagnon.bridge.state.SessionContract
+import app.n_zik.compagnon.bridge.state.SongRecommendations
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.UiSettings
 import app.n_zik.compagnon.bridge.state.TrackLike
@@ -79,6 +80,9 @@ class RemoteLibraryRepository(
 
     override suspend fun uiSettings(): UiSettings? =
         if (SessionContract.FEATURE_UI_SETTINGS in features) api.uiSettings(address, deviceToken) else null
+
+    override suspend fun songRecommendations(): SongRecommendations? =
+        if (SessionContract.FEATURE_LIBRARY_RECOMMENDATIONS in features) api.songRecommendations(address, deviceToken) else null
 
     private suspend fun <T> guarded(call: suspend () -> LibraryResult<T>): LibraryResult<T> =
         revocation.confirmRest(call = call, isRevoked = { it is LibraryResult.Revoked }).result

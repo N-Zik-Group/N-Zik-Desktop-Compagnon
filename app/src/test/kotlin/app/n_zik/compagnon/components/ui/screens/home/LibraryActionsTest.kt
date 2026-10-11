@@ -220,6 +220,40 @@ class LibraryActionsTest {
         assertEquals(listOf<Sent>(Sent.Add(listOf("b"), QueuePosition.Next, 1), Sent.Add(listOf("b"), QueuePosition.End, 1)), player.sent)
     }
 
+    // ---- Contract 1.12.0: a smart-shuffle recommendation acts on its track alone ----
+
+    @Test
+    fun `a recommendation click plays that track alone`() = runTest {
+        val player = FakePlayer()
+        val actions = LibraryActions(player, FakeLibrary(0), this) {}
+        actions.playSingle(Track("r"))
+        advanceUntilIdle()
+        assertEquals(listOf<Sent>(Sent.Play(listOf("r"), 0, 1)), player.sent)
+    }
+
+    @Test
+    fun `a recommendation menu adds that track next or at the end, disabled offline, inert without queue`() = runTest {
+        val player = FakePlayer()
+        val actions = LibraryActions(player, FakeLibrary(0), this) {}
+        val menu = actions.singleTrackActions(Track("r"), live = true)
+        assertTrue(menu.enabled)
+        menu.onPlayNext()
+        menu.onEnqueue()
+        advanceUntilIdle()
+        assertEquals(listOf<Sent>(Sent.Add(listOf("r"), QueuePosition.Next, 1), Sent.Add(listOf("r"), QueuePosition.End, 1)), player.sent)
+
+        assertFalse(actions.singleTrackActions(Track("r"), live = false).enabled)
+
+        val noQueue = FakePlayer(features = setOf("playback"))
+        val inert = LibraryActions(noQueue, FakeLibrary(0), this) {}.singleTrackActions(Track("r"), live = true)
+        assertFalse(inert.enabled)
+        inert.onPlay()
+        inert.onPlayNext()
+        inert.onEnqueue()
+        advanceUntilIdle()
+        assertEquals(emptyList<Sent>(), noQueue.sent)
+    }
+
     @Test
     fun `a track menu sends nothing once the list changed under it`() = runTest {
         val player = FakePlayer()

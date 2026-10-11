@@ -19,7 +19,9 @@ import app.n_zik.compagnon.bridge.library.PlaylistsQuery
 import app.n_zik.compagnon.bridge.library.RewindState
 import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongsQuery
+import app.n_zik.compagnon.bridge.state.Recommendation
 import app.n_zik.compagnon.bridge.state.SessionContract
+import app.n_zik.compagnon.bridge.state.SongRecommendations
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.core.network.LibraryResult
@@ -29,6 +31,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -180,6 +183,50 @@ class LibraryListsTest {
 
         // §10 (since 1.7.1): the cache bar is not exercised by these lists
         override suspend fun cacheSpace(): LibraryCache? = null
+    }
+
+    /** A library whose `songRecommendations()` answers the [answers] in turn (then `null`), counting the reads. */
+    private class RecommendingLibrary(
+        features: Set<String>,
+        private val answers: ArrayDeque<SongRecommendations?>,
+    ) : LibraryRepository by PagedLibrary(0, features) {
+        var recommendationReads = 0
+        override suspend fun songRecommendations(): SongRecommendations? {
+            recommendationReads++
+            return answers.removeFirstOrNull()
+        }
+    }
+
+    // ---- Smart shuffle (contract §10.1, since 1.12.0 `library.recommendations`) ----
+
+    @Test
+    fun `a songs delta re-reads the recommendations, a later null read clears them`() = runTest {
+        val first = SongRecommendations("all", listOf(Recommendation(1, Track("r"))))
+        val library = RecommendingLibrary(setOf("library.songs", "library.recommendations"), ArrayDeque(listOf(first, null)))
+        val lists = LibraryLists(library, this)
+
+        lists.onLibraryChanged("songs")
+        advanceUntilIdle()
+        assertEquals(1, library.recommendationReads)
+        assertEquals(first, lists.songRecommendations.value)
+
+        lists.onLibraryChanged("songs")
+        advanceUntilIdle()
+        assertEquals(2, library.recommendationReads)
+        assertNull(lists.songRecommendations.value)
+    }
+
+    @Test
+    fun `without the feature the recommendations are never read`() = runTest {
+        val library = RecommendingLibrary(setOf("library.songs"), ArrayDeque(listOf(SongRecommendations("all"))))
+        val lists = LibraryLists(library, this)
+
+        lists.reloadSongRecommendations()
+        lists.onLibraryChanged("songs")
+        advanceUntilIdle()
+
+        assertEquals(0, library.recommendationReads)
+        assertNull(lists.songRecommendations.value)
     }
 
     // ---- Live (contract §7.2, since 1.7.3 `library.live`) ----

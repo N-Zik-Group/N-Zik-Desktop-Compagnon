@@ -41,6 +41,7 @@ import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.medium
+import app.n_zik.compagnon.utils.secondary
 import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
@@ -117,6 +118,9 @@ fun BoxWithConstraintsScope.ThumbnailRenderer(
  * (`PlaylistItem.kt` 362-371): 12 dp in `favoritesIcon` at the bottom start, outside the clip,
  * like on the phone. The name honours the "Disable scrolling text" setting (the phone's
  * `disableScrollingTextKey`, its `PlaylistItem.kt` 390-401): no marquee when it is set.
+ * The phone's channel line under the name ([channelName], its `PlaylistItem.kt` 394-403): `xs` semi-bold
+ * secondary, one line, with the same marquee rule; the phone passes `null` on its local playlist cards,
+ * so no PC card shows it yet (the contract carries no channel).
  */
 @Composable
 fun PlaylistItem(
@@ -141,6 +145,8 @@ fun PlaylistItem(
     showSongsCount: Boolean = true,
     showInfo: Boolean = true,
     thumbnailOverlay: @Composable () -> Unit = {},
+    /** The phone's channel line under the name; `null` (the phone's local playlist cards) hides it. */
+    channelName: String? = null,
 ) {
     // The PC's "Disable scrolling text" (the phone's `disableScrollingTextKey`, its
     // `PlaylistItem.kt` 390, 401): the name's marquee is dropped when set
@@ -253,7 +259,7 @@ fun PlaylistItem(
 
         if (showInfo) {
             ItemInfoContainer(
-                horizontalAlignment = if (alternative) Alignment.CenterHorizontally else Alignment.Start,
+                horizontalAlignment = if (alternative && channelName == null) Alignment.CenterHorizontally else Alignment.Start,
                 modifier = Modifier
                     .fillMaxSize(),
             ) {
@@ -261,6 +267,16 @@ fun PlaylistItem(
                     BasicText(
                         text = name,
                         style = typography().xs.semiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = marquee,
+                    )
+                }
+
+                channelName?.let {
+                    BasicText(
+                        text = it,
+                        style = typography().xs.semiBold.secondary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = marquee,

@@ -60,6 +60,7 @@ import app.n_zik.compagnon.bridge.pairing.ValidateResponse
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.bridge.state.CommandResponse
 import app.n_zik.compagnon.bridge.state.ListRef
+import app.n_zik.compagnon.bridge.state.SongRecommendations
 import app.n_zik.compagnon.bridge.state.UiSettings
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
@@ -408,6 +409,18 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
         } ?: return null
         if (response.status != HttpStatusCode.OK) return null
         return response.decode(UiSettings.serializer())
+    }
+
+    /** `GET /library/songs/recommendations` (contract §10.1, since 1.12.0): `null` on any non-`200` answer (no insertion). */
+    override suspend fun songRecommendations(address: ServerAddress, deviceToken: String): SongRecommendations? {
+        val response = call(address, "library/songs/recommendations") {
+            http.get("${address.apiBase}/library/songs/recommendations") { bearerAuth(deviceToken) }
+        } ?: return null
+        if (response.status != HttpStatusCode.OK) {
+            log.warning("Recommendations read failed: HTTP ${response.status.value}")
+            return null
+        }
+        return response.decode(SongRecommendations.serializer())
     }
 
     // ---- Library writes (contract §10.2, since 1.7): the explicit state, local Room only ----

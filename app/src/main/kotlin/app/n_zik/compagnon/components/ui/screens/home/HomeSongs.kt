@@ -1,6 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import app.n_zik.compagnon.bridge.state.ListRef
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,8 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import app.n_zik.compagnon.bridge.library.PagedList
 import app.n_zik.compagnon.bridge.library.PagedState
+import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongSort
 import app.n_zik.compagnon.bridge.library.SongsQuery
+import app.n_zik.compagnon.bridge.state.SongRecommendations
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.formattedTotalPlayTime
 import app.n_zik.compagnon.bridge.state.unmatched
@@ -30,6 +32,7 @@ import app.n_zik.compagnon.components.SongItem
 import app.n_zik.compagnon.components.menu.song.SongItemMenu
 import app.n_zik.compagnon.components.songSortOverlay
 import app.n_zik.compagnon.components.styling.Dimensions
+import app.n_zik.compagnon.components.tab.ItemSelector
 import app.n_zik.compagnon.components.tab.Search
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.generated.resources.*
@@ -51,6 +54,12 @@ import org.jetbrains.compose.resources.stringResource
  * `PlayCount` sort, the total play time of the `PlayTime` / `RelativePlayTime` sorts in the phone's
  * `formattedTotalPlayTime` format (`45m` / `2h` / `3d`), and the rank on the Top chip.
  *
+ * Since 1.12.0 (`library.recommendations`): the phone's smart-shuffle recommendations of the same chip
+ * are inserted at the phone's positions ([songRows]), with the phone's `smart_shuffle` indicator; a click
+ * plays that track alone (it is not in the phone's list), a right click opens the song menu on it. The
+ * rows carry the "in a playlist" indicator (`Track.inPlaylist`) and, while [itemSelector] is active, the
+ * phone's selection box (unchecked, inert).
+ *
  * Adaptations: a click outside a `Live` session does nothing (no command can reach the phone); the top
  * fade has no system-bar inset (none on the desktop).
  * Dropped: swipe actions (play next / download / enqueue), drag to reorder (custom sort), haptics.
@@ -70,6 +79,14 @@ fun HomeSongs(
     isTop: Boolean = false,
     /** Since 1.10.0 (`queue.fullList`): the whole list the click hands to the phone; `null` for a PC-only chip. */
     listRef: () -> ListRef? = { null },
+    /** Since 1.12.0: the phone's smart-shuffle recommendations, inserted when [chipFilter] is the phone's tab. */
+    recommendations: SongRecommendations? = null,
+    /** The chip's wire filter; `null` for a PC-only chip (no recommendation inserted). */
+    chipFilter: SongFilter? = null,
+    /** The search text, applied to the inserted recommendations (the loaded rows come filtered by the phone). */
+    searchText: String? = null,
+    /** The screen's selection toggle: an unchecked box on every row while active. */
+    itemSelector: ItemSelector? = null,
 ) {
     val menuState = LocalMenuState.current
     LoadMoreEffect(list, state, { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 })
@@ -84,21 +101,27 @@ fun HomeSongs(
                 .background(colorPalette().background0)
                 .fillMaxSize(),
         ) {
-            items(
-                items = state.items.withIndex().distinctBy { it.value.id },
+            itemsIndexed(
+                // The phone's display list: the loaded rows with its recommendations inserted (since 1.12.0)
+                items = songRows(state.items, recommendations, chipFilter, searchText),
                 // The phone's keys: the track id, duplicates dropped (`distinctBy`)
-                key = { it.value.id },
-            ) { (index, song) ->
+                key = { _, row -> row.track.id },
+            ) { displayIndex, row ->
+                val song = row.track
+                // A recommendation has no index in the loaded list: its menu and click act on it alone
+                val index = row.loadedIndex
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .zIndex(2f),
                 ) {
-                    val menu = actions.trackActions(list.state, index, song.id, live, listRef())
+                    val menu = if (index == null) actions.singleTrackActions(song, live) else actions.trackActions(list.state, index, song.id, live, listRef())
                     // Phone's `HomeSongs.kt` 587: the rows animate their placement
                     SongItem(
                         song = song,
                         modifier = Modifier.animateItem(),
+                        isRecommended = row.isRecommended,
+                        itemSelector = itemSelector,
                         // The phone's listening-sort overlays (contract 1.7.1, phone's `HomeSongs.kt` 600-632),
                         // the rank on the Top chip
                         thumbnailOverlay = {
@@ -110,7 +133,8 @@ fun HomeSongs(
                                     -> song.formattedTotalPlayTime
                                     else -> null
                                 },
-                                rank = if (isTop) index + 1 else null,
+                                // The phone's rank is the row's place in its display list
+                                rank = if (isTop) displayIndex + 1 else null,
                             )
                         },
                         // The phone's orange alert of a track not matched to the phone's library
@@ -133,7 +157,11 @@ fun HomeSongs(
                             if (song.unmatched()) {
                                 Toaster.w(Res.string.playback_blocked_match_first)
                             } else if (live && actions.available) {
-                                actions.playFrom(list.state.value.items, index, song.id, listRef())
+                                if (index == null) {
+                                    actions.playSingle(song)
+                                } else {
+                                    actions.playFrom(list.state.value.items, index, song.id, listRef())
+                                }
                             }
                         },
                     )

@@ -18,6 +18,7 @@ import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.bridge.state.ListRef
+import app.n_zik.compagnon.bridge.state.SongRecommendations
 import app.n_zik.compagnon.bridge.state.UiSettings
 import kotlinx.serialization.Serializable
 
@@ -191,4 +192,10 @@ interface LibraryApi {
      * `null` on any non-`200` answer — the PC keeps the phone's defaults.
      */
     suspend fun uiSettings(address: ServerAddress, deviceToken: String): UiSettings? = null
+
+    /**
+     * `GET /library/songs/recommendations` (contract §10.1, since 1.12.0, feature `library.recommendations`):
+     * the phone's smart-shuffle recommendations; `null` on a failed read.
+     */
+    suspend fun songRecommendations(address: ServerAddress, deviceToken: String): SongRecommendations? = null
 }

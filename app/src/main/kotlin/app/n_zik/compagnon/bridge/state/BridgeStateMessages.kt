@@ -123,6 +123,12 @@ object SessionContract {
 
     /** §5 / §7.9 (since 1.10.0): the WS `toast` message, the phone's relayed toasts. */
     const val FEATURE_UI_TOASTS = "ui.toasts"
+
+    /**
+     * §5 / §10.1 (since 1.12.0): `GET /library/songs/recommendations`, the smart-shuffle
+     * recommendations of the phone's Songs tab — inserted in the same chip of the PC's Songs tab.
+     */
+    const val FEATURE_LIBRARY_RECOMMENDATIONS = "library.recommendations"
 }
 
 /** `RepeatMode` (contract §1.1); an unknown value reads as [Off]. */
@@ -278,6 +284,30 @@ data class Track(
      * A ≤ 1.7.1 phone does not send it (→ `false`).
      */
     val isCustomArtwork: Boolean = false,
+    /**
+     * Since 1.12.0: the track is in at least one of the phone's playlists (its `SongPlaylistMap`) — the
+     * row's "in a playlist" indicator. A ≤ 1.11.0 phone does not send it (→ `false`).
+     */
+    val inPlaylist: Boolean = false,
+)
+
+/** One item of `GET /library/songs/recommendations` (contract §10.1, since 1.12.0): a recommended [track] at its insert [position]. */
+@Serializable
+data class Recommendation(
+    val position: Int = 0,
+    val track: Track,
+)
+
+/**
+ * The answer of `GET /library/songs/recommendations` (contract §10.1, since 1.12.0, feature
+ * `library.recommendations`): the smart-shuffle recommendations the phone's Songs tab shows — [filter]
+ * is the wire `filter` of the phone's tab (`null` without one), [items] is empty while its smart
+ * shuffle is off.
+ */
+@Serializable
+data class SongRecommendations(
+    val filter: String? = null,
+    val items: List<Recommendation> = emptyList(),
 )
 
 /**
