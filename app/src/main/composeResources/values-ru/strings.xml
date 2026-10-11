@@ -182,6 +182,7 @@
     <string name="follow">Подписаться</string>
     <string name="following">Подписан</string>
     <string name="item_select">Выбрать</string>
+    <string name="item_deselect">Отменить выделение</string>
     <string name="info_download_all_songs">Скачать все песни</string>
     <string name="info_smart_recommendation">Умные рекомендации</string>
     <string name="import_playlist">Импортировать плейлист</string>
