@@ -362,6 +362,13 @@
     <string name="close_behavior">Close behavior</string>
     <string name="close_behavior_minimize">Minimize to tray</string>
     <string name="close_behavior_quit">Quit the app</string>
+    <!-- The app shortcuts (the phone's launcher shortcuts, shown in the tray menu) — the phone's strings verbatim -->
+    <string name="app_shortcuts_settings">App shortcuts</string>
+    <string name="app_shortcuts_settings_description">Choose and reorder launcher shortcuts</string>
+    <string name="app_shortcuts_rescue_locked">Rescue cannot be disabled</string>
+    <string name="reset">Reset</string>
+    <string name="home">Home</string>
+    <string name="toast_preference_saved">Preference Saved</string>
     <string name="network_settings_description">The network section contains settings to optimize the app\'s performance and data usage</string>
     <string name="other_settings_description">The miscellaneous section contains various optional settings and utilities</string>
     <string name="cache">ক্যাশে</string>
