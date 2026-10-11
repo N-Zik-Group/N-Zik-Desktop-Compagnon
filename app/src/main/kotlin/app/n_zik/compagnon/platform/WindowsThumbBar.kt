@@ -68,7 +68,9 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
 
     // The buttons: the last specs (driving the enable/glyph updates) and the per-glyph HICONs —
     // created once, kept until the process exit (the taskbar references them through the buttons)
-    private var specs: List<ThumbBarSpec> = thumbBarSpecs(null, ConnectionState.Connecting, emptySet())
+    // (internal read: the tests check a push landing before the setup is kept)
+    internal var specs: List<ThumbBarSpec> = thumbBarSpecs(null, ConnectionState.Connecting, emptySet())
+        private set
     private var icons: MutableMap<IconGlyph, IconHandle> = mutableMapOf()
 
     // The retry timer for an unrealized window (see [scheduleSetupRetry]) — `null` while not retrying
@@ -86,6 +88,11 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
     // BEFORE the show, and [reShowButtons] (WM_SHOWWINDOW) runs the bounded retry as the
     // belt-and-braces. `hiddenSinceLastShow` distinguishes the first show from a re-show
     private var hiddenSinceLastShow = false
+
+    // `true` when the setup ran before the window's first show: the toolbar added then never
+    // appears on the button the show creates (live-observed 2026-10-12), so the first
+    // WM_SHOWWINDOW recreates the button a beat later ([scheduleFirstShowRecreate])
+    private var firstShowPending = false
 
     // The bounded re-add retry cycle of [scheduleRepushRetry] (`null` while not retrying) — the
     // backstop for a state push that raced a (re)created thumbnail button
@@ -105,7 +112,11 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         log.info("ThumbBar: pre-show toolbar re-add — ok=$ok, enabled=${specs.all { it.enabled }}")
     }
 
-    override fun onStateChanged(state: PlayerState?, connection: ConnectionState, features: Set<String>) {
+    // Public (widened from the base's protected) so the tests can push a state without a session
+    public override fun onStateChanged(state: PlayerState?, connection: ConnectionState, features: Set<String>) {
+        // Kept even before the setup: the first addButtons then carries the live state, not the
+        // disabled defaults (a push that lands before the setup would otherwise be lost)
+        specs = thumbBarSpecs(state, connection, features)
         if (taskbar == null) {
             // The window may not have been realized when the first attach ran the setup (a session
             // auto-reconnects at startup, before the window's first show): retry on each state push
@@ -113,7 +124,6 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
             setup()
             return
         }
-        specs = thumbBarSpecs(state, connection, features)
         if (!updateButtons()) {
             // The push raced a (re)created thumbnail button — re-add with bounded retries, or the
             // buttons would stay in the last successfully-pushed state (e.g. the disabled specs the
@@ -184,6 +194,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
             stopSetupRetry()
             comCall(SLOT_HR_INIT)
             addButtons()
+            if (window.isShowing) recreateTaskbarButton() else firstShowPending = true
             log.info("ThumbBar: taskbar media buttons installed")
         } catch (t: Throwable) {
             // A native failure (e.g. an `UnsatisfiedLinkError` for a function this Windows build does
@@ -250,6 +261,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         val callback = object : WndProcCallback {
             override fun callback(hWnd: Long, nMsg: Int, wParam: Long, lParam: Long): Long {
                 if (taskbarButtonCreatedMsg != 0 && nMsg == taskbarButtonCreatedMsg) {
+                    log.info("ThumbBar: TaskbarButtonCreated received — re-adding the toolbar")
                     addButtons()
                     return 0L
                 }
@@ -263,6 +275,9 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
                 if (nMsg == WM_SHOWWINDOW) {
                     if (wParam == 0L) {
                         hiddenSinceLastShow = true
+                    } else if (firstShowPending) {
+                        firstShowPending = false
+                        scheduleFirstShowRecreate()
                     } else if (hiddenSinceLastShow) {
                         // The window came back from a full hide (the tray): the taskbar's fresh
                         // thumbnail button may not exist yet — run the bounded re-add retry
@@ -360,6 +375,34 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         if (taskbar == null) return
         reAddButtons()
         scheduleRepushRetry("re-show")
+    }
+
+    /** The setup usually lands AFTER the window's first show (the window is attached during its own
+     *  composition, the setup retries on a timer): the taskbar button then already exists, the
+     *  TaskbarButtonCreated broadcast went by before the subclass, and the add just made reports
+     *  S_OK into the void (the button reads the toolbar only at its creation — see
+     *  [hiddenSinceLastShow]). Deleting and re-adding the tab makes the taskbar create a fresh
+     *  button that reads the stored toolbar — the tray's hide→show path, without hiding the window.
+     *  ActivateTab keeps the button marked as the active one. */
+    private fun recreateTaskbarButton() {
+        val deleted = comCall(SLOT_DELETE_TAB, hwnd)
+        val added = comCall(SLOT_ADD_TAB, hwnd)
+        comCall(SLOT_ACTIVATE_TAB, hwnd)
+        log.info("ThumbBar: taskbar button recreated after the first show — delete=0x${Integer.toHexString(deleted)}, add=0x${Integer.toHexString(added)}")
+        // Belt-and-braces: the taskbar may create the fresh button a beat later
+        scheduleRepushRetry("first show")
+    }
+
+    /** The first show after a pre-show setup: the button is recreated once the show has settled —
+     *  never from inside WM_SHOWWINDOW itself (the taskbar is mid-way through creating the button). */
+    private fun scheduleFirstShowRecreate() {
+        log.info("ThumbBar: first show — recreating the taskbar button in ${FIRST_SHOW_RECREATE_DELAY_MS}ms")
+        val timer = Timer(FIRST_SHOW_RECREATE_DELAY_MS) { event ->
+            // One-shot: the firing timer stops itself (see [scheduleRepushRetry])
+            (event.source as? Timer)?.stop()
+            recreateTaskbarButton()
+        }
+        timer.start()
     }
 
     /** Re-adds the current specs (the same button ids replace the existing ones). */
@@ -559,6 +602,10 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
     private companion object {
         // ---- vtable (live-verified on this machine — see the class KDoc) ------------------------------
         const val SLOT_HR_INIT = 3
+        // ITaskbarList's own methods, right after HrInit (ShObjIdl_core.h order)
+        const val SLOT_ADD_TAB = 4
+        const val SLOT_DELETE_TAB = 5
+        const val SLOT_ACTIVATE_TAB = 6
         const val SLOT_THUMBBAR_ADD_BUTTONS = 15
         const val SLOT_THUMBBAR_UPDATE_BUTTONS = 16
 
@@ -609,5 +656,8 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         // The delayed retry of the re-show repush (the fresh thumbnail button may not exist yet)
         const val RESHOW_REPUSH_DELAY_MS = 500
         const val RESHOW_REPUSH_MAX_ATTEMPTS = 8
+
+        // The settle delay between the first show and the taskbar button's recreation
+        const val FIRST_SHOW_RECREATE_DELAY_MS = 1000
     }
 }

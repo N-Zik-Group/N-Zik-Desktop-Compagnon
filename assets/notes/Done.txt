@@ -490,3 +490,13 @@ Added:
   - `Main.kt` opens a window titled "N-Zik Desktop Compagnon" with a "Not paired" placeholder; `AppInfo` holds the app name
   - `LICENSE` (GPL-3.0) and `README.md` (purpose, transitional product notice, requirements, build and run, Cubic Music Desktop acknowledgement)
   - `.gitattributes` (LF everywhere, CRLF for `.bat`), `.gitignore`; `AppInfoTest` as the first JUnit 5 test
+
+Fixed:
+- fix(tray): les boutons ⏮⏯⏭ de la miniature Windows absents au premier affichage (n'apparaissaient qu'après un passage par le tray)
+  - Cause : `setupPlatform()` tourne avant que la fenêtre existe, `setup()` réessaie toutes les 500 ms et installe la toolbar avant le 1er show ; le bouton de la barre des tâches créé par ce show n'emporte pas la toolbar et `TaskbarButtonCreated` n'arrive jamais (vérifié aux logs 2026-10-12) — seul le chemin hide→show du tray (re-add avant le show) les faisait apparaître
+  - `WindowsThumbBar` : setup avant le show → `firstShowPending`, le 1er `WM_SHOWWINDOW` programme `scheduleFirstShowRecreate()` (1000 ms, jamais depuis le WndProc lui-même) → `recreateTaskbarButton()` = `ITaskbarList::DeleteTab` + `AddTab` + `ActivateTab` (slots vtable 5/4/6) : la barre des tâches recrée un bouton qui lit la toolbar stockée, sans masquer la fenêtre, puis les 8 re-adds bornés de `scheduleRepushRetry` ; setup après le show → `recreateTaskbarButton()` direct
+  - `onStateChanged` enregistre `specs` AVANT de relancer `setup()` : un push du téléphone arrivé avant le setup n'est plus perdu (le 1er add portait les specs désactivées par défaut)
+  - Logs de diagnostic : `TaskbarButtonCreated received`, `first show — recreating…`, `taskbar button recreated … delete/add`
+  - Tests : nouveau `WindowsThumbBarTest` (push avant setup conservé — échoue sans le correctif, vérifié) ; `specs` en lecture `internal`, `onStateChanged` élargi en `public` pour le test ; `gradlew.bat build` vert
+  - Validé en live par l'user sur Windows (2026-10-12) : ⏮⏯⏭ présents dès l'ouverture, sans passer par le tray
+  - Commité sur le feu vert de l'user (2026-10-12, mode Done + commit + push)
