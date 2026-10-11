@@ -967,10 +967,15 @@ val flatpakFileName = channelArtifactName("${linuxPackageName}-${libs.versions.n
 // (`-dev`) and in the artifact file name through the single rename helper (AD-2), like the other
 // four. Pinned by ArchPkgPinTest (exposed to the JVM tests as `arch.*`).
 val archMarkerContent = "github-release"
-// The PKGINFO v2 `pkgver`: the FULL version — `<base>[-channel suffix]-<pkgrel>` (the release number
-// is INSIDE the `pkgver`, as in makepkg — there is no `pkgrel` keyword; the dash is mandatory,
-// libalpm rejects a version without one). Pkgrel 1 = the jpackage `appRelease` single source.
-val archPkgver = appVersionName + "-1"
+// The PKGINFO v2 `pkgver`: the full version — `<base>[-channel suffix]-<pkgrel>` (the release number
+// is INSIDE the `pkgver`, as in makepkg — there is no `pkgrel` keyword). The channel suffix's dashes
+// are sanitized to dots: libalpm accepts only alphanumerics + dots and EXACTLY ONE dash (the release
+// separator — more are rejected, and `strchr(version, "-") == NULL` is rejected too), so the pre-fix
+// pkgvers `0.0.1-dev-<date>-1` / `0.0.1-beta-1` would fail as "invalid package version" (issue #29):
+// the pkgver is `0.0.1.dev.<date>-1` / `0.0.1.beta-1` (stable unchanged: `0.0.1-1`). The artifact
+// FILE name keeps its dashes (frozen channel naming — see archFileName below). Pkgrel 1 = the
+// jpackage `appRelease` single source.
+val archPkgver = appVersionName.replace('-', '.') + "-1"
 val archFileName = channelArtifactName("${linuxPackageName}-${baseVersion}-1-x86_64.pkg.tar.zst")
 // The /usr/bin launcher: an absolute symlink to the app's bin/ launcher (the PKGBUILD's
 // `ln -sf "$launcher" ...` — the .desktop Exec resolves through it, and the kernel resolves the
@@ -1696,6 +1701,18 @@ project.afterEvaluate {
                 .replace("__SIZE__", size.toString())
             if (Regex("__[A-Z0-9_]+__").containsMatchIn(pkginfo)) {
                 throw GradleException("a __…__ placeholder survived the substitution in the .PKGINFO")
+            }
+            // 5b. pkgver sanity (fail-loud, same tier as the checks above): libalpm's version rule
+            //     (pkg_version_check + the dash presence check) — alphanumerics + dots + EXACTLY
+            //     ONE dash (the release separator): more are rejected, and a version without the
+            //     dash is rejected too. A regression of the dash-to-dot sanitization (or a lost
+            //     release number) must fail the build, not ship a package pacman cannot install
+            //     (issue #29).
+            val pkgver = pkginfo.lineSequence().firstOrNull { it.startsWith("pkgver = ") }
+                ?.removePrefix("pkgver = ")
+                ?: throw GradleException("the .PKGINFO carries no pkgver line")
+            if (pkgver.any { !it.isLetterOrDigit() && it != '.' && it != '-' } || pkgver.count { it == '-' } != 1) {
+                throw GradleException("the .PKGINFO pkgver '$pkgver' is not pacman-compatible (alphanumerics/dots only, exactly one dash) — libalpm would reject the package")
             }
             File(pkgRoot, ".PKGINFO").writeText(pkginfo)
 

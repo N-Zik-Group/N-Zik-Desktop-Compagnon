@@ -59,14 +59,26 @@ class ArchPkgPinTest {
     }
 
     @Test
-    fun `the pkgver is the full version with the mandatory dash release number`() {
-        // PKGINFO v2: `pkgver` carries the FULL version `<base>[-channel suffix]-<pkgrel>` — the
-        // release number is INSIDE the pkgver (there is no `pkgrel` keyword), and libalpm rejects
-        // a version without the dash
-        assertEquals("$appVersionName-1", archProp("arch.pkgver"))
+    fun `the pkgver is the sanitized full version with the single dash release number`() {
+        // PKGINFO v2: `pkgver` carries the full version with the channel suffix's dashes sanitized
+        // to dots — libalpm accepts only alphanumerics + dots and a SINGLE dash (the release
+        // separator), so dev `0.0.1-dev-<date>` becomes `0.0.1.dev.<date>-1` (issue #29)
+        val pkgver = archProp("arch.pkgver")
+        assertEquals(appVersionName.replace('-', '.') + "-1", pkgver)
         assertTrue(
-            archProp("arch.pkgver").endsWith("-1"),
+            pkgver.endsWith("-1"),
             "the pkgver ends with the dash release number (the dash is mandatory — libalpm)",
+        )
+        // The pacman compatibility rule itself (not just the helper's formula): a regression must
+        // red here, not at the user's pacman
+        assertFalse(
+            pkgver.any { !it.isLetterOrDigit() && it != '.' && it != '-' },
+            "the pkgver must contain only alphanumerics, dots and dashes (libalpm version rule)",
+        )
+        assertEquals(
+            1,
+            pkgver.count { it == '-' },
+            "the pkgver must carry exactly one dash (the release separator — libalpm)",
         )
     }
 
@@ -96,7 +108,7 @@ class ArchPkgPinTest {
                 "pkgname = $pkgName",
                 "pkgbase = $pkgName",
                 "xdata = pkgtype=pkg",
-                "pkgver = $appVersionName-1",
+                "pkgver = ${appVersionName.replace("-", ".")}-1",
                 "pkgdesc = ${pkgbuildField("pkgdesc")}",
                 "arch = x86_64",
                 "url = ${pkgbuildField("url")}",
