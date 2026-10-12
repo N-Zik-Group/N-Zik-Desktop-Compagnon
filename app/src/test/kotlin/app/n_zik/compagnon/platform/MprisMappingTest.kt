@@ -4,13 +4,20 @@ import app.n_zik.compagnon.bridge.ConnectionState
 import app.n_zik.compagnon.bridge.state.PlayerState
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.Track
+import app.n_zik.compagnon.generated.resources.Res
+import java.awt.image.BufferedImage
+import java.io.ByteArrayInputStream
+import javax.imageio.ImageIO
+import kotlinx.coroutines.runBlocking
 import org.freedesktop.dbus.DBusPath
 import org.freedesktop.dbus.types.Variant
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 
 /**
  * The phone state → MPRIS surface mapping (frozen spec `spec-tray-taskbar-media-controls`):
@@ -67,18 +74,31 @@ class MprisMappingTest {
         assertEquals(PLAYING, snapshot.playbackStatus)
         assertTrue(snapshot.canGoNext)
         assertTrue(snapshot.canGoPrevious)
-        assertFalse(snapshot.canPlay)
+        // MPRIS v2.2: `CanPlay` is a property of the current track, not of the state — open while
+        // playing too (GNOME 51's media area filters its players on `CanPlay`).
+        assertTrue(snapshot.canPlay)
         assertTrue(snapshot.canPause)
         assertTrue(snapshot.canControl)
     }
 
     @Test
-    fun `a live paused session is paused with the pause gate closed`() {
+    fun `a live paused session is paused with the playback gates open`() {
         val snapshot = mprisSnapshot(stateOf(track(), isPlaying = false), ConnectionState.Live, playbackFeatures, null)
         assertEquals(PAUSED, snapshot.playbackStatus)
         assertTrue(snapshot.canPlay)
-        assertFalse(snapshot.canPause)
+        // MPRIS v2.2: `CanPause` is independent of the paused/playing state — open while playing too.
+        assertTrue(snapshot.canPause)
         assertTrue(snapshot.canControl)
+    }
+
+    @Test
+    fun `a live session without a current track is stopped with the playback gates closed`() {
+        val snapshot = mprisSnapshot(stateOf(null, isPlaying = false), ConnectionState.Live, playbackFeatures, null)
+        assertEquals(STOPPED, snapshot.playbackStatus)
+        assertNull(snapshot.metadata)
+        assertFalse(snapshot.canPlay)
+        assertFalse(snapshot.canPause)
+        assertFalse(snapshot.canControl)
     }
 
     @Test
@@ -162,9 +182,11 @@ class MprisMappingTest {
 
     @Test
     fun `a play pause flip announces the status only`() {
+        // MPRIS v2.2: `CanPlay` / `CanPause` do not depend on the paused/playing state, so a flip
+        // changes the status alone.
         val playing = mprisSnapshot(stateOf(track(), isPlaying = true), ConnectionState.Live, playbackFeatures, null)
         val paused = mprisSnapshot(stateOf(track(), isPlaying = false), ConnectionState.Live, playbackFeatures, null)
-        assertEquals(listOf("PlaybackStatus", "CanPlay", "CanPause"), propertiesChanged(playing, paused))
+        assertEquals(listOf("PlaybackStatus"), propertiesChanged(playing, paused))
     }
 
     @Test
@@ -220,6 +242,16 @@ class MprisMappingTest {
     }
 
     @Test
+    fun `the hex encodings are unsigned two digits per byte`() {
+        // UTF-8 bytes ≥ 0x80 (any non-ASCII track id): a signed Byte sign-extends through the
+        // Formatter (é would render ffffffffc3 ffffffffa9) — the documented two-digits-per-byte
+        // form is unsigned. é = UTF-8 c3 a9. The same encoding serves the MPRIS object path AND
+        // the per-track artwork file name.
+        assertEquals("/app/n_zik/compagnon/track/tc3a9", mprisTrackPath("é"))
+        assertEquals("mpris-artwork-c3a9.png", artworkFileName("é"))
+    }
+
+    @Test
     fun `a known duration with the playback feature can seek and carries the speed`() {
         val state = stateOf(track(durationMs = 20_000L), isPlaying = true).copy(speed = 1.5f)
         val snapshot = mprisSnapshot(state, ConnectionState.Live, playbackFeatures, null)
@@ -236,6 +268,49 @@ class MprisMappingTest {
         val state = stateOf(track(), isPlaying = true).copy(positionMs = 1_000L, serverTimeMs = 10_000L)
         assertEquals(3_000_000L, mprisPositionUs(state, ConnectionState.Live, serverNowMs = 12_000L))
         assertEquals(0L, mprisPositionUs(state, ConnectionState.Connecting, serverNowMs = 12_000L))
+    }
+
+    @Test
+    fun `the artwork is center-cropped to a square`() {
+        // the phone sends covers as-is (portrait/wide) — the desktops' Now Playing tile is square
+        val cropped = squareCrop(BufferedImage(200, 100, BufferedImage.TYPE_INT_ARGB))
+        assertEquals(100, cropped.width)
+        assertEquals(100, cropped.height)
+        val croppedTall = squareCrop(BufferedImage(100, 300, BufferedImage.TYPE_INT_ARGB))
+        assertEquals(100, croppedTall.width)
+        assertEquals(100, croppedTall.height)
+    }
+
+    @Test
+    fun `a square artwork is left as-is`() {
+        val square = BufferedImage(120, 120, BufferedImage.TYPE_INT_ARGB)
+        assertSame(square, squareCrop(square))
+    }
+
+    @Test
+    fun `the artwork fallback resource decodes to a square image`() {
+        // the notification's fallback tile is the app's own ic_launcher_box, read outside composition
+        // (the MPRIS setup has no graphics context — Res.readBytes is plain classpath bytes)
+        val bytes = runBlocking { Res.readBytes("drawable/ic_launcher_box.png") }
+        val image = ImageIO.read(ByteArrayInputStream(bytes)) as? BufferedImage
+            ?: fail("the fallback resource is not a decodable image")
+        assertEquals(image.width, image.height)
+    }
+
+    @Test
+    fun `the artwork file name is unique per track`() {
+        // the desktops cache the notification artwork by its `file://` URI — a fixed file name
+        // would keep showing the first track's image (live-verified 2026-10-12)
+        assertEquals("mpris-artwork-7431.png", artworkFileName("t1"))
+        assertEquals("mpris-artwork-7432.png", artworkFileName("t2"))
+    }
+
+    @Test
+    fun `the artwork file name stays safe for any track id`() {
+        // the id is hex-encoded: even a hostile id can neither escape the app directory nor collide
+        val file = artworkFileName("a/b\\c?d")
+        assertEquals("mpris-artwork-612f625c633f64.png", file)
+        assertFalse(file.any { it in "/\\:?*\"<>|" || it in '\u0000'..'\u001f' })
     }
 
     @Test

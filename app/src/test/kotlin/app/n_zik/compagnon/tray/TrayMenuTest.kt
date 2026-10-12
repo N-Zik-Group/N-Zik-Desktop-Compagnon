@@ -30,7 +30,7 @@ class TrayMenuTest {
 
     @Test
     fun `the height follows the rows and separators`() {
-        val entry = TrayMenuEntry("x", null) {}
+        val entry = TrayMenuEntry(1, "x", null) {}
         val withShortcuts = TrayMenuModel("t", listOf(entry), listOf(entry, entry), listOf(entry))
         val without = withShortcuts.copy(shortcuts = emptyList())
         assertEquals(TRAY_MENU_ROW_DP * 2 + TRAY_MENU_SEPARATOR_DP, trayMenuHeightDp(withShortcuts) - trayMenuHeightDp(without))

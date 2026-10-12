@@ -1,6 +1,7 @@
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.desktop.application.tasks.AbstractJLinkTask
 import org.jetbrains.compose.desktop.application.tasks.AbstractJPackageTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.time.LocalDate
@@ -1152,6 +1153,22 @@ compose.desktop {
 
 tasks.matching { it.name == "prepareAppResources" }.configureEach { dependsOn(extractVlc) }
 
+// ---- jlink runtime modules (the D-Bus SASL module the classpath analysis never finds) ------------
+//
+// The Compose plugin builds the app's JRE with jlink from a minimal module set computed by
+// analyzing the app classpath. `com.sun.security.auth.module` is never referenced from the app's
+// own Kotlin code, so the analysis never finds the module — but dbus-java references it at
+// RUNTIME: its SASL layer calls `com.sun.security.auth.module.UnixSystem` (module
+// `jdk.security.auth`) to resolve the session-bus UID on Unix. Without the module, EVERY
+// session-bus connection inside the jlinked runtime fails with a `NoClassDefFoundError` and the
+// tray + MPRIS surfaces silently stay off in every packaged Linux artifact (the Flatpak, the
+// .deb, the .rpm, the AUR, the portable zip); `:app:run` is immune because it uses the host JDK.
+// 2026-10-12 Flatpak live evidence: `SNI: no session bus — no tray (NoClassDefFoundError)` and
+// `MPRIS: no session bus — the media surface stays off (NoClassDefFoundError)` inside the
+// sandbox, while the identical code registers both surfaces on the native host-JDK run.
+// (registered in the afterEvaluate block below — the compose plugin creates the task in its own
+// afterEvaluate, which runs before this project's.)
+
 // ---- Linux package dependencies + portable build ---------------------------------------------------
 //
 // The Compose plugin registers its jpackage tasks in its own afterEvaluate, so these references are
@@ -1170,6 +1187,10 @@ tasks.matching { it.name == "prepareAppResources" }.configureEach { dependsOn(ex
 // "Unknown"), so the menu entry sorts under Audio like the AUR entries' own .desktop. The tasks run
 // only on a compatible (Linux/WSL) host; on Windows they are disabled by the plugin.
 project.afterEvaluate {
+    // The jlink runtime module (see the block above "jlink runtime modules"): the task exists only
+    // after the compose plugin's own afterEvaluate, so the configuration must run in this one.
+    tasks.named<AbstractJLinkTask>("createRuntimeImage") { modules.add("jdk.security.auth") }
+
     tasks.named<AbstractJPackageTask>("packageDeb") { freeArgs.addAll(listOf("--linux-package-deps", "vlc", "--linux-menu-group", "Audio;")) }
     tasks.named<AbstractJPackageTask>("packageRpm") { freeArgs.addAll(listOf("--linux-package-deps", "vlc", "--linux-menu-group", "Audio;")) }
 
@@ -1237,6 +1258,12 @@ project.afterEvaluate {
         systemProperty("linux.freeArgs.deb", tasks.named<AbstractJPackageTask>("packageDeb").get().freeArgs.get().joinToString("\u001f"))
         systemProperty("linux.freeArgs.rpm", tasks.named<AbstractJPackageTask>("packageRpm").get().freeArgs.get().joinToString("\u001f"))
         systemProperty("linux.portable.zipName", tasks.named<Zip>("packageLinuxPortable").get().archiveFileName.get())
+        // The jlinked JRE's EFFECTIVE module set (the D-Bus SASL module — see the "jlink runtime
+        // modules" block above): the compose plugin's classpath analysis never finds
+        // jdk.security.auth, and without it in the runtime every session-bus connection inside a
+        // packaged Linux artifact fails with NoClassDefFoundError (tray + MPRIS silently off,
+        // green build) — the pin (LinuxPackagePinTest) reads the effective value, not a copy.
+        systemProperty("linux.jlinkModules", tasks.named<AbstractJLinkTask>("createRuntimeImage").get().modules.get().joinToString("\u001f"))
         // The shared pinned Linux VLC tarball (spec spec-linux-flatpak): URL + name + SHA-256.
         // The Flatpak is the only Linux artifact that embeds the runtime (injected into its own
         // staging — the other paths must never get a resources/vlc), so the pin is exposed under

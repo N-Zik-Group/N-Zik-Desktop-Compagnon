@@ -27,15 +27,16 @@ class SmtcViewTest {
     }
 
     @Test
-    fun `a playing track shows its title artist and the pause gate`() {
+    fun `a playing track shows its title artist and the playback gates`() {
         val state = playing(true)
         val view = smtcView(mprisSnapshot(state, ConnectionState.Live, playback, artUrl = null))
         assertTrue(view.enabled)
         assertEquals(SMTC_STATUS_PLAYING, view.status)
         assertEquals("Title", view.title)
         assertEquals("Artist", view.artist)
+        // MPRIS v2.2: `CanPlay` / `CanPause` are properties of the current track, not of the state.
         assertTrue(view.canPause)
-        assertFalse(view.canPlay)
+        assertTrue(view.canPlay)
         assertTrue(view.canNext && view.canPrevious)
     }
 

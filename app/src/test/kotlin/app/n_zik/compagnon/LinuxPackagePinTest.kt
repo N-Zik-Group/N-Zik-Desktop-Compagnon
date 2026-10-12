@@ -46,6 +46,23 @@ class LinuxPackagePinTest {
     }
 
     @Test
+    fun `the jlinked runtime carries the dbus sasl module`() {
+        // The compose plugin's classpath analysis never finds jdk.security.auth (the app code never
+        // references com.sun.security.auth.module): without it in the jlinked JRE, dbus-java's SASL
+        // layer cannot resolve the session-bus UID and EVERY session-bus connection inside the
+        // packaged Linux artifacts fails with NoClassDefFoundError — the tray + MPRIS surfaces
+        // silently stay off in all five Linux packaging paths, with a green build (the 2026-10-12
+        // Flatpak field bug). Pinned against the EFFECTIVE task modules (exposed by the build),
+        // not a copy of the string.
+        val modules = (System.getProperty("linux.jlinkModules")
+            ?: error("linux.jlinkModules is not exposed to the tests")).split("\u001f")
+        assertTrue(
+            modules.contains("jdk.security.auth"),
+            "the jlinked JRE must carry jdk.security.auth (dbus-java's SASL — every session-bus connection in the packaged Linux artifacts)"
+        )
+    }
+
+    @Test
     fun `the package name is frozen and matches the portable zip base`() {
         // The dev channel keeps its OWN package base (AD-8 — a parallel product): the frozen
         // install identity is the base name, dev adds its -dev suffix

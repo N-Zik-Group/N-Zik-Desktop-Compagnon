@@ -15,10 +15,11 @@ import org.junit.jupiter.api.Test
  * path touches: a changed app-id would desynchronize the bundle identity (the install name, the
  * upgrade identity and the icon name all derive from it — frozen by AD-1, irreversible once
  * published), a drifted base runtime or a shrunken finish-args list would ship a bundle that
- * cannot reach the phone (network), the keyring (org.freedesktop.secrets) or the data dir
- * (xdg-config) — all with a green build. The build exposes the effective values (`systemProperty` in
+ * cannot reach the phone (network), the keyring (org.freedesktop.secrets), the data dir
+ * (xdg-config) or the tray (the StatusNotifierWatcher talk/own names) — all with a green build.
+ * The build exposes the effective values (`systemProperty` in
  * `app/build.gradle.kts`, read from the committed template like `flatpak.*`) so this test
- * pins them, and the committed template itself is checked (valid JSON, exactly its two
+ * pins them, and the committed template itself is checked (valid JSON, exactly its three
  * placeholders) so the build cannot substitute anything it does not declare.
  */
 class FlatpakPinTest {
@@ -62,7 +63,7 @@ class FlatpakPinTest {
     }
 
     @Test
-    fun `the finish args keep the pairing keyring windowing and audio sandbox`() {
+    fun `the finish args keep the pairing keyring windowing audio tray sandbox`() {
         // The sandbox contract: network = the pairing listener + the phone's LAN server,
         // x11/wayland = windowing, pulseaudio = audio, device:dri = GPU rendering,
         // xdg-config = the data dir (~/.config/ — the XDG move of 2026-10-12; inside the sandbox
@@ -70,11 +71,16 @@ class FlatpakPinTest {
         // ~/N-Zik Desktop Compagnon = the one-time migration source of the pre-XDG data dir
         // (pairing/settings/cache — accessed only to move it, then the dir is gone),
         // org.freedesktop.secrets = the keyring (the
-        // current Secret Service spec bus name — the only D-Bus name the app may reach,
+        // current Secret Service spec bus name — the only keyring D-Bus name the app may reach,
         // through the flatpak runtime's D-Bus proxy, no raw bus socket; the legacy
         // org.freedesktop.SecretService name is no longer registered by modern keyrings),
-        // org.mpris.MediaPlayer2.nzik_compagnon = the MPRIS bus name the app owns for the
-        // desktop media controls (spec `spec-tray-taskbar-media-controls`).
+        // org.kde.StatusNotifierWatcher = the tray host (without this talk name the sandbox's
+        // D-Bus proxy filters the watcher, the SNI probe reads "no host" and the tray stays
+        // dead — the 2026-10-12 Flatpak tray bug), org.mpris.MediaPlayer2.nzik_compagnon =
+        // the MPRIS bus name the app owns for the desktop media controls (spec
+        // `spec-tray-taskbar-media-controls`), and the SNI own name = the STATIC SNI bus name
+        // the app owns for the tray item (dynamic pid-based names cannot be granted to a
+        // sandbox — SNI_BUS_NAME, pinned against drift).
         // Exposed from the committed template, joined with the unit separator. Note: the socket
         // types are validated by flatpak at build time (`--socket=ipc` is rejected — ipc is a
         // `--share=` type; `dri` is a `--device=` type), so a wrong entry fails the build too.
@@ -88,9 +94,11 @@ class FlatpakPinTest {
             "--filesystem=xdg-config",
             "--filesystem=~/N-Zik Desktop Compagnon",
             "--talk-name=org.freedesktop.secrets",
+            "--talk-name=org.kde.StatusNotifierWatcher",
             "--own-name=org.mpris.MediaPlayer2.nzik_compagnon",
+            "--own-name=" + app.n_zik.compagnon.tray.SNI_BUS_NAME,
         )) {
-            assertTrue(args.contains(arg), "the Flatpak sandbox needs $arg (a missing one breaks pairing, the keyring, the data dir or the MPRIS name)")
+            assertTrue(args.contains(arg), "the Flatpak sandbox needs $arg (a missing one breaks pairing, the keyring, the data dir, the tray or the MPRIS name)")
         }
     }
 
@@ -182,7 +190,9 @@ class FlatpakPinTest {
                 "--filesystem=xdg-config",
                 "--filesystem=~/N-Zik Desktop Compagnon",
                 "--talk-name=org.freedesktop.secrets",
+                "--talk-name=org.kde.StatusNotifierWatcher",
                 "--own-name=org.mpris.MediaPlayer2.nzik_compagnon",
+                "--own-name=" + app.n_zik.compagnon.tray.SNI_BUS_NAME,
             ),
             finishArgs?.mapNotNull { it.jsonPrimitive.content }?.toSet(),
             "the finish-args are exactly the frozen sandbox contract (an added permission must go through the spec, not the template)")

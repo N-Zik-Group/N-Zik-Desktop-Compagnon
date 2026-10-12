@@ -3,6 +3,8 @@ package app.n_zik.compagnon.platform
 import app.n_zik.compagnon.bridge.ConnectionState
 import app.n_zik.compagnon.bridge.state.PlayerState
 import app.n_zik.compagnon.bridge.state.SessionContract
+import app.n_zik.compagnon.components.player.PLAYER_ARTWORK_SIZE_PX
+import app.n_zik.compagnon.core.network.ArtworkKey
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -22,5 +24,14 @@ class WindowsThumbBarTest {
         thumbBar.onStateChanged(state, ConnectionState.Live, features)
 
         assertEquals(thumbBarSpecs(state, ConnectionState.Live, features), thumbBar.specs)
+    }
+
+    @Test
+    fun `the smtc artwork fetch uses the player canonical key`() {
+        // The shared loader's key includes the size: the default 544 would never hit the
+        // player's already-loaded 1000px entry, so every track change on Windows would fetch
+        // the same cover a SECOND time through the phone (the two-fetch behavior the MPRIS
+        // artUrl change removes)
+        assertEquals(ArtworkKey.track("t42", PLAYER_ARTWORK_SIZE_PX), smtcArtworkKey("t42"))
     }
 }

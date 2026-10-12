@@ -3,6 +3,7 @@ package app.n_zik.compagnon.platform
 import app.n_zik.compagnon.bridge.ConnectionState
 import app.n_zik.compagnon.bridge.state.PlayerState
 import app.n_zik.compagnon.bridge.state.SessionContract
+import app.n_zik.compagnon.components.player.PLAYER_ARTWORK_SIZE_PX
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import kotlinx.coroutines.Job
@@ -440,8 +441,14 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         scheduleRepushRetry("first show")
     }
 
-    /** Keeps the SMTC artwork on the current track (EDT): fetched through the phone (gated by
-     *  `FEATURE_ARTWORK` + `hasArtwork`, like MPRIS), latest-wins — a superseded fetch drops its result. */
+    /**
+     * Keeps the SMTC artwork on the current track (EDT): looked up under the player's canonical
+     * key ([smtcArtworkKey] — `track id` + [PLAYER_ARTWORK_SIZE_PX], the same key the player screen
+     * uses, gated by `FEATURE_ARTWORK` + `hasArtwork` like MPRIS), so the shared in-memory loader
+     * serves the already-loaded bitmap instead of a second fetch through the phone (one fetch per
+     * track change, not two — the MPRIS `artUrl` twin's rule). Latest-wins: a superseded fetch
+     * drops its result.
+     */
     private fun scheduleSmtcArtwork() {
         if (!smtc.isUp) return
         val track = lastState?.currentTrack
@@ -461,7 +468,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         artJob?.cancel()
         artForTrackId = track.id
         artJob = artScope.launch {
-            val png = runCatching { repo.artwork(ArtworkKey.track(track.id)) }.getOrNull()
+            val png = runCatching { repo.artwork(smtcArtworkKey(track.id)) }.getOrNull()
                 ?.let { bitmap -> runCatching { bitmap.toPngBytes() }.getOrNull() }
             onEdt {
                 if (artForTrackId == track.id) smtc.setThumbnail(png)
@@ -737,3 +744,11 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         const val FIRST_SHOW_RECREATE_DELAY_MS = 1000
     }
 }
+
+/**
+ * The SMTC thumbnail's shared-loader key (pure — the tests pin it): the player's CANONICAL key
+ * (`track id` + [PLAYER_ARTWORK_SIZE_PX], the same key the player screen and the M3 dynamic palette
+ * use) — the shared in-memory loader then serves the already-loaded bitmap instead of a second
+ * fetch through the phone (one fetch per track change, not two; the MPRIS `artUrl` twin's rule).
+ */
+internal fun smtcArtworkKey(trackId: String): ArtworkKey = ArtworkKey.track(trackId, PLAYER_ARTWORK_SIZE_PX)

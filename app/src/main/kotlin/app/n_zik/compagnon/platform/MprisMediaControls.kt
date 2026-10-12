@@ -2,12 +2,16 @@ package app.n_zik.compagnon.platform
 
 import androidx.compose.ui.graphics.ImageBitmap
 import app.n_zik.compagnon.generated.AppVersion
+import app.n_zik.compagnon.generated.resources.Res
 import app.n_zik.compagnon.bridge.ConnectionState
 import app.n_zik.compagnon.bridge.state.PlayerState
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.pairing.CredentialStore
+import app.n_zik.compagnon.components.player.PLAYER_ARTWORK_SIZE_PX
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
+import java.awt.image.BufferedImage
+import java.io.ByteArrayInputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.logging.Logger
@@ -178,12 +182,19 @@ class MprisMediaControls(
     private var lastConnection: ConnectionState = ConnectionState.Connecting
     private var lastFeatures: Set<String> = emptySet()
 
-    // The track artwork (the `mpris:artUrl` entry): latest-wins per track, PNG in the app directory
+    // The track artwork (the `mpris:artUrl` entry): latest-wins per track, ONE PNG file per track
+    // in the app directory (the desktops cache the notification artwork by URI — see [artworkFileName]).
+    // When no track artwork applies (no track, no artwork feature, a failed fetch) the app's own
+    // fallback tile ([artFallbackUrl]) shows instead — live request 2026-10-12.
     private val artScope = NzikDispatchers.fireAndForget(NzikDispatchers.DATA)
     private var artJob: Job? = null
     private var artForTrackId: String? = null
     private var artFile: Path? = null
     private var artUrl: String? = null
+    @Volatile
+    private var artFallbackFile: Path? = null
+    @Volatile
+    private var artFallbackUrl: String? = null
 
     /** The exported object — inner so it can forward through the base's [forward]/[onEdt]. */
     private inner class MprisObject : MPRISRoot, MPRISPlayer {
@@ -317,7 +328,7 @@ class MprisMediaControls(
     // ---- Setup ------------------------------------------------------------------------------------------
 
     /** Builds the connection, exports the object, owns the bus name — all in [NzikDispatchers.DATA]. */
-    private fun setup() {
+    private suspend fun setup() {
         val conn = try {
             DBusConnectionBuilder.forSessionBus().build()
         } catch (t: Throwable) {
@@ -342,6 +353,8 @@ class MprisMediaControls(
             return
         }
         connection = conn
+        clearStaleArtwork() // the per-track PNGs of a previous run (one at most — the app was killed mid-track)
+        writeArtworkFallback() // the notification's fallback tile — before any state push reads it
         // The first push lands on the EDT, serialized with the state stream's pushes (a DATA-thread push
         // here could land AFTER a fresh state push and regress the surface to the stopped state)
         onEdt {
@@ -408,9 +421,17 @@ class MprisMediaControls(
 
     /**
      * Keeps the `mpris:artUrl` entry in sync with the current track (called on the EDT): the PNG is
-     * fetched through the phone (gated by `FEATURE_ARTWORK` + `hasArtwork`) and cached in the app
-     * directory — KDE reads the `file://` URL, and the phone's own artwork endpoint is Bearer-only.
-     * Latest-wins per track: a superseded fetch drops its result.
+     * written from the cover the app already loaded and cached in the app directory — the
+     * desktop's `file://` URL is read by KDE/GNOME, and the phone's artwork endpoint is Bearer-only.
+     * The cover is looked up under the **player's canonical key** (`track id` + [PLAYER_ARTWORK_SIZE_PX]),
+     * the same key the player screen and the M3 dynamic palette use, so the shared in-memory loader
+     * serves the already-loaded bitmap instead of a second, separate fetch through the phone (one
+     * fetch per track change, not two — and no phone round-trip at all when the app has the cover).
+     * The PNG goes to a per-track file ([artworkFileName]) — the desktops cache the notification
+     * artwork by its URI, so overwriting one fixed file in place would keep showing the FIRST
+     * track's image (live-verified 2026-10-12). Latest-wins per track: a superseded fetch drops
+     * its result. When no track artwork applies — no track, no artwork feature, a failed fetch —
+     * the app's own fallback tile shows instead ([useFallbackArtwork]).
      */
     private fun scheduleArtwork() {
         val repo = attachedRepository ?: return
@@ -425,20 +446,28 @@ class MprisMediaControls(
             SessionContract.FEATURE_ARTWORK in lastFeatures &&
             track != null && track.hasArtwork
         if (!wantsArtwork) {
-            clearArtwork()
+            useFallbackArtwork() // no artwork for this state: the notification shows the app's tile
             return
         }
         if (artForTrackId == track.id) return // the same track is already fetched or fetching
         artJob?.cancel()
-        clearArtwork() // the track changed: the old file (and URL) is gone before the fetch even starts
+        useFallbackArtwork() // the track changed: the app's tile replaces the old cover while the new one loads
         artForTrackId = track.id
         artJob = artScope.launch {
-            val bitmap = runCatching { repo.artwork(ArtworkKey.track(track.id)) }.getOrNull()
+            // Reuse the player's already-loaded cover (the shared in-memory loader's key) rather than
+            // re-fetching a second copy through the phone — see the method's KDoc.
+            val bitmap = runCatching { repo.artwork(ArtworkKey.track(track.id, PLAYER_ARTWORK_SIZE_PX)) }.getOrNull()
             if (artForTrackId != track.id) return@launch // a newer track superseded this fetch
-            if (bitmap == null) return@launch
-            val file = runCatching { writeArtworkFile(bitmap) }.onFailure {
+            if (bitmap == null) {
+                onEdt { if (artForTrackId == track.id) useFallbackArtwork() } // the cover could not be loaded
+                return@launch
+            }
+            val file = runCatching { writeArtworkFile(bitmap, track.id) }.onFailure {
                 log.warning("MPRIS: could not cache the track artwork (${it::class.simpleName})")
-            }.getOrNull() ?: return@launch
+            }.getOrNull() ?: run {
+                onEdt { if (artForTrackId == track.id) useFallbackArtwork() }
+                return@launch
+            }
             onEdt {
                 if (artForTrackId != track.id) return@onEdt // a newer track cleared the artwork meanwhile
                 artFile = file
@@ -448,7 +477,27 @@ class MprisMediaControls(
         }
     }
 
-    /** Drops the cached artwork and its URL (EDT) — a no-op push when nothing was cached. */
+    /**
+     * Makes the app's fallback tile the current artwork (EDT): the track has no artwork, its fetch
+     * failed, or the cover could not be cached. [artFallbackUrl] is null when the tile could not
+     * be written at setup — then the artwork is simply gone (the pre-fallback behavior).
+     */
+    private fun useFallbackArtwork() {
+        val fallbackUrl = artFallbackUrl ?: run {
+            clearArtwork()
+            return
+        }
+        if (artForTrackId == null && artUrl == fallbackUrl) return // already on the fallback tile
+        artJob?.cancel()
+        artJob = null
+        artForTrackId = null
+        deleteArtFile() // the per-track file goes; the fallback file is [artFallbackFile] — never deleted here
+        artFile = null
+        artUrl = fallbackUrl
+        pushCurrentSnapshot()
+    }
+
+    /** Drops the cached artwork and its URL (EDT) — no push: the next state push carries the gap. */
     private fun clearArtwork() {
         artJob?.cancel()
         artJob = null
@@ -465,14 +514,47 @@ class MprisMediaControls(
         }
     }
 
-    /** The [bitmap] as a PNG in the app directory (`mpris-artwork.png`, overwritten per track). */
-    private fun writeArtworkFile(bitmap: ImageBitmap): Path {
-        val image = bitmap.toBufferedImage()
+    /** The [bitmap] as a PNG in the app directory — one file per track ([artworkFileName]). */
+    private fun writeArtworkFile(bitmap: ImageBitmap, trackId: String): Path {
+        val image = squareCrop(bitmap.toBufferedImage())
         val dir = CredentialStore.appDirectory()
         Files.createDirectories(dir)
-        val file = dir.resolve(ART_FILE_NAME)
+        val file = dir.resolve(artworkFileName(trackId))
         require(ImageIO.write(image, "png", file.toFile())) { "ImageIO.write returned false" }
         return file
+    }
+
+    /**
+     * Caches the app's artwork fallback tile (the `ic_launcher_box` the player shows for a track
+     * without artwork — read through [Res], no graphics context needed) as a static PNG next to the
+     * per-track files: the notification shows it while no track artwork applies. The desktops cache
+     * it by URI — fine, it never changes; the previous run's copy was already swept by
+     * [clearStaleArtwork] (same prefix).
+     */
+    private suspend fun writeArtworkFallback() {
+        runCatching {
+            val image = ImageIO.read(ByteArrayInputStream(Res.readBytes(ART_FALLBACK_RESOURCE_PATH)))
+                as? BufferedImage
+                ?: throw IllegalStateException("the artwork fallback resource could not be decoded")
+            val dir = CredentialStore.appDirectory()
+            Files.createDirectories(dir)
+            val file = dir.resolve(ART_FALLBACK_FILE_NAME)
+            require(ImageIO.write(image, "png", file.toFile())) { "ImageIO.write returned false" }
+            artFallbackFile = file
+            artFallbackUrl = file.toUri().toString()
+        }.onFailure { log.warning("MPRIS: could not cache the artwork fallback (${it::class.simpleName})") }
+    }
+
+    /** Deletes the per-track artwork files of a previous run (the app was killed between tracks). */
+    private fun clearStaleArtwork() {
+        val dir = CredentialStore.appDirectory()
+        if (!Files.isDirectory(dir)) return
+        runCatching {
+            Files.list(dir).use { files ->
+                files.filter { it.fileName.toString().startsWith(ART_FILE_PREFIX) && it.fileName.toString().endsWith(ART_FILE_SUFFIX) }
+                    .forEach { runCatching { Files.deleteIfExists(it) } }
+            }
+        }.onFailure { log.warning("MPRIS: could not clean the stale artwork files (${it::class.simpleName})") }
     }
 }
 
@@ -495,12 +577,44 @@ private fun sessionDesktopType(): String =
 
 private val MPRIS_VALIDATED: List<String> = listOf("2.0")
 
-private const val MPRIS_BUS_NAME = "org.mpris.MediaPlayer2.nzik_compagnon"
-private const val MPRIS_OBJECT_PATH = "/org/mpris/MediaPlayer2"
+/** The MPRIS static bus name — also the single-instance marker ([SingleInstance]). */
+internal const val MPRIS_BUS_NAME = "org.mpris.MediaPlayer2.nzik_compagnon"
+
+/** The MPRIS root object's path (the `Raise` of [SingleInstance] lands on it). */
+internal const val MPRIS_OBJECT_PATH = "/org/mpris/MediaPlayer2"
 private const val MPRIS_ROOT_IFACE = "org.mpris.MediaPlayer2"
 private const val MPRIS_PLAYER_IFACE = "org.mpris.MediaPlayer2.Player"
 private const val PROPERTIES_IFACE = "org.freedesktop.DBus.Properties"
 private const val PROPERTIES_CHANGED = "PropertiesChanged"
 private const val SEEKED = "Seeked"
 private const val METADATA_SIG = "a{sv}"
-private const val ART_FILE_NAME = "mpris-artwork.png"
+/**
+ * Center-crops [image] to a 1:1 square (the phone's artwork is not pre-cropped — portrait/wide covers
+ * arrive as-is — while the desktops' Now Playing tile and the app's player thumbnails are square,
+ * the player's `aspectRatio(1f)` + `ContentScale.Crop`). A square input is returned as-is.
+ */
+internal fun squareCrop(image: BufferedImage): BufferedImage {
+    val side = minOf(image.width, image.height)
+    if (side == image.width && side == image.height) return image
+    val x = (image.width - side) / 2
+    val y = (image.height - side) / 2
+    return image.getSubimage(x, y, side, side)
+}
+
+/**
+ * The per-track artwork file name: a fixed prefix + the hex-encoded track id (the same
+ * two-digits-per-byte unsigned encoding as [mprisTrackPath] — always a safe file name) + `.png`.
+ * The per-track name (and therefore the `file://` [MprisMetadata.artUrl]) is what makes the
+ * desktops drop their artwork cache on a track change — they cache the notification image by URI.
+ */
+internal fun artworkFileName(trackId: String): String =
+    ART_FILE_PREFIX + trackId.toByteArray(Charsets.UTF_8).joinToString("") { "%02x".format(it.toInt() and 0xFF) } + ART_FILE_SUFFIX
+
+private const val ART_FILE_PREFIX = "mpris-artwork-"
+private const val ART_FILE_SUFFIX = ".png"
+
+/** The cached fallback tile's file name (the [ART_FILE_PREFIX] sweep covers a previous run's copy). */
+private const val ART_FALLBACK_FILE_NAME = "mpris-artwork-fallback.png"
+
+/** The app's own artwork fallback drawable (the player's no-artwork tile). */
+private const val ART_FALLBACK_RESOURCE_PATH = "drawable/ic_launcher_box.png"
