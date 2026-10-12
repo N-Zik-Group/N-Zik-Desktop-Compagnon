@@ -356,12 +356,12 @@
     <string name="general_settings_description">Genel bölümü, uygulamanın genel işlevlerine ilişkin ayarları içerir</string>
     <!-- The system tray + the window close behavior (spec `spec-tray-taskbar-media-controls`) -->
     <string name="tray_open">Açık</string>
-    <string name="tray_quit">Quit</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
-    <string name="window">Window</string>
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
+    <string name="tray_quit">Çık</string>
+    <string name="tray_tooltip">N-Zik Masaüstü Yardımcısı</string>
+    <string name="window">Pencere</string>
+    <string name="close_behavior">Davranışı kapat</string>
+    <string name="close_behavior_minimize">Simge durumuna küçült</string>
+    <string name="close_behavior_quit">Uygulamadan çık</string>
     <!-- The app shortcuts (the phone's launcher shortcuts, shown in the tray menu) — the phone's strings verbatim -->
     <string name="app_shortcuts_settings">Uygulama kısayolları</string>
     <string name="app_shortcuts_settings_description">Başlatıcı kısayollarını seçin ve sırasını değiştirin</string>
