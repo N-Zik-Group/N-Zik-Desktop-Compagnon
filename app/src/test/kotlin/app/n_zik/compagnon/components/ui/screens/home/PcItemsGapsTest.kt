@@ -193,16 +193,16 @@ class PcItemsGapsTest {
     // ---- Setting ----
 
     @Test
-    fun `the playlist indicator defaults to shown and round-trips through settings json`() {
+    fun `the playlist indicator defaults to hidden and round-trips through settings json`() {
         val file = dir.resolve("settings.json")
         Files.writeString(file, """{"disableScrollingText":true}""")
-        assertTrue(Preferences(file).settings.value.playlistIndicator)
+        assertFalse(Preferences(file).settings.value.playlistIndicator)
 
-        Preferences(file).update { it.copy(playlistIndicator = false) }
+        Preferences(file).update { it.copy(playlistIndicator = true) }
 
         assertTrue(Files.readString(file).contains("\"playlistindicator\""))
         val reloaded = Preferences(file).settings.value
-        assertFalse(reloaded.playlistIndicator)
+        assertTrue(reloaded.playlistIndicator)
         assertTrue(reloaded.disableScrollingText)
     }
 }

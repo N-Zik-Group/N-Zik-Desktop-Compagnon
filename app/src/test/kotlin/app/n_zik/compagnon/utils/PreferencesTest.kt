@@ -204,7 +204,7 @@ class PreferencesTest {
         assertEquals(PlaylistSwipeAction.PlayNext.name, settings.playlistSwipeRightAction)
         assertEquals(AlbumSwipeAction.PlayNext.name, settings.albumSwipeLeftAction)
         assertEquals(AlbumSwipeAction.Bookmark.name, settings.albumSwipeRightAction)
-        // On by default on the PC (off on the phone)
+        // Off by default on the phone; off on the PC too (user decision 2026-10-11)
         assertEquals(false, settings.showFloatingIcon)
         assertEquals(0f, settings.multiFloatActionIconOffsetX)
         assertEquals(0f, settings.multiFloatActionIconOffsetY)

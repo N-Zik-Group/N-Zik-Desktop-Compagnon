@@ -148,11 +148,10 @@ data class UserSettings(
     @SerialName(languageKey) val language: String = AppLanguage.SYSTEM,
     /**
      * The phone's "Show playlist indicator" (its `playlistindicatorKey`): the song rows' "in a playlist"
-     * badge (contract 1.12.0 `Track.inPlaylist`). Shown by default on the PC — the phone's default is off
-     * (decision 1 of the PC UI gaps plan: the items behind an off phone setting are visible until the PC
-     * has its own setting entry).
+     * badge (contract 1.12.0 `Track.inPlaylist`), off by default — the phone's own default (the PC keeps
+     * the phone's defaults, user decision 2026-10-12).
      */
-    @SerialName(playlistindicatorKey) val playlistIndicator: Boolean = true,
+    @SerialName(playlistindicatorKey) val playlistIndicator: Boolean = false,
     /**
      * The in-app updater's three-state check choice (spec `spec-updater`, AD-9, loop 2 — the
      * phone's `checkUpdateState`, replacing the v1 boolean): the wire value "on" (automatic

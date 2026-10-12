@@ -2,8 +2,9 @@ package app.n_zik.compagnon.components.settings
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,8 +43,13 @@ import org.jetbrains.compose.resources.painterResource
  * `app/it/fast4x/rimusic/ui/screens/settings/SettingsScreen.kt` 277-367): the settings row of a switch
  * setting — the 32 dp accent badge with its 18 dp icon, the title (s.semiBold), the description (xs,
  * `textSecondary`), the theme's M3 switch (a click on the row flips it too). Its press scale (0.95 over
- * 150 ms) is ported as on the phone.
+ * 150 ms) is ported as on the phone. `enabled = false` is the inert-entry state (a phone entry without a PC
+ * key): the row is dimmed at 0.5 (the `PlaybackSettingsMenu` inert-slider convention) and the switch is
+ * disabled, so a click is a no-op — but the row stays pressable, so [onLongClick] (the PC's inert-entry
+ * convention: the call site toasts the phone's description, `Toaster.i`) still fires. The phone has no
+ * long-press on this row.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ToggleSettingsEntry(
     title: String,
@@ -53,6 +59,7 @@ fun ToggleSettingsEntry(
     enabled: Boolean = true,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null,
 ) {
     var isPressed by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(
@@ -66,7 +73,7 @@ fun ToggleSettingsEntry(
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .clip(uiRoundnessShape())
-            .clip(uiRoundnessShape()).clickable(enabled = enabled) { onCheckedChange(!isChecked) },
+            .clip(uiRoundnessShape()).combinedClickable(enabled = true, onClick = { if (enabled) onCheckedChange(!isChecked) }, onLongClick = onLongClick),
         color = Color.Transparent,
     ) {
         Box(
@@ -125,6 +132,7 @@ fun ToggleSettingsEntry(
                 Switch(
                     checked = isChecked,
                     onCheckedChange = onCheckedChange,
+                    enabled = enabled,
                 )
             }
         }

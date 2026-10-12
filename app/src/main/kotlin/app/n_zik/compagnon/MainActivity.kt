@@ -275,8 +275,9 @@ internal data class NavPageState(
         /** All the pages closed (the home). */
         val closed = NavPageState()
 
-        /** The About sub-tab, the last one (NAV-3). */
-        const val ABOUT_TAB = 4
+        /** The About sub-tab, the last one (NAV-3) — the 7-tab bar (spec
+         * `spec-fill-pc-ui-gaps-settings` inserted User Interface / Player appearance after Général). */
+        const val ABOUT_TAB = 6
     }
 
     /** Any navigation page shown (the home content and the connection banner are hidden). */
@@ -715,6 +716,10 @@ fun MainActivity(
                                             shown.settingsTab,
                                             onTabChanged = { pages = pages.onTabChanged(it) },
                                             onOpenUpdate = { navIsBack = false; pages = pages.openUpdate() },
+                                            // The Réseau tab's "PC server" entry: the window's own
+                                            // Serveur PC page (the header's "Serveur PC" button's
+                                            // transition, spec `spec-fill-pc-ui-gaps-settings` §A3)
+                                            onOpenServer = { navIsBack = false; pages = pages.onPhonePress() },
                                         )
                                     }
                                 }
