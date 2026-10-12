@@ -168,6 +168,7 @@ HALT after 3 failed build attempts → report with full error log.
 | `rules/SECURITY.md`   | Device token, secrets, input validation, license checks, VLC runtime |
 | `rules/RECOVERY.md`   | Build failures, skill failures, rollback              |
 | `rules/BUILD.md`      | Gradle commands, embedded VLC, commit convention, testing |
+| `rules/LINUX-FLATPAK.md` | Linux/Flatpak development logic — the sandbox D-Bus, jlink SASL module, host dconf, the dev bundle loop, live verification (informational) |
 | `rules/WORKFLOW.md`   | BMAD workflow step-by-step enforcement                |
 | `rules/BMAD.md`       | BMAD config, skill customization, scripts             |
 | `rules/BMAD-TOOLS.md` | IDE skill directories reference                       |

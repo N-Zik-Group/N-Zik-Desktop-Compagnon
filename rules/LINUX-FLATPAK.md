@@ -1,0 +1,185 @@
+# Linux & Flatpak Development Rules — N-Zik Desktop Compagnon
+
+**Version:** 1.0.0 | **Last updated:** 2026-10-13
+
+**Informational.** The Linux/Flatpak development logic gained from the tray + media-surface
+implementation (2026-10-12/13) — what works in the sandbox, why, and how to verify it. Every
+entry below is live-verified on the dev machine (CachyOS, GNOME 51, dark session, the
+`com.nzik.desktop.compagnon.dev` bundle) or in the unit tests named. When a rule and a
+"cleverer" approach conflict, the rule wins — it encodes a live bug.
+
+## The sandbox session bus (xdg-dbusproxy)
+
+The Flatpak sees the session bus through a proxy (`unix:path=/run/flatpak/bus` **inside the
+sandbox** — that path does not exist on the host; never try to open it from the host). The
+proxy forwards only what the finish-args allow:
+
+- **`--talk-name=`** — the app may *call* that name. Without `--talk-name=org.kde.StatusNotifierWatcher`
+  the proxy filters the watcher, the SNI probe reads "no host" and the tray stays dead with a
+  GREEN build (the 2026-10-12 Flatpak tray bug). Same for the keyring
+  (`--talk-name=org.freedesktop.secrets`).
+- **`--own-name=`** — the app may *register* that name. Needed for `org.mpris.MediaPlayer2.nzik_compagnon`
+  (MPRIS) and the SNI item name. A duplicate launch's `Raise` call to an `--own-name` name passes
+  the proxy fine (sending needs no extra grant — live-verified double launch).
+- **Static names only.** A dynamic pid-based name (`org.kde.StatusNotifierItem-<pid>-1`) **cannot**
+  be granted to a sandbox — the finish-args are frozen at build time. The SNI item therefore owns
+  the STATIC `org.kde.StatusNotifierItem.nzik_desktop_compagnon` (`SNI_BUS_NAME`,
+  `StatusNotifierTray.kt`). Outside the sandbox (a `gradlew run` on a native Linux host) the same
+  static name is correct — SNI hosts deduplicate by bus name anyway.
+- **No raw bus socket** in this app: only the proxied bus, only granted names. Anything not
+  granted fails with a bus error — catch it, log it, degrade (the tray pattern: every D-Bus
+  error is a log line, never a crash).
+- **Do NOT add `--talk-name=ca.desrt.dconf`** (it was there and removed): the host dconf daemon
+  is useless inside the sandbox — the app reads the host dconf user DB as a FILE instead (below).
+
+## jlink + D-Bus: the SASL module
+
+dbus-java's SASL layer resolves the session-bus UID through `com.sun.security.auth.module.UnixSystem`
+(module `jdk.security.auth`) at RUNTIME. The Compose plugin computes the jlinked JRE's module set
+from the app classpath — it **never finds** `jdk.security.auth` (no app code references it). Without
+the module, EVERY session-bus connection inside every packaged Linux artifact (Flatpak, .deb, .rpm,
+AUR, portable zip) fails with `NoClassDefFoundError`, and the tray + MPRIS silently stay off — with
+a green build. `:app:run` is immune (host JDK, full module set) — the bug only shows in packaged
+artifacts.
+
+- The fix: `createRuntimeImage { modules.add("jdk.security.auth") }` in `app/build.gradle.kts`
+  (in `project.afterEvaluate` — the Compose plugin creates the task in its OWN afterEvaluate, which
+  runs first).
+- The pin: `LinuxPackagePinTest` reads `linux.jlinkModules` (the build exposes the EFFECTIVE module
+  set via `systemProperty` — same pattern as `flatpak.*`; pin the effective value, never a copy of
+  the string). If a plugin upgrade drops the line, the suite breaks, not the build.
+
+## Host config vs sandbox config (dconf)
+
+Inside the sandbox:
+
+| Env var | Value |
+| --- | --- |
+| `HOME` | the REAL home (`/home/<user>`) — unusual, do not assume the per-app dir |
+| `XDG_CONFIG_HOME` | the PER-APP dir (`~/.var/app/<id>/config`) — carries NO dconf |
+
+Consequences, live-verified:
+
+- **Every in-sandbox probe answers the SCHEMA DEFAULTS, not the host's value** — `gsettings`,
+  the dconf daemon's D-Bus API (a sandboxed talk-name would reach a dconf daemon that serves the
+  app's own per-app DB), the DConf/Settings portals. The host's session settings are only
+  reachable through the host's FILES.
+- **The tray/menu icon tint** therefore reads the host's dconf user DB **directly as a file**
+  (`HostDconf.kt` — a dconf ≥ 0.44 GVDB parser: 24-byte header, bloom-filtered root hash table,
+  key-segment chains, value blobs). Candidate order: `$XDG_CONFIG_HOME/dconf/user` then
+  `$HOME/.config/dconf/user` — in the sandbox the first does not exist and the second works
+  (99 KB, `GVariant` magic); on a plain run the first does. The order is tested
+  (`HostDconfTest`), including the sandbox case.
+- `prefer-light` → dark icons `#241F1F`; anything else (dark, default, missing, failed read) →
+  white. Resolved ONCE before the UI exists (`primeMenuTint()` from `Main.main()` — the startup
+  thread may do the one small synchronous read; the composition must never touch the disk).
+- **Why not a themed symbolic `IconName`?** It would adapt on its own — but the host-side shell
+  cannot see a flatpak's `/app`, so a custom icon file never resolves from the sandbox. The icons
+  must ship their pixels: the SNI `IconPixmap` (raw ARGB32) and the DBusMenu `icon-data` (PNG) are
+  tinted to the menu/panel's text color.
+
+## Tray + menu from the sandbox
+
+- **SNI**: register the item on the STATIC `SNI_BUS_NAME` (above), `IconPixmap` as raw ARGB32
+  big-endian bytes (NOT PNG — live-verified), `Menu` path to the DBusMenu object, the
+  `StatusNotifierWatcher` registration in a retry loop (the host may own its name after the
+  app's probe — the announceMenu workaround).
+- **DBusMenu row ids must be STABLE across updates** (`TRAY_MENU_ID_*`): the host recycles its
+  menu items by id — new ids on every update force a full menu rebuild in the shell. On a content
+  change, emit `com.canonical.dbusmenu.LayoutUpdated` — and do it OFF the EDT (the tray contract:
+  all D-Bus off the EDT; the LaunchedEffect hops to `NzikDispatchers.DATA` via `withContext`).
+- **`GetLayout(parentId, recursionDepth, …)`**: every real host (appindicator GNOME, KDE) asks
+  `(0, -1)` and the menu is flat — ignoring `parentId`/recursionDepth is deliberate, tested
+  decision (review-verified, 2026-10-13).
+- **Icon-data PNGs**: render each distinct row icon ONCE, in memory, tinted, with the SAME
+  margin as the tray icon (render at `px * 0.8` centered on the `px` canvas — full-bleed glyphs
+  look oversized in shell menus; user request "like Discord", live-verified: 6 icons, glyphs
+  32–38 px on the 48×48 canvas). Only the SNI backend renders them — never on the AWT backend
+  (wasted startup work on Windows).
+- **Icon choice**: Linux trays (SNI + X11 AWT fallback) use the monochrome `ic_launcher_monochrome`
+  glyph tinted from the host dconf; the **Windows AWT taskbar keeps the full-color untinted
+  `app_icon`** (no dconf there — a white monochrome glyph is invisible on a light taskbar; the
+  2026-10-13 review HIGH). The full-color `ic_launcher` tile stays with the desktop launchers.
+- **Single instance (Linux)**: `SingleInstance.isDuplicate()` — `NameHasOwner(MPRIS_BUS_NAME)` on
+  the session bus; a duplicate re-shows the first instance through its MPRIS `Raise` and exits.
+  The WHOLE exchange is in `runCatching` (a bus error reads "the only instance" — never kill a
+  legitimate launch). No guard exists on Windows (pre-existing, deferred — a named mutex would
+  be a feature addition).
+
+## The data dir
+
+`~/.config/N-Zik Desktop Compagnon/` (XDG — `$XDG_CONFIG_HOME` honoured, blank-safe) on Linux,
+`%APPDATA%\…` on Windows. The legacy bare-home dir is migrated ONCE on first launch
+(`CredentialStore.migrateLegacyAppDataDir`): whole-dir move when the target is absent (atomic →
+plain → **copy** for a non-empty dir on another filesystem — the cross-mount rename fails with
+`DirectoryNotEmptyException`, even plain `Files.move`), file-by-file merge when both exist,
+symlinks recreated as links (NEVER followed — a dangling target aborts the walk; note the host
+JDK has NO `StandardCopyOption.COPY_LINKS` — use `createSymbolicLink` + `readSymbolicLink`),
+every failure only logs (no-crash). The sandbox contract: `--filesystem=xdg-config` +
+`--filesystem=~/N-Zik Desktop Compagnon` (the one-time migration source — **remove the second
+permission in a future release, with `FlatpakPinTest` in the same change**; see TODO.txt).
+
+## Dev loop (the .dev bundle, in place)
+
+```bash
+./gradlew build                        # green first (all tests)
+./gradlew :app:packageFlatpak -Pchannel=dev
+# bundle: app/build/compose/binaries/n-zik-desktop-compagnon-dev-0.0.1-dev-<YYYYMMDD>-x86_64.flatpak
+pkexec flatpak install --system -y <ABSOLUTE bundle path>   # in-place update of the .dev
+pkill -f "N-Zik[ ]Desktop[ ]Compagnon[ ]DEV"                # restart (bracket regex — see pitfalls)
+nohup flatpak run com.nzik.desktop.compagnon.dev > /tmp/opencode/launch.log 2>&1 &
+```
+
+`pkexec flatpak` needs the ABSOLUTE bundle path. The .dev id (with the `-dev` suffix) is the
+development identity — upgrades are in place, the pairing survives (same id, monotone version).
+
+## Live-verification toolbox
+
+- **In-sandbox probe**: `flatpak run --command=sh com.nzik.desktop.compagnon.dev -c '…'` — check
+  env (`HOME`, `XDG_CONFIG_HOME`), the host dconf file (`ls -la $HOME/.config/dconf/user`, the
+  `GVariant` magic, ~100 KB), any file the app should see.
+- **Host-side D-Bus**: the SNI/MPRIS names are visible on the HOST session bus (the proxy
+  exposes them). `dbus-send --session --print-reply --dest=org.kde.StatusNotifierItem.<id>
+  /com/canonical/menu com.canonical.dbusmenu.GetLayout int32:0 int32:-1 array:string:` dumps the
+  menu incl. the `icon-data` byte arrays (parse them as hex — `byte 0x89, 0x50, …`); decode a PNG
+  and check the glyph's bounding box + transparent corners to verify the icon margin
+  (`/tmp/opencode/check_menu_icon_padding.py`, 2026-10-13).
+- **Name ownership**: `gdbus call --session --dest org.freedesktop.DBus --object-path
+  /org/freedesktop/DBus --method org.freedesktop.DBus.NameHasOwner <name>` (note: gdbus treats a
+  `-1` argument as an option — `dbus-send` above is the safe route for negative ints).
+- **Double launch (single instance)**: launch a second instance while the first is alive; expect
+  `INFOS: Single instance: another instance owns … — this launch exits` in the duplicate's log,
+  NO "could not raise" warning, exit 0, and the first instance still owning both names.
+  (An inconclusive first test usually means the "first" instance died on its own — check `pgrep`
+  BEFORE launching the duplicate.)
+- **Logs**: the app logs to the launching terminal — `nohup … > file 2>&1 &` then grep
+  `SNI:` / `MPRIS:` / `Tray:` / `Single instance:` / `HostDconf:`. A missing "no dconf user DB"
+  line = the tint file was found; its presence = the tint fell back to white.
+- **Build gates**: `./gradlew build` (Linux host) / `gradlew.bat build` (Windows host) — the
+  pin tests (FlatpakPinTest, LinuxPackagePinTest, ArchPkgPinTest) read EFFECTIVE build values
+  exposed as `systemProperty`s; a build change that drifts the contract breaks the suite.
+
+## Pitfalls (learned the hard way)
+
+- **`pkill -f "flatpak run com.nzik"` matches ITSELF** — use the bracket regex
+  `N-Zik[ ]Desktop[ ]Compagnon[ ]DEV` or explicit PIDs.
+- **`timeout N flatpak run …` does not reliably kill the app** — an orphan survived a timeout
+  kill (2026-10-13). Kill by PID.
+- **Duplicate JVMs** print `Cannot use file /tmp/hsperfdata_<user>/<pid>` and harmless
+  `pure virtual method called` / `ProvideXdgActivationToken` / canberra-gtk-module lines at
+  startup — not a failure.
+- **The test source set does NOT see the generated `Res.drawable.*` accessors** — test code that
+  needs a drawable reads the file, it does not reference the accessor.
+- **`PairingListenerTest` is known flaky** — re-run once before reporting.
+- **Compose 1.13.0-alpha01**: no `@Composable` inside `runCatching`/`try`-`catch`;
+  `Painter.toAwtImage` returns a `PainterImage` that is NOT a `RenderedImage` — encode through a
+  `BufferedImage` canvas (the tray's `padTrayImage` pattern) before `ImageIO`.
+- **This host JDK (21.0.12) REMOVED `StandardCopyOption.COPY_LINKS`** (and `LinkOption.FOLLOW_LINKS`)
+  — copy a symlink with `Files.createSymbolicLink(dest, Files.readSymbolicLink(src))`.
+- **Kotlin gotchas already hit**: `ByteArray.take(n) == ByteArray` is always false (compare
+  contents, not identity); unsigned bucket math is `(hash.toUInt() % nBuckets.toUInt()).toInt()`;
+  `const val` only top-level/in objects; `ByteArray` has no `orEmpty()`.
+- **Hex-encode bytes UNSIGNED** — `"%02x".format(byte)` sign-extends bytes ≥ 0x80 into 8–16
+  digits; use `"%02x".format(it.toInt() and 0xFF)` (the MPRIS track id + artwork file names).
+- **A Flatpak bundle is an ostree static delta, not a tar** — inspect by installing, not
+  `tar tf` (rules/BUILD.md "flatpak-builder notes").
