@@ -2,8 +2,9 @@ package app.n_zik.compagnon.components.settings
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,8 +41,10 @@ import org.jetbrains.compose.resources.painterResource
  * a clickable row (4 dp vertical padding, UI roundness) on a transparent surface: the 32 dp accent badge
  * with its 18 dp icon, the title (s.semiBold) and its text (xs, `textSecondary`), an optional trailing
  * content, the 16 dp chevron. Its press scale (0.95 over 150 ms) is ported as on the phone, where nothing
- * sets the pressed state.
+ * sets the pressed state. [onLongClick] is the PC's inert-entry convention: the call site toasts the
+ * phone's description (`Toaster.i`) — the phone has no long-press on this row.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OtherSettingsEntry(
     title: String,
@@ -50,6 +53,7 @@ fun OtherSettingsEntry(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     trailingContent: (@Composable () -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
 ) {
     val isPressed by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(
@@ -63,7 +67,7 @@ fun OtherSettingsEntry(
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .clip(uiRoundnessShape())
-            .clip(uiRoundnessShape()).clickable(onClick = onClick),
+            .clip(uiRoundnessShape()).combinedClickable(onClick = onClick, onLongClick = onLongClick),
         color = Color.Transparent,
     ) {
         Box(

@@ -1,7 +1,9 @@
 package app.n_zik.compagnon.bridge.state
 
 import androidx.compose.runtime.staticCompositionLocalOf
+import app.n_zik.compagnon.generated.resources.*
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.StringResource
 
 /**
  * The phone's UI settings seen by the PC (contract §10.5, since 1.10.0, feature `ui.settings`),
@@ -76,9 +78,17 @@ enum class TransitionEffect { SlideVertical, SlideHorizontal, Scale, Fade, Expan
 /** The phone's `IconLikeType` (`IconsLikeType.kt`), in its order. */
 enum class IconLikeType { Apple, Breaked, Brilliant, Essential, Gift, Shape, Striped }
 
-/** The phone's `PlayerBackgroundColors`, in its order. */
-enum class PlayerBackgroundColors {
-    CoverColor, ThemeColor, CoverColorGradient, ThemeColorGradient, BlurredCoverColor, ColorPalette, AnimatedGradient,
+/** The phone's `PlayerBackgroundColors`, in its order. [textId] is the phone's settings-entry label of the mode (the Background selector of the PC's Player-appearance tab). */
+enum class PlayerBackgroundColors(
+    val textId: StringResource,
+) {
+    CoverColor(Res.string.bg_colors_background_from_cover),
+    ThemeColor(Res.string.bg_colors_background_from_theme),
+    CoverColorGradient(Res.string.bg_colors_gradient_background_from_cover),
+    ThemeColorGradient(Res.string.bg_colors_gradient_background_from_theme),
+    BlurredCoverColor(Res.string.bg_colors_blurred_cover_background),
+    ColorPalette(Res.string.colorpalette),
+    AnimatedGradient(Res.string.animatedgradient),
 }
 
 /** The PC's effective UI settings seen by every screen: its coded defaults, the phone's [UiSettings.topN] once read. */

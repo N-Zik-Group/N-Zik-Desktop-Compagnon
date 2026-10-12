@@ -1,7 +1,8 @@
 package app.n_zik.compagnon.components.settings
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +32,10 @@ import org.jetbrains.compose.resources.painterResource
  * bottom gap) and its description (xxs, `textSecondary`), the 16 dp chevron. Unlike
  * [OtherSettingsEntry] there is NO press scale — the phone's `ModernSettingsEntry` is a bare
  * `Row`, and neither is the desktop's port (the About screen's troubleshooting rows use it).
+ * [onLongClick] is the PC's inert-entry convention: the call site toasts the phone's description
+ * (`Toaster.i`) — the phone has no long-press on this row.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ModernSettingsEntry(
     title: String,
@@ -39,6 +43,7 @@ fun ModernSettingsEntry(
     icon: DrawableResource,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -47,7 +52,7 @@ fun ModernSettingsEntry(
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .clip(uiRoundnessShape())
-            .clickable(onClick = onClick)
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
             .padding(12.dp),
     ) {
         // Icon

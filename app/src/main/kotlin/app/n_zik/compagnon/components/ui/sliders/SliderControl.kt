@@ -22,6 +22,13 @@ import app.n_zik.compagnon.utils.semiBold
 /**
  * Port of `SliderControl` (phone's `app/n_zik/android/components/ui/sliders/SliderControl.kt`): [Slider] with
  * its value shown as an overlay.
+ *
+ * **Inert-slider convention** (the PC's inert settings rows, spec `spec-fill-pc-ui-gaps-settings` — reference
+ * implementation [ListSliderMenuItem], `PlaybackSettingsMenu.kt` L280-355): a setting with no PC key is
+ * rendered as a normal row — the title and the phone's default value — with the slider itself disabled:
+ * `isEnabled = false` (the track at alpha 0.5, the value dimmed) + the whole row at alpha 0.5, the value
+ * fixed at the phone's own default, and the call site gating [onSlide]/[onSlideComplete] so a drag writes
+ * nothing; the row's long-press toasts the phone's description.
  */
 @Composable
 fun SliderControl(
