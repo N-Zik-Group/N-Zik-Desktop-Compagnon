@@ -365,7 +365,7 @@
     <!-- The app shortcuts (the phone's launcher shortcuts, shown in the tray menu) — the phone's strings verbatim -->
     <string name="app_shortcuts_settings">Raccourcis vers les applications</string>
     <string name="app_shortcuts_settings_description">Sélectionner et réorganiser les raccourcis du lanceur d\'applications</string>
-    <string name="app_shortcuts_rescue_locked">La fonction « Rescue » ne peut pas être désactivée</string>
+    <string name="app_shortcuts_rescue_locked">La fonction « Sauvegarde » ne peut pas être désactivée</string>
     <string name="reset">Réinitialiser</string>
     <string name="home">Accueil</string>
     <string name="toast_preference_saved">Préférence enregistrée</string>
