@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test
  * path touches: a changed app-id would desynchronize the bundle identity (the install name, the
  * upgrade identity and the icon name all derive from it — frozen by AD-1, irreversible once
  * published), a drifted base runtime or a shrunken finish-args list would ship a bundle that
- * cannot reach the phone (network), the keyring (org.freedesktop.secrets) or the data dir (home) — all
- * with a green build. The build exposes the effective values (`systemProperty` in
+ * cannot reach the phone (network), the keyring (org.freedesktop.secrets) or the data dir
+ * (xdg-config) — all with a green build. The build exposes the effective values (`systemProperty` in
  * `app/build.gradle.kts`, read from the committed template like `flatpak.*`) so this test
  * pins them, and the committed template itself is checked (valid JSON, exactly its two
  * placeholders) so the build cannot substitute anything it does not declare.
@@ -64,8 +64,12 @@ class FlatpakPinTest {
     @Test
     fun `the finish args keep the pairing keyring windowing and audio sandbox`() {
         // The sandbox contract: network = the pairing listener + the phone's LAN server,
-        // x11/wayland = windowing, pulseaudio = audio, device:dri = GPU rendering, home = the
-        // data dir (~/N-Zik Desktop Compagnon/), org.freedesktop.secrets = the keyring (the
+        // x11/wayland = windowing, pulseaudio = audio, device:dri = GPU rendering,
+        // xdg-config = the data dir (~/.config/ — the XDG move of 2026-10-12; inside the sandbox
+        // the app sees its per-app XDG_CONFIG_HOME under the host's ~/.config/), the legacy
+        // ~/N-Zik Desktop Compagnon = the one-time migration source of the pre-XDG data dir
+        // (pairing/settings/cache — accessed only to move it, then the dir is gone),
+        // org.freedesktop.secrets = the keyring (the
         // current Secret Service spec bus name — the only D-Bus name the app may reach,
         // through the flatpak runtime's D-Bus proxy, no raw bus socket; the legacy
         // org.freedesktop.SecretService name is no longer registered by modern keyrings),
@@ -81,7 +85,8 @@ class FlatpakPinTest {
             "--socket=wayland",
             "--socket=pulseaudio",
             "--device=dri",
-            "--filesystem=home",
+            "--filesystem=xdg-config",
+            "--filesystem=~/N-Zik Desktop Compagnon",
             "--talk-name=org.freedesktop.secrets",
             "--own-name=org.mpris.MediaPlayer2.nzik_compagnon",
         )) {
@@ -174,7 +179,8 @@ class FlatpakPinTest {
                 "--socket=wayland",
                 "--socket=pulseaudio",
                 "--device=dri",
-                "--filesystem=home",
+                "--filesystem=xdg-config",
+                "--filesystem=~/N-Zik Desktop Compagnon",
                 "--talk-name=org.freedesktop.secrets",
                 "--own-name=org.mpris.MediaPlayer2.nzik_compagnon",
             ),

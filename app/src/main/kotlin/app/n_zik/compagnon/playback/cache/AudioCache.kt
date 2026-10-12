@@ -212,7 +212,7 @@ class AudioCache(
         private const val PART_SUFFIX = ".part"
         private val JSON = Json { ignoreUnknownKeys = true }
 
-        /** `%APPDATA%\N-Zik Desktop Compagnon\cache\audio\`. */
+        /** `%APPDATA%\N-Zik Desktop Compagnon\cache\audio\` (Windows) / `~/.config/N-Zik Desktop Compagnon/cache/audio/` (Linux). */
         fun defaultDirectory(): Path = CredentialStore.appDirectory().resolve("cache").resolve("audio")
 
         /** SHA-256 of the `trackId`, hex: a safe file name whatever the id holds. */
