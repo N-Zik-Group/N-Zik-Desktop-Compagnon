@@ -49,10 +49,14 @@ data class MprisSnapshot(
 
 /**
  * The MPRIS snapshot from the phone's state (spec `spec-tray-taskbar-media-controls`): no session →
- * `Stopped` and every `Can*` false; live → `Playing` / `Paused` from `isPlaying` (MPRIS defines no
- * buffering status — the phone's rebuffer is a momentary `Playing`) and the `Can*` gates on the
- * contract's `playback` feature alone, like the ThumbBar's enable gate. The duration is the track's
- * `durationMs` with the player's standing in (the phone's own fallback), omitted on sentinel.
+ * `Stopped` and every `Can*` false; live with a current track → `Playing` / `Paused` from `isPlaying`
+ * (MPRIS defines no buffering status — the phone's rebuffer is a momentary `Playing`); live without
+ * one → `Stopped` (nothing loaded). Per MPRIS v2.2, `CanPlay` / `CanPause` are properties of the
+ * CURRENT TRACK, not the playback state — both track the contract's `playback` feature AND a loaded
+ * track, independent of `isPlaying` ("if a track is currently playing (and CanControl is true), this
+ * should be true"; a state-based `CanPlay` would drop the player from GNOME 51's media area while
+ * playing — the shell filters its players on `CanPlay`). The duration is the track's `durationMs`
+ * with the player's standing in (the phone's own fallback), omitted on sentinel.
  */
 fun mprisSnapshot(
     state: PlayerState?,
@@ -73,10 +77,15 @@ fun mprisSnapshot(
             artUrl = artUrl,
         )
     }
-    val canPlay = playback && !isPlaying
-    val canPause = playback && isPlaying
+    // MPRIS v2.2: `CanPlay` / `CanPause` are properties of the CURRENT TRACK, not of the playback
+    // state ("the value should not depend on whether the track is currently paused or playing") —
+    // both track the `playback` feature AND a loaded track, open in every state of a loaded track.
+    val hasTrack = metadata != null
+    val canPlay = playback && hasTrack
+    val canPause = playback && hasTrack
     return MprisSnapshot(
-        playbackStatus = if (isPlaying) PLAYING else PAUSED,
+        // Nothing loaded → `Stopped`; a live track → `Playing` / `Paused` from the phone.
+        playbackStatus = if (!hasTrack) STOPPED else if (isPlaying) PLAYING else PAUSED,
         metadata = metadata,
         canGoNext = playback,
         canGoPrevious = playback,
@@ -144,10 +153,12 @@ fun propertiesChanged(old: MprisSnapshot?, new: MprisSnapshot): List<String> {
 /**
  * The MPRIS `mpris:trackid` of a phone track: an OBJECT PATH, as the MPRIS spec requires (KDE's
  * `SetPosition` — the progress bar's seek — matches it and ignores a plain string). The phone's id is
- * hex-encoded: an object path element only allows `[A-Za-z0-9_]`, and the encoding keeps two ids distinct.
+ * hex-encoded TWO DIGITS PER BYTE (unsigned — a signed `Byte` would sign-extend into 8–16 digit
+ * segments for UTF-8 bytes ≥ 0x80): an object path element only allows `[A-Za-z0-9_]`, and the
+ * encoding keeps two ids distinct.
  */
 fun mprisTrackPath(trackId: String): String =
-    MPRIS_TRACK_PATH_PREFIX + trackId.toByteArray(Charsets.UTF_8).joinToString("") { "%02x".format(it) }
+    MPRIS_TRACK_PATH_PREFIX + trackId.toByteArray(Charsets.UTF_8).joinToString("") { "%02x".format(it.toInt() and 0xFF) }
 
 /** The current position for MPRIS `Position` (µs): the phone's extrapolated position while live, 0 otherwise. */
 fun mprisPositionUs(state: PlayerState?, connection: ConnectionState, serverNowMs: Long): Long =

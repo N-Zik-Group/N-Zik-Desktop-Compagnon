@@ -36,6 +36,9 @@ enum class AppShortcut(
 
     val locked: Boolean get() = this == Rescue
 
+    /** The tray menu's stable DBusMenu id (the host recycles its menu items by id — [TRAY_MENU_ID_SHORTCUT_BASE] + the enum ordinal). */
+    val trayMenuId: Int get() = TRAY_MENU_ID_SHORTCUT_BASE + ordinal
+
     companion object {
         fun of(id: String): AppShortcut? = entries.firstOrNull { it.id == id }
     }

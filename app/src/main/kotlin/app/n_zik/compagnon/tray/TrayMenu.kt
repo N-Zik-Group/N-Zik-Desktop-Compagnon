@@ -56,7 +56,14 @@ object TrayMenuAppearance {
 data class TrayAnchor(val x: Int, val y: Int)
 
 /** One row of the tray menu; [icon] `null` = no icon; [tinted] `false` keeps a full-color icon (the app logo). */
-data class TrayMenuEntry(val label: String, val icon: DrawableResource?, val tinted: Boolean = true, val onClick: () -> Unit)
+/**
+ * One row of the tray menu. [id] is the row's STABLE identity (not its position): the native
+ * DBusMenu host reuses its items BY ID (a row that moves keeps its id; a row that disappears is
+ * removed from the layout, a new one is added) — reusing an id for a different row would change the
+ * host item's type in place and corrupt its menu (live bug 2026-10-13: a duplicated « Quitter »
+ * after a settings change). See [DBusMenuRow] and the id constants in `DbusMenu.kt`.
+ */
+data class TrayMenuEntry(val id: Int, val label: String, val icon: DrawableResource?, val tinted: Boolean = true, val onClick: () -> Unit)
 
 /** The tray menu's rows: the header-less list « Open » / the shortcuts / « Quit ». */
 data class TrayMenuModel(val title: String, val top: List<TrayMenuEntry>, val shortcuts: List<TrayMenuEntry>, val bottom: List<TrayMenuEntry>)

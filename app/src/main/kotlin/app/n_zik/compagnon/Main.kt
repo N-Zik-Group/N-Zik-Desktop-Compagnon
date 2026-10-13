@@ -55,12 +55,14 @@ import app.n_zik.compagnon.core.network.CandidateAddresses
 import app.n_zik.compagnon.core.network.SystemNetworkInterfaceSource
 import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.playback.services.LocalPlayback
+import app.n_zik.compagnon.platform.SingleInstance
 import app.n_zik.compagnon.platform.TaskbarMediaControls
 import app.n_zik.compagnon.platform.WindowController
 import app.n_zik.compagnon.platform.TaskbarMediaControls.Companion.createTaskbarMediaControls
 import app.n_zik.compagnon.tray.TrayMenuAppearance
 import app.n_zik.compagnon.tray.TraySetup
 import app.n_zik.compagnon.tray.isSystemTraySupported
+import app.n_zik.compagnon.tray.primeMenuTint
 import app.n_zik.compagnon.tray.shouldMinimizeOnClose
 import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.LocalPreferences
@@ -81,6 +83,13 @@ fun main() {
     // the moment the OS reports the new size, instead of showing white / black until the next
     // Compose frame
     System.setProperty(ERASE_BACKGROUND_ON_RESIZE_PROPERTY, "true")
+    // A duplicate launch (the desktop icon, the media notification's click, a `flatpak run`)
+    // re-shows the first instance's window through its MPRIS `Raise` and exits here — a parallel
+    // player would play the phone's track twice (SingleInstance)
+    if (SingleInstance.isDuplicate()) return
+    // The tray/menu icon's session tint (one small dconf read — the startup thread is free for it,
+    // the composition is not; Linux-only, a no-op on Windows)
+    primeMenuTint()
     runApplication()
 }
 

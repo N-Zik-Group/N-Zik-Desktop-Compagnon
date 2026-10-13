@@ -6,7 +6,7 @@
 
 - The paired device token is the ONLY secret this app handles — it authenticates every bridge call (REST Bearer + WS upgrade header)
 - **Storage: the platform secret store** — the **Windows Credential Manager ONLY on Windows** (generic credential "N-Zik Desktop Compagnon", via `WindowsCredentialSecretStore`'s JNA mapping of `CredWriteW`/`CredReadW`/`CredDeleteW`), the **system keyring on Linux** (GNOME Secret Service via `LinuxSecretStore`'s JNA mapping of `libsecret`, loaded at runtime — JNA is already in the catalog, no new dependency), and an **in-memory session store on keyring-less Linux** (`SessionSecretStore`: the token survives only for the session, the paired screen shows a visible note, and a restart requires re-pairing). Plain text on disk is never a storage option
-- `pairing.json` (in `%APPDATA%\N-Zik Desktop Compagnon\` on Windows, `~/N-Zik Desktop Compagnon/` on Linux) holds the NON-SECRET fields only (`serverIps`, `serverPort`, `serverName`, `deviceId`, `deviceName`) — the token must NEVER appear there; `CredentialStore` is built so a missing token or a corrupt file reads as "not paired"
+- `pairing.json` (in `%APPDATA%\N-Zik Desktop Compagnon\` on Windows, `~/.config/N-Zik Desktop Compagnon/` on Linux — the XDG config dir, the legacy `~/N-Zik Desktop Compagnon/` being migrated once on first launch) holds the NON-SECRET fields only (`serverIps`, `serverPort`, `serverName`, `deviceId`, `deviceName`) — the token must NEVER appear there; `CredentialStore` is built so a missing token or a corrupt file reads as "not paired"
 - **NEVER log the token** — not at any level, not masked, not in an exception message
 - **NEVER write the token** into `Done.txt`, `TODO.txt`, README, comments, tests, or any file in this repo
 - "Forget this phone" and every revocation path (`RevocationPolicy`) must remove BOTH the platform secret store entry and `pairing.json`
@@ -37,7 +37,7 @@
 ## Sensitive Data Storage
 
 - Use the platform secret store for the device token (the mechanism above) — no plain-text credential storage anywhere
-- The app data directory (`%APPDATA%\N-Zik Desktop Compagnon\` on Windows, `~/N-Zik Desktop Compagnon/` on Linux) holds `pairing.json` (non-secret), `settings.json` (PC-local settings) and the audio cache — nothing sensitive
+- The app data directory (`%APPDATA%\N-Zik Desktop Compagnon\` on Windows, `~/.config/N-Zik Desktop Compagnon/` on Linux — the XDG config dir) holds `pairing.json` (non-secret), `settings.json` (PC-local settings) and the audio cache — nothing sensitive
 - Clear sensitive data when the user forgets the phone / the phone revokes this PC (Credential Manager entry + `pairing.json`, both)
 - All bridge network communication goes to the phone's **local** server — see the network exception below
 

@@ -125,7 +125,7 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 | Playback            | `playback/` (VLC engine, audio cache, local playback)                     |
 | UI                  | `components/` (screens in `components/ui/screens/`, player in `components/player/`) |
 | Strings (English)   | `app/src/main/composeResources/values/strings.xml` — single file, no `values-*` |
-| Pairing persistence | token → the platform secret store (Windows Credential Manager "N-Zik Desktop Compagnon"; Linux keyring via libsecret, in-memory session store without a keyring); non-secret fields → `%APPDATA%\N-Zik Desktop Compagnon\pairing.json` (Windows) / `~/N-Zik Desktop Compagnon/pairing.json` (Linux); PC-local settings → `settings.json`; audio cache → `%APPDATA%\N-Zik Desktop Compagnon\cache\audio\` |
+| Pairing persistence | token → the platform secret store (Windows Credential Manager "N-Zik Desktop Compagnon"; Linux keyring via libsecret, in-memory session store without a keyring); non-secret fields → `%APPDATA%\N-Zik Desktop Compagnon\pairing.json` (Windows) / `~/.config/N-Zik Desktop Compagnon/pairing.json` (Linux — the XDG config dir, `$XDG_CONFIG_HOME` override honoured; the legacy `~/N-Zik Desktop Compagnon/` is migrated once on first launch, `CredentialStore`); PC-local settings → `settings.json`; audio cache → `%APPDATA%\N-Zik Desktop Compagnon\cache\audio\` |
 | Database            | none on the PC — the phone's local DB is the only database; schema work belongs to the N-Zik (phone) repo |
 | Tests               | `app/src/test/kotlin/`                                                   |
 
@@ -173,6 +173,7 @@ HALT after 3 failed build attempts → report with full error log.
 | `rules/SECURITY.md`   | Device token, secrets, input validation, license checks, VLC runtime |
 | `rules/RECOVERY.md`   | Build failures, skill failures, rollback              |
 | `rules/BUILD.md`      | Gradle commands, embedded VLC, commit convention, testing |
+| `rules/LINUX-FLATPAK.md` | Linux/Flatpak development logic — the sandbox D-Bus, jlink SASL module, host dconf, the dev bundle loop, live verification (informational) |
 | `rules/WORKFLOW.md`   | BMAD workflow step-by-step enforcement                |
 | `rules/BMAD.md`       | BMAD config, skill customization, scripts             |
 | `rules/BMAD-TOOLS.md` | IDE skill directories reference                       |
