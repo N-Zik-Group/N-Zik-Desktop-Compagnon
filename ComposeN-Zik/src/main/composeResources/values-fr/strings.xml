@@ -200,7 +200,7 @@
     <string name="match_album_audio_version">Faire correspondre l\'album/la version audio</string>
     <string name="autosync_likes">Synchronisation automatique des morceaux aimés</string>
     <string name="statistics">Statistiques</string>
-    <string name="header_view_top_of">Voir le top %s de …</string>
+    <string name="header_view_top_of">Les %s meilleurs de…</string>
     <string name="max_items_unlimited">Illimité</string>
     <string name="today">Aujourd\'hui</string>
     <string name="_1_week">1 Semaine</string>
