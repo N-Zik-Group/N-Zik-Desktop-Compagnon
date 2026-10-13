@@ -248,8 +248,21 @@ jobs:
           - The channel workflows are UNCHANGED: they read the single embedded zip generically (SHA-verified against its .sha256 at build time)
           - **Proof:** ComposeN-Zik/packaging/windows/installer.nsi compiled with the new makensis on this run (the smoke compile passed — the committed installer script is compatible with NSIS @LATEST@)
 
-          > The bot never merges this PR — the merge is the human verification gate (rules/BUILD.md "Windows Installer" — the "NSIS on the build machine" bullet). After merging, dev machines can move to NSIS @LATEST@ (the per-user install in rules/BUILD.md).
+          > The bot never merges this PR — the merge is the human verification gate (rules/BUILD.md "Windows Installer" — the "NSIS on the build machine" bullet). After merging, dev machines can move to NSIS @LATEST@ (the per-user install in rules/BUILD.md). The head branch bot/nsis-update-@LATEST@ is deleted automatically when the PR is merged (the PR is created with delete-on-merge).
           '@
           $body = $body.Replace('@EMBEDDED@', $embedded).Replace('@LATEST@', $latest).Replace('@SHA@', $newSha)
           $body | Out-File -FilePath pr_body.md -Encoding utf8
-          gh pr create --base main --head "bot/nsis-update-$latest" --title "chore(tools): update the embedded NSIS from $embedded to $latest" --body-file pr_body.md
+          $prUrl = gh pr create --base main --head "bot/nsis-update-$latest" --title "chore(tools): update the embedded NSIS from $embedded to $latest" --body-file pr_body.md
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "ERROR: gh pr create failed (exit $LASTEXITCODE) — failing loud (no publish)."
+            exit 1
+          }
+          # Delete the head branch after the human merges: the bot PR is a one-shot update
+          # artifact — its branch (bot/nsis-update-<v>) must not survive the merge. gh pr create
+          # has no delete-branch flag — the flag is set on the created PR through the API.
+          $prNumber = ($prUrl -split '/')[-1]
+          gh api -X PATCH "repos/$env:GITHUB_REPOSITORY/pulls/$prNumber" -f delete_on_merge=true
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "ERROR: setting delete_on_merge on PR #${prNumber} failed (exit $LASTEXITCODE) — the branch would survive the merge; failing loud."
+            exit 1
+          }

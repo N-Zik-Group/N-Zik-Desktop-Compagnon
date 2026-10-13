@@ -247,7 +247,7 @@ jobs:
 
           **Optional local verification:** bash scripts/build-vlc-linux-tarball.sh (the same committed script) -> compare the printed SHA-256 with the one above.
 
-          > The bot never merges this PR — the merge is the human verification gate (rules/BUILD.md "VLC Linux tarball pipeline").
+          > The bot never merges this PR — the merge is the human verification gate (rules/BUILD.md "VLC Linux tarball pipeline"). The head branch bot/vlc-pin-@VERSION@ is deleted automatically when the PR is merged (the PR is created with delete-on-merge).
           BODY
           sed -i \
             -e "s|@LEAD@|${LEAD}|g" \
@@ -257,8 +257,13 @@ jobs:
             -e "s|@SHA@|${SHA}|g" \
             -e "s|@RELEASE@|${RELEASE_URL}|g" \
             pr_body.md
-          gh pr create \
+          PR_URL="$(gh pr create \
             --base main \
             --head "bot/vlc-pin-${VERSION}" \
             --title "chore(catalog): pin the Linux VLC tarball to ${VERSION}" \
-            --body-file pr_body.md
+            --body-file pr_body.md)"
+          # Delete the head branch after the human merges: the bot PR is a one-shot verification
+          # artifact — its branch (bot/vlc-pin-<v>) must not survive the merge. gh pr create has
+          # no delete-branch flag — the flag is set on the created PR through the API.
+          PR_NUMBER="${PR_URL##*/}"
+          gh api -X PATCH "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" -f delete_on_merge=true
