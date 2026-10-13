@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_subtitle">N-Zik için yardımcı</string>
-    <string name="starting">Startingâ€¦</string>
-    <!-- QR pairing -->
+    <string name="starting">Başlatılıyor…</string>
     <string name="pair_title">Telefonunuzla eşleştirin</string>
     <string name="pair_qr_description">Telefonunuzdaki N-Zik uygulamasında Sunucuyu yönet seçeneğini açın, eşleştirme işlemini başlatın, ardından Tara seçeneğine dokunun ve kamerayı bu koda doğrultun.</string>
     <string name="pair_device_name">Bu bilgisayarın adı</string>
     <string name="pair_device_name_invalid">1 ile 64 karakterden oluşan bir ad girin.</string>
-    <string name="pair_qr_waiting">Waiting for your phoneâ€¦</string>
-    <string name="pair_qr_preparing">Preparing the QR codeâ€¦</string>
+    <string name="pair_qr_waiting">Waiting for your phone…</string>
+    <string name="pair_qr_preparing">Preparing the QR code…</string>
     <string name="pair_qr_addresses">Bu bilgisayar: %1$s (bağlantı noktası %2$d)</string>
     <string name="pair_qr_renew_hint">Kod her 2 dakikada bir yenilenir.</string>
     <string name="pair_manual_entry">Manuel giriş</string>
@@ -16,7 +15,6 @@
     <string name="pair_show_qr">QR kodunu göster</string>
     <string name="pair_listener_unreachable">Telefonunuz bu bilgisayara bağlanamadı. Windows Güvenlik Duvarı mı engelliyor, yoksa ağ Genel olarak mı ayarlanmış? Özel ağlarda N-Zik Masaüstü Yardımcısına izin verin veya aşağıdan manuel olarak eşleştirin.</string>
     <string name="pair_no_address">Bu bilgisayarda herhangi bir yerel ağ adresi bulunamadığı için QR kodu gösterilemiyor. Aşağıdaki adımları izleyerek manuel olarak eşleştirin.</string>
-    <!-- Manual pairing -->
     <string name="manual_title">Manuel eşleştirme</string>
     <string name="manual_description">Telefonunuzda, Sunucuyu yönet seçeneği altında IP adresi, bağlantı noktası ve 6 karakterlik bir kod görüntülenir.</string>
     <string name="manual_ip">Telefonun IP adresi</string>
@@ -26,9 +24,7 @@
     <string name="manual_port_invalid">1 ile 65535 arasında bir bağlantı noktası girin.</string>
     <string name="manual_code_invalid">Kod 6 karakterden oluşur, örneğin ABC-DEF.</string>
     <string name="manual_submit">Eşleştir</string>
-    <!-- Validation -->
-    <string name="validating">Pairing with your phoneâ€¦</string>
-    <!-- Errors -->
+    <string name="validating">Pairing with your phone…</string>
     <string name="error_code_rejected">Kod geçersiz veya süresi dolmuş. Telefonunuzdaki kodu kontrol edin ve tekrar deneyin.</string>
     <string name="error_rate_limited">Çok fazla deneme yapıldı. %1$d saniye sonra tekrar deneyin.</string>
     <string name="error_incompatible_version">Telefon sürümü uyumsuz (sözleşme %1$s). N-Zik Masaüstü Yardımcısı veya N-Zik uygulamasını güncelleyin.</string>
@@ -38,11 +34,10 @@
     <string name="error_unexpected">Telefondan beklenmedik bir yanıt geldi (HTTP %1$d, %2$s).</string>
     <string name="error_unknown_code">kod yok</string>
     <string name="dismiss">Kapat</string>
-    <!-- Paired -->
     <string name="paired_title">Eşleştirildi</string>
     <string name="paired_with">%1$s ile eşleştirildi</string>
     <string name="paired_as">Bu bilgisayar telefonda %1$s olarak görünüyor.</string>
-    <string name="paired_checking">Checking the connectionâ€¦</string>
+    <string name="paired_checking">Checking the connection…</string>
     <string name="paired_ok">Telefona ulaşılabilir.</string>
     <string name="paired_other_active">Telefona başka bir bilgisayar (%1$s) bağlı. Bunu telefondan ayırın, ardından tekrar deneyin.</string>
     <string name="paired_other_active_unknown">diğer cihaz</string>
@@ -52,34 +47,29 @@
     <string name="retry">Tekrar dene</string>
     <string name="forget_phone">Bu telefonu unut</string>
     <string name="forget_phone_text">Bu bilgisayardaki eşleştirmeyi kaldırır</string>
-    <!-- Unreachable -->
     <string name="unreachable_title">Telefona ulaşılamıyor</string>
     <string name="unreachable_description">%1$s adresinde %2$s yanıt vermedi. Sunucusu durdurulmuş olabilir veya IP adresi değişmiş olabilir. Eşleştirme korunur.</string>
     <string name="unreachable_edit_ip">IP\'yi Düzenle</string>
-    <string name="unreachable_edit_ip_text">Keep the pairing, change the phoneâ€™s IP address only</string>
+    <string name="unreachable_edit_ip_text">Keep the pairing, change the phone’s IP address only</string>
     <string name="unreachable_port_kept">Bağlantı noktası %1$d (korunur)</string>
     <string name="unreachable_save_ip">Kaydet ve yeniden dene</string>
     <string name="cancel">İptal</string>
-    <!-- Revoked -->
     <string name="revoked_title">Eşleştirme iptal edildi</string>
-    <string name="revoked_description">This PC was removed from the phoneâ€™s paired devices. Pair it again to keep using it.</string>
+    <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
     <string name="revoked_pair_again">Tekrar eşleştir</string>
-    <!-- Main window -->
     <string name="phone_panel_title">Telefon</string>
     <string name="phone_panel_open">Telefon: %1$s</string>
     <string name="close">Kapalı</string>
-    <!-- Connection -->
     <string name="connection_live">Bağlanıldı</string>
-    <string name="connection_connecting">Connectingâ€¦</string>
-    <string name="connection_reconnecting">Reconnectingâ€¦</string>
+    <string name="connection_connecting">Bağlanıyor…</string>
+    <string name="connection_reconnecting">Yeniden bağlanıyor…</string>
     <string name="connection_offline">Bağlantı kesildi</string>
-    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d sâ€¦</string>
+    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
     <string name="connection_server_stopped">Sunucu durdu. Telefonunuzdaki N-Zik uygulamasından sunucuyu yeniden başlatın, ardından yeniden bağlanın.</string>
     <string name="connection_kicked">Telefon bağlantısı kesildi. Eşleştirme korunur.</string>
     <string name="connection_replaced">Bu bilgisayarın başka bir penceresi oturumu devraldı.</string>
     <string name="connection_other_active">Telefona başka bir bilgisayar (%1$s) bağlı. Bunu telefondan ayırın, ardından tekrar deneyin.</string>
     <string name="reconnect">Yeniden bağlan</string>
-    <!-- Player -->
     <string name="player_nothing_playing">Hiçbir şey çalmıyor</string>
     <string name="player_unknown_artist">Bilinmeyen sanatçı</string>
     <string name="player_untitled">Başlıksız</string>
@@ -96,8 +86,7 @@
     <string name="player_shuffle_off">Karıştırma: kapalı</string>
     <string name="player_open_full">Oynatıcıyı aç</string>
     <string name="player_close_full">Oynatıcıyı kapat</string>
-    <string name="player_waiting_state">Waiting for the phoneâ€™s playback stateâ€¦</string>
-    <!-- Queue -->
+    <string name="player_waiting_state">Waiting for the phone’s playback state…</string>
     <string name="queue_title">Kuyruk</string>
     <string name="queue_count">%1$d parça</string>
     <string name="queue_empty">Kuyruk boş. Telefonunuzda bir şeyler çalmaya başlayın.</string>
@@ -108,8 +97,7 @@
     <string name="queue_remove">Kaldır</string>
     <string name="queue_clear">Kuyruğu temizle</string>
     <string name="queue_clear_confirm_title">Kuyruk temizlensin mi?</string>
-    <string name="queue_clear_confirm_text">Every track is removed from the phoneâ€™s queue and playback stops.</string>
-    <!-- Command failures -->
+    <string name="queue_clear_confirm_text">Every track is removed from the phone’s queue and playback stops.</string>
     <string name="command_play">Oynat</string>
     <string name="command_pause">Duraklat</string>
     <string name="command_seek">Ara</string>
@@ -126,18 +114,17 @@
     <string name="command_queue_add">Kuyruğa ekle</string>
     <string name="command_output">Ses çıkışı</string>
     <string name="command_unknown">Bir komut</string>
-    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshingâ€¦</string>
+    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
     <string name="notice_queue_mismatch">%1$s: bu arada kuyruk değişti. Sayfa yenilendi, lütfen tekrar deneyin.</string>
     <string name="notice_rejected">%1$s: telefon tarafından reddedildi.</string>
-    <string name="notice_unavailable">%1$s: the phoneâ€™s player is unavailable. Try again later.</string>
-    <string name="notice_server_stopping">%1$s: the phoneâ€™s server is stopping.</string>
+    <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
+    <string name="notice_server_stopping">%1$s: the phone’s server is stopping.</string>
     <string name="notice_other_active">%1$s: telefona başka bir bilgisayar (%2$s) bağlı.</string>
     <string name="notice_not_found">%1$s: telefonda bulunamadı.</string>
     <string name="notice_unreachable">%1$s: telefon cevap vermedi.</string>
     <string name="notice_truncated">%1$s: %3$d parçadan sadece %2$d gönderildi.</string>
     <string name="notice_failed">%1$s başarısız oldu (HTTP %2$d, %3$s).</string>
     <string name="notice_late_error">%1$s telefonda başarısız oldu (%2$s, komut %3$s).</string>
-    <!-- Library: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="songs">Şarkılar</string>
     <string name="artists">Sanatçılar</string>
     <string name="albums">Albümler</string>
@@ -145,7 +132,6 @@
     <string name="all">Tümü</string>
     <string name="favorites">Favoriler</string>
     <string name="cached">Önbelleğe alındı</string>
-    <!-- "On device" on the phone; here the label says where the files are, to be told apart from "Cached" -->
     <string name="on_device">Cihaz üzerinden telefon</string>
     <string name="done">Tamam</string>
     <string name="downloaded">İndirildi</string>
@@ -171,12 +157,11 @@
     <string name="info_find_the_song_that_is_playing">Şu anda çalan şarkıyı göster</string>
     <string name="playing_song_not_found_on_current_list">Mevcut listede çalan şarkı bulunamadı</string>
     <string name="no_songs_playing">Şu anda çalan şarkı yok</string>
-    <string name="artist_songs_count_duration">%1$d Songs â€¢ %2$s</string>
+    <string name="artist_songs_count_duration">%1$d Şarkı • %2$s</string>
     <string name="no_song_found">Şarkı bulunamadı</string>
     <string name="no_song_to_shuffle">Karıştırılacak şarkı yok</string>
     <string name="songs_shuffled">%d şarkı rastgele çalındı</string>
     <string name="info_no_songs_yet">Şarkılar bulunamadı</string>
-    <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Yer imi</string>
     <string name="info_bookmark_album">Albümü yer imlerine ekle</string>
     <string name="follow">Takip et</string>
@@ -215,7 +200,7 @@
     <string name="match_album_audio_version">Albüm/Ses versiyon</string>
     <string name="autosync_likes">Beğenilen Şarkıları Otomatik Olarak Senkronize Et</string>
     <string name="statistics">İstatistikler</string>
-    <string name="header_view_top_of">Top %s of â€¦</string>
+    <string name="header_view_top_of">… içindeki en iyi %s</string>
     <string name="max_items_unlimited">Sınırsız</string>
     <string name="today">Bugün</string>
     <string name="_1_week">1 Hafta</string>
@@ -223,10 +208,8 @@
     <string name="_3_month">3 Ay</string>
     <string name="_6_month">6 Ay</string>
     <string name="_1_year">1 Yıl</string>
-    <!-- Compagnon-only chips (no phone equivalent) -->
     <string name="download_pc">Bilgisayara indir</string>
     <string name="cached_pc">Önbelleğe alınmış bilgisayar</string>
-    <!-- Library: Compagnon only (no phone equivalent) -->
     <string name="library_none">Telefon bu bilgisayarla hiçbir kütüphaneyi paylaşmıyor.</string>
     <string name="library_refresh">Yenile</string>
     <string name="library_back">Geri</string>
@@ -237,7 +220,6 @@
     <string name="queue_open">Kuyruk</string>
     <string name="discover">Keşfet</string>
     <string name="discoverinfo">Favorilerde veya çalma listelerinde bulunan şarkıları kuyruktan kaldır</string>
-    <!-- Player, queue, header and theme (phase 3): keys and texts of the phone (N-Zik strings.xml) -->
     <string name="confirm">Onayla</string>
     <string name="value_copied">Kopyalandı</string>
     <string name="controls_header_customize">Özelleştir</string>
@@ -269,7 +251,6 @@
     <string name="info_reorder_is_possible_only_in_ascending_sort">Yeniden sıralama sadece artan sıralamada mümkündür</string>
     <string name="repeat">Tekrarla</string>
     <string name="bridge_server">Bilgisayar sunucusu</string>
-    <!-- Story 12: audio output, local playback and settings (phone keys and English labels) -->
     <string name="audio_devices">Ses cihazları</string>
     <string name="audio_output_title">Ses çıkışı</string>
     <string name="volume">Ses</string>
@@ -289,7 +270,6 @@
     <string name="disable_scrolling_text">Kaydırılan metni devre dışı bırak</string>
     <string name="scrolling_text_is_used_for_long_texts">Kaydırılan metin uzun metinler için kullanılır</string>
     <string name="settings">Ayarlar</string>
-    <!-- App language (contract 1.9.0, `ui.language`); the per-locale translations arrive later through the Crowdin flow -->
     <string name="languages">Diller</string>
     <string name="app_language">Uygulama dili</string>
     <string name="profile_base_name">N-Zik Hayranı</string>
@@ -349,12 +329,10 @@
     <string name="info_remove_all_downloaded_songs">Tüm indirilen şarkıları kaldır</string>
     <string name="tab_data">Veri</string>
     <string name="data_settings_description">Veri bölümü, uygulamanın verileri yerel ve uzaktan nasıl işlediğini değiştiren ayarları içerir</string>
-    <!-- The settings sub-tabs (spec `spec-settings-navigation`, NAV-9): the phone's keys and English values, verbatim -->
     <string name="tab_general">Genel</string>
     <string name="tab_network">Ağ</string>
     <string name="tab_miscellaneous">Çeşitli</string>
     <string name="general_settings_description">Genel bölümü, uygulamanın genel işlevlerine ilişkin ayarları içerir</string>
-    <!-- The system tray + the window close behavior (spec `spec-tray-taskbar-media-controls`) -->
     <string name="tray_open">Açık</string>
     <string name="tray_quit">Çık</string>
     <string name="tray_tooltip">N-Zik Masaüstü Yardımcısı</string>
@@ -362,7 +340,6 @@
     <string name="close_behavior">Davranışı kapat</string>
     <string name="close_behavior_minimize">Simge durumuna küçült</string>
     <string name="close_behavior_quit">Uygulamadan çık</string>
-    <!-- The app shortcuts (the phone's launcher shortcuts, shown in the tray menu) â€” the phone's strings verbatim -->
     <string name="app_shortcuts_settings">Uygulama kısayolları</string>
     <string name="app_shortcuts_settings_description">Başlatıcı kısayollarını seçin ve sırasını değiştirin</string>
     <string name="app_shortcuts_rescue_locked">Kurtarma işlevi devre dışı bırakılamaz</string>
@@ -394,7 +371,6 @@
     <string name="removed_from_favorites">Favorilerden çıkarıldı</string>
     <string name="update_playlist_browse_id">Çalma Listesi Gözatma Kimliğini Değiştir</string>
     <string name="cannot_bookmark_special_playlist">Beğenilen Şarkılar veya Bölümler çalma listesine yer imi eklenemiyor</string>
-    <!-- Compagnon only: the PC as an audio output -->
     <string name="this_pc">Bu bilgisayar</string>
     <string name="local_playback_unavailable">Bu bilgisayarda ses özelliği kullanılamıyor: Yerleşik VLC yüklenemedi.</string>
     <string name="local_playback_unavailable_linux">Bu bilgisayarda ses özelliği kullanılamıyor. %1$s ile VLC\'yi yükleyin ve uygulamayı yeniden başlatın.</string>
@@ -404,7 +380,6 @@
     <string name="local_playback_other_active">Bu bilgisayardaki ses: telefona başka bir bilgisayar (%1$s) bağlı.</string>
     <string name="local_playback_unreachable">Telefonunuza cevap verilmedi.</string>
     <string name="local_playback_failed">Bu şarkı bu bilgisayarda çalınamadı.</string>
-    <!-- App update (spec spec-updater: the in-app updater + the channel header badge) -->
     <string name="update_current_version">Mevcut sürüm</string>
     <string name="enable_check_for_update">Otomatik güncelleme kontrolünü etkinleştir</string>
     <string name="update_check_when_enabled">Etkinleştirildiğinde, başlangıçta bu kanalın yeni bir sürümü kontrol edilir ve güncelleme iletişim kutusu bunu sunar.</string>
@@ -415,7 +390,7 @@
     <string name="app_update_dialog_version">Yeni sürüm %s indirilebilir!</string>
     <string name="app_update_dialog_size">Dosya boyutu %s</string>
     <string name="downloading_update">Güncelleme indiriliyor</string>
-    <string name="update_download_progress">Downloading updateâ€¦ %1$d%%</string>
+    <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">Güncelleme yok</string>
     <string name="update_download_completed">Güncelleme indirildi</string>
     <string name="error_update_check_failed">Güncelleme kontrolü başarısız oldu (%1$s)</string>
@@ -434,20 +409,17 @@
     <string name="install_pkg_manual">Herhangi bir paket yöneticisi algılanmadı. İndirdiğiniz paketi manuel olarak yükleyin.</string>
     <string name="install_replacement_portable">Uygulama klasörünü değiştirin: indirdiğiniz dosyayı mevcut uygulama klasörünün üzerine açın, ardından uygulamayı yeniden başlatın.</string>
     <string name="old_install_path">Mevcut kurulum:</string>
-    <!-- The channel header badge (4 labels; stable shows no badge â€” the phone's rule) -->
     <string name="beta_title">BETA</string>
     <string name="dev_title">GELİŞTİRİCİ</string>
     <string name="git_title">GIT</string>
     <string name="debug_title">HATA AYIKLAMA</string>
-    <!-- Loop 2: the update page (spec spec-updater AD-9 revised) -->
     <string name="check_update">Güncellemeyi kontrol et</string>
     <string name="check_update_ask">Şimdi güncellemeleri kontrol etmek ister misiniz?</string>
-    <!-- The "ask" startup dialog (the phone's CheckForUpdateDialog, ported 1:1) -->
     <string name="check_at_github_for_updates">GitHub\'da güncellemeleri kontrol et?</string>
     <string name="when_an_update_is_available_you_will_be_asked_if_you_want_to_install_info">Bir güncelleme mevcut olduğunda, yüklemek isteyip istemediğiniz sorulacak. Arka planda otomatik kurulumlar olmayacak.</string>
     <string name="but_these_updates_would_not_go_through">Ancak bu güncellemeler, örneğin IzzyOnDroid veya F-Droid\'de gerçekleştirilen ek taramadan geçmez.</string>
     <string name="you_can_still_turn_it_on_or_off_from_the_settings">Ayarlardan hala açabilir veya kapatabilirsiniz.</string>
-    <string name="checking_for_updates">Checking for updatesâ€¦</string>
+    <string name="checking_for_updates">Güncellemeler kontrol ediliyor...</string>
     <string name="auto_update_enabled">Etkin</string>
     <string name="auto_update_ask">Sor</string>
     <string name="auto_update_disabled">Devre dışı</string>
@@ -466,7 +438,7 @@
     <string name="redownload_update">Son güncellemeyi tekrar indir</string>
     <string name="download_cancelled">İndirme iptal edildi</string>
     <string name="update_cache_cleared">Önbellek temizlendi</string>
-    <string name="update_download_truncated">The update download was truncated. The partial file was kept â€” try downloading again.</string>
+    <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
     <string name="update_download_indeterminate">%1$s indirildi (boyutu bilinmiyor)</string>
     <string name="error_windows_install_helper">Windows yükleyicisi başlatılamadı. İndirdiğiniz yükleyiciyi manuel olarak çalıştırın.</string>
     <string name="install">Yükle</string>
@@ -475,7 +447,6 @@
     <string name="translate">Çevir</string>
     <string name="info_translation">Çeviri</string>
     <string name="whats_new_in">%s sürümündeki yenilikler</string>
-    <!-- AD-10: the About page (1:1 port of the phone's About) -->
     <string name="about">Hakkında</string>
     <string name="about_description">Hakkında bölümünde uygulama, geliştiriciler, sorun giderme ve güncelleme seçenekleri hakkında bilgiler yer almaktadır</string>
     <string name="by_string">tarafından</string>
@@ -490,7 +461,7 @@
     <string name="in_alphabetical_order">Alfabetik sırada:</string>
     <string name="do_you_really_want_to_download_all">Tümünü gerçekten indirmek istiyor musunuz?</string>
     <string name="do_you_really_want_to_delete_download">İndirmeyi gerçekten silmek istiyor musunuz?</string>
-    <string name="loading_songs_count">Loading %1$d songsâ€¦</string>
+    <string name="loading_songs_count">%1$d şarkı yükleniyor…</string>
     <string name="equalizer">Ekolayzer</string>
     <string name="sleep_timer">Uyku zamanlayıcısı</string>
     <string name="listen_on">Dinle</string>
@@ -505,7 +476,6 @@
     <string name="sync">Senkronize et</string>
     <string name="delete_playlists_confirm_all">%d adet çalma listesinin TÜMÜNÜ silmek istediğinizden emin misiniz?</string>
     <string name="visualizer">Görselleştirme</string>
-    <!-- Home screens (spec spec-fill-pc-ui-gaps-home, step 3 G2): keys and texts of the phone (N-Zik strings.xml) -->
     <string name="swipe_to_action">İşlem için kaydır</string>
     <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">Dikey şarkı listesinde bir şarkıyı sola veya sağa kaydırarak işlemleri gerçekleştirin</string>
     <string name="navigation_bar_position">Gezinme çubuğu konumu</string>
@@ -524,7 +494,6 @@
     <string name="syncing_failed">Senkronizasyon başarısız oldu</string>
     <string name="txt_settings">Ayarlar</string>
     <string name="none">Yok</string>
-    <!-- Settings screens (spec spec-fill-pc-ui-gaps-settings, step 1): keys and texts of the phone (N-Zik strings.xml) -->
     <string name="ui_tab">UI</string>
     <string name="player_appearance">Oynatıcı Görünümü</string>
     <string name="user_interface">Kullanıcı arayüzü</string>
