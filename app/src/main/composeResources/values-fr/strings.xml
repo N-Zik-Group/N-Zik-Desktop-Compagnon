@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_subtitle">Guide d\'accompagnement pour N-Zik</string>
-    <string name="starting">Startingâ€¦</string>
-    <!-- QR pairing -->
+    <string name="starting">Démarrage de…</string>
     <string name="pair_title">Appairez-le avec votre téléphone</string>
     <string name="pair_qr_description">Dans l\'application N-Zik sur votre téléphone, ouvrez « Gérer le serveur », lancez le couplage, puis appuyez sur « Scanner » et pointez l\'appareil photo vers ce code.</string>
     <string name="pair_device_name">Nom de cet ordinateur</string>
     <string name="pair_device_name_invalid">Saisissez un nom comportant entre 1 et 64 caractères.</string>
-    <string name="pair_qr_waiting">Waiting for your phoneâ€¦</string>
-    <string name="pair_qr_preparing">Preparing the QR codeâ€¦</string>
+    <string name="pair_qr_waiting">Waiting for your phone…</string>
+    <string name="pair_qr_preparing">Preparing the QR code…</string>
     <string name="pair_qr_addresses">Cet ordinateur : %1$s (port %2$d)</string>
     <string name="pair_qr_renew_hint">Le code est actualisé toutes les 2 minutes.</string>
     <string name="pair_manual_entry">Saisie manuelle</string>
@@ -16,7 +15,6 @@
     <string name="pair_show_qr">Afficher le QR code</string>
     <string name="pair_listener_unreachable">Votre téléphone n\'a pas pu se connecter à cet ordinateur. Est-ce dû au pare-feu Windows ou à un réseau configuré en mode « Public » ? Autorisez N-Zik Desktop Compagnon sur les réseaux privés ou effectuez l\'appairage manuellement ci-dessous.</string>
     <string name="pair_no_address">Aucune adresse réseau locale n\'a été détectée sur cet ordinateur ; par conséquent, aucun QR code ne peut s\'afficher. Effectuez l\'appairage manuellement ci-dessous.</string>
-    <!-- Manual pairing -->
     <string name="manual_title">Appairage manuel</string>
     <string name="manual_description">Sur votre téléphone, la rubrique « Gérer le serveur » affiche l\'adresse IP, le port et un code à 6 caractères.</string>
     <string name="manual_ip">Adresse IP du téléphone</string>
@@ -26,9 +24,7 @@
     <string name="manual_port_invalid">Entrez un numéro de port compris entre 1 et 65 535.</string>
     <string name="manual_code_invalid">Le code comporte 6 caractères, par exemple ABC-DEF.</string>
     <string name="manual_submit">Appairer</string>
-    <!-- Validation -->
-    <string name="validating">Pairing with your phoneâ€¦</string>
-    <!-- Errors -->
+    <string name="validating">Pairing with your phone…</string>
     <string name="error_code_rejected">Code invalide ou périmé. Vérifiez le code sur votre téléphone et réessayez.</string>
     <string name="error_rate_limited">Trop de tentatives. Veuillez réessayer dans %1$d s.</string>
     <string name="error_incompatible_version">Version mobile incompatible (abonnement %1$s). Mettez à jour N-Zik Desktop Compagnon ou N-Zik.</string>
@@ -38,11 +34,10 @@
     <string name="error_unexpected">Réponse inattendue provenant du téléphone (HTTP %1$d, %2$s).</string>
     <string name="error_unknown_code">aucun code</string>
     <string name="dismiss">Ignorer</string>
-    <!-- Paired -->
     <string name="paired_title">Appairé</string>
     <string name="paired_with">Associé à %1$s</string>
     <string name="paired_as">Cet ordinateur apparaît sous le nom de %1$s sur le téléphone.</string>
-    <string name="paired_checking">Checking the connectionâ€¦</string>
+    <string name="paired_checking">Checking the connection…</string>
     <string name="paired_ok">Le téléphone est joignable.</string>
     <string name="paired_other_active">Un autre ordinateur (%1$s) est connecté au téléphone. Déconnectez-le du téléphone, puis réessayez.</string>
     <string name="paired_other_active_unknown">autre appareil</string>
@@ -52,34 +47,29 @@
     <string name="retry">Réessayer</string>
     <string name="forget_phone">Oublier ce téléphone</string>
     <string name="forget_phone_text">Supprime l\'appairage de cet ordinateur</string>
-    <!-- Unreachable -->
     <string name="unreachable_title">Téléphone injoignable</string>
     <string name="unreachable_description">%1$s n\'a pas répondu à %2$s. Son serveur est peut-être arrêté, ou son adresse IP a peut-être changé. L\'appairage est conservé.</string>
     <string name="unreachable_edit_ip">Modifier l\'adresse IP</string>
-    <string name="unreachable_edit_ip_text">Keep the pairing, change the phoneâ€™s IP address only</string>
+    <string name="unreachable_edit_ip_text">Keep the pairing, change the phone’s IP address only</string>
     <string name="unreachable_port_kept">Port %1$d (conservé)</string>
     <string name="unreachable_save_ip">Enregistrer et réessayer</string>
     <string name="cancel">Annuler</string>
-    <!-- Revoked -->
     <string name="revoked_title">Appairage annulé</string>
-    <string name="revoked_description">This PC was removed from the phoneâ€™s paired devices. Pair it again to keep using it.</string>
+    <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
     <string name="revoked_pair_again">Re-appairer</string>
-    <!-- Main window -->
     <string name="phone_panel_title">Téléphone</string>
     <string name="phone_panel_open">Téléphone : %1$s</string>
     <string name="close">Fermer</string>
-    <!-- Connection -->
     <string name="connection_live">Connecté</string>
-    <string name="connection_connecting">Connectingâ€¦</string>
-    <string name="connection_reconnecting">Reconnectingâ€¦</string>
+    <string name="connection_connecting">Connexion en cours…</string>
+    <string name="connection_reconnecting">Rétablissement de la connexion…</string>
     <string name="connection_offline">Déconnecté</string>
-    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d sâ€¦</string>
+    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
     <string name="connection_server_stopped">Le serveur s\'est arrêté. Redémarrez-le depuis l\'application N-Zik sur votre téléphone, puis reconnectez-vous.</string>
     <string name="connection_kicked">Déconnecté du téléphone. L\'appairage est conservé.</string>
     <string name="connection_replaced">Une autre fenêtre de cet ordinateur a pris le contrôle de la session.</string>
     <string name="connection_other_active">Un autre ordinateur (%1$s) est connecté au téléphone. Déconnectez-le du téléphone, puis réessayez.</string>
     <string name="reconnect">Se reconnecter</string>
-    <!-- Player -->
     <string name="player_nothing_playing">Rien ne se passe</string>
     <string name="player_unknown_artist">Artiste inconnu</string>
     <string name="player_untitled">Sans titre</string>
@@ -96,8 +86,7 @@
     <string name="player_shuffle_off">Lecture aléatoire : désactivée</string>
     <string name="player_open_full">Ouvrir le lecteur</string>
     <string name="player_close_full">Fermer le lecteur</string>
-    <string name="player_waiting_state">Waiting for the phoneâ€™s playback stateâ€¦</string>
-    <!-- Queue -->
+    <string name="player_waiting_state">Waiting for the phone’s playback state…</string>
     <string name="queue_title">File d\'attente</string>
     <string name="queue_count">%1$d titres</string>
     <string name="queue_empty">La file d\'attente est vide. Lancez la lecture d\'un morceau sur votre téléphone.</string>
@@ -108,8 +97,7 @@
     <string name="queue_remove">Supprimer</string>
     <string name="queue_clear">Vider la file d\'attente</string>
     <string name="queue_clear_confirm_title">Vider la file d\'attente ?</string>
-    <string name="queue_clear_confirm_text">Every track is removed from the phoneâ€™s queue and playback stops.</string>
-    <!-- Command failures -->
+    <string name="queue_clear_confirm_text">Every track is removed from the phone’s queue and playback stops.</string>
     <string name="command_play">Lire</string>
     <string name="command_pause">Mettre en pause</string>
     <string name="command_seek">Rechercher</string>
@@ -126,18 +114,17 @@
     <string name="command_queue_add">Ajouter à la file d\'attente</string>
     <string name="command_output">Sortie audio</string>
     <string name="command_unknown">Une commande</string>
-    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshingâ€¦</string>
+    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
     <string name="notice_queue_mismatch">%1$s : la file d\'attente a changé entre-temps. Elle a été actualisée, réessayez.</string>
     <string name="notice_rejected">%1$s : rejeté par le téléphone.</string>
-    <string name="notice_unavailable">%1$s: the phoneâ€™s player is unavailable. Try again later.</string>
-    <string name="notice_server_stopping">%1$s: the phoneâ€™s server is stopping.</string>
+    <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
+    <string name="notice_server_stopping">%1$s: the phone’s server is stopping.</string>
     <string name="notice_other_active">%1$s : un autre ordinateur (%2$s) est connecté au téléphone.</string>
     <string name="notice_not_found">%1$s : introuvable sur le téléphone.</string>
     <string name="notice_unreachable">%1$s : le téléphone n\'a pas répondu.</string>
     <string name="notice_truncated">%1$s : seuls %2$d titres sur %3$d ont été envoyés.</string>
     <string name="notice_failed">%1$s a échoué (HTTP %2$d, %3$s).</string>
     <string name="notice_late_error">%1$s a échoué sur le téléphone (%2$s, commande %3$s).</string>
-    <!-- Library: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="songs">Titres</string>
     <string name="artists">Artistes</string>
     <string name="albums">Albums</string>
@@ -145,7 +132,6 @@
     <string name="all">Tout</string>
     <string name="favorites">Favoris</string>
     <string name="cached">En cache</string>
-    <!-- "On device" on the phone; here the label says where the files are, to be told apart from "Cached" -->
     <string name="on_device">Sur le téléphone</string>
     <string name="done">Terminé</string>
     <string name="downloaded">Téléchargés</string>
@@ -171,12 +157,11 @@
     <string name="info_find_the_song_that_is_playing">Afficher le titre en cours de lecture</string>
     <string name="playing_song_not_found_on_current_list">Impossible de trouver le titre en cours de lecture dans la liste actuelle</string>
     <string name="no_songs_playing">Aucun titre n\'est joué pour le moment</string>
-    <string name="artist_songs_count_duration">%1$d Songs â€¢ %2$s</string>
+    <string name="artist_songs_count_duration">Titres %1$d • %2$s</string>
     <string name="no_song_found">Aucun titre trouvé</string>
     <string name="no_song_to_shuffle">Aucun titre en lecture aléatoire</string>
     <string name="songs_shuffled">%d titres en lecture aléatoire</string>
     <string name="info_no_songs_yet">Aucun titre disponible</string>
-    <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Ajouter aux favoris</string>
     <string name="info_bookmark_album">Ajouter l\'album à vos favoris</string>
     <string name="follow">Suivre</string>
@@ -215,7 +200,7 @@
     <string name="match_album_audio_version">Faire correspondre l\'album/la version audio</string>
     <string name="autosync_likes">Synchronisation automatique des morceaux aimés</string>
     <string name="statistics">Statistiques</string>
-    <string name="header_view_top_of">Top %s of â€¦</string>
+    <string name="header_view_top_of">Voir le top %s de …</string>
     <string name="max_items_unlimited">Illimité</string>
     <string name="today">Aujourd\'hui</string>
     <string name="_1_week">1 Semaine</string>
@@ -223,10 +208,8 @@
     <string name="_3_month">3 Mois</string>
     <string name="_6_month">6 Mois</string>
     <string name="_1_year">1 An</string>
-    <!-- Compagnon-only chips (no phone equivalent) -->
     <string name="download_pc">Télécharger pour PC</string>
     <string name="cached_pc">Ordinateur en cache</string>
-    <!-- Library: Compagnon only (no phone equivalent) -->
     <string name="library_none">Le téléphone ne partage aucune bibliothèque avec cet ordinateur.</string>
     <string name="library_refresh">Actualiser</string>
     <string name="library_back">Retour</string>
@@ -237,7 +220,6 @@
     <string name="queue_open">File d\'attente</string>
     <string name="discover">Découvrir</string>
     <string name="discoverinfo">Supprimer les titres de la file d\'attente s\'ils figurent dans les favoris ou dans des playlists</string>
-    <!-- Player, queue, header and theme (phase 3): keys and texts of the phone (N-Zik strings.xml) -->
     <string name="confirm">Confirmer</string>
     <string name="value_copied">Copié</string>
     <string name="controls_header_customize">Personnaliser</string>
@@ -269,7 +251,6 @@
     <string name="info_reorder_is_possible_only_in_ascending_sort">La réorganisation est possible uniquement dans le tri ascendant</string>
     <string name="repeat">Répéter</string>
     <string name="bridge_server">Serveur PC</string>
-    <!-- Story 12: audio output, local playback and settings (phone keys and English labels) -->
     <string name="audio_devices">Périphériques audio</string>
     <string name="audio_output_title">Sortie audio</string>
     <string name="volume">Volume</string>
@@ -289,7 +270,6 @@
     <string name="disable_scrolling_text">Désactiver le défilement du texte</string>
     <string name="scrolling_text_is_used_for_long_texts">Le défilement du texte est utilisé pour les longs textes</string>
     <string name="settings">Paramètres</string>
-    <!-- App language (contract 1.9.0, `ui.language`); the per-locale translations arrive later through the Crowdin flow -->
     <string name="languages">Langues</string>
     <string name="app_language">Langue de l\'application</string>
     <string name="profile_base_name">Fan de N-Zik</string>
@@ -349,12 +329,10 @@
     <string name="info_remove_all_downloaded_songs">Supprimer tous les titres téléchargés</string>
     <string name="tab_data">Données</string>
     <string name="data_settings_description">La section « Données » contient des paramètres qui modifient la manière dont l\'application gère les données en local et à distance.</string>
-    <!-- The settings sub-tabs (spec `spec-settings-navigation`, NAV-9): the phone's keys and English values, verbatim -->
     <string name="tab_general">Généralités</string>
     <string name="tab_network">Réseau</string>
     <string name="tab_miscellaneous">Divers</string>
     <string name="general_settings_description">La section « Général » contient les paramètres relatifs aux fonctionnalités générales de l\'application</string>
-    <!-- The system tray + the window close behavior (spec `spec-tray-taskbar-media-controls`) -->
     <string name="tray_open">Ouvrir</string>
     <string name="tray_quit">Quitter</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
@@ -362,7 +340,6 @@
     <string name="close_behavior">Comportement de fermeture</string>
     <string name="close_behavior_minimize">Réduire dans la barre des tâches</string>
     <string name="close_behavior_quit">Quitter l\'application</string>
-    <!-- The app shortcuts (the phone's launcher shortcuts, shown in the tray menu) â€” the phone's strings verbatim -->
     <string name="app_shortcuts_settings">Raccourcis vers l\'application</string>
     <string name="app_shortcuts_settings_description">Sélectionner et réorganiser les raccourcis du lanceur d\'applications</string>
     <string name="app_shortcuts_rescue_locked">La fonction « Sauvegarde » ne peut pas être désactivée</string>
@@ -394,7 +371,6 @@
     <string name="removed_from_favorites">Retiré des favoris</string>
     <string name="update_playlist_browse_id">Modifier l\'identifiant de navigation de la playlist</string>
     <string name="cannot_bookmark_special_playlist">Impossible d\'ajouter à ses favoris les titres ou les playlists d\'épisodes qu\'on a aimés</string>
-    <!-- Compagnon only: the PC as an audio output -->
     <string name="this_pc">Cet ordinateur</string>
     <string name="local_playback_unavailable">Le son n\'est pas disponible sur cet ordinateur : le lecteur VLC intégré n\'a pas pu être chargé.</string>
     <string name="local_playback_unavailable_linux">Le son ne fonctionne pas sur cet ordinateur. Installez VLC à l\'aide de %1$s, puis redémarrez l\'application.</string>
@@ -404,7 +380,6 @@
     <string name="local_playback_other_active">Son sur cet ordinateur : un autre ordinateur (%1$s) est connecté au téléphone.</string>
     <string name="local_playback_unreachable">Votre téléphone n\'a pas répondu.</string>
     <string name="local_playback_failed">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
-    <!-- App update (spec spec-updater: the in-app updater + the channel header badge) -->
     <string name="update_current_version">Version actuelle</string>
     <string name="enable_check_for_update">Activer la vérification automatique des mises à jour</string>
     <string name="update_check_when_enabled">Lorsque cette option est activée, le système vérifie la disponibilité d\'une nouvelle version de cette chaîne au démarrage et la propose dans la boîte de dialogue de mise à jour.</string>
@@ -415,7 +390,7 @@
     <string name="app_update_dialog_version">La nouvelle version %s est disponible au téléchargement !</string>
     <string name="app_update_dialog_size">La taille du fichier est de %s</string>
     <string name="downloading_update">Téléchargement de la mise à jour</string>
-    <string name="update_download_progress">Downloading updateâ€¦ %1$d%%</string>
+    <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">Aucune mise à jour disponible</string>
     <string name="update_download_completed">Mise à jour téléchargée</string>
     <string name="error_update_check_failed">La vérification des mises à jour a échoué (%1$s)</string>
@@ -434,20 +409,17 @@
     <string name="install_pkg_manual">Aucun gestionnaire de packs n\'a été détecté. Installez manuellement le pack téléchargé.</string>
     <string name="install_replacement_portable">Remplacer le dossier de l\'application : décompressez le fichier téléchargé dans le dossier actuel de l\'application, puis relancez celle-ci.</string>
     <string name="old_install_path">Installation actuelle :</string>
-    <!-- The channel header badge (4 labels; stable shows no badge â€” the phone's rule) -->
     <string name="beta_title">BETA</string>
     <string name="dev_title">DÉVELOPPEMENT</string>
     <string name="git_title">GIT</string>
     <string name="debug_title">DÉBOGAGE</string>
-    <!-- Loop 2: the update page (spec spec-updater AD-9 revised) -->
     <string name="check_update">Vérifier les mises à jour</string>
     <string name="check_update_ask">Vérifier les mises à jour maintenant ?</string>
-    <!-- The "ask" startup dialog (the phone's CheckForUpdateDialog, ported 1:1) -->
     <string name="check_at_github_for_updates">Consulter GitHub pour voir s\'il y a des mises à jour ?</string>
     <string name="when_an_update_is_available_you_will_be_asked_if_you_want_to_install_info">Lorsqu\'une mise à jour est disponible, le système vous demandera si vous souhaitez l\'installer. Il n\'y aura pas d\'installations automatiques à votre insu.</string>
     <string name="but_these_updates_would_not_go_through">Mais ces mises à jour ne passeraient pas le contrôle supplémentaire effectué, par exemple, sur IzzyOnDroid ou F-Droid.</string>
     <string name="you_can_still_turn_it_on_or_off_from_the_settings">Vous pouvez toujours l\'activer ou le désactiver depuis les paramètres.</string>
-    <string name="checking_for_updates">Checking for updatesâ€¦</string>
+    <string name="checking_for_updates">Vérification des mises à jour…</string>
     <string name="auto_update_enabled">Mise à jour activée</string>
     <string name="auto_update_ask">Demander à l\'utilisateur</string>
     <string name="auto_update_disabled">Mise à jour désactivée</string>
@@ -466,7 +438,7 @@
     <string name="redownload_update">Télécharger à nouveau la dernière mise à jour</string>
     <string name="download_cancelled">Téléchargement annulé</string>
     <string name="update_cache_cleared">Cache effacé</string>
-    <string name="update_download_truncated">The update download was truncated. The partial file was kept â€” try downloading again.</string>
+    <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
     <string name="update_download_indeterminate">%1$s téléchargé (taille inconnue)</string>
     <string name="error_windows_install_helper">Le programme d\'installation Windows n\'a pas pu être lancé. Lancez manuellement le programme d\'installation que vous avez téléchargé.</string>
     <string name="install">Installer</string>
@@ -475,7 +447,6 @@
     <string name="translate">Traduire</string>
     <string name="info_translation">Traduction</string>
     <string name="whats_new_in">Quelles sont les nouveautés de %s ?</string>
-    <!-- AD-10: the About page (1:1 port of the phone's About) -->
     <string name="about">À propos</string>
     <string name="about_description">La section « À propos » contient des informations sur l\'application, ses développeurs, le dépannage et les options de mise à jour.</string>
     <string name="by_string">par</string>
@@ -490,7 +461,7 @@
     <string name="in_alphabetical_order">Dans l\'ordre alphabétique :</string>
     <string name="do_you_really_want_to_download_all">Voulez-vous vraiment tout télécharger ?</string>
     <string name="do_you_really_want_to_delete_download">Voulez-vous vraiment supprimer le téléchargement ?</string>
-    <string name="loading_songs_count">Loading %1$d songsâ€¦</string>
+    <string name="loading_songs_count">Chargement de %1$d titres…</string>
     <string name="equalizer">Égaliseur</string>
     <string name="sleep_timer">Minuteur de veille</string>
     <string name="listen_on">Écouter sur</string>
@@ -505,7 +476,6 @@
     <string name="sync">Synchronisation</string>
     <string name="delete_playlists_confirm_all">Êtes-vous sûr de vouloir supprimer TOUTES les %d playlists ?</string>
     <string name="visualizer">Visualiseur</string>
-    <!-- Home screens (spec spec-fill-pc-ui-gaps-home, step 3 G2): keys and texts of the phone (N-Zik strings.xml) -->
     <string name="swipe_to_action">Action associée au balayage</string>
     <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">Activer le menu d\'action en faisant glisser le titre vers la gauche ou la droite</string>
     <string name="navigation_bar_position">Position de la barre de navigation</string>
@@ -524,7 +494,6 @@
     <string name="syncing_failed">Échec de la synchronisation</string>
     <string name="txt_settings">Paramètres</string>
     <string name="none">Aucun</string>
-    <!-- Settings screens (spec spec-fill-pc-ui-gaps-settings, step 1): keys and texts of the phone (N-Zik strings.xml) -->
     <string name="ui_tab">Interface Utilisateur</string>
     <string name="player_appearance">Apparence du Lecteur</string>
     <string name="user_interface">Interface Utilisateur</string>
