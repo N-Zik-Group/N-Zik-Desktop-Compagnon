@@ -24,6 +24,12 @@ import org.junit.jupiter.api.Test
  * and writes the failure marker for ANY other code — so the pins are: the emitted set is exactly
  * the documented set, every code the helper names is emittable, and the only unnamed emitted
  * codes are the documented install-failure (3) and vanished-child (4) codes.
+ *
+ * The in-app install detection (spec `spec-windows-portable-zip` D1) discriminates the NSIS
+ * install from the portable extract on the uninstaller marker — so the marker write side is
+ * contract too: the uninstaller is ALWAYS written at the exact path the detection reads
+ * (`$INSTDIR\Uninstall <product>.exe`), the per-scope registry `InstallDir` is recorded, and
+ * the scope defaults place the install in the product-named dir.
  */
 class InstallerContractTest {
 
@@ -110,6 +116,53 @@ class InstallerContractTest {
         assertTrue(
             helperText.contains("install failed with exit code \\\$code"),
             "the failure marker must record the code (the diagnostics)"
+        )
+    }
+
+    @Test
+    fun `the uninstaller marker contract the in-app detection relies on is pinned`() {
+        // spec `spec-windows-portable-zip` D1 (review 2 — VG2-1): the in-app detection
+        // discriminates the NSIS install from the portable extract on the uninstaller marker —
+        // if the installer stops writing it at the exact path the detection reads, every real
+        // install would misdetect as portable with a green build. The write side is the
+        // contract:
+        assertTrue(
+            nsiText.contains("WriteUninstaller \"${'$'}INSTDIR\\Uninstall ${'$'}{PRODUCT_NAME}.exe\""),
+            "the uninstaller is ALWAYS written at the exact path the in-app detection reads (Uninstall <product>.exe in \$INSTDIR)"
+        )
+        assertTrue(
+            nsiText.contains("WriteRegStr HKCU \"${'$'}{UNINST_KEY}\" \"UninstallString\" '\"${'$'}INSTDIR\\Uninstall ${'$'}{PRODUCT_NAME}.exe\"'"),
+            "the per-user uninstall entry records the same marker path (UninstallString)"
+        )
+        assertTrue(
+            nsiText.contains("WriteRegStr HKLM \"${'$'}{UNINST_KEY}\" \"UninstallString\" '\"${'$'}INSTDIR\\Uninstall ${'$'}{PRODUCT_NAME}.exe\"'"),
+            "the global uninstall entry records the same marker path (UninstallString)"
+        )
+        // The installer records its install dir under the per-channel key (the D1 registry
+        // cross-check source) in BOTH scopes:
+        assertTrue(
+            nsiText.contains("WriteRegStr HKCU \"${'$'}{PRODUCT_KEY}\" \"InstallDir\" \"${'$'}INSTDIR\""),
+            "the per-user scope records InstallDir = \$INSTDIR under the channel key"
+        )
+        assertTrue(
+            nsiText.contains("WriteRegStr HKLM \"${'$'}{PRODUCT_KEY}\" \"InstallDir\" \"${'$'}INSTDIR\""),
+            "the global scope records InstallDir = \$INSTDIR under the channel key"
+        )
+        // The scope defaults place the install in the product-named dir (the D1 folder-name
+        // rule holds out of the box; the directory page is editable, which is why the
+        // detection carries the registry cross-check fallback):
+        assertTrue(
+            nsiText.contains("InstallDir \"${'$'}PROGRAMFILES\\${'$'}{PRODUCT_NAME}\""),
+            "the global scope default installs into the product-named Program Files dir"
+        )
+        assertEquals(
+            2,
+            Regex("StrCpy \\\$INSTDIR \"\\\$LOCALAPPDATA\\\\\\$\\{PRODUCT_NAME\\}\"").findAll(nsiText).count(),
+            "the per-user scope sets \$INSTDIR to the product-named LOCALAPPDATA dir (pre-branch default + the scope page)"
+        )
+        assertTrue(
+            nsiText.contains("!insertmacro MUI_PAGE_DIRECTORY"),
+            "the directory page is offered (editable) — the custom-dir installs the registry cross-check covers"
         )
     }
 }

@@ -49,7 +49,7 @@ class ArchPkgPinTest {
 
     @Test
     fun `the artifact name is the channel-aware package name full version and release number`() {
-        // The 7th asset: <package>-<full version WITH the channel suffix>-1-x86_64.pkg.tar.zst
+        // The Arch package asset: <package>-<full version WITH the channel suffix>-1-x86_64.pkg.tar.zst
         // (the channel rides in the package name — dev: the -dev base — and in the version)
         assertEquals(
             "$pkgName-$appVersionName-1-x86_64.pkg.tar.zst",

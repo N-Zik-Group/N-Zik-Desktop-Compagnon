@@ -139,6 +139,11 @@ gradlew.bat :app:test                                   # Tests only
 gradlew.bat :app:test --tests "app.n_zik.compagnon.SomeTest"   # Single test
 gradlew.bat :app:run                                    # Launch the app
 gradlew.bat clean build                                 # Clean + build
+gradlew.bat :app:packageInstaller -Pchannel=stable      # Windows NSIS installer
+gradlew.bat :app:packageWindowsPortable -Pchannel=stable   # Windows portable zip (the app-image zip, published alongside the installer)
+./gradlew :app:packageLinuxPortable -Pchannel=stable    # Linux portable zip (Linux/WSL host only)
+gradlew.bat :app:createDistributable -Pchannel=stable   # Raw app-image folder (MAIN build type, channel-gated - the source the installer, the Flatpak + the portable zips package)
+gradlew.bat :app:createReleaseDistributable             # Raw app-image folder (release build type, no channel gate)
 ```
 
 > **Windows:** `gradlew.bat`, run from the repo root `N-Zik-Desktop-Compagnon/`. **Linux:** `./gradlew` (or `build.sh`). JDK 21 (Gradle toolchain).

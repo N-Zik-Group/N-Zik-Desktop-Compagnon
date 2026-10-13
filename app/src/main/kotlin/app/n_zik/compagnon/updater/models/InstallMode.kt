@@ -1,6 +1,9 @@
 package app.n_zik.compagnon.updater.models
 
 import app.n_zik.compagnon.generated.AppVersion
+import com.sun.jna.platform.win32.Advapi32
+import com.sun.jna.platform.win32.WinReg
+import com.sun.jna.ptr.IntByReference
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -16,8 +19,21 @@ private val log = Logger.getLogger("InstallMode")
  * `InstallModeDetectionTest`.
  */
 enum class InstallMode {
-    /** The Windows install: interactive in-place reinstall (machine-level with a visible UAC prompt — the frozen per-channel upgrade UUID). */
+    /**
+     * The Windows NSIS install: interactive in-place reinstall. The scope defaults to the
+     * current install's scope (per-user by default — no UAC prompt; the global scope relaunches
+     * the installer elevated, the visible UAC prompt appears at that moment) — NO frozen
+     * upgrade GUID (spec `spec-updater` AD-8: the registry key `Software\N-Zik\DesktopCompagnon\{channel}`
+     * is the identity).
+     */
     WINDOWS,
+    /**
+     * The portable Windows build (spec `spec-windows-portable-zip`): the app-image unzipped
+     * anywhere, launched without the NSIS uninstaller marker — the updater offers the
+     * `-windows-portable.zip` and the manual "replace the app folder" gesture (the zip's top
+     * level IS the product folder: delete the current folder, unzip the new one in its place).
+     */
+    PORTABLE_WINDOWS,
     /** Running inside a Flatpak sandbox: update in place with `flatpak install <file>`. */
     FLATPAK,
     /** Installed by a package manager under `/opt` (the .deb / .rpm / Arch pkg / AUR share the path). */
@@ -27,20 +43,133 @@ enum class InstallMode {
 }
 
 /**
- * Detects the [InstallMode] (spec AD-4, pure; loop-2 refinement): a Windows host is always
- * [InstallMode.WINDOWS]; on Linux, the Flatpak environment wins — a NON-BLANK `FLATPAK_ID` or
- * the exact marker `container=flatpak` — then the package-managed `/opt` path (stable or dev —
- * the dev install lives in `/opt/n-zik-desktop-compagnon-dev`, spec AD-8); anything else is
- * portable.
+ * Whether a Windows launch is an NSIS install (spec `spec-windows-portable-zip`, decision D1 —
+ * pure, testable): the launcher's folder carries the NSIS uninstaller `Uninstall <product>.exe`
+ * AND EITHER the folder is named after the PER-CHANNEL product (AD-8: `N-Zik Desktop Compagnon`
+ * / `… BETA` / `… DEV`) OR the channel's registry key `Software\N-Zik\DesktopCompagnon\{channel}`
+ * (HKCU per-user / HKLM global) records `InstallDir` = that folder. The uninstaller marker is
+ * the DISCRIMINATOR — `installer.nsi` writes it into `$INSTDIR` always (`WriteUninstaller`), and
+ * a portable extract never carries it. The registry cross-check (review loopback 2 — the
+ * installer's directory page is EDITABLE, so an install can sit in a custom folder not named
+ * after the product): the installer records its `$INSTDIR` under the per-channel key at install
+ * time, so marker + recorded dir cover custom-dir installs; an absent or unreadable key degrades
+ * to the folder-name rule (the pre-loopback-2 behavior). The scope location
+ * (`AppData\Local\` / `Program Files\`) is a secondary indicator, NOT a requirement: a per-user
+ * install under a redirected `%LOCALAPPDATA%` must still detect as installed, and a portable
+ * extract unzipped INTO a scope dir must NOT.
+ *
+ * @param registryInstallDir reads the installer's recorded `InstallDir` for a channel
+ * ([windowsInstallDirFromRegistry] in production — the tests inject theirs).
+ */
+fun isNsisWindowsInstall(
+    executablePath: String,
+    productName: String,
+    channel: String = AppVersion.channel,
+    registryInstallDir: (String) -> String? = { windowsInstallDirFromRegistry(it) },
+): Boolean {
+    val launcherDir = File(executablePath).parentFile ?: return false
+    if (!File(launcherDir, "Uninstall $productName.exe").isFile) return false
+    if (launcherDir.name.equals(productName, ignoreCase = true)) return true
+    val recorded = registryInstallDir(channel) ?: return false
+    return sameWindowsDir(recorded, launcherDir.path)
+}
+
+/**
+ * Windows dir comparison for the D1 registry cross-check: case-insensitive (Windows paths are)
+ * and trailing-backslash-insensitive (NSIS records `$INSTDIR` without one — a trailing separator
+ * is not a different dir).
+ */
+private fun sameWindowsDir(recorded: String, dir: String): Boolean {
+    val strip = { s: String -> s.trim().removeSuffix("\\") }
+    return strip(recorded).equals(strip(dir), ignoreCase = true)
+}
+
+/**
+ * The install dir the NSIS installer recorded for a channel (spec `spec-windows-portable-zip`,
+ * review loopback 2 — D1): `installer.nsi` writes `InstallDir = $INSTDIR` into the per-channel
+ * key at install time (HKCU for the per-user scope, HKLM for the global — both are consulted).
+ * Windows-only by construction (reached only from the Windows branch of [detectInstallMode] via
+ * [isNsisWindowsInstall]); `null` when the key or the value is absent or unreadable (a manually
+ * cleaned key degrades to the folder-name rule).
+ */
+fun windowsInstallDirFromRegistry(channel: String): String? {
+    val key = "Software\\N-Zik\\DesktopCompagnon\\$channel"
+    return registryInstallDirUnder(WinReg.HKEY_CURRENT_USER, key)
+        ?: registryInstallDirUnder(WinReg.HKEY_LOCAL_MACHINE, key)
+}
+
+/**
+ * Reads the `InstallDir` REG_SZ value of [key] under [root] (`null` when the key or value is
+ * absent or unreadable). Windows-only by construction: the Advapi32 bindings load on first use,
+ * so this is never reached on a non-Windows host.
+ */
+private fun registryInstallDirUnder(root: WinReg.HKEY, key: String): String? =
+    runCatching {
+        val opened = WinReg.HKEYByReference()
+        // A query-only open (KEY_READ) — the updater never writes the installer's identity.
+        if (Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, KEY_READ, opened) != ERROR_SUCCESS) {
+            return@runCatching null
+        }
+        val handle = opened.getValue() ?: return@runCatching null
+        try {
+            // Two-pass REG_SZ read: the size first (bytes, the terminating zero included), then
+            // the value. The probe reports the size via lpcbData (lpData = null) and returns
+            // either SUCCESS (zero-length value) or ERROR_INSUFFICIENT_BUFFER.
+            val size = IntByReference(0)
+            val probe = Advapi32.INSTANCE.RegQueryValueEx(
+                handle, "InstallDir", 0, IntByReference(), null as CharArray?, size,
+            )
+            if (probe != ERROR_SUCCESS && probe != ERROR_INSUFFICIENT_BUFFER) return@runCatching null
+            val buffer = CharArray(size.value / 2)
+            val read = Advapi32.INSTANCE.RegQueryValueEx(
+                handle, "InstallDir", 0, IntByReference(), buffer, IntByReference(buffer.size * 2),
+            )
+            if (read != ERROR_SUCCESS) return@runCatching null
+            String(buffer).trimEnd('\u0000')
+        } finally {
+            Advapi32.INSTANCE.RegCloseKey(handle)
+        }
+    }.onFailure { log.fine("Registry InstallDir read failed ($key): ${it.message}") }.getOrNull()
+        ?.takeIf { it.isNotBlank() }
+
+/** Read-only registry open (the updater never writes the installer's identity). */
+private const val KEY_READ = 0x20019
+/** `RegOpenKeyEx` / `RegQueryValueEx` success (the probe additionally tolerates 122). */
+private const val ERROR_SUCCESS = 0
+/** `RegQueryValueEx` "the buffer is too small" — the expected probe outcome (size in lpcbData). */
+private const val ERROR_INSUFFICIENT_BUFFER = 122
+
+/**
+ * Detects the [InstallMode] (spec AD-4, pure; loop-2 refinement): on Windows, an NSIS install
+ * (the launcher folder carrying the `Uninstall <product>.exe` marker — product-named folder or
+ * the installer's recorded `InstallDir` in the channel registry key, see
+ * [isNsisWindowsInstall]) is [InstallMode.WINDOWS], any other launch is [InstallMode.PORTABLE_WINDOWS];
+ * on Linux, the Flatpak environment wins — a NON-BLANK `FLATPAK_ID` or the exact marker
+ * `container=flatpak` — then the package-managed `/opt` path (stable or dev — the dev install
+ * lives in `/opt/n-zik-desktop-compagnon-dev`, spec AD-8); anything else is portable.
  *
  * @param osName `System.getProperty("os.name")`
  * @param env the process environment (`System.getenv()`)
  * @param executablePath the RESOLVED path of the running executable (see [liveExecutablePath] —
  * the production launch goes through the `/usr/bin/<pkg>` symlink, so the unresolved argv[0]
  * would misclassify an `/opt` install as portable)
+ * @param windowsProductName the per-channel product name of this build (AD-8 — the jpackage
+ * app name the NSIS installer lays out; the production default is this build's own channel
+ * product name, the tests inject theirs)
+ * @param registryInstallDir the D1 registry cross-check source (the production default reads
+ * the installer's recorded `InstallDir`, the tests inject theirs)
  */
-fun detectInstallMode(osName: String, env: Map<String, String>, executablePath: String): InstallMode = when {
-    osName.startsWith("Windows", ignoreCase = true) -> InstallMode.WINDOWS
+fun detectInstallMode(
+    osName: String,
+    env: Map<String, String>,
+    executablePath: String,
+    windowsProductName: String = ArtifactNames.productName(AppVersion.channel),
+    registryInstallDir: (String) -> String? = { windowsInstallDirFromRegistry(it) },
+): InstallMode = when {
+    osName.startsWith("Windows", ignoreCase = true) ->
+        if (isNsisWindowsInstall(executablePath, windowsProductName, AppVersion.channel, registryInstallDir))
+            InstallMode.WINDOWS
+        else InstallMode.PORTABLE_WINDOWS
     env["FLATPAK_ID"].isNullOrBlank().not() || env["container"] == "flatpak" -> InstallMode.FLATPAK
     executablePath.startsWith("/opt/n-zik-desktop-compagnon", ignoreCase = true) -> InstallMode.PACKAGE_MANAGED
     else -> InstallMode.PORTABLE
@@ -192,7 +321,7 @@ fun updaterEffectivelyEnabled(
  * identity agree); the Linux dev channel carries its own package base
  * (`n-zik-desktop-compagnon-dev`). The published .exe file name is the channel's Linux base
  * (`n-zik-desktop-compagnon[-dev]-<version>.exe` — the CI renames the jpackage output before
- * the release upload), so the six artifacts of a channel share that base. The functions take
+ * the release upload), so the seven app assets of a channel share that base. The functions take
  * the channel as a defaulted parameter so callers with an explicit channel can override the
  * inference.
  */
@@ -252,12 +381,20 @@ object ArtifactNames {
     fun portableZip(version: String, channel: String = channelOf(version)): String =
         "${linuxPackageBase(channel)}-$version-linux-portable.zip"
 
+    /**
+     * The release asset name of the portable Windows zip (spec `spec-windows-portable-zip`):
+     * the same channel base as the other assets — the zip of the shared jpackage app-image
+     * (the NSIS installer's own source, the embedded VLC runtime included).
+     */
+    fun windowsPortableZip(version: String, channel: String = channelOf(version)): String =
+        "${linuxPackageBase(channel)}-$version-windows-portable.zip"
+
     fun flatpak(version: String, channel: String = channelOf(version)): String =
         "${linuxPackageBase(channel)}-$version-x86_64.flatpak"
 
     /**
      * The release asset name of the Arch binary package (spec
-     * `spec-arch-binary-package-release`): the 6th asset, the pacman `.pkg.tar.zst` built by
+     * `spec-arch-binary-package-release`): the pacman `.pkg.tar.zst` built by
      * `:app:packageArch` — the PKGBUILD layout (the `<pkg>` base + the full version WITH the
      * channel suffix + release number 1 + the frozen x86_64 arch).
      */
@@ -269,7 +406,9 @@ object ArtifactNames {
      * commands). A package-managed install on pacman offers the binary package ONLY when the
      * release marker is present (a release-pkg install, spec
      * `spec-arch-binary-package-release`); an AUR install (no marker) has no binary asset —
-     * its updater is blocked before any asset is selected.
+     * its updater is blocked before any asset is selected. A portable-Windows install
+     * (spec `spec-windows-portable-zip`) gets the Windows portable zip — the manual
+     * "replace the app folder" gesture (the zip's top level IS the product folder).
      *
      * @param isReleasePackage the install carries the `distribution.txt` release marker (the
      * production default reads it live from the resolved app root).
@@ -282,6 +421,7 @@ object ArtifactNames {
         channel: String = channelOf(version),
     ): String? = when (mode) {
         InstallMode.WINDOWS -> exe(version, channel)
+        InstallMode.PORTABLE_WINDOWS -> windowsPortableZip(version, channel)
         InstallMode.FLATPAK -> flatpak(version, channel)
         InstallMode.PACKAGE_MANAGED -> when (packageManager) {
             PackageManager.DEB -> deb(version, channel)

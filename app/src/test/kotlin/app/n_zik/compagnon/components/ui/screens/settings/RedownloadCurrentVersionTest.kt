@@ -29,7 +29,7 @@ import java.nio.file.Path
 /**
  * The update page's "Download again last update" gesture (spec `spec-arch-binary-package-release`,
  * loop 2 G14): the release marker is adopted on the re-download too — a pacman install picks the
- * 7th asset only when it is a release-pkg install (`isReleasePackage` = the `distribution.txt`
+ * Arch package asset only when it is a release-pkg install (`isReleasePackage` = the `distribution.txt`
  * marker present), an AUR install (no marker) is a no-op (its updater is blocked before any
  * download, so the second `forMode` call site must not silently skip the marker either).
  *
@@ -131,7 +131,7 @@ class RedownloadCurrentVersionTest {
         val completed = state as DownloadState.Completed
         assertTrue(
             completed.filePath.endsWith(ArtifactNames.archPkg(AppVersion.versionName)),
-            "the re-downloaded file is the running version's Arch package (the 7th asset): ${completed.filePath}",
+            "the re-downloaded file is the running version's Arch package: ${completed.filePath}",
         )
     }
 

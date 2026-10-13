@@ -1087,10 +1087,10 @@ private val releaseJson = Json { ignoreUnknownKeys = true }
  * [UpdateDownloadManager] state (the page's bottom action shows its progression).
  *
  * [isReleasePackage] adopts the release marker (spec `spec-arch-binary-package-release`,
- * loop 2 G14): a pacman install carries the 7th asset only when it is a release-pkg install —
- * without the marker this gesture is a no-op, like every other check on an AUR install. The
- * [client] and [changelogFetcher] are the test seams (the production defaults are
- * [updaterHttpClient] and the fire-and-forget [Updater.fetchCurrentChangelog]).
+ * loop 2 G14): a pacman install carries the Arch package asset only when it is a release-pkg
+ * install — without the marker this gesture is a no-op, like every other check on an AUR
+ * install. The [client] and [changelogFetcher] are the test seams (the production defaults
+ * are [updaterHttpClient] and the fire-and-forget [Updater.fetchCurrentChangelog]).
  */
 internal suspend fun redownloadCurrentVersion(
     installMode: InstallMode,

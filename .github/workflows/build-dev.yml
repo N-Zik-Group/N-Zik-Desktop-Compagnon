@@ -316,13 +316,15 @@ jobs:
           NSIS_DIR: ${{ runner.temp }}\nsis
         # PowerShell (the default run shell on Windows) does not resolve executables
         # from the current directory — the .\ prefix is required.
-        run: .\gradlew.bat :app:packageInstaller -Pchannel=dev
+        run: .\gradlew.bat :app:packageInstaller :app:packageWindowsPortable -Pchannel=dev
 
       - name: Upload the Windows artifact
         uses: actions/upload-artifact@v7
         with:
           name: windows-artifact
-          path: app/build/compose/binaries/main/exe/*.exe
+          path: |
+            app/build/compose/binaries/main/exe/*.exe
+            app/build/compose/binaries/*.zip
 
   upload-to-release:
     needs: [build_time, versioning, build-linux, build-windows]
@@ -335,7 +337,7 @@ jobs:
         with:
           path: artifacts
 
-      - name: Collect the 6 artifacts and compute the SHA-256
+      - name: Collect the 7 artifacts and compute the SHA-256
         run: |
           set -euo pipefail
 
@@ -350,11 +352,12 @@ jobs:
           # The name GitHub stores the .exe as: the CI renames the jpackage output (the
           # spaced product name) to the channel's Linux base before upload — the release
           # asset, the SHA-256 table and the in-app updater (ArtifactNames.exe) all agree
-          # on it (the six artifacts of the channel share that base).
+          # on it (the seven artifacts of the channel share that base).
           EXE_PUB="${PKG}-${BASE}${SUFFIX}.exe"
           DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
           RPM="${PKG}-${BASE}${SUFFIX}-1.x86_64.rpm"
           ZIP="${PKG}-${BASE}${SUFFIX}-linux-portable.zip"
+          WINZIP="${PKG}-${BASE}${SUFFIX}-windows-portable.zip"
           FLATPAK="${PKG}-${BASE}${SUFFIX}-x86_64.flatpak"
           ARCH="${PKG}-${BASE}${SUFFIX}-1-x86_64.pkg.tar.zst"
 
@@ -365,17 +368,21 @@ jobs:
           # (the longest common prefix of the upload patterns is stripped from the stored
           # tree): the linux root is app/build/compose/binaries (the deb/rpm keep their
           # main/ sub-dir, the rest sits at the top level) and the windows root is
-          # app/build/compose/binaries/main/exe (the bare .exe at the top level) — the
-          # paths below are the actual downloaded tree, not the build-dir layout.
+          # app/build/compose/binaries (the .exe keeps its main/exe/ sub-dir, the portable
+          # zip sits at the top level) — the paths below are the actual downloaded tree,
+          # not the build-dir layout.
           cp "artifacts/linux-artifacts/main/deb/${DEB}" release/
           cp "artifacts/linux-artifacts/main/rpm/${RPM}" release/
           cp "artifacts/linux-artifacts/${ZIP}" release/
           cp "artifacts/linux-artifacts/${FLATPAK}" release/
           cp "artifacts/linux-artifacts/${ARCH}" release/
-          cp "artifacts/windows-artifact/${EXE}" "release/${EXE_PUB}"
+          cp "artifacts/windows-artifact/main/exe/${EXE}" "release/${EXE_PUB}"
+          cp "artifacts/windows-artifact/${WINZIP}" release/
 
           cd release
-          sha256sum "${EXE_PUB}" "${DEB}" "${RPM}" "${ZIP}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
+          # The two portable rows are ordered as in the release-body download links (Windows
+          # portable before Linux portable): sha256sum runs in that order, and the table iterates SHA256SUMS.txt
+          sha256sum "${EXE_PUB}" "${DEB}" "${RPM}" "${WINZIP}" "${ZIP}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
           cd ..
 
           # The markdown SHA-256 table (the artifacts are unsigned — this is
@@ -418,7 +425,8 @@ jobs:
              - **Debian / Ubuntu / Mint:** apt install ./<file>.deb
              - **Fedora / openSUSE / Rocky:** dnf install ./<file>.rpm
              - **Arch / Manjaro / CachyOS:** sudo pacman -U ./<file>.pkg.tar.zst
-             - **Portable:** unzip the zip and run the launcher in bin/.
+             - **Windows Portable:** unzip the zip and run the launcher in the unzipped folder - it sits at the top of the app folder, no sub-directory.
+             - **Linux Portable:** unzip the zip and run the launcher in bin/.
              - **Flatpak:** flatpak install ./<file>.flatpak.
 
           ⚠️ **WARNING:** This build may contain bugs, experimental features, and incomplete functionality. Use only for development testing.
@@ -431,10 +439,11 @@ jobs:
           - **Debian / Ubuntu** (.deb) – Complete build for Debian-based distros (x86_64, 64-bit only).
           - **Fedora / openSUSE / Rocky** (.rpm) – Complete build for RPM-based distros (x86_64, 64-bit only).
           - **Arch / Manjaro / CachyOS** (.pkg.tar.zst) – Prebuilt pacman binary package, installable with `sudo pacman -U` (x86_64, 64-bit only).
-          - **Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
+          - **Windows Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
+          - **Linux Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
           - **Flatpak** – Flatpak build (x86_64, 64-bit only).
 
-          > ℹ️ All 6 artifacts are 64-bit only (x86_64).
+          > ℹ️ All 7 artifacts are 64-bit only (x86_64).
 
           ## 🔄 Features
 
@@ -611,7 +620,8 @@ jobs:
                - **Debian / Ubuntu / Mint:** apt install ./<file>.deb
                - **Fedora / openSUSE / Rocky:** dnf install ./<file>.rpm
                - **Arch / Manjaro / CachyOS:** sudo pacman -U ./<file>.pkg.tar.zst
-               - **Portable:** unzip the zip and run the launcher in bin/.
+               - **Windows Portable:** unzip the zip and run the launcher in the unzipped folder - it sits at the top of the app folder, no sub-directory.
+               - **Linux Portable:** unzip the zip and run the launcher in bin/.
                - **Flatpak:** flatpak install ./<file>.flatpak.
 
             ⚠️ **WARNING:** This build may contain bugs, experimental features, and incomplete functionality. Use only for development testing.
@@ -624,10 +634,11 @@ jobs:
             - **Debian / Ubuntu** (.deb) – Complete build for Debian-based distros (x86_64, 64-bit only).
             - **Fedora / openSUSE / Rocky** (.rpm) – Complete build for RPM-based distros (x86_64, 64-bit only).
             - **Arch / Manjaro / CachyOS** (.pkg.tar.zst) – Prebuilt pacman binary package, installable with `sudo pacman -U` (x86_64, 64-bit only).
-            - **Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
+            - **Windows Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
+            - **Linux Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
             - **Flatpak** – Flatpak build (x86_64, 64-bit only).
 
-            > ℹ️ All 6 artifacts are 64-bit only (x86_64).
+            > ℹ️ All 7 artifacts are 64-bit only (x86_64).
 
             ## 🔄 Features
 
@@ -655,7 +666,8 @@ jobs:
             - 📥 **Debian (.deb):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev_${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1_amd64.deb
             - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1.x86_64.rpm
             - 📥 **Arch (.pkg.tar.zst):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1-x86_64.pkg.tar.zst
-            - 📥 **Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-linux-portable.zip
+            - 📥 **Windows Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-windows-portable.zip
+            - 📥 **Linux Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-linux-portable.zip
             - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-x86_64.flatpak
             - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}>
         run: |

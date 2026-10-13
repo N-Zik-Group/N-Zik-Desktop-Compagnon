@@ -26,8 +26,9 @@ import org.junit.jupiter.api.Test
  * `spec-updater`, AD-1 / AD-3): the channel filter over the whole releases list, the dev date
  * tiebreak, the `NoSuchFileException` "no update available" mapping, the changelog fetch (the body
  * link / `dev.txt`) and the per-mode asset selection. Every release carries ALL the channel's
- * asset names (the uniform 6-asset matrix), so the assertion holds on any host (Windows exe,
- * Linux deb / rpm / zip / flatpak / Arch pkg, or the pacman / none case with no asset).
+ * asset names (the uniform 7-asset matrix), so the assertion holds on any host (Windows exe +
+ * Windows portable zip, Linux deb / rpm / zip / flatpak / Arch pkg, or the pacman / none case
+ * with no asset).
  */
 class FetchUpdateTest {
 
@@ -57,6 +58,7 @@ class FetchUpdateTest {
               "prerelease": ${tag.contains("-dev")},
               "assets": [
                 ${assetJson(tag, ArtifactNames.exe(tag.removePrefix("v")))},
+                ${assetJson(tag, ArtifactNames.windowsPortableZip(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.deb(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.rpm(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.portableZip(tag.removePrefix("v")))},
@@ -269,7 +271,7 @@ class FetchUpdateTest {
 
     @Test
     fun `a marked pacman install picks the arch package asset, an aur install picks none`() = runTest {
-        // The 7th asset (spec `spec-arch-binary-package-release`): the release marker decides —
+        // The Arch package asset (spec `spec-arch-binary-package-release`): the release marker decides —
         // a package-managed install on pacman gets the binary package only when it is a
         // release-pkg install; without the marker (an AUR install) no asset is selected (its
         // updater is blocked before it reaches a check on that path)

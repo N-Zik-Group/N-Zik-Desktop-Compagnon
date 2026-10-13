@@ -114,7 +114,11 @@ fun InstallStep(filePath: String, installMode: InstallMode, packageManager: Pack
                     )
                 }
 
-                InstallMode.PORTABLE -> {
+                // The portable-Windows install (spec `spec-windows-portable-zip`): the same
+                // manual-replacement gesture as the Linux portable — the zip's top level IS
+                // the product folder, so the user deletes the current folder and unzips the
+                // new one in its place (never "unzip over")
+                InstallMode.PORTABLE_WINDOWS, InstallMode.PORTABLE -> {
                     BasicText(
                         text = stringResource(Res.string.install_replacement_portable),
                         style = typography().xs.copy(color = colorPalette().textSecondary),
@@ -192,7 +196,9 @@ fun oldInstallPath(): String =
  */
 fun installCommand(installMode: InstallMode, packageManager: PackageManager?, filePath: String): String? =
     when (installMode) {
-        InstallMode.WINDOWS -> null
+        // The Windows NSIS install (interactive, no command) and the portable-Windows
+        // manual replacement (the "replace the app folder" card) carry no command
+        InstallMode.WINDOWS, InstallMode.PORTABLE_WINDOWS -> null
 
         InstallMode.FLATPAK -> "flatpak install \"$filePath\""
 

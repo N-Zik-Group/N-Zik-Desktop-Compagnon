@@ -201,16 +201,18 @@ jobs:
           NSIS_DIR: ${{ runner.temp }}\nsis
         # PowerShell (the default run shell on Windows) does not resolve executables
         # from the current directory — the .\ prefix is required.
-        run: .\gradlew.bat :app:packageInstaller -Pchannel=stable
+        run: .\gradlew.bat :app:packageInstaller :app:packageWindowsPortable -Pchannel=stable
 
       - name: Upload the Windows artifact
         uses: actions/upload-artifact@v7
         with:
           name: windows-artifact
-          path: app/build/compose/binaries/main/exe/*.exe
+          path: |
+            app/build/compose/binaries/main/exe/*.exe
+            app/build/compose/binaries/*.zip
 
   collect:
-    name: Collect the 6 artifacts (no publish)
+    name: Collect the 7 artifacts (no publish)
     needs: [build-linux, build-windows]
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -238,6 +240,7 @@ jobs:
           DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
           RPM="${PKG}-${BASE}${SUFFIX}-1.x86_64.rpm"
           ZIP="${PKG}-${BASE}${SUFFIX}-linux-portable.zip"
+          WINZIP="${PKG}-${BASE}${SUFFIX}-windows-portable.zip"
           FLATPAK="${PKG}-${BASE}${SUFFIX}-x86_64.flatpak"
           ARCH="${PKG}-${BASE}${SUFFIX}-1-x86_64.pkg.tar.zst"
 
@@ -248,20 +251,24 @@ jobs:
           # (the longest common prefix of the upload patterns is stripped from the stored
           # tree): the linux root is app/build/compose/binaries (the deb/rpm keep their
           # main/ sub-dir, the rest sits at the top level) and the windows root is
-          # app/build/compose/binaries/main/exe (the bare .exe at the top level) — the
-          # paths below are the actual downloaded tree, not the build-dir layout.
+          # app/build/compose/binaries (the .exe keeps its main/exe/ sub-dir, the portable
+          # zip sits at the top level) — the paths below are the actual downloaded tree,
+          # not the build-dir layout.
           cp "artifacts/linux-artifacts/main/deb/${DEB}" release/
           cp "artifacts/linux-artifacts/main/rpm/${RPM}" release/
           cp "artifacts/linux-artifacts/${ZIP}" release/
           cp "artifacts/linux-artifacts/${FLATPAK}" release/
           cp "artifacts/linux-artifacts/${ARCH}" release/
-          cp "artifacts/windows-artifact/${EXE}" release/
+          cp "artifacts/windows-artifact/main/exe/${EXE}" release/
+          cp "artifacts/windows-artifact/${WINZIP}" release/
 
-          echo "Collected the 6 dry-run artifacts:"
+          echo "Collected the 7 dry-run artifacts:"
           ls -lR release
 
           cd release
-          sha256sum "${EXE}" "${DEB}" "${RPM}" "${ZIP}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
+          # The two portable rows are ordered as in the release-body download links (Windows
+          # portable before Linux portable): sha256sum runs in that order, and the table iterates SHA256SUMS.txt
+          sha256sum "${EXE}" "${DEB}" "${RPM}" "${WINZIP}" "${ZIP}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
           cd ..
 
           # The markdown SHA-256 table (the artifacts are unsigned — this is the

@@ -407,7 +407,7 @@
     <string name="install_pkg_command">Install the package with:</string>
     <string name="install_pkg_pacman_command">Upgrade the package with:</string>
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
+    <string name="install_replacement_portable">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, unzip the downloaded file in its place (the zip opens into a new app folder - never over the current one), and relaunch.</string>
     <string name="old_install_path">Current install:</string>
     <string name="beta_title">BETA</string>
     <string name="dev_title">DEV</string>

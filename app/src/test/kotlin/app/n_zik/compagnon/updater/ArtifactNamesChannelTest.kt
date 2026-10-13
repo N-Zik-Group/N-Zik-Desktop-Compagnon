@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test
  * The per-channel artifact names and product names (spec `spec-updater`, AD-8, loop 2 + the
  * 2026-10-09 naming rework): the channel inferred from the version suffix, the per-channel
  * product name ("… BETA" / "… DEV" — the jpackage app name the build sets, mirrored here so the
- * window title and the install identity agree), and the full set of six asset names per channel
- * (the uniform 6-asset matrix — the five Linux names byte-identical to the pre-rework
- * convention; the published .exe is the channel's Linux base, the six artifacts share it; the
+ * window title and the install identity agree), and the full set of seven asset names per channel
+ * (the uniform 7-asset matrix — the five Linux names byte-identical to the pre-rework
+ * convention; the published .exe is the channel's Linux base, the seven artifacts share it; the
  * beta keeps the stable Linux base, the beta REPLACES the stable in place; the dev carries its
  * own package base, the parallel product).
  */
@@ -44,6 +44,8 @@ class ArtifactNamesChannelTest {
         assertEquals("n-zik-desktop-compagnon_$v-1_amd64.deb", ArtifactNames.deb(v))
         assertEquals("n-zik-desktop-compagnon-$v-1.x86_64.rpm", ArtifactNames.rpm(v))
         assertEquals("n-zik-desktop-compagnon-$v-linux-portable.zip", ArtifactNames.portableZip(v))
+        // The Windows portable zip (spec `spec-windows-portable-zip`) shares the same base
+        assertEquals("n-zik-desktop-compagnon-$v-windows-portable.zip", ArtifactNames.windowsPortableZip(v))
         assertEquals("n-zik-desktop-compagnon-$v-x86_64.flatpak", ArtifactNames.flatpak(v))
         assertEquals("n-zik-desktop-compagnon-$v-1-x86_64.pkg.tar.zst", ArtifactNames.archPkg(v))
     }
@@ -57,8 +59,11 @@ class ArtifactNamesChannelTest {
         assertEquals("n-zik-desktop-compagnon_$v-1_amd64.deb", ArtifactNames.deb(v))
         assertEquals("n-zik-desktop-compagnon-$v-1.x86_64.rpm", ArtifactNames.rpm(v))
         assertEquals("n-zik-desktop-compagnon-$v-linux-portable.zip", ArtifactNames.portableZip(v))
+        // The Windows portable zip keeps the stable Linux base too (the beta replaces the stable
+        // in place)
+        assertEquals("n-zik-desktop-compagnon-$v-windows-portable.zip", ArtifactNames.windowsPortableZip(v))
         assertEquals("n-zik-desktop-compagnon-$v-x86_64.flatpak", ArtifactNames.flatpak(v))
-        // The 6th asset keeps the stable Linux base too (the beta replaces the stable in place)
+        // The Arch package keeps the stable Linux base too (the beta replaces the stable in place)
         assertEquals("n-zik-desktop-compagnon-$v-1-x86_64.pkg.tar.zst", ArtifactNames.archPkg(v))
     }
 
@@ -72,6 +77,7 @@ class ArtifactNamesChannelTest {
         assertEquals("n-zik-desktop-compagnon-dev_$v-1_amd64.deb", ArtifactNames.deb(v))
         assertEquals("n-zik-desktop-compagnon-dev-$v-1.x86_64.rpm", ArtifactNames.rpm(v))
         assertEquals("n-zik-desktop-compagnon-dev-$v-linux-portable.zip", ArtifactNames.portableZip(v))
+        assertEquals("n-zik-desktop-compagnon-dev-$v-windows-portable.zip", ArtifactNames.windowsPortableZip(v))
         assertEquals("n-zik-desktop-compagnon-dev-$v-x86_64.flatpak", ArtifactNames.flatpak(v))
         assertEquals("n-zik-desktop-compagnon-dev-$v-1-x86_64.pkg.tar.zst", ArtifactNames.archPkg(v))
     }
@@ -80,9 +86,12 @@ class ArtifactNamesChannelTest {
     fun `the per mode names follow the channel inference`() {
         val v = "0.0.3-dev-20261007"
         assertEquals("n-zik-desktop-compagnon-dev-$v.exe", ArtifactNames.forMode(InstallMode.WINDOWS, v, PackageManager.NONE))
+        // The portable-Windows install (spec `spec-windows-portable-zip`) gets the Windows
+        // portable zip
+        assertEquals("n-zik-desktop-compagnon-dev-$v-windows-portable.zip", ArtifactNames.forMode(InstallMode.PORTABLE_WINDOWS, v, PackageManager.NONE))
         assertEquals("n-zik-desktop-compagnon-dev_$v-1_amd64.deb", ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, v, PackageManager.DEB))
         assertEquals("n-zik-desktop-compagnon-dev-$v-x86_64.flatpak", ArtifactNames.forMode(InstallMode.FLATPAK, v, PackageManager.NONE))
-        // A pacman install with the release marker (a release-pkg install) gets the 6th asset
+        // A pacman install with the release marker (a release-pkg install) gets the Arch package
         assertEquals(
             "n-zik-desktop-compagnon-dev-$v-1-x86_64.pkg.tar.zst",
             ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, v, PackageManager.AUR, isReleasePackage = true),

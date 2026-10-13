@@ -15,7 +15,8 @@ import org.junit.jupiter.api.Test
  * semantics, the build's own values pin its implementation). Pinned: the version BOUNDARY check
  * (a base version that is a prefix of a longer version is never hit mid-number), the anti-RE-
  * SUFFIX guard (a stale suffixed artifact is rejected, never corrupted) and the effective
- * per-task artifact names the build exposes (`artifacts.*` system properties).
+ * per-task artifact names the build exposes (`artifacts.*` / `windows.portable.zipName`
+ * system properties).
  */
 class ChannelArtifactNameTest {
 
@@ -136,6 +137,12 @@ class ChannelArtifactNameTest {
             channelArtifactName("$linuxPackageName-$baseVersion-1.x86_64.rpm", baseVersion, channelSuffix, channelSuffixPrefix),
             System.getProperty("artifacts.rpm"),
             "the rpm artifact name is the channel-renamed jpackage name",
+        )
+        // The Windows portable zip reuses the channel's package base (spec `spec-windows-portable-zip`)
+        assertEquals(
+            channelArtifactName("$linuxPackageName-$baseVersion-windows-portable.zip", baseVersion, channelSuffix, channelSuffixPrefix),
+            System.getProperty("windows.portable.zipName"),
+            "the windows portable zip artifact name is the channel-renamed package-base name",
         )
     }
 }

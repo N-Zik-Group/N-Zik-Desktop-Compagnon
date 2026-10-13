@@ -33,9 +33,11 @@ class InstallCommandTest {
 
     @Test
     fun `the modes without a command show the manual hint instead`() {
-        // The interactive Windows install, the manual-replacement modes, and the probe-failed
+        // The interactive Windows install, the manual-replacement modes (the Linux portable +
+        // the portable-Windows zip — spec `spec-windows-portable-zip`), and the probe-failed
         // package-managed fallback (no command to show or copy — the card shows the manual hint)
         assertNull(installCommand(InstallMode.WINDOWS, null, filePath))
+        assertNull(installCommand(InstallMode.PORTABLE_WINDOWS, null, filePath))
         assertNull(installCommand(InstallMode.PORTABLE, null, filePath))
         assertNull(installCommand(InstallMode.PACKAGE_MANAGED, PackageManager.NONE, filePath))
         assertNull(installCommand(InstallMode.PACKAGE_MANAGED, null, filePath))

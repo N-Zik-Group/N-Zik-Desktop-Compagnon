@@ -48,14 +48,15 @@ version = libs.versions.nzikVersionName.get()
 
 val channel = providers.gradleProperty("channel").orNull ?: "debug"
 
-// Which channel each packaging task accepts (AD-1): the seven packaging tasks take stable|beta|dev;
-// `createDistributable` + the portable zip additionally take `git` (AUR-git / source builds — no
-// release asset, updater off, badge "GIT").
+// Which channel each packaging task accepts (AD-1): the eight packaging tasks take stable|beta|dev;
+// `createDistributable` + the two portable zips (Linux + Windows) additionally take `git`
+// (AUR-git / source builds — no release asset, updater off, badge "GIT").
 val packagingTaskChannels = mapOf(
     "packageExe" to listOf("stable", "beta", "dev"),
     "packageDeb" to listOf("stable", "beta", "dev"),
     "packageRpm" to listOf("stable", "beta", "dev"),
     "packageLinuxPortable" to listOf("stable", "beta", "dev", "git"),
+    "packageWindowsPortable" to listOf("stable", "beta", "dev", "git"),
     "packageFlatpak" to listOf("stable", "beta", "dev"),
     "packageArch" to listOf("stable", "beta", "dev"),
     "packageInstaller" to listOf("stable", "beta", "dev"),
@@ -1237,6 +1238,11 @@ project.afterEvaluate {
         systemProperty("linux.freeArgs.deb", tasks.named<AbstractJPackageTask>("packageDeb").get().freeArgs.get().joinToString("\u001f"))
         systemProperty("linux.freeArgs.rpm", tasks.named<AbstractJPackageTask>("packageRpm").get().freeArgs.get().joinToString("\u001f"))
         systemProperty("linux.portable.zipName", tasks.named<Zip>("packageLinuxPortable").get().archiveFileName.get())
+        // The Windows portable zip contract (spec `spec-windows-portable-zip`): the effective
+        // archiveFileName after the channel rename — the WindowsPortablePinTest pins its shape
+        // against the frozen package base + the -windows-portable.zip suffix, on every host
+        // (the name is channel-derived, the zip itself is Windows-host only).
+        systemProperty("windows.portable.zipName", tasks.named<Zip>("packageWindowsPortable").get().archiveFileName.get())
         // The shared pinned Linux VLC tarball (spec spec-linux-flatpak): URL + name + SHA-256.
         // The Flatpak is the only Linux artifact that embeds the runtime (injected into its own
         // staging — the other paths must never get a resources/vlc), so the pin is exposed under
@@ -1407,6 +1413,79 @@ project.afterEvaluate {
                 reRead[reHeader + 40] == 0xED.toByte() && reRead[reHeader + 41] == 0x81.toByte()
             ) { "portable zip launcher entry is not 0755 after the central-directory patch: $zipFile" }
         }
+    }
+
+    // The portable Windows build (spec `spec-windows-portable-zip`): the zip of the SHARED
+    // app-image — the same image the NSIS installer consumes, so the portable zip and the
+    // installer ship byte-equivalent app content (same runtime, same embedded VLC). Windows
+    // host only: on a Linux host the app-image is the Linux image (no embedded win64 runtime),
+    // so the task is skipped there with a lifecycle message, like `packageLinuxPortable`.
+    // The Windows app-image layout (measured on a real build): the launcher .exe + app/ +
+    // runtime/ sit at the image ROOT — there is NO bin/ level (unlike the Linux image's
+    // bin/ + lib/), and the embedded runtime lives at app/resources/vlc/libvlc.dll — exactly
+    // the path VlcRuntime loads (compose.application.resources.dir + vlc/ + the platform
+    // libvlc). The app-image folder is the zip's top-level entry (same layout as the Linux
+    // portable zip).
+    val windowsAppImage = createDistributableImpl.flatMap { it.destinationDir }.map { dir ->
+        val base = dir.asFile
+        // The Windows app-image is recognized by its measured layout (the launcher .exe +
+        // app/ + runtime/ at the root; the Linux image would carry bin/ + lib/ instead).
+        val appImages = base.listFiles { f, _ -> f.isDirectory }
+            ?.filter { it.resolve("app").isDirectory && it.resolve("runtime").isDirectory }
+            ?: error("app-image output dir is missing or not a directory: $base")
+        require(appImages.size == 1) {
+            "expected exactly one Windows app-image directory in $base, found ${appImages.size}"
+        }
+        val appImage = appImages.first()
+        // Fail-loud boundary (the inverted mirror of the Linux "no runtime" boundary): the
+        // shared Windows app-image MUST carry the embedded VLC runtime — a silently VLC-less
+        // zip would break "This PC" playback on every portable-Windows user (VlcRuntime loads
+        // the platform libvlc from the app's resources dir, the path below).
+        val libvlc = appImage.resolve("app/resources/vlc/libvlc.dll")
+        if (!libvlc.isFile) {
+            throw GradleException(
+                "the Windows app-image is missing app/resources/vlc/libvlc.dll ($appImage) — " +
+                    "the portable zip must carry the embedded VLC runtime (VlcRuntime loads it " +
+                    "from compose.application.resources.dir + vlc/); a VLC-less zip would break " +
+                    "local playback on every portable-Windows user"
+            )
+        }
+        // The measured layout: NO bin/ level — the launcher .exe sits at the image root, the
+        // same way the NSIS installer (SetOutPath "$INSTDIR" + File /r) lays it at the install
+        // root. Any bin/ level here would mean the app-image layout changed (fail loud — a
+        // code, test or doc asserting bin/ on Windows would be wrong).
+        if (appImage.resolve("bin").isDirectory) {
+            throw GradleException(
+                "the Windows app-image carries a bin/ level ($appImage) — the measured Windows " +
+                    "layout puts the launcher .exe at the image root (no bin/ level, unlike the " +
+                    "Linux image); the portable zip must mirror the install layout"
+            )
+        }
+        // The launcher shares the app-image folder name (the jpackage app name = the
+        // per-channel display name, set in the compose jpackage config above).
+        val launcher = appImage.resolve("${appImage.name}.exe")
+        if (!launcher.isFile) error("Windows app-image launcher not found: $launcher")
+        appImage
+    }
+
+    tasks.register<Zip>("packageWindowsPortable") {
+        group = "n-zik"
+        description = "Zips the Windows app-image into n-zik-desktop-compagnon-<version>-windows-portable.zip."
+        enabled = isWindowsHost
+        if (!isWindowsHost) {
+            logger.lifecycle("packageWindowsPortable: skipped on this non-Windows host — build it on a Windows host")
+        }
+        dependsOn(createDistributableImpl)
+        // The shared app-image (the windowsAppImage boundary above validates the layout at
+        // execution, on the Windows host — the Linux host never executes the task).
+        doFirst {
+            windowsAppImage.get()
+        }
+        from(createDistributableImpl.flatMap { it.destinationDir })
+        // The channel suffix rides after the base version through the single rename helper
+        // (AD-2) — the same base the other assets of the channel share.
+        archiveFileName.set(channelArtifactName("${linuxPackageName}-${libs.versions.nzikVersionName.get()}-windows-portable.zip"))
+        destinationDirectory.set(layout.buildDirectory.dir("compose/binaries"))
     }
 
     // The Flatpak (spec spec-linux-flatpak) — the 4th Linux artifact: the same app-image the
