@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_subtitle">Companion for N-Zik</string>
-    <string name="starting">Startingâ€¦</string>
-    <!-- QR pairing -->
+    <string name="starting">Starting…</string>
     <string name="pair_title">Pair with your phone</string>
     <string name="pair_qr_description">In N-Zik on your phone, open Manage server, start pairing, then tap Scan and point the camera at this code.</string>
     <string name="pair_device_name">Name of this PC</string>
     <string name="pair_device_name_invalid">Enter a name of 1 to 64 characters.</string>
-    <string name="pair_qr_waiting">Waiting for your phoneâ€¦</string>
-    <string name="pair_qr_preparing">Preparing the QR codeâ€¦</string>
+    <string name="pair_qr_waiting">Waiting for your phone…</string>
+    <string name="pair_qr_preparing">Preparing the QR code…</string>
     <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
     <string name="pair_qr_renew_hint">The code renews itself every 2 minutes.</string>
     <string name="pair_manual_entry">Manual entry</string>
@@ -16,7 +15,6 @@
     <string name="pair_show_qr">Show the QR code</string>
     <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
     <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
-    <!-- Manual pairing -->
     <string name="manual_title">Manual pairing</string>
     <string name="manual_description">On your phone, Manage server shows the IP address, the port and a 6-character code.</string>
     <string name="manual_ip">Phone IP address</string>
@@ -26,9 +24,7 @@
     <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
     <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
     <string name="manual_submit">Pair</string>
-    <!-- Validation -->
-    <string name="validating">Pairing with your phoneâ€¦</string>
-    <!-- Errors -->
+    <string name="validating">Pairing with your phone…</string>
     <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
     <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
     <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
@@ -38,11 +34,10 @@
     <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
     <string name="error_unknown_code">no code</string>
     <string name="dismiss">Dismiss</string>
-    <!-- Paired -->
     <string name="paired_title">Paired</string>
     <string name="paired_with">Paired with %1$s</string>
     <string name="paired_as">This PC appears as %1$s on the phone.</string>
-    <string name="paired_checking">Checking the connectionâ€¦</string>
+    <string name="paired_checking">Checking the connection…</string>
     <string name="paired_ok">The phone is reachable.</string>
     <string name="paired_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
     <string name="paired_other_active_unknown">another device</string>
@@ -52,34 +47,29 @@
     <string name="retry">Retry</string>
     <string name="forget_phone">Forget this phone</string>
     <string name="forget_phone_text">Removes the pairing from this PC</string>
-    <!-- Unreachable -->
     <string name="unreachable_title">Phone unreachable</string>
     <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
     <string name="unreachable_edit_ip">Edit IP</string>
-    <string name="unreachable_edit_ip_text">Keep the pairing, change the phoneâ€™s IP address only</string>
+    <string name="unreachable_edit_ip_text">Keep the pairing, change the phone’s IP address only</string>
     <string name="unreachable_port_kept">Port %1$d (kept)</string>
     <string name="unreachable_save_ip">Save and retry</string>
     <string name="cancel">বাতিল</string>
-    <!-- Revoked -->
     <string name="revoked_title">Pairing revoked</string>
-    <string name="revoked_description">This PC was removed from the phoneâ€™s paired devices. Pair it again to keep using it.</string>
+    <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
     <string name="revoked_pair_again">Pair again</string>
-    <!-- Main window -->
     <string name="phone_panel_title">Phone</string>
     <string name="phone_panel_open">Phone: %1$s</string>
     <string name="close">Close</string>
-    <!-- Connection -->
     <string name="connection_live">Connected</string>
-    <string name="connection_connecting">Connectingâ€¦</string>
-    <string name="connection_reconnecting">Reconnectingâ€¦</string>
+    <string name="connection_connecting">Connecting…</string>
+    <string name="connection_reconnecting">Reconnecting…</string>
     <string name="connection_offline">Disconnected</string>
-    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d sâ€¦</string>
+    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
     <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
     <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
     <string name="connection_replaced">Another window of this PC took over the session.</string>
     <string name="connection_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
     <string name="reconnect">Reconnect</string>
-    <!-- Player -->
     <string name="player_nothing_playing">Nothing is playing</string>
     <string name="player_unknown_artist">Unknown artist</string>
     <string name="player_untitled">Untitled</string>
@@ -96,8 +86,7 @@
     <string name="player_shuffle_off">Shuffle: off</string>
     <string name="player_open_full">Open the player</string>
     <string name="player_close_full">Close the player</string>
-    <string name="player_waiting_state">Waiting for the phoneâ€™s playback stateâ€¦</string>
-    <!-- Queue -->
+    <string name="player_waiting_state">Waiting for the phone’s playback state…</string>
     <string name="queue_title">Queue</string>
     <string name="queue_count">%1$d tracks</string>
     <string name="queue_empty">The queue is empty. Start playing something on your phone.</string>
@@ -108,8 +97,7 @@
     <string name="queue_remove">Remove</string>
     <string name="queue_clear">Clear queue</string>
     <string name="queue_clear_confirm_title">Clear the queue?</string>
-    <string name="queue_clear_confirm_text">Every track is removed from the phoneâ€™s queue and playback stops.</string>
-    <!-- Command failures -->
+    <string name="queue_clear_confirm_text">Every track is removed from the phone’s queue and playback stops.</string>
     <string name="command_play">Play</string>
     <string name="command_pause">Pause</string>
     <string name="command_seek">Seek</string>
@@ -126,18 +114,17 @@
     <string name="command_queue_add">Add to queue</string>
     <string name="command_output">Audio output</string>
     <string name="command_unknown">A command</string>
-    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshingâ€¦</string>
+    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
     <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
     <string name="notice_rejected">%1$s: refused by the phone.</string>
-    <string name="notice_unavailable">%1$s: the phoneâ€™s player is unavailable. Try again later.</string>
-    <string name="notice_server_stopping">%1$s: the phoneâ€™s server is stopping.</string>
+    <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
+    <string name="notice_server_stopping">%1$s: the phone’s server is stopping.</string>
     <string name="notice_other_active">%1$s: another PC (%2$s) is connected to the phone.</string>
     <string name="notice_not_found">%1$s: not found on the phone.</string>
     <string name="notice_unreachable">%1$s: the phone did not answer.</string>
     <string name="notice_truncated">%1$s: only %2$d of %3$d tracks were sent.</string>
     <string name="notice_failed">%1$s failed (HTTP %2$d, %3$s).</string>
     <string name="notice_late_error">%1$s failed on the phone (%2$s, command %3$s).</string>
-    <!-- Library: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="songs">গানগুলো</string>
     <string name="artists">শিল্পী</string>
     <string name="albums">এলবামস</string>
@@ -145,7 +132,6 @@
     <string name="all">সব</string>
     <string name="favorites">প্রিয়</string>
     <string name="cached">ক্যাশেতে</string>
-    <!-- "On device" on the phone; here the label says where the files are, to be told apart from "Cached" -->
     <string name="on_device">On device phone</string>
     <string name="done">হয়েছে</string>
     <string name="downloaded">ডাউনলোড</string>
@@ -171,12 +157,11 @@
     <string name="info_find_the_song_that_is_playing">যে গান বাজানো হচ্ছে সেটা বের করুন</string>
     <string name="playing_song_not_found_on_current_list">Could not find playing song on current list</string>
     <string name="no_songs_playing">No song is playing at the moment</string>
-    <string name="artist_songs_count_duration">%1$d Songs â€¢ %2$s</string>
+    <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
     <string name="no_song_found">No song found</string>
     <string name="no_song_to_shuffle">No song to shuffle</string>
     <string name="songs_shuffled">%d songs shuffled</string>
     <string name="info_no_songs_yet">কোনো গান নাই এখনো</string>
-    <!-- Toolbar buttons and sort options: keys and texts of the phone (N-Zik strings.xml) -->
     <string name="bookmark">Bookmark</string>
     <string name="info_bookmark_album">এলবাম বুকমার্ক</string>
     <string name="follow">অনুসরণ করুন</string>
@@ -215,7 +200,7 @@
     <string name="match_album_audio_version">Match Album/Audio version</string>
     <string name="autosync_likes">Auto Sync Liked Songs</string>
     <string name="statistics">পরিসংখ্যান</string>
-    <string name="header_view_top_of">Top %s of â€¦</string>
+    <string name="header_view_top_of">View top %s of …</string>
     <string name="max_items_unlimited">আনলিমিটেড</string>
     <string name="today">আজ</string>
     <string name="_1_week">১ সপ্তাহ</string>
@@ -223,10 +208,8 @@
     <string name="_3_month">৩ মাস</string>
     <string name="_6_month">৬ মাস</string>
     <string name="_1_year">১ বছর</string>
-    <!-- Compagnon-only chips (no phone equivalent) -->
     <string name="download_pc">Download PC</string>
     <string name="cached_pc">Cached PC</string>
-    <!-- Library: Compagnon only (no phone equivalent) -->
     <string name="library_none">The phone shares no library with this PC.</string>
     <string name="library_refresh">Refresh</string>
     <string name="library_back">Back</string>
@@ -237,7 +220,6 @@
     <string name="queue_open">Queue</string>
     <string name="discover">Discover</string>
     <string name="discoverinfo">Removes Liked and Playlist songs from queue</string>
-    <!-- Player, queue, header and theme (phase 3): keys and texts of the phone (N-Zik strings.xml) -->
     <string name="confirm">নিশ্চিত করুন</string>
     <string name="value_copied">কপি হয়েছে</string>
     <string name="controls_header_customize">Customize</string>
@@ -269,7 +251,6 @@
     <string name="info_reorder_is_possible_only_in_ascending_sort">এসেন্ডিং ক্রমে রি অর্ডার করা সম্ভব শুধু</string>
     <string name="repeat">Repeat</string>
     <string name="bridge_server">PC server</string>
-    <!-- Story 12: audio output, local playback and settings (phone keys and English labels) -->
     <string name="audio_devices">Audio devices</string>
     <string name="audio_output_title">Audio output</string>
     <string name="volume">Volume</string>
@@ -289,7 +270,6 @@
     <string name="disable_scrolling_text">টেক্সট স্ক্রোল করা বাতিল করুন</string>
     <string name="scrolling_text_is_used_for_long_texts">বড় লেখার জন্য টেক্সট স্ক্রোল ব্যাবহার করা হয়</string>
     <string name="settings">সেটিংস</string>
-    <!-- App language (contract 1.9.0, `ui.language`); the per-locale translations arrive later through the Crowdin flow -->
     <string name="languages">ভাষা গুলো</string>
     <string name="app_language">এপের ভাষা</string>
     <string name="profile_base_name">N-Zik Fan</string>
@@ -349,12 +329,10 @@
     <string name="info_remove_all_downloaded_songs">সকল ডাওনলোড করা গান সড়ান</string>
     <string name="tab_data">ডাটা</string>
     <string name="data_settings_description">The data section contains settings that modify how the app handles data locally and remotely</string>
-    <!-- The settings sub-tabs (spec `spec-settings-navigation`, NAV-9): the phone's keys and English values, verbatim -->
     <string name="tab_general">General</string>
     <string name="tab_network">Network</string>
     <string name="tab_miscellaneous">বিবিধ</string>
     <string name="general_settings_description">The general section contains settings for the general functionality of the app</string>
-    <!-- The system tray + the window close behavior (spec `spec-tray-taskbar-media-controls`) -->
     <string name="tray_open">Open</string>
     <string name="tray_quit">Quit</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
@@ -362,7 +340,6 @@
     <string name="close_behavior">Close behavior</string>
     <string name="close_behavior_minimize">Minimize to tray</string>
     <string name="close_behavior_quit">Quit the app</string>
-    <!-- The app shortcuts (the phone's launcher shortcuts, shown in the tray menu) â€” the phone's strings verbatim -->
     <string name="app_shortcuts_settings">App shortcuts</string>
     <string name="app_shortcuts_settings_description">Choose and reorder launcher shortcuts</string>
     <string name="app_shortcuts_rescue_locked">Rescue cannot be disabled</string>
@@ -394,7 +371,6 @@
     <string name="removed_from_favorites">প্রিয় থেকে বাদ দেয়া হয়েছে</string>
     <string name="update_playlist_browse_id">Change Playlist Browse ID</string>
     <string name="cannot_bookmark_special_playlist">Cannot bookmark Liked Songs or Episodes playlist</string>
-    <!-- Compagnon only: the PC as an audio output -->
     <string name="this_pc">This PC</string>
     <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
     <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
@@ -404,7 +380,6 @@
     <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
     <string name="local_playback_unreachable">Your phone did not answer.</string>
     <string name="local_playback_failed">This song could not be played on this PC.</string>
-    <!-- App update (spec spec-updater: the in-app updater + the channel header badge) -->
     <string name="update_current_version">Current version</string>
     <string name="enable_check_for_update">আপডেট চেক চালু করুন</string>
     <string name="update_check_when_enabled">When enabled, a new version of this channel is checked at startup and the update dialog offers it.</string>
@@ -415,7 +390,7 @@
     <string name="app_update_dialog_version">The new version %s can be downloaded!</string>
     <string name="app_update_dialog_size">The file size is %s</string>
     <string name="downloading_update">Downloading update</string>
-    <string name="update_download_progress">Downloading updateâ€¦ %1$d%%</string>
+    <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">No update available</string>
     <string name="update_download_completed">Update downloaded</string>
     <string name="error_update_check_failed">The update check failed (%1$s)</string>
@@ -434,20 +409,17 @@
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
     <string name="old_install_path">Current install:</string>
-    <!-- The channel header badge (4 labels; stable shows no badge â€” the phone's rule) -->
     <string name="beta_title"> Beta</string>
     <string name="dev_title">DEV</string>
     <string name="git_title">GIT</string>
     <string name="debug_title">DEBUG</string>
-    <!-- Loop 2: the update page (spec spec-updater AD-9 revised) -->
     <string name="check_update">আপডেট চেক করুন</string>
     <string name="check_update_ask">Check for updates now?</string>
-    <!-- The "ask" startup dialog (the phone's CheckForUpdateDialog, ported 1:1) -->
     <string name="check_at_github_for_updates">গিটহাবে আপডেট আছে কিনা চেক করবেন?</string>
     <string name="when_an_update_is_available_you_will_be_asked_if_you_want_to_install_info">কোনো আপডেট থাকলে আপনার কাছে ইন্সটল করা হবে কিনা জানতে চাওয়া হবে। আপনার অজান্তে ইন্সটল করা হবে না।</string>
     <string name="but_these_updates_would_not_go_through">কিন্তু এই আপডেট গুলো ইজিঅনড্রয়েড কিংবা এফ-ড্রয়েডে অতিরিক্ত স্ক্রিনিং এর মধ্য দিয়ে যাবে না।</string>
     <string name="you_can_still_turn_it_on_or_off_from_the_settings">সেটিংস থেকে আপনি অন কিংবা অফ করতে পারেন।</string>
-    <string name="checking_for_updates">Checking for updatesâ€¦</string>
+    <string name="checking_for_updates">Checking for updates…</string>
     <string name="auto_update_enabled">Update enabled</string>
     <string name="auto_update_ask">Ask user</string>
     <string name="auto_update_disabled">Update disabled</string>
@@ -466,7 +438,7 @@
     <string name="redownload_update">Download again last update</string>
     <string name="download_cancelled">Download cancelled</string>
     <string name="update_cache_cleared">Cache cleared</string>
-    <string name="update_download_truncated">The update download was truncated. The partial file was kept â€” try downloading again.</string>
+    <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
     <string name="update_download_indeterminate">Downloaded %1$s (unknown size)</string>
     <string name="error_windows_install_helper">The Windows installer could not be started. Run the downloaded installer manually.</string>
     <string name="install">Install</string>
@@ -475,7 +447,6 @@
     <string name="translate">অনুবাদ</string>
     <string name="info_translation">অনুবাদ</string>
     <string name="whats_new_in">What\'s new in %s</string>
-    <!-- AD-10: the About page (1:1 port of the phone's About) -->
     <string name="about">পরিচিতি</string>
     <string name="about_description">The about section shows information about the app, the developers, troubleshooting and update options</string>
     <string name="by_string">by</string>
@@ -490,7 +461,7 @@
     <string name="in_alphabetical_order">বর্ণক্রম অনুযায়ী</string>
     <string name="do_you_really_want_to_download_all">আপনি কি সত্যি সবগুলো ডাওনলোড করতে চান?</string>
     <string name="do_you_really_want_to_delete_download">আপনি কি সত্যি ডাওনলোড মুছতে চান?</string>
-    <string name="loading_songs_count">Loading %1$d songsâ€¦</string>
+    <string name="loading_songs_count">Loading %1$d songs…</string>
     <string name="equalizer">ইকুয়ালাইজার</string>
     <string name="sleep_timer">স্লিপ টাইমার</string>
     <string name="listen_on">শুনুন</string>
@@ -505,7 +476,6 @@
     <string name="sync">সিঙ্ক</string>
     <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
     <string name="visualizer">ভিজ্যুয়ালাইজার</string>
-    <!-- Home screens (spec spec-fill-pc-ui-gaps-home, step 3 G2): keys and texts of the phone (N-Zik strings.xml) -->
     <string name="swipe_to_action">সোয়াইপ অ্যাকশন</string>
     <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">গানের ডান বামে সোয়াইপ করে একশন মেনু চালু করুন</string>
     <string name="navigation_bar_position">নেভিগেশন বারের পজিশন</string>
@@ -524,7 +494,6 @@
     <string name="syncing_failed">Sync failed</string>
     <string name="txt_settings">সেটিংস</string>
     <string name="none">কোনটি নয়</string>
-    <!-- Settings screens (spec spec-fill-pc-ui-gaps-settings, step 1): keys and texts of the phone (N-Zik strings.xml) -->
     <string name="ui_tab">ইউ-আই</string>
     <string name="player_appearance">প্লেয়ারের চেহারা</string>
     <string name="user_interface">ব্যাবহারকারীর ইন্টারফেস</string>
