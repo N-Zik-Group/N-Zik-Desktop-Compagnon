@@ -1,6 +1,6 @@
 # Linux & Flatpak Development Rules — N-Zik Desktop Compagnon
 
-**Version:** 1.0.0 | **Last updated:** 2026-10-13
+**Version:** 1.1.0 | **Last updated:** 2026-10-13
 
 **Informational.** The Linux/Flatpak development logic gained from the tray + media-surface
 implementation (2026-10-12/13) — what works in the sandbox, why, and how to verify it. Every
@@ -132,6 +132,73 @@ nohup flatpak run com.nzik.desktop.compagnon.dev > /tmp/opencode/launch.log 2>&1
 
 `pkexec flatpak` needs the ABSOLUTE bundle path. The .dev id (with the `-dev` suffix) is the
 development identity — upgrades are in place, the pairing survives (same id, monotone version).
+
+## Build host (WSL) — the Linux packaging tasks
+
+All Linux packaging tasks are host-gated: on a non-Linux host they skip themselves with a
+lifecycle message (`packageArch`, `packageLinuxPortable` — "skipped on this non-Linux host —
+build it on a Linux/WSL host"; `.deb`/`.rpm` are disabled by the Compose plugin). A Windows-side
+run produces NO Linux artifact at all — only the skip messages. The packaging build runs INSIDE
+WSL (`./build.sh package <channel>`), never from the Windows side against the mount.
+
+- **`zstd` is a host prerequisite of `:app:packageArch`** — the `tar -I zstd` compressor, a
+  system apt tool, not a pinned artifact. A stock WSL Ubuntu does NOT have it. The task fails
+  loud at its very start: `zstd not found on the PATH (or its --version failed) — install it
+  with: sudo apt install zstd` (live-verified 2026-10-13 with a stripped `PATH` — the failure is
+  fast, before any staging).
+- **The false symptom — "the Arch build produced a zip instead of a `.pkg.tar.zst`".** That is
+  the missing-`zstd` case: the sibling packaging tasks (`packageLinuxPortable`, `packageDeb`, …)
+  run in the same Gradle invocation and can still complete, so `binaries/` ends up holding
+  `…-linux-portable.zip` WITHOUT the `.pkg.tar.zst`. The zip is a DIFFERENT artifact (the
+  portable app-image — unzip + run `bin/`), not "the Arch package gone wrong". The zip and the
+  `.pkg.tar.zst` are both normal outputs of one packaging run, and both sit side by side on the
+  GitHub release page — one is never the other one broken. First check for ANY "missing
+  `.pkg.tar.zst`" report: `zstd --version` on the build host.
+- **Staging stays on the local WSL disk.** The Arch/Flatpak tasks stage under the Gradle user
+  home because the repo often lives on the 9P (Windows) mount, where thousands of small file ops
+  are slow and the long-lived daemon can serve stale listings — the `packageArch` staging comment
+  records the rationale, and the removed `packageAppImage` task (added `30e4728`, removed
+  `7afdd9e`) records the actual lost-artifact incident. Never point `GRADLE_USER_HOME` at a
+  Windows drive.
+- **`binaries/` accumulates** across channels and dates (every artifact name carries the date for
+  dev). The newest `.pkg.tar.zst` is the current Arch artifact — an older `…-linux-portable.zip`
+  next to it is not evidence of a regression.
+
+## Version metadata per artifact (where the version lives)
+
+Single source: the catalog's `nzikVersionName` (the base, e.g. `0.0.1`) + `nzikVersionCode`;
+the channel suffix per channel (stable `""`, beta `-beta`, dev `-dev-YYYYMMDD`, git `-git`);
+the `AppVersion` object generated at build time (never committed — Settings/About + the header
+channel badge read it). Two registers by design (spec `spec-updater` AD-2/AD-8):
+
+1. **The channel-aware full version** (`<base> + channel suffix`, e.g. `0.0.1-dev-20261013`)
+   lives in: the artifact FILE NAMES, the in-app `AppVersion`, the GitHub tags, the Windows
+   installer metadata (NSIS `ProductVersion` + the registry `DisplayVersion` — visible in
+   Windows' "installed apps"), and the Arch `pkgver` — dashes sanitized to dots
+   (`0.0.1.dev.<date>-1`): libalpm accepts alphanumerics + dots and EXACTLY ONE dash in a version
+   (the release separator; issue #29). The artifact FILE NAME keeps its dashes.
+2. **The numeric base version** (`0.0.1`) is what jpackage records in the `.deb` control, the
+   `.rpm` headers, the Flatpak manifest `version`, and the app-image PE. The channel rides in
+   the PACKAGE/APP IDENTITY instead: the per-channel package name
+   (`n-zik-desktop-compagnon-dev`), the Flatpak app-id (`com.nzik.desktop.compagnon.dev`), the
+   Windows product name ("… DEV"). Each channel is its OWN parallel installation (AD-8) — and
+   the updater's InstallMode/provenance logic keys on that identity, not on the version field.
+
+Consequences to know:
+
+- `dpkg -l` / `rpm -q` / `flatpak info` show `0.0.1` for EVERY channel — the channel is in the
+  NAME, not the version.
+- The portable zip carries NO package metadata at all (it is not a package — only the in-app
+  identity and the file name carry the version).
+- The AUR entries carry their OWN `pkgver`/`pkgrel` (release-zip: pinned per release in the
+  PKGBUILD; `-git`: computed from the tracked branch) — independent of the release artifacts.
+- Every line above is pinned by the suite: `LinuxPackagePinTest` (deb/rpm), `ArchPkgPinTest`
+  (PKGINFO + the libalpm one-dash rule), `FlatpakPinTest` (manifest placeholders → effective
+  app-id/version/launcher), `ArtifactNamesChannelTest` (file names),
+  `InstallModeDetectionTest` (updater provenance).
+- There is NO version-bump machinery in the repo (AGENTS.md forbids inventing one) — a release
+  bump is a manual catalog edit + tag + the per-format chore (AUR `pkgver`/`sha256sums`,
+  metainfo `releases` entry when the app ships on Flathub).
 
 ## Live-verification toolbox
 
