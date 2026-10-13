@@ -243,7 +243,7 @@
     <string name="controls_header_customize">Personnaliser</string>
     <string name="controls_title_playback_speed">Vitesse de lecture</string>
     <string name="controls_title_playback_pitch">Hauteur de lecture</string>
-    <string name="controls_title_medley_duration">Durée du Medley</string>
+    <string name="controls_title_medley_duration">Durée du medley</string>
     <string name="controls_title_device_volume">Volume de l\'appareil</string>
     <string name="cd_background_image">Image d\'arrière-plan</string>
     <string name="cd_app_icon_in_player">icône de l\'application dans le lecteur</string>
@@ -323,7 +323,7 @@
     <string name="listen_together_sync_volume">Synchroniser le volume hôte</string>
     <string name="listen_together_sync_volume_desc">Les invités adapteront le volume de leur voix à celui de l\'hôte</string>
     <string name="listen_together_history">Historique locale</string>
-    <string name="listen_together_history_desc">Enregistrez des morceaux de « Listen Together » dans votre historique locale</string>
+    <string name="listen_together_history_desc">Enregistrez des morceaux de « Écoutons Ensemble » dans votre historique local</string>
     <string name="listen_together_view_logs">Afficher les journaux</string>
     <string name="listen_together_view_logs_desc">Déboguer les événements et les messages liés à la connexion</string>
     <string name="listen_together_blocked_users">Utilisateurs bloqués</string>
@@ -363,7 +363,7 @@
     <string name="close_behavior_minimize">Réduire dans la barre des tâches</string>
     <string name="close_behavior_quit">Quitter l\'application</string>
     <!-- The app shortcuts (the phone's launcher shortcuts, shown in the tray menu) â€” the phone's strings verbatim -->
-    <string name="app_shortcuts_settings">Raccourcis vers les applications</string>
+    <string name="app_shortcuts_settings">Raccourcis vers l\'application</string>
     <string name="app_shortcuts_settings_description">Sélectionner et réorganiser les raccourcis du lanceur d\'applications</string>
     <string name="app_shortcuts_rescue_locked">La fonction « Sauvegarde » ne peut pas être désactivée</string>
     <string name="reset">Réinitialiser</string>
@@ -533,7 +533,7 @@
     <string name="theme">Thème</string>
     <string name="settings_use_font_type">Utiliser la police</string>
     <string name="home_tabs_settings">Page d\'accueil</string>
-    <string name="sort_menu">Menu de tri</string>
+    <string name="sort_menu">Menu « Trier »</string>
     <string name="toolbar">Barre d\'outils</string>
     <string name="settings_reset">Réinitialiser</string>
     <string name="player_presets_and_layout">Préréglages &amp; Mise en page</string>
@@ -560,9 +560,9 @@
     <string name="exclude_disliked_songs">Exclure les titres que vous n\'aimez pas</string>
     <string name="exclude_disliked_artists">Exclure les artistes que vous n\'appréciez pas</string>
     <string name="exclude_disliked_albums">Exclure les albums que vous n\'aimez pas</string>
-    <string name="pause_between_songs">Mettre en pause entre les titres</string>
+    <string name="pause_between_songs">Mettre en pause entre les morceaux</string>
     <string name="crossfade">Fondu enchaîné</string>
-    <string name="crossfade_description">Activer la transition en douceur entre les chansons</string>
+    <string name="crossfade_description">Activer la transition en douceur entre les morceaux</string>
     <string name="player_pause_on_volume_zero">Mettre en pause quand le volume est à 0</string>
     <string name="info_pauses_player_when_volume_zero">Met en pause le lecteur lorsque le volume atteint 0 et reprend lorsque le volume est supérieur à 0</string>
     <string name="player_keep_minimized">Garder minimisé</string>
