@@ -45,7 +45,7 @@
 
 ## Third-Party Runtime & Licenses
 
-- **VLC:** the embedded runtime is downloaded at build time against its pinned SHA-256 (`app/build.gradle.kts`) and extracted under `build/` (gitignored) — **no VLC binary is ever committed**. Do NOT change `vlcVersion`/`vlcZipUrl`/`vlcZipSha256`/`vlcRuntimeFiles` without explicit user approval (AGENTS.md "Ask First")
+- **VLC:** the embedded runtime is downloaded at build time against its pinned SHA-256 (`ComposeN-Zik/build.gradle.kts`) and extracted under `build/` (gitignored) — **no VLC binary is ever committed**. Do NOT change `vlcVersion`/`vlcZipUrl`/`vlcZipSha256`/`vlcRuntimeFiles` without explicit user approval (AGENTS.md "Ask First")
 - **This repo is GPL-3.0** (LICENSE) — the project itself is copyleft:
   1. Any code added must be GPL-3.0-compatible; open-source (MIT, Apache) = acceptable; copyleft (GPL, AGPL, LGPL) = acceptable, verify the terms; closed-source/proprietary = NEVER acceptable
   2. **Cubic Music Desktop reuse** is documented in the README (the author granted explicit permission, GPL-3.0) — any file derived from it keeps its original copyright and license notices; do not strip them

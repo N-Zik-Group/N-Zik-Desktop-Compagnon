@@ -18,7 +18,7 @@
 
 ## ✅ Always Do
 
-- Code → `app.n_zik.compagnon.*` ONLY (single package root, single `:app` module — there is no legacy namespace in this repo)
+- Code → `app.n_zik.compagnon.*` ONLY (single package root, single `:ComposeN-Zik` module — there is no legacy namespace in this repo)
 - Log with `java.util.logging.Logger` tagged by class name (no `println`/`printStackTrace` — see rules/CODE.md "Logging")
 - Dispatch coroutines on `NzikDispatchers` named dispatchers only (`UI`, `PLAYBACK`, `MEDIA`, `DATA` — same name/shape as the phone app); fire-and-forget / app-lifetime scopes via `NzikDispatchers.fireAndForget()` — the object is planned, see rules/CODE.md "Coroutines & Dispatchers" (transition note); never a bare `Job()`
 - Use version catalog refs (`gradle/libs.versions.toml`)
@@ -32,7 +32,7 @@
 ## ⚠️ Ask First
 
 - Adding new dependencies not in `gradle/libs.versions.toml`
-- Any change to the embedded VLC runtime config in `app/build.gradle.kts` (`vlcVersion`, `vlcZipUrl`, `vlcZipSha256`, `vlcRuntimeFiles`)
+- Any change to the embedded VLC runtime config in `ComposeN-Zik/build.gradle.kts` (`vlcVersion`, `vlcZipUrl`, `vlcZipSha256`, `vlcRuntimeFiles`)
 - Committing code (NEVER without human testing + approval)
 - Commit mode at end of workflow: (1) Done+commit = `assets/notes/Done.txt` only, (2) Wait = nothing — ASK before editing ANY file (see rules/WORKFLOW.md Step 8d). This repo has NO version-bump / fastlane / Updater machinery — do not invent one
 - Which IDE/tool to use (ask ONE at a time — see rules/BMAD-TOOLS.md for preferred list)
@@ -41,7 +41,7 @@
 
 - Put business logic or a streaming stack on the PC (the phone stays the source of truth — see the project identity above)
 - Write the device token anywhere except the platform secret store — the Windows Credential Manager, the Linux keyring, or the in-memory session store on a keyring-less Linux machine (never in `pairing.json`, logs, `Done.txt`, README, or code — see rules/SECURITY.md)
-- Edit the `values-*` locale strings files — Crowdin takes care of them: the only strings file to edit is `app/src/main/composeResources/values/strings.xml` (the English single source of truth); add or change strings there, and the `values-*` locale files are never touched by hand (same rule as the phone's AGENTS.md)
+- Edit the `values-*` locale strings files — Crowdin takes care of them: the only strings file to edit is `ComposeN-Zik/src/main/composeResources/values/strings.xml` (the English single source of truth); add or change strings there, and the `values-*` locale files are never touched by hand (same rule as the phone's AGENTS.md)
 - Write code before completing full BMAD workflow
 - Skip BMAD workflow steps
 - Skip the Step 8b code-review gate, or edit `assets/notes/Done.txt` before the user chose a commit mode (Step 8d) — exception: doc-only edits (rules/WORKFLOW.md "Doc-Only Exception") follow their own commit-approval flow and are NOT subject to the Step 8d mode question
@@ -93,7 +93,7 @@
 
 ```
 N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
-├── app/
+├── ComposeN-Zik/
 │   ├── src/main/kotlin/app/n_zik/compagnon/   ★ ALL code lives here
 │   │   ├── bridge/          contract layer: BridgeSession.kt (the WS session), pairing/ (PairingController, PairingListener, PairingModels,
 │   │   │                    WindowsCredentialSecretStore, LinuxSecretStore, SessionSecretStore, CredentialStore,
@@ -120,14 +120,14 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 
 | What                | Where                                                                    |
 | ------------------- | ------------------------------------------------------------------------ |
-| Main code           | `app/src/main/kotlin/app/n_zik/compagnon/`                               |
+| Main code           | `ComposeN-Zik/src/main/kotlin/app/n_zik/compagnon/`                               |
 | Contract (bridge)   | `bridge/` (pairing, state, library, command) + `core/network/` (BridgeClient) |
 | Playback            | `playback/` (VLC engine, audio cache, local playback)                     |
 | UI                  | `components/` (screens in `components/ui/screens/`, player in `components/player/`) |
-| Strings (English)   | `app/src/main/composeResources/values/strings.xml` — single file, no `values-*` |
+| Strings (English)   | `ComposeN-Zik/src/main/composeResources/values/strings.xml` — single file, no `values-*` |
 | Pairing persistence | token → the platform secret store (Windows Credential Manager "N-Zik Desktop Compagnon"; Linux keyring via libsecret, in-memory session store without a keyring); non-secret fields → `%APPDATA%\N-Zik Desktop Compagnon\pairing.json` (Windows) / `~/.config/N-Zik Desktop Compagnon/pairing.json` (Linux — the XDG config dir, `$XDG_CONFIG_HOME` override honoured; the legacy `~/N-Zik Desktop Compagnon/` is migrated once on first launch, `CredentialStore`); PC-local settings → `settings.json`; audio cache → `%APPDATA%\N-Zik Desktop Compagnon\cache\audio\` |
 | Database            | none on the PC — the phone's local DB is the only database; schema work belongs to the N-Zik (phone) repo |
-| Tests               | `app/src/test/kotlin/`                                                   |
+| Tests               | `ComposeN-Zik/src/test/kotlin/`                                                   |
 
 ---
 
@@ -135,15 +135,15 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 
 ```bash
 gradlew.bat build                                       # Compile + all tests (primary)
-gradlew.bat :app:test                                   # Tests only
-gradlew.bat :app:test --tests "app.n_zik.compagnon.SomeTest"   # Single test
-gradlew.bat :app:run                                    # Launch the app
+gradlew.bat :ComposeN-Zik:test                                   # Tests only
+gradlew.bat :ComposeN-Zik:test --tests "app.n_zik.compagnon.SomeTest"   # Single test
+gradlew.bat :ComposeN-Zik:run                                    # Launch the app
 gradlew.bat clean build                                 # Clean + build
-gradlew.bat :app:packageInstaller -Pchannel=stable      # Windows NSIS installer
-gradlew.bat :app:packageWindowsPortable -Pchannel=stable   # Windows portable zip (the app-image zip, published alongside the installer)
-./gradlew :app:packageLinuxPortable -Pchannel=stable    # Linux portable zip (Linux/WSL host only)
-gradlew.bat :app:createDistributable -Pchannel=stable   # Raw app-image folder (MAIN build type, channel-gated - the source the installer, the Flatpak + the portable zips package)
-gradlew.bat :app:createReleaseDistributable             # Raw app-image folder (release build type, no channel gate)
+gradlew.bat :ComposeN-Zik:packageInstaller -Pchannel=stable      # Windows NSIS installer
+gradlew.bat :ComposeN-Zik:packageWindowsPortable -Pchannel=stable   # Windows portable zip (the app-image zip, published alongside the installer)
+./gradlew :ComposeN-Zik:packageLinuxPortable -Pchannel=stable    # Linux portable zip (Linux/WSL host only)
+gradlew.bat :ComposeN-Zik:createDistributable -Pchannel=stable   # Raw app-image folder (MAIN build type, channel-gated - the source the installer, the Flatpak + the portable zips package)
+gradlew.bat :ComposeN-Zik:createReleaseDistributable             # Raw app-image folder (release build type, no channel gate)
 ```
 
 > **Windows:** `gradlew.bat`, run from the repo root `N-Zik-Desktop-Compagnon/`. **Linux:** `./gradlew` (or `build.sh`). JDK 21 (Gradle toolchain).

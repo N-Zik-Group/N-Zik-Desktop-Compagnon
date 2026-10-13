@@ -42,7 +42,7 @@
 > Tick every box that applies to your PR; leave the rest unchecked.
 
 ### ✅ Always (every PR)
-- [ ] I tested this change myself (launched the app with `gradlew.bat :app:run`) before opening the PR
+- [ ] I tested this change myself (launched the app with `gradlew.bat :ComposeN-Zik:run`) before opening the PR
 - [ ] No force push, no rewritten history
 - [ ] Branch named `feat/…`, `fix/…` or `chore/…`
 - [ ] Commits follow the repo convention — e.g. `feat(pairing): pair with the phone by QR or manual code`
@@ -57,7 +57,7 @@
 - [ ] I added a `Done.txt` entry under the right section header — summary line **plus technical sub-bullets** (template: `assets/notes/Changelog_Template.txt`)
 
 ### 🏗️ Code
-- [ ] New code lives in `app.n_zik.compagnon.*` (single `:app` module — there is no legacy namespace in this repo)
+- [ ] New code lives in `app.n_zik.compagnon.*` (single `:ComposeN-Zik` module — there is no legacy namespace in this repo)
 - [ ] No business logic or streaming stack added on the PC (the phone stays the source of truth)
 - [ ] New UI/actions are gated on their contract feature — buttons without a contract route are `InertButton`/`InertMenuItem` with the phone's own title (shown, never faked)
 - [ ] New strings go in `values/strings.xml` only (English) — I didn't touch any `values-*/` file (Crowdin-managed)
@@ -67,14 +67,14 @@
 - [ ] I didn't add `!!` (any existing one has a comment explaining why)
 - [ ] I log with a `java.util.logging.Logger` tagged by class name only — no `println` / `printStackTrace`
 - [ ] Risky operations are wrapped in `runCatching`, and failures are logged
-- [ ] I didn't touch the embedded VLC runtime config (`vlcVersion` / `vlcZipUrl` / `vlcZipSha256` / `vlcRuntimeFiles` in `app/build.gradle.kts`) without approval
+- [ ] I didn't touch the embedded VLC runtime config (`vlcVersion` / `vlcZipUrl` / `vlcZipSha256` / `vlcRuntimeFiles` in `ComposeN-Zik/build.gradle.kts`) without approval
 - [ ] New dependencies go through `libs.versions.toml` (I asked before adding)
 - [ ] No secrets in the diff — the device token never leaves the Windows Credential Manager (never in `pairing.json`, logs, `Done.txt`, README or code)
 - [ ] External code is MIT/Apache-licensed, with the source cited
 
 ### 🧪 Build & tests
 - [ ] `gradlew.bat build` is green (compile + all tests)
-- [ ] New feature or bug fix → at least one new test, and `gradlew.bat :app:test` passes
+- [ ] New feature or bug fix → at least one new test, and `gradlew.bat :ComposeN-Zik:test` passes
 
 ## 🗒️ Anything else?
 -

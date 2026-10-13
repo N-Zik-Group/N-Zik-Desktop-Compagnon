@@ -9,7 +9,7 @@
 # (transparency): rebuilding it reproduces the same audio subset, and the tarball's own SHA-256
 # is what the build pins in `gradle/libs.versions.toml` (`vlc-linux-tarball-sha256`).
 #
-# What it produces (the same audio subset that `app/build.gradle.kts` extracts into the build —
+# What it produces (the same audio subset that `ComposeN-Zik/build.gradle.kts` extracts into the build —
 # the two lists must stay in sync):
 #   vlc-3.0.24-linux-x64/
 #   ├── COPYING
@@ -170,7 +170,7 @@ cp "$(readlink -f "$PREFIX/lib/libvlc.so.5")" "$STAGE/libvlc.so"
 cp "$(readlink -f "$PREFIX/lib/libvlccore.so.9")" "$STAGE/libvlccore.so.9"
 cp "$(readlink -f "$PREFIX/lib/vlc/libvlc_pulse.so.0")" "$STAGE/libvlc_pulse.so.0"
 
-# The audio subset — keep in sync with `vlcLinuxRuntimeFiles` in `app/build.gradle.kts` (the
+# The audio subset — keep in sync with `vlcLinuxRuntimeFiles` in `ComposeN-Zik/build.gradle.kts` (the
 # WASAPI/DirectSound/mmdevice outputs of the Windows list are the ALSA/PulseAudio outputs here).
 AUDIO_SUBSET="
 plugins/access/libfilesystem_plugin.so
@@ -220,7 +220,7 @@ done
 # the dir the Flatpak wrapper launcher already exports on LD_LIBRARY_PATH (zero wrapper change).
 #
 # Each name below is pinned by SONAME and stays in sync with `vlcLinuxRuntimeFiles` in
-# `app/build.gradle.kts`. The lib is resolved on the build host via ldd against the staged plugin
+# `ComposeN-Zik/build.gradle.kts`. The lib is resolved on the build host via ldd against the staged plugin
 # that needs it (distro-agnostic), verified by its OWN SONAME, and copied as a real file
 # (readlink -f follows the distro's symlink farm). A missing or drifted lib fails loud — never a
 # tarball that plays webm/opus on one host and not in the sandbox.
@@ -318,7 +318,7 @@ echo "contract OK: every DT_NEEDED resolves (tarball-carried or 24.08-runtime-pr
 
 # --- 5. Tar it (reproducible: sorted entries, fixed owner/mtime, gzip -n) -------------------------
 # The tar root is the staging dir's basename (relative, from $WORK) so the archive contains a single
-# top-level `vlc-3.0.24-linux-x64/` dir — the layout `extractVlcLinux` in app/build.gradle.kts expects.
+# top-level `vlc-3.0.24-linux-x64/` dir — the layout `extractVlcLinux` in ComposeN-Zik/build.gradle.kts expects.
 echo "== tarring =="
 cd "$WORK"
 tar --sort=name --owner=0 --group=0 --numeric-owner \

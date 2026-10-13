@@ -22,7 +22,7 @@ Use this format every session — keep it SHORT:
 📋 Rules loaded:
 
 [CRITICAL]
-1. Code → app.n_zik.compagnon.* only (single :app module, no legacy namespace)
+1. Code → app.n_zik.compagnon.* only (single :ComposeN-Zik module, no legacy namespace)
 2. java.util.logging.Logger (class tag) ONLY (no println/printStackTrace); NEVER log the device token
 3. Build: gradlew.bat build (Windows, repo root)
 4. Version catalog refs only (gradle/libs.versions.toml)
@@ -284,7 +284,7 @@ Some skills use micro-file design where each step is in its own file.
 - Review changes for quality
 - **Guard check (MANDATORY):** run `git diff --name-only HEAD` (staged + unstaged) AND `git status --porcelain` (includes untracked new files) from the repo root `N-Zik-Desktop-Compagnon/`, and verify that:
   - no file under `build/` or any VLC binary appears as tracked/untracked (the VLC runtime is downloaded at build time, never committed)
-  - no diff touches the pinned VLC config in `app/build.gradle.kts` (`vlcVersion`/`vlcZipUrl`/`vlcZipSha256`/`vlcRuntimeFiles`) without the user's prior approval (AGENTS.md "Ask First")
+  - no diff touches the pinned VLC config in `ComposeN-Zik/build.gradle.kts` (`vlcVersion`/`vlcZipUrl`/`vlcZipSha256`/`vlcRuntimeFiles`) without the user's prior approval (AGENTS.md "Ask First")
   - no token material appears anywhere in the diff (scan changed files for the device token / Credential Manager strings)
   - all new `.kt` files live under `app.n_zik.compagnon.*`
   — if any of these appears, HALT, revert it and report to the user
@@ -373,12 +373,12 @@ This repo has **no version-bump machinery** (no `fastlane/`, no `Updater/`, no v
 
 ## Change Scope
 
-This repo is a **single Gradle module** (`:app`) — there are no submodules and no feature subprojects. A change can still span layers, and the Step 6 guard check covers them all:
+This repo is a **single Gradle module** (`:ComposeN-Zik`) — there are no submodules and no feature subprojects. A change can still span layers, and the Step 6 guard check covers them all:
 
-1. `app/src/main/kotlin/` — code
-2. `app/src/test/kotlin/` — tests (mirror the package)
-3. `app/src/main/composeResources/` — drawables, fonts, `values/strings.xml` (a new string key or a changed one belongs in the same commit as the code that uses it)
-4. `app/build.gradle.kts` / `gradle/libs.versions.toml` — build/config (Ask First applies)
+1. `ComposeN-Zik/src/main/kotlin/` — code
+2. `ComposeN-Zik/src/test/kotlin/` — tests (mirror the package)
+3. `ComposeN-Zik/src/main/composeResources/` — drawables, fonts, `values/strings.xml` (a new string key or a changed one belongs in the same commit as the code that uses it)
+4. `ComposeN-Zik/build.gradle.kts` / `gradle/libs.versions.toml` — build/config (Ask First applies)
 
 When a change also requires the **phone side** to evolve (a new contract route or feature), HALT before Step 6 and say so explicitly: the phone work happens in the `N-Zik/` repo (its own AGENTS.md + rules), and the contract spec in `{project-root}/_bmad-output/` must be updated before either side is finished.
 

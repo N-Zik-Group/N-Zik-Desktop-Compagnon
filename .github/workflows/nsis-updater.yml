@@ -8,7 +8,7 @@ name: NSIS Update Checker
 # checks the official SourceForge project for a newer NSIS 3.x release:
 #   - no newer release -> a green no-op (explicit message — no download, no PR);
 #   - a newer release  -> the windows job downloads the new official zip, SMOKE-COMPILES
-#                         app/packaging/windows/installer.nsi with the new makensis (the
+#                         ComposeN-Zik/packaging/windows/installer.nsi with the new makensis (the
 #                         proof that the committed installer script still builds with it),
 #                         and opens the bot PR bot/nsis-update-<v> (the new zip + its
 #                         .sha256 replacing the old pair — the channel workflows are
@@ -151,8 +151,8 @@ jobs:
             Write-Error "ERROR: makensis /VERSION failed (exit $LASTEXITCODE) — failing loud (no PR opened on an unverified toolchain)."
             exit 1
           }
-          # The committed installer.nsi needs its 15 Gradle /D defines (see :app:packageInstaller
-          # in app/build.gradle.kts) — the smoke compile passes DUMMY channel values + a stub
+          # The committed installer.nsi needs its 15 Gradle /D defines (see :ComposeN-Zik:packageInstaller
+          # in ComposeN-Zik/build.gradle.kts) — the smoke compile passes DUMMY channel values + a stub
           # app-image seeded with one placeholder file: installer.nsi does
           # File /r "${APPIMAGE_DIR}\*.*" at COMPILE time, and makensis ABORTS on an empty
           # dir ("no files found" — proven by execution), so an empty stub cannot compile.
@@ -179,7 +179,7 @@ jobs:
             "/DDESCRIPTION=smoke compile (nsis-updater)" `
             "/DDATA_DIR_NAME=N-Zik Desktop Compagnon" `
             "/DCRED_TARGET=N-Zik Desktop Compagnon" `
-            'app\packaging\windows\installer.nsi'
+            'ComposeN-Zik\packaging\windows\installer.nsi'
           if ($LASTEXITCODE -ne 0) {
             Write-Error "ERROR: the committed installer.nsi failed to compile with NSIS $latest (exit $LASTEXITCODE) — the makensis log above is the diagnosis; no bot PR is opened on a failing toolchain."
             exit 1
@@ -188,7 +188,7 @@ jobs:
             Write-Error "ERROR: makensis reported success but the smoke installer is missing — failing loud."
             exit 1
           }
-          Write-Output "SMOKE OK: app\packaging\windows\installer.nsi compiled with NSIS $latest"
+          Write-Output "SMOKE OK: ComposeN-Zik\packaging\windows\installer.nsi compiled with NSIS $latest"
 
       - name: Close the open bot PRs (same version re-run or older version — deterministic replacement)
         run: |
@@ -246,7 +246,7 @@ jobs:
 
           - New zip: tools/nsis/nsis-@LATEST@.zip (SHA-256: @SHA@) — replaces tools/nsis/nsis-@EMBEDDED@.zip
           - The channel workflows are UNCHANGED: they read the single embedded zip generically (SHA-verified against its .sha256 at build time)
-          - **Proof:** app/packaging/windows/installer.nsi compiled with the new makensis on this run (the smoke compile passed — the committed installer script is compatible with NSIS @LATEST@)
+          - **Proof:** ComposeN-Zik/packaging/windows/installer.nsi compiled with the new makensis on this run (the smoke compile passed — the committed installer script is compatible with NSIS @LATEST@)
 
           > The bot never merges this PR — the merge is the human verification gate (rules/BUILD.md "Windows Installer" — the "NSIS on the build machine" bullet). After merging, dev machines can move to NSIS @LATEST@ (the per-user install in rules/BUILD.md).
           '@

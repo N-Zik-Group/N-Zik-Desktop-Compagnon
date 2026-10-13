@@ -140,7 +140,7 @@ The mini player's "audio output" button opens the audio devices: choose **This P
 Audio is played by [vlcj](https://github.com/caprica/vlcj) 4.12.1 on an embedded copy of [VLC](https://www.videolan.org/) 3.0.24: no VLC installation is needed.
 
 - **What the build fetches:** the official VideoLAN zip (`vlc-3.0.24-win64.zip`) for the Windows build, and the pinned Linux tarball (`vlc-3.0.24-linux-x64.tar.gz`, produced by `scripts/build-vlc-linux-tarball.sh` from the official VideoLAN source and published as a release asset) for the Flatpak - both checked against their pinned SHA-256s and kept in the Gradle user home, so `clean` does not download them again.
-- **What it embeds:** only the audio part (libvlc, libvlccore, about 30 plugins, the license file - about 10-12 MB) under `app/build/vlc-runtime`. No VLC binary is stored in this repository.
+- **What it embeds:** only the audio part (libvlc, libvlccore, about 30 plugins, the license file - about 10-12 MB) under `ComposeN-Zik/build/vlc-runtime`. No VLC binary is stored in this repository.
 - **The Linux tarball is self-contained:** it carries that audio part AND the three runtime libs (libmatroska, libebml, libfaad) the 24.08 Flatpak runtime does not ship, so webm/opus and AAC play in the sandbox with no system package.
 - **VLC bumps:** produced by the `vlc-tarball-builder.yml` pipeline - bump the committed script on `main` and it builds the tarball, publishes the prerelease staging release `vlc-<v>-tarball`, and opens a catalog-only PR; reviewing and merging that PR activates the new pin (the bot never merges). While the current `vlc-3.0.24-tarball` prerelease asset is missing (currently the case), any pipeline run self-heals it (rebuild + republish the prerelease in place + re-open the pin PR - the same review-and-merge gate applies), and a manual upload stays the fallback.
 - **Licensing:** VLC is © the VideoLAN team and contributors; libvlc is licensed under the LGPL 2.1 or later and some plugins under the GPL 2 or later (see `COPYING.txt` next to the runtime). vlcj is licensed under the GPL 3.0.
@@ -236,25 +236,25 @@ The first build on a **Windows host** downloads VLC 3.0.24 from download.videola
 Launch the app on Windows:
 
 ```bat
-gradlew.bat :app:run
+gradlew.bat :ComposeN-Zik:run
 ```
 
 A plain run (or a plain compile) builds the **debug channel** - the DEBUG badge in the header, no auto-update (source-build discipline). A release artifact is never built without an explicit channel: `-Pchannel=stable|beta|dev` on the packaging tasks (`stable` is the only one whose five Linux artifact names stay byte-identical to the original convention; the published `.exe` moved to the channel's Linux base name).
 
-The app also runs on Linux: `./gradlew :app:run`. Pairing works there too (keyring, or session-only without a keyring daemon); "Sound on the PC" uses the **system libvlc** - install VLC (e.g. `sudo apt install vlc`) and local playback works; when it is missing, the app shows the install command for your distribution.
+The app also runs on Linux: `./gradlew :ComposeN-Zik:run`. Pairing works there too (keyring, or session-only without a keyring daemon); "Sound on the PC" uses the **system libvlc** - install VLC (e.g. `sudo apt install vlc`) and local playback works; when it is missing, the app shows the install command for your distribution.
 
 ## 🪟 Windows installer
 
 The app ships as an NSIS Windows installer (a scope-choice page: per-user by default, or global with a visible UAC prompt), alongside the portable zip built from the same app-image:
 
 ```bat
-gradlew.bat :app:packageInstaller -Pchannel=stable
-gradlew.bat :app:packageWindowsPortable -Pchannel=stable
+gradlew.bat :ComposeN-Zik:packageInstaller -Pchannel=stable
+gradlew.bat :ComposeN-Zik:packageWindowsPortable -Pchannel=stable
 ```
 
 - **Channel + naming (AD-8):** the channel is required (`stable`, `beta` or `dev` - see "Channels and auto-update" above): the beta/dev installers are named after it on the per-channel product name (e.g. `N-Zik Desktop Compagnon BETA-0.0.2-beta.exe` - the jpackage name with the channel suffix right after the version), the stable one keeps its plain name. In the published GitHub release the CI renames the `.exe` to the channel's Linux base name (`n-zik-desktop-compagnon-<version>.exe` for stable; beta/dev carry the channel suffix as in the other assets) before the upload - the rename is documented in "Channels and auto-update".
-- **The portable zip:** `packageWindowsPortable` zips the same app-image the installer packages (the embedded VLC runtime included) into `app\build\compose\binaries\n-zik-desktop-compagnon-<version>-windows-portable.zip` - unzip it and run the launcher at the top of the unzipped folder (no sub-directory); Windows host only.
-- **Source:** the installer (`.exe`, written under `app\build\compose\binaries\`) is built from `app\packaging\windows\installer.nsi` (the header there is the full contract - the NSIS installer replaced the jpackage self-extracting exe). It adds Start menu + desktop shortcuts and registers the uninstall entry under the same per-channel product name.
+- **The portable zip:** `packageWindowsPortable` zips the same app-image the installer packages (the embedded VLC runtime included) into `ComposeN-Zik\build\compose\binaries\n-zik-desktop-compagnon-<version>-windows-portable.zip` - unzip it and run the launcher at the top of the unzipped folder (no sub-directory); Windows host only.
+- **Source:** the installer (`.exe`, written under `ComposeN-Zik\build\compose\binaries\`) is built from `ComposeN-Zik\packaging\windows\installer.nsi` (the header there is the full contract - the NSIS installer replaced the jpackage self-extracting exe). It adds Start menu + desktop shortcuts and registers the uninstall entry under the same per-channel product name.
 - **Scope-choice page:** **per-user by default** (no administrator prompt, installs to `%LOCALAPPDATA%\` under the per-channel display name - `N-Zik Desktop Compagnon` for stable, `N-Zik Desktop Compagnon BETA` / `N-Zik Desktop Compagnon DEV` for the other channels) or **global** (a visible UAC elevation, installs to `%PROGRAMFILES%\` under the same name).
 - **Building it needs NSIS 3.x:** in CI the official NSIS zip is embedded in the repo (`tools/nsis/`, SHA-256-verified at build time - the `nsis-updater.yml` pipeline checks the official SourceForge project and opens an update bot PR when a newer NSIS 3.x is released); on a dev machine use the official portable zip per-user or the `NSIS_DIR` environment variable (the build resolves `makensis.exe` at execution time and does not download the toolchain).
 - **In-place upgrade:** installing a newer version on top of an existing one (same channel) **upgrades it in place** - the installation's identity is its registry key (`Software\N-Zik\DesktopCompagnon\{channel}` - HKCU for per-user, HKLM for global), recorded by the installer itself; no frozen upgrade identifier anymore. The user data in `%APPDATA%\N-Zik Desktop Compagnon\` (pairing, settings, audio cache) is left untouched by an upgrade or an uninstall, and the portable build is produced separately and is not affected.
@@ -338,7 +338,7 @@ Any file derived from Cubic Music Desktop keeps its original copyright and licen
 
 ### 🔤 Bundled fonts:
 
-- **Roboto** Regular and Medium (`app/src/main/composeResources/font/roboto_w400.ttf`, `roboto_w500.ttf`), from [googlefonts/roboto](https://github.com/googlefonts/roboto) v2.138: the font Android gives the Material components, used for the same components here so they look like the phone's. Roboto is © Google and licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+- **Roboto** Regular and Medium (`ComposeN-Zik/src/main/composeResources/font/roboto_w400.ttf`, `roboto_w500.ttf`), from [googlefonts/roboto](https://github.com/googlefonts/roboto) v2.138: the font Android gives the Material components, used for the same components here so they look like the phone's. Roboto is © Google and licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 - **Rubik** (`rubik_w*.ttf`), the phone's app font.
 
 # 👀 Status

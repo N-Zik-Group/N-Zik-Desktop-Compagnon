@@ -36,7 +36,7 @@ skip() { echo "  SKIP  $1"; SKIP=$((SKIP+1)); }
 # locate an exact file name under the compose output tree (the layout varies by task:
 # the zips land in binaries/, the .deb/.rpm in binaries/main/<type>/)
 find_artifact() {
-  find app/build/compose/binaries -type f -name "$1" 2>/dev/null | head -1
+  find ComposeN-Zik/build/compose/binaries -type f -name "$1" 2>/dev/null | head -1
 }
 
 baseVersion=$(grep -oP 'nzikVersionName\s*=\s*"\K[^"]+' gradle/libs.versions.toml)
@@ -48,21 +48,21 @@ echo "== [1/4] full test suite (Linux, after clean) =="
 if ./gradlew clean build --console=plain -q; then ok "gradlew clean build (full suite, Linux host)"; else bad "gradlew clean build failed"; fi
 
 echo "== [2/4] channel artifact naming — portable zip (stable + dev) =="
-if ./gradlew :app:packageLinuxPortable -Pchannel=stable --console=plain -q; then
+if ./gradlew :ComposeN-Zik:packageLinuxPortable -Pchannel=stable --console=plain -q; then
   if [ -n "$(find_artifact "${pkgStable}-${baseVersion}-linux-portable.zip")" ]; then
     ok "stable zip: ${pkgStable}-${baseVersion}-linux-portable.zip"
   else
-    bad "missing ${pkgStable}-${baseVersion}-linux-portable.zip under app/build/compose/binaries"
+    bad "missing ${pkgStable}-${baseVersion}-linux-portable.zip under ComposeN-Zik/build/compose/binaries"
   fi
 else
   bad "packageLinuxPortable (stable) failed"
 fi
 
-if ./gradlew :app:packageLinuxPortable -Pchannel=dev --console=plain -q; then
+if ./gradlew :ComposeN-Zik:packageLinuxPortable -Pchannel=dev --console=plain -q; then
   if [ -n "$(find_artifact "${pkgDev}-${baseVersion}-dev-${today}-linux-portable.zip")" ]; then
     ok "dev zip: ${pkgDev}-${baseVersion}-dev-${today}-linux-portable.zip"
   else
-    bad "missing ${pkgDev}-${baseVersion}-dev-${today}-linux-portable.zip under app/build/compose/binaries (today=$today)"
+    bad "missing ${pkgDev}-${baseVersion}-dev-${today}-linux-portable.zip under ComposeN-Zik/build/compose/binaries (today=$today)"
   fi
 else
   bad "packageLinuxPortable (dev) failed"
@@ -70,20 +70,20 @@ fi
 
 echo "== [3/4] .deb builds (stable + dev) / .rpm (when rpmbuild is present) =="
 if command -v dpkg >/dev/null 2>&1; then
-  if ./gradlew :app:packageDeb -Pchannel=stable --console=plain -q; then
+  if ./gradlew :ComposeN-Zik:packageDeb -Pchannel=stable --console=plain -q; then
     if [ -n "$(find_artifact "${pkgStable}_${baseVersion}-1_amd64.deb")" ]; then
       ok "stable deb: ${pkgStable}_${baseVersion}-1_amd64.deb"
     else
-      bad "missing ${pkgStable}_${baseVersion}-1_amd64.deb under app/build/compose/binaries"
+      bad "missing ${pkgStable}_${baseVersion}-1_amd64.deb under ComposeN-Zik/build/compose/binaries"
     fi
   else
     bad "packageDeb (stable) failed"
   fi
-  if ./gradlew :app:packageDeb -Pchannel=dev --console=plain -q; then
+  if ./gradlew :ComposeN-Zik:packageDeb -Pchannel=dev --console=plain -q; then
     if [ -n "$(find_artifact "${pkgDev}_${baseVersion}-dev-${today}-1_amd64.deb")" ]; then
       ok "dev deb: ${pkgDev}_${baseVersion}-dev-${today}-1_amd64.deb"
     else
-      bad "missing ${pkgDev}_${baseVersion}-dev-${today}-1_amd64.deb under app/build/compose/binaries (today=$today)"
+      bad "missing ${pkgDev}_${baseVersion}-dev-${today}-1_amd64.deb under ComposeN-Zik/build/compose/binaries (today=$today)"
     fi
   else
     bad "packageDeb (dev) failed"
@@ -92,11 +92,11 @@ else
   skip "dpkg not present — .deb builds skipped"
 fi
 if command -v rpmbuild >/dev/null 2>&1; then
-  if ./gradlew :app:packageRpm -Pchannel=stable --console=plain -q; then
+  if ./gradlew :ComposeN-Zik:packageRpm -Pchannel=stable --console=plain -q; then
     if [ -n "$(find_artifact "${pkgStable}-${baseVersion}-1.x86_64.rpm")" ]; then
       ok "stable rpm: ${pkgStable}-${baseVersion}-1.x86_64.rpm"
     else
-      bad "missing ${pkgStable}-${baseVersion}-1.x86_64.rpm under app/build/compose/binaries"
+      bad "missing ${pkgStable}-${baseVersion}-1.x86_64.rpm under ComposeN-Zik/build/compose/binaries"
     fi
   else
     bad "packageRpm (stable) failed"

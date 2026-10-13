@@ -39,10 +39,10 @@ dbus-java's SASL layer resolves the session-bus UID through `com.sun.security.au
 from the app classpath — it **never finds** `jdk.security.auth` (no app code references it). Without
 the module, EVERY session-bus connection inside every packaged Linux artifact (Flatpak, .deb, .rpm,
 AUR, portable zip) fails with `NoClassDefFoundError`, and the tray + MPRIS silently stay off — with
-a green build. `:app:run` is immune (host JDK, full module set) — the bug only shows in packaged
+a green build. `:ComposeN-Zik:run` is immune (host JDK, full module set) — the bug only shows in packaged
 artifacts.
 
-- The fix: `createRuntimeImage { modules.add("jdk.security.auth") }` in `app/build.gradle.kts`
+- The fix: `createRuntimeImage { modules.add("jdk.security.auth") }` in `ComposeN-Zik/build.gradle.kts`
   (in `project.afterEvaluate` — the Compose plugin creates the task in its OWN afterEvaluate, which
   runs first).
 - The pin: `LinuxPackagePinTest` reads `linux.jlinkModules` (the build exposes the EFFECTIVE module
@@ -123,8 +123,8 @@ permission in a future release, with `FlatpakPinTest` in the same change**; see 
 
 ```bash
 ./gradlew build                        # green first (all tests)
-./gradlew :app:packageFlatpak -Pchannel=dev
-# bundle: app/build/compose/binaries/n-zik-desktop-compagnon-dev-0.0.1-dev-<YYYYMMDD>-x86_64.flatpak
+./gradlew :ComposeN-Zik:packageFlatpak -Pchannel=dev
+# bundle: ComposeN-Zik/build/compose/binaries/n-zik-desktop-compagnon-dev-0.0.1-dev-<YYYYMMDD>-x86_64.flatpak
 pkexec flatpak install --system -y <ABSOLUTE bundle path>   # in-place update of the .dev
 pkill -f "N-Zik[ ]Desktop[ ]Compagnon[ ]DEV"                # restart (bracket regex — see pitfalls)
 nohup flatpak run com.nzik.desktop.compagnon.dev > /tmp/opencode/launch.log 2>&1 &
@@ -141,7 +141,7 @@ build it on a Linux/WSL host"; `.deb`/`.rpm` are disabled by the Compose plugin)
 run produces NO Linux artifact at all — only the skip messages. The packaging build runs INSIDE
 WSL (`./build.sh package <channel>`), never from the Windows side against the mount.
 
-- **`zstd` is a host prerequisite of `:app:packageArch`** — the `tar -I zstd` compressor, a
+- **`zstd` is a host prerequisite of `:ComposeN-Zik:packageArch`** — the `tar -I zstd` compressor, a
   system apt tool, not a pinned artifact. A stock WSL Ubuntu does NOT have it. The task fails
   loud at its very start: `zstd not found on the PATH (or its --version failed) — install it
   with: sudo apt install zstd` (live-verified 2026-10-13 with a stripped `PATH` — the failure is

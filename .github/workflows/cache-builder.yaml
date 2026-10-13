@@ -35,7 +35,7 @@ jobs:
   #
   # Topology:
   # Scan Git's commit logs for any changes in 1 of these locations:
-  # - app/src (all sources: main + test)
+  # - ComposeN-Zik/src (all sources: main + test)
   # - .gradle, .gradle.kts, gradle-wrapper.properties, or the version catalog
   # If any change is detected, warm the build cache later on.
   #
@@ -58,14 +58,14 @@ jobs:
       # Explanations:
       # git log --since="48 hours ago" --name-only --pretty=format:
       # - Show all files that were changed within 48 hrs.
-      # - Show changed file paths in relative (app/src, etc.)
+      # - Show changed file paths in relative (ComposeN-Zik/src, etc.)
       #
       - name: Detect changes in last 48 hours
         id: detect-changes
         run: |
           CHANGES_MADE=false
           if \
-            git log --since="48 hours ago" --name-only --pretty=format: | grep -q "^app/src/" || \
+            git log --since="48 hours ago" --name-only --pretty=format: | grep -q "^ComposeN-Zik/src/" || \
             git log --since="48 hours ago" --name-only --pretty=format: | grep -q "^.*\.gradle.*" || \
             git log --since="48 hours ago" --name-only --pretty=format: | grep -q "^gradle/wrapper/gradle-wrapper.properties$" || \
             git log --since="48 hours ago" --name-only --pretty=format: | grep -q "^gradle/libs.versions.toml$"; then
@@ -107,7 +107,7 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
             ./build
-            ./app/build
+            ./ComposeN-Zik/build
           # Same key contract as build.yml — this pre-warmed cache is
           # restored by the Build workflow.
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}

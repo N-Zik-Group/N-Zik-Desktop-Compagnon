@@ -17,4 +17,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "N-Zik-Desktop-Compagnon"
-include(":app")
+include(":ComposeN-Zik")

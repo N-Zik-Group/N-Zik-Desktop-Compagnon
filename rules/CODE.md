@@ -233,7 +233,7 @@ Rules:
 
 ## UI — Compose Multiplatform Desktop + Material 3
 
-- All UI in Compose (Desktop target, single `:app` module) — no XML, no Swing UI code outside the Compose bootstrap in `Main.kt`
+- All UI in Compose (Desktop target, single `:ComposeN-Zik` module) — no XML, no Swing UI code outside the Compose bootstrap in `Main.kt`
 - **The phone's look & feel is the source of truth:** screens are ported from the phone file by file (same names, same constants, same modifier chains); when in doubt, check the phone app's file (workspace `N-Zik/` repo, READ-ONLY reference) and match it
 - Use the existing theming system — `ColorPalette` (dynamic palette read from the current track's cover via `CoverPaletteExtractor`, N-Zik violet without a cover), `AnimatedAppearance`, `PaletteFade`, Rubik/Roboto typography; do NOT invent new CompositionLocals
 - Animations under 300ms for snappy feel (sheet appear 300 ms, the 250 ms pop — ported values)
@@ -279,7 +279,7 @@ Menu sheets follow the phone's `CustomModalBottomSheet` semantics, ported at `Me
 - **Coroutines:** `runTest` (kotlinx-coroutines-test) with virtual time for timing logic (backoff, debounces, the 3 s delta wait) — the dominant style
 - **HTTP:** Ktor `MockEngine` for `BridgeClient`/repository route tests (assert routes, bodies, parameters, id encoding, error mapping); a **real CIO server on loopback** only where a real socket is the subject (the pairing listener)
 - **Pure UI math** (sheet snap, seek bar scrub, duration indicator, palette fade) is extracted to pure functions and tested directly — follow this pattern for new UI logic
-- Test files: `app/src/test/kotlin/` — mirror the source package structure
+- Test files: `ComposeN-Zik/src/test/kotlin/` — mirror the source package structure
 
 ```kotlin
 import kotlinx.coroutines.test.runTest
@@ -301,7 +301,7 @@ class PagedListTest {
 
 ## Translations
 
-- UI strings live ONLY in `app/src/main/composeResources/values/strings.xml` (English, the single strings file — there are no `values-*` files and no Crowdin on the PC)
+- UI strings live ONLY in `ComposeN-Zik/src/main/composeResources/values/strings.xml` (English, the single strings file — there are no `values-*` files and no Crowdin on the PC)
 - Ported screens **reuse the phone's keys and English texts** — copy the phone's `strings.xml` entries when porting a screen, don't invent new keys for the same concept
 - **Format arguments:** this Compose version's `getString`/`stringResource` apply NO format arguments — any string with `%s` is formatted at the call site with `formatMessage` (suspend) / `formatText` (`utils/Toaster.kt`); the raw message is kept on a mismatch. Never add format args to a string expecting the resource loader to apply them
 

@@ -36,7 +36,7 @@ jobs:
         run: python .github/get_translators.py
 
       - name: Copy generated translators.json to its correct place
-        run: "mkdir -p app/src/main/resources && mv translators.json app/src/main/resources/translators.json"
+        run: "mkdir -p ComposeN-Zik/src/main/resources && mv translators.json ComposeN-Zik/src/main/resources/translators.json"
 
       - name: Get current date
         id: date

@@ -163,7 +163,7 @@ body:
     attributes:
       label: 📜 Logs
       description: |
-        The app logs to its console (java.util.logging). If you build the app from source, launch it from a terminal with `gradlew.bat :app:run`, reproduce the issue, and copy the relevant lines from that terminal window.
+        The app logs to its console (java.util.logging). If you build the app from source, launch it from a terminal with `gradlew.bat :ComposeN-Zik:run`, reproduce the issue, and copy the relevant lines from that terminal window.
         Installed releases do not expose the console. In that case, skip this field and mention it in the bug description.
         If the logs are too large to paste directly, attach them as a file, or upload them to https://pastebin.com/ and share the link.
       placeholder: |

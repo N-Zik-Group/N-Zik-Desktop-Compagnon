@@ -1,23 +1,23 @@
 {
   "repo_notes": [
     {
-      "content": "This repository is N-Zik Desktop Compagnon, a Windows-only companion app (Kotlin + Compose Desktop, single :app module, package root app.n_zik.compagnon.) for the N-Zik Android music player. The phone is the single source of truth: it runs a local server on the Wi-Fi network, and this app only talks to it (pairing, REST + WebSocket, artwork, streamed audio). No business logic or streaming stack lives on the PC, and there is no database on the PC — the phone's local DB is the only database. It is a transitional product that will be replaced by a standalone N-Zik desktop app."
+      "content": "This repository is N-Zik Desktop Compagnon, a Windows-only companion app (Kotlin + Compose Desktop, single :ComposeN-Zik module, package root app.n_zik.compagnon.) for the N-Zik Android music player. The phone is the single source of truth: it runs a local server on the Wi-Fi network, and this app only talks to it (pairing, REST + WebSocket, artwork, streamed audio). No business logic or streaming stack lives on the PC, and there is no database on the PC — the phone's local DB is the only database. It is a transitional product that will be replaced by a standalone N-Zik desktop app."
     },
     {
-      "content": "All code lives in app/src/main/kotlin/app/n_zik/compagnon/: bridge/ (the phone-to-PC contract layer: pairing/, state/, library/, command/, plus BridgeSession.kt the WebSocket session), components/ (the UI ported from the phone: ui/screens/, player/, queue, menus, chips/toolbars, theming), core/ (network: BridgeClient + LibraryApi/PlayerApi/AudioApi, navigation, palette, image cache factory), playback/ (embedded VLC via vlcj: VlcRuntime, VlcAudioEngine, AudioCache, LocalPlayback), and utils/coroutines/ (NzikDispatchers). app/build.gradle.kts pins an embedded VLC 3.0.24 win64 runtime that is downloaded at build time and verified against a pinned SHA-256. The central project rule is the wire contract: every feature is gated on its negotiated contract feature, and buttons without a contract route are shown as inert (InertButton/InertMenuItem), never faked."
+      "content": "All code lives in ComposeN-Zik/src/main/kotlin/app/n_zik/compagnon/: bridge/ (the phone-to-PC contract layer: pairing/, state/, library/, command/, plus BridgeSession.kt the WebSocket session), components/ (the UI ported from the phone: ui/screens/, player/, queue, menus, chips/toolbars, theming), core/ (network: BridgeClient + LibraryApi/PlayerApi/AudioApi, navigation, palette, image cache factory), playback/ (embedded VLC via vlcj: VlcRuntime, VlcAudioEngine, AudioCache, LocalPlayback), and utils/coroutines/ (NzikDispatchers). ComposeN-Zik/build.gradle.kts pins an embedded VLC 3.0.24 win64 runtime that is downloaded at build time and verified against a pinned SHA-256. The central project rule is the wire contract: every feature is gated on its negotiated contract feature, and buttons without a contract route are shown as inert (InertButton/InertMenuItem), never faked."
     },
     {
-      "content": "The device token (pairing secret) lives only in the Windows Credential Manager and is never written to pairing.json, logs, or anywhere on disk — document the pairing security model accordingly. Tests live in app/src/test/kotlin mirroring the main package structure; `gradlew.bat build` runs compile + all tests. The .github/ directory holds the build CI (build.yml + cache-builder.yaml with a shared Gradle cache contract), repo-maintenance workflows, the Crowdin translation sync, issue/PR templates, dependabot, the code of conduct and the security policy."
+      "content": "The device token (pairing secret) lives only in the Windows Credential Manager and is never written to pairing.json, logs, or anywhere on disk — document the pairing security model accordingly. Tests live in ComposeN-Zik/src/test/kotlin mirroring the main package structure; `gradlew.bat build` runs compile + all tests. The .github/ directory holds the build CI (build.yml + cache-builder.yaml with a shared Gradle cache contract), repo-maintenance workflows, the Crowdin translation sync, issue/PR templates, dependabot, the code of conduct and the security policy."
     }
   ],
   "pages": [
     {
       "title": "Project Overview",
-      "purpose": "What the companion is (Windows companion of the N-Zik phone app, phone as single source of truth, transitional product), how to install/build/run it (JDK 21, gradlew.bat build, gradlew.bat :app:run), and the high-level architecture"
+      "purpose": "What the companion is (Windows companion of the N-Zik phone app, phone as single source of truth, transitional product), how to install/build/run it (JDK 21, gradlew.bat build, gradlew.bat :ComposeN-Zik:run), and the high-level architecture"
     },
     {
       "title": "Build & Embedded VLC Runtime",
-      "purpose": "The Gradle setup in app/build.gradle.kts: the embedded VLC 3.0.24 win64 runtime (downloadVlc/extractVlc/prepareAppResources, pinned SHA-256, the audio subset under build/vlc-runtime), the packaging tasks, and the opt-in VlcRuntimeTrialTest (-PvlcTrial)",
+      "purpose": "The Gradle setup in ComposeN-Zik/build.gradle.kts: the embedded VLC 3.0.24 win64 runtime (downloadVlc/extractVlc/prepareAppResources, pinned SHA-256, the audio subset under build/vlc-runtime), the packaging tasks, and the opt-in VlcRuntimeTrialTest (-PvlcTrial)",
       "parent": "Project Overview"
     },
     {
@@ -92,7 +92,7 @@
     },
     {
       "title": "Tests",
-      "purpose": "app/src/test/kotlin: the JUnit 5 + kotlinx-coroutines-test + Ktor test tools setup, tests mirroring the main package structure, and how to run them (gradlew.bat :app:test)",
+      "purpose": "ComposeN-Zik/src/test/kotlin: the JUnit 5 + kotlinx-coroutines-test + Ktor test tools setup, tests mirroring the main package structure, and how to run them (gradlew.bat :ComposeN-Zik:test)",
       "parent": "Core Infrastructure"
     },
     {

@@ -52,9 +52,9 @@ If a BMAD skill fails or gets stuck:
 
 Symptom: `downloadVlc` fails — HTTP error from download.videolan.org, or `VLC zip SHA-256 mismatch: expected …, got …`.
 
-1. If the download failed (network) → re-run `gradlew.bat :app:build` once the connection is back; the zip is cached in the Gradle user home, so a successful download is never repeated
+1. If the download failed (network) → re-run `gradlew.bat :ComposeN-Zik:build` once the connection is back; the zip is cached in the Gradle user home, so a successful download is never repeated
 2. If the **SHA-256 mismatched** → HALT immediately. Do NOT update `vlcZipSha256` to match what was downloaded, do NOT disable the check. Verify the hash against the official `vlc-3.0.24-win64.zip.sha256` (download.videolan.org); a mismatch means either the download was corrupted (delete the cached zip and re-download) or the official file changed (ask the user before touching the pin — AGENTS.md "Ask First")
-3. If `extractVlc` reports "VLC runtime incomplete, missing: …" → delete `app/build/vlc-runtime` and re-run; if it persists with a known-good zip → HALT, report to user
+3. If `extractVlc` reports "VLC runtime incomplete, missing: …" → delete `ComposeN-Zik/build/vlc-runtime` and re-run; if it persists with a known-good zip → HALT, report to user
 
 ## Gradle Wrapper Issues
 
