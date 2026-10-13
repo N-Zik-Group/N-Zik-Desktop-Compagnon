@@ -553,7 +553,7 @@
     <string name="proxy">Proxy</string>
     <string name="parental_control">Contrôle parental</string>
     <string name="maintenance_card_desc">Aperçu de l\'état de l\'application : tests de démarrage réussis et sous-systèmes actifs</string>
-    <string name="jump_previous">Le bouton Précédent redémarrera le titre en cours une fois les secondes suivantes écoulées</string>
+    <string name="jump_previous">Durée maximale écoulée depuis le morceau précédent</string>
     <string name="min_listening_time">Durée d\'écoute minimale</string>
     <string name="exclude_songs_with_duration_limit">Exclure les titres avec une limite de durée</string>
     <string name="vt_disabled">Désactivé</string>
