@@ -140,7 +140,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Download the tarball artifact
-        uses: actions/download-artifact@v8.0.1
+        uses: actions/download-artifact@v8.0.2
         with:
           name: vlc-tarball
           path: release
