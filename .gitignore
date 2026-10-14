@@ -7,7 +7,7 @@ out/
 local.properties
 hs_err_pid*.log
 
-###      BUILDS ARTIFACTS (ne jamais committer les builds)
+### BUILDS ARTIFACTS
 *.apk
 *.exe
 *.jar
