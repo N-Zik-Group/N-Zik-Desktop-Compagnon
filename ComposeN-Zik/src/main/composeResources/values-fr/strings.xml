@@ -477,9 +477,9 @@
     <string name="delete_playlists_confirm_all">Êtes-vous sûr de vouloir supprimer TOUTES les %d playlists ?</string>
     <string name="visualizer">Visualiseur</string>
     <string name="swipe_to_action">Action associée au balayage</string>
-    <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">Activer le menu d\'action en faisant glisser le titre vers la gauche ou la droite</string>
+    <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">Effectuez des actions en balayant vers la gauche ou vers la droite sur un titre dans la liste verticale des titres</string>
     <string name="navigation_bar_position">Position de la barre de navigation</string>
-    <string name="navigation_bar_type">Type de barre de navigation</string>
+    <string name="navigation_bar_type">Style de la barre de navigation</string>
     <string name="direction_left">À gauche</string>
     <string name="direction_right">À droite</string>
     <string name="direction_top">En haut</string>
@@ -546,8 +546,8 @@
     <string name="now_playing_indicator">Indicateur de lecture en cours</string>
     <string name="music_animations_bubbles">Bulles</string>
     <string name="persistent_queue">Lecteur persistant</string>
-    <string name="save_and_restore_playing_songs">Enregistrer et restaurer la lecture des titres</string>
-    <string name="skip_media_on_error">Ignorer automatiquement en cas d\'erreur</string>
+    <string name="save_and_restore_playing_songs">Enregistrer et reprendre la lecture des morceaux</string>
+    <string name="skip_media_on_error">Ignorer le morceau en cas d\'erreur</string>
     <string name="skip_media_on_error_description">Si une erreur survient, le média est changé</string>
     <string name="skip_silence">Ignorer le silence</string>
     <string name="skip_silent_parts_during_playback">Ignorer les parties silencieuses pendant la lecture</string>
