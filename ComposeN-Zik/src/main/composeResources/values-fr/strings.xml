@@ -548,7 +548,7 @@
     <string name="persistent_queue">Lecteur persistant</string>
     <string name="save_and_restore_playing_songs">Enregistrer et reprendre la lecture des morceaux</string>
     <string name="skip_media_on_error">Ignorer le morceau en cas d\'erreur</string>
-    <string name="skip_media_on_error_description">Si une erreur survient, le média est changé</string>
+    <string name="skip_media_on_error_description">En cas d\'erreur, passez au morceau suivant</string>
     <string name="skip_silence">Ignorer le silence</string>
     <string name="skip_silent_parts_during_playback">Ignorer les parties silencieuses pendant la lecture</string>
     <string name="loudness_normalization">Normalisation du volume</string>
