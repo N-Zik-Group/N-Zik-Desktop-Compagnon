@@ -35,7 +35,7 @@ kotlinx-coroutines = "1.11.0"
 jna = "5.19.1"
 # Linux MPRIS media controls (spec `spec-tray-taskbar-media-controls`, user approval 2026-10-11):
 # the D-Bus session bus client + the native unix-socket transport (MIT — GPL-3.0 compatible).
-dbus-java = "5.2.0"
+dbus-java = "5.2.2"
 zxing = "3.5.4"
 graphics-shapes = "1.1.0"
 vlcj = "4.12.1"
