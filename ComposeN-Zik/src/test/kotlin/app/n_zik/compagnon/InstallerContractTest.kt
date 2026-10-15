@@ -2,6 +2,7 @@ package app.n_zik.compagnon
 
 import java.io.File
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -50,6 +51,28 @@ class InstallerContractTest {
     /** The codes the installer exits with DIRECTLY: literal `SetErrorLevel <n>` (any scope). */
     private val literalExitCodes: Set<Int> by lazy {
         Regex("SetErrorLevel (\\d+)").findAll(nsiText).map { it.groupValues[1].toInt() }.toSet()
+    }
+
+    /**
+     * The body of a named NSIS function (between `Function <name>` and its `FunctionEnd`).
+     * The word boundary after the name anchors the match to an EXACT name — a bare
+     * indexOf("Function $name") would let a future `Function Shortcuts` resolve into
+     * `Function ShortcutsShow`'s body (or vice versa).
+     */
+    private fun nsisFunction(name: String): String {
+        val marker = Regex("Function " + Regex.escape(name) + """\b""").find(nsiText)
+            ?: error("$name is not defined in the NSIS script")
+        val end = nsiText.indexOf("FunctionEnd", marker.range.last)
+        check(end > marker.range.last) { "$name is not defined in the NSIS script" }
+        return nsiText.substring(marker.range.last + 1, end)
+    }
+
+    /** The body of a named NSIS section (from `Section "<name>"` to its `SectionEnd`). */
+    private fun nsisSection(name: String): String {
+        val start = nsiText.indexOf("Section \"$name\"")
+        val end = nsiText.indexOf("SectionEnd", start)
+        check(start >= 0 && end > start) { "Section \"$name\" is not found in the NSIS script" }
+        return nsiText.substring(start, end)
     }
 
     /**
@@ -163,6 +186,182 @@ class InstallerContractTest {
         assertTrue(
             nsiText.contains("!insertmacro MUI_PAGE_DIRECTORY"),
             "the directory page is offered (editable) — the custom-dir installs the registry cross-check covers"
+        )
+    }
+
+    /**
+     * The shortcuts page (spec `spec-installer-shortcuts-launch` D1/D4/D5): ONE checkbox —
+     * "Create shortcuts (Start Menu and Desktop)" — ON by default, between the directory page
+     * and the install-files page; the install section creates the shortcuts only under the
+     * `SHORTCUTS` gate, and the OFF branch DELETES the existing Desktop + Start Menu shortcuts
+     * (the upgrade path: an install with shortcuts, upgraded with the box off, must not keep
+     * the old `.lnk` files). The checkbox is read in the page's LEAVE callback (distro quirk —
+     * the leave fires on the Next click while the dialog still exists), and the silent path
+     * defaults `SHORTCUTS="1"` in `.onInit` (`/S` skips the pages).
+     */
+    @Test
+    fun `the shortcuts page exists before the install-files page and gates the shortcut block`() {
+        assertTrue(
+            nsiText.contains("Page custom ShortcutsShow ShortcutsLeave"),
+            "the shortcuts page must be a custom nsDialogs page (ShortcutsShow/ShortcutsLeave)"
+        )
+        val pagePos = nsiText.indexOf("Page custom ShortcutsShow ShortcutsLeave")
+        val directoryPos = nsiText.indexOf("!insertmacro MUI_PAGE_DIRECTORY")
+        val instfilesPos = nsiText.indexOf("!insertmacro MUI_PAGE_INSTFILES")
+        assertTrue(
+            directoryPos in 0 until pagePos && pagePos in 0 until instfilesPos,
+            "the shortcuts page must be ordered between the directory page and the install-files page (directory -> shortcuts -> install)"
+        )
+        assertTrue(
+            nsiText.contains("StrCpy \$SHORTCUTS \"1\""),
+            "the silent install path keeps shortcuts ON by default (SHORTCUTS = \"1\" in .onInit — /S skips the pages)"
+        )
+        assertTrue(
+            nsisFunction("ShortcutsShow").contains("\${NSD_SetState} \$R4 \${BST_CHECKED}"),
+            "the shortcut checkbox is created CHECKED by default (NSD_SetState to BST_CHECKED in ShortcutsShow — the leave alone cannot prove the default)"
+        )
+        assertTrue(
+            nsisFunction("ShortcutsLeave").contains("NSD_GetState"),
+            "the shortcut checkbox must be read in the page's LEAVE callback (distro quirk — a GetState after the show reads a destroyed dialog)"
+        )
+        // The ON branch creates both shortcuts; the OFF branch deletes the existing ones
+        // Pattern: \$\{If\} \$SHORTCUTS == "1"(.*?)\$\{EndIf\} — a raw string interpolates
+        // $identifiers, so the literal \$ before the var name is written as \ + ${'$'}
+        val block = Regex("""\$\{If\} \${'$'}SHORTCUTS == "1"(.*?)\$\{EndIf\}""", RegexOption.DOT_MATCHES_ALL)
+            .find(nsiText)?.value
+            ?: error("the SHORTCUTS gate block is not found in the NSIS script")
+        // Plain-text pins on the .nsi path fragments (raw strings: ${'$'} is the only way to
+        // write a literal $ that is not followed by an identifier; a backslash right before
+        // the closing delimiter stays a literal content character)
+        assertTrue(
+            block.contains("""CreateDirectory "${'$'}SMPROGRAMS\N-Zik""") &&
+                block.contains("""CreateShortcut "${'$'}SMPROGRAMS\N-Zik"""),
+            "the ON branch creates the Start Menu group \"N-Zik\" + its shortcut"
+        )
+        assertTrue(
+            block.contains("""CreateShortcut "${'$'}DESKTOP"""),
+            "the ON branch creates the Desktop shortcut"
+        )
+        assertTrue(block.contains("\${Else}"), "the OFF branch must exist (the upgrade path)")
+        val offBranch = block.substringAfter("\${Else}")
+        assertTrue(
+            offBranch.contains("Delete \"\$DESKTOP\\${'$'}{PRODUCT_NAME}.lnk\""),
+            "the OFF branch must DELETE the existing Desktop shortcut (an upgrade with the box off must not keep the old .lnk)"
+        )
+        assertTrue(
+            offBranch.contains("Delete \"\$SMPROGRAMS\\N-Zik\\${'$'}{PRODUCT_NAME}.lnk\""),
+            "the OFF branch must DELETE the existing Start Menu shortcut (an upgrade with the box off must not keep the old .lnk)"
+        )
+        assertTrue(
+            offBranch.contains("RMDir \"\$SMPROGRAMS\\N-Zik\""),
+            "the OFF branch also removes the (now empty) Start Menu group directory (the same operations the uninstaller does)"
+        )
+        // The elevated child RE-SHOWS the page (D5 — consistent with the scope / directory
+        // re-show, no state propagation): the show function must not branch on the elevation
+        // flag to skip it (a skip here would silently drop the user's choice on a global install)
+        assertTrue(
+            !nsisFunction("ShortcutsShow").contains("ELEVATED"),
+            "the shortcuts page must re-show in the elevated child (no ELEVATED branch that skips it — the user re-confirms after the UAC relaunch, same pattern as \$INSTDIR)"
+        )
+        // UPDATE_FLOW (spec edge-case matrix): the page is STILL OFFERED on /UPDATE — only the
+        // finish page branches on IS_UPDATE, never the shortcuts page
+        assertTrue(
+            !nsisFunction("ShortcutsShow").contains("IS_UPDATE"),
+            "the shortcuts page is still offered on /UPDATE (no IS_UPDATE branch that skips it — the updater flow keeps the user's shortcut choice)"
+        )
+        // The UNINSTALL row (unchanged by this feature — the pin guards the regression): the
+        // uninstaller deletes both shortcuts if present (Delete is a no-op when absent). Scoped
+        // to the uninstall section — a whole-file contains would be satisfied by the
+        // install-side OFF-branch Deletes above
+        val uninstallSection = nsisSection("Uninstall")
+        assertTrue(
+            uninstallSection.contains("Delete \"\$DESKTOP\\${'$'}{PRODUCT_NAME}.lnk\""),
+            "the UNINSTALLER deletes the Desktop shortcut if present (no-op when absent)"
+        )
+        assertTrue(
+            uninstallSection.contains("Delete \"\$SMPROGRAMS\\N-Zik\\${'$'}{PRODUCT_NAME}.lnk\""),
+            "the UNINSTALLER deletes the Start Menu shortcut if present (no-op when absent)"
+        )
+    }
+
+    /**
+     * The finish page (spec `spec-installer-shortcuts-launch` D2/D3): a custom nsDialogs page
+     * replacing the MUI finish page — the "Launch <product>" checkbox is ON by default and
+     * offered OUTSIDE the `/UPDATE` flow only (the updater helper relaunches the app after
+     * exit 0 — its own running-guard; a visible checkbox would add a redundant relaunch
+     * race). The launch is an async `Exec` of `$INSTDIR\${LAUNCHER_NAME}` (NOT `ExecWait` —
+     * the installer must return exit 0 to the helper immediately) and the exit-0 write to the
+     * propagation file stays in the leave.
+     */
+    @Test
+    fun `the finish page is custom and offers the launch checkbox only outside the updater flow`() {
+        assertFalse(
+            nsiText.contains("MUI_PAGE_FINISH"),
+            "the MUI finish page is replaced by the custom page — MUI_FINISHPAGE_RUN's checkbox is a compile-time define and cannot be conditionally hidden at runtime for /UPDATE"
+        )
+        assertTrue(
+            nsiText.contains("Page custom FinishShow FinishLeave"),
+            "the finish page must be a custom nsDialogs page (FinishShow/FinishLeave — the checkbox is read in the leave)"
+        )
+        // It must be the LAST page — the wizard frame shows the Finish button only on the final
+        // page (no button handling in the custom finish page)
+        val finishPagePos = nsiText.indexOf("Page custom FinishShow FinishLeave")
+        val instfilesPos = nsiText.indexOf("!insertmacro MUI_PAGE_INSTFILES")
+        assertTrue(
+            instfilesPos in 0 until finishPagePos,
+            "the finish page must come AFTER the install-files page (it is the last page — the Finish button depends on it)"
+        )
+        val show = nsisFunction("FinishShow")
+        // The /UPDATE branch: informational labels only, NO launch checkbox
+        val updateBranch = show.substringAfter("\${If} \$IS_UPDATE == \"1\"").substringBefore("\${Else}")
+        assertFalse(
+            updateBranch.contains("NSD_CreateCheckBox"),
+            "on /UPDATE the finish page must show NO launch checkbox (the updater helper relaunches the app after exit 0 — its own running-guard)"
+        )
+        assertTrue(
+            updateBranch.contains("NSD_CreateLabel"),
+            "on /UPDATE the finish page is an informational label only (the page still shows — it is the finish)"
+        )
+        // The non-/UPDATE branch: the launch checkbox, ON by default
+        val offUpdateBranch = show.substringAfter("\${Else}")
+        assertTrue(
+            offUpdateBranch.contains("Launch \${PRODUCT_NAME}"),
+            "outside /UPDATE the finish page offers the \"Launch <product>\" checkbox"
+        )
+        assertTrue(
+            offUpdateBranch.contains("NSD_CreateCheckBox") &&
+                offUpdateBranch.contains("\${NSD_SetState} \$R4 \${BST_CHECKED}"),
+            "the launch checkbox is created and CHECKED by default (NSD_SetState to BST_CHECKED — not merely present)"
+        )
+        // The leave: the launch gated on the checkbox + the exit-0 write
+        val leave = nsisFunction("FinishLeave")
+        assertTrue(
+            leave.contains("\${If} \$IS_UPDATE != \"1\""),
+            "the finish leave never reads the launch checkbox on /UPDATE (the IS_UPDATE guard — paired with the show's LAUNCH_APP reset, the never-launch guarantee cannot be dropped by removing one side alone)"
+        )
+        val gate = "\${If} \$LAUNCH_APP == \"1\""
+        assertTrue(
+            leave.contains(gate),
+            "the launch must run only when the launch checkbox was checked (the LAUNCH_APP gate)"
+        )
+        // The launch line as PLAIN TEXT (the same idiom as the registry pins above — a regex on
+        // the \$-carrying path is escape-fragile): Exec '"$INSTDIR\${LAUNCHER_NAME}"'
+        val execLine = "Exec '\"${'$'}INSTDIR\\${'$'}{LAUNCHER_NAME}\"'"
+        assertTrue(
+            leave.contains(execLine),
+            "the finish leave must launch the app (an async Exec) targeting \$INSTDIR\\<launcher>"
+        )
+        assertTrue(
+            leave.indexOf(gate) < leave.indexOf(execLine),
+            "the launch Exec must sit INSIDE the LAUNCH_APP gate (no launch when unchecked)"
+        )
+        assertTrue(
+            !leave.contains("ExecWait"),
+            "the launch must be async (Exec) — the installer returns exit 0 to the updater helper immediately"
+        )
+        assertTrue(
+            leave.contains("StrCpy \$EXITCODE_OUT \"0\"") && leave.contains("Call WriteExitCode"),
+            "the exit-0 write to the propagation file stays in the finish leave (the updater helper consumes exit 0 — the elevated child's primary channel)"
         )
     }
 }

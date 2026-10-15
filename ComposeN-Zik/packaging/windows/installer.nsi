@@ -55,6 +55,33 @@
 ; is NUMERIC (major / minor / patch / build - the dev build date), never
 ; lexicographic.
 ;
+; SHORTCUTS PAGE (after the directory page, before the install - the user
+; decision): ONE checkbox "Create shortcuts (Start Menu and Desktop)" -
+; CHECKED BY DEFAULT (a user who never touches the page keeps today's
+; behavior). Checked -> the install section creates the Start Menu group
+; "N-Zik" + the Desktop shortcut; unchecked -> no shortcuts are created AND
+; the EXISTING Desktop + Start Menu shortcuts are deleted (the upgrade path:
+; an install with shortcuts, upgraded with the box off, must not keep the
+; old .lnk files). The checkbox state is read in the page's LEAVE callback
+; (distro quirk - the leave fires on the Next click while nsDialogs::Show is
+; still blocked; a GetState after the show reads a destroyed dialog). Silent
+; installs (/S) skip the page: SHORTCUTS defaults to "1" in .onInit (the
+; silent path keeps today's behavior). On the global-scope elevation relaunch
+; the elevated child RE-SHOWS the page (consistent with the scope / directory
+; re-show - no state propagation, same pattern as $INSTDIR).
+;
+; FINISH PAGE (a custom nsDialogs page that REPLACES the MUI finish page): a
+; "Launch <product>" checkbox - CHECKED BY DEFAULT - the checked finish
+; launches the app with Exec (ASYNC: the installer must return exit 0 to the
+; updater helper immediately; ExecWait would block until the app exits). The
+; checkbox state is read in the page's LEAVE callback (the same distro quirk
+; as above). The launched app inherits the scope's privileges (global -> elevated) - accepted.
+; On /UPDATE (the in-app updater path) the page shows NO checkbox
+; - an informational label only: the updater helper relaunches the app after
+; exit 0 (its own running-guard; a visible checkbox would add a redundant
+; relaunch race). The exit-0 write to the propagation file stays in the
+; leave. Silent installs never reach the leave -> no auto-launch.
+;
 ; UNINSTALL - files + registry + shortcuts, plus an nsDialogs checkbox page
 ; "Also delete user data (pairing, settings, audio cache)" - UNCHECKED BY
 ; DEFAULT. Checked -> deletes %APPDATA%\<product> and the Windows Credential
@@ -195,6 +222,8 @@ Var INSTALLDATE     ; yyyyMMdd (the install date, written to the registry)
 Var UELEVATED       ; uninstaller: "1" when relaunched with --uninst-elevated
 Var UN_SCOPE        ; uninstaller: "peruser" | "global" (this install's scope)
 Var UN_NEED_ELEVATE ; uninstaller: "1" when the welcome PRE must relaunch elevated
+Var SHORTCUTS       ; "1" when the user checked the shortcuts page (Start Menu + Desktop, ON by default)
+Var LAUNCH_APP      ; "1" when the user checked the finish page's launch checkbox (ON by default, never on /UPDATE)
 
 ; ============================================================================
 ; Helpers
@@ -736,6 +765,11 @@ Function .onInit
   StrCpy $CHOSEN_SCOPE ""
   StrCpy $RRU_CHOICE "upgrade"
   StrCpy $EXITCODE_OUT ""
+  ; Shortcuts ON by default (the silent path: /S skips the pages and never
+  ; reaches the finish leave, so the silent install keeps today's behavior -
+  ; shortcuts, no auto-launch). The interactive pages re-resolve both.
+  StrCpy $SHORTCUTS "1"
+  StrCpy $LAUNCH_APP "1"
   StrCpy $INST_SCOPE_OLD ""
   StrCpy $INST_DIR_OLD ""
   StrCpy $INST_VER_OLD ""
@@ -905,10 +939,11 @@ Page custom ScopeShow ScopeLeave
 
 !insertmacro MUI_PAGE_DIRECTORY
 
+Page custom ShortcutsShow ShortcutsLeave
+
 !insertmacro MUI_PAGE_INSTFILES
 
-!define MUI_PAGE_CUSTOMFUNCTION_LEAVE "FinishLeave"
-!insertmacro MUI_PAGE_FINISH
+Page custom FinishShow FinishLeave
 
 ; ============================================================================
 ; RRU page (existing install + NOT /UPDATE)
@@ -1087,8 +1122,111 @@ Function ScopeLeave
   ${EndIf}
 FunctionEnd
 
-; Exit code 0 on the finish-page leave (install already happened in the section)
+; ============================================================================
+; Shortcuts page (after the directory page, before the install)
+; ============================================================================
+
+Function ShortcutsShow
+  nsDialogs::Create 1018
+  Pop $R0
+  ; nsDialogs::Create returns the string "error" on failure - the
+  ; official check per the plugin Readme; Abort in the show function skips
+  ; the page
+  ${If} $R0 == error
+    Abort
+  ${EndIf}
+  ${NSD_CreateLabel} 5 5 250 16 "Create shortcuts"
+  Pop $R1
+  ; The explanation as two single-line labels (multiline EDIT/MLText
+  ; controls render empty in this NSIS distro - proven)
+  ${NSD_CreateLabel} 5 23 260 14 "The installer can create a Start Menu entry"
+  Pop $R2
+  ${NSD_CreateLabel} 5 39 260 14 "(group N-Zik) and a Desktop shortcut."
+  Pop $R6
+  ; ONE checkbox controls both shortcuts (the request is binary) -
+  ; CHECKED BY DEFAULT (today's behavior)
+  ${NSD_CreateCheckBox} 5 57 260 16 "Create shortcuts (Start Menu and Desktop)"
+  Pop $R4
+  ${NSD_SetState} $R4 ${BST_CHECKED}
+  nsDialogs::Show
+  Pop $R0
+FunctionEnd
+
+; Read the checkbox in the leave callback: in this distro the leave fires on
+; the Next click while the show function is still in the nsDialogs::Show
+; message pump (marker-proven) - by the time the show function's post-Show
+; tail runs, the dialog (and the checkbox) is already destroyed, so a
+; GetState there would always read unchecked.
+Function ShortcutsLeave
+  StrCpy $SHORTCUTS "0"
+  ${NSD_GetState} $R4 $R1
+  ${If} $R1 == ${BST_CHECKED}
+    StrCpy $SHORTCUTS "1"
+  ${EndIf}
+FunctionEnd
+
+; ============================================================================
+; Finish page (a custom nsDialogs page replacing the MUI finish page)
+; ============================================================================
+
+Function FinishShow
+  nsDialogs::Create 1018
+  Pop $R0
+  ; nsDialogs::Create returns the string "error" on failure - the
+  ; official check per the plugin Readme; Abort in the show function skips
+  ; the page
+  ${If} $R0 == error
+    Abort
+  ${EndIf}
+  ${If} $IS_UPDATE == "1"
+    ; /UPDATE (the in-app updater path): NO launch checkbox - informational
+    ; labels only. The updater helper relaunches the app after exit 0
+    ; (its own running-guard); a visible checkbox would add a redundant
+    ; relaunch race. The page still shows (it is the finish - the wizard
+    ; frame shows the Finish button on the last page automatically)
+    ${NSD_CreateLabel} 5 5 250 16 "Installation complete"
+    Pop $R1
+    ${NSD_CreateLabel} 5 23 260 14 "${PRODUCT_NAME} has been updated."
+    Pop $R2
+    ${NSD_CreateLabel} 5 39 260 14 "The application will be restarted"
+    Pop $R6
+    ${NSD_CreateLabel} 5 55 260 14 "automatically - click Finish to close."
+    Pop $R7
+    StrCpy $LAUNCH_APP "0"
+  ${Else}
+    ${NSD_CreateLabel} 5 5 250 16 "Installation complete"
+    Pop $R1
+    ${NSD_CreateLabel} 5 23 260 14 "${PRODUCT_NAME} has been installed."
+    Pop $R2
+    ; CHECKED BY DEFAULT - read in the leave callback (distro quirk)
+    ${NSD_CreateCheckBox} 5 41 260 16 "Launch ${PRODUCT_NAME}"
+    Pop $R4
+    ${NSD_SetState} $R4 ${BST_CHECKED}
+  ${EndIf}
+  nsDialogs::Show
+  Pop $R0
+FunctionEnd
+
+; Finish-page leave: the launch decision + exit code 0 (the install already
+; happened in the section). The checkbox must be read NOW: in this distro
+; the leave fires on the Finish click while the show function is still in
+; the nsDialogs::Show message pump (marker-proven) - the dialog is already
+; destroyed by the time the show function's post-Show tail runs, so a
+; GetState there would always read unchecked.
 Function FinishLeave
+  StrCpy $LAUNCH_APP "0"
+  ${If} $IS_UPDATE != "1"
+    ${NSD_GetState} $R4 $R1
+    ${If} $R1 == ${BST_CHECKED}
+      StrCpy $LAUNCH_APP "1"
+    ${EndIf}
+  ${EndIf}
+  ; Launch with Exec (ASYNC): the installer must return exit 0 to the
+  ; updater helper immediately - a wait on the launched app (a synchronous
+  ; launch) would block until the app exits
+  ${If} $LAUNCH_APP == "1"
+    Exec '"$INSTDIR\${LAUNCHER_NAME}"'
+  ${EndIf}
   StrCpy $EXITCODE_OUT "0"
   Call WriteExitCode
 FunctionEnd
@@ -1211,10 +1349,21 @@ DoExtract:
 ExtractedOk:
 
   ; --- Shortcuts (parity with the jpackage windows{} config: the start menu
-  ;     group "N-Zik" + the desktop shortcut)
-  CreateDirectory "$SMPROGRAMS\N-Zik"
-  CreateShortcut "$SMPROGRAMS\N-Zik\${PRODUCT_NAME}.lnk" "$INSTDIR\${LAUNCHER_NAME}" "" "$INSTDIR\${LAUNCHER_NAME}" 0
-  CreateShortcut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\${LAUNCHER_NAME}" "" "$INSTDIR\${LAUNCHER_NAME}" 0
+  ;     group "N-Zik" + the desktop shortcut) - gated on the shortcuts page
+  ;     checkbox ($SHORTCUTS, ON by default; the silent path defaults it in
+  ;     .onInit). OFF -> the existing shortcuts are DELETED (the upgrade
+  ;     path: an install with shortcuts upgraded with the box off must not
+  ;     keep the old .lnk files - the same operations the uninstaller does;
+  ;     Delete is a no-op when the .lnk is absent)
+  ${If} $SHORTCUTS == "1"
+    CreateDirectory "$SMPROGRAMS\N-Zik"
+    CreateShortcut "$SMPROGRAMS\N-Zik\${PRODUCT_NAME}.lnk" "$INSTDIR\${LAUNCHER_NAME}" "" "$INSTDIR\${LAUNCHER_NAME}" 0
+    CreateShortcut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\${LAUNCHER_NAME}" "" "$INSTDIR\${LAUNCHER_NAME}" 0
+  ${Else}
+    Delete "$DESKTOP\${PRODUCT_NAME}.lnk"
+    Delete "$SMPROGRAMS\N-Zik\${PRODUCT_NAME}.lnk"
+    RMDir "$SMPROGRAMS\N-Zik"
+  ${EndIf}
 
   ; --- Install date (yyyyMMdd). This NSIS distro has no DateGet, so the local
   ;     date comes from kernel32 GetLocalTime (SYSTEMTIME). The System plugin
