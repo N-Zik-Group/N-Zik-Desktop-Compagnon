@@ -51,6 +51,7 @@ import app.n_zik.compagnon.updater.models.livePackageManager
 import app.n_zik.compagnon.updater.services.UpdateDownloadManager
 import app.n_zik.compagnon.updater.services.Updater
 import app.n_zik.compagnon.updater.ui.InstallStep
+import app.n_zik.compagnon.updater.ui.channelLabel
 import app.n_zik.compagnon.updater.ui.copyToClipboard
 import app.n_zik.compagnon.updater.ui.installCommand
 import app.n_zik.compagnon.updater.ui.openFileFolder
@@ -431,21 +432,6 @@ object NewUpdateAvailableDialog {
                 }
             }
         }
-    }
-
-    /** The "BETA Update available" title prefix: the uppercase channel label + a space —
-     *  stable is labeled too (the phone's strings are uppercase in the update flow — its
-     *  "BETA Update available"). The desktop's `*_title` strings are uppercase in
-     *  `values/strings.xml`, but the `values-*` locale copies stay mixed-case until the next
-     *  Crowdin resync, so the case is applied at render (plain rendering/normalization, not a
-     *  safeguard — round-4 audit MINOR-1). */
-    @Composable
-    private fun channelLabel(): String = when (AppVersion.channel) {
-        "beta" -> stringResource(Res.string.beta_title).uppercase() + " "
-        "stable" -> stringResource(Res.string.stable_title).uppercase() + " "
-        "dev" -> stringResource(Res.string.dev_title).uppercase() + " "
-        "git" -> stringResource(Res.string.git_title).uppercase() + " "
-        else -> ""
     }
 
     /** A single full-width cancel button (the no-download / no-asset phases). */

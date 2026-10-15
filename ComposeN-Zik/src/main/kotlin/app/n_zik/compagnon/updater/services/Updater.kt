@@ -63,7 +63,10 @@ object Updater {
     // card without recomposing anything by hand (the phone's `build` / `tagName` were plain
     // fields because Android re-reads them on rotation; Compose Desktop needs the state).
     var build: GithubRelease.Build? by mutableStateOf(null)
-    private var tagName: String? by mutableStateOf(null)
+    // `internal` (the test seam, like [fetchUpdate] / [decideCheck]): the pre-fetch cleanup
+    // (spec `spec-updater-parity-fixes`) must be pinnable — a failed re-check clears the tag
+    // like [githubRelease] / [build]
+    internal var tagName: String? by mutableStateOf(null)
 
     /** The app's [Preferences] (`settings.json`), attached once before any check. */
     private var preferences: Preferences? = null
@@ -256,6 +259,15 @@ object Updater {
         packageManager: PackageManager = livePackageManager(),
         isReleasePackage: Boolean = currentDistributionMarker() != null,
     ) = withContext(NzikDispatchers.DATA) {
+        // Clear any previously found release so a failed fetch or a no-update result never
+        // leaves a stale update visible to the UI (the phone's pre-fetch cleanup, ported to the
+        // PC's three release states — spec `spec-updater-parity-fixes`: a failed forced
+        // re-check must hide the previous release, its download gesture with it; the previous
+        // changelog is already cleared by checkForUpdate at the start of the check)
+        this@Updater.githubRelease = null
+        this@Updater.build = null
+        this@Updater.tagName = null
+
         // Get all releases to find the best one
         val url = "${UpdaterConstants.GITHUB_API}/repos/${UpdaterConstants.REPO}/releases"
         val response = client.get(url)

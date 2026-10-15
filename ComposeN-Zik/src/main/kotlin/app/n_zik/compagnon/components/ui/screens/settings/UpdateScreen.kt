@@ -71,6 +71,7 @@ import app.n_zik.compagnon.updater.services.ChangelogTranslator
 import app.n_zik.compagnon.updater.ui.ChangelogCard
 import app.n_zik.compagnon.updater.ui.InstallStep
 import app.n_zik.compagnon.updater.ui.UpdateLanguage
+import app.n_zik.compagnon.updater.ui.channelLabel
 import app.n_zik.compagnon.updater.ui.copyToClipboard
 import app.n_zik.compagnon.updater.ui.installCommand
 import app.n_zik.compagnon.updater.ui.openFileFolder
@@ -197,19 +198,9 @@ fun UpdateScreen(
         }
     }
 
-    // The "BETA/DEV/…" title prefix: the uppercase channel label + a space — stable is labeled
-    // too (the phone shows "STABLE" on the stable channel as well; the phone's strings are
-    // uppercase in the update flow). The `*_title` strings are uppercase in values/strings.xml,
-    // but the values-* locale copies stay mixed-case until the next Crowdin resync — the
-    // .uppercase() is plain rendering/normalization, not a safeguard (round-4 audit MINOR-1)
-    val channelLabel = when (channel) {
-        "beta" -> stringResource(Res.string.beta_title).uppercase() + " "
-        "stable" -> stringResource(Res.string.stable_title).uppercase() + " "
-        "dev" -> stringResource(Res.string.dev_title).uppercase() + " "
-        "git" -> stringResource(Res.string.git_title).uppercase() + " "
-        "debug" -> stringResource(Res.string.debug_title).uppercase() + " "
-        else -> ""
-    }
+    // The "BETA/DEV/…" title prefix (the shared [channelLabel] — spec
+    // `spec-updater-parity-fixes`: the page and the update dialog render it from the single
+    // shared source)
 
     // The page structure (the phone's `updater/ui/UpdateScreen.kt` Scaffold: the fixed header, the
     // scrollable content, the bottom action fixed under it — the phone's bottomBar)
@@ -389,7 +380,7 @@ fun UpdateScreen(
                                         text = if (isReinstalling) {
                                             stringResource(Res.string.reinstalling_update)
                                         } else {
-                                            "$channelLabel${stringResource(Res.string.update_available)}"
+                                            "${channelLabel(channel)}${stringResource(Res.string.update_available)}"
                                         },
                                         modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                                         maxLines = 1,
@@ -646,7 +637,7 @@ fun UpdateScreen(
                                         stringResource(Res.string.downloading_update)
                                     } else {
                                         val extraInfo =
-                                            if (fileSize.isNotEmpty()) "$channelLabel.trim() - $fileSize" else channelLabel.trim()
+                                            if (fileSize.isNotEmpty()) "${channelLabel(channel).trim()} - $fileSize" else channelLabel(channel).trim()
                                         formatText(
                                             stringResource(Res.string.downloading_actual_version),
                                             currentVersion,

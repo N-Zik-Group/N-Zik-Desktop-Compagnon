@@ -65,7 +65,11 @@ fun isNsisWindowsInstall(
     executablePath: String,
     productName: String,
     channel: String = AppVersion.channel,
-    registryInstallDir: (String) -> String? = { windowsInstallDirFromRegistry(it) },
+    registryInstallDir: (String) -> String? = {
+        // The cross-scope reader (spec `spec-updater-parity-fixes`): the instance dir is this
+        // launcher's folder — the hive whose record matches it wins
+        windowsInstallDirFromRegistry(it, File(executablePath).parentFile?.path.orEmpty())
+    },
 ): Boolean {
     val launcherDir = File(executablePath).parentFile ?: return false
     if (!File(launcherDir, "Uninstall $productName.exe").isFile) return false
@@ -86,16 +90,42 @@ private fun sameWindowsDir(recorded: String, dir: String): Boolean {
 
 /**
  * The install dir the NSIS installer recorded for a channel (spec `spec-windows-portable-zip`,
- * review loopback 2 — D1): `installer.nsi` writes `InstallDir = $INSTDIR` into the per-channel
- * key at install time (HKCU for the per-user scope, HKLM for the global — both are consulted).
+ * review loopback 2 — D1; the cross-scope fix, spec `spec-updater-parity-fixes`): `installer.nsi`
+ * writes `InstallDir = $INSTDIR` into the per-channel key at install time (HKCU for the per-user
+ * scope, HKLM for the global — a per-user AND a global install of the same channel can coexist,
+ * so both are consulted). The returned record is the hive whose `InstallDir` matches the running
+ * instance's directory ([instanceDir], [preferMatchingInstallDir] — the mobile principle: the
+ * selection is a pure function of the current instance), degrading to the HKCU-first, then HKLM
+ * read when neither hive matches (the pre-audit behavior, now an explicit fallback).
  * Windows-only by construction (reached only from the Windows branch of [detectInstallMode] via
  * [isNsisWindowsInstall]); `null` when the key or the value is absent or unreadable (a manually
- * cleaned key degrades to the folder-name rule).
+ * cleaned key degrades to the folder-name rule). A degenerate empty [instanceDir] (the default
+ * seam's `orEmpty()` — an executable path with no parent) can never match a hive and falls
+ * back to the HKCU-first read as well.
  */
-fun windowsInstallDirFromRegistry(channel: String): String? {
+fun windowsInstallDirFromRegistry(channel: String, instanceDir: String): String? {
     val key = "Software\\N-Zik\\DesktopCompagnon\\$channel"
-    return registryInstallDirUnder(WinReg.HKEY_CURRENT_USER, key)
-        ?: registryInstallDirUnder(WinReg.HKEY_LOCAL_MACHINE, key)
+    return preferMatchingInstallDir(
+        hkcu = registryInstallDirUnder(WinReg.HKEY_CURRENT_USER, key),
+        hklm = registryInstallDirUnder(WinReg.HKEY_LOCAL_MACHINE, key),
+        instanceDir = instanceDir,
+    )
+}
+
+/**
+ * The hive-selection decision of [windowsInstallDirFromRegistry] (the cross-scope fix, spec
+ * `spec-updater-parity-fixes`, pure — unit-testable off-Windows): a per-user AND a global NSIS
+ * install of the same channel can coexist, so the reader must not blindly trust the HKCU-first
+ * read — a global instance in a custom dir was claimed by the coexisting per-user record
+ * (misdetected `PORTABLE_WINDOWS`, wrong asset + gesture). The per-user (HKCU) record wins when
+ * it matches the running instance's directory, then the global (HKLM) record when it does (the
+ * match is [sameWindowsDir] — case + trailing-slash insensitive); when NEITHER hive matches,
+ * the explicit degradation is HKCU first, then HKLM (the pre-audit reader order).
+ */
+internal fun preferMatchingInstallDir(hkcu: String?, hklm: String?, instanceDir: String): String? = when {
+    hkcu != null && sameWindowsDir(hkcu, instanceDir) -> hkcu
+    hklm != null && sameWindowsDir(hklm, instanceDir) -> hklm
+    else -> hkcu ?: hklm
 }
 
 /**
@@ -165,7 +195,11 @@ fun detectInstallMode(
     env: Map<String, String>,
     executablePath: String,
     windowsProductName: String = ArtifactNames.productName(AppVersion.channel),
-    registryInstallDir: (String) -> String? = { windowsInstallDirFromRegistry(it) },
+    registryInstallDir: (String) -> String? = {
+        // The cross-scope reader (spec `spec-updater-parity-fixes`): the instance dir is this
+        // launcher's folder — the hive whose record matches it wins
+        windowsInstallDirFromRegistry(it, File(executablePath).parentFile?.path.orEmpty())
+    },
 ): InstallMode = when {
     osName.startsWith("Windows", ignoreCase = true) ->
         if (isNsisWindowsInstall(executablePath, windowsProductName, AppVersion.channel, registryInstallDir))

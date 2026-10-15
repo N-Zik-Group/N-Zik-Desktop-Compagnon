@@ -12,7 +12,9 @@ import app.n_zik.compagnon.updater.models.currentIsAurBlocked
 import app.n_zik.compagnon.updater.models.detectInstallMode
 import app.n_zik.compagnon.updater.models.distributionMarkerAt
 import app.n_zik.compagnon.updater.models.isAurBlocked
+import app.n_zik.compagnon.updater.models.isNsisWindowsInstall
 import app.n_zik.compagnon.updater.models.liveExecutablePath
+import app.n_zik.compagnon.updater.models.preferMatchingInstallDir
 import app.n_zik.compagnon.updater.models.probePackageManager
 import app.n_zik.compagnon.updater.models.updaterEffectivelyEnabled
 import app.n_zik.compagnon.updater.models.windowsInstallDirFromRegistry
@@ -23,6 +25,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
@@ -216,6 +219,77 @@ class InstallModeDetectionTest {
         assertEquals(AppVersion.channel, channelSeen, "the registry read is keyed by the build's channel")
     }
 
+    // ---- spec `spec-updater-parity-fixes`: the cross-scope reader (a per-user AND a global
+    // install of the same channel can coexist — the hive matching the instance dir wins) ----
+
+    @Test
+    fun `the matching hive wins over the hkcu-first degradation`() {
+        // preferMatchingInstallDir (pure, testable off-Windows): the running instance's
+        // directory decides which hive's record is returned — HKCU when it matches, HKLM when
+        // it does, HKCU-then-HKLM when neither does (the pre-audit reader order, now an
+        // explicit fallback)
+        val x = "C:\\Program Files\\N-Zik Desktop Compagnon"
+        val y = "C:\\Users\\me\\AppData\\Local\\N-Zik Desktop Compagnon"
+        val z = "C:\\Program Files\\N-Zik Desktop Compagnon BETA"
+        // CROSS_SCOPE_HKCU_MATCH — the per-user record matches the instance (unchanged)
+        assertEquals(x, preferMatchingInstallDir(hkcu = x, hklm = y, instanceDir = x))
+        // CROSS_SCOPE_HKLM_MATCH — the global instance, the per-user also installed: the
+        // matching HKLM record is returned, not the HKCU one (the pre-audit misread)
+        assertEquals(x, preferMatchingInstallDir(hkcu = y, hklm = x, instanceDir = x))
+        // CROSS_SCOPE_NO_MATCH — the explicit HKCU-first degradation (today's behavior)
+        assertEquals(y, preferMatchingInstallDir(hkcu = y, hklm = z, instanceDir = "C:\\nowhere"))
+        // CROSS_SCOPE_ONLY_HKLM — no regression
+        assertEquals(x, preferMatchingInstallDir(hkcu = null, hklm = x, instanceDir = x))
+        // Both hives absent
+        assertNull(preferMatchingInstallDir(hkcu = null, hklm = null, instanceDir = x))
+        // The match is case + trailing-slash insensitive (sameWindowsDir) — the returned
+        // record is the recorded value verbatim
+        val recordedLower = x.lowercase() + "\\"
+        assertEquals(
+            recordedLower,
+            preferMatchingInstallDir(hkcu = null, hklm = recordedLower, instanceDir = x.uppercase()),
+        )
+        // Both hives matching: HKCU first (the per-user scope is the default)
+        assertEquals(x, preferMatchingInstallDir(hkcu = x, hklm = x, instanceDir = x))
+    }
+
+    @Test
+    fun `a global instance in a custom dir is windows, not portable`(@TempDir root: File) {
+        // The acceptance case: a per-user AND a global NSIS install of the same channel coexist;
+        // the global instance runs from a custom dir (the HKLM.InstallDir) while HKCU carries
+        // the per-user install's dir — the reader must return the matching HKLM record, so
+        // detectInstallMode stays WINDOWS (the pre-audit HKCU-first read returned the per-user
+        // dir and misdetected the global instance PORTABLE_WINDOWS — wrong asset + gesture).
+        // The production reader is simulated through the injectable seam: the per-user record
+        // does NOT match the instance dir, the global one does
+        val product = "N-Zik Desktop Compagnon"
+        val globalDir = File(root, "Program Files/MyApps")
+        globalDir.mkdirs()
+        val launcher = File(globalDir, "$product.exe")
+        launcher.writeText("launcher")
+        File(globalDir, "Uninstall $product.exe").writeText("uninstaller")
+        val perUserDir = File(root, "AppData/Local/$product")
+        assertEquals(
+            InstallMode.WINDOWS,
+            detectInstallMode(WINDOWS, env, launcher.absolutePath, product,
+                registryInstallDir = {
+                    preferMatchingInstallDir(
+                        hkcu = perUserDir.absolutePath,
+                        hklm = globalDir.absolutePath,
+                        instanceDir = globalDir.absolutePath,
+                    )
+                }),
+            "the hive matching the instance dir (HKLM) is returned — the global instance stays an install",
+        )
+        // Without the cross-scope fix (the HKCU-first read), the per-user record would not
+        // match the instance dir and the launch would misread as portable
+        assertEquals(
+            InstallMode.PORTABLE_WINDOWS,
+            detectInstallMode(WINDOWS, env, launcher.absolutePath, product,
+                registryInstallDir = { perUserDir.absolutePath }),
+        )
+    }
+
     @Test
     @EnabledOnOs(OS.WINDOWS)
     fun `the production registry reader round-trips the installer recorded dir`() {
@@ -229,20 +303,119 @@ class InstallModeDetectionTest {
         val installDir = Files.createTempDirectory("nzik-registry-roundtrip")
         try {
             assertNull(
-                windowsInstallDirFromRegistry(channel),
+                windowsInstallDirFromRegistry(channel, installDir.toString()),
                 "an absent key must read as null (the folder-name rule takes over)",
             )
             runReg("add", key, "/v", "InstallDir", "/t", "REG_SZ", "/d", installDir.toString(), "/f")
             assertEquals(
                 installDir.toString(),
-                windowsInstallDirFromRegistry(channel),
+                windowsInstallDirFromRegistry(channel, installDir.toString()),
                 "the InstallDir the installer records must be read back verbatim",
             )
         } finally {
             runCatching { runReg("delete", key, "/f") }
             Files.deleteIfExists(installDir)
         }
-        assertNull(windowsInstallDirFromRegistry(channel), "a cleaned-up key must read as null again")
+        assertNull(
+            windowsInstallDirFromRegistry(channel, installDir.toString()),
+            "a cleaned-up key must read as null again",
+        )
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    fun `both hives coexisting returns the hive matching the instance dir`() {
+        // The cross-scope coexistence against the REAL registry (spec `spec-updater-parity-fixes`):
+        // a per-user AND a global record of the same channel — the reader returns the hive
+        // matching the instance dir, not merely the HKCU-first one. The HKLM write needs
+        // elevation; when the dev host is not elevated the coexistence cannot be staged, and
+        // the test reports a SKIP (Assumptions — not a pass; the pure helper pins the
+        // cross-scope rows off-Windows, the round-trip pins the production reader)
+        val channel = "zz-cross-scope-${System.currentTimeMillis()}"
+        val hkcuDir = Files.createTempDirectory("nzik-cross-hkcu")
+        val hklmDir = Files.createTempDirectory("nzik-cross-hklm")
+        val hkcuKey = "HKCU\\Software\\N-Zik\\DesktopCompagnon\\$channel"
+        val hklmKey = "HKLM\\Software\\N-Zik\\DesktopCompagnon\\$channel"
+        val hklmStaged = runCatching {
+            runReg("add", hklmKey, "/v", "InstallDir", "/t", "REG_SZ", "/d", hklmDir.toString(), "/f")
+        }.isSuccess
+        try {
+            Assumptions.assumeTrue(
+                hklmStaged,
+                "the HKLM record needs elevation to stage (non-elevated host — the cross-scope rows are pinned by the pure helper)",
+            )
+            runReg("add", hkcuKey, "/v", "InstallDir", "/t", "REG_SZ", "/d", hkcuDir.toString(), "/f")
+            assertEquals(
+                hklmDir.toString(),
+                windowsInstallDirFromRegistry(channel, hklmDir.toString()),
+                "the global instance (dir = the HKLM record) must not be claimed by the HKCU record",
+            )
+            assertEquals(
+                hkcuDir.toString(),
+                windowsInstallDirFromRegistry(channel, hkcuDir.toString()),
+                "the per-user instance (dir = the HKCU record) is unchanged",
+            )
+            assertEquals(
+                hkcuDir.toString(),
+                windowsInstallDirFromRegistry(channel, "C:\\nowhere"),
+                "neither hive matches: the HKCU-first degradation",
+            )
+        } finally {
+            runCatching { runReg("delete", hklmKey, "/f") }
+            runCatching { runReg("delete", hkcuKey, "/f") }
+            Files.deleteIfExists(hkcuDir)
+            Files.deleteIfExists(hklmDir)
+        }
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    fun `the default registry seam derives the instance dir from the launcher path`() {
+        // The production default `registryInstallDir` lambda (isNsisWindowsInstall — the same
+        // expression detectInstallMode's default carries) derives the instance dir from the
+        // executable path (spec `spec-updater-parity-fixes`): every other registry test
+        // injects its own lambda, so a wrong derivation would silently degrade to the
+        // HKCU-first bug with nothing failing. Stage a per-user AND a global record under a
+        // throwaway channel key, place the launcher + marker in a custom (non-product-named)
+        // dir that equals the HKLM record's InstallDir, and call isNsisWindowsInstall WITHOUT
+        // the lambda argument — the default seam must derive the launcher folder as the
+        // instance dir and pick the matching HKLM record (a HKCU-first read would claim the
+        // per-user dir → the launch would misread as portable). A non-elevated host reports a
+        // SKIP (Assumptions — the pure helper pins the cross-scope rows off-Windows)
+        val product = "N-Zik Desktop Compagnon"
+        val channel = "zz-default-seam-${System.currentTimeMillis()}"
+        val customDir = Files.createTempDirectory("nzik-default-seam")
+        val perUserDir = Files.createTempDirectory("nzik-default-seam-peruser")
+        val hkcuKey = "HKCU\\Software\\N-Zik\\DesktopCompagnon\\$channel"
+        val hklmKey = "HKLM\\Software\\N-Zik\\DesktopCompagnon\\$channel"
+        val hklmStaged = runCatching {
+            runReg("add", hklmKey, "/v", "InstallDir", "/t", "REG_SZ", "/d", customDir.toString(), "/f")
+        }.isSuccess
+        try {
+            Assumptions.assumeTrue(
+                hklmStaged,
+                "the HKLM record needs elevation to stage (non-elevated host — the derivation is pinned by the pure helper)",
+            )
+            runReg("add", hkcuKey, "/v", "InstallDir", "/t", "REG_SZ", "/d", perUserDir.toString(), "/f")
+            val launcher = File(customDir.toString(), "$product.exe")
+            launcher.writeText("launcher")
+            File(customDir.toString(), "Uninstall $product.exe").writeText("uninstaller")
+            // The default seam (no lambda argument) + an explicit throwaway channel — the
+            // production channel key (AppVersion.channel) is never touched
+            assertTrue(
+                isNsisWindowsInstall(launcher.absolutePath, product, channel),
+                "the default seam must derive the launcher folder as the instance dir and pick the matching HKLM record",
+            )
+        } finally {
+            runCatching { runReg("delete", hklmKey, "/f") }
+            runCatching { runReg("delete", hkcuKey, "/f") }
+            runCatching {
+                File(customDir.toString(), "Uninstall $product.exe").delete()
+                File(customDir.toString(), "$product.exe").delete()
+                Files.deleteIfExists(customDir)
+                Files.deleteIfExists(perUserDir)
+            }
+        }
     }
 
     private fun runReg(vararg args: String) {

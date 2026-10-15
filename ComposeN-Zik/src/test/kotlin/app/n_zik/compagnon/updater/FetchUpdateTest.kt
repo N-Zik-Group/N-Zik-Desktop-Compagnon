@@ -1,6 +1,7 @@
 package app.n_zik.compagnon.updater
 
 import app.n_zik.compagnon.updater.models.ArtifactNames
+import app.n_zik.compagnon.updater.models.GithubRelease
 import app.n_zik.compagnon.updater.models.InstallMode
 import app.n_zik.compagnon.updater.models.PackageManager
 import app.n_zik.compagnon.updater.models.currentInstallMode
@@ -40,6 +41,33 @@ class FetchUpdateTest {
         Updater.latestVersionCode = null
         Updater.githubRelease = null
         Updater.build = null
+        Updater.tagName = null
+    }
+
+    /** A canned release for pre-populating the static state (a prior successful check). */
+    private fun release(tag: String, asset: String): GithubRelease = GithubRelease(
+        id = 1u,
+        tagName = tag,
+        name = tag,
+        body = "Stale release",
+        builds = listOf(
+            GithubRelease.Build(
+                id = 10u,
+                url = "https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/assets/10",
+                name = asset,
+                size = 12345678u,
+                createdAt = "2026-10-01T00:00:00Z",
+                downloadUrl = "https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/$tag/$asset",
+            ),
+        ),
+    )
+
+    /** Pre-populates the state as a prior successful check would have left it. */
+    private fun primeReleaseState(tag: String, asset: String) {
+        val stale = release(tag, asset)
+        Updater.githubRelease = stale
+        Updater.build = stale.builds.first()
+        Updater.tagName = stale.tagName
     }
 
     private fun releasesJson(vararg tags: String, changelogCode: String? = null): String =
@@ -301,6 +329,98 @@ class FetchUpdateTest {
         } finally {
             client.close()
         }
+    }
+
+    // ---- spec `spec-updater-parity-fixes`: the pre-fetch cleanup — a failed re-check must
+    // clear the previously fetched release (no stale "update available" left to the UI) ----
+
+    @Test
+    fun `a failed re-check clears the previously fetched release`() = runTest {
+        // RECHECK_FAILED: a prior successful check left the release state set; a re-check that
+        // fails with an HTTP error must clear it — the stale release (with its working download
+        // button) must not survive the failed fetch (the phone's pre-fetch cleanup, ported)
+        primeReleaseState("v0.0.1", ArtifactNames.exe("0.0.1"))
+        val client = HttpClient(
+            MockEngine { _ -> respondError(HttpStatusCode.InternalServerError) },
+        )
+        try {
+            Updater.fetchUpdate(client, "stable")
+        } finally {
+            client.close()
+        }
+        assertNull(Updater.githubRelease)
+        assertNull(Updater.build)
+        assertNull(Updater.tagName)
+        // The previous changelog is not this seam's: checkForUpdate clears it at the start of
+        // the check (pre-existing), and the failure paths never (re)write it
+    }
+
+    @Test
+    fun `a no-release re-check clears the previously fetched release`() = runTest {
+        // RECHECK_NO_RELEASE: the re-fetch returns no same-channel release (the
+        // NoSuchFileException path) — the previously fetched release is cleared, the
+        // "no update available" mapping keeps its existing behavior
+        primeReleaseState("v0.0.1", ArtifactNames.exe("0.0.1"))
+        val client = clientFor(releasesJson("v0.0.1-beta"))
+        var thrown: NoSuchFileException? = null
+        try {
+            Updater.fetchUpdate(client, "stable")
+        } catch (e: NoSuchFileException) {
+            thrown = e
+        } finally {
+            client.close()
+        }
+        assertNotNull(thrown)
+        assertNull(Updater.githubRelease)
+        assertNull(Updater.build)
+        assertNull(Updater.tagName)
+        // The previous changelog is not this seam's: checkForUpdate clears it at the start of
+        // the check (pre-existing), and the failure paths never (re)write it
+    }
+
+    @Test
+    fun `a blank 200 body re-check clears the previously fetched release`() = runTest {
+        // The last pre-success exit (HTTP 200 + a blank body — a proxy error page with no
+        // content): the previously fetched release is cleared like the other failure paths
+        // (the previous changelog is not this seam's: checkForUpdate clears it at the start
+        // of the check)
+        primeReleaseState("v0.0.1", ArtifactNames.exe("0.0.1"))
+        val client = HttpClient(
+            MockEngine { respond(content = "", status = HttpStatusCode.OK) },
+        )
+        try {
+            Updater.fetchUpdate(client, "stable")
+        } finally {
+            client.close()
+        }
+        assertNull(Updater.githubRelease)
+        assertNull(Updater.build)
+        assertNull(Updater.tagName)
+    }
+
+    @Test
+    fun `a successful re-check refreshes the previously fetched release`() = runTest {
+        // RECHECK_OK (no regression): a re-fetch that succeeds replaces the stale release with
+        // the new result — the pre-fetch cleanup must not make a successful re-check lose the
+        // release
+        primeReleaseState("v0.0.1", ArtifactNames.exe("0.0.1"))
+        val client = clientFor(
+            releasesJson("v0.0.1", "v0.0.2", changelogCode = "2"),
+        )
+        try {
+            Updater.fetchUpdate(client, "stable")
+        } finally {
+            client.close()
+        }
+        assertEquals("v0.0.2", Updater.githubRelease?.tagName)
+        assertEquals("v0.0.2", Updater.tagName)
+        val expected = ArtifactNames.forMode(currentInstallMode(), "0.0.2", probePackageManager())
+        if (expected == null) {
+            assertNull(Updater.build, "the build must still be this host's install-mode asset (none)")
+        } else {
+            assertEquals(expected, Updater.build?.name, "the build must be the NEW release's asset")
+        }
+        assertEquals("New:\n- the mocked changelog", Updater.latestChangelog)
     }
 }
 
