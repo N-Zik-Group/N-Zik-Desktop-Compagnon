@@ -17,11 +17,11 @@
     <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
     <string name="manual_title">Manual pairing</string>
     <string name="manual_description">On your phone, Manage server shows the IP address, the port and a 6-character code.</string>
-    <string name="manual_ip">Phone IP address</string>
+    <string name="manual_ip">כתובת הIP של הטלפון</string>
     <string name="manual_port">Port</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_ip_invalid">Enter an IPv4 address, for example 192.168.1.14.</string>
-    <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
+    <string name="manual_port_invalid">הכנס פורט בין 1 ל65535.</string>
     <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
     <string name="manual_submit">Pair</string>
     <string name="validating">Pairing with your phone…</string>
