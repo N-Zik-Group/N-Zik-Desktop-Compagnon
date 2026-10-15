@@ -161,7 +161,7 @@ class UpdateDownloadManagerTest {
 
     private fun helperScript(): String = UpdateDownloadManager.windowsInstallScript(
         appExe = "C:\\Program Files\\N-Zik Desktop Compagnon DEV\\N-Zik Desktop Compagnon DEV.exe",
-        installerPath = "C:\\Users\\danie\\AppData\\Local\\N-Zik Desktop Compagnon\\updates\\n-zik-desktop-compagnon-dev-0.0.2-dev-20260101.exe",
+        installerPath = "C:\\Users\\danie\\AppData\\Local\\N-Zik Desktop Compagnon\\updates\\n-zik-desktop-compagnon-0.0.2-dev-20260101.exe",
         markerPath = "C:\\Users\\danie\\AppData\\Roaming\\N-Zik Desktop Compagnon\\update-install-failed.txt",
     )
 
@@ -188,7 +188,7 @@ class UpdateDownloadManagerTest {
         // are both gone
         assertFalse(script.contains("/quiet"), "the MSI-era /quiet flag must be gone")
         assertFalse(script.contains("/S"), "the NSIS /S silent flag must be gone")
-        assertTrue(script.contains("Start-Process -FilePath 'C:\\Users\\danie\\AppData\\Local\\N-Zik Desktop Compagnon\\updates\\n-zik-desktop-compagnon-dev-0.0.2-dev-20260101.exe' -ArgumentList '/UPDATE' -Wait -PassThru"))
+        assertTrue(script.contains("Start-Process -FilePath 'C:\\Users\\danie\\AppData\\Local\\N-Zik Desktop Compagnon\\updates\\n-zik-desktop-compagnon-0.0.2-dev-20260101.exe' -ArgumentList '/UPDATE' -Wait -PassThru"))
         // No timeout and no auto-kill: a hang is now VISIBLE to the user, and killing a dialog
         // the user is looking at would be wrong
         assertFalse(script.contains("WaitForExit("), "no install timeout anymore")

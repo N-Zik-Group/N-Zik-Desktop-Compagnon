@@ -7,9 +7,10 @@
 #      Windows build fails on a Linux-written cache ("\mnt\c\…") and the Linux build fails on a
 #      Windows-written cache ("C:\…", "Expected absolute path but found relative path").
 #      Whichever OS builds second must run clean.)
-#   2. the per-channel Linux artifact naming contract — stable + dev (the dev keeps its OWN
-#      package base `n-zik-desktop-compagnon-dev` + the dated `-dev-<yyyyMMdd>` suffix; stable
-#      names stay byte-identical to the no-channel convention, so the AUR release entry stays valid)
+#   2. the per-channel Linux artifact naming contract — stable + dev (ALL channels share the
+#      package base `n-zik-desktop-compagnon` — the 2026-10-15 naming decision: the dev marker is
+#      the dated `-dev-<yyyyMMdd>` version suffix only; stable names stay byte-identical to the
+#      no-channel convention, so the AUR release entry stays valid)
 #   3. the .deb builds (Ubuntu host) — stable + dev; the .rpm is built when rpmbuild is present
 #   4. the stable portable-zip launch smoke test (needs a display — WSLg; skipped headless)
 #
@@ -42,7 +43,7 @@ find_artifact() {
 baseVersion=$(grep -oP 'nzikVersionName\s*=\s*"\K[^"]+' gradle/libs.versions.toml)
 today=$(date +%Y%m%d)
 pkgStable=n-zik-desktop-compagnon
-pkgDev=n-zik-desktop-compagnon-dev
+pkgDev=n-zik-desktop-compagnon
 
 echo "== [1/4] full test suite (Linux, after clean) =="
 if ./gradlew clean build --console=plain -q; then ok "gradlew clean build (full suite, Linux host)"; else bad "gradlew clean build failed"; fi

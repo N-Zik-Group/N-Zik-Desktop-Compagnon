@@ -13,17 +13,18 @@ import org.junit.jupiter.api.Test
  * would desynchronize the `/opt` dir from the portable zip name, the AUR `pkgname`s and the
  * download URL — all with a green build.
  * The build exposes the effective values (`systemProperty` in `ComposeN-Zik/build.gradle.kts`, same pattern
- * as `windows.packageName`) so this test pins them. Channel-aware: the dev channel keeps its OWN
- * package base (`n-zik-desktop-compagnon-dev`, AD-8) and every artifact name carries the channel
- * suffix after the base version — `build.sh package beta|dev` runs `:ComposeN-Zik:test -Pchannel=…`, so a
- * channel-blind pin reds those builds.
+ * as `windows.packageName`) so this test pins them. Channel-aware: since the 2026-10-15 naming
+ * decision every channel shares the one package base (`n-zik-desktop-compagnon` — AD-8 as
+ * amended) and every artifact name carries the channel suffix after the base version —
+ * `build.sh package beta|dev` runs `:ComposeN-Zik:test -Pchannel=…`, so a channel-blind pin reds
+ * those builds.
  */
 class LinuxPackagePinTest {
 
     private val releasePkgbuild = File("../packaging/aur/PKGBUILD")
     private val gitPkgbuild = File("../packaging/aur-git/PKGBUILD")
 
-    /** The channel-aware package name the running build generates (dev: its own `-dev` base, AD-8). */
+    /** The package name the running build generates (shared by every channel — AD-8 as amended 2026-10-15). */
     private fun pkgName(): String =
         System.getProperty("linux.packageName") ?: error("linux.packageName is not exposed to the tests")
 
@@ -64,12 +65,12 @@ class LinuxPackagePinTest {
 
     @Test
     fun `the package name is frozen and matches the portable zip base`() {
-        // The dev channel keeps its OWN package base (AD-8 — a parallel product): the frozen
-        // install identity is the base name, dev adds its -dev suffix
+        // Every channel shares the ONE package base (AD-8 as amended 2026-10-15 — the dev's own
+        // -dev base was removed): the frozen install identity is this base name
         assertEquals(
             "n-zik-desktop-compagnon",
             pkgName().removeSuffix("-dev"),
-            "the catalog-derived linux.packageName base is the frozen install identity (dev adds its -dev suffix)",
+            "the catalog-derived linux.packageName is the shared frozen install identity (every channel)",
         )
         val zip = System.getProperty("linux.portable.zipName") ?: error("the portable zip archiveFileName is not exposed to the tests")
         assertTrue(zip.startsWith("${pkgName()}-"), "the portable zip base name must be the channel-aware package name: $zip")
@@ -198,8 +199,9 @@ class LinuxPackagePinTest {
 
     @Test
     fun `the package name matches the AUR pkgnames and the download URL`() {
-        // The committed AUR entries are STABLE-ONLY (the dev channel is a parallel product — its
-        // own -dev package base): compare against the base name, whatever the channel is.
+        // The committed AUR entries are STABLE-ONLY; since the 2026-10-15 naming decision every
+        // channel shares the one package base (AD-8 as amended), so the package name IS the
+        // base name on every channel.
         val baseName = pkgName().removeSuffix("-dev")
         // Release entry: pkgname is the package identity.
         val releaseName = releasePkgbuild.readText().lineSequence()

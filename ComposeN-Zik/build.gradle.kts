@@ -311,7 +311,7 @@ tasks.compileTestKotlin {
 // exe, which is now a build BYPRODUCT, no longer distributed. This task runs makensis on the
 // committed installer source of truth (`packaging/windows/installer.nsi`) with the per-channel
 // defines and writes the final installer on the channel's package base
-// (`<linux-package-base>-<version>.exe` — e.g. "n-zik-desktop-compagnon-dev-0.0.1-dev-20261015.exe"):
+// (`<linux-package-base>-<version>.exe` — e.g. "n-zik-desktop-compagnon-0.0.1-dev-20261015.exe"):
 // the SAME name the channel's Linux artifacts and the published release asset carry, so the CI
 // uploads it as-is (no rename step) and the in-app updater (`ArtifactNames.exe`) resolves the
 // download from that one name. The spaced jpackage byproduct is deleted afterwards (doLast).
@@ -399,9 +399,25 @@ tasks.register<Exec>("packageInstaller") {
     }
     doLast {
         // The NSIS installer now sits on the package base while the jpackage byproduct keeps its
-        // spaced product name: drop the byproduct so `main/exe/` (and the CI upload glob) carry
-        // ONE installer. Runs only on makensis success — a failed build keeps the byproduct.
-        jpackageByproduct.delete()
+        // spaced product name: drop the byproduct so `main/exe/` carries ONE installer. Runs
+        // only on makensis success — a failed build keeps the byproduct (the CI's explicit
+        // `cp` by name is unaffected either way).
+        // The deletion MUST run in a separate process (measured 2026-10-15): the Gradle daemon
+        // holds a read handle on the byproduct (a plugin-tracked output of packageExe), so the
+        // daemon's own File.delete() fails on Windows while a foreign process (cmd, PowerShell)
+        // deletes the same file fine — the A/B test: PowerShell delete during the build = OK,
+        // daemon delete = silent failure.
+        if (jpackageByproduct.exists()) {
+            // cmd /c takes the whole command as one string — quote the path (it carries spaces)
+            val del = ProcessBuilder("cmd", "/c", "del /f \"${jpackageByproduct.absolutePath}\"")
+                .redirectErrorStream(true)
+                .start()
+            val delExit = del.waitFor()
+            check(delExit == 0 && !jpackageByproduct.exists()) {
+                "failed to delete the jpackage byproduct $jpackageByproduct (del exit=$delExit) — " +
+                    "`main/exe/` must carry ONE installer"
+            }
+        }
     }
 }
 
@@ -968,14 +984,15 @@ val linuxIcon = rootProject.file("assets/design/icon-linux.png")
 
 // The Linux package name (jpackage --linux-package-name): the deb/rpm file base name, the /opt
 // install dir, the portable-zip base name and the AUR install identity, all derived from the single
-// app identity (nzikPackageName) so none of them can drift from each other. The dev channel keeps
-// its OWN package (spec `spec-updater`, AD-8): `n-zik-desktop-compagnon-dev`, installing to
-// `/opt/n-zik-desktop-compagnon-dev` beside the stable one — the dev build is a parallel product,
-// never a replacement of the stable installation. Pinned by LinuxPackagePinTest (exposed to the
-// JVM tests as `linux.packageName`).
+// app identity (nzikPackageName) so none of them can drift from each other. ALL channels share
+// this one package base (the 2026-10-15 naming decision — user: the channel marker lives in the
+// version suffix only, never in the base): the dev channel installs to
+// `/opt/n-zik-desktop-compagnon` too, replacing the stable one in place (like beta) — on Windows
+// it stays its own installation (the per-channel registry key
+// `Software\N-Zik\DesktopCompagnon\DEV`) and the Flatpak keeps its own app-id. Pinned by
+// LinuxPackagePinTest (exposed to the JVM tests as `linux.packageName`).
 val linuxPackageName =
-    libs.versions.nzikPackageName.get().lowercase().replace(' ', '-') +
-        if (channel == "dev") "-dev" else ""
+    libs.versions.nzikPackageName.get().lowercase().replace(' ', '-')
 
 // The Flatpak app-id (spec spec-linux-flatpak, AD-1): the frozen Flatpak identity — the bundle's
 // install name, the upgrade identity and the icon name all derive from it, so it must never
@@ -1752,7 +1769,8 @@ project.afterEvaluate {
     // app root — the single signal the in-app updater uses to tell a release-pkg install from an
     // AUR install (the PKGBUILDs carry it not). No bundled VLC: the package declares `vlc` as a
     // dependency, exactly like the .deb/.rpm/AUR. The naming rides the channel through
-    // `linuxPackageName` (the `-dev` base) + `channelArtifactName` (the file-name suffix).
+    // `linuxPackageName` (the shared package base — the 2026-10-15 decision: no per-channel base)
+// + `channelArtifactName` (the file-name suffix).
     // Linux host only; on Windows it is skipped like packageFlatpak, so
     // gradlew.bat build stays green.
     tasks.register("packageArch") {

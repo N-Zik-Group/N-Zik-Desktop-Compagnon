@@ -68,32 +68,33 @@ class ArtifactNamesChannelTest {
     }
 
     @Test
-    fun `the dev names carry the dev product name and the dev linux package base`() {
-        // AD-8: the dev is a parallel product — its own product name on Windows AND its own Linux
-        // package base (n-zik-desktop-compagnon-dev → /opt/n-zik-desktop-compagnon-dev), for ALL
-        // the release assets (the .exe included — it shares the dev Linux base)
+    fun `the dev names carry the dev product name and the shared linux package base`() {
+        // AD-8 as amended 2026-10-15: the dev is still its own product on Windows (its own
+        // product name + registry key) and keeps its own Flatpak app-id, but its Linux package
+        // base is the SHARED one (n-zik-desktop-compagnon) — the channel marker is the dated
+        // version suffix only, for ALL the release assets (the .exe included)
         val v = "0.0.3-dev-20261007"
-        assertEquals("n-zik-desktop-compagnon-dev-$v.exe", ArtifactNames.exe(v))
-        assertEquals("n-zik-desktop-compagnon-dev_$v-1_amd64.deb", ArtifactNames.deb(v))
-        assertEquals("n-zik-desktop-compagnon-dev-$v-1.x86_64.rpm", ArtifactNames.rpm(v))
-        assertEquals("n-zik-desktop-compagnon-dev-$v-linux-portable.zip", ArtifactNames.portableZip(v))
-        assertEquals("n-zik-desktop-compagnon-dev-$v-windows-portable.zip", ArtifactNames.windowsPortableZip(v))
-        assertEquals("n-zik-desktop-compagnon-dev-$v-x86_64.flatpak", ArtifactNames.flatpak(v))
-        assertEquals("n-zik-desktop-compagnon-dev-$v-1-x86_64.pkg.tar.zst", ArtifactNames.archPkg(v))
+        assertEquals("n-zik-desktop-compagnon-$v.exe", ArtifactNames.exe(v))
+        assertEquals("n-zik-desktop-compagnon_$v-1_amd64.deb", ArtifactNames.deb(v))
+        assertEquals("n-zik-desktop-compagnon-$v-1.x86_64.rpm", ArtifactNames.rpm(v))
+        assertEquals("n-zik-desktop-compagnon-$v-linux-portable.zip", ArtifactNames.portableZip(v))
+        assertEquals("n-zik-desktop-compagnon-$v-windows-portable.zip", ArtifactNames.windowsPortableZip(v))
+        assertEquals("n-zik-desktop-compagnon-$v-x86_64.flatpak", ArtifactNames.flatpak(v))
+        assertEquals("n-zik-desktop-compagnon-$v-1-x86_64.pkg.tar.zst", ArtifactNames.archPkg(v))
     }
 
     @Test
     fun `the per mode names follow the channel inference`() {
         val v = "0.0.3-dev-20261007"
-        assertEquals("n-zik-desktop-compagnon-dev-$v.exe", ArtifactNames.forMode(InstallMode.WINDOWS, v, PackageManager.NONE))
+        assertEquals("n-zik-desktop-compagnon-$v.exe", ArtifactNames.forMode(InstallMode.WINDOWS, v, PackageManager.NONE))
         // The portable-Windows install (spec `spec-windows-portable-zip`) gets the Windows
         // portable zip
-        assertEquals("n-zik-desktop-compagnon-dev-$v-windows-portable.zip", ArtifactNames.forMode(InstallMode.PORTABLE_WINDOWS, v, PackageManager.NONE))
-        assertEquals("n-zik-desktop-compagnon-dev_$v-1_amd64.deb", ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, v, PackageManager.DEB))
-        assertEquals("n-zik-desktop-compagnon-dev-$v-x86_64.flatpak", ArtifactNames.forMode(InstallMode.FLATPAK, v, PackageManager.NONE))
+        assertEquals("n-zik-desktop-compagnon-$v-windows-portable.zip", ArtifactNames.forMode(InstallMode.PORTABLE_WINDOWS, v, PackageManager.NONE))
+        assertEquals("n-zik-desktop-compagnon_$v-1_amd64.deb", ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, v, PackageManager.DEB))
+        assertEquals("n-zik-desktop-compagnon-$v-x86_64.flatpak", ArtifactNames.forMode(InstallMode.FLATPAK, v, PackageManager.NONE))
         // A pacman install with the release marker (a release-pkg install) gets the Arch package
         assertEquals(
-            "n-zik-desktop-compagnon-dev-$v-1-x86_64.pkg.tar.zst",
+            "n-zik-desktop-compagnon-$v-1-x86_64.pkg.tar.zst",
             ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, v, PackageManager.AUR, isReleasePackage = true),
         )
         // A pacman install WITHOUT the marker (an AUR install) has no binary asset — its updater

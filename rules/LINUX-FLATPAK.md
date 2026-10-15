@@ -124,7 +124,7 @@ permission in a future release, with `FlatpakPinTest` in the same change**; see 
 ```bash
 ./gradlew build                        # green first (all tests)
 ./gradlew :ComposeN-Zik:packageFlatpak -Pchannel=dev
-# bundle: ComposeN-Zik/build/compose/binaries/n-zik-desktop-compagnon-dev-0.0.1-dev-<YYYYMMDD>-x86_64.flatpak
+# bundle: ComposeN-Zik/build/compose/binaries/n-zik-desktop-compagnon-0.0.1-dev-<YYYYMMDD>-x86_64.flatpak
 pkexec flatpak install --system -y <ABSOLUTE bundle path>   # in-place update of the .dev
 pkill -f "N-Zik[ ]Desktop[ ]Compagnon[ ]DEV"                # restart (bracket regex — see pitfalls)
 nohup flatpak run com.nzik.desktop.compagnon.dev > /tmp/opencode/launch.log 2>&1 &
@@ -179,15 +179,17 @@ channel badge read it). Two registers by design (spec `spec-updater` AD-2/AD-8):
    (the release separator; issue #29). The artifact FILE NAME keeps its dashes.
 2. **The numeric base version** (`0.0.1`) is what jpackage records in the `.deb` control, the
    `.rpm` headers, the Flatpak manifest `version`, and the app-image PE. The channel rides in
-   the PACKAGE/APP IDENTITY instead: the per-channel package name
-   (`n-zik-desktop-compagnon-dev`), the Flatpak app-id (`com.nzik.desktop.compagnon.dev`), the
-   Windows product name ("… DEV"). Each channel is its OWN parallel installation (AD-8) — and
+   the PACKAGE/APP IDENTITY instead: the shared package name
+   (`n-zik-desktop-compagnon` — every channel since the 2026-10-15 decision), the Flatpak app-id
+   (`com.nzik.desktop.compagnon.dev` for dev), the
+   Windows product name ("… DEV"). On Linux the channels replace each other in place (AD-8 as amended 2026-10-15; Windows and Flatpak stay separate installations) — and
    the updater's InstallMode/provenance logic keys on that identity, not on the version field.
 
 Consequences to know:
 
-- `dpkg -l` / `rpm -q` / `flatpak info` show `0.0.1` for EVERY channel — the channel is in the
-  NAME, not the version.
+- `dpkg -l` / `rpm -q` / `flatpak info` show `0.0.1` for EVERY channel — since the 2026-10-15
+  naming decision the package NAME is shared, so the channel rides in the version field of the
+  file name only (plus the Flatpak app-id and the Windows product name).
 - The portable zip carries NO package metadata at all (it is not a package — only the in-app
   identity and the file name carry the version).
 - The AUR entries carry their OWN `pkgver`/`pkgrel` (release-zip: pinned per release in the

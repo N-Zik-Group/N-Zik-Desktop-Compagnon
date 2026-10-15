@@ -346,7 +346,7 @@ jobs:
           DATE="${{ needs.build_time.outputs.date }}"
 
           SUFFIX="-dev-${DATE}"
-          PKG="n-zik-desktop-compagnon-dev"
+          PKG="n-zik-desktop-compagnon"
 
           # The build writes the installer on the channel's package base (the NSIS task's
           # OUT_FILE) — the CI uploads it as-is: the release asset, the SHA-256 table and the
@@ -454,7 +454,7 @@ jobs:
           ## 🔄 Update Policy
 
           - 🔴 **Dev Build**
-            - **Separate installation:** Installs alongside Stable/Beta as a distinct installation (on Windows every channel is its own installation; on Linux the dev package is n-zik-desktop-compagnon-dev with its own Flatpak app-id).
+            - **Dev channel:** on Windows every channel is its own installation (its own folder + registry key, so dev lives beside Stable/Beta); on Linux the dev package shares the `n-zik-desktop-compagnon` package name with Stable — it REPLACES the Stable install in place, not alongside (the Flatpak keeps its own app-id, so the Flatpak dev still coexists).
             - **Default:** Auto-update is **enabled by default**.
             - **User options:**
               - You can **disable auto update** in **Settings > About > the update card**.
@@ -649,7 +649,7 @@ jobs:
             ## 🔄 Update Policy
 
             - 🔴 **Dev Build**
-              - **Separate installation:** Installs alongside Stable/Beta as a distinct installation (on Windows every channel is its own installation; on Linux the dev package is n-zik-desktop-compagnon-dev with its own Flatpak app-id).
+              - **Dev channel:** on Windows every channel is its own installation (its own folder + registry key, so dev lives beside Stable/Beta); on Linux the dev package shares the `n-zik-desktop-compagnon` package name with Stable — it REPLACES the Stable install in place, not alongside (the Flatpak keeps its own app-id, so the Flatpak dev still coexists).
               - **Default:** Auto-update is **enabled by default**.
               - **User options:**
                 - You can **disable auto update** in **Settings > About > the update card**.
@@ -661,13 +661,13 @@ jobs:
 
             ## 🔗 Download & Info
 
-            - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}.exe
-            - 📥 **Debian (.deb):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev_${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1_amd64.deb
-            - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1.x86_64.rpm
-            - 📥 **Arch (.pkg.tar.zst):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1-x86_64.pkg.tar.zst
-            - 📥 **Windows Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-windows-portable.zip
-            - 📥 **Linux Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-linux-portable.zip
-            - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-dev-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-x86_64.flatpak
+            - 📥 **Windows installer (.exe):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}.exe
+            - 📥 **Debian (.deb):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon_${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1_amd64.deb
+            - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1.x86_64.rpm
+            - 📥 **Arch (.pkg.tar.zst):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-1-x86_64.pkg.tar.zst
+            - 📥 **Windows Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-windows-portable.zip
+            - 📥 **Linux Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-linux-portable.zip
+            - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}-x86_64.flatpak
             - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/v${{ needs.versioning.outputs.downstream }}-dev-${{ needs.build_time.outputs.date }}>
         run: |
           if [ -z "$WEBHOOK_URL" ]; then

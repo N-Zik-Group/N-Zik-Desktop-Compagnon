@@ -290,10 +290,11 @@ class InstallModeDetectionTest {
             InstallMode.PACKAGE_MANAGED,
             detectInstallMode(LINUX, env, "/opt/n-zik-desktop-compagnon/bin/N-Zik Desktop Compagnon"),
         )
-        // The dev channel installs under its OWN /opt base (spec `spec-updater`, AD-8)
+        // The dev channel installs into the SHARED /opt base (spec `spec-updater`, AD-8 as
+        // amended 2026-10-15 — its marker is the dated version suffix, not a separate path)
         assertEquals(
             InstallMode.PACKAGE_MANAGED,
-            detectInstallMode(LINUX, env, "/opt/n-zik-desktop-compagnon-dev/bin/N-Zik Desktop Compagnon DEV"),
+            detectInstallMode(LINUX, env, "/opt/n-zik-desktop-compagnon/bin/N-Zik Desktop Compagnon DEV"),
         )
     }
 
@@ -366,9 +367,10 @@ class InstallModeDetectionTest {
             "n-zik-desktop-compagnon-0.0.2-beta-1-x86_64.pkg.tar.zst",
             ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, "0.0.2-beta", PackageManager.AUR, isReleasePackage = true),
         )
-        // The dev channel carries its own package base (AD-8) in the asset name
+        // The dev channel rides the shared package base (AD-8 as amended 2026-10-15) — its
+        // marker is the dated version suffix only
         assertEquals(
-            "n-zik-desktop-compagnon-dev-0.0.2-dev-20261008-1-x86_64.pkg.tar.zst",
+            "n-zik-desktop-compagnon-0.0.2-dev-20261008-1-x86_64.pkg.tar.zst",
             ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, "0.0.2-dev-20261008", PackageManager.AUR, isReleasePackage = true),
         )
         // The archPkg helper itself (the default channel inference from the version suffix)
@@ -441,7 +443,7 @@ class InstallModeDetectionTest {
         // A package-managed launcher lives at <appRoot>/bin/<launcher> — the parent dir named
         // `bin` gives the app root, where the distribution.txt marker lives
         assertEquals("/opt/n-zik-desktop-compagnon", appRootOfResolvedPath("/opt/n-zik-desktop-compagnon/bin/N-Zik Desktop Compagnon"))
-        assertEquals("/opt/n-zik-desktop-compagnon-dev", appRootOfResolvedPath("/opt/n-zik-desktop-compagnon-dev/bin/N-Zik Desktop Compagnon DEV"))
+        assertEquals("/opt/n-zik-desktop-compagnon", appRootOfResolvedPath("/opt/n-zik-desktop-compagnon/bin/N-Zik Desktop Compagnon DEV"))
         // The UNRESOLVED launch path (/usr/bin/<pkg> — the symlink the .desktop Exec carries): the
         // parent is /usr, so no marker can be read from it — this is the loop-2 bug: the
         // production launch carries the SYMLINK path in its own cmdline

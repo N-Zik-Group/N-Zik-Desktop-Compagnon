@@ -145,8 +145,9 @@ private const val ERROR_INSUFFICIENT_BUFFER = 122
  * the installer's recorded `InstallDir` in the channel registry key, see
  * [isNsisWindowsInstall]) is [InstallMode.WINDOWS], any other launch is [InstallMode.PORTABLE_WINDOWS];
  * on Linux, the Flatpak environment wins — a NON-BLANK `FLATPAK_ID` or the exact marker
- * `container=flatpak` — then the package-managed `/opt` path (stable or dev — the dev install
- * lives in `/opt/n-zik-desktop-compagnon-dev`, spec AD-8); anything else is portable.
+ * `container=flatpak` — then the package-managed `/opt` path (stable and dev share
+ * `/opt/n-zik-desktop-compagnon` — spec AD-8 as amended 2026-10-15: the dev channel's marker is
+ * its dated version suffix, not a separate path); anything else is portable.
  *
  * @param osName `System.getProperty("os.name")`
  * @param env the process environment (`System.getenv()`)
@@ -314,16 +315,19 @@ fun updaterEffectivelyEnabled(
  * suffix sits right after the base version, e.g. `…-0.0.2-beta-x86_64.flatpak`). The version
  * argument is the release version WITH its channel suffix.
  *
- * Channel-aware identity (spec AD-8, loop 2 + the 2026-10-09 naming rework): the channel is
- * INFERRED from the version suffix (`-dev-*` → dev, `-beta` → beta, else stable) — the release's
- * assets carry the channel in their names. The product name is per-channel ("… BETA" / "… DEV"
- * — the jpackage app name the build sets, mirrored here so the window title and the install
- * identity agree); the Linux dev channel carries its own package base
- * (`n-zik-desktop-compagnon-dev`). The published .exe file name is the channel's Linux base
- * (`n-zik-desktop-compagnon[-dev]-<version>.exe` — the CI renames the jpackage output before
- * the release upload), so the seven app assets of a channel share that base. The functions take
- * the channel as a defaulted parameter so callers with an explicit channel can override the
- * inference.
+ * Channel-aware identity (spec AD-8, loop 2 + the 2026-10-09 naming rework, amended 2026-10-15):
+ * the channel is INFERRED from the version suffix (`-dev-*` → dev, `-beta` → beta, else stable)
+ * — the release's assets carry the channel in their names, and ONLY there: since the 2026-10-15
+ * decision all seven app assets of every channel share the single package base
+ * (`n-zik-desktop-compagnon`) — the dev channel's marker is its dated version suffix (on Linux
+ * it replaces the stable install in place, like beta; Windows keeps its per-channel registry
+ * key and the Flatpak keeps its own app-id, so both stay separate installations there). The
+ * product name is per-channel ("… BETA" / "… DEV" — the jpackage app name the build sets,
+ * mirrored here so the window title and the install identity agree). The .exe file name is the
+ * shared base + the channel-suffixed version (`n-zik-desktop-compagnon-0.0.1-dev-20261015.exe`);
+ * the build writes the installer under that exact name, so the release asset and the in-app
+ * updater agree on one name. The functions take the channel as a defaulted parameter so
+ * callers with an explicit channel can override the inference.
  */
 object ArtifactNames {
     /**
@@ -333,11 +337,14 @@ object ArtifactNames {
      */
     const val WINDOWS_PACKAGE_BASE = "N-Zik Desktop Compagnon"
 
-    /** The jpackage linux package name (the frozen install identity — `/opt/n-zik-desktop-compagnon`). */
+    /**
+     * The jpackage linux package name — shared by EVERY channel since the 2026-10-15 naming
+     * decision (the dev channel's own `-dev` base was removed: its marker is the dated version
+     * suffix only, so on Linux dev replaces the stable install in place, like beta — Windows
+     * keeps its per-channel registry key, the Flatpak keeps its own app-id). The frozen install
+     * identity — `/opt/n-zik-desktop-compagnon`.
+     */
     const val LINUX_PACKAGE_BASE = "n-zik-desktop-compagnon"
-
-    /** The dev channel's linux package name (spec AD-8 — installs to `/opt/n-zik-desktop-compagnon-dev`). */
-    const val LINUX_PACKAGE_BASE_DEV = "n-zik-desktop-compagnon-dev"
 
     /**
      * The channel of a release version (the build's suffix convention): `-dev-<date>` → dev,
@@ -359,27 +366,24 @@ object ArtifactNames {
         else -> WINDOWS_PACKAGE_BASE
     }
 
-    private fun linuxPackageBase(channel: String): String =
-        if (channel == UpdaterConstants.TYPE_DEV) LINUX_PACKAGE_BASE_DEV else LINUX_PACKAGE_BASE
-
     /**
      * The release asset name of the Windows installer (spec AD-2 / AD-8, the 2026-10-09 naming
-     * rework): the channel's Linux base + the version — the same base the five Linux artifacts
-     * of the channel share. The CI renames jpackage's output (the spaced product name) to this
-     * exact name before upload, so the release asset, the SHA-256 table and the in-app updater
-     * all agree on one name.
+     * rework, amended 2026-10-15): the shared package base + the channel-suffixed version — the
+     * same base every Linux artifact of every channel shares. The build writes the installer
+     * under this exact name (the spaced jpackage byproduct is deleted by the task), so the
+     * release asset, the SHA-256 table and the in-app updater all agree on one name.
      */
     fun exe(version: String, channel: String = channelOf(version)): String =
-        "${linuxPackageBase(channel)}-$version.exe"
+        "$LINUX_PACKAGE_BASE-$version.exe"
 
     fun deb(version: String, channel: String = channelOf(version)): String =
-        "${linuxPackageBase(channel)}_$version-1_amd64.deb"
+        "${LINUX_PACKAGE_BASE}_$version-1_amd64.deb"
 
     fun rpm(version: String, channel: String = channelOf(version)): String =
-        "${linuxPackageBase(channel)}-$version-1.x86_64.rpm"
+        "$LINUX_PACKAGE_BASE-$version-1.x86_64.rpm"
 
     fun portableZip(version: String, channel: String = channelOf(version)): String =
-        "${linuxPackageBase(channel)}-$version-linux-portable.zip"
+        "$LINUX_PACKAGE_BASE-$version-linux-portable.zip"
 
     /**
      * The release asset name of the portable Windows zip (spec `spec-windows-portable-zip`):
@@ -387,10 +391,10 @@ object ArtifactNames {
      * (the NSIS installer's own source, the embedded VLC runtime included).
      */
     fun windowsPortableZip(version: String, channel: String = channelOf(version)): String =
-        "${linuxPackageBase(channel)}-$version-windows-portable.zip"
+        "$LINUX_PACKAGE_BASE-$version-windows-portable.zip"
 
     fun flatpak(version: String, channel: String = channelOf(version)): String =
-        "${linuxPackageBase(channel)}-$version-x86_64.flatpak"
+        "$LINUX_PACKAGE_BASE-$version-x86_64.flatpak"
 
     /**
      * The release asset name of the Arch binary package (spec
@@ -399,7 +403,7 @@ object ArtifactNames {
      * channel suffix + release number 1 + the frozen x86_64 arch).
      */
     fun archPkg(version: String, channel: String = channelOf(version)): String =
-        "${linuxPackageBase(channel)}-$version-1-x86_64.pkg.tar.zst"
+        "$LINUX_PACKAGE_BASE-$version-1-x86_64.pkg.tar.zst"
 
     /**
      * The asset name the update wants for this install mode (`null` = none: the manual
