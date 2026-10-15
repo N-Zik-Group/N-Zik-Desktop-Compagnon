@@ -310,9 +310,11 @@ tasks.compileTestKotlin {
 // (the launcher + app/ + runtime/ with the embedded VLC) — plus the jpackage self-extracting
 // exe, which is now a build BYPRODUCT, no longer distributed. This task runs makensis on the
 // committed installer source of truth (`packaging/windows/installer.nsi`) with the per-channel
-// defines and writes the final installer at the SAME output path as the jpackage exe (it
-// overwrites the byproduct): `<product>-<version>.exe` (e.g.
-// "N-Zik Desktop Compagnon DEV-0.0.1-dev-20261007.exe").
+// defines and writes the final installer on the channel's package base
+// (`<linux-package-base>-<version>.exe` — e.g. "n-zik-desktop-compagnon-dev-0.0.1-dev-20261015.exe"):
+// the SAME name the channel's Linux artifacts and the published release asset carry, so the CI
+// uploads it as-is (no rename step) and the in-app updater (`ArtifactNames.exe`) resolves the
+// download from that one name. The spaced jpackage byproduct is deleted afterwards (doLast).
 //
 // NSIS 3.x toolchain: on CI the official zip ships EMBEDDED in the repo (tools/nsis/ — the
 // windows-latest runner migrated to Windows Server 2025, which dropped the NSIS that the
@@ -344,7 +346,13 @@ tasks.register<Exec>("packageInstaller") {
     dependsOn("packageExe")
     val appDir = layout.buildDirectory.dir("compose/binaries/main/app/$channelDisplayName").get().asFile
     val outDir = layout.buildDirectory.dir("compose/binaries/main/exe").get().asFile
-    val outFile = File(outDir, "$channelDisplayName-$appVersionName.exe")
+    // The output name rides on the channel's package base (linuxPackageName — the same base the
+    // Linux artifacts and the published release asset use), NOT the spaced product name: build
+    // output == published asset == the name `ArtifactNames.exe` builds for the download
+    val outFile = File(outDir, "$linuxPackageName-$appVersionName.exe")
+    // The jpackage self-extracting byproduct (the spaced product name) — deleted once the NSIS
+    // installer has been written (the byproduct is no longer distributed)
+    val jpackageByproduct = File(outDir, "$channelDisplayName-$appVersionName.exe")
     // A non-numeric version catalog entry must fail with a clear message, not a raw
     // NumberFormatException deeper in the pipeline
     check(baseVersion.matches(Regex("\\d+(\\.\\d+)*"))) {
@@ -388,6 +396,12 @@ tasks.register<Exec>("packageInstaller") {
             "/DCRED_TARGET=${libs.versions.nzikPackageName.get()}",
             nsisScript,
         )
+    }
+    doLast {
+        // The NSIS installer now sits on the package base while the jpackage byproduct keeps its
+        // spaced product name: drop the byproduct so `main/exe/` (and the CI upload glob) carry
+        // ONE installer. Runs only on makensis success — a failed build keeps the byproduct.
+        jpackageByproduct.delete()
     }
 }
 
@@ -1254,6 +1268,10 @@ project.afterEvaluate {
         // `ChannelArtifactNameTest` pins the derivation against these (test-side copy of the
         // helper — build-script symbols are unreachable from the JVM tests).
         systemProperty("artifacts.exe", channelArtifactName("${channelDisplayName}-$baseVersion.exe"))
+        // The NSIS installer output name (the package base + the channel-suffixed version — the
+        // SAME name the published release asset carries; cross-checked against `ArtifactNames.exe`
+        // in ChannelArtifactNameTest: the in-app updater downloads by exactly this name)
+        systemProperty("windows.installer.name", "$linuxPackageName-$appVersionName.exe")
         systemProperty("artifacts.deb", channelArtifactName("${linuxPackageName}_$baseVersion-1_amd64.deb"))
         systemProperty("artifacts.rpm", channelArtifactName("${linuxPackageName}-$baseVersion-1.x86_64.rpm"))
         systemProperty("linux.freeArgs.deb", tasks.named<AbstractJPackageTask>("packageDeb").get().freeArgs.get().joinToString("\u001f"))

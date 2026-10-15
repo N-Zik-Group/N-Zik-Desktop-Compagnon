@@ -270,14 +270,12 @@ jobs:
 
           SUFFIX="-beta"
           PKG="n-zik-desktop-compagnon"
-          PRODUCT="N-Zik Desktop Compagnon BETA"
 
-          EXE="${PRODUCT}-${BASE}${SUFFIX}.exe"
-          # The name GitHub stores the .exe as: the CI renames the jpackage output (the
-          # spaced product name) to the channel's Linux base before upload — the release
-          # asset, the SHA-256 table and the in-app updater (ArtifactNames.exe) all agree
-          # on it (the seven artifacts of the channel share that base).
-          EXE_PUB="${PKG}-${BASE}${SUFFIX}.exe"
+          # The build writes the installer on the channel's package base (the NSIS task's
+          # OUT_FILE) — the CI uploads it as-is: the release asset, the SHA-256 table and the
+          # in-app updater (ArtifactNames.exe) all agree on that one name (the seven artifacts
+          # of the channel share that base).
+          EXE="${PKG}-${BASE}${SUFFIX}.exe"
           DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
           RPM="${PKG}-${BASE}${SUFFIX}-1.x86_64.rpm"
           ZIP="${PKG}-${BASE}${SUFFIX}-linux-portable.zip"
@@ -300,13 +298,13 @@ jobs:
           cp "artifacts/linux-artifacts/${ZIP}" release/
           cp "artifacts/linux-artifacts/${FLATPAK}" release/
           cp "artifacts/linux-artifacts/${ARCH}" release/
-          cp "artifacts/windows-artifact/main/exe/${EXE}" "release/${EXE_PUB}"
+          cp "artifacts/windows-artifact/main/exe/${EXE}" release/
           cp "artifacts/windows-artifact/${WINZIP}" release/
 
           cd release
           # The two portable rows are ordered as in the release-body download links (Windows
           # portable before Linux portable): sha256sum runs in that order, and the table iterates SHA256SUMS.txt
-          sha256sum "${EXE_PUB}" "${DEB}" "${RPM}" "${WINZIP}" "${ZIP}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
+          sha256sum "${EXE}" "${DEB}" "${RPM}" "${WINZIP}" "${ZIP}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
           cd ..
 
           # The markdown SHA-256 table (the artifacts are unsigned — this is

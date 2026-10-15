@@ -235,9 +235,11 @@ jobs:
 
           SUFFIX=""
           PKG="n-zik-desktop-compagnon"
-          PRODUCT="N-Zik Desktop Compagnon"
 
-          EXE="${PRODUCT}-${BASE}${SUFFIX}.exe"
+          # The build writes the installer on the channel's package base (the NSIS task's
+          # OUT_FILE) — the same name the published release asset and the in-app updater
+          # (ArtifactNames.exe) use
+          EXE="${PKG}-${BASE}${SUFFIX}.exe"
           DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
           RPM="${PKG}-${BASE}${SUFFIX}-1.x86_64.rpm"
           ZIP="${PKG}-${BASE}${SUFFIX}-linux-portable.zip"

@@ -1,5 +1,6 @@
 package app.n_zik.compagnon
 
+import app.n_zik.compagnon.updater.models.ArtifactNames
 import java.io.File
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -15,8 +16,9 @@ import org.junit.jupiter.api.Test
  * semantics, the build's own values pin its implementation). Pinned: the version BOUNDARY check
  * (a base version that is a prefix of a longer version is never hit mid-number), the anti-RE-
  * SUFFIX guard (a stale suffixed artifact is rejected, never corrupted) and the effective
- * per-task artifact names the build exposes (`artifacts.*` / `windows.portable.zipName`
- * system properties).
+ * per-task artifact names the build exposes (`artifacts.*` / `windows.installer.name` /
+ * `windows.portable.zipName` system properties — the installer output name is cross-checked
+ * against `ArtifactNames.exe`, the name the in-app updater downloads by).
  */
 class ChannelArtifactNameTest {
 
@@ -143,6 +145,19 @@ class ChannelArtifactNameTest {
             channelArtifactName("$linuxPackageName-$baseVersion-windows-portable.zip", baseVersion, channelSuffix, channelSuffixPrefix),
             System.getProperty("windows.portable.zipName"),
             "the windows portable zip artifact name is the channel-renamed package-base name",
+        )
+        // The NSIS installer output name rides on the channel's package base (the build writes it
+        // directly — the CI uploads it as-is, no rename step): it must be the channel-renamed
+        // package-base name AND the exact name the in-app updater (ArtifactNames.exe) downloads by
+        assertEquals(
+            channelArtifactName("$linuxPackageName-$baseVersion.exe", baseVersion, channelSuffix, channelSuffixPrefix),
+            System.getProperty("windows.installer.name"),
+            "the installer output name is the channel-renamed package-base name",
+        )
+        assertEquals(
+            ArtifactNames.exe("$baseVersion$channelSuffix", channel),
+            System.getProperty("windows.installer.name"),
+            "the installer output name is what the in-app updater (ArtifactNames.exe) downloads",
         )
     }
 }

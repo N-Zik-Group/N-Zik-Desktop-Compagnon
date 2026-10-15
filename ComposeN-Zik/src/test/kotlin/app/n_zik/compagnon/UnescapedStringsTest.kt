@@ -15,8 +15,9 @@ import java.io.File
  *    (wired in `ComposeN-Zik/build.gradle.kts`), so the assertions below run against the copies the
  *    build actually generated (one `strings.xml` per generated values directory, under
  *    `build/generated/composeResourcesUnescaped`): the French `app_subtitle` (the source still
- *    carries the Android `\'` escaping) is unescaped, the French `starting` keeps its
- *    Crowdin value plain, and no generated value still carries an escaped apostrophe;
+ *    carries the Android `\'` escaping) is unescaped, the French `starting` carries the plain
+ *    Crowdin value (`C'est parti…` — its source apostrophe escaped, unescaped like app_subtitle),
+ *    and no generated value still carries an escaped apostrophe;
  *  * (b) the pure semantics of the unescape — the single left-to-right pass over the value of
  *    each `<string>` element. The build script carries its own copy of this function (build
  *    scripts cannot call test sources); case (a) pins the build's implementation on the real
@@ -77,10 +78,9 @@ class UnescapedStringsTest {
     fun `the generated fr starting is unescaped`() {
         val fr = generatedRoot.resolve("values-fr/strings.xml")
         assertTrue(fr.isFile, "the generated unescaped fr strings.xml is missing: ${fr.path} (run :ComposeN-Zik:test — it depends on unescapeStringsXml)")
-        // The Crowdin-owned fr value (the 2026-10 re-export replaced the old escaped-apostrophe
-        // "C\'est parti…" with an unescaped one — the real-escaping case is pinned by
-        // app_subtitle below); the generated copy must carry it plain
-        assertEquals("Démarrage de…", stringName(fr.readText(), "starting"))
+        // The Crowdin-owned fr value: the source still carries the Android escaped apostrophe
+        // (C\'est parti…) — the generated copy must carry the plain one, like app_subtitle below
+        assertEquals("C'est parti…", stringName(fr.readText(), "starting"))
     }
 
     @Test
