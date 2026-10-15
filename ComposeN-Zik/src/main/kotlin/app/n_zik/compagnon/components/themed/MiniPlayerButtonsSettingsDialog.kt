@@ -1,36 +1,31 @@
 package app.n_zik.compagnon.components.themed
 
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.dialog.common.ButtonRow
+import app.n_zik.compagnon.components.dialog.common.DialogButton
+import app.n_zik.compagnon.components.dialog.common.DialogFrame
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.Preferences
 import app.n_zik.compagnon.utils.Toaster
-import app.n_zik.compagnon.utils.medium
 import app.n_zik.compagnon.utils.semiBold
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -41,10 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -182,8 +174,9 @@ private fun MpbDialogRow(
  * Player-appearance tab's "Timeline & Controls" card (AS:1724) — the title
  * `miniplayer_buttons_config` + its description, the 17 rows in the phone's default order
  * (MPB:45-67) with the phone's icons / labels, and its Reset / Cancel / Confirm row (the phone's
- * `ToggleListDialog` button styles; the confirm label uses the PC's `confirm` string, as every
- * other PC dialog).
+ * `ToggleListDialog` roles on the shared [ButtonRow] — Reset secondary, Cancel the red `danger`,
+ * Confirm the accent `primary`; the confirm label uses the PC's `confirm` string, as every
+ * other PC dialog), on the shared [DialogFrame] (spec `spec-dialog-framework-port`).
  *
  * **Wired** (2 rows): Discover + Visualizer — the PC keys `showMiniPlayerDiscover` /
  * `showMiniPlayerVisualizer` (both off by default). **Inert** (15 rows): the switch shows the
@@ -211,145 +204,92 @@ fun MiniPlayerButtonsSettingsDialog(
         mutableStateOf(MpbWiredState(settings.showMiniPlayerDiscover, settings.showMiniPlayerVisualizer))
     }
 
-    val colorPalette = colorPalette()
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+    DialogFrame(
+        onDismiss = onDismiss,
+        title = stringResource(Res.string.miniplayer_buttons_config),
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize(),
+        val colorPalette = colorPalette()
+        // The header's description (the frame carries the title)
+        BasicText(
+            text = stringResource(Res.string.miniplayer_buttons_config_description),
+            style = typography().s.copy(
+                color = colorPalette.textSecondary,
+            ),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // The 17 rows, in the phone's default order (MPB:45-67): bounded by BOTH the old 480 dp
+        // cap and the frame's remaining space (`weight(1f, fill = false)` — the frame body is not
+        // scrollable, so the list scrolls here and the button row below always stays visible)
+        Column(
+            modifier = Modifier
+                .weight(1f, fill = false)
+                .verticalScroll(rememberScrollState())
+                .heightIn(max = 480.dp),
         ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    // PC: a window is much wider than a phone; the card keeps a phone-like width
-                    .widthIn(max = 560.dp)
-                    .padding(16.dp),
-                shape = uiRoundnessShape(),
-                colors = CardDefaults.cardColors(
-                    containerColor = colorPalette.background1,
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                ) {
-                    // Header
-                    BasicText(
-                        text = stringResource(Res.string.miniplayer_buttons_config),
-                        style = typography().l.semiBold.copy(
-                            color = colorPalette.text,
-                        ),
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    BasicText(
-                        text = stringResource(Res.string.miniplayer_buttons_config_description),
-                        style = typography().s.copy(
-                            color = colorPalette.textSecondary,
-                        ),
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // The 17 rows, in the phone's default order (MPB:45-67)
-                    Column(
-                        modifier = Modifier
-                            .verticalScroll(rememberScrollState())
-                            .heightIn(max = 480.dp),
-                    ) {
-                        MPB_ROWS.forEach { row ->
-                            val isChecked = when (row.id) {
-                                "discover" -> working.discover
-                                "visualizer" -> working.visualizer
-                                else -> row.defaultChecked
-                            }
-                            // The 15 inert rows are frozen at the phone defaults (never togglable);
-                            // the 2 functional rows follow the max-checked gate (functional count
-                            // only — see [mpbRowCanToggle]). The `when (row.id)` / else mapping below
-                            // targets exactly those 2 functional rows (discover / visualizer) —
-                            // extend it if a third functional row is ever added
-                            val enabled = row.functional && mpbRowCanToggle(isChecked, working.functionalCheckedCount)
-                            MpbDialogRow(
-                                row = row,
-                                isChecked = isChecked,
-                                enabled = enabled,
-                                onToggle = {
-                                    if (row.id == "discover") {
-                                        working = working.copy(discover = it)
-                                    } else {
-                                        working = working.copy(visualizer = it)
-                                    }
-                                },
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Reset / Cancel / Confirm (the phone's `ToggleListDialog` 152-204 button styles,
-                    // ported; the confirm label uses the PC's `confirm` string, as every other PC
-                    // dialog)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End,
-                    ) {
-                        // Reset: the working state only (the phone's MPB:207-213 — no persist, no
-                        // toast)
-                        BasicText(
-                            text = stringResource(Res.string.reset),
-                            style = typography().xs.medium.copy(
-                                color = colorPalette.textDisabled,
-                                textAlign = TextAlign.Center,
-                            ),
-                            modifier = Modifier
-                                .clip(uiRoundnessShape())
-                                .clickable { working = mpbResetState() }
-                                .padding(horizontal = 16.dp, vertical = 10.dp),
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        BasicText(
-                            text = stringResource(Res.string.cancel),
-                            style = typography().xs.medium.copy(
-                                color = colorPalette.red.copy(alpha = 0.3f),
-                                textAlign = TextAlign.Center,
-                            ),
-                            modifier = Modifier
-                                .clip(uiRoundnessShape())
-                                .clickable(onClick = onDismiss)
-                                .padding(horizontal = 16.dp, vertical = 10.dp),
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        // Confirm: persists the 2 functional keys (the phone's MPB:217-225, without
-                        // the order / side effect) + toasts + closes
-                        BasicText(
-                            text = stringResource(Res.string.confirm),
-                            style = typography().xs.semiBold.copy(
-                                color = colorPalette.onAccent,
-                                textAlign = TextAlign.Center,
-                            ),
-                            modifier = Modifier
-                                .clip(uiRoundnessShape())
-                                .background(colorPalette.accent)
-                                .clickable {
-                                    preferences.update { s ->
-                                        s.copy(
-                                            showMiniPlayerDiscover = working.discover,
-                                            showMiniPlayerVisualizer = working.visualizer,
-                                        )
-                                    }
-                                    Toaster.s(Res.string.toast_preference_saved)
-                                    onDismiss()
-                                }
-                                .padding(horizontal = 20.dp, vertical = 10.dp),
-                        )
-                    }
+            MPB_ROWS.forEach { row ->
+                val isChecked = when (row.id) {
+                    "discover" -> working.discover
+                    "visualizer" -> working.visualizer
+                    else -> row.defaultChecked
                 }
+                // The 15 inert rows are frozen at the phone defaults (never togglable);
+                // the 2 functional rows follow the max-checked gate (functional count
+                // only — see [mpbRowCanToggle]). The `when (row.id)` / else mapping below
+                // targets exactly those 2 functional rows (discover / visualizer) —
+                // extend it if a third functional row is ever added
+                val enabled = row.functional && mpbRowCanToggle(isChecked, working.functionalCheckedCount)
+                MpbDialogRow(
+                    row = row,
+                    isChecked = isChecked,
+                    enabled = enabled,
+                    onToggle = {
+                        if (row.id == "discover") {
+                            working = working.copy(discover = it)
+                        } else {
+                            working = working.copy(visualizer = it)
+                        }
+                    },
+                )
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Reset / Cancel / Confirm (the phone's `ToggleListDialog` roles, on the shared
+        // [ButtonRow]; the confirm label uses the PC's `confirm` string, as every other PC
+        // dialog)
+        ButtonRow(
+            buttons = listOf(
+                // Reset: the working state only (the phone's MPB:207-213 — no persist, no
+                // toast)
+                DialogButton(
+                    text = stringResource(Res.string.reset),
+                    onClick = { working = mpbResetState() },
+                ),
+                DialogButton(
+                    text = stringResource(Res.string.cancel),
+                    onClick = onDismiss,
+                    danger = true,
+                ),
+                // Confirm: persists the 2 functional keys (the phone's MPB:217-225, without
+                // the order / side effect) + toasts + closes
+                DialogButton(
+                    text = stringResource(Res.string.confirm),
+                    onClick = {
+                        preferences.update { s ->
+                            s.copy(
+                                showMiniPlayerDiscover = working.discover,
+                                showMiniPlayerVisualizer = working.visualizer,
+                            )
+                        }
+                        Toaster.s(Res.string.toast_preference_saved)
+                        onDismiss()
+                    },
+                    primary = true,
+                ),
+            ),
+        )
     }
 }

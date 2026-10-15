@@ -4,23 +4,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
@@ -32,18 +23,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.components.theme.ModernBlackColorPalette
-import app.n_zik.compagnon.components.theme.PureBlackColorPalette
+import app.n_zik.compagnon.components.dialog.common.ButtonRow
+import app.n_zik.compagnon.components.dialog.common.DialogButton
+import app.n_zik.compagnon.components.dialog.common.DialogFrame
 import app.n_zik.compagnon.generated.AppVersion
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
-import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.updater.models.InstallMode
 import app.n_zik.compagnon.updater.models.PackageManager
 import app.n_zik.compagnon.updater.models.currentInstallMode
@@ -60,7 +47,6 @@ import app.n_zik.compagnon.utils.bold
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.formatShortFileSize
 import app.n_zik.compagnon.utils.formatText
-import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -76,6 +62,16 @@ import org.jetbrains.compose.resources.stringResource
  * the user sees progress and can cancel — the self-extracting exe then relaunches the app on a
  * 0 / 3010 exit), Flatpak = `flatpak install <file>`, package-managed = the exact command shown,
  * never auto-run (privilege), portable = manual replacement.
+ *
+ * The chrome renders through the shared [DialogFrame] (420 dp cap — the updater width) and the
+ * shared [ButtonRow] (the phone's roles: Cancel = the red `danger` pill, the download / install /
+ * copy / open-folder action = the accent `primary` pill), spec `spec-dialog-framework-port`.
+ *
+ * Frame-migration deltas (spec `spec-dialog-framework-port`): the phone's per-state nested cards
+ * are removed (the content renders directly in the shared frame — [InstallStep] keeps its own
+ * content card, a shared component, pre-existing) and the metrics moved to the shared pill
+ * language (pill spacing 12→8 dp, pill padding 16/10 dp, the updater icons 24→16 dp, the 420 dp
+ * cap now includes the frame's 16 dp card padding).
  */
 object NewUpdateAvailableDialog {
 
@@ -132,425 +128,277 @@ object NewUpdateAvailableDialog {
             }
         }
 
-        Dialog(onDismissRequest = onDismiss) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .widthIn(max = 420.dp)
-                    .fillMaxWidth()
-                    .padding(8.dp),
+        DialogFrame(onDismiss = onDismiss, maxWidth = 420.dp) {
+            val colorPalette = colorPalette()
+
+            // Header with title (the phone's `update` icon + title + version + size lines)
+            AnimatedVisibility(
+                visible = true,
+                enter = fadeIn(animationSpec = tween(300)) + scaleIn(animationSpec = tween(300), initialScale = 0.9f),
             ) {
-                // Header with title
-                AnimatedVisibility(
-                    visible = true,
-                    enter = fadeIn(animationSpec = tween(300)) + scaleIn(animationSpec = tween(300), initialScale = 0.9f),
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        painter = painterResource(Res.drawable.update),
+                        contentDescription = null,
+                        tint = colorPalette.accent,
+                        modifier = Modifier.size(32.dp),
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    BasicText(
+                        text = channelLabel() + stringResource(Res.string.update_available),
+                        style = typography().l.bold.copy(color = colorPalette.text),
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    // The phone's display version (its `getDisplayVersion()` — keeps
+                    // the tag's "v", appends the channel suffix when absent)
+                    BasicText(
+                        text = formatText(
+                            stringResource(Res.string.app_update_dialog_version),
+                            Updater.getDisplayVersion(),
+                        ),
+                        style = typography().xs.copy(color = colorPalette.textSecondary),
+                    )
+                    // The phone always shows the size line (L185-188) — the "?" fallback
+                    // when no asset is selected (the desktop's no-asset phase)
+                    BasicText(
+                        text = formatText(
+                            stringResource(Res.string.app_update_dialog_size),
+                            build?.readableSize?.ifEmpty { "?" } ?: "?",
+                        ),
+                        style = typography().xs.copy(color = colorPalette.textSecondary),
+                    )
+                }
+            }
+
+            // The phone's 16 dp header → actions gap (its L194)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // The release's changelog (when fetched): the frame body is not scrollable, so a tall
+            // changelog scrolls in its own column bounded to the frame's remaining space (the
+            // [DefaultDialog] idiom) — the action pills below always stay visible and tappable
+            if (!changelog.isNullOrBlank()) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .verticalScroll(rememberScrollState()),
                 ) {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
-                                Color(0xFF1A1A1A) // Gray dark for pitch black themes
-                            } else {
-                                colorPalette().background1
-                            },
-                        ),
-                        shape = uiRoundnessShape(),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                // The phone's `update` icon (its `arrow_up` is a desktop-only leftover)
-                                Icon(
-                                    painter = painterResource(Res.drawable.update),
-                                    contentDescription = null,
-                                    tint = colorPalette().accent,
-                                    modifier = Modifier.size(32.dp),
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                BasicText(
-                                    text = channelLabel() + stringResource(Res.string.update_available),
-                                    style = typography().l.bold.copy(color = colorPalette().text),
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                // The phone's display version (its `getDisplayVersion()` — keeps
-                                // the tag's "v", appends the channel suffix when absent)
-                                BasicText(
-                                    text = formatText(
-                                        stringResource(Res.string.app_update_dialog_version),
-                                        Updater.getDisplayVersion(),
-                                    ),
-                                    style = typography().xs.copy(color = colorPalette().textSecondary),
-                                )
-                                // The phone always shows the size line (L185-188) — the "?" fallback
-                                // when no asset is selected (the desktop's no-asset phase)
-                                BasicText(
-                                    text = formatText(
-                                        stringResource(Res.string.app_update_dialog_size),
-                                        build?.readableSize?.ifEmpty { "?" } ?: "?",
-                                    ),
-                                    style = typography().xs.copy(color = colorPalette().textSecondary),
-                                )
-                            }
-                        }
-                    }
+                    BasicText(
+                        text = changelog,
+                        style = typography().xs.copy(color = colorPalette.textSecondary),
+                    )
                 }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
 
-                // The phone's 16 dp header → actions gap (its L194)
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // The release's changelog (when fetched)
-                if (!changelog.isNullOrBlank()) {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
-                                Color(0xFF1A1A1A) // Gray dark for pitch black themes
-                            } else {
-                                colorPalette().background1
-                            },
-                        ),
-                        shape = uiRoundnessShape(),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                    ) {
+            // Action phase: download / progression / install / error
+            when (val state = download) {
+                is UpdateDownloadManager.DownloadState.Idle,
+                is UpdateDownloadManager.DownloadState.Starting -> {
+                    if (build == null) {
+                        // No binary asset for this install mode (the probe failed, or the
+                        // release simply has no asset for this mode): the manual-commands
+                        // hint, no download button (the v1 code silently offered a dead
+                        // button). An AUR install (pacman, no release marker) never reaches
+                        // this dialog — its updater is blocked by provenance before any
+                        // check (spec `spec-arch-binary-package-release`); a marked
+                        // release-pkg install gets its binary package asset instead.
                         BasicText(
-                            text = changelog,
-                            style = typography().xs.copy(color = colorPalette().textSecondary),
-                            modifier = Modifier
-                                .verticalScroll(rememberScrollState())
-                                .padding(16.dp),
+                            text = stringResource(Res.string.install_pkg_manual),
+                            style = typography().xs.copy(color = colorPalette.textSecondary),
                         )
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
-
-                // Action phase: download / progression / install / error
-                when (val state = download) {
-                    is UpdateDownloadManager.DownloadState.Idle,
-                    is UpdateDownloadManager.DownloadState.Starting -> {
-                        if (build == null) {
-                            // No binary asset for this install mode (the probe failed, or the
-                            // release simply has no asset for this mode): the manual-commands
-                            // card, no download button (the v1 code silently offered a dead
-                            // button). An AUR install (pacman, no release marker) never reaches
-                            // this dialog — its updater is blocked by provenance before any
-                            // check (spec `spec-arch-binary-package-release`); a marked
-                            // release-pkg install gets its binary package asset instead.
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
-                                        Color(0xFF1A1A1A) // Gray dark for pitch black themes
-                                    } else {
-                                        colorPalette().background1
-                                    },
+                        Spacer(modifier = Modifier.height(12.dp))
+                        ButtonRow(
+                            buttons = listOf(
+                                DialogButton(
+                                    text = stringResource(Res.string.cancel),
+                                    icon = Res.drawable.close,
+                                    onClick = onDismiss,
+                                    danger = true,
                                 ),
-                                shape = uiRoundnessShape(),
-                                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                            ) {
-                                BasicText(
-                                    text = stringResource(Res.string.install_pkg_manual),
-                                    style = typography().xs.copy(color = colorPalette().textSecondary),
-                                    modifier = Modifier.padding(16.dp),
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(12.dp))
-                            CancelButton(onClick = onDismiss)
-                        } else {
-                            ActionRow(
-                                primaryLabel = stringResource(Res.string.download),
-                                onPrimary = {
-                                    UpdateDownloadManager.startDownload(
-                                        downloadUrl = build.downloadUrl,
-                                        version = release?.tagName?.removePrefix("v") ?: AppVersion.versionName,
-                                        assetName = build.name,
-                                    )
-                                },
-                                onCancel = onDismiss,
-                            )
-                        }
-                    }
-
-                    is UpdateDownloadManager.DownloadState.Downloading -> {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
-                                    Color(0xFF1A1A1A) // Gray dark for pitch black themes
-                                } else {
-                                    colorPalette().background1
-                                },
                             ),
-                            shape = uiRoundnessShape(),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                BasicText(
-                                    text = formatText(
-                                        stringResource(Res.string.update_download_progress),
-                                        (state.progress * 100).toInt(),
-                                    ),
-                                    style = typography().xs.copy(color = colorPalette().textSecondary),
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                LinearProgressIndicator(
-                                    progress = { state.progress },
-                                    modifier = Modifier.fillMaxWidth().height(6.dp),
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        ActionRow(
-                            primaryLabel = stringResource(Res.string.cancel),
-                            onPrimary = {
-                                UpdateDownloadManager.cancelDownload()
-                                onDismiss()
-                            },
-                            onCancel = onDismiss,
                         )
-                    }
-
-                    is UpdateDownloadManager.DownloadState.DownloadingIndeterminate -> {
-                        // Loop 2: no Content-Length header — the byte counter instead of the bar
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
-                                    Color(0xFF1A1A1A) // Gray dark for pitch black themes
-                                } else {
-                                    colorPalette().background1
-                                },
-                            ),
-                            shape = uiRoundnessShape(),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                        ) {
-                            BasicText(
-                                text = formatText(
-                                    stringResource(Res.string.update_download_indeterminate),
-                                    formatShortFileSize(state.bytesRead),
-                                ),
-                                style = typography().xs.copy(color = colorPalette().textSecondary),
-                                modifier = Modifier.padding(16.dp),
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        ActionRow(
-                            primaryLabel = stringResource(Res.string.cancel),
-                            onPrimary = {
-                                UpdateDownloadManager.cancelDownload()
-                                onDismiss()
-                            },
-                            onCancel = onDismiss,
-                        )
-                    }
-
-                    is UpdateDownloadManager.DownloadState.Completed -> {
-                        // Hoisted into composable scope: the click lambda below is neither suspend nor
-                        // composable, so the non-composable `getString` cannot be called inside it
-                        val windowsHelperError = stringResource(Res.string.error_windows_install_helper)
-                        // The exact command of this mode (`null` = the manual modes — the primary
-                        // action keeps the "Open folder" fallback instead of a misleading
-                        // "Install")
-                        val command = installCommand(installMode, packageManager, state.filePath)
-                        InstallStep(
-                            filePath = state.filePath,
-                            installMode = installMode,
-                            packageManager = packageManager,
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        ActionRow(
-                            primaryLabel = when {
-                                installMode == InstallMode.WINDOWS -> stringResource(Res.string.install_now)
-                                command != null -> stringResource(Res.string.install_copy_command)
-                                else -> stringResource(Res.string.install_open_folder)
-                            },
-                            onPrimary = {
-                                when {
-                                    installMode == InstallMode.WINDOWS -> {
-                                        if (UpdateDownloadManager.startWindowsInstall(state.filePath)) {
-                                            // Quit so the installer can replace the running files. `exitApplication()`
-                                            // is only reachable from the `application {}` scope in Main.kt, so a JVM
-                                            // exit is the way to quit from here (safe: dispatchers are daemon threads,
-                                            // no shutdown hooks, and the install helper is a detached process).
-                                            System.exit(0)
-                                        } else {
-                                            Toaster.e(windowsHelperError)
-                                        }
-                                    }
-                                    // The command-managed modes (flatpak / apt / dnf / pacman): copy
-                                    // the exact command — the user runs it in their terminal
-                                    // (never auto-run, privilege)
-                                    command != null -> copyToClipboard(command, Res.string.command_copied)
-                                    else -> openFileFolder(state.filePath)
-                                }
-                            },
-                            onCancel = {
-                                UpdateDownloadManager.resetState()
-                                onDismiss()
-                            },
-                        )
-                    }
-
-                    is UpdateDownloadManager.DownloadState.Failed -> {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
-                                    Color(0xFF1A1A1A) // Gray dark for pitch black themes
-                                } else {
-                                    colorPalette().background1
-                                },
-                            ),
-                            shape = uiRoundnessShape(),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                        ) {
-                            BasicText(
-                                text = state.error,
-                                style = typography().xs.copy(color = colorPalette().red),
-                                modifier = Modifier.padding(16.dp),
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        ActionRow(
-                            primaryLabel = stringResource(Res.string.download),
-                            onPrimary = {
-                                build?.let {
-                                    UpdateDownloadManager.startDownload(
-                                        downloadUrl = it.downloadUrl,
-                                        version = release?.tagName?.removePrefix("v") ?: AppVersion.versionName,
-                                        assetName = it.name,
-                                    )
-                                }
-                            },
-                            onCancel = onDismiss,
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    /** A single full-width cancel button (the no-download / no-asset phases). */
-    @Composable
-    private fun CancelButton(onClick: () -> Unit) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(uiRoundnessShape())
-                .clickable { onClick() },
-            colors = CardDefaults.cardColors(
-                containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
-                    Color(0xFF1A1A1A) // Gray dark for pitch black themes
-                } else {
-                    colorPalette().background1
-                },
-            ),
-            shape = uiRoundnessShape(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                BasicText(
-                    text = stringResource(Res.string.cancel),
-                    style = typography().xs.semiBold.copy(color = colorPalette().textSecondary),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
-    }
-
-    /** The Cancel / primary action pair of the phone's dialog (the accent card + the flat card). */
-    @Composable
-    private fun ActionRow(primaryLabel: String, onPrimary: () -> Unit, onCancel: () -> Unit) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            // Cancel button
-            Card(
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(uiRoundnessShape())
-                    .clickable { onCancel() },
-                colors = CardDefaults.cardColors(
-                    containerColor = if (colorPalette() === PureBlackColorPalette || colorPalette() === ModernBlackColorPalette || app.n_zik.compagnon.bridge.state.LocalUiSettings.current.isPitchBlack) {
-                        Color(0xFF1A1A1A) // Gray dark for pitch black themes
                     } else {
-                        colorPalette().background1
-                    },
-                ),
-                shape = uiRoundnessShape(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            ) {
-                // The phone's cancel card (its `NewUpdateAvailableDialog.kt` 223-244): the close
-                // icon + the label, 16 dp vertical padding
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            painter = painterResource(Res.drawable.close),
-                            contentDescription = null,
-                            tint = colorPalette().textSecondary,
-                            modifier = Modifier.size(16.dp),
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        BasicText(
-                            text = stringResource(Res.string.cancel),
-                            style = typography().xs.semiBold.copy(color = colorPalette().textSecondary),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                        ButtonRow(
+                            buttons = listOf(
+                                DialogButton(
+                                    text = stringResource(Res.string.cancel),
+                                    icon = Res.drawable.close,
+                                    onClick = onDismiss,
+                                    danger = true,
+                                ),
+                                DialogButton(
+                                    text = stringResource(Res.string.download),
+                                    icon = Res.drawable.chevron_forward,
+                                    onClick = {
+                                        UpdateDownloadManager.startDownload(
+                                            downloadUrl = build.downloadUrl,
+                                            version = release?.tagName?.removePrefix("v") ?: AppVersion.versionName,
+                                            assetName = build.name,
+                                        )
+                                    },
+                                    primary = true,
+                                ),
+                            ),
                         )
                     }
                 }
-            }
 
-            // Primary button (the phone's card, its 261-282): the label + the chevron icon
-            Card(
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(uiRoundnessShape())
-                    .clickable { onPrimary() },
-                colors = CardDefaults.cardColors(containerColor = colorPalette().accent),
-                shape = uiRoundnessShape(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        BasicText(
-                            text = primaryLabel,
-                            style = typography().xs.semiBold.copy(color = Color.White),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Icon(
-                            painter = painterResource(Res.drawable.chevron_forward),
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(16.dp),
-                        )
-                    }
+                is UpdateDownloadManager.DownloadState.Downloading -> {
+                    BasicText(
+                        text = formatText(
+                            stringResource(Res.string.update_download_progress),
+                            (state.progress * 100).toInt(),
+                        ),
+                        style = typography().xs.copy(color = colorPalette.textSecondary),
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LinearProgressIndicator(
+                        progress = { state.progress },
+                        modifier = Modifier.fillMaxWidth().height(6.dp),
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    ButtonRow(
+                        buttons = listOf(
+                            DialogButton(
+                                text = stringResource(Res.string.cancel),
+                                icon = Res.drawable.close,
+                                onClick = onDismiss,
+                                danger = true,
+                            ),
+                            DialogButton(
+                                text = stringResource(Res.string.cancel),
+                                icon = Res.drawable.chevron_forward,
+                                onClick = {
+                                    UpdateDownloadManager.cancelDownload()
+                                    onDismiss()
+                                },
+                                primary = true,
+                            ),
+                        ),
+                    )
+                }
+
+                is UpdateDownloadManager.DownloadState.DownloadingIndeterminate -> {
+                    // Loop 2: no Content-Length header — the byte counter instead of the bar
+                    BasicText(
+                        text = formatText(
+                            stringResource(Res.string.update_download_indeterminate),
+                            formatShortFileSize(state.bytesRead),
+                        ),
+                        style = typography().xs.copy(color = colorPalette.textSecondary),
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    ButtonRow(
+                        buttons = listOf(
+                            DialogButton(
+                                text = stringResource(Res.string.cancel),
+                                icon = Res.drawable.close,
+                                onClick = onDismiss,
+                                danger = true,
+                            ),
+                            DialogButton(
+                                text = stringResource(Res.string.cancel),
+                                icon = Res.drawable.chevron_forward,
+                                onClick = {
+                                    UpdateDownloadManager.cancelDownload()
+                                    onDismiss()
+                                },
+                                primary = true,
+                            ),
+                        ),
+                    )
+                }
+
+                is UpdateDownloadManager.DownloadState.Completed -> {
+                    // Hoisted into composable scope: the click lambda below is neither suspend nor
+                    // composable, so the non-composable `getString` cannot be called inside it
+                    val windowsHelperError = stringResource(Res.string.error_windows_install_helper)
+                    // The exact command of this mode (`null` = the manual modes — the primary
+                    // action keeps the "Open folder" fallback instead of a misleading
+                    // "Install")
+                    val command = installCommand(installMode, packageManager, state.filePath)
+                    InstallStep(
+                        filePath = state.filePath,
+                        installMode = installMode,
+                        packageManager = packageManager,
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    ButtonRow(
+                        buttons = listOf(
+                            DialogButton(
+                                text = stringResource(Res.string.cancel),
+                                icon = Res.drawable.close,
+                                onClick = {
+                                    UpdateDownloadManager.resetState()
+                                    onDismiss()
+                                },
+                                danger = true,
+                            ),
+                            DialogButton(
+                                text = when {
+                                    installMode == InstallMode.WINDOWS -> stringResource(Res.string.install_now)
+                                    command != null -> stringResource(Res.string.install_copy_command)
+                                    else -> stringResource(Res.string.install_open_folder)
+                                },
+                                icon = Res.drawable.chevron_forward,
+                                onClick = {
+                                    when {
+                                        installMode == InstallMode.WINDOWS -> {
+                                            if (UpdateDownloadManager.startWindowsInstall(state.filePath)) {
+                                                // Quit so the installer can replace the running files. `exitApplication()`
+                                                // is only reachable from the `application {}` scope in Main.kt, so a JVM
+                                                // exit is the way to quit from here (safe: dispatchers are daemon threads,
+                                                // no shutdown hooks, and the install helper is a detached process).
+                                                System.exit(0)
+                                            } else {
+                                                Toaster.e(windowsHelperError)
+                                            }
+                                        }
+                                        // The command-managed modes (flatpak / apt / dnf / pacman): copy
+                                        // the exact command — the user runs it in their terminal
+                                        // (never auto-run, privilege)
+                                        command != null -> copyToClipboard(command, Res.string.command_copied)
+                                        else -> openFileFolder(state.filePath)
+                                    }
+                                },
+                                primary = true,
+                            ),
+                        ),
+                    )
+                }
+
+                is UpdateDownloadManager.DownloadState.Failed -> {
+                    BasicText(
+                        text = state.error,
+                        style = typography().xs.copy(color = colorPalette.red),
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    ButtonRow(
+                        buttons = listOf(
+                            DialogButton(
+                                text = stringResource(Res.string.cancel),
+                                icon = Res.drawable.close,
+                                onClick = onDismiss,
+                                danger = true,
+                            ),
+                            DialogButton(
+                                text = stringResource(Res.string.download),
+                                icon = Res.drawable.chevron_forward,
+                                onClick = {
+                                    build?.let {
+                                        UpdateDownloadManager.startDownload(
+                                            downloadUrl = it.downloadUrl,
+                                            version = release?.tagName?.removePrefix("v") ?: AppVersion.versionName,
+                                            assetName = it.name,
+                                        )
+                                    }
+                                },
+                                primary = true,
+                            ),
+                        ),
+                    )
                 }
             }
         }
     }
-
 }

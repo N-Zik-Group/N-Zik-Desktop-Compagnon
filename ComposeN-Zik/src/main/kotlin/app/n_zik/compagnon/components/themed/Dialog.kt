@@ -1,84 +1,81 @@
 package app.n_zik.compagnon.components.themed
 
-import androidx.compose.foundation.background
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextOverflow
-import app.n_zik.compagnon.utils.bold
-import app.n_zik.compagnon.utils.center
-import app.n_zik.compagnon.utils.secondary
-import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.painterResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.dialog.common.ButtonRow
+import app.n_zik.compagnon.components.dialog.common.DialogButton
+import app.n_zik.compagnon.components.dialog.common.DialogFrame
 import app.n_zik.compagnon.components.theme.ColorPalette
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
+import app.n_zik.compagnon.utils.bold
+import app.n_zik.compagnon.utils.center
 import app.n_zik.compagnon.utils.medium
+import app.n_zik.compagnon.utils.secondary
 import app.n_zik.compagnon.utils.semiBold
+import kotlinx.coroutines.delay
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Port of `ConfirmationDialog` (phone's `app/it/fast4x/rimusic/ui/components/themed/Dialog.kt` 314). PC only:
- * the card is at most 560 dp wide (a window is much wider than a phone). Dropped: the unused
- * `cancelBackgroundPrimary` / `confirmBackgroundPrimary` parameters.
- * Story 12 adds [ValueSelectorDialog] and [InputNumericDialog] (with [textFieldColors]) below.
+ * Port of `ConfirmationDialog` (the phone's `app/n_zik/android/components/dialog/common/
+ * ConfirmationDialog.kt`): a message + the Cancel (danger) / Confirm (primary) [ButtonRow] on the
+ * shared [DialogFrame] (the phone's parity — the cancel pill is the red `danger`, the confirm the
+ * accent `primary`). PC only: the frame's fixed max width (560 dp default — a window is much
+ * wider than a phone). Dropped: the unused gen-1 `cancelBackgroundPrimary` /
+ * `confirmBackgroundPrimary` parameters. Story 12 adds [ValueSelectorDialog] and
+ * [InputNumericDialog] (with [textFieldColors]) below.
  */
 @Composable
 fun ConfirmationDialog(
@@ -90,96 +87,40 @@ fun ConfirmationDialog(
     confirmText: String = stringResource(Res.string.confirm),
     onCancel: () -> Unit = onDismiss,
 ) {
-    val colorPalette = colorPalette()
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            Card(
-                modifier = modifier
-                    .fillMaxWidth(0.9f)
-                    // PC: a window is much wider than a phone; the card keeps a phone-like width
-                    .widthIn(max = 560.dp)
-                    .padding(16.dp),
-                shape = uiRoundnessShape(),
-                colors = CardDefaults.cardColors(
-                    containerColor = colorPalette.background1,
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    // Message text
-                    BasicText(
-                        text = text,
-                        style = typography().s.copy(
-                            color = colorPalette.text,
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 24.dp),
-                    )
+    DialogFrame(onDismiss = onDismiss, modifier = modifier) {
+        // Message text
+        BasicText(
+            text = text,
+            style = typography().s.copy(
+                color = colorPalette().text,
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp),
+        )
 
-                    // Action buttons — Row with weight, no conflicting fillMaxWidth
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .background(colorPalette.background2, uiRoundnessShape())
-                                .clip(uiRoundnessShape())
-                                .clickable(onClick = onCancel)
-                                .padding(vertical = 12.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            BasicText(
-                                text = cancelText,
-                                style = typography().xs
-                                    .medium
-                                    .copy(
-                                        color = colorPalette.text,
-                                        textAlign = TextAlign.Center,
-                                    ),
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .background(colorPalette.accent, uiRoundnessShape())
-                                .clip(uiRoundnessShape())
-                                .clickable {
-                                    onConfirm()
-                                    onDismiss()
-                                }
-                                .padding(vertical = 12.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            BasicText(
-                                text = confirmText,
-                                style = typography().xs
-                                    .medium
-                                    .copy(
-                                        color = colorPalette.onAccent,
-                                        textAlign = TextAlign.Center,
-                                    ),
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        // Action buttons (the phone's parity — both pills via the shared [ButtonRow])
+        ButtonRow(
+            buttons = listOf(
+                DialogButton(
+                    text = cancelText,
+                    onClick = onCancel,
+                    danger = true,
+                ),
+                DialogButton(
+                    text = confirmText,
+                    onClick = {
+                        onConfirm()
+                        onDismiss()
+                    },
+                    primary = true,
+                ),
+            ),
+        )
     }
 }
 
-/** Port of `textFieldColors` (phone's `Dialog.kt` 194-205). */
+/** Port of `textFieldColors` (the phone's `InputNumericDialog` field colors, inlined in its `components/dialog/common/InputNumericDialog.kt`). */
 @Composable
 fun textFieldColors(colorPalette: ColorPalette, errorText: String) =
     TextFieldDefaults.colors(
@@ -195,8 +136,11 @@ fun textFieldColors(colorPalette: ColorPalette, errorText: String) =
     )
 
 /**
- * Port of `ValueSelectorDialog` (phone's `Dialog.kt` 447-572). PC only: the card is at most 560 dp wide, as
- * [ConfirmationDialog].
+ * Port of `ValueSelectorDialog` (the phone's `app/n_zik/android/components/dialog/common/
+ * ValueSelectorDialog.kt`): a title + secondary line, the radio list (its n_zik radio language)
+ * and the Cancel [ButtonRow] on the shared [DialogFrame]. PC only: the phone's `lockedValues` /
+ * `lockedLabel` parameters (the PC's screens do not lock rows) and the frame's fixed max width
+ * (560 dp default — a window is much wider than a phone).
  */
 @Composable
 fun <T> ValueSelectorDialog(
@@ -210,128 +154,86 @@ fun <T> ValueSelectorDialog(
     valueText: @Composable (T) -> String = { it.toString() },
 ) {
     val colorPalette = colorPalette()
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+    DialogFrame(
+        onDismiss = onDismiss,
+        modifier = modifier,
+        title = title,
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            Card(
-                modifier = modifier
-                    .fillMaxWidth(0.9f)
-                    // PC: a window is much wider than a phone; the card keeps a phone-like width
-                    .widthIn(max = 560.dp)
-                    .padding(16.dp),
-                shape = uiRoundnessShape(),
-                colors = CardDefaults.cardColors(
-                    containerColor = colorPalette.background1,
+        titleSecondary?.let {
+            Spacer(modifier = Modifier.height(4.dp))
+            BasicText(
+                text = it,
+                style = typography().s.copy(
+                    color = colorPalette.textSecondary,
                 ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                ) {
-                    // Header
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column(
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            BasicText(
-                                text = title,
-                                style = typography().l.semiBold.copy(
-                                    color = colorPalette.text,
-                                ),
-                            )
-                            if (titleSecondary != null) {
-                                Spacer(modifier = Modifier.height(4.dp))
-                                BasicText(
-                                    text = titleSecondary,
-                                    style = typography().s.copy(
-                                        color = colorPalette.textSecondary,
-                                    ),
-                                )
-                            }
-                        }
-                    }
+            )
+        }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-                    // Values list
-                    Column(
-                        modifier = Modifier
-                            .verticalScroll(rememberScrollState())
-                            .weight(1f, false),
-                    ) {
-                        values.forEach { value ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(0.dp),
-                                modifier = Modifier
-                                    .clip(uiRoundnessShape()).clickable(
-                                        onClick = {
-                                            onDismiss()
-                                            onValueSelected(value)
-                                        },
-                                    )
-                                    .padding(vertical = 0.dp, horizontal = 16.dp)
-                                    .fillMaxWidth()
-                                    .clip(uiRoundnessShape()),
-                            ) {
-                                RadioButton(
-                                    selected = selectedValue == value,
-                                    onClick = {
-                                        onDismiss()
-                                        onValueSelected(value)
-                                    },
-                                    colors = RadioButtonDefaults.colors(
-                                        selectedColor = colorPalette.accent,
-                                        unselectedColor = colorPalette.textSecondary,
-                                    ),
-                                )
-
-                                BasicText(
-                                    text = valueText(value),
-                                    style = typography().s.copy(
-                                        color = colorPalette.text,
-                                    ),
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Cancel button
-                    Button(
-                        onClick = onDismiss,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorPalette.background2,
-                            contentColor = colorPalette.text,
-                        ),
-                        shape = uiRoundnessShape(),
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.cancel),
-                            style = typography().s.semiBold,
+        // Values list
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .weight(1f, false),
+        ) {
+            values.forEach { value ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(0.dp),
+                    modifier = Modifier
+                        .clip(uiRoundnessShape()).clickable(
+                            onClick = {
+                                onDismiss()
+                                onValueSelected(value)
+                            },
                         )
-                    }
+                        .padding(vertical = 0.dp, horizontal = 16.dp)
+                        .fillMaxWidth()
+                        .clip(uiRoundnessShape()),
+                ) {
+                    RadioButton(
+                        selected = selectedValue == value,
+                        onClick = {
+                            onDismiss()
+                            onValueSelected(value)
+                        },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = colorPalette.accent,
+                            unselectedColor = colorPalette.textSecondary,
+                        ),
+                    )
+
+                    BasicText(
+                        text = valueText(value),
+                        style = typography().s.copy(
+                            color = colorPalette.text,
+                        ),
+                    )
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Cancel button
+        ButtonRow(
+            buttons = listOf(
+                DialogButton(
+                    text = stringResource(Res.string.cancel),
+                    onClick = onDismiss,
+                    danger = true,
+                ),
+            ),
+        )
     }
 }
 
 /**
- * The phone's `InputNumericDialog` confirm check (`Dialog.kt` 850-870): an empty field is refused, a value
- * under [valueMin] is refused, anything else is kept as typed — the phone has no maximum check, so neither
- * does the PC (`valueMax` is only shown by the caller). PC only: a non-number reads as empty instead of
+ * The phone's `InputNumericDialog` confirm check (inlined in its `components/dialog/common/
+ * InputNumericDialog.kt`): an empty field is refused, a value under [valueMin] is refused,
+ * anything else is kept as typed — the phone has no maximum check, so neither does the PC
+ * (`valueMax` is only shown by the caller). PC only: a non-number reads as empty instead of
  * crashing (the phone's `toInt()` throws).
  */
 sealed interface NumericInput {
@@ -349,8 +251,12 @@ sealed interface NumericInput {
 }
 
 /**
- * Port of `InputNumericDialog` (phone's `Dialog.kt` 777-890), without its commented-out leading icon and
- * border; its confirm check is [NumericInput.check] (no maximum, as on the phone).
+ * Port of `InputNumericDialog` (the phone's `app/n_zik/android/components/dialog/common/
+ * InputNumericDialog.kt`), on the shared [DefaultDialog] and [ButtonRow] (Confirm secondary,
+ * Cancel danger — the phone's roles), without its leading icon and border; its confirm check is
+ * [NumericInput.check] (no maximum, as on the phone). It keeps the phone's own inner title
+ * (`s.semiBold`, the phone's `InputNumericDialog.kt:55-60`) instead of the frame's `l` title —
+ * parity, not a deviation.
  */
 @Composable
 fun InputNumericDialog(
@@ -368,59 +274,49 @@ fun InputNumericDialog(
     val valueCannotEmpty = stringResource(Res.string.value_cannot_be_empty)
     val valueMustBeGreater = stringResource(Res.string.value_must_be_greater_than)
 
-    Dialog(onDismissRequest = onDismiss) {
-        Column(
-            modifier = modifier
-                .padding(all = 10.dp)
-                .background(color = colorPalette().background1, shape = uiRoundnessShape())
-                .padding(vertical = 16.dp)
-                .requiredHeight(190.dp),
+    DefaultDialog(onDismiss = onDismiss, modifier = modifier) {
+        BasicText(
+            text = title,
+            style = typography().s.semiBold,
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = 24.dp),
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxWidth(),
+        ) {
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth(0.7f),
+                colors = textFieldColors(colorPalette(), txtFieldError.value),
+                leadingIcon = {},
+                placeholder = { Text(text = placeholder) },
+                value = txtField.value,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                onValueChange = {
+                    txtField.value = it.take(10)
+                },
+            )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxWidth(),
         ) {
             BasicText(
-                text = title,
-                style = typography().s.semiBold,
+                text = if (txtFieldError.value.isNotEmpty()) txtFieldError.value else "---",
+                style = typography().xs.medium,
                 modifier = Modifier
                     .padding(vertical = 8.dp, horizontal = 24.dp),
             )
+        }
 
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier
-                    .fillMaxWidth(),
-            ) {
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth(0.7f),
-                    colors = textFieldColors(colorPalette(), txtFieldError.value),
-                    leadingIcon = {},
-                    placeholder = { Text(text = placeholder) },
-                    value = txtField.value,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    onValueChange = {
-                        txtField.value = it.take(10)
-                    },
-                )
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier
-                    .fillMaxWidth(),
-            ) {
-                BasicText(
-                    text = if (txtFieldError.value.isNotEmpty()) txtFieldError.value else "---",
-                    style = typography().xs.medium,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp, horizontal = 24.dp),
-                )
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier
-                    .fillMaxWidth(),
-            ) {
-                DialogTextButton(
+        ButtonRow(
+            buttons = listOf(
+                DialogButton(
                     text = stringResource(Res.string.confirm),
                     onClick = {
                         when (val checked = NumericInput.check(txtField.value, valueMin)) {
@@ -430,24 +326,24 @@ fun InputNumericDialog(
                             is NumericInput.Valid -> setValue(txtField.value.trim())
                         }
                     },
-                )
-
-                DialogTextButton(
+                ),
+                DialogButton(
                     text = stringResource(Res.string.cancel),
                     onClick = onDismiss,
-                    modifier = Modifier,
-                )
-            }
-        }
+                    danger = true,
+                ),
+            ),
+        )
     }
 }
 
-
 /**
- * Port of `DefaultDialog` (phone's `Dialog.kt` 414-445): a column on `background1`, 90 % wide, at most
- * 600 dp high, scrolling. PC only: at most 560 dp wide, as [ConfirmationDialog].
- * Ported ahead for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for that spec): no PC
- * screen opens it yet.
+ * Port of `DefaultDialog` (the phone's `app/n_zik/android/components/dialog/common/
+ * DefaultDialog.kt`): a vertically scrolling body on the shared [DialogFrame] (no title, no
+ * built-in buttons — the content decides). The frame body itself stays non-scrollable; the
+ * scrollable column keeps tall content inside the frame's 80 % height cap.
+ * Ported ahead for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for that spec):
+ * no PC screen opens it yet.
  */
 @Composable
 fun DefaultDialog(
@@ -456,36 +352,27 @@ fun DefaultDialog(
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+    DialogFrame(
+        onDismiss = onDismiss,
+        modifier = modifier,
+        horizontalAlignment = horizontalAlignment,
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            Column(
-                horizontalAlignment = horizontalAlignment,
-                modifier = modifier
-                    .fillMaxWidth(0.9f)
-                    .widthIn(max = 560.dp)
-                    .heightIn(max = 600.dp)
-                    .padding(all = 10.dp)
-                    .background(color = colorPalette().background1, shape = uiRoundnessShape())
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
-                    .verticalScroll(rememberScrollState()),
-                content = content,
-            )
-        }
+        Column(
+            modifier = Modifier
+                .weight(1f, fill = false)
+                .verticalScroll(rememberScrollState()),
+            content = content,
+        )
     }
 }
 
 /**
- * Port of `TextFieldDialog` (phone's `Dialog.kt` 208-312): a centred single-line field with its hint, "Cancel"
- * and "Done" (primary), Done / Enter accepted only when [isTextInputValid]; the field takes the focus 300 ms
- * after opening, as on the phone.
- * Ported ahead for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for that spec): no PC
- * screen opens it yet.
+ * Port of `TextFieldDialog` (the phone's `app/n_zik/android/components/dialog/common/
+ * TextFieldDialog.kt`): a centred single-line field with its hint, "Cancel" (danger) and "Done"
+ * (primary) [ButtonRow], Done / Enter accepted only when [isTextInputValid]; the field takes the
+ * focus 300 ms after opening, as on the phone.
+ * Ported ahead for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for that spec):
+ * no PC screen opens it yet.
  */
 @Composable
 fun TextFieldDialog(
@@ -502,7 +389,7 @@ fun TextFieldDialog(
     isTextInputValid: (String) -> Boolean = { it.isNotEmpty() },
 ) {
     val focusRequester = remember { FocusRequester() }
-    var textFieldValue by androidx.compose.runtime.saveable.rememberSaveable(initialTextInput, stateSaver = TextFieldValue.Saver) {
+    var textFieldValue by rememberSaveable(initialTextInput, stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(text = initialTextInput, selection = TextRange(initialTextInput.length)))
     }
 
@@ -531,6 +418,8 @@ fun TextFieldDialog(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.weight(1f),
                 ) {
+                    // Fully qualified: the decoration box's ColumnScope receiver shadows the
+                    // top-level AnimatedVisibility
                     androidx.compose.animation.AnimatedVisibility(
                         visible = textFieldValue.text.isEmpty(),
                         enter = fadeIn(tween(100)),
@@ -552,25 +441,25 @@ fun TextFieldDialog(
                 .focusRequester(focusRequester),
         )
 
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            DialogTextButton(
-                text = cancelText,
-                onClick = onCancel,
-            )
-            DialogTextButton(
-                primary = true,
-                text = doneText,
-                onClick = {
-                    if (isTextInputValid(textFieldValue.text)) {
-                        onDismiss()
-                        onDone(textFieldValue.text)
-                    }
-                },
-            )
-        }
+        ButtonRow(
+            buttons = listOf(
+                DialogButton(
+                    text = cancelText,
+                    onClick = onCancel,
+                    danger = true,
+                ),
+                DialogButton(
+                    text = doneText,
+                    onClick = {
+                        if (isTextInputValid(textFieldValue.text)) {
+                            onDismiss()
+                            onDone(textFieldValue.text)
+                        }
+                    },
+                    primary = true,
+                ),
+            ),
+        )
     }
 
     LaunchedEffect(Unit) {
@@ -579,13 +468,20 @@ fun TextFieldDialog(
     }
 }
 
-/** The phone's `Info` (`models/Info.kt`): an entry of [SelectorDialog]; a `null` [name] reads "Not selectable". */
+/**
+ * The phone's `Info` (`models/Info.kt`): an entry of [SelectorDialog]; a `null` [name] reads
+ * "Not selectable". Kept for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for
+ * that spec); no living phone source (the phone's `SelectorDialog` was deleted in the #896
+ * centralization).
+ */
 data class Info(val id: String, val name: String?)
 
 /**
- * Port of `SelectorDialog` (phone's `Dialog.kt` 576-650): a title, the distinct [values], "Cancel".
- * Ported ahead for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for that spec): no PC
- * screen opens it yet.
+ * A title, the distinct [values], "Cancel" — a port of the phone's gen-1 `SelectorDialog` (its
+ * `components/themed/Dialog.kt` 576-650), migrated onto the shared [DialogFrame] and [ButtonRow].
+ * Kept for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for that spec); no
+ * living phone source (deleted in the phone's #896 centralization). The title now renders in the
+ * frame's `l` semi-bold title language (the phone's gen-1 `s.semiBold` inner title is dropped).
  */
 @Composable
 fun SelectorDialog(
@@ -596,73 +492,67 @@ fun SelectorDialog(
     modifier: Modifier = Modifier,
     showItemsIcon: Boolean = false,
 ) {
-    Dialog(onDismissRequest = onDismiss) {
+    DialogFrame(
+        onDismiss = onDismiss,
+        modifier = modifier,
+        title = title,
+    ) {
         Column(
-            modifier = modifier
-                .padding(all = 10.dp)
-                .background(color = colorPalette().background1, shape = uiRoundnessShape())
-                .padding(vertical = 16.dp),
+            modifier = Modifier
+                .weight(1f, fill = false)
+                .verticalScroll(rememberScrollState()),
         ) {
-            BasicText(
-                text = title,
-                style = typography().s.semiBold,
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 24.dp),
-            )
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                values?.distinct()?.forEach { value ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier
-                            .clip(uiRoundnessShape()).clickable(
-                                onClick = {
-                                    onDismiss()
-                                    onValueSelected(value.id)
-                                },
-                            )
-                            .padding(vertical = 12.dp, horizontal = 24.dp)
-                            .fillMaxWidth(),
-                    ) {
-                        if (showItemsIcon) {
-                            IconButton(
-                                onClick = {},
-                                icon = Res.drawable.playlist,
-                                color = colorPalette().text,
-                                modifier = Modifier.size(18.dp),
-                            )
-                        }
-                        BasicText(
-                            text = value.name ?: stringResource(Res.string.not_selectable),
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis,
-                            style = typography().xs.medium,
+            values?.distinct()?.forEach { value ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .clip(uiRoundnessShape()).clickable(
+                            onClick = {
+                                onDismiss()
+                                onValueSelected(value.id)
+                            },
+                        )
+                        .padding(vertical = 12.dp, horizontal = 24.dp)
+                        .fillMaxWidth(),
+                ) {
+                    if (showItemsIcon) {
+                        IconButton(
+                            onClick = {},
+                            icon = Res.drawable.playlist,
+                            color = colorPalette().text,
+                            modifier = Modifier.size(18.dp),
                         )
                     }
+                    BasicText(
+                        text = value.name ?: stringResource(Res.string.not_selectable),
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        style = typography().xs.medium,
+                    )
                 }
             }
-            Box(
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(end = 24.dp),
-            ) {
-                DialogTextButton(
+        }
+        ButtonRow(
+            buttons = listOf(
+                DialogButton(
                     text = stringResource(Res.string.cancel),
                     onClick = onDismiss,
-                    modifier = Modifier,
-                )
-            }
-        }
+                    danger = true,
+                ),
+            ),
+        )
     }
 }
 
 /**
- * Port of `StringListDialog` (phone's `Dialog.kt` 907-1091): a card with its title and "add" button, the
- * strings with their red trash, "No items" when empty, "Cancel"; adding opens an input, removing asks for
- * a confirmation, a duplicate shows the conflict. PC adaptation: the add input is a [TextFieldDialog] (the
- * phone's `SettingsInputDialog` belongs to its settings screens, not ported).
- * PC only: the card is at most 560 dp wide, as [ConfirmationDialog].
- * Ported ahead for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for that spec): no PC
- * screen opens it yet.
+ * Port of `StringListDialog` (the phone's `app/n_zik/android/components/dialog/common/
+ * StringListDialog.kt`): a header with its title and "add" button, the strings with their red
+ * trash, "No items" when empty, and the Cancel [ButtonRow], on the shared [DialogFrame]. PC
+ * adaptation: the add input is a [TextFieldDialog] (the phone's `SettingsInputDialog` belongs to
+ * its settings screens, not ported).
+ * Ported ahead for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for that spec):
+ * no PC screen opens it yet.
  */
 @Composable
 fun StringListDialog(
@@ -677,113 +567,102 @@ fun StringListDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colorPalette = colorPalette()
     var showStringAddDialog by remember { mutableStateOf(false) }
     var showStringRemoveDialog by remember { mutableStateOf(false) }
     var removingItem by remember { mutableStateOf("") }
     var errorDialog by remember { mutableStateOf(false) }
 
-    Dialog(onDismissRequest = onDismiss) {
-        Card(
-            modifier = modifier
-                .fillMaxWidth()
-                .widthIn(max = 560.dp)
-                .padding(16.dp),
-            shape = uiRoundnessShape(),
-            colors = CardDefaults.cardColors(containerColor = colorPalette().background1),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+    DialogFrame(onDismiss = onDismiss, modifier = modifier) {
+        // Header (the title + the "add" action, as on the phone)
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            Column(modifier = Modifier.padding(24.dp)) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    BasicText(
-                        text = title,
-                        style = typography().l.semiBold.copy(color = colorPalette().text),
-                    )
-                    Button(
-                        onClick = { showStringAddDialog = true },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorPalette().accent,
-                            contentColor = colorPalette().textSecondary,
-                        ),
-                        shape = uiRoundnessShape(),
-                    ) {
-                        Text(text = addTitle, style = typography().s.semiBold)
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                if (list.isNotEmpty()) {
-                    Column(
-                        modifier = Modifier
-                            .verticalScroll(rememberScrollState())
-                            .weight(1f, false),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        list.forEach { item ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(uiRoundnessShape())
-                                    .clickable { }
-                                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                            ) {
-                                BasicText(
-                                    text = item,
-                                    style = typography().s.copy(color = colorPalette().text),
-                                    modifier = Modifier.weight(1f),
-                                )
-                                androidx.compose.material3.IconButton(
-                                    onClick = {
-                                        removingItem = item
-                                        showStringRemoveDialog = true
-                                    },
-                                    modifier = Modifier.size(32.dp),
-                                ) {
-                                    Icon(
-                                        painter = painterResource(Res.drawable.trash),
-                                        contentDescription = stringResource(Res.string.delete),
-                                        tint = colorPalette().red,
-                                        modifier = Modifier.size(20.dp),
-                                    )
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 32.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        BasicText(
-                            text = stringResource(Res.string.no_items),
-                            style = typography().s.copy(color = colorPalette().textSecondary),
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = onDismiss,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorPalette().background2,
-                        contentColor = colorPalette().text,
-                    ),
-                    shape = uiRoundnessShape(),
-                ) {
-                    Text(text = stringResource(Res.string.cancel), style = typography().s.semiBold)
-                }
+            BasicText(
+                text = title,
+                style = typography().l.semiBold.copy(color = colorPalette.text),
+            )
+            Button(
+                onClick = { showStringAddDialog = true },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorPalette.accent,
+                    contentColor = colorPalette.textSecondary,
+                ),
+                shape = uiRoundnessShape(),
+            ) {
+                Text(text = addTitle, style = typography().s.semiBold)
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (list.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .weight(1f, false),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                list.forEach { item ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(uiRoundnessShape())
+                            .clickable { }
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                    ) {
+                        BasicText(
+                            text = item,
+                            style = typography().s.copy(color = colorPalette.text),
+                            modifier = Modifier.weight(1f),
+                        )
+                        // Fully qualified: absolute naming conflict with this package's `IconButton`
+                        androidx.compose.material3.IconButton(
+                            onClick = {
+                                removingItem = item
+                                showStringRemoveDialog = true
+                            },
+                            modifier = Modifier.size(32.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.trash),
+                                contentDescription = stringResource(Res.string.delete),
+                                tint = colorPalette.red,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 32.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                BasicText(
+                    text = stringResource(Res.string.no_items),
+                    style = typography().s.copy(color = colorPalette.textSecondary),
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        ButtonRow(
+            buttons = listOf(
+                DialogButton(
+                    text = stringResource(Res.string.cancel),
+                    onClick = onDismiss,
+                    danger = true,
+                ),
+            ),
+        )
     }
 
     if (showStringAddDialog) {
@@ -813,9 +692,12 @@ fun StringListDialog(
 }
 
 /**
- * Port of `GenericDialog` (phone's `Dialog.kt` 1094-1130): a bold title, [content], one text button.
- * Ported ahead for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for that spec): no PC
- * screen opens it yet.
+ * A title, [content], one text button — a port of the phone's gen-1 `GenericDialog` (its
+ * `components/themed/Dialog.kt` 1094-1130), migrated onto the shared [DialogFrame] and
+ * [ButtonRow]. Kept for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for that
+ * spec); no living phone source (deleted in the phone's #896 centralization). The title now
+ * renders in the frame's `l` semi-bold title language (the phone's gen-1 `s.bold` inner title is
+ * dropped).
  */
 @Composable
 fun GenericDialog(
@@ -825,36 +707,32 @@ fun GenericDialog(
     textButton: String = stringResource(Res.string.cancel),
     content: @Composable () -> Unit,
 ) {
-    Dialog(onDismissRequest = onDismiss) {
-        Column(
-            modifier = modifier
-                .padding(all = 48.dp)
-                .background(color = colorPalette().background1, shape = uiRoundnessShape())
-                .padding(vertical = 16.dp),
-        ) {
-            BasicText(
-                text = title,
-                style = typography().s.bold,
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 24.dp),
-            )
-            content()
-            Box(
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(end = 24.dp),
-            ) {
-                DialogTextButton(text = textButton, onClick = onDismiss, modifier = Modifier)
-            }
-        }
+    DialogFrame(
+        onDismiss = onDismiss,
+        modifier = modifier,
+        title = title,
+    ) {
+        content()
+        ButtonRow(
+            buttons = listOf(
+                DialogButton(
+                    text = textButton,
+                    onClick = onDismiss,
+                    danger = true,
+                ),
+            ),
+        )
     }
 }
 
 /**
- * Port of `InProgressDialog` (phone's `Dialog.kt` 1537-1611): [text] in `l` bold, a 48 dp wavy progress
- * (determinate when [total] > 0, with "done / total"), a "Cancel" button when [onDismiss] is set.
- * [isLandscape] narrows the card to 30 % (the phone's landscape; the PC passes its window's).
- * Ported ahead for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for that spec): no PC
- * screen opens it yet.
+ * Port of `InProgressDialog` (the phone's `app/n_zik/android/components/dialog/common/
+ * InProgressDialog.kt`): [text] in `l` bold, a 48 dp wavy progress (determinate when [total] > 0,
+ * with "done / total"), and the Cancel [ButtonRow] when [onDismiss] is set, on the shared
+ * [DefaultDialog]. [isLandscape] narrows the card to 30 % (the phone's landscape; the PC passes
+ * its window's).
+ * Ported ahead for `spec-home-songs-toolbar-actions` (decision 5 exception agreed for that spec):
+ * no PC screen opens it yet.
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -910,27 +788,18 @@ fun InProgressDialog(
         }
         if (onDismiss != null) {
             Spacer(modifier = Modifier.height(20.dp))
-            Button(
-                onClick = onDismiss,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorPalette.background2,
-                    contentColor = colorPalette.text,
-                ),
-                shape = uiRoundnessShape(),
-                modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.CenterHorizontally),
-            ) {
-                BasicText(
-                    text = stringResource(Res.string.cancel),
-                    style = TextStyle(
-                        textAlign = TextAlign.Center,
-                        fontStyle = typography().s.semiBold.fontStyle,
-                        color = colorPalette.text,
+            ButtonRow(
+                buttons = listOf(
+                    DialogButton(
+                        text = stringResource(Res.string.cancel),
+                        onClick = onDismiss,
+                        danger = true,
                     ),
-                )
-            }
+                ),
+            )
         }
     }
 }
 
-/** The phone's `InProgressDialog` progress: `done / total`, `0` without a total. */
+/** The phone's `InProgressDialog` progress (its `components/dialog/common/InProgressDialog.kt`): `done / total`, `0` without a total. */
 fun inProgressFraction(total: Int, done: Int): Float = if (total > 0) (done.toFloat() / total.toFloat()).coerceIn(0f, 1f) else 0f

@@ -24,25 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.window.DialogProperties
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.window.Dialog
-import app.n_zik.compagnon.uiRoundnessShape
-import app.n_zik.compagnon.utils.medium
-import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import org.jetbrains.compose.resources.DrawableResource
@@ -50,18 +33,19 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Port of the phone's `CheckboxDialog` (`app/n_zik/android/components/dialog/common/CheckboxDialog.kt`) with its
- * bases `Dialog` / `InteractiveDialog` / `ConfirmDialog` (`dialog/common/Dialog.kt` 96-150,
- * `InteractiveDialog.kt`, `ConfirmDialog.kt`), 1:1: a wrap-content card (at most 95 % × 80 % of the window,
- * 16 dp margin, `background1`, 8 dp elevation, UI roundness) with the centred `l` semi-bold title, 20 dp, the
- * body (a column of checkable [items], 80 % wide, the phone's [Item.SELECT_ALL] semantics), 20 dp, then the
- * two Material buttons 12 dp apart — Cancel (`background2`, its label in red at 30 %) and Confirm (`accent`,
- * its label in `onAccent`). Confirm runs [onConfirm] only (the implementation closes the dialog, as on the
- * phone). The base of the phone's `UpdateSongDialog`.
+ * Port of the phone's `CheckboxDialog` (`app/n_zik/android/components/dialog/common/CheckboxDialog.kt`)
+ * with its bases `Dialog` / `InteractiveDialog` / `ConfirmDialog` (the phone's `dialog/common/
+ * Dialog.kt`, `InteractiveDialog.kt`, `ConfirmDialog.kt`): a wrap-content card on the shared
+ * [DialogFrame] (the PC window bounds — a fixed 560 dp max width, 80 % of the window height — in
+ * place of the phone's screen ratios, `background1`, 8 dp elevation, UI roundness) with the
+ * centred `l` semi-bold title, 20 dp, the body (a column of checkable [items], 80 % wide, the
+ * phone's [Item.SELECT_ALL] semantics), 20 dp, then the two pills of the shared [ButtonRow] —
+ * Cancel (the red `danger`) and Confirm (the accent `primary`, the phone's `ConfirmDialog` roles).
+ * Confirm runs [onConfirm] only (the implementation closes the dialog, as on the phone). The base
+ * of the phone's `UpdateSongDialog`.
  *
- * Ported ahead for `spec-home-songs-toolbar-actions` (its update dialog): no PC screen opens one yet.
- * PC adaptation: the window size stands in for the phone's screen (portrait ratios; the PC has no
- * orientation), the dialog drawn without the platform's default width so those ratios apply.
+ * Ported ahead for `spec-home-songs-toolbar-actions` (its update dialog): no PC screen opens one
+ * yet.
  */
 abstract class CheckboxDialog(activeState: MutableState<Boolean>) {
 
@@ -92,83 +76,38 @@ abstract class CheckboxDialog(activeState: MutableState<Boolean>) {
     @Composable
     fun Render() {
         if (!isActive) return
-        // The phone's sizes are fractions of the SCREEN (`LocalConfiguration`): the window's size here
-        val window = LocalWindowInfo.current.containerSize
-        val density = LocalDensity.current
-        val screenWidth = with(density) { window.width.toDp() }
-        val screenHeight = with(density) { window.height.toDp() }
-        Dialog(onDismissRequest = ::hideDialog, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-            run {
-                Card(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .sizeIn(maxWidth = screenWidth * MAX_WIDTH_PORTRAIT, maxHeight = screenHeight * MAX_HEIGHT_PORTRAIT)
-                        .padding(16.dp),
-                    shape = uiRoundnessShape(),
-                    colors = CardDefaults.cardColors(containerColor = colorPalette().background1),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                ) {
-                    Column(
-                        modifier = Modifier.padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Box(
-                            Modifier.padding(bottom = 4.dp).fillMaxWidth(.9f),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            BasicText(
-                                text = dialogTitle,
-                                style = typography().l.semiBold.copy(color = colorPalette().text),
-                            )
-                        }
-                        Spacer(Modifier.height(SPACE_BETWEEN_SECTIONS.dp))
-                        Box(modifier = Modifier.weight(1f, fill = false)) { DialogBody() }
-                        Spacer(Modifier.height(SPACE_BETWEEN_SECTIONS.dp))
-                        Buttons()
-                    }
-                }
-            }
+        // The frame carries the card chrome + the PC window bounds (the phone's `Dialog.Render()`)
+        DialogFrame(
+            onDismiss = ::hideDialog,
+            title = dialogTitle,
+        ) {
+            Spacer(Modifier.height(SPACE_BETWEEN_SECTIONS.dp))
+            Box(modifier = Modifier.weight(1f, fill = false)) { DialogBody() }
+            Spacer(Modifier.height(SPACE_BETWEEN_SECTIONS.dp))
+            Buttons()
         }
     }
 
-    /** The phone's `ConfirmDialog.Buttons`. */
+    /** The phone's `ConfirmDialog.Buttons` (the shared [ButtonRow]: the red cancel + the accent confirm). */
     @Composable
-    private fun Buttons() = Row(
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Button(
-            onClick = ::hideDialog,
-            modifier = Modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(containerColor = colorPalette().background2, contentColor = colorPalette().text),
-            shape = uiRoundnessShape(),
-        ) {
-            BasicText(
+    private fun Buttons() = ButtonRow(
+        buttons = listOf(
+            DialogButton(
                 text = stringResource(Res.string.cancel),
-                style = typography().xs.medium.copy(color = colorPalette().red.copy(alpha = .3f), textAlign = TextAlign.Center),
-                // The phone's `InteractiveDialog.ButtonModifier`
-                modifier = Modifier.wrapContentWidth(Alignment.CenterHorizontally).clip(uiRoundnessShape()).clickable(onClick = ::hideDialog),
-            )
-        }
-        Button(
-            onClick = ::onConfirm,
-            modifier = Modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(containerColor = colorPalette().accent, contentColor = colorPalette().textSecondary),
-            shape = uiRoundnessShape(),
-        ) {
-            BasicText(
+                onClick = ::hideDialog,
+                danger = true,
+            ),
+            DialogButton(
                 text = stringResource(Res.string.confirm),
-                style = typography().xs.medium.copy(color = colorPalette().onAccent, textAlign = TextAlign.Center),
-                modifier = Modifier.wrapContentWidth(Alignment.CenterHorizontally).clip(uiRoundnessShape()).clickable(onClick = ::onConfirm),
-            )
-        }
-    }
+                onClick = ::onConfirm,
+                primary = true,
+            ),
+        ),
+    )
 
     private companion object {
         /** The phone's `Dialog` constants (`Dialog.kt` 16-55). */
         const val SPACE_BETWEEN_SECTIONS = 20
-        const val MAX_WIDTH_PORTRAIT = .95f
-        const val MAX_HEIGHT_PORTRAIT = .8f
     }
 
     abstract class Item : MenuIcon {
