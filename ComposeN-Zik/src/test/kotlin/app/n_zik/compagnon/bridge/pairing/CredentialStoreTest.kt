@@ -171,7 +171,9 @@ class CredentialStoreTest {
         // Credential Manager read + write of the real device token as an unasserted side effect
         // of the test run. The getter must stay the identity of the process-wide default store,
         // pinned without touching any OS state
-        val source = File("src/main/kotlin/app/n_zik/compagnon/bridge/pairing/CredentialStore.kt").readText()
+        val sourceFile = File("src/main/kotlin/app/n_zik/compagnon/bridge/pairing/CredentialStore.kt")
+        if (!sourceFile.isFile) error("the source pin needs $sourceFile — run the tests with the ComposeN-Zik module dir as the working directory (cwd=${File(".").absolutePath})")
+        val source = sourceFile.readText()
         assertTrue(
             source.contains("get() = defaultStore === SessionSecretStore"),
             "isSessionOnly must be the identity of the default store",

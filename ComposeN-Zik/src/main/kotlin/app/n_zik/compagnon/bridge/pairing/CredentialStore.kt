@@ -437,10 +437,13 @@ class CredentialStore(
          */
         internal fun copySharedIntoChannel(shared: Path, channel: Path, log: Logger) {
             if (!Files.isDirectory(shared) || shared == channel) return
-            // The one-time skip: the walk runs once, on the first launch into an absent or empty
-            // channel dir (a wiped channel dir recovers the base files)
+            // The one-time skip: the walk runs on a channel dir that carries no files of its own
+            // (an absent or file-less dir — a wiped channel dir, or a first copy that died
+            // partway having only created subdirs, recovers the base files on the next launch).
+            // A subdir alone is NOT "initialized": the walk creates dirs only as parents of
+            // copied files, so a file-less dir is by definition a dir the walk never finished
             val channelFiles = runCatching { channel.toFile().listFiles() }.getOrNull()
-            if (Files.isDirectory(channel) && channelFiles.orEmpty().isNotEmpty()) return
+            if (Files.isDirectory(channel) && channelFiles.orEmpty().any { it.isFile }) return
             if (copyMissingFilesInto(shared, channel, log)) {
                 log.info("Copied the shared app data dir $shared into the channel dir $channel (the one-time copy)")
             }

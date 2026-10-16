@@ -198,6 +198,33 @@ class LinuxPackagePinTest {
     }
 
     @Test
+    fun `the portable archive task pins the explicit gzip and the discovered-name marker staging (source pin on the build script)`() {
+        // The archive FORMAT and the marker staging live in build config the task itself never
+        // executes on every host (packageLinuxPortable is Linux/WSL-only): Gradle 9's bare `Tar`
+        // defaults to an UNCOMPRESSED archive (probe-verified on this repo's Gradle 9.8.1 — the
+        // `.tar.gz` name alone does not select the format), and the doLast GZIPInputStream re-read
+        // fails loud only where the task runs. The marker must stay an archive entry written by
+        // the TWO portable tasks only (a stray `portable.txt` in the shared app-image would make
+        // every other install self-contained-portable — the data dir would relocate, silently).
+        // The source pin keeps both halves on every host:
+        val buildFile = File("build.gradle.kts")
+        if (!buildFile.isFile) error("the source pin needs $buildFile — run the tests with the ComposeN-Zik module dir as the working directory (cwd=${File(".").absolutePath})")
+        val build = buildFile.readText()
+        // The explicit GZIP (exactly once — a second bare compression line would mean the tasks diverged)
+        assertEquals(1, build.split("compression = Compression.GZIP").size - 1, "the portable tar must pin compression = Compression.GZIP exactly once (a bare Gradle 9 Tar is UNCOMPRESSED)")
+        // The marker write side: ONE writer, the EXACT content (the app-side strict reader pins the read —
+        // a trailing newline or a copy-paste println on the write side would fail EVERY produced portable)
+        assertEquals(1, build.split("File(markerRoot, \"portable.txt\").writeText(\"portable\")").size - 1, "the portable.txt marker has exactly ONE writer (the staging function, archive entry only — never on disk in the shared app-image)")
+        // The staging runs under the DISCOVERED app-image folder name (A12): a rename of
+        // channelDisplayName alone would place the marker as a SIBLING of the app root and the
+        // portable would silently degrade to the per-channel storage — both call sites must pass
+        // the discovered name (the Linux launcher's grandparent, the Windows image dir)
+        assertTrue(build.contains("stagePortableMarker(appImageName)"), "the Linux tar must stage the marker under the discovered app-image name")
+        assertTrue(build.contains("stagePortableMarker(appImageDir.name)"), "the Windows zip must stage the marker under the discovered app-image name")
+        assertEquals(2, build.split("stagePortableMarker(appImageName)").size - 1 + build.split("stagePortableMarker(appImageDir.name)").size - 1, "exactly the two portable tasks stage the marker (the spec's Never: never in the shared app-image, NSIS, Flatpak, packageArch or a run-source launch)")
+    }
+
+    @Test
     fun `the package name matches the AUR pkgnames and the download URL`() {
         // The committed AUR entries are STABLE-ONLY; since the 2026-10-15 naming decision every
         // channel shares the one package base (AD-8 as amended), so the package name IS the

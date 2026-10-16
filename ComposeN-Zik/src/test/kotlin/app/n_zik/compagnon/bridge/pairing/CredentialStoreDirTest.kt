@@ -175,6 +175,32 @@ class CredentialStoreDirTest {
         assertTrue(Files.exists(wiped.resolve("settings.json")), "an empty channel dir still receives the one-time copy")
     }
 
+    @Test
+    fun `copySharedIntoChannel re-walks a channel dir that carries subdirs but no files (an interrupted first copy)`(@TempDir temp: Path) {
+        // The skip counts FILES only: the walk creates dirs only as parents of copied files, so a
+        // dir whose top level holds subdirs alone is by definition a first copy that died partway
+        // (it copied into cache/ before the top-level entries) — it must be re-walked on the next
+        // launch, or the channel keeps a PERMANENT partial state (missing pairing.json → forced
+        // re-pair). A dir that carries its own file is still skipped (the test above)
+        val shared = temp.resolve("config/N-Zik Desktop Compagnon")
+        val channel = temp.resolve("config/N-Zik Desktop Compagnon DEV")
+        Files.createDirectories(shared)
+        Files.writeString(shared.resolve("pairing.json"), "base")
+        Files.writeString(shared.resolve("settings.json"), "base-settings")
+        Files.createDirectories(shared.resolve("cache"))
+        Files.writeString(shared.resolve("cache/track1.flac"), "audio")
+        // The interrupted first copy: a subdir with a file inside (top-level listFiles sees a
+        // directory only — no top-level file)
+        Files.createDirectories(channel.resolve("cache"))
+        Files.writeString(channel.resolve("cache/track2.flac"), "partial")
+
+        CredentialStore.copySharedIntoChannel(shared, channel, log)
+
+        assertTrue(Files.exists(channel.resolve("pairing.json")), "the missing top-level files arrive on the re-walk")
+        assertTrue(Files.exists(channel.resolve("settings.json")), "the missing top-level files arrive on the re-walk")
+        assertEquals("partial", Files.readString(channel.resolve("cache/track2.flac")), "the partial copy's own file is never clobbered")
+    }
+
     // ---- legacy migration ----------------------------------------------------------------------------------
 
     @Test
@@ -300,6 +326,32 @@ class CredentialStoreDirTest {
         val devDir2 = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon DEV", emptyList(), log)
         assertEquals("{}", Files.readString(devDir2.resolve("pairing.json")), "the channel picks up the data through the base copy")
         assertEquals("audio", Files.readString(devDir2.resolve("cache/audio/track1.flac")))
+    }
+
+    @Test
+    fun `appDataDirFor with beta's base name migrates the legacy dir too (the gate is the name, not the channel)`(@TempDir temp: Path) {
+        // Beta SHARES the base storage name (2026-10-16 regrouping) — a beta launch IS a
+        // base-named launch: the legacy bare-home dir must migrate into the base dir on it (the
+        // gate is `dataDirName == AppInfo.NAME`, so re-tightening it to "stable only" would strand
+        // beta's legacy data with a green suite), and the legacy `… BETA` merge-back runs alongside
+        val home = temp.resolve("home")
+        val xdg = home.resolve(".config")
+        val legacy = home.resolve("N-Zik Desktop Compagnon")
+        Files.createDirectories(legacy.resolve("cache/audio"))
+        Files.writeString(legacy.resolve("pairing.json"), "{}")
+        Files.writeString(legacy.resolve("cache/audio/track1.flac"), "audio")
+        // The pre-regrouping isolated beta dir (the merge-back source)
+        val legacyBeta = xdg.resolve("N-Zik Desktop Compagnon BETA")
+        Files.createDirectories(legacyBeta)
+        Files.writeString(legacyBeta.resolve("beta-only.json"), "beta")
+
+        val betaDir = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon", CredentialStore.legacyDataDirNamesFor("beta"), log)
+
+        assertFalse(Files.exists(legacy), "the legacy bare-home dir migrates into the base dir on the beta launch (beta shares the base name)")
+        assertEquals("{}", Files.readString(betaDir.resolve("pairing.json")))
+        assertEquals("audio", Files.readString(betaDir.resolve("cache/audio/track1.flac")))
+        assertEquals("beta", Files.readString(betaDir.resolve("beta-only.json")), "the legacy beta dir merges its missing files back into the base")
+        assertTrue(Files.isDirectory(legacyBeta), "the legacy beta dir SURVIVES the merge-back (never deleted)")
     }
 
     @Test
@@ -742,7 +794,9 @@ class CredentialStoreDirTest {
         // over the per-channel dir, the per-channel dir goes through appDataDirFor (the
         // migration + copy + merge-back wiring), and the default secret store targets the
         // per-channel name with the one-time shared migration
-        val source = File("src/main/kotlin/app/n_zik/compagnon/bridge/pairing/CredentialStore.kt").readText()
+        val sourceFile = File("src/main/kotlin/app/n_zik/compagnon/bridge/pairing/CredentialStore.kt")
+        if (!sourceFile.isFile) error("the source pin needs $sourceFile — run the tests with the ComposeN-Zik module dir as the working directory (cwd=${File(".").absolutePath})")
+        val source = sourceFile.readText()
         assertTrue(
             source.contains("portableDataRootOf(osName, System.getenv(), liveExecutablePath(), AppInfo.productName(channel))"),
             "the portable decision must run with the production inputs and win over the per-channel dir",
@@ -752,12 +806,20 @@ class CredentialStoreDirTest {
             "the app data dir must resolve under the per-channel STORAGE name (AppInfo.dataName, not the install identity)",
         )
         assertTrue(
-            source.contains("appDataDirFor("),
-            "the per-channel dir must go through appDataDirFor (the migration + copy + merge-back wiring)",
+            source.contains("?: appDataDirFor("),
+            "the per-channel dir must go through the appDataDirFor CALL (the migration + copy + merge-back wiring — the function's own declaration must not satisfy this pin)",
+        )
+        assertTrue(
+            source.contains("resolveAppDataDir(osName, appData, xdgConfigHome, home, AppInfo.NAME)"),
+            "the portable branch's one-time copy must take the BASE data dir as its source (the lazy's own `home` argument — a bare copySharedIntoChannel pin would be satisfied by the appDataDirFor call site)",
         )
         assertTrue(
             source.contains("AppInfo.dataName(AppVersion.channel)"),
             "the default secret store must target the per-channel storage name",
+        )
+        assertTrue(
+            source.contains("name != AppInfo.NAME && store.read() == null"),
+            "the shared store must be constructed ONLY when the channel-suffixed name's secret does not exist yet (dropping this condition puts the second JNA load + D-Bus probe back on every launch of an isolated channel)",
         )
         assertTrue(
             source.contains("migrateSharedSecret(store, selectSecretStore(osName, AppInfo.NAME))"),

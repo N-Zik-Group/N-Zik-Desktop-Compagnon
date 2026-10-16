@@ -17,9 +17,15 @@ import org.junit.jupiter.api.Test
  */
 class GoToDownloadWiringTest {
 
+    private fun sourceOf(relativePath: String): String {
+        val sourceFile = File(relativePath)
+        if (!sourceFile.isFile) error("the source pin needs $sourceFile — run the tests with the ComposeN-Zik module dir as the working directory (cwd=${File(".").absolutePath})")
+        return sourceFile.readText()
+    }
+
     @Test
     fun `the dialog button raises the one-shot go-to-download flag`() {
-        val source = File("src/main/kotlin/app/n_zik/compagnon/components/dialog/updater/NewUpdateAvailableDialog.kt").readText()
+        val source = sourceOf("src/main/kotlin/app/n_zik/compagnon/components/dialog/updater/NewUpdateAvailableDialog.kt")
         assertTrue(
             source.contains("GoToDownloadRequest.requested = true"),
             "the 'Go to download' button must set the one-shot flag (after dismissing the dialog)",
@@ -28,7 +34,7 @@ class GoToDownloadWiringTest {
 
     @Test
     fun `main consumes the flag and opens the update page`() {
-        val source = File("src/main/kotlin/app/n_zik/compagnon/MainActivity.kt").readText()
+        val source = sourceOf("src/main/kotlin/app/n_zik/compagnon/MainActivity.kt")
         assertTrue(
             source.contains("snapshotFlow { NewUpdateAvailableDialog.GoToDownloadRequest.requested }"),
             "MainActivity must consume the one-shot flag through the snapshotFlow",
