@@ -389,6 +389,7 @@
     <string name="update_available">Update beschikbaar</string>
     <string name="app_update_dialog_version">De nieuwe versie %s kan worden gedownload!</string>
     <string name="app_update_dialog_size">De bestandsgrootte is %s</string>
+    <string name="go_to_download">Ga naar download</string>
     <string name="downloading_update">Update downloaden</string>
     <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">Geen updates beschikbaar</string>
