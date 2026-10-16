@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -212,10 +213,44 @@ class UpdateDownloadManagerTest {
         // 1223 (user declined the UAC) → NOTHING: a normal decline writes no marker
         assertTrue(script.contains("} elseif (\$code -ne 1 -and \$code -ne 2 -and \$code -ne 1223) {"))
         assertTrue(script.contains("install failed with exit code \$code"))
+        // A successful update deletes the downloaded installer (the setup is locked while it
+        // runs, so the helper does it — user decision 2026-10-16); the same single-quoted path
+        // literal as the launch
+        assertTrue(script.contains("Remove-Item 'C:\\Users\\danie\\AppData\\Local\\N-Zik Desktop Compagnon\\updates\\n-zik-desktop-compagnon-0.0.2-dev-20260101.exe' -ErrorAction SilentlyContinue"))
         // Two marker writes only: the app never exited / a bad exit code (a cancel is not one)
         assertEquals(2, script.split("Set-Content -Path '").size - 1, "exactly the two failure paths write the marker")
         // The marker path is the helper's single marker, single-quoted for PowerShell
         assertTrue(script.contains("C:\\Users\\danie\\AppData\\Roaming\\N-Zik Desktop Compagnon\\update-install-failed.txt"))
+    }
+
+    @Test
+    fun `the helper script is one parseable PowerShell line — the statements are semicolon-joined, never bare spaces`() {
+        val script = helperScript()
+        // The 2026-10-16 field bug: the statements were joined with bare spaces, which is a
+        // ParserError for the single -Command line — the helper died before its first line
+        // (the app quit, the installer never launched, no marker, silent). The text pins keep
+        // the separator on non-Windows hosts; the parse test next door proves it for real.
+        assertTrue(script.contains("\$w=0; while"), "the init and the wait loop must be ';' -joined")
+        assertTrue(script.contains("}; if (\$alive) {"), "the loop close must be ';' -joined to the cap check")
+        assertTrue(script.contains("}; \$p=Start-Process"), "the cap check must be ';' -joined to the installer launch")
+    }
+
+    @Test
+    fun `the helper script parses as one PowerShell line (a real parse, not just text pins)`() {
+        assumeTrue(
+            System.getProperty("os.name").startsWith("windows", ignoreCase = true),
+            "the PowerShell install helper is Windows-only",
+        )
+        val script = helperScript()
+        // [scriptblock]::Create parses WITHOUT executing — a broken join fails here with the
+        // ParserError the production helper used to swallow (its output went nowhere)
+        val probe = "\$null=[scriptblock]::Create('" + script.replace("'", "''") + "'); 'PARSED OK'"
+        val process = ProcessBuilder("powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", probe)
+            .redirectErrorStream(true)
+            .start()
+        val output = process.inputStream.bufferedReader().readText()
+        assertEquals(0, process.waitFor(), "the helper script must parse as one PowerShell line:\n$output")
+        assertTrue(output.contains("PARSED OK"))
     }
 
     @Test

@@ -397,7 +397,12 @@ object UpdateDownloadManager {
 
     /**
      * The PowerShell one-liner of [startWindowsInstall] — PURE, so it is pinned by
-     * `UpdateDownloadManagerTest`. The install is **INTERACTIVE** (the user decisions — the
+     * `UpdateDownloadManagerTest`. The statements are joined with `"; "` (never bare spaces):
+     * the script travels as ONE `-Command` line and PowerShell parses the whole string before
+     * running anything, so a space-joined statement sequence is a `ParserError` and the helper
+     * dies before its first line (the 2026-10-16 field bug — the app quit, the installer never
+     * launched, no marker, silent; the parse test in `UpdateDownloadManagerTest` pins it).
+     * The install is **INTERACTIVE** (the user decisions — the
      * silent `/quiet /wait` design, the per-user design AND the machine-level-only jpackage exe
      * are superseded by the NSIS installer; the Change Log of `spec-updater.md` is the record):
      * the NSIS pages show (a scope-choice page — per-user by default, or global with a UAC
@@ -420,7 +425,10 @@ object UpdateDownloadManager {
      *    page still shows; the UAC prompt appears only when the user picks the global scope;
      *    with an existing install of the SAME OR OLDER version an "already installed —
      *    reinstall anyway?" confirmation shows first — declining exits 1);
-     * 3. **THE EXIT CODE** (the NSIS script header pins the contract — InstallerContractTest keeps the two sides in sync): **0** → the app is
+     * 3. **THE EXIT CODE** (the NSIS script header pins the contract — InstallerContractTest keeps the two sides in sync): **0** → the
+     *    downloaded installer file is DELETED (the setup is locked while it runs, so it cannot
+     *    remove itself — the user decision 2026-10-16: after a successful update the installer
+     *    file is gone; `updates/` no longer accumulates stale installers), and the app is
      *    relaunched from its current path — but only when it is NOT already running (the
      *    installer's finish page launched it) and its path still EXISTS (cross-scope edge: if
      *    the user migrated to the other scope in the installer UI, the old path is gone — no
@@ -428,10 +436,10 @@ object UpdateDownloadManager {
      *    cancelled any page — or the installer's running-app guard fired: the app was still
      *    running when the install started) / **2** (the remove choice — the existing install was removed, the
      *    app is gone by design) / **1223** (ERROR_CANCELLED — user DECLINED THE UAC) → NOTHING —
-     *    a normal decline, no marker is written; **3** (install failure)
+     *    a normal decline: no marker, and the installer file is KEPT (the user can retry); **3** (install failure)
      *    / **4** (the elevated child vanished — death detected through its PID file +
      *    GetExitCodeProcess, or the PID file never appeared within the grace) or anything else → the
-     *    marker.
+     *    marker (the installer file is kept — the download can be re-run).
      */
     internal fun windowsInstallScript(appExe: String, installerPath: String, markerPath: String): String {
         // Single quotes inside the PowerShell literals are doubled (the PowerShell escape)
@@ -455,12 +463,16 @@ object UpdateDownloadManager {
             "\$p=Start-Process -FilePath '$installer' -ArgumentList '/UPDATE' -Wait -PassThru",
             "\$code=\$p.ExitCode",
             "if (\$code -eq 0) {",
+            // the setup is locked while it runs, so it cannot remove its own file — the helper
+            // deletes the downloaded installer right after a successful update (user decision
+            // 2026-10-16); a decline (1 / 2 / 1223) keeps the file so the install can be re-run
+            "  Remove-Item '$installer' -ErrorAction SilentlyContinue",
             "  \$running=Get-Process -ErrorAction SilentlyContinue | Where-Object Path -eq \$appExe",
             "  if (-not \$running -and (Test-Path '$app')) { Start-Process -FilePath '$app' }",
             "} elseif (\$code -ne 1 -and \$code -ne 2 -and \$code -ne 1223) {",
             "  Set-Content -Path '$marker' -Value \"install failed with exit code \$code\"",
             "}",
-        ).joinToString(" ")
+        ).joinToString("; ")
     }
 
     /**
@@ -477,11 +489,13 @@ object UpdateDownloadManager {
      * prompt at that moment; a same/older-version re-install is confirmed by an "already
      * installed — reinstall anyway?" prompt first — declining exits 1) — then INSPECTS THE
      * EXIT CODE (the NSIS script header pins the
-     * contract): **0** → relaunches the app from its current path (only when it is not already
-     * running — the installer's finish page may have launched it — and the path still exists);
+     * contract): **0** → deletes the downloaded installer (the setup cannot remove its own
+     * locked file — user decision 2026-10-16) and relaunches the app from its current path
+     * (only when it is not already running — the installer's finish page may have launched it —
+     * and the path still exists);
      * **1** (user cancelled — or the installer's running-app guard fired) / **2** (remove choice — the existing install was removed, the
      * app is gone by design) / **1223** (user declined the UAC) → nothing (a normal decline —
-     * the app simply does not relaunch); **3** (install failure) / **4** (the elevated child
+     * the app simply does not relaunch, the installer file is kept for a retry); **3** (install failure) / **4** (the elevated child
      * vanished) or anything else → the
      * failure marker
      * ([installFailureMarkerPath] — consumed at
