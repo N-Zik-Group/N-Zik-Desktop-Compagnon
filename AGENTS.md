@@ -127,6 +127,7 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 ├── assets/notes/                    Done.txt + Changelog_Template.txt + TODO.txt (repo-root working files — NOT an app resources dir)
 ├── assets/design/                   icon.ico, icon-linux.png, ic_banner2.png, installer-bg.png (installer / packaging artwork)
 ├── assets/stats/                    chart.svg, download-card.svg, history.json (the `metrics.yml` bot targets)
+├── .devin/wiki.json                 Tracked agent-tooling config (not app code — same convention as the phone repo)
 └── (WORKSPACE ROOT, one level above N-Zik-Desktop-Compagnon/: `_bmad/` + `_bmad-output/` BMAD installation + specs ·
     `.agents/` `.agent/` `.claude/` skills · `docs/` reference projects READ-ONLY · `N-Zik/` the phone app (separate repo, NOT part of this one) ·
     `N-Zik-Website/` separate project, NOT part of this one)
