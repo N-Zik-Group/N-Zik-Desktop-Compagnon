@@ -119,6 +119,23 @@ class FetchUpdateTest {
     private fun releasesWithTarball(vararg tags: String): String =
         releasesJson(*tags).dropLast(1) + ", " + tarballReleaseJson() + "]"
 
+    /**
+     * A single release with an explicit asset list (the asset-filter rows need releases that
+     * ship a chosen subset — [releasesJson] gives every release the uniform 7-asset matrix).
+     */
+    private fun releaseJson(tag: String, assetNames: List<String>): String = """
+        {
+          "id": 1,
+          "tag_name": "$tag",
+          "name": "$tag",
+          "body": "Release notes with no changelog link",
+          "prerelease": ${tag.contains("-dev")},
+          "assets": [
+            ${assetNames.joinToString(", ") { assetJson(tag, it) }}
+          ]
+        }
+    """.trimIndent()
+
     private fun assetJson(tag: String, name: String): String = """
         {
           "id": 10,
@@ -376,6 +393,65 @@ class FetchUpdateTest {
         assertNull(Updater.githubRelease, "the release must NOT be published when its asset is missing (the phone's ordering)")
         assertNull(Updater.tagName)
         assertNull(Updater.build)
+    }
+
+    @Test
+    fun `a newest release without the install-mode asset falls back to the older one that ships it`() = runTest {
+        // The phone's `shipsInstallableAsset` rule (parity audit S1): a release that ships no
+        // asset for this install mode is SKIPPED — the next-best release that ships it becomes
+        // the candidate (a newest release without the .exe must not end the whole check in
+        // "no update available")
+        val exe = ArtifactNames.exe("0.0.1")
+        val client = clientFor(
+            "[" +
+                releaseJson("v0.0.2", listOf(ArtifactNames.windowsPortableZip("0.0.2"))) + ", " +
+                releaseJson("v0.0.1", listOf(exe)) +
+                "]",
+        )
+        try {
+            Updater.fetchUpdate(
+                client,
+                "stable",
+                installMode = InstallMode.WINDOWS,
+                packageManager = PackageManager.NONE,
+                isReleasePackage = false,
+            )
+        } finally {
+            client.close()
+        }
+        assertEquals("v0.0.1", Updater.githubRelease?.tagName, "v0.0.2 ships no exe — v0.0.1 (which does) wins")
+        assertEquals(exe, Updater.build?.name)
+        assertEquals("v0.0.1", Updater.tagName)
+    }
+
+    @Test
+    fun `no same-channel release shipping the install-mode asset throws without publishing`() = runTest {
+        // The same rule, total: NO same-channel release ships the asset → the "no update
+        // available" mapping, with the release state left unpublished
+        val client = clientFor(
+            "[" +
+                releaseJson("v0.0.2", listOf(ArtifactNames.windowsPortableZip("0.0.2"))) + ", " +
+                releaseJson("v0.0.1", listOf(ArtifactNames.windowsPortableZip("0.0.1"))) +
+                "]",
+        )
+        var thrown: NoSuchFileException? = null
+        try {
+            Updater.fetchUpdate(
+                client,
+                "stable",
+                installMode = InstallMode.WINDOWS,
+                packageManager = PackageManager.NONE,
+                isReleasePackage = false,
+            )
+        } catch (e: NoSuchFileException) {
+            thrown = e
+        } finally {
+            client.close()
+        }
+        assertNotNull(thrown, "no release ships the exe — the check must report 'no update available'")
+        assertNull(Updater.githubRelease)
+        assertNull(Updater.build)
+        assertNull(Updater.tagName)
     }
 
     // ---- spec `spec-updater-parity-fixes`: the pre-fetch cleanup — a failed re-check must

@@ -113,7 +113,8 @@ import org.jetbrains.compose.resources.stringResource
  *    section cards and the translate toggle (the sanctioned `translator` dependency through
  *    [ChangelogTranslator]);
  *  * the bottom action — the phone's bottomBar: the download progression (the wavy progress,
- *    the indeterminate byte counter) and the per-mode install gesture ([InstallStep], the
+ *    the indeterminate byte counter + the wavy track — the phone keeps its bar visible in that
+ *    situation too, parked at 0 %) and the per-mode install gesture ([InstallStep], the
  *    Windows interactive install), the check-for-update action and the GitHub release link.
  *
  * Desktop adaptations (documented, audit 2026-10-09 zone 8): the phone's pre-install backup and its
@@ -718,6 +719,17 @@ fun UpdateScreen(
                                             )
                                         }
                                     }
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    // The phone keeps its wavy bar visible in this same situation
+                                    // (its state parks at 0 % — no Content-Length, the bar stays
+                                    // on screen) — parity: the wavy track stays visible while the
+                                    // byte counter above it carries the progress the phone cannot
+                                    LinearWavyProgressIndicator(
+                                        progress = { 0f },
+                                        modifier = Modifier.fillMaxWidth().height(8.dp).clip(uiRoundnessShape()),
+                                        color = colorPalette().accent,
+                                        trackColor = colorPalette().background2,
+                                    )
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),

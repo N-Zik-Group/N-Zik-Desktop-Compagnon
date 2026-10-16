@@ -165,10 +165,25 @@ object Updater {
 
     /**
      * Finds the best release for a channel (port of the phone's `findBestRelease` L342-405:
-     * same base-score normalization + dev date bonus, same null when nothing is eligible).
+     * same base-score normalization + dev date bonus, same null when nothing is eligible —
+     * plus the phone's `shipsInstallableAsset` filter, L601-610): a release that ships no
+     * asset for this install mode is SKIPPED and the next-best release that does ship it
+     * becomes the candidate (the phone's fallback — a newest release without the user's
+     * artifact must not end the whole check in "no update available"). [assetNameForVersion]
+     * maps a release version to the artifact name the install mode needs; `null` (the
+     * manual-command mode — package-managed without a downloadable asset) leaves every
+     * same-channel release eligible.
      */
-    internal fun findBestRelease(releases: List<GithubRelease>, channel: String): GithubRelease? {
-        val eligibleReleases = releases.filter { release -> isSameChannel(release.tagName, channel) }
+    internal fun findBestRelease(
+        releases: List<GithubRelease>,
+        channel: String,
+        assetNameForVersion: (String) -> String? = { null },
+    ): GithubRelease? {
+        val eligibleReleases = releases.filter { release ->
+            isSameChannel(release.tagName, channel) &&
+            (assetNameForVersion(release.tagName.removePrefix(UpdaterConstants.PREFIX_VERSION))
+                ?.let { name -> release.builds.any { build -> build.name == name } } ?: true)
+        }
         if (eligibleReleases.isEmpty()) return null
 
         // Find the maximum number of version parts to normalize all versions
@@ -244,8 +259,10 @@ object Updater {
      * (release-pkg install) or none (AUR install — the updater is blocked before it
      * reaches a check on that path).
      *
-     * @throws NoSuchFileException when no same-channel release exists, or the best release ships
-     *   no asset for this install mode (the phone's mapping: "no update available").
+     * @throws NoSuchFileException when no same-channel release exists, or NO same-channel release
+     *   ships an asset for this install mode (the phone's mapping: "no update available" — a
+     *   newest release without the asset falls back to the older one that ships it, the
+     *   phone's `shipsInstallableAsset` rule).
      *
      * **Toasts**: only the forced (explicit user) checks toast — the startup/background check
      * is silent (a repo with no release would otherwise toast « No update available » on every
@@ -289,8 +306,16 @@ object Updater {
 
         val releases = releaseJson.decodeFromString<List<GithubRelease>>(resBody)
 
-        // Find the best release for this channel
-        val bestRelease = findBestRelease(releases, channel) ?: throw NoSuchFileException("")
+        // Find the best release for this channel, skipping the releases that ship no asset for
+        // this install mode (the phone's `shipsInstallableAsset` rule — a newest release without
+        // the user's artifact falls back to the older one that ships it)
+        val bestRelease = findBestRelease(
+            releases,
+            channel,
+            assetNameForVersion = { version ->
+                ArtifactNames.forMode(installMode, version, packageManager, isReleasePackage = isReleasePackage)
+            },
+        ) ?: throw NoSuchFileException("")
 
         // The asset of this channel for the detected install mode (the phone's `extractBuild`
         // APK-name matching, replaced by the channel artifact names; null = no asset — the

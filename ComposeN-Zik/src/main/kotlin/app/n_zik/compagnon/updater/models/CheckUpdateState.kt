@@ -6,8 +6,8 @@ package app.n_zik.compagnon.updater.models
  *
  *  * [On] — an automatic check at startup (non-forced — it honors the "update cancelled" flag,
  *    the phone's Enabled), the update dialog on result;
- *  * [Ask] — a confirmation dialog at startup first; only a confirmed check runs, forced (the
- *    phone's Ask — the only path that may reset the cancelled flag);
+ *  * [Ask] — a confirmation dialog at startup first; only a confirmed check runs, the plain
+ *    non-forced one (the phone's Ask — same non-forced check, dialog on result);
  *  * [Off] — no startup check at all (the phone's Disabled).
  *
  * All three stay gated on `AppVersion.updaterEnabled`: debug and -git are source builds and
@@ -19,7 +19,7 @@ enum class CheckUpdateState(val wire: String) {
     /** Automatic check at startup. */
     On("on"),
 
-    /** Ask the user at startup before checking (a confirmed check is forced). */
+    /** Ask the user at startup before checking (a confirmed check is the plain non-forced one, dialog on result). */
     Ask("ask"),
 
     /** No startup check. */
