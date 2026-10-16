@@ -389,6 +389,7 @@
     <string name="update_available">Aggiornamento disponibile</string>
     <string name="app_update_dialog_version">La nuova versione %s può essere scaricata!</string>
     <string name="app_update_dialog_size">La dimensione del file è %s</string>
+    <string name="go_to_download">Vai al download</string>
     <string name="downloading_update">Scaricamento aggiornamento</string>
     <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">Nessun aggiornamento disponibile</string>
@@ -408,6 +409,7 @@
     <string name="install_pkg_pacman_command">Upgrade the package with:</string>
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
+    <string name="install_replacement_portable_linux">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, extract the downloaded .tar.gz in its place (the tarball opens into a new app folder - never over the current one), and relaunch.</string>
     <string name="old_install_path">Current install:</string>
     <string name="beta_title">BETA</string>
     <string name="dev_title">DEV</string>

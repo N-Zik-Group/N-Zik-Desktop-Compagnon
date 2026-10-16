@@ -389,6 +389,7 @@
     <string name="update_available">Päivitys saatavilla</string>
     <string name="app_update_dialog_version">Uusi versio %s ladattavissa!</string>
     <string name="app_update_dialog_size">Tiedoston koko on %s</string>
+    <string name="go_to_download">Siirry lataukseen</string>
     <string name="downloading_update">Ladataan päivitystä</string>
     <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">Ei päivityksiä saatavilla</string>
@@ -408,6 +409,7 @@
     <string name="install_pkg_pacman_command">Upgrade the package with:</string>
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
+    <string name="install_replacement_portable_linux">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, extract the downloaded .tar.gz in its place (the tarball opens into a new app folder - never over the current one), and relaunch.</string>
     <string name="old_install_path">Current install:</string>
     <string name="beta_title">BETA</string>
     <string name="dev_title">DEV</string>
