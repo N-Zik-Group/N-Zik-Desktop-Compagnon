@@ -389,6 +389,7 @@
     <string name="update_available">Güncelleme mevcut</string>
     <string name="app_update_dialog_version">Yeni sürüm %s indirilebilir!</string>
     <string name="app_update_dialog_size">Dosya boyutu %s</string>
+    <string name="go_to_download">İndirmeye git</string>
     <string name="downloading_update">Güncelleme indiriliyor</string>
     <string name="update_download_progress">Güncelleme indiriliyor… %1$d%%</string>
     <string name="info_no_update_available">Güncelleme yok</string>
