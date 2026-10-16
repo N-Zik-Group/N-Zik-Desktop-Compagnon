@@ -118,13 +118,15 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 │   │   ├── updater/         in-app updater: services/ (Updater, UpdaterHttp, UpdateDownloadManager, ChangelogTranslator),
 │   │   │                    models/ (CheckUpdateState, GithubRelease, InstallMode, UpdaterConstants), ui/ (ChangelogCard, …)
 │   │   ├── enums/ + utils/  AudioQualityFormat, PairingMode, QueueLoopType…; Preferences, Toaster (formatMessage/formatText),
-│   │   │                    PhoneDensity…; coroutines/ (NzikDispatchers)
+│   │   │                    PhoneDensity…, PlayerState.kt (utils-level — NOT the canonical `bridge/state/PlayerState.kt`)…; coroutines/ (NzikDispatchers)
 │   │   └── Main.kt, MainActivity.kt, AppInfo.kt, GlobalVars.kt, WindowBackground.kt, WindowMinimumSize.kt
 │   ├── src/main/composeResources/   drawable/ (177 files) + font/ (Roboto, Rubik) + values/strings.xml (English — the ONLY file to edit;
 │   │                                the `values-*` locale dirs are Crowdin-managed)
 │   └── src/test/kotlin/             Tests mirroring the main package structure
 ├── gradle/libs.versions.toml        Version catalog
 ├── assets/notes/                    Done.txt + Changelog_Template.txt + TODO.txt (repo-root working files — NOT an app resources dir)
+├── assets/design/                   icon.ico, icon-linux.png, ic_banner2.png, installer-bg.png (installer / packaging artwork)
+├── assets/stats/                    chart.svg, download-card.svg, history.json (the `metrics.yml` bot targets)
 └── (WORKSPACE ROOT, one level above N-Zik-Desktop-Compagnon/: `_bmad/` + `_bmad-output/` BMAD installation + specs ·
     `.agents/` `.agent/` `.claude/` skills · `docs/` reference projects READ-ONLY · `N-Zik/` the phone app (separate repo, NOT part of this one) ·
     `N-Zik-Website/` separate project, NOT part of this one)
