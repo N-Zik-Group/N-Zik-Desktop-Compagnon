@@ -389,6 +389,7 @@
     <string name="update_available">Päivitys saatavilla</string>
     <string name="app_update_dialog_version">Uusi versio %s ladattavissa!</string>
     <string name="app_update_dialog_size">Tiedoston koko on %s</string>
+    <string name="go_to_download">Siirry lataukseen</string>
     <string name="downloading_update">Ladataan päivitystä</string>
     <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">Ei päivityksiä saatavilla</string>
