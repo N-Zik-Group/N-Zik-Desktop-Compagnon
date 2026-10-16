@@ -389,6 +389,7 @@
     <string name="update_available">Доступно оновлення</string>
     <string name="app_update_dialog_version">Нову версію %s можна завантажити!</string>
     <string name="app_update_dialog_size">Розмір файлу %s</string>
+    <string name="go_to_download">До завантаження</string>
     <string name="downloading_update">Завантаження оновлення</string>
     <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">Оновлень немає</string>
