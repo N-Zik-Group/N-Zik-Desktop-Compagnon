@@ -10,7 +10,7 @@
 
 ## Wire Contract (MANDATORY — the domain of this app)
 
-The PC speaks a versioned wire contract with the phone's local server (contract 1.x). The phone is the source of truth for library, queue and player state.
+The PC speaks a versioned wire contract with the phone's local server (contract 1.x — current: **1.12.0**, `{project-root}/_bmad-output/specs/spec-n-zik-pc-bridge/contract/CONTRACT-v1.md`). The phone is the source of truth for library, queue and player state.
 
 - **Features gate the UI:** a screen/action exists only while its `SessionContract` feature is present (`queue`, `playback`, `artwork`, `library.*` …). Without the feature, hide or disable — do not fake it.
 - **Inert, never fake:** a button/menu entry without a contract route is an `InertButton`/`InertMenuItem` (or inert placeholder) carrying **the phone's own title**. It is shown so the screen stays faithful to the phone; it performs no action and its KDoc documents why.
@@ -106,6 +106,7 @@ New files MUST go under `app.n_zik.compagnon.*`. The tree mirrors the phone app'
 | Settings rows                | `components/settings/` (`SettingsSectionCard`, `ToggleSettingsEntry`, …) |
 | Theme & typography           | `components/theme/` (`ColorPalette`, `Typography`, `AnimatedAppearance`, `Hsl`) — do NOT invent new CompositionLocals |
 | Reusable themed widgets      | `components/themed/` (Dialog, DropdownMenu, Loader, NowPlaying, …) |
+| Dialogs                      | `components/dialog/common/` (ButtonRow, CheckboxDialog, DialogFrame) + `components/dialog/updater/` (CheckForUpdateDialog, NewUpdateAvailableDialog) |
 | Navigation                   | `core/navigation/` (BackNavigation — keyboard back + stack)       |
 | Network (contract client)    | `core/network/` (`BridgeClient` + `LibraryApi`, `PlayerApi`, `AudioApi`, `CandidateAddresses`) |
 | Pairing / bridge             | `bridge/pairing/`, `bridge/state/`, `bridge/library/`, `bridge/command/` |
@@ -113,6 +114,11 @@ New files MUST go under `app.n_zik.compagnon.*`. The tree mirrors the phone app'
 | Pure helpers (palette, etc.) | `core/palette/`, `core/coil/`                                    |
 | Enums                        | `enums/`                                                        |
 | Utilities                    | `utils/` (`Preferences`, `Toaster`, `formatMessage`/`formatText`, `PhoneDensity`, …) |
+
+## Navigation
+
+- Single in-app back stack: `core/navigation/BackNavigation` (header back button + keyboard back) — there is no route enum, no interceptors and no deep links (nothing to validate)
+- If navigation grows beyond a back stack (routes, deep links, interceptors), document them here before building on them
 
 ## Imports
 

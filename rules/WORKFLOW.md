@@ -73,7 +73,7 @@ Before triggering the full BMAD workflow, check if the request is **doc-only and
 - Read request carefully
 - Ask clarifying questions: one clear question per decision — unrelated decisions are NEVER bundled into one question; related questions MAY be grouped in a single question tool call
 - Identify scope (packages, files, resources affected)
-- If the request touches what the PC may do with the phone → the phone's wire contract (contract 1.x, in `{project-root}/_bmad-output/`) is the reference
+- If the request touches what the PC may do with the phone → the phone's wire contract (contract 1.x — current: **1.12.0**, `{project-root}/_bmad-output/specs/spec-n-zik-pc-bridge/contract/CONTRACT-v1.md`) is the reference
 
 ### Step 2: Explore
 
@@ -285,7 +285,7 @@ Some skills use micro-file design where each step is in its own file.
   - No dead code: no commented-out code blocks, no unused functions/classes/variables/parameters (if intentionally kept: `// TODO(author): reason`)
   - Comment hygiene: no comments that restate the code, KDoc on public APIs, TODOs as `// TODO(author): description`
   - Indentation & formatting: consistent with the surrounding code, no trailing whitespace, newline at end of file
-  - `java.util.logging.Logger` with the class tag ONLY (no `println`/`System.out`/`printStackTrace`), no token in any log, no `!!` without a justification comment, no `GlobalScope`/`runBlocking`, no NEW raw `Dispatchers.*` in app code (use `NzikDispatchers` — grandfathered pre-existing usages excepted, see rules/CODE.md), no bare `Job()`
+  - `java.util.logging.Logger` with the class tag ONLY (no `println`/`System.out`/`printStackTrace`), no token in any log, no `!!` without a justification comment, no `GlobalScope`, no `runBlocking` WITHOUT a justification comment (per rules/CODE.md), no NEW raw `Dispatchers.*` in app code (use `NzikDispatchers` — there are no grandfathered usages left, see rules/CODE.md), no bare `Job()`
 - Show evidence for the hygiene gate: list the files cleaned + what was removed (or explicitly state "no issues found") — never just claim "clean"
 - Build: `gradlew.bat build`
 - Run tests (new feature/bug fix → at least one new test, per AGENTS.md: list the test file(s) added)
@@ -294,6 +294,7 @@ Some skills use micro-file design where each step is in its own file.
   - no file under `build/` or any VLC binary appears as tracked/untracked (the VLC runtime is downloaded at build time, never committed)
   - no diff touches the pinned VLC config in `ComposeN-Zik/build.gradle.kts` (`vlcVersion`/`vlcZipUrl`/`vlcZipSha256`/`vlcRuntimeFiles`) without the user's prior approval (AGENTS.md "Ask First")
   - no token material appears anywhere in the diff (scan changed files for the device token / Credential Manager strings)
+  - no diff touches `ComposeN-Zik/src/main/composeResources/values-*/` — the Crowdin-managed locale files (only `values/strings.xml` may change; AGENTS.md Never Do / rules/CODE.md Translations)
   - all new `.kt` files live under `app.n_zik.compagnon.*`
   — if any of these appears, HALT, revert it and report to the user
 - Show evidence: paste the build output tail + test results — never just claim "done"

@@ -2,7 +2,7 @@
 
 **MANDATORY: Read this file + rules/*.md before any task.**
 
-> **Project identity:** desktop companion for [N-Zik](https://github.com/N-Zik-Group/N-Zik) on **Windows and Linux**. The **phone is the single source of truth** — it runs a local server on the Wi-Fi network and this app only talks to it (pairing, REST + WebSocket, artwork, streamed audio). **No business logic and no streaming stack live on the PC.** **Transitional product** — it will be replaced by a standalone N-Zik desktop app (see README.md). The wire contract with the phone is versioned (contract 1.x).
+> **Project identity:** desktop companion for [N-Zik](https://github.com/N-Zik-Group/N-Zik) on **Windows and Linux**. The **phone is the single source of truth** — it runs a local server on the Wi-Fi network and this app only talks to it (pairing, REST + WebSocket, artwork, streamed audio). **No business logic and no streaming stack live on the PC.** **Transitional product** — it will be replaced by a standalone N-Zik desktop app (see README.md). The wire contract with the phone is versioned (contract 1.x — current: **1.12.0**; the spec is shared at `{project-root}/_bmad-output/specs/spec-n-zik-pc-bridge/contract/CONTRACT-v1.md`).
 
 ## Session Startup
 
@@ -64,7 +64,7 @@
 
 **Skills location** (depends on your IDE):
 
-> This table lists only the 3 preferred tools plus common alternatives. It is NOT the authoritative full list — if the user's IDE isn't shown here, **rules/BMAD-TOOLS.md is the source of truth** for all supported tools and their skills/global/commands directories. Never assume a tool is unsupported just because it's absent from this shorter table.
+> This table lists only the 3 preferred tools plus common alternatives. It is NOT the authoritative full list — if the user's IDE isn't shown here, **rules/BMAD-TOOLS.md is the source of truth** for all 45 supported tools and their skills/global/commands directories (shared BMAD install — the count is the phone's). Never assume a tool is unsupported just because it's absent from this shorter table.
 
 | IDE                  | Skills Path                                            | How to Load                     |
 | -------------------- | ------------------------------------------------------ | ------------------------------- |
@@ -74,7 +74,7 @@
 | Claude Code          | `{project-root}/.claude/skills/{skill-name}/SKILL.md`  | Direct read                     |
 | Cursor               | `{project-root}/.agents/skills/{skill-name}/SKILL.md`  | Direct read                     |
 | Codex                | `{project-root}/.agents/skills/{skill-name}/SKILL.md`  | Direct read                     |
-| Other tools          | See `rules/BMAD-TOOLS.md`                              | See `rules/BMAD-TOOLS.md`       |
+| Other tools (42 total) | See `rules/BMAD-TOOLS.md`                        | See `rules/BMAD-TOOLS.md`       |
 
 **When to use which skill:**
 
@@ -99,13 +99,15 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 │   │   ├── bridge/          contract layer: BridgeSession.kt (the WS session), pairing/ (PairingController, PairingListener, PairingModels,
 │   │   │                    WindowsCredentialSecretStore, LinuxSecretStore, SessionSecretStore, CredentialStore,
 │   │   │                    RevocationPolicy), state/ (StateReducer, PlayerState,
-│   │   │                    PlayerRepository/RemotePlayerRepository, ServerClock, BridgeStateMessages),
+│   │   │                    PlayerRepository/RemotePlayerRepository, ServerClock, BridgeStateMessages, UiSettings),
 │   │   │                    library/ (LibraryRepository/RemoteLibraryRepository, PagedList, ArtworkLoader, LibraryModels),
 │   │   │                    command/ (PlayWindow)
 │   │   ├── components/      UI ported from the phone: ui/screens/ (home, album, artist, localplaylist, player, bridge, settings, profiles),
 │   │   │                    player/ (Player, MiniPlayer, queue, seek bars, controls), menu/ (per-domain item menus),
 │   │   │                    tab/ (chips, toolbars, search, sort), items/ (AlbumItem, ArtistItem, PlaylistItem, ItemContainer),
+│   │   │                    dialog/ (common: ButtonRow/CheckboxDialog/DialogFrame; updater: CheckForUpdateDialog/NewUpdateAvailableDialog),
 │   │   │                    styling/ (Dimensions, HomeItemSize), theme/ (ColorPalette, Typography), themed/ + settings/ + navigation/
+│   │   │                    + root files (Menu, SongItem, Sort, PeriodSelector, MusicAnimations, ButtonsRow)
 │   │   ├── core/            network/ (BridgeClient + LibraryApi/PlayerApi/AudioApi, CandidateAddresses), navigation/ (BackNavigation),
 │   │   │                    palette/ (pure-Kotlin port of androidx Palette), coil/ (ImageCacheFactory)
 │   │   ├── playback/        vlc/ (VlcAudioEngine, VlcRuntime — embedded VLC 3.0.24), cache/ (AudioCache), services/ (LocalPlayback)
@@ -118,7 +120,7 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 │   │   ├── enums/ + utils/  AudioQualityFormat, PairingMode, QueueLoopType…; Preferences, Toaster (formatMessage/formatText),
 │   │   │                    PhoneDensity…; coroutines/ (NzikDispatchers)
 │   │   └── Main.kt, MainActivity.kt, AppInfo.kt, GlobalVars.kt, WindowBackground.kt, WindowMinimumSize.kt
-│   ├── src/main/composeResources/   drawables/ + font/ (Roboto, Rubik) + values/strings.xml (English — the ONLY file to edit;
+│   ├── src/main/composeResources/   drawable/ (177 files) + font/ (Roboto, Rubik) + values/strings.xml (English — the ONLY file to edit;
 │   │                                the `values-*` locale dirs are Crowdin-managed)
 │   └── src/test/kotlin/             Tests mirroring the main package structure
 ├── gradle/libs.versions.toml        Version catalog

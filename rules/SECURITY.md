@@ -51,6 +51,14 @@
   4. **VLC:** libvlc is LGPL 2.1+, some plugins GPL 2+, vlcj GPL 3.0 — the runtime ships with its `COPYING.txt` (kept under `build/vlc-runtime/.../vlc/COPYING.txt`); do not remove it from the extraction list
   5. Always cite source and license in a comment when porting or pasting code
 
+## Signing & Keystore (future)
+
+This repo publishes **unsigned** artifacts (the SHA-256 story of rules/BUILD.md "Release chore — channels" / "GitHub CI" stays — there is no signing/keystore/fastlane machinery here yet). If a signing flow is ever added:
+
+- NEVER commit a keystore file (`.jks`, `.keystore`) or its passwords under any build variant — signing credentials come from GitHub Actions secrets only (CI), never hardcoded in `build.gradle.kts`
+- NEVER add a local signing config block without explicit user instruction
+- If a keystore or signing secret appears in a diff, commit, or log output → HALT immediately (same escalation as "Secrets found in code" below)
+
 ## HALT IMMEDIATELY IF:
 
 | Scenario                                | Action                                                                      |
