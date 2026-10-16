@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
- * The two AUR packages (the release-zip entry and the `-git` entry) are the Arch/Manjaro/CachyOS
+ * The two AUR packages (the release-tarball entry and the `-git` entry) are the Arch/Manjaro/CachyOS
  * install path. They live in the repo (under `packaging/`) and are NOT built by Gradle — an AUR
  * build fetches them. This test pins the identity of both so a silent drift (a renamed package, a
  * dropped `vlc` dependency, a broken source URL) fails the build instead of shipping a broken AUR
@@ -50,11 +50,11 @@ class AurPkgbuildTest {
     }
 
     @Test
-    fun `release entry downloads the portable zip and the icon from the release`() {
+    fun `release entry downloads the portable tarball and the icon from the release`() {
         val text = releasePkgbuild.readText()
         assertTrue(
-            text.contains("releases/download/v\${pkgver}/n-zik-desktop-compagnon-\${pkgver}-linux-portable.zip"),
-            "release entry must download the portable zip from the GitHub release (v<pkgver>)"
+            text.contains("releases/download/v\${pkgver}/n-zik-desktop-compagnon-\${pkgver}-linux-portable.tar.gz"),
+            "release entry must download the portable tarball from the GitHub release (v<pkgver>)"
         )
         assertTrue(
             text.contains("assets/design/icon-linux.png"),
@@ -154,11 +154,11 @@ class AurPkgbuildTest {
             val licensePath = "usr/share/licenses/" + "${'$'}{" + nameVar + "}" + "/LICENSE"
             assertTrue(text.contains(licensePath), "$label entry must install the LICENSE text under $licensePath")
         }
-        // The portable zip does not contain the LICENSE, so the release entry fetches it from the
-        // release tag as a third source (next to the icon).
+        // The portable tarball does not contain the LICENSE, so the release entry fetches it from
+        // the release tag as a third source (next to the icon).
         assertTrue(
             releasePkgbuild.readText().contains("raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/v\${pkgver}/LICENSE"),
-            "release entry must fetch the LICENSE text from the release tag (it is not in the portable zip)"
+            "release entry must fetch the LICENSE text from the release tag (it is not in the portable tarball)"
         )
     }
 }

@@ -130,32 +130,57 @@ class CredentialStore(
     companion object {
         const val FILE_NAME = "pairing.json"
 
-        /** `%APPDATA%\<per-channel product name>\pairing.json` (Windows) / `~/.config/<per-channel product name>/pairing.json` (Linux). */
+        /** `pairing.json` under the app data dir ([appDirectory] — the per-channel storage dir, or `<root>/data/` of a self-contained portable). */
         fun defaultPairingFile(): Path = appDirectory().resolve(FILE_NAME)
 
         /**
          * The app's data dir (the single convergence point — pairing, settings (`settings.json`),
          * audio cache (`cache/audio/`), updates and the MPRIS artwork all resolve from it):
-         * `%APPDATA%\<per-channel name>\` on Windows, the XDG config dir (`$XDG_CONFIG_HOME` or
-         * `~/.config`) + `<per-channel name>\` on Linux (the 2026-10-12 move off the bare home dir
+         * `%APPDATA%\<storage name>\` on Windows, the XDG config dir (`$XDG_CONFIG_HOME` or
+         * `~/.config`) + `<storage name>\` on Linux (the 2026-10-12 move off the bare home dir
          * — inside a Flatpak sandbox this is the per-app config dir the runtime maps under the
-         * host's `~/.config/`), `~\<per-channel name>\` elsewhere. The name is PER CHANNEL
-         * ([AppInfo.productName] — `N-Zik Desktop Compagnon DEV` / `… BETA`, the base name for
-         * stable / debug / -git, the 2026-10-16 channel separation): each channel build keeps its
-         * own pairing, settings and cache instead of sharing one dir across channels. Resolved
-         * once and cached.
+         * host's `~/.config/`), `~\<storage name>\` elsewhere. The name is the per-channel
+         * STORAGE name ([AppInfo.dataName] — the base name, shared by stable AND beta,
+         * `N-Zik Desktop Compagnon DEV` / `… DEBUG` / `… GIT` for dev / debug / -git — the
+         * 2026-10-16 storage regrouping): the isolated channels keep their own pairing, settings
+         * and cache, stable and beta share one dir (the beta tests against the stable user's
+         * real data). A SELF-CONTAINED PORTABLE (the `portable.txt` marker at the app root,
+         * written only by the portable archive tasks) instead stores its data in
+         * `<root>/data/` next to the launcher ([portableDataRootOf]) — the device token STILL
+         * lives in the OS secret store, never in the portable dir. Resolved once and cached.
          */
         fun appDirectory(): Path = appDataDir
 
         private val appDataDir: Path by lazy {
-            appDataDirFor(
-                System.getProperty("os.name").orEmpty(),
-                System.getenv("APPDATA"),
-                System.getenv("XDG_CONFIG_HOME"),
-                System.getProperty("user.home").orEmpty(),
-                AppInfo.productName(AppVersion.channel),
-                log,
-            )
+            val osName = System.getProperty("os.name").orEmpty()
+            val appData = System.getenv("APPDATA")
+            val xdgConfigHome = System.getenv("XDG_CONFIG_HOME")
+            val home = System.getProperty("user.home").orEmpty()
+            val channel = AppVersion.channel
+            // The self-contained-portable decision wins over the per-channel dir (spec
+            // `spec-channel-storage-portable-targz`): the marker is the sole signal, and every
+            // resolution failure degrades to the per-channel dir below (safe — no data lost)
+            portableDataRootOf(osName, System.getenv(), liveExecutablePath(), AppInfo.productName(channel))
+                ?.let { portableRoot ->
+                    val portableDir = portableRoot.resolve(PORTABLE_DATA_DIR_NAME)
+                    // The one-time copy from the base data dir (same semantics as the channel
+                    // copy: the base's files the portable dir lacks — idempotent on re-launch)
+                    copySharedIntoChannel(
+                        resolveAppDataDir(osName, appData, xdgConfigHome, home, AppInfo.NAME),
+                        portableDir,
+                        log,
+                    )
+                    portableDir
+                }
+                ?: appDataDirFor(
+                    osName,
+                    appData,
+                    xdgConfigHome,
+                    home,
+                    AppInfo.dataName(channel),
+                    legacyDataDirNamesFor(channel),
+                    log,
+                )
         }
 
         /**
@@ -163,16 +188,29 @@ class CredentialStore(
          * wiring): [resolveAppDataDir] and, on Linux only, [migrateLegacyAppDataDir] of the legacy
          * `~/N-Zik Desktop Compagnon/` into the resolved dir, then — for a channel-suffixed name
          * only — [copySharedIntoChannel] of the pre-channel shared dir (the base name) into the
-         * channel dir. Dropping a migration call (or gating it on the wrong OS) would strand the
-         * data — every consumer would read the empty new dir (forced re-pair) with a green suite.
+         * channel dir, then — for the legacy per-channel dir names only —
+         * [mergeLegacyChannelDirInto] of the dirs once isolated by the 2026-10-16 channel
+         * separation (the legacy beta `… BETA`) back into the dir (the base wins, the legacy
+         * dir SURVIVES). Dropping a migration call (or gating it on the wrong OS / name) would
+         * strand the data — every consumer would read the empty new dir (forced re-pair) with a
+         * green suite.
+         *
+         * @param legacyDataDirNames the storage names once isolated for this channel, now
+         * merged back into [dataDirName] (production: beta → [`$NAME BETA`], the 2026-10-16
+         * isolated-beta dir; every other channel → none)
          */
-        internal fun appDataDirFor(osName: String, appData: String?, xdgConfigHome: String?, userHome: String, dataDirName: String, log: Logger): Path {
+        internal fun appDataDirFor(osName: String, appData: String?, xdgConfigHome: String?, userHome: String, dataDirName: String, legacyDataDirNames: List<String>, log: Logger): Path {
             val dir = resolveAppDataDir(osName, appData, xdgConfigHome, userHome, dataDirName)
             if (isLinuxOs(osName)) {
                 migrateLegacyAppDataDir(legacyAppDataDir(userHome), dir, log)
             }
             if (dataDirName != AppInfo.NAME) {
                 copySharedIntoChannel(resolveAppDataDir(osName, appData, xdgConfigHome, userHome, AppInfo.NAME), dir, log)
+            }
+            for (legacyName in legacyDataDirNames) {
+                if (legacyName != dataDirName) {
+                    mergeLegacyChannelDirInto(resolveAppDataDir(osName, appData, xdgConfigHome, userHome, legacyName), dir, log)
+                }
             }
             return dir
         }
@@ -181,7 +219,9 @@ class CredentialStore(
          * The data dir from its inputs (pure — the tests pin the matrix): Windows prefers the
          * `APPDATA` dir (blank/absent falls back to the home dir), Linux the XDG config dir
          * (the `XDG_CONFIG_HOME` override wins over `~/.config`), any other OS the home dir —
-         * each under the per-channel [dataDirName] ([AppInfo.productName] of the build's channel).
+         * each under [dataDirName] ([AppInfo.dataName] of the build's channel — the storage
+         * regrouping: base name for stable / beta, the `… DEV` / `… DEBUG` / `… GIT` suffix for
+         * the isolated channels).
          */
         internal fun resolveAppDataDir(osName: String, appData: String?, xdgConfigHome: String?, userHome: String, dataDirName: String): Path = when {
             osName.startsWith("Windows", ignoreCase = true) && appData?.isNotBlank() == true ->
@@ -190,6 +230,104 @@ class CredentialStore(
                 Paths.get(xdgConfigHome?.takeIf { it.isNotBlank() } ?: Paths.get(userHome, ".config").toString(), dataDirName)
             else -> Paths.get(userHome, dataDirName)
         }
+
+        /** The self-contained-portable marker file (written as an archive entry ONLY by the two portable build tasks). */
+        const val PORTABLE_MARKER_FILE = "portable.txt"
+
+        /** The EXACT content of [PORTABLE_MARKER_FILE] (the strict reader: any other content = no marker). */
+        const val PORTABLE_MARKER_CONTENT = "portable"
+
+        /** The data dir name inside a portable root (the portable's data lives in `<root>/data/`). */
+        const val PORTABLE_DATA_DIR_NAME = "data"
+
+        /**
+         * The storage names once isolated for this channel, now merged back into its live dir
+         * (the 2026-10-16 storage regrouping): only beta had a per-channel dir before the
+         * regrouping — the 2026-10-16 isolated-beta `… BETA` (the install identity,
+         * [AppInfo.productName] of beta). Beta now SHARES the base with stable, so the beta
+         * build merges those legacy files back into the base dir once (the base wins, the
+         * `… BETA` dir SURVIVES — never deleted). Every other channel never had a legacy dir of
+         * its own.
+         */
+        internal fun legacyDataDirNamesFor(channel: String): List<String> =
+            if (channel == "beta") listOf(AppInfo.productName("beta")) else emptyList()
+
+        /**
+         * The self-contained-portable decision (pure — the tests pin the matrix): the app root
+         * of a self-contained portable distribution, or `null` (→ the data dir stays the
+         * per-channel one — the safe degradation: no marker, no data lost).
+         *
+         * The marker is [PORTABLE_MARKER_FILE] at the app root with the EXACT content
+         * [PORTABLE_MARKER_CONTENT] (the strict reader: any other content counts as no marker —
+         * a stray or forged marker must not relocate the data dir). The marker is written as an
+         * archive entry ONLY by the two portable build tasks, so it can exist in a real
+         * portable distribution only (never in the shared app-image, the NSIS installer, the
+         * Flatpak, `packageArch` or a run-source launch).
+         *
+         * The exclusions (each degrades to `null` → per-channel dir):
+         *  * the executable path is blank (no launch context to resolve);
+         *  * the Flatpak environment (a non-blank `FLATPAK_ID` or `container=flatpak` — the
+         *    sandbox data dir is the runtime-mapped per-app config dir, never a portable one);
+         *  * the package-managed install prefix (`/opt/n-zik-desktop-compagnon` — the
+         *    .deb/.rpm/Arch/AUR layout, whose data lives in the XDG dir);
+         *  * the NSIS Windows install (the launcher folder carries the uninstaller
+         *    `Uninstall <product>.exe` — the same discriminator the updater's
+         *    `isNsisWindowsInstall` uses, DUPLICATED here by documentation: the `bridge/` layer
+         *    must not import the `updater/` layer).
+         *
+         * The app root (mirroring the updater's layout semantics, duplicated by documentation —
+         * the updater is NOT imported): on Windows the launcher sits at the image ROOT (the
+         * executable's own dir); on Linux the launcher lives at `<root>/bin/<launcher>` (the
+         * parent dir named `bin` → its parent IS the app root); any other OS → `null`.
+         *
+         * @param env the process environment (`System.getenv()` — the Flatpak signals)
+         * @param executablePath the RESOLVED path of the running executable ([liveExecutablePath]
+         * in production)
+         * @param windowsProductName the per-channel product name of this build (the NSIS
+         * uninstaller is named after it)
+         */
+        internal fun portableDataRootOf(osName: String, env: Map<String, String>, executablePath: String, windowsProductName: String): Path? {
+            if (executablePath.isBlank()) return null
+            // The Flatpak sandbox (the same signals the updater's detection reads)
+            if (env["FLATPAK_ID"]?.isNotBlank() == true || env["container"] == "flatpak") return null
+            // The package-managed install (the same prefix rule the updater's detection reads)
+            if (executablePath.startsWith("/opt/n-zik-desktop-compagnon", ignoreCase = true)) return null
+            val exe = runCatching { Paths.get(executablePath).toAbsolutePath().normalize() }.getOrNull() ?: return null
+            val appRoot = when {
+                osName.startsWith("Windows", ignoreCase = true) -> exe.parent
+                osName.startsWith("Linux", ignoreCase = true) ->
+                    exe.parent?.takeIf { it.fileName?.toString()?.equals("bin", ignoreCase = true) == true }?.parent
+                else -> null
+            } ?: return null
+            // The NSIS Windows install (the same uninstaller-file discriminator the updater uses —
+            // duplicated here: bridge/ must not import updater/)
+            if (Files.exists(exe.resolveSibling("Uninstall $windowsProductName.exe"))) return null
+            val marker = appRoot.resolve(PORTABLE_MARKER_FILE)
+            if (!Files.isRegularFile(marker)) return null
+            val content = runCatching { Files.readString(marker, Charsets.UTF_8) }.getOrNull() ?: return null
+            return if (content == PORTABLE_MARKER_CONTENT) appRoot else null
+        }
+
+        /**
+         * The live executable path of this process, RESOLVED (the same semantics as the updater's
+         * `liveExecutablePath`, duplicated here by documentation — the `bridge/` layer must not
+         * import the `updater/` layer): `ProcessHandle.command()` is argv[0] UNRESOLVED; on Linux
+         * the kernel-resolved `/proc/self/exe` is authoritative (its `toRealPath()` walks the
+         * full chain, the binary itself included). Any failure degrades silently to the
+         * command-line path — the portable decision then simply finds no marker (per-channel
+         * dir, no data lost).
+         */
+        private fun liveExecutablePath(): String = commandLinePath().let { fallback ->
+            val procSelfExe = Paths.get("/proc/self/exe")
+            if (Files.isSymbolicLink(procSelfExe)) {
+                runCatching { procSelfExe.toRealPath().toString() }.getOrNull() ?: fallback
+            } else {
+                fallback
+            }
+        }
+
+        private fun commandLinePath(): String =
+            runCatching { ProcessHandle.current().info().command().orElse("") }.getOrDefault("")
 
         /** The pre-2026-10-12 Linux data dir (`~/N-Zik Desktop Compagnon/`) — the migration source. */
         private fun legacyAppDataDir(userHome: String): Path = Paths.get(userHome, AppInfo.NAME)
@@ -273,17 +411,34 @@ class CredentialStore(
         }
 
         /**
-         * The 2026-10-16 channel separation: copies the pre-channel SHARED data dir (the base
-         * [AppInfo.NAME]) into the per-channel dir — the files the channel dir lacks only, the
-         * channel dir's own files winning. Unlike [migrateLegacyAppDataDir] the shared source
-         * SURVIVES: it stays the live data dir of the base-named channels (stable / debug / -git
-         * keep [AppInfo.NAME]), so a side-by-side stable + dev install keeps its own data on its
-         * own — the one-time cost is a copy, never a forced re-pair on either side.
+         * The channel-separation copy (2026-10-16): copies the pre-channel SHARED data dir (the
+         * base [AppInfo.NAME]) into the per-channel dir — the files the channel dir lacks only,
+         * the channel dir's own files winning. Also the one-time copy into a self-contained
+         * portable's `<root>/data/` dir (same semantics). Unlike [migrateLegacyAppDataDir] the
+         * shared source SURVIVES: it stays the live data dir of the base-named channels (stable
+         * / beta / debug / -git keep [AppInfo.NAME] after the 2026-10-16 storage regrouping),
+         * so a side-by-side stable + dev install keeps its own data on its own — the one-time
+         * cost is a copy, never a forced re-pair on either side.
          */
         internal fun copySharedIntoChannel(shared: Path, channel: Path, log: Logger) {
             if (!Files.isDirectory(shared) || shared == channel) return
             if (copyMissingFilesInto(shared, channel, log)) {
                 log.info("Copied the shared app data dir $shared into the channel dir $channel")
+            }
+        }
+
+        /**
+         * The 2026-10-16 storage regrouping, legacy-beta side: merges the pre-regrouping
+         * PER-CHANNEL dir (the 2026-10-16 isolated-beta `… BETA`) into the channel's live dir —
+         * the files the live dir lacks only, the live dir's own files winning (the base wins).
+         * Unlike [migrateLegacyAppDataDir] the legacy source SURVIVES: it is a MERGE-BACK ONLY —
+         * the `… BETA` dir is never deleted (a copy, never a move: the pairing can never be
+         * lost, and the dir may still be referenced by the user or by an older launch path).
+         */
+        internal fun mergeLegacyChannelDirInto(legacy: Path, target: Path, log: Logger) {
+            if (!Files.isDirectory(legacy) || legacy == target) return
+            if (copyMissingFilesInto(legacy, target, log)) {
+                log.info("Merged the legacy channel data dir $legacy into $target (the base files win, $legacy survives)")
             }
         }
 
@@ -306,12 +461,13 @@ class CredentialStore(
         /**
          * The one platform store for this process: probed once (the Linux probe is a D-Bus call)
          * and shared by every [CredentialStore] and the [isSessionOnly] check, so a second probe
-         * can never disagree with the first. Since the 2026-10-16 channel separation it targets
-         * the PER-CHANNEL secret name, and — for a channel-suffixed name — copies the device
-         * token from the pre-channel shared secret once (see [migrateSharedSecret]).
+         * can never disagree with the first. Since the 2026-10-16 storage regrouping it targets
+         * the per-channel STORAGE name ([AppInfo.dataName] — the base name, shared by stable AND
+         * beta), and — for a channel-suffixed name only — copies the device token from the
+         * pre-channel shared secret once (see [migrateSharedSecret]).
          */
         private val defaultStore: SecretStore by lazy {
-            val name = AppInfo.productName(AppVersion.channel)
+            val name = AppInfo.dataName(AppVersion.channel)
             val osName = System.getProperty("os.name").orEmpty()
             val store = selectSecretStore(osName, name)
             if (name != AppInfo.NAME) {
@@ -324,8 +480,8 @@ class CredentialStore(
          * The platform's secret store: the Credential Manager on Windows (a generic credential
          * named [targetName]), the keyring on Linux (the in-memory [SessionSecretStore] when no
          * keyring daemon is running), no storage anywhere else. [targetName] is the per-channel
-         * secret name ([AppInfo.productName] of the build's channel; the base name is the
-         * pre-channel default — what every stable / debug / -git build still uses).
+         * storage name ([AppInfo.dataName] of the build's channel; the base name is what every
+         * stable / BETA / debug / -git build uses — stable and beta share it).
          */
         internal fun selectSecretStore(osName: String, targetName: String = AppInfo.NAME): SecretStore = when {
             osName.startsWith("Windows", ignoreCase = true) -> WindowsCredentialSecretStore(targetName)
@@ -334,10 +490,10 @@ class CredentialStore(
         }
 
         /**
-         * The 2026-10-16 channel separation, secret side: copies the device token from the
-         * pre-channel SHARED secret ([AppInfo.NAME] target) into the per-channel secret when the
-         * channel secret does not exist yet. The shared entry SURVIVES — it stays the live
-         * secret of the base-named channels (stable / debug / -git) — and an existing channel
+         * The channel separation, secret side: copies the device token from the pre-channel
+         * SHARED secret ([AppInfo.NAME] target) into the per-channel secret when the channel
+         * secret does not exist yet. The shared entry SURVIVES — it stays the live secret of
+         * the base-named channels (stable / beta / debug / -git) — and an existing channel
          * token is never overwritten (a fresh channel pairing wins over a stale shared one).
          */
         internal fun migrateSharedSecret(channel: SecretStore, shared: SecretStore) {

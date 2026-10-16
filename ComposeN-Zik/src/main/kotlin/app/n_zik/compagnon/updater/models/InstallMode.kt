@@ -39,7 +39,7 @@ enum class InstallMode {
     FLATPAK,
     /** Installed by a package manager under `/opt` (the .deb / .rpm / Arch pkg / AUR share the path). */
     PACKAGE_MANAGED,
-    /** Any other path (the portable app-image unzipped anywhere). */
+    /** Any other path (the portable app-image extracted/unzipped anywhere — the Linux .tar.gz or the Windows .zip). */
     PORTABLE,
 }
 
@@ -358,8 +358,9 @@ fun updaterEffectivelyEnabled(
  * it replaces the stable install in place, like beta; Windows keeps its per-channel registry
  * key and the Flatpak keeps its own app-id, so both stay separate installations there). The
  * product name is per-channel ("… BETA" / "… DEV" — the jpackage app name the build sets, from
- * [AppInfo.productName] so the window title, the install identity, the app data dir and the
- * secret store target all agree). The .exe file name is the
+ * [AppInfo.productName] so the window title and the install identity agree; the app data dir
+ * and the secret store target follow the per-channel STORAGE name ([AppInfo.dataName]) instead
+ * — the 2026-10-16 storage regrouping). The .exe file name is the
  * shared base + the channel-suffixed version (`n-zik-desktop-compagnon-0.0.1-dev-20261015.exe`);
  * the build writes the installer under that exact name, so the release asset and the in-app
  * updater agree on one name. The functions take the channel as a defaulted parameter so
@@ -389,8 +390,9 @@ object ArtifactNames {
     /**
      * The per-channel product name (spec AD-8: the jpackage app name — the window title, the
      * install directory name, the Linux launcher, the Flatpak `exec`). Delegates to
-     * [AppInfo.productName] — the single source of truth, shared with the app data dir and the
-     * secret store target (the 2026-10-16 channel separation).
+     * [AppInfo.productName] — the single source of truth of the INSTALL identity (the app data
+     * dir and the secret store target follow [AppInfo.dataName] — the 2026-10-16 storage
+     * regrouping).
      */
     fun productName(channel: String): String = AppInfo.productName(channel)
 
@@ -410,8 +412,15 @@ object ArtifactNames {
     fun rpm(version: String, channel: String = channelOf(version)): String =
         "$LINUX_PACKAGE_BASE-$version-1.x86_64.rpm"
 
-    fun portableZip(version: String, channel: String = channelOf(version)): String =
-        "$LINUX_PACKAGE_BASE-$version-linux-portable.zip"
+    /**
+     * The release asset name of the portable Linux build (spec
+     * `spec-channel-storage-portable-targz` — the 2026-10-16 switch from `.zip` to `.tar.gz`):
+     * the gzip tarball of the shared jpackage app-image (the AUR release entry consumes it —
+     * `tar -xzf` in its `package()`; the launcher keeps its execute bit inside the archive,
+     * verified fail-loud by the build).
+     */
+    fun portableTar(version: String, channel: String = channelOf(version)): String =
+        "$LINUX_PACKAGE_BASE-$version-linux-portable.tar.gz"
 
     /**
      * The release asset name of the portable Windows zip (spec `spec-windows-portable-zip`):
@@ -461,7 +470,7 @@ object ArtifactNames {
             PackageManager.AUR -> if (isReleasePackage) archPkg(version, channel) else null
             PackageManager.NONE -> null
         }
-        InstallMode.PORTABLE -> portableZip(version, channel)
+        InstallMode.PORTABLE -> portableTar(version, channel)
     }
 }
 

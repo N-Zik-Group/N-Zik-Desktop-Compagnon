@@ -169,7 +169,7 @@ jobs:
         with:
           name: linux-artifacts
           path: |
-            ComposeN-Zik/build/compose/binaries/*.zip
+            ComposeN-Zik/build/compose/binaries/*.tar.gz
             ComposeN-Zik/build/compose/binaries/*.flatpak
             ComposeN-Zik/build/compose/binaries/*.pkg.tar.zst
             ComposeN-Zik/build/compose/binaries/main/deb/*.deb
@@ -313,7 +313,7 @@ jobs:
           EXE="${PKG}-${BASE}${SUFFIX}.exe"
           DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
           RPM="${PKG}-${BASE}${SUFFIX}-1.x86_64.rpm"
-          ZIP="${PKG}-${BASE}${SUFFIX}-linux-portable.zip"
+          TAR="${PKG}-${BASE}${SUFFIX}-linux-portable.tar.gz"
           WINZIP="${PKG}-${BASE}${SUFFIX}-windows-portable.zip"
           FLATPAK="${PKG}-${BASE}${SUFFIX}-x86_64.flatpak"
           ARCH="${PKG}-${BASE}${SUFFIX}-1-x86_64.pkg.tar.zst"
@@ -330,7 +330,7 @@ jobs:
           # not the build-dir layout.
           cp "artifacts/linux-artifacts/main/deb/${DEB}" release/
           cp "artifacts/linux-artifacts/main/rpm/${RPM}" release/
-          cp "artifacts/linux-artifacts/${ZIP}" release/
+          cp "artifacts/linux-artifacts/${TAR}" release/
           cp "artifacts/linux-artifacts/${FLATPAK}" release/
           cp "artifacts/linux-artifacts/${ARCH}" release/
           cp "artifacts/windows-artifact/main/exe/${EXE}" release/
@@ -339,7 +339,7 @@ jobs:
           cd release
           # The two portable rows are ordered as in the release-body download links (Windows
           # portable before Linux portable): sha256sum runs in that order, and the table iterates SHA256SUMS.txt
-          sha256sum "${EXE}" "${DEB}" "${RPM}" "${WINZIP}" "${ZIP}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
+          sha256sum "${EXE}" "${DEB}" "${RPM}" "${WINZIP}" "${TAR}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
           cd ..
 
           # The markdown SHA-256 table (the artifacts are unsigned — this is
@@ -381,7 +381,7 @@ jobs:
              - **Fedora / openSUSE / Rocky:** dnf install ./<file>.rpm
              - **Arch / Manjaro / CachyOS:** sudo pacman -U ./<file>.pkg.tar.zst
              - **Windows Portable:** unzip the zip and run the launcher in the unzipped folder - it sits at the top of the app folder, no sub-directory.
-             - **Linux Portable:** unzip the zip and run the launcher in bin/.
+             - **Linux Portable:** extract the .tar.gz and run the launcher in bin/.
              - **Flatpak:** flatpak install ./<file>.flatpak.
 
           > The **Portable** builds are available if you prefer not to install a package. They are fully stable.
@@ -395,7 +395,7 @@ jobs:
           - **Fedora / openSUSE / Rocky** (.rpm) – Complete build for RPM-based distros (x86_64, 64-bit only).
           - **Arch / Manjaro / CachyOS** (.pkg.tar.zst) – Prebuilt pacman binary package, installable with `sudo pacman -U` (x86_64, 64-bit only).
           - **Windows Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
-          - **Linux Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
+          - **Linux Portable** (.tar.gz) – Compressed build, extract and run (x86_64, 64-bit only).
           - **Flatpak** – Flatpak build (x86_64, 64-bit only).
 
           > ℹ️ All 7 artifacts are 64-bit only (x86_64).
@@ -501,7 +501,7 @@ jobs:
                - **Fedora / openSUSE / Rocky:** dnf install ./<file>.rpm
                - **Arch / Manjaro / CachyOS:** sudo pacman -U ./<file>.pkg.tar.zst
                - **Windows Portable:** unzip the zip and run the launcher in the unzipped folder - it sits at the top of the app folder, no sub-directory.
-               - **Linux Portable:** unzip the zip and run the launcher in bin/.
+               - **Linux Portable:** extract the .tar.gz and run the launcher in bin/.
                - **Flatpak:** flatpak install ./<file>.flatpak.
 
             > The **Portable** builds are available if you prefer not to install a package. They are fully stable.
@@ -515,7 +515,7 @@ jobs:
             - **Fedora / openSUSE / Rocky** (.rpm) – Complete build for RPM-based distros (x86_64, 64-bit only).
             - **Arch / Manjaro / CachyOS** (.pkg.tar.zst) – Prebuilt pacman binary package, installable with `sudo pacman -U` (x86_64, 64-bit only).
             - **Windows Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
-            - **Linux Portable** (.zip) – Uncompressed build, no installation needed (x86_64, 64-bit only).
+            - **Linux Portable** (.tar.gz) – Compressed build, extract and run (x86_64, 64-bit only).
             - **Flatpak** – Flatpak build (x86_64, 64-bit only).
 
             > ℹ️ All 7 artifacts are 64-bit only (x86_64).
@@ -539,7 +539,7 @@ jobs:
             - 📥 **Fedora (.rpm):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-1.x86_64.rpm
             - 📥 **Arch (.pkg.tar.zst):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-1-x86_64.pkg.tar.zst
             - 📥 **Windows Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-windows-portable.zip
-            - 📥 **Linux Portable (.zip):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-linux-portable.zip
+            - 📥 **Linux Portable (.tar.gz):** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-linux-portable.tar.gz
             - 📥 **Flatpak:** https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${{ needs.versioning.outputs.downstream }}/n-zik-desktop-compagnon-${{ needs.versioning.outputs.downstream }}-x86_64.flatpak
             - 📄 **Changelog:** <https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/main/Updater/changelogs/${{ needs.versioning.outputs.code }}.txt>
             - 🚀 **Release page:** <https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/tag/v${{ needs.versioning.outputs.downstream }}>

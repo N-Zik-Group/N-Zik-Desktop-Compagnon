@@ -488,7 +488,7 @@ class InstallModeDetectionTest {
         // The 2026-10-09 rework removed the APPIMAGE mode from detection (spec
         // `spec-channel-version-naming`): a legacy AppImage mount (`/tmp/.mount_*`) is no longer
         // recognized — it falls through to the portable/generic path, so a legacy AppImage install
-        // gets the portable-zip gesture (accepted consequence, the "pas besoin" family: the
+        // gets the portable gesture (accepted consequence, the "pas besoin" family: the
         // releases no longer carry an AppImage asset)
         assertEquals(
             InstallMode.PORTABLE,
@@ -509,7 +509,7 @@ class InstallModeDetectionTest {
         assertEquals("n-zik-desktop-compagnon-$version-x86_64.flatpak", ArtifactNames.forMode(InstallMode.FLATPAK, version, PackageManager.NONE))
         assertEquals("n-zik-desktop-compagnon_$version-1_amd64.deb", ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, version, PackageManager.DEB))
         assertEquals("n-zik-desktop-compagnon-$version-1.x86_64.rpm", ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, version, PackageManager.RPM))
-        assertEquals("n-zik-desktop-compagnon-$version-linux-portable.zip", ArtifactNames.forMode(InstallMode.PORTABLE, version, PackageManager.NONE))
+        assertEquals("n-zik-desktop-compagnon-$version-linux-portable.tar.gz", ArtifactNames.forMode(InstallMode.PORTABLE, version, PackageManager.NONE))
     }
 
     @Test
@@ -560,7 +560,7 @@ class InstallModeDetectionTest {
             ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, "0.0.2-beta", PackageManager.DEB, isReleasePackage = true),
         )
         assertEquals(
-            "n-zik-desktop-compagnon-0.0.2-beta-linux-portable.zip",
+            "n-zik-desktop-compagnon-0.0.2-beta-linux-portable.tar.gz",
             ArtifactNames.forMode(InstallMode.PORTABLE, "0.0.2-beta", PackageManager.NONE, isReleasePackage = true),
         )
     }

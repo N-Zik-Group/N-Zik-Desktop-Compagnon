@@ -115,8 +115,9 @@ class CredentialStoreTest {
 
     @Test
     fun `selectSecretStore carries the per-channel target name`() {
-        // The 2026-10-16 channel separation: the secret store targets the PER-CHANNEL name
-        // (dev / beta suffixed, the base name for stable / debug / -git — the pre-channel default)
+        // The 2026-10-16 storage regrouping: the secret store targets the per-channel STORAGE
+        // name ([AppInfo.dataName] — dev / debug / git suffixed, the base name for stable /
+        // beta / debug-channel / -git — the base is what stable and beta share)
         val dev = CredentialStore.selectSecretStore("Windows 11", "N-Zik Desktop Compagnon DEV")
         assertTrue(dev is WindowsCredentialSecretStore)
         assertEquals("N-Zik Desktop Compagnon DEV", (dev as WindowsCredentialSecretStore).targetName)
@@ -126,9 +127,9 @@ class CredentialStoreTest {
 
     @Test
     fun `the shared token is copied into the channel secret on first launch`() {
-        // The 2026-10-16 channel separation, secret side: the pre-channel shared secret holds the
+        // The channel separation, secret side: the pre-channel shared secret holds the
         // token — the channel build copies it into its OWN secret, and the shared entry SURVIVES
-        // (it stays the live secret of the base-named channels, stable / debug / -git)
+        // (it stays the live secret of the base-named channels, stable / beta / debug / -git)
         val shared = InMemorySecretStore(token)
         val channel = InMemorySecretStore()
 

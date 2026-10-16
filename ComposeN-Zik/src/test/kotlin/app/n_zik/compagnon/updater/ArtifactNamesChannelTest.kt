@@ -43,7 +43,9 @@ class ArtifactNamesChannelTest {
         assertEquals("n-zik-desktop-compagnon-$v.exe", ArtifactNames.exe(v))
         assertEquals("n-zik-desktop-compagnon_$v-1_amd64.deb", ArtifactNames.deb(v))
         assertEquals("n-zik-desktop-compagnon-$v-1.x86_64.rpm", ArtifactNames.rpm(v))
-        assertEquals("n-zik-desktop-compagnon-$v-linux-portable.zip", ArtifactNames.portableZip(v))
+        // The Linux portable tarball (spec `spec-channel-storage-portable-targz` — the 2026-10-16
+        // switch from .zip to .tar.gz; the Windows portable stays a .zip)
+        assertEquals("n-zik-desktop-compagnon-$v-linux-portable.tar.gz", ArtifactNames.portableTar(v))
         // The Windows portable zip (spec `spec-windows-portable-zip`) shares the same base
         assertEquals("n-zik-desktop-compagnon-$v-windows-portable.zip", ArtifactNames.windowsPortableZip(v))
         assertEquals("n-zik-desktop-compagnon-$v-x86_64.flatpak", ArtifactNames.flatpak(v))
@@ -58,7 +60,7 @@ class ArtifactNamesChannelTest {
         assertEquals("n-zik-desktop-compagnon-$v.exe", ArtifactNames.exe(v))
         assertEquals("n-zik-desktop-compagnon_$v-1_amd64.deb", ArtifactNames.deb(v))
         assertEquals("n-zik-desktop-compagnon-$v-1.x86_64.rpm", ArtifactNames.rpm(v))
-        assertEquals("n-zik-desktop-compagnon-$v-linux-portable.zip", ArtifactNames.portableZip(v))
+        assertEquals("n-zik-desktop-compagnon-$v-linux-portable.tar.gz", ArtifactNames.portableTar(v))
         // The Windows portable zip keeps the stable Linux base too (the beta replaces the stable
         // in place)
         assertEquals("n-zik-desktop-compagnon-$v-windows-portable.zip", ArtifactNames.windowsPortableZip(v))
@@ -77,7 +79,7 @@ class ArtifactNamesChannelTest {
         assertEquals("n-zik-desktop-compagnon-$v.exe", ArtifactNames.exe(v))
         assertEquals("n-zik-desktop-compagnon_$v-1_amd64.deb", ArtifactNames.deb(v))
         assertEquals("n-zik-desktop-compagnon-$v-1.x86_64.rpm", ArtifactNames.rpm(v))
-        assertEquals("n-zik-desktop-compagnon-$v-linux-portable.zip", ArtifactNames.portableZip(v))
+        assertEquals("n-zik-desktop-compagnon-$v-linux-portable.tar.gz", ArtifactNames.portableTar(v))
         assertEquals("n-zik-desktop-compagnon-$v-windows-portable.zip", ArtifactNames.windowsPortableZip(v))
         assertEquals("n-zik-desktop-compagnon-$v-x86_64.flatpak", ArtifactNames.flatpak(v))
         assertEquals("n-zik-desktop-compagnon-$v-1-x86_64.pkg.tar.zst", ArtifactNames.archPkg(v))
@@ -90,6 +92,8 @@ class ArtifactNamesChannelTest {
         // The portable-Windows install (spec `spec-windows-portable-zip`) gets the Windows
         // portable zip
         assertEquals("n-zik-desktop-compagnon-$v-windows-portable.zip", ArtifactNames.forMode(InstallMode.PORTABLE_WINDOWS, v, PackageManager.NONE))
+        // The portable Linux install gets the tarball (spec `spec-channel-storage-portable-targz`)
+        assertEquals("n-zik-desktop-compagnon-$v-linux-portable.tar.gz", ArtifactNames.forMode(InstallMode.PORTABLE, v, PackageManager.NONE))
         assertEquals("n-zik-desktop-compagnon_$v-1_amd64.deb", ArtifactNames.forMode(InstallMode.PACKAGE_MANAGED, v, PackageManager.DEB))
         assertEquals("n-zik-desktop-compagnon-$v-x86_64.flatpak", ArtifactNames.forMode(InstallMode.FLATPAK, v, PackageManager.NONE))
         // A pacman install with the release marker (a release-pkg install) gets the Arch package

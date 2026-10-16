@@ -98,7 +98,7 @@ jobs:
         with:
           name: linux-artifacts
           path: |
-            ComposeN-Zik/build/compose/binaries/*.zip
+            ComposeN-Zik/build/compose/binaries/*.tar.gz
             ComposeN-Zik/build/compose/binaries/*.flatpak
             ComposeN-Zik/build/compose/binaries/*.pkg.tar.zst
             ComposeN-Zik/build/compose/binaries/main/deb/*.deb
@@ -242,7 +242,7 @@ jobs:
           EXE="${PKG}-${BASE}${SUFFIX}.exe"
           DEB="${PKG}_${BASE}${SUFFIX}-1_amd64.deb"
           RPM="${PKG}-${BASE}${SUFFIX}-1.x86_64.rpm"
-          ZIP="${PKG}-${BASE}${SUFFIX}-linux-portable.zip"
+          TAR="${PKG}-${BASE}${SUFFIX}-linux-portable.tar.gz"
           WINZIP="${PKG}-${BASE}${SUFFIX}-windows-portable.zip"
           FLATPAK="${PKG}-${BASE}${SUFFIX}-x86_64.flatpak"
           ARCH="${PKG}-${BASE}${SUFFIX}-1-x86_64.pkg.tar.zst"
@@ -259,7 +259,7 @@ jobs:
           # not the build-dir layout.
           cp "artifacts/linux-artifacts/main/deb/${DEB}" release/
           cp "artifacts/linux-artifacts/main/rpm/${RPM}" release/
-          cp "artifacts/linux-artifacts/${ZIP}" release/
+          cp "artifacts/linux-artifacts/${TAR}" release/
           cp "artifacts/linux-artifacts/${FLATPAK}" release/
           cp "artifacts/linux-artifacts/${ARCH}" release/
           cp "artifacts/windows-artifact/main/exe/${EXE}" release/
@@ -271,7 +271,7 @@ jobs:
           cd release
           # The two portable rows are ordered as in the release-body download links (Windows
           # portable before Linux portable): sha256sum runs in that order, and the table iterates SHA256SUMS.txt
-          sha256sum "${EXE}" "${DEB}" "${RPM}" "${WINZIP}" "${ZIP}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
+          sha256sum "${EXE}" "${DEB}" "${RPM}" "${WINZIP}" "${TAR}" "${FLATPAK}" "${ARCH}" > ../SHA256SUMS.txt
           cd ..
 
           # The markdown SHA-256 table (the artifacts are unsigned — this is the

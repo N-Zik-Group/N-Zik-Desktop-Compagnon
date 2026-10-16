@@ -1,7 +1,5 @@
 # Code Quality Rules — N-Zik Desktop Compagnon
 
-**Version:** 1.0.0 | **Last updated:** 2026-10-05
-
 ## Naming Conventions
 
 - **Classes/PascalCase**: `BridgeSession`, `RemotePlayerRepository`, `AlbumScreen`
@@ -12,7 +10,7 @@
 
 ## Wire Contract (MANDATORY — the domain of this app)
 
-The PC speaks a versioned wire contract with the phone's local server (spec `spec-n-zik-pc-bridge`, contract 1.x — the spec lives in the workspace `_bmad-output/`). The phone is the source of truth for library, queue and player state.
+The PC speaks a versioned wire contract with the phone's local server (contract 1.x). The phone is the source of truth for library, queue and player state.
 
 - **Features gate the UI:** a screen/action exists only while its `SessionContract` feature is present (`queue`, `playback`, `artwork`, `library.*` …). Without the feature, hide or disable — do not fake it.
 - **Inert, never fake:** a button/menu entry without a contract route is an `InertButton`/`InertMenuItem` (or inert placeholder) carrying **the phone's own title**. It is shown so the screen stays faithful to the phone; it performs no action and its KDoc documents why.

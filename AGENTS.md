@@ -1,10 +1,8 @@
 # AGENTS.md — N-Zik Desktop Compagnon
 
-**Version:** 1.1.1 | **Last updated:** 2026-10-08
-
 **MANDATORY: Read this file + rules/*.md before any task.**
 
-> **Project identity:** desktop companion for [N-Zik](https://github.com/N-Zik-Group/N-Zik) on **Windows and Linux**. The **phone is the single source of truth** — it runs a local server on the Wi-Fi network and this app only talks to it (pairing, REST + WebSocket, artwork, streamed audio). **No business logic and no streaming stack live on the PC.** **Transitional product** — it will be replaced by a standalone N-Zik desktop app (see README.md). Wire contract with the phone: spec `spec-n-zik-pc-bridge` (contract 1.x) in the workspace `_bmad-output/`.
+> **Project identity:** desktop companion for [N-Zik](https://github.com/N-Zik-Group/N-Zik) on **Windows and Linux**. The **phone is the single source of truth** — it runs a local server on the Wi-Fi network and this app only talks to it (pairing, REST + WebSocket, artwork, streamed audio). **No business logic and no streaming stack live on the PC.** **Transitional product** — it will be replaced by a standalone N-Zik desktop app (see README.md). The wire contract with the phone is versioned (contract 1.x).
 
 ## Session Startup
 
@@ -114,7 +112,7 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 │   └── src/test/kotlin/             Tests mirroring the main package structure
 ├── gradle/libs.versions.toml        Version catalog
 ├── assets/notes/                    Done.txt + Changelog_Template.txt + TODO.txt (repo-root working files — NOT an app resources dir)
-└── (WORKSPACE ROOT, one level above N-Zik-Desktop-Compagnon/: `_bmad/` + `_bmad-output/` BMAD installation + specs (incl. `spec-n-zik-pc-bridge`) ·
+└── (WORKSPACE ROOT, one level above N-Zik-Desktop-Compagnon/: `_bmad/` + `_bmad-output/` BMAD installation + specs ·
     `.agents/` `.agent/` `.claude/` skills · `docs/` reference projects READ-ONLY · `N-Zik/` the phone app — separate repo, NOT part of this one)
 ```
 
@@ -125,7 +123,7 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 | Playback            | `playback/` (VLC engine, audio cache, local playback)                     |
 | UI                  | `components/` (screens in `components/ui/screens/`, player in `components/player/`) |
 | Strings (English)   | `ComposeN-Zik/src/main/composeResources/values/strings.xml` — single file, no `values-*` |
-| Pairing persistence | token → the platform secret store (Windows Credential Manager "N-Zik Desktop Compagnon"; Linux keyring via libsecret, in-memory session store without a keyring); non-secret fields → `%APPDATA%\N-Zik Desktop Compagnon\pairing.json` (Windows) / `~/.config/N-Zik Desktop Compagnon/pairing.json` (Linux — the XDG config dir, `$XDG_CONFIG_HOME` override honoured; the legacy `~/N-Zik Desktop Compagnon/` is migrated once on first launch, `CredentialStore`); PC-local settings → `settings.json`; audio cache → `%APPDATA%\N-Zik Desktop Compagnon\cache\audio\` |
+| Pairing persistence | token → the platform secret store (Windows Credential Manager "N-Zik Desktop Compagnon"; Linux keyring via libsecret, in-memory session store without a keyring); non-secret fields → `%APPDATA%\<storage name>\pairing.json` (Windows) / `~/.config/<storage name>/pairing.json` (Linux — the XDG config dir, `$XDG_CONFIG_HOME` override honoured; the legacy `~/N-Zik Desktop Compagnon/` is migrated once on first launch, `CredentialStore`); the storage name is per-channel (`AppInfo.dataName` — the base name, shared by stable AND beta, `… DEV` / `… DEBUG` / `… GIT` for dev / debug / -git; the legacy beta `… BETA` dir is merged back into the base once — base wins, `… BETA` survives); a self-contained portable (the `portable.txt` marker at the app root, written only by the two portable archive tasks) instead stores its data in `<portable root>/data/` — the token STILL lives in the OS secret store; PC-local settings → `settings.json`; audio cache → `%APPDATA%\<storage name>\cache\audio\` |
 | Database            | none on the PC — the phone's local DB is the only database; schema work belongs to the N-Zik (phone) repo |
 | Tests               | `ComposeN-Zik/src/test/kotlin/`                                                   |
 
@@ -141,7 +139,7 @@ gradlew.bat :ComposeN-Zik:run                                    # Launch the ap
 gradlew.bat clean build                                 # Clean + build
 gradlew.bat :ComposeN-Zik:packageInstaller -Pchannel=stable      # Windows NSIS installer
 gradlew.bat :ComposeN-Zik:packageWindowsPortable -Pchannel=stable   # Windows portable zip (the app-image zip, published alongside the installer)
-./gradlew :ComposeN-Zik:packageLinuxPortable -Pchannel=stable    # Linux portable zip (Linux/WSL host only)
+./gradlew :ComposeN-Zik:packageLinuxPortable -Pchannel=stable    # Linux portable tarball .tar.gz (Linux/WSL host only — skipped on Windows)
 gradlew.bat :ComposeN-Zik:createDistributable -Pchannel=stable   # Raw app-image folder (MAIN build type, channel-gated - the source the installer, the Flatpak + the portable zips package)
 gradlew.bat :ComposeN-Zik:createReleaseDistributable             # Raw app-image folder (release build type, no channel gate)
 ```

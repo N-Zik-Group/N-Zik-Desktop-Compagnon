@@ -1,3 +1,4 @@
+import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
@@ -9,7 +10,6 @@ import java.time.format.DateTimeFormatter
 import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -18,6 +18,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.security.MessageDigest
 import java.util.Base64
+import java.util.zip.GZIPInputStream
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -50,7 +51,7 @@ version = libs.versions.nzikVersionName.get()
 val channel = providers.gradleProperty("channel").orNull ?: "debug"
 
 // Which channel each packaging task accepts (AD-1): the eight packaging tasks take stable|beta|dev;
-// `createDistributable` + the two portable zips (Linux + Windows) additionally take `git`
+// `createDistributable` + the two portable builds (Linux tarball + Windows zip) additionally take `git`
 // (AUR-git / source builds — no release asset, updater off, badge "GIT").
 val packagingTaskChannels = mapOf(
     "packageExe" to listOf("stable", "beta", "dev"),
@@ -96,6 +97,21 @@ val appVersionName = baseVersion + channelSuffix
 val channelDisplayName = when (channel) {
     "beta" -> "${libs.versions.nzikPackageName.get()} BETA"
     "dev" -> "${libs.versions.nzikPackageName.get()} DEV"
+    else -> libs.versions.nzikPackageName.get()
+}
+
+// The channel storage name (spec `spec-channel-storage-portable-targz`, the 2026-10-16 storage
+// regrouping): the app data dir name AND the Windows Credential Manager target — the build
+// mirror of `AppInfo.dataName(AppVersion.channel)` (pinned by the cross test in AppInfoTest
+// through the `channel.dataName` system property). Stable + beta SHARE the plain base name
+// (the beta tests against the stable user's real data); dev / debug / -git carry their own
+// isolated `… DEV` / `… DEBUG` / `… GIT` name. The legacy beta `… BETA` dir (the 2026-10-16
+// isolated-beta convention, reversed by this regrouping) is merged back into the base by the
+// app at first launch (the base files win, the `… BETA` dir survives — never deleted).
+val channelDataName = when (channel) {
+    "dev" -> "${libs.versions.nzikPackageName.get()} DEV"
+    "debug" -> "${libs.versions.nzikPackageName.get()} DEBUG"
+    "git" -> "${libs.versions.nzikPackageName.get()} GIT"
     else -> libs.versions.nzikPackageName.get()
 }
 
@@ -188,8 +204,8 @@ tasks.named<KotlinCompile>("compileKotlin") {
 
 // The channel artifact rename (spec `spec-updater`, AD-2 / AD-8, loop 2) — ONE helper, applied by
 // every packaging task: the channel suffix is inserted right after the base version in the
-// artifact name ("n-zik-desktop-compagnon-0.0.1-linux-portable.zip" →
-// "n-zik-desktop-compagnon-0.0.1-beta-linux-portable.zip"). An empty suffix (stable, the debug
+// artifact name ("n-zik-desktop-compagnon-0.0.1-linux-portable.tar.gz" →
+// "n-zik-desktop-compagnon-0.0.1-beta-linux-portable.tar.gz"). An empty suffix (stable, the debug
 // default) returns the name unchanged — the stable artifact names stay byte-identical to the
 // no-channel convention (the AUR release entry stays valid). Two loop-2 hardenings:
 //   * the base version is matched on a BOUNDARY — the next character is `.`, `-`, `_` or the
@@ -389,15 +405,16 @@ tasks.register<Exec>("packageInstaller") {
             "/DICON_FILE=${project.file("../assets/design/icon.ico").absolutePath}",
             "/DVENDOR=N-Zik Group",
             "/DDESCRIPTION=Desktop companion for N-Zik: control your phone's library and playback from a large screen, and listen on your computer.",
-            // AppInfo.productName(AppVersion.channel) — the app data dir name AND the Windows
-            // Credential Manager target (2026-10-16 channel separation: PER-CHANNEL data dir —
-            // `N-Zik Desktop Compagnon DEV` / `… BETA`, the base name for stable / debug / -git;
-            // the pre-channel shared base dir is COPIED once into the channel dir by
-            // `CredentialStore.copySharedIntoChannel` and SURVIVES as the base-named channels'
-            // live dir — verified against `CredentialStore.appDirectory()` /
-            // `WindowsCredentialSecretStore`)
-            "/DDATA_DIR_NAME=$channelDisplayName",
-            "/DCRED_TARGET=$channelDisplayName",
+            // AppInfo.dataName(AppVersion.channel) — the app data dir name AND the Windows
+            // Credential Manager target (2026-10-16 storage regrouping: stable + beta share the
+            // BASE name, dev / debug / -git carry `… DEV` / `… DEBUG` / `… GIT`; the pre-channel
+            // shared base dir is COPIED once into the suffixed dir by
+            // `CredentialStore.copySharedIntoChannel`, the legacy beta `… BETA` dir is merged
+            // back into the base by `CredentialStore.mergeLegacyChannelDirInto` — both SURVIVE
+            // the source. Verified against `CredentialStore.appDirectory()` /
+            // `WindowsCredentialSecretStore` + the `channel.dataName` cross test)
+            "/DDATA_DIR_NAME=$channelDataName",
+            "/DCRED_TARGET=$channelDataName",
             nsisScript,
         )
     }
@@ -1198,7 +1215,7 @@ tasks.matching { it.name == "prepareAppResources" }.configureEach { dependsOn(ex
 // `jdk.security.auth`) to resolve the session-bus UID on Unix. Without the module, EVERY
 // session-bus connection inside the jlinked runtime fails with a `NoClassDefFoundError` and the
 // tray + MPRIS surfaces silently stay off in every packaged Linux artifact (the Flatpak, the
-// .deb, the .rpm, the AUR, the portable zip); `:ComposeN-Zik:run` is immune because it uses the host JDK.
+// .deb, the .rpm, the AUR, the portable tarball); `:ComposeN-Zik:run` is immune because it uses the host JDK.
 // 2026-10-12 Flatpak live evidence: `SNI: no session bus — no tray (NoClassDefFoundError)` and
 // `MPRIS: no session bus — the media surface stays off (NoClassDefFoundError)` inside the
 // sandbox, while the identical code registers both surfaces on the native host-JDK run.
@@ -1265,7 +1282,7 @@ project.afterEvaluate {
     // Expose the effective Linux packaging contract to the JVM tests (same pattern as
     // `windows.packageName`): LinuxPackagePinTest fails if a plugin upgrade stops forwarding these
     // freeArgs (the `vlc` dependency + the Audio menu group are the core of the Linux packages) or
-    // if the package name drifts from the portable zip's file name. Read eagerly here: this
+    // if the package name drifts from the portable tarball's file name. Read eagerly here: this
     // afterEvaluate block runs after the plugin's (the tasks exist and the freeArgs are injected
     // above), and Test.systemProperty stores the value as-is (no Provider resolution).
     tasks.named<Test>("test") {
@@ -1281,6 +1298,12 @@ project.afterEvaluate {
         // package identity (the MSI-era upgrade UUIDs are gone with the NSIS installer — AD-8
         // superseded).
         systemProperty("windows.packageName", channelDisplayName)
+        // The per-channel storage name (spec `spec-channel-storage-portable-targz`, 2026-10-16
+        // storage regrouping): the build mirror of `AppInfo.dataName(channel)` — the NSIS
+        // DATA_DIR_NAME / CRED_TARGET targets. AppInfoTest cross-checks it against the app's own
+        // `AppInfo.dataName(AppVersion.channel)` (a drift between the installer cleanup target
+        // and the app's storage must fail the suite).
+        systemProperty("channel.dataName", channelDataName)
         systemProperty("linux.packageName", linuxPackageName)
         // The effective per-task artifact names AFTER the channel rename (spec `spec-updater`,
         // AD-2 / loop 2 — the doLast hook above renames the jpackage outputs through
@@ -1297,7 +1320,7 @@ project.afterEvaluate {
         systemProperty("artifacts.rpm", channelArtifactName("${linuxPackageName}-$baseVersion-1.x86_64.rpm"))
         systemProperty("linux.freeArgs.deb", tasks.named<AbstractJPackageTask>("packageDeb").get().freeArgs.get().joinToString("\u001f"))
         systemProperty("linux.freeArgs.rpm", tasks.named<AbstractJPackageTask>("packageRpm").get().freeArgs.get().joinToString("\u001f"))
-        systemProperty("linux.portable.zipName", tasks.named<Zip>("packageLinuxPortable").get().archiveFileName.get())
+        systemProperty("linux.portable.tarName", tasks.named<Tar>("packageLinuxPortable").get().archiveFileName.get())
         // The Windows portable zip contract (spec `spec-windows-portable-zip`): the effective
         // archiveFileName after the channel rename — the WindowsPortablePinTest pins its shape
         // against the frozen package base + the -windows-portable.zip suffix, on every host
@@ -1362,19 +1385,72 @@ project.afterEvaluate {
 
     // The portable Linux build is the jpackage app-image — the only Linux binary the AUR entry consumes.
     // `createDistributableImpl` is the plugin's hidden jpackage task that writes
-    // the app-image to <outputBaseDir>/<appDirName>/app/<package name>/. We zip that output folder so
-    // the app folder is the zip root. Linux host only: on a Windows host the app-image is the Windows
-    // image, so the task is disabled there.
+    // the app-image to <outputBaseDir>/<appDirName>/app/<package name>/. We tar that output folder
+    // (gzip) so the app folder is the tarball's top-level entry. Linux host only: on a Windows host
+    // the app-image is the Windows image, so the task is disabled there.
     val createDistributableImpl = tasks.named<AbstractJPackageTask>("createDistributableImpl")
 
-    // The app-image launcher must keep its execute bit inside the portable zip (users unzip it as-is
-    // and the AUR release entry consumes it): this repo lives on the 9P/drvfs mount (/mnt/d on WSL),
-    // where Gradle's zip writer does not preserve the launcher's exec bit (observed: 0777 on disk but
-    // 0644 in the zip entry, reproduced by a forced re-zip). Java's zip API has no external-attributes
-    // setter, so the zip task patches the launcher's central-directory header bytes directly (the Unix
-    // mode lives at byte 38 of each central header; the launcher is the only entry that needs an exec
-    // bit — jars and .so files do not). On a regular (non-9P) host the entry already carries the bit,
-    // so the patch is a no-op.
+    // The app-image launcher must keep its execute bit inside the portable tarball (users extract
+    // it and run it, and the AUR release entry consumes it). The tar records the on-disk mode
+    // directly, so no byte patching is needed — but this repo lives on the 9P/drvfs mount
+    // (/mnt/d on WSL), where the launcher can emerge 0777 (any exec bit is ACCEPTED — the check
+    // is `mode & 0111 != 0`, not a strict 0755; 9P/drvfs cannot guarantee the exact mode). The
+    // task therefore re-reads the archive after writing and fails loud when the launcher entry
+    // is absent or not executable (the empirical WSL validation is the second layer — the task
+    // itself is inoperative on a Windows host).
+
+    // The self-contained-portable marker (spec `spec-channel-storage-portable-targz`):
+    // `portable.txt` (content exactly `portable`) at the app-image ROOT — added as an archive
+    // entry ONLY by the two portable tasks (never on disk in the shared app-image, the NSIS
+    // installer, the Flatpak or `packageArch` — a marker on disk there would make every other
+    // install self-contained-portable too). The app's storage decision
+    // (`CredentialStore.portableDataRootOf`) reads it back; any other content = no marker.
+    // Staged under the build dir (regenerated on every portable run) so it lands at the
+    // app-image root inside the archive only.
+    val portableMarkerDir = layout.buildDirectory.dir("compose/portable-marker").get().asFile
+    fun stagePortableMarker() {
+        portableMarkerDir.deleteRecursively()
+        val markerRoot = File(portableMarkerDir, channelDisplayName)
+        markerRoot.mkdirs()
+        File(markerRoot, "portable.txt").writeText("portable")
+    }
+
+    // The tar entry mode of [entryName] in [tarFile] (null when the entry is absent or the
+    // header is unreadable): a hand-rolled tar read (512-byte headers, the header fields only —
+    // no tar dependency): the name is bytes 0..100, the octal mode at 100..107, the octal size
+    // at 124..135 (data blocks are skipped). The gzip layer is decoded with a GZIPInputStream
+    // (the Tar task's GZIP compression).
+    fun tarEntryMode(tarFile: File, entryName: String): Int? {
+        val data = ByteArrayOutputStream()
+        GZIPInputStream(BufferedInputStream(tarFile.inputStream())).use { input ->
+            val buf = ByteArray(65536)
+            var n = input.read(buf)
+            while (n >= 0) {
+                data.write(buf, 0, n)
+                n = input.read(buf)
+            }
+        }
+        val bytes = data.toByteArray()
+        var offset = 0
+        while (offset + 512 <= bytes.size) {
+            // An all-zero block is the end-of-archive marker (the padding gap) — stop there
+            var empty = true
+            for (i in offset until offset + 512) {
+                if (bytes[i] != 0.toByte()) {
+                    empty = false
+                    break
+                }
+            }
+            if (empty) break
+            val name = String(bytes, offset, 100, Charsets.UTF_8).trimEnd('\u0000')
+            val modeText = String(bytes, offset + 100, 8).trim()
+            val sizeText = String(bytes, offset + 124, 12).trim()
+            val size = sizeText.toIntOrNull(8) ?: break
+            if (name == entryName) return modeText.toIntOrNull(8)
+            offset += 512 + ((size + 511) / 512 * 512)
+        }
+        return null
+    }
     // jpackage lays the app-image out as <destinationDir>/<AppName>/bin/<AppName>; the launcher
     // shares the app-image folder name (located dynamically — no hard-coded display name).
     val launcherFile = createDistributableImpl.flatMap { it.destinationDir }.map { dir ->
@@ -1402,82 +1478,49 @@ project.afterEvaluate {
         launcher
     }
 
-    tasks.register<Zip>("packageLinuxPortable") {
+    tasks.register<Tar>("packageLinuxPortable") {
         group = "n-zik"
-        description = "Zips the Linux app-image into n-zik-desktop-compagnon-<version>-linux-portable.zip."
+        description = "Tars the Linux app-image into n-zik-desktop-compagnon-<version>-linux-portable.tar.gz."
         enabled = !isWindowsHost
         if (isWindowsHost) {
             logger.lifecycle("packageLinuxPortable: skipped on this Windows host — build it on a Linux/WSL host")
         }
         dependsOn(createDistributableImpl)
         from(createDistributableImpl.flatMap { it.destinationDir })
+        // The self-contained-portable marker (archive entry only — see stagePortableMarker).
+        from(portableMarkerDir)
+        doFirst {
+            stagePortableMarker()
+        }
         // The channel suffix rides after the base version through the single rename helper (AD-2).
-        archiveFileName.set(channelArtifactName("${linuxPackageName}-${libs.versions.nzikVersionName.get()}-linux-portable.zip"))
+        archiveFileName.set(channelArtifactName("${linuxPackageName}-${libs.versions.nzikVersionName.get()}-linux-portable.tar.gz"))
         destinationDirectory.set(layout.buildDirectory.dir("compose/binaries"))
-        // Patch the launcher entry's Unix mode to 0755 in the central directory (see above).
+        // `Tar` compresses with GZIP by default (Gradle 9 removed the archiveCompression/
+        // CompressionType API — the extension is what identifies the format).
+        // MANDATORY: since Gradle 9 archive tasks fix every file permission to 0644 by default,
+        // which would strip the launcher's exec bit — the on-disk mode (0755/0777 from jpackage)
+        // must ride into the tar entry, or the doLast re-read below fails every build.
+        useFileSystemPermissions()
+        // The fail-loud exec-bit verification (spec `spec-channel-storage-portable-targz`): the
+        // launcher entry MUST carry an executable bit in the archive — re-read by parsing the
+        // tar entries (replaces the old central-directory byte patch: the tar records the
+        // on-disk mode, no patching needed; 0777 from 9P/drvfs is acceptable, 0755-exact is not
+        // guaranteed there).
         doLast {
-            val zipFile = archiveFile.get().asFile
+            val tarFile = archiveFile.get().asFile
             val baseDir = createDistributableImpl.get().destinationDir.get().asFile
             val entryName = launcherFile.get().path.removePrefix(baseDir.path.trimEnd('/').plus("/"))
-            fun readBytes(f: File): ByteArray {
-                val buf = ByteArray(65536)
-                val out = ByteArrayOutputStream()
-                val input = BufferedInputStream(f.inputStream())
-                try {
-                    var n = input.read(buf)
-                    while (n >= 0) {
-                        out.write(buf, 0, n)
-                        n = input.read(buf)
-                    }
-                } finally {
-                    input.close()
-                }
-                return out.toByteArray()
+            val mode = tarEntryMode(tarFile, entryName)
+            require(mode != null) {
+                "portable tar launcher entry not found (or unreadable) in the archive: $entryName in $tarFile"
             }
-            fun writeBytes(f: File, b: ByteArray) {
-                val output = FileOutputStream(f)
-                try {
-                    output.write(b)
-                } finally {
-                    output.close()
-                }
+            // Any exec bit is accepted (the octal 0111 mask = decimal 7 — the Kotlin DSL
+            // compiler of this Gradle version rejects `0o` octal literals, so the mask is
+            // decimal with the octal meaning in a comment).
+            require((mode and 7) != 0) {
+                "portable tar launcher entry is not executable (mode ${mode.toString(8).padStart(7, '0')}): " +
+                    "$entryName in $tarFile — the launcher must keep its execute bit inside the archive"
             }
-            // Offset of the central-directory header holding [name] (-1 when absent).
-            fun scanHeader(b: ByteArray, name: String): Int {
-                var offset = 0
-                while (offset + 46 <= b.size) {
-                    // Central-directory file header signature is PK\x01\x02 = 50 4B 01 02 in file order.
-                    val isHeader =
-                        b[offset] == 0x50.toByte() && b[offset + 1] == 0x4B.toByte() &&
-                            b[offset + 2] == 0x01.toByte() && b[offset + 3] == 0x02.toByte()
-                    if (isHeader) {
-                        val nameLen = (b[offset + 28].toInt() and 0xFF) or ((b[offset + 29].toInt() and 0xFF) shl 8)
-                        if (offset + 46 + nameLen <= b.size && String(b, offset + 46, nameLen) == name) {
-                            return offset
-                        }
-                        offset += 46 + nameLen
-                    } else {
-                        offset += 1
-                    }
-                }
-                return -1
-            }
-            val bytes = readBytes(zipFile)
-            val header = scanHeader(bytes, entryName)
-            require(header >= 0) { "portable zip launcher entry not found in central directory: $entryName" }
-            // Little-endian 0x81ED = 0o100755 (regular file + rwxr-xr-x).
-            bytes[header + 38] = 0x00
-            bytes[header + 39] = 0x00
-            bytes[header + 40] = 0xED.toByte()
-            bytes[header + 41] = 0x81.toByte()
-            writeBytes(zipFile, bytes)
-            // Verify by re-reading: the mode bytes must now be 0o100755.
-            val reRead = readBytes(zipFile)
-            val reHeader = scanHeader(reRead, entryName)
-            require(reHeader >= 0 && reRead[reHeader + 38] == 0x00.toByte() &&
-                reRead[reHeader + 39] == 0x00.toByte() &&
-                reRead[reHeader + 40] == 0xED.toByte() && reRead[reHeader + 41] == 0x81.toByte()
-            ) { "portable zip launcher entry is not 0755 after the central-directory patch: $zipFile" }
         }
     }
 
@@ -1491,7 +1534,8 @@ project.afterEvaluate {
     // bin/ + lib/), and the embedded runtime lives at app/resources/vlc/libvlc.dll — exactly
     // the path VlcRuntime loads (compose.application.resources.dir + vlc/ + the platform
     // libvlc). The app-image folder is the zip's top-level entry (same layout as the Linux
-    // portable zip).
+    // portable tarball) and the zip carries the `portable.txt` self-contained marker at that
+    // root (archive entry only — see stagePortableMarker).
     val windowsAppImage = createDistributableImpl.flatMap { it.destinationDir }.map { dir ->
         val base = dir.asFile
         // The Windows app-image is recognized by its measured layout (the launcher .exe +
@@ -1546,8 +1590,11 @@ project.afterEvaluate {
         // execution, on the Windows host — the Linux host never executes the task).
         doFirst {
             windowsAppImage.get()
+            // The self-contained-portable marker (archive entry only — see stagePortableMarker).
+            stagePortableMarker()
         }
         from(createDistributableImpl.flatMap { it.destinationDir })
+        from(portableMarkerDir)
         // The channel suffix rides after the base version through the single rename helper
         // (AD-2) — the same base the other assets of the channel share.
         archiveFileName.set(channelArtifactName("${linuxPackageName}-${libs.versions.nzikVersionName.get()}-windows-portable.zip"))

@@ -1,9 +1,7 @@
 # Linux & Flatpak Development Rules — N-Zik Desktop Compagnon
 
-**Version:** 1.1.0 | **Last updated:** 2026-10-13
-
 **Informational.** The Linux/Flatpak development logic gained from the tray + media-surface
-implementation (2026-10-12/13) — what works in the sandbox, why, and how to verify it. Every
+implementation — what works in the sandbox, why, and how to verify it. Every
 entry below is live-verified on the dev machine (CachyOS, GNOME 51, dark session, the
 `com.nzik.desktop.compagnon.dev` bundle) or in the unit tests named. When a rule and a
 "cleverer" approach conflict, the rule wins — it encodes a live bug.
@@ -16,7 +14,7 @@ proxy forwards only what the finish-args allow:
 
 - **`--talk-name=`** — the app may *call* that name. Without `--talk-name=org.kde.StatusNotifierWatcher`
   the proxy filters the watcher, the SNI probe reads "no host" and the tray stays dead with a
-  GREEN build (the 2026-10-12 Flatpak tray bug). Same for the keyring
+  GREEN build. Same for the keyring
   (`--talk-name=org.freedesktop.secrets`).
 - **`--own-name=`** — the app may *register* that name. Needed for `org.mpris.MediaPlayer2.nzik_compagnon`
   (MPRIS) and the SNI item name. A duplicate launch's `Raise` call to an `--own-name` name passes
@@ -38,7 +36,7 @@ dbus-java's SASL layer resolves the session-bus UID through `com.sun.security.au
 (module `jdk.security.auth`) at RUNTIME. The Compose plugin computes the jlinked JRE's module set
 from the app classpath — it **never finds** `jdk.security.auth` (no app code references it). Without
 the module, EVERY session-bus connection inside every packaged Linux artifact (Flatpak, .deb, .rpm,
-AUR, portable zip) fails with `NoClassDefFoundError`, and the tray + MPRIS silently stay off — with
+AUR, portable tarball) fails with `NoClassDefFoundError`, and the tray + MPRIS silently stay off — with
 a green build. `:ComposeN-Zik:run` is immune (host JDK, full module set) — the bug only shows in packaged
 artifacts.
 
@@ -90,7 +88,7 @@ Consequences, live-verified:
   all D-Bus off the EDT; the LaunchedEffect hops to `NzikDispatchers.DATA` via `withContext`).
 - **`GetLayout(parentId, recursionDepth, …)`**: every real host (appindicator GNOME, KDE) asks
   `(0, -1)` and the menu is flat — ignoring `parentId`/recursionDepth is deliberate, tested
-  decision (review-verified, 2026-10-13).
+  decision (review-verified).
 - **Icon-data PNGs**: render each distinct row icon ONCE, in memory, tinted, with the SAME
   margin as the tray icon (render at `px * 0.8` centered on the `px` canvas — full-bleed glyphs
   look oversized in shell menus; user request "like Discord", live-verified: 6 icons, glyphs
@@ -98,8 +96,7 @@ Consequences, live-verified:
   (wasted startup work on Windows).
 - **Icon choice**: Linux trays (SNI + X11 AWT fallback) use the monochrome `ic_launcher_monochrome`
   glyph tinted from the host dconf; the **Windows AWT taskbar keeps the full-color untinted
-  `app_icon`** (no dconf there — a white monochrome glyph is invisible on a light taskbar; the
-  2026-10-13 review HIGH). The full-color `ic_launcher` tile stays with the desktop launchers.
+  `app_icon`** (no dconf there — a white monochrome glyph is invisible on a light taskbar). The full-color `ic_launcher` tile stays with the desktop launchers.
 - **Single instance (Linux)**: `SingleInstance.isDuplicate()` — `NameHasOwner(MPRIS_BUS_NAME)` on
   the session bus; a duplicate re-shows the first instance through its MPRIS `Raise` and exits.
   The WHOLE exchange is in `runCatching` (a bus error reads "the only instance" — never kill a
@@ -108,8 +105,17 @@ Consequences, live-verified:
 
 ## The data dir
 
-`~/.config/N-Zik Desktop Compagnon/` (XDG — `$XDG_CONFIG_HOME` honoured, blank-safe) on Linux,
-`%APPDATA%\…` on Windows. The legacy bare-home dir is migrated ONCE on first launch
+`~/.config/<storage name>/` (XDG — `$XDG_CONFIG_HOME` honoured, blank-safe) on Linux,
+`%APPDATA%\<storage name>\` on Windows. The storage name is per-channel (`AppInfo.dataName`): the
+base name
+`N-Zik Desktop Compagnon` is SHARED by stable AND beta (the beta tests against the stable user's
+real data), dev / debug / git carry `… DEV` / `… DEBUG` / `… GIT`; a beta built from the legacy
+isolated `… BETA` dir merges its missing files back into the base once (`mergeLegacyChannelDirInto`
+— the base wins, the `… BETA` dir survives). A SELF-CONTAINED PORTABLE (the `portable.txt` marker
+at the app root, content exactly `portable`, written as an archive entry ONLY by the two portable
+tasks) instead stores its data in `<portable root>/data/` (the base dir copied in once) — the
+device token STILL lives in the OS secret store, never in the portable dir. The legacy bare-home
+dir is migrated ONCE on first launch
 (`CredentialStore.migrateLegacyAppDataDir`): whole-dir move when the target is absent (atomic →
 plain → **copy** for a non-empty dir on another filesystem — the cross-mount rename fails with
 `DirectoryNotEmptyException`, even plain `Files.move`), file-by-file merge when both exist,
@@ -144,24 +150,23 @@ WSL (`./build.sh package <channel>`), never from the Windows side against the mo
 - **`zstd` is a host prerequisite of `:ComposeN-Zik:packageArch`** — the `tar -I zstd` compressor, a
   system apt tool, not a pinned artifact. A stock WSL Ubuntu does NOT have it. The task fails
   loud at its very start: `zstd not found on the PATH (or its --version failed) — install it
-  with: sudo apt install zstd` (live-verified 2026-10-13 with a stripped `PATH` — the failure is
+  with: sudo apt install zstd` (live-verified with a stripped `PATH` — the failure is
   fast, before any staging).
 - **The false symptom — "the Arch build produced a zip instead of a `.pkg.tar.zst`".** That is
   the missing-`zstd` case: the sibling packaging tasks (`packageLinuxPortable`, `packageDeb`, …)
   run in the same Gradle invocation and can still complete, so `binaries/` ends up holding
-  `…-linux-portable.zip` WITHOUT the `.pkg.tar.zst`. The zip is a DIFFERENT artifact (the
-  portable app-image — unzip + run `bin/`), not "the Arch package gone wrong". The zip and the
-  `.pkg.tar.zst` are both normal outputs of one packaging run, and both sit side by side on the
-  GitHub release page — one is never the other one broken. First check for ANY "missing
+  `…-linux-portable.tar.gz` WITHOUT the `.pkg.tar.zst`. The tarball is a DIFFERENT artifact (the
+  portable app-image — extract + run `bin/`), not "the Arch package gone wrong". The tarball and
+  the `.pkg.tar.zst` are both normal outputs of one packaging run, and both sit side by side on
+  the GitHub release page — one is never the other one broken. First check for ANY "missing
   `.pkg.tar.zst`" report: `zstd --version` on the build host.
 - **Staging stays on the local WSL disk.** The Arch/Flatpak tasks stage under the Gradle user
   home because the repo often lives on the 9P (Windows) mount, where thousands of small file ops
   are slow and the long-lived daemon can serve stale listings — the `packageArch` staging comment
-  records the rationale, and the removed `packageAppImage` task (added `30e4728`, removed
-  `7afdd9e`) records the actual lost-artifact incident. Never point `GRADLE_USER_HOME` at a
+  records the rationale, including a real lost-artifact incident.  `GRADLE_USER_HOME` at a
   Windows drive.
 - **`binaries/` accumulates** across channels and dates (every artifact name carries the date for
-  dev). The newest `.pkg.tar.zst` is the current Arch artifact — an older `…-linux-portable.zip`
+  dev). The newest `.pkg.tar.zst` is the current Arch artifact — an older `…-linux-portable.tar.gz`
   next to it is not evidence of a regression.
 
 ## Version metadata per artifact (where the version lives)
@@ -169,7 +174,7 @@ WSL (`./build.sh package <channel>`), never from the Windows side against the mo
 Single source: the catalog's `nzikVersionName` (the base, e.g. `0.0.1`) + `nzikVersionCode`;
 the channel suffix per channel (stable `""`, beta `-beta`, dev `-dev-YYYYMMDD`, git `-git`);
 the `AppVersion` object generated at build time (never committed — Settings/About + the header
-channel badge read it). Two registers by design (spec `spec-updater` AD-2/AD-8):
+channel badge read it). Two registers by design (AD-2/AD-8):
 
 1. **The channel-aware full version** (`<base> + channel suffix`, e.g. `0.0.1-dev-20261013`)
    lives in: the artifact FILE NAMES, the in-app `AppVersion`, the GitHub tags, the Windows
@@ -180,19 +185,18 @@ channel badge read it). Two registers by design (spec `spec-updater` AD-2/AD-8):
 2. **The numeric base version** (`0.0.1`) is what jpackage records in the `.deb` control, the
    `.rpm` headers, the Flatpak manifest `version`, and the app-image PE. The channel rides in
    the PACKAGE/APP IDENTITY instead: the shared package name
-   (`n-zik-desktop-compagnon` — every channel since the 2026-10-15 decision), the Flatpak app-id
+   (`n-zik-desktop-compagnon` — every channel), the Flatpak app-id
    (`com.nzik.desktop.compagnon.dev` for dev), the
-   Windows product name ("… DEV"). On Linux the channels replace each other in place (AD-8 as amended 2026-10-15; Windows and Flatpak stay separate installations) — and
+   Windows product name ("… DEV"). On Linux the channels replace each other in place (AD-8; Windows and Flatpak stay separate installations) — and
    the updater's InstallMode/provenance logic keys on that identity, not on the version field.
 
 Consequences to know:
 
-- `dpkg -l` / `rpm -q` / `flatpak info` show `0.0.1` for EVERY channel — since the 2026-10-15
-  naming decision the package NAME is shared, so the channel rides in the version field of the
+- `dpkg -l` / `rpm -q` / `flatpak info` show `0.0.1` for EVERY channel— the package NAME is shared, so the channel rides in the version field of the
   file name only (plus the Flatpak app-id and the Windows product name).
-- The portable zip carries NO package metadata at all (it is not a package — only the in-app
-  identity and the file name carry the version).
-- The AUR entries carry their OWN `pkgver`/`pkgrel` (release-zip: pinned per release in the
+- The portables (Windows `.zip`, Linux `.tar.gz`) carry NO package metadata at all (they are not
+  packages — only the in-app identity and the file name carry the version).
+- The AUR entries carry their OWN `pkgver`/`pkgrel` (release-tarball: pinned per release in the
   PKGBUILD; `-git`: computed from the tracked branch) — independent of the release artifacts.
 - Every line above is pinned by the suite: `LinuxPackagePinTest` (deb/rpm), `ArchPkgPinTest`
   (PKGINFO + the libalpm one-dash rule), `FlatpakPinTest` (manifest placeholders → effective
@@ -212,7 +216,7 @@ Consequences to know:
   /com/canonical/menu com.canonical.dbusmenu.GetLayout int32:0 int32:-1 array:string:` dumps the
   menu incl. the `icon-data` byte arrays (parse them as hex — `byte 0x89, 0x50, …`); decode a PNG
   and check the glyph's bounding box + transparent corners to verify the icon margin
-  (`/tmp/opencode/check_menu_icon_padding.py`, 2026-10-13).
+  (`/tmp/opencode/check_menu_icon_padding.py`).
 - **Name ownership**: `gdbus call --session --dest org.freedesktop.DBus --object-path
   /org/freedesktop/DBus --method org.freedesktop.DBus.NameHasOwner <name>` (note: gdbus treats a
   `-1` argument as an option — `dbus-send` above is the safe route for negative ints).
@@ -233,7 +237,7 @@ Consequences to know:
 - **`pkill -f "flatpak run com.nzik"` matches ITSELF** — use the bracket regex
   `N-Zik[ ]Desktop[ ]Compagnon[ ]DEV` or explicit PIDs.
 - **`timeout N flatpak run …` does not reliably kill the app** — an orphan survived a timeout
-  kill (2026-10-13). Kill by PID.
+  kill. Kill by PID.
 - **Duplicate JVMs** print `Cannot use file /tmp/hsperfdata_<user>/<pid>` and harmless
   `pure virtual method called` / `ProvideXdgActivationToken` / canberra-gtk-module lines at
   startup — not a failure.

@@ -89,7 +89,7 @@ class FetchUpdateTest {
                 ${assetJson(tag, ArtifactNames.windowsPortableZip(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.deb(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.rpm(tag.removePrefix("v")))},
-                ${assetJson(tag, ArtifactNames.portableZip(tag.removePrefix("v")))},
+                ${assetJson(tag, ArtifactNames.portableTar(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.flatpak(tag.removePrefix("v")))},
                 ${assetJson(tag, ArtifactNames.archPkg(tag.removePrefix("v")))}
               ]

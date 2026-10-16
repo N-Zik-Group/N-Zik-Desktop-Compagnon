@@ -4,7 +4,7 @@
 #
 # Tracks the `main` branch: clones the repository and builds the portable app-image with Gradle
 # (`:ComposeN-Zik:createDistributable`), then installs it to /opt with the .desktop menu entry ("raccourci")
-# and the icon. Always the latest state of main — no release chore needed (unlike the release-zip
+# and the icon. Always the latest state of main — no release chore needed (unlike the release-tarball
 # entry, whose `pkgver` + `sha256sums` are bumped on every release).
 #
 # Build requirements: JDK 21 (makedepends) and network access. The first build downloads the Gradle
@@ -43,7 +43,7 @@ sha256sums=('SKIP')
 # The app-image is named after the app display name (with spaces): "N-Zik Desktop Compagnon", and its
 # launcher lives in bin/ (named the same). The app-image bundles its own JRE (lib/runtime), so no
 # system Java is needed at runtime. We install it under the lowercase name in /opt so the install path
-# matches the .deb/.rpm and the release-zip AUR entry (all one /opt/n-zik-desktop-compagnon/).
+# matches the .deb/.rpm and the release-tarball AUR entry (all one /opt/n-zik-desktop-compagnon/).
 _appdir="N-Zik Desktop Compagnon"
 # Where the Gradle build puts the app-image (relative to the repo root; `main` is the plugin's
 # default-build-type directory).
@@ -86,8 +86,8 @@ package() {
   install -Dm644 "assets/design/icon-linux.png" \
     "${pkgdir}/usr/share/icons/hicolor/256x256/apps/${_pkgname}.png"
 
-  # The GPL-3.0 license text (from the checkout; the release-zip entry fetches it as a third source
-  # pinned to the tag, since it is not in the portable zip).
+  # The GPL-3.0 license text (from the checkout; the release-tarball entry fetches it as a third source
+  # pinned to the tag, since it is not in the portable tarball).
   install -Dm644 "LICENSE" \
     "${pkgdir}/usr/share/licenses/${_pkgname}/LICENSE"
 

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
  * upgrade that stops forwarding the jpackage `freeArgs` would ship a `.deb`/`.rpm` WITHOUT the
  * `vlc` dependency (the core contract — the `.deb`/`.rpm`/AUR/portable paths never bundle VLC;
  * only the Flatpak embeds the runtime, into its own staging), and a renamed `nzikPackageName`
- * would desynchronize the `/opt` dir from the portable zip name, the AUR `pkgname`s and the
+ * would desynchronize the `/opt` dir from the portable tarball name, the AUR `pkgname`s and the
  * download URL — all with a green build.
  * The build exposes the effective values (`systemProperty` in `ComposeN-Zik/build.gradle.kts`, same pattern
  * as `windows.packageName`) so this test pins them. Channel-aware: since the 2026-10-15 naming
@@ -64,7 +64,7 @@ class LinuxPackagePinTest {
     }
 
     @Test
-    fun `the package name is frozen and matches the portable zip base`() {
+    fun `the package name is frozen and matches the portable tarball base`() {
         // Every channel shares the ONE package base (AD-8 as amended 2026-10-15 — the dev's own
         // -dev base was removed): the frozen install identity is this base name
         assertEquals(
@@ -72,9 +72,9 @@ class LinuxPackagePinTest {
             pkgName().removeSuffix("-dev"),
             "the catalog-derived linux.packageName is the shared frozen install identity (every channel)",
         )
-        val zip = System.getProperty("linux.portable.zipName") ?: error("the portable zip archiveFileName is not exposed to the tests")
-        assertTrue(zip.startsWith("${pkgName()}-"), "the portable zip base name must be the channel-aware package name: $zip")
-        assertTrue(zip.endsWith("-linux-portable.zip"), "the portable zip keeps its -linux-portable.zip suffix: $zip")
+        val tar = System.getProperty("linux.portable.tarName") ?: error("the portable tarball archiveFileName is not exposed to the tests")
+        assertTrue(tar.startsWith("${pkgName()}-"), "the portable tarball base name must be the channel-aware package name: $tar")
+        assertTrue(tar.endsWith("-linux-portable.tar.gz"), "the portable tarball keeps its -linux-portable.tar.gz suffix: $tar")
     }
 
     private fun pinProp(name: String): String =
@@ -213,10 +213,10 @@ class LinuxPackagePinTest {
             .firstOrNull { it.startsWith("_pkgname=") }?.removePrefix("_pkgname=")
             ?: error("git entry: the _pkgname= line is missing")
         assertEquals(baseName, gitName, "the git AUR install identity (_pkgname) must be the jpackage package name")
-        // The release entry downloads the zip from the release; the URL's package base must be the same name.
-        val urlBase = Regex("releases/download/v\\$\\{pkgver\\}/([a-z0-9-]+)-\\$\\{pkgver\\}-linux-portable\\.zip")
+        // The release entry downloads the tarball from the release; the URL's package base must be the same name.
+        val urlBase = Regex("releases/download/v\\$\\{pkgver\\}/([a-z0-9-]+)-\\$\\{pkgver\\}-linux-portable\\.tar\\.gz")
             .find(releasePkgbuild.readText())?.groupValues?.get(1)
-            ?: error("release entry: the portable-zip download URL is missing")
-        assertEquals(baseName, urlBase, "the release download URL must name the portable zip after the package name")
+            ?: error("release entry: the portable-tarball download URL is missing")
+        assertEquals(baseName, urlBase, "the release download URL must name the portable tarball after the package name")
     }
 }

@@ -1,15 +1,17 @@
 # Maintainer: N-Zik Group
 #
-# N-Zik Desktop Compagnon — release-zip AUR entry.
+# N-Zik Desktop Compagnon — release-tarball AUR entry.
 #
-# Installs the portable Linux app-image (the jpackage app-image, shipped as a zip in the GitHub
-# releases) to /opt, plus the .desktop menu entry ("raccourci") and the icon. No VLC is bundled: the
-# app plays through the system libvlc, so `vlc` is a hard dependency (installed by pacman).
+# Installs the portable Linux app-image (the jpackage app-image, shipped as a gzip tarball in the
+# GitHub releases) to /opt, plus the .desktop menu entry ("raccourci") and the icon. No VLC is
+# bundled: the app plays through the system libvlc, so `vlc` is a hard dependency (installed by
+# pacman).
 #
 # Release chore (one-shot, per release):
 #   1. bump `pkgver` to the new release version
-#   2. recompute ALL THREE `sha256sums` (the portable zip, the icon and the LICENSE text — all are
-#      pinned to the tag `v<pkgver>`, which must exist for the `releases/download` URL to resolve)
+#   2. recompute ALL THREE `sha256sums` (the portable tarball, the icon and the LICENSE text —
+#      all are pinned to the tag `v<pkgver>`, which must exist for the `releases/download` URL to
+#      resolve)
 #
 # The `-git` variant (n-zik-desktop-compagnon-git) tracks `main` directly and needs no chore.
 
@@ -21,30 +23,30 @@ arch=(x86_64)
 url="https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon"
 license=(GPL-3.0-only)
 depends=(vlc)
-makedepends=(unzip)
-# The portable app-image, the icon and the GPL-3.0 license text (the LICENSE is not in the zip),
+# The portable app-image, the icon and the GPL-3.0 license text (the LICENSE is not in the tarball),
 # all pinned to the release tag v<pkgver>.
 source=(
-  "https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${pkgver}/n-zik-desktop-compagnon-${pkgver}-linux-portable.zip"
+  "https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/releases/download/v${pkgver}/n-zik-desktop-compagnon-${pkgver}-linux-portable.tar.gz"
   "https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/v${pkgver}/assets/design/icon-linux.png"
   "https://raw.githubusercontent.com/N-Zik-Group/N-Zik-Desktop-Compagnon/v${pkgver}/LICENSE"
 )
 sha256sums=(
-  "0000000000000000000000000000000000000000000000000000000000000000"  # portable zip: filled by the release chore
+  "0000000000000000000000000000000000000000000000000000000000000000"  # portable tarball: filled by the release chore
   "831edcc324a716691b501f976b8a8b8254c4615a69f82ba088bec2bf775797e4"  # icon-linux.png @ v<pkgver>
   "0000000000000000000000000000000000000000000000000000000000000000"  # LICENSE @ v<pkgver>: filled by the release chore
 )
 
-# The zip's root entry is the jpackage app-image folder, named after the app display name (with
-# spaces): "N-Zik Desktop Compagnon". Its launcher lives in bin/ (named the same) and it bundles its
-# own JRE (lib/runtime), so no system Java is needed at runtime. We install it under the lowercase
-# package name in /opt so the install path matches the .deb/.rpm (jpackage uses --linux-package-name).
+# The tarball's top-level entry is the jpackage app-image folder, named after the app display
+# name (with spaces): "N-Zik Desktop Compagnon". Its launcher lives in bin/ (named the same) and
+# it bundles its own JRE (lib/runtime), so no system Java is needed at runtime. We install it
+# under the lowercase package name in /opt so the install path matches the .deb/.rpm (jpackage
+# uses --linux-package-name).
 _appdir="N-Zik Desktop Compagnon"
 
 package() {
   # Unpack the app-image to /opt/, then rename the display-name folder to the lowercase package name
   # (single /opt install location across all the Linux packages).
-  unzip -q "${srcdir}/n-zik-desktop-compagnon-${pkgver}-linux-portable.zip" -d "${pkgdir}/opt"
+  tar -xzf "${srcdir}/n-zik-desktop-compagnon-${pkgver}-linux-portable.tar.gz" -C "${pkgdir}/opt"
   mv "${pkgdir}/opt/${_appdir}" "${pkgdir}/opt/${pkgname}"
 
   # The app-image launcher (jpackage puts it in <app-image>/bin/). Fail loudly if the app-image

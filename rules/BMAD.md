@@ -1,7 +1,5 @@
 # BMAD Technical Reference — N-Zik Desktop Compagnon
 
-**Version:** 1.0.0 | **Last updated:** 2026-10-05
-
 **MANDATORY: Read this file before executing any BMAD skill.**
 
 ---
@@ -26,7 +24,7 @@
 
 **`_bmad/` contains:** config, scripts, modules, rendered outputs — NOT skills.
 
-> **`_bmad-output/`** (workspace root, sibling of `_bmad/` — NOT part of the installation) is BMAD's output directory, **shared by all workspace projects**: planning/implementation/test artifacts, `problem-solution-*.md` reports, and `DONTREAD/` (archive of older outputs — respect it, do not delete or reorganize). The companion's bridge spec `spec-n-zik-pc-bridge` and its story artifacts live there. It is separate from the protected `_bmad/` installation.
+> **`_bmad-output/`** (workspace root, sibling of `_bmad/` — NOT part of the installation) is BMAD's output directory, **shared by all workspace projects**: planning/implementation/test artifacts, `problem-solution-*.md` reports, and `DONTREAD/` (archive of older outputs — respect it, do not delete or reorganize). It is separate from the protected `_bmad/` installation.
 
 ---
 

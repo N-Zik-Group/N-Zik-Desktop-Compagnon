@@ -8,7 +8,7 @@
 #   ./build.sh            compile + run all tests
 #   ./build.sh test       run the tests only
 #   ./build.sh clean      clean, then compile + run all tests
-#   ./build.sh package <channel>   run the tests, then build the Linux .deb + .rpm + portable zip +
+#   ./build.sh package <channel>   run the tests, then build the Linux .deb + .rpm + portable tarball +
 #                                  Flatpak + Arch binary package (.pkg.tar.zst) for the
 #                                  channel (Linux/WSL host only).
 #                                  The channel is REQUIRED: stable | beta | dev (spec `spec-updater` —

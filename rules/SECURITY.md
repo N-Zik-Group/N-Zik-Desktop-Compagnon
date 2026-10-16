@@ -1,7 +1,5 @@
 # Security Rules — N-Zik Desktop Compagnon
 
-**Version:** 1.0.0 | **Last updated:** 2026-10-05
-
 ## The Device Token (primary secret of this app)
 
 - The paired device token is the ONLY secret this app handles — it authenticates every bridge call (REST Bearer + WS upgrade header)

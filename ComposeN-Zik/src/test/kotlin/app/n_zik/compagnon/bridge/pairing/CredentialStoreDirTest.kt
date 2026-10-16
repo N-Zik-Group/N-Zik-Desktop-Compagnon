@@ -7,17 +7,24 @@ import java.nio.file.Paths
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.logging.Logger
+import app.n_zik.compagnon.AppInfo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
 /**
- * The app data dir (the 2026-10-12 XDG move of the Linux data dir off the bare home dir): the
- * [CredentialStore.resolveAppDataDir] platform matrix (pure) and the one-time migration of the
- * legacy `~/N-Zik Desktop Compagnon/` into the XDG dir (move, merge, no-op).
+ * The app data dir (the 2026-10-12 XDG move of the Linux data dir off the bare home dir, the
+ * 2026-10-16 storage regrouping and the self-contained portable): the
+ * [CredentialStore.resolveAppDataDir] platform matrix (pure), the one-time migration of the
+ * legacy `~/N-Zik Desktop Compagnon/` into the XDG dir (move, merge, no-op), the channel copy
+ * (shared base → suffixed dir, the base survives), the legacy-beta merge-back (`… BETA` → base,
+ * the base wins, `… BETA` survives) and the self-contained-portable decision
+ * ([CredentialStore.portableDataRootOf] — the marker matrix).
  */
 class CredentialStoreDirTest {
 
@@ -42,12 +49,13 @@ class CredentialStoreDirTest {
 
     @Test
     fun `windows uses the per-channel data dir name`() {
-        // The 2026-10-16 channel separation: dev / beta carry the suffixed product name, stable
-        // keeps the base — the same rule as the install dir ([AppInfo.productName])
+        // The storage name rides as the path component (whatever name the caller passes —
+        // [AppInfo.dataName] in production: the base for stable / beta, the suffixed name for
+        // dev / debug / git). This pins the resolution, not the mapping (pinned in AppInfoTest)
         val dev = CredentialStore.resolveAppDataDir("Windows 11", "C:\\Users\\x\\AppData\\Roaming", null, "C:\\Users\\x", "N-Zik Desktop Compagnon DEV")
         assertEquals(Paths.get("C:\\Users\\x\\AppData\\Roaming", "N-Zik Desktop Compagnon DEV"), dev)
-        val beta = CredentialStore.resolveAppDataDir("Windows 11", "C:\\Users\\x\\AppData\\Roaming", null, "C:\\Users\\x", "N-Zik Desktop Compagnon BETA")
-        assertEquals(Paths.get("C:\\Users\\x\\AppData\\Roaming", "N-Zik Desktop Compagnon BETA"), beta)
+        val git = CredentialStore.resolveAppDataDir("Windows 11", "C:\\Users\\x\\AppData\\Roaming", null, "C:\\Users\\x", "N-Zik Desktop Compagnon GIT")
+        assertEquals(Paths.get("C:\\Users\\x\\AppData\\Roaming", "N-Zik Desktop Compagnon GIT"), git)
         val stable = CredentialStore.resolveAppDataDir("Windows 11", "C:\\Users\\x\\AppData\\Roaming", null, "C:\\Users\\x", "N-Zik Desktop Compagnon")
         assertEquals(Paths.get("C:\\Users\\x\\AppData\\Roaming", "N-Zik Desktop Compagnon"), stable)
     }
@@ -76,7 +84,8 @@ class CredentialStoreDirTest {
 
     @Test
     fun `linux uses the per-channel xdg config dir`() {
-        // The 2026-10-16 channel separation rides the same XDG base with the suffixed name
+        // The storage name rides the same XDG base with the suffixed name (dev / debug / git —
+        // [AppInfo.dataName])
         val dir = CredentialStore.resolveAppDataDir("Linux", null, null, "/home/u", "N-Zik Desktop Compagnon DEV")
         assertEquals(Paths.get("/home/u/.config/N-Zik Desktop Compagnon DEV"), dir)
     }
@@ -224,7 +233,7 @@ class CredentialStoreDirTest {
         Files.writeString(legacy.resolve("pairing.json"), "{}")
         Files.writeString(legacy.resolve("cache/audio/track1.flac"), "audio")
 
-        val dir = CredentialStore.appDataDirFor("Linux", null, null, home.toString(), "N-Zik Desktop Compagnon", log)
+        val dir = CredentialStore.appDataDirFor("Linux", null, null, home.toString(), "N-Zik Desktop Compagnon", emptyList(), log)
 
         assertEquals(home.resolve(".config/N-Zik Desktop Compagnon"), dir)
         assertFalse(Files.exists(legacy), "the legacy dir must be gone after the one-time migration")
@@ -239,7 +248,7 @@ class CredentialStoreDirTest {
         Files.createDirectories(legacy)
         Files.writeString(legacy.resolve("pairing.json"), "{}")
 
-        val dir = CredentialStore.appDataDirFor("Windows 11", null, null, home.toString(), "N-Zik Desktop Compagnon", log)
+        val dir = CredentialStore.appDataDirFor("Windows 11", null, null, home.toString(), "N-Zik Desktop Compagnon", emptyList(), log)
 
         assertEquals(home.resolve("N-Zik Desktop Compagnon"), dir)
         assertTrue(Files.isDirectory(legacy), "off Linux the legacy dir is never touched")
@@ -250,7 +259,7 @@ class CredentialStoreDirTest {
         // The 2026-10-16 channel separation wiring: a dev build resolves its OWN dir
         // (`<xdg>/N-Zik Desktop Compagnon DEV`) and, on first launch, COPIES the files the shared
         // base dir has that its dir lacks — the shared dir SURVIVES (it stays the live dir of the
-        // base-named channels, stable / debug / -git). Dropping the copySharedIntoChannel line, or
+        // base-named channels, stable / beta / debug / -git). Dropping the copySharedIntoChannel line, or
         // gating it on the wrong name, would strand the channel dir — forced re-pair, green suite.
         val home = temp.resolve("home")
         val xdg = home.resolve(".config")
@@ -260,7 +269,7 @@ class CredentialStoreDirTest {
         Files.writeString(shared.resolve("settings.json"), "shared-settings")
         Files.writeString(shared.resolve("cache/audio/track1.flac"), "audio")
 
-        val dir = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon DEV", log)
+        val dir = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon DEV", emptyList(), log)
 
         assertEquals(xdg.resolve("N-Zik Desktop Compagnon DEV"), dir)
         // the shared dir SURVIVES (a stable build installed side-by-side still reads it)
@@ -280,7 +289,7 @@ class CredentialStoreDirTest {
         Files.createDirectories(shared)
         Files.writeString(shared.resolve("pairing.json"), "{}")
 
-        val dir = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon", log)
+        val dir = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon", emptyList(), log)
 
         assertEquals(shared, dir)
         assertEquals(1L, Files.list(dir).count(), "no duplication: the base-name dir IS the shared dir (no channel copy ran)")
@@ -300,7 +309,7 @@ class CredentialStoreDirTest {
         Files.writeString(channel.resolve("pairing.json"), "FRESH")
         Files.writeString(channel.resolve("cache.flac"), "channel-audio")
 
-        val dir = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon DEV", log)
+        val dir = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon DEV", emptyList(), log)
 
         assertEquals("FRESH", Files.readString(dir.resolve("pairing.json")), "the channel's own pairing must win")
         assertEquals("channel-audio", Files.readString(dir.resolve("cache.flac")))
@@ -377,5 +386,287 @@ class CredentialStoreDirTest {
                 })
             }
         }
+    }
+
+    // ---- storage regrouping (2026-10-16: stable + beta share the base, dev / debug / git isolated) ----
+
+    @Test
+    fun `the legacyDataDirNamesFor beta is the legacy BETA dir and the other channels none`() {
+        // The production wiring of the merge-back: only beta had a per-channel dir before the
+        // regrouping (the 2026-10-16 isolated-beta `… BETA` = the beta INSTALL identity)
+        assertEquals(
+            listOf("N-Zik Desktop Compagnon BETA"),
+            CredentialStore.legacyDataDirNamesFor("beta"),
+        )
+        for (channel in listOf("stable", "dev", "debug", "git")) {
+            assertTrue(
+                CredentialStore.legacyDataDirNamesFor(channel).isEmpty(),
+                "$channel had no legacy per-channel dir of its own"
+            )
+        }
+    }
+
+    @Test
+    fun `appDataDirFor for beta merges the legacy BETA dir into the base (the base wins, BETA survives)`(@TempDir temp: Path) {
+        // The 2026-10-16 storage regrouping, beta side: beta now SHAREDs the base storage with
+        // stable. A beta build that still has the legacy isolated `… BETA` dir from the
+        // 2026-10-16 channel separation merges its files back into the base — the base's own
+        // files win, the legacy-only files arrive, and the `… BETA` dir SURVIVES (a copy, never
+        // a move: the pairing can never be lost)
+        val home = temp.resolve("home")
+        val xdg = home.resolve(".config")
+        val base = xdg.resolve(AppInfo.dataName("beta"))
+        val legacy = xdg.resolve("N-Zik Desktop Compagnon BETA")
+        Files.createDirectories(base)
+        Files.writeString(base.resolve("pairing.json"), "BASE")
+        Files.writeString(base.resolve("settings.json"), "BASE-SETTINGS")
+        Files.createDirectories(legacy.resolve("cache/audio"))
+        Files.writeString(legacy.resolve("pairing.json"), "BETA")
+        Files.writeString(legacy.resolve("settings.json"), "BETA-SETTINGS")
+        Files.writeString(legacy.resolve("cache/audio/track1.flac"), "beta-audio")
+
+        val dir = CredentialStore.appDataDirFor(
+            "Linux", null, xdg.toString(), home.toString(),
+            AppInfo.dataName("beta"),
+            CredentialStore.legacyDataDirNamesFor("beta"),
+            log,
+        )
+
+        assertEquals(base, dir, "beta shares the base storage name")
+        assertEquals("BASE", Files.readString(dir.resolve("pairing.json")), "the base files win the merge")
+        assertEquals("BASE-SETTINGS", Files.readString(dir.resolve("settings.json")), "the base files win the merge")
+        assertEquals("beta-audio", Files.readString(dir.resolve("cache/audio/track1.flac")), "the legacy-only file arrives in the base")
+        assertTrue(Files.isDirectory(legacy), "the legacy BETA dir SURVIVES the merge-back (never deleted)")
+        assertEquals("BETA", Files.readString(legacy.resolve("pairing.json")), "the legacy dir is untouched (a copy, never a move)")
+    }
+
+    @Test
+    fun `the beta merge-back is idempotent (a second launch copies nothing, the base still wins)`(@TempDir temp: Path) {
+        // The merge is a one-time effect by construction (only the files the base LACKS are
+        // copied): a second launch must not re-copy a stale BETA file over a fresh base one
+        val home = temp.resolve("home")
+        val xdg = home.resolve(".config")
+        val base = xdg.resolve("N-Zik Desktop Compagnon")
+        val legacy = xdg.resolve("N-Zik Desktop Compagnon BETA")
+        Files.createDirectories(base)
+        Files.createDirectories(legacy)
+        Files.writeString(base.resolve("pairing.json"), "BASE")
+        Files.writeString(legacy.resolve("pairing.json"), "BETA")
+
+        val first = CredentialStore.appDataDirFor(
+            "Linux", null, xdg.toString(), home.toString(),
+            "N-Zik Desktop Compagnon",
+            listOf("N-Zik Desktop Compagnon BETA"),
+            log,
+        )
+        assertEquals("BASE", Files.readString(first.resolve("pairing.json")))
+        // Simulate a later launch after the user re-paired on the base (fresh base state)
+        Files.writeString(base.resolve("pairing.json"), "FRESH-BASE")
+        val second = CredentialStore.appDataDirFor(
+            "Linux", null, xdg.toString(), home.toString(),
+            "N-Zik Desktop Compagnon",
+            listOf("N-Zik Desktop Compagnon BETA"),
+            log,
+        )
+        assertEquals("FRESH-BASE", Files.readString(second.resolve("pairing.json")), "the fresh base state is never clobbered by the stale BETA copy")
+        assertTrue(Files.isDirectory(legacy), "the legacy dir survives every launch")
+    }
+
+    @Test
+    fun `appDataDirFor for dev still copies the shared base into the suffixed dir`(@TempDir temp: Path) {
+        // The isolated channels keep the pre-regrouping behavior: base → `… DEV` copy (the base
+        // survives) — the regrouping only touched the beta side (shared base + legacy merge-back)
+        val home = temp.resolve("home")
+        val xdg = home.resolve(".config")
+        val shared = xdg.resolve("N-Zik Desktop Compagnon")
+        Files.createDirectories(shared)
+        Files.writeString(shared.resolve("pairing.json"), "SHARED")
+
+        val dir = CredentialStore.appDataDirFor(
+            "Linux", null, xdg.toString(), home.toString(),
+            AppInfo.dataName("dev"),
+            CredentialStore.legacyDataDirNamesFor("dev"),
+            log,
+        )
+
+        assertEquals(xdg.resolve("N-Zik Desktop Compagnon DEV"), dir)
+        assertEquals("SHARED", Files.readString(dir.resolve("pairing.json")))
+        assertTrue(Files.isDirectory(shared), "the base dir survives (stable + beta still read it)")
+    }
+
+    @Test
+    fun `appDataDirFor for stable does no channel copy and no legacy merge`(@TempDir temp: Path) {
+        // stable keeps the base name: neither the channel copy (shared == channel) nor a legacy
+        // merge may run — the dir is exactly the base one
+        val home = temp.resolve("home")
+        val xdg = home.resolve(".config")
+        val base = xdg.resolve("N-Zik Desktop Compagnon")
+        Files.createDirectories(base)
+        Files.writeString(base.resolve("pairing.json"), "{}")
+
+        val dir = CredentialStore.appDataDirFor(
+            "Linux", null, xdg.toString(), home.toString(),
+            AppInfo.dataName("stable"),
+            CredentialStore.legacyDataDirNamesFor("stable"),
+            log,
+        )
+
+        assertEquals(base, dir)
+        assertEquals(1L, Files.list(dir).count(), "no duplication, no merge: the base dir is exactly the base dir")
+    }
+
+    // ---- self-contained portable decision (portableDataRootOf — the marker matrix) ----
+
+    private val windowsProduct = "N-Zik Desktop Compagnon"
+
+    /** Plants a Windows portable layout (the launcher at the image ROOT) under [temp]. */
+    private fun plantWindowsPortable(temp: Path, marker: String? = CredentialStore.PORTABLE_MARKER_CONTENT): Path {
+        val root = temp.resolve("portable").resolve(windowsProduct)
+        Files.createDirectories(root)
+        Files.writeString(root.resolve("$windowsProduct.exe"), "launcher")
+        if (marker != null) Files.writeString(root.resolve(CredentialStore.PORTABLE_MARKER_FILE), marker)
+        return root.resolve("$windowsProduct.exe")
+    }
+
+    /** Plants a Linux portable layout (the launcher in `bin/` at the image root) under [temp]. */
+    private fun plantLinuxPortable(temp: Path, marker: String? = CredentialStore.PORTABLE_MARKER_CONTENT): Path {
+        val root = temp.resolve("portable").resolve(windowsProduct)
+        Files.createDirectories(root.resolve("bin"))
+        Files.writeString(root.resolve("bin").resolve(windowsProduct), "launcher")
+        if (marker != null) Files.writeString(root.resolve(CredentialStore.PORTABLE_MARKER_FILE), marker)
+        return root.resolve("bin").resolve(windowsProduct)
+    }
+
+    @Test
+    fun `a valid marker at the Windows app root resolves the portable root`(@TempDir temp: Path) {
+        // Windows layout: the launcher sits at the image root — the executable's OWN dir is the
+        // app root (there is no bin/ level on Windows)
+        val exe = plantWindowsPortable(temp)
+        val root = CredentialStore.portableDataRootOf("Windows 11", emptyMap(), exe.toString(), windowsProduct)
+        assertEquals(exe.parent, root)
+    }
+
+    @Test
+    fun `a valid marker at the Linux app root resolves the portable root`(@TempDir temp: Path) {
+        // Linux layout: the launcher lives at `<root>/bin/<launcher>` — the parent dir named
+        // `bin` → its parent IS the app root
+        val exe = plantLinuxPortable(temp)
+        val root = CredentialStore.portableDataRootOf("Linux", emptyMap(), exe.toString(), windowsProduct)
+        assertEquals(exe.parent.parent, root)
+    }
+
+    @Test
+    fun `a Linux launcher outside a bin level degrades to null`(@TempDir temp: Path) {
+        // No bin/ level on a Linux path → no app root → no marker to read (safe degradation)
+        val root = temp.resolve("portable").resolve(windowsProduct)
+        Files.createDirectories(root)
+        Files.writeString(root.resolve("launcher"), "launcher")
+        Files.writeString(root.resolve(CredentialStore.PORTABLE_MARKER_FILE), CredentialStore.PORTABLE_MARKER_CONTENT)
+        assertNull(CredentialStore.portableDataRootOf("Linux", emptyMap(), root.resolve("launcher").toString(), windowsProduct))
+    }
+
+    @Test
+    fun `a missing marker degrades to null (run-source and legacy portables)`(@TempDir temp: Path) {
+        // No marker (a run-source launch, or a pre-marker portable): the data dir stays the
+        // per-channel one — nothing is relocated
+        for (os in listOf("Windows 11", "Linux")) {
+            val exe = if (os == "Windows 11") plantWindowsPortable(temp, marker = null) else plantLinuxPortable(temp.resolve("l"), marker = null)
+            assertNull(CredentialStore.portableDataRootOf(os, emptyMap(), exe.toString(), windowsProduct))
+        }
+    }
+
+    @Test
+    fun `a marker with any other content degrades to null (the strict reader)`(@TempDir temp: Path) {
+        // The reader is strict: a stray or forged marker with ANY other content must not
+        // relocate the data dir (only the exact constant counts — the write side is equally
+        // strict, the archive entry is written by the two portable tasks only)
+        for (content in listOf("", "PORTABLE", "portable\n", "portable ", "portable-extra")) {
+            val exe = plantWindowsPortable(temp.resolve("case-${content.hashCode()}"), marker = content)
+            assertNull(CredentialStore.portableDataRootOf("Windows 11", emptyMap(), exe.toString(), windowsProduct), "content '$content' must not count as a marker")
+        }
+    }
+
+    @Test
+    fun `an NSIS Windows install is excluded even with a marker (the uninstaller file wins)`(@TempDir temp: Path) {
+        // The same discriminator the updater's isNsisWindowsInstall uses (duplicated here —
+        // bridge/ must not import updater/): the launcher folder carrying the uninstaller
+        // `Uninstall <product>.exe` is an NSIS install, never a portable
+        val exe = plantWindowsPortable(temp)
+        Files.writeString(exe.parent.resolve("Uninstall $windowsProduct.exe"), "uninstaller")
+        assertNull(CredentialStore.portableDataRootOf("Windows 11", emptyMap(), exe.toString(), windowsProduct))
+    }
+
+    @Test
+    fun `a package-managed opt install is excluded (the prefix rule)`(@TempDir temp: Path) {
+        // The .deb/.rpm/Arch/AUR layout: the launcher under /opt/n-zik-desktop-compagnon — the
+        // same prefix rule the updater's detection reads (checked before any I/O)
+        assertNull(
+            CredentialStore.portableDataRootOf(
+                "Linux", emptyMap(),
+                "/opt/n-zik-desktop-compagnon/bin/N-Zik Desktop Compagnon",
+                windowsProduct,
+            )
+        )
+    }
+
+    @Test
+    fun `a Flatpak environment is excluded (the FLATPAK_ID and container=flatpak signals)`(@TempDir temp: Path) {
+        // The sandbox data dir is the runtime-mapped per-app config dir, never a portable one —
+        // the same signals the updater's detection reads
+        val exe = plantLinuxPortable(temp)
+        for (env in listOf(mapOf("FLATPAK_ID" to "com.nzik.desktop.compagnon"), mapOf("container" to "flatpak"))) {
+            assertNull(CredentialStore.portableDataRootOf("Linux", env, exe.toString(), windowsProduct), "env $env must exclude the portable decision")
+        }
+        // A blank FLATPAK_ID is NOT a sandbox (the updater's rule)
+        val exe2 = plantLinuxPortable(temp.resolve("blank-env"))
+        assertNotNull(CredentialStore.portableDataRootOf("Linux", mapOf("FLATPAK_ID" to "  "), exe2.toString(), windowsProduct))
+    }
+
+    @Test
+    fun `an empty executable path degrades to null (no launch context)`(@TempDir temp: Path) {
+        for (os in listOf("Windows 11", "Linux")) {
+            assertNull(CredentialStore.portableDataRootOf(os, emptyMap(), "", windowsProduct))
+            assertNull(CredentialStore.portableDataRootOf(os, emptyMap(), "   ", windowsProduct))
+        }
+    }
+
+    @Test
+    fun `an unsupported OS degrades to null (no portable layout defined)`(@TempDir temp: Path) {
+        // Neither the Windows (root) nor the Linux (bin/) layout applies → null (the run-source
+        // case on any other platform)
+        val root = temp.resolve("portable").resolve(windowsProduct)
+        Files.createDirectories(root)
+        Files.writeString(root.resolve("launcher"), "launcher")
+        Files.writeString(root.resolve(CredentialStore.PORTABLE_MARKER_FILE), CredentialStore.PORTABLE_MARKER_CONTENT)
+        assertNull(CredentialStore.portableDataRootOf("Mac OS X", emptyMap(), root.resolve("launcher").toString(), windowsProduct))
+    }
+
+    @Test
+    fun `the portable data dir wiring resolves the root data dir with the one-time base copy`(@TempDir temp: Path) {
+        // The production composition of the decision (the lazy appDataDir does exactly this —
+        // root wins → <root>/data/ + the one-time copy from the base data dir): the base's
+        // files the portable dir lacks arrive, the base dir SURVIVES, and a second launch is a
+        // no-op (only missing files are copied)
+        val home = temp.resolve("home")
+        val xdg = home.resolve(".config")
+        val base = xdg.resolve("N-Zik Desktop Compagnon")
+        Files.createDirectories(base.resolve("cache/audio"))
+        Files.writeString(base.resolve("pairing.json"), "BASE")
+        Files.writeString(base.resolve("cache/audio/track1.flac"), "audio")
+        val exe = plantLinuxPortable(temp.resolve("portable-case"))
+        val portableRoot = CredentialStore.portableDataRootOf("Linux", emptyMap(), exe.toString(), windowsProduct)
+        assertNotNull(portableRoot, "the decision must resolve the portable root")
+
+        val portableDir = portableRoot!!.resolve(CredentialStore.PORTABLE_DATA_DIR_NAME)
+        CredentialStore.copySharedIntoChannel(base, portableDir, log)
+
+        assertEquals("BASE", Files.readString(portableDir.resolve("pairing.json")))
+        assertEquals("audio", Files.readString(portableDir.resolve("cache/audio/track1.flac")))
+        assertTrue(Files.isDirectory(base), "the base data dir survives the portable copy")
+        // Second launch: nothing new to copy (idempotent)
+        Files.writeString(portableDir.resolve("settings.json"), "portable-settings")
+        CredentialStore.copySharedIntoChannel(base, portableDir, log)
+        assertEquals("portable-settings", Files.readString(portableDir.resolve("settings.json")))
+        assertEquals("BASE", Files.readString(portableDir.resolve("pairing.json")))
     }
 }

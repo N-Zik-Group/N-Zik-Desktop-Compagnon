@@ -12,7 +12,7 @@
 #      the dated `-dev-<yyyyMMdd>` version suffix only; stable names stay byte-identical to the
 #      no-channel convention, so the AUR release entry stays valid)
 #   3. the .deb builds (Ubuntu host) — stable + dev; the .rpm is built when rpmbuild is present
-#   4. the stable portable-zip launch smoke test (needs a display — WSLg; skipped headless)
+#   4. the stable portable-tarball launch smoke test (needs a display — WSLg; skipped headless)
 #
 # Out of scope: the Windows/NSIS installer + the in-app updater install flow (Windows-only —
 # verified on the Windows host; see the TODO.txt verification gate).
@@ -35,7 +35,7 @@ bad()  { echo "  FAIL  $1"; FAIL=$((FAIL+1)); }
 skip() { echo "  SKIP  $1"; SKIP=$((SKIP+1)); }
 
 # locate an exact file name under the compose output tree (the layout varies by task:
-# the zips land in binaries/, the .deb/.rpm in binaries/main/<type>/)
+# the portable tarballs land in binaries/, the .deb/.rpm in binaries/main/<type>/)
 find_artifact() {
   find ComposeN-Zik/build/compose/binaries -type f -name "$1" 2>/dev/null | head -1
 }
@@ -48,22 +48,22 @@ pkgDev=n-zik-desktop-compagnon
 echo "== [1/4] full test suite (Linux, after clean) =="
 if ./gradlew clean build --console=plain -q; then ok "gradlew clean build (full suite, Linux host)"; else bad "gradlew clean build failed"; fi
 
-echo "== [2/4] channel artifact naming — portable zip (stable + dev) =="
+echo "== [2/4] channel artifact naming — portable tarball (stable + dev) =="
 if ./gradlew :ComposeN-Zik:packageLinuxPortable -Pchannel=stable --console=plain -q; then
-  if [ -n "$(find_artifact "${pkgStable}-${baseVersion}-linux-portable.zip")" ]; then
-    ok "stable zip: ${pkgStable}-${baseVersion}-linux-portable.zip"
+  if [ -n "$(find_artifact "${pkgStable}-${baseVersion}-linux-portable.tar.gz")" ]; then
+    ok "stable tarball: ${pkgStable}-${baseVersion}-linux-portable.tar.gz"
   else
-    bad "missing ${pkgStable}-${baseVersion}-linux-portable.zip under ComposeN-Zik/build/compose/binaries"
+    bad "missing ${pkgStable}-${baseVersion}-linux-portable.tar.gz under ComposeN-Zik/build/compose/binaries"
   fi
 else
   bad "packageLinuxPortable (stable) failed"
 fi
 
 if ./gradlew :ComposeN-Zik:packageLinuxPortable -Pchannel=dev --console=plain -q; then
-  if [ -n "$(find_artifact "${pkgDev}-${baseVersion}-dev-${today}-linux-portable.zip")" ]; then
-    ok "dev zip: ${pkgDev}-${baseVersion}-dev-${today}-linux-portable.zip"
+  if [ -n "$(find_artifact "${pkgDev}-${baseVersion}-dev-${today}-linux-portable.tar.gz")" ]; then
+    ok "dev tarball: ${pkgDev}-${baseVersion}-dev-${today}-linux-portable.tar.gz"
   else
-    bad "missing ${pkgDev}-${baseVersion}-dev-${today}-linux-portable.zip under ComposeN-Zik/build/compose/binaries (today=$today)"
+    bad "missing ${pkgDev}-${baseVersion}-dev-${today}-linux-portable.tar.gz under ComposeN-Zik/build/compose/binaries (today=$today)"
   fi
 else
   bad "packageLinuxPortable (dev) failed"
@@ -106,24 +106,20 @@ else
   skip "rpmbuild not present — .rpm build skipped"
 fi
 
-echo "== [4/4] stable portable-zip launch smoke test (display required) =="
-stableZip=$(find_artifact "${pkgStable}-${baseVersion}-linux-portable.zip")
+echo "== [4/4] stable portable-tarball launch smoke test (display required) =="
+stableTar=$(find_artifact "${pkgStable}-${baseVersion}-linux-portable.tar.gz")
 if [ -z "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]; then
   skip "no display (headless WSL session) — launch smoke test skipped"
-elif [ -z "$stableZip" ]; then
-  skip "stable zip not present — launch smoke test skipped"
-elif ! command -v unzip >/dev/null 2>&1 && ! command -v python3 >/dev/null 2>&1; then
-  skip "neither unzip nor python3 present — launch smoke test skipped"
+elif [ -z "$stableTar" ]; then
+  skip "stable tarball not present — launch smoke test skipped"
+elif ! command -v tar >/dev/null 2>&1; then
+  skip "tar not present — launch smoke test skipped"
 else
   tmp=$(mktemp -d)
-  if command -v unzip >/dev/null 2>&1; then
-    unzip -q "$stableZip" -d "$tmp"
-  else
-    python3 -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])" "$stableZip" "$tmp"
-  fi
+  tar -xzf "$stableTar" -C "$tmp"
   imageDir=$(ls -d "$tmp"/*/ | head -1)
-  # python's zipfile does not restore the Unix exec bits (the zip entries are 0755 — a real
-  # `unzip` restores them); chmod so the smoke test can exec the launcher either way
+  # the tar entry keeps the launcher's exec bit (fail-loud verified by the build task); chmod
+  # as a safety net for hosts whose tar build drops it
   chmod +x "$imageDir"/bin/* 2>/dev/null || true
   launcher=$(ls "$imageDir"bin/ | head -1)
   "$imageDir/bin/$launcher" >/dev/null 2>&1 &

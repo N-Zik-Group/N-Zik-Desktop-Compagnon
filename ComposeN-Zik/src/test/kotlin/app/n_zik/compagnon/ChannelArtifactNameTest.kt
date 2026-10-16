@@ -74,8 +74,8 @@ class ChannelArtifactNameTest {
     @Test
     fun `the suffix is inserted right after the base version`() {
         assertEquals(
-            "n-zik-desktop-compagnon-0.0.2-beta-linux-portable.zip",
-            channelArtifactName("n-zik-desktop-compagnon-0.0.2-linux-portable.zip", "0.0.2", "-beta", "-beta"),
+            "n-zik-desktop-compagnon-0.0.2-beta-linux-portable.tar.gz",
+            channelArtifactName("n-zik-desktop-compagnon-0.0.2-linux-portable.tar.gz", "0.0.2", "-beta", "-beta"),
         )
         assertEquals(
             "N-Zik Desktop Compagnon DEV-0.0.2-dev-20261007.exe",
@@ -85,7 +85,7 @@ class ChannelArtifactNameTest {
 
     @Test
     fun `an empty suffix is a no-op (stable and debug stay byte-identical)`() {
-        val name = "n-zik-desktop-compagnon-0.0.2-linux-portable.zip"
+        val name = "n-zik-desktop-compagnon-0.0.2-linux-portable.tar.gz"
         assertEquals(name, channelArtifactName(name, "0.0.2", "", ""))
         assertTrue(canBeChannelRenamed("any-stale-name", "0.0.2", "", ""))
     }
@@ -93,30 +93,30 @@ class ChannelArtifactNameTest {
     @Test
     fun `the base version must sit on a version boundary`() {
         // The boundary characters are dot, dash, underscore — and the end of the name
-        assertEquals(6, versionBoundaryIndex("n-zik-0.0.1-linux-portable.zip", "0.0.1"))
+        assertEquals(6, versionBoundaryIndex("n-zik-0.0.1-linux-portable.tar.gz", "0.0.1"))
         assertEquals(2, versionBoundaryIndex("v-0.0.1", "0.0.1"))
         assertEquals(4, versionBoundaryIndex("pkg_0.0.2_amd64", "0.0.2"))
         assertEquals(4, versionBoundaryIndex("app.0.0.2.exe", "0.0.2"))
         // "0.0.1" inside "0.0.11-…" is a PREFIX of a longer version — never hit mid-number
-        assertEquals(-1, versionBoundaryIndex("n-zik-desktop-compagnon-0.0.11-linux-portable.zip", "0.0.1"))
-        assertFalse(canBeChannelRenamed("n-zik-desktop-compagnon-0.0.11-linux-portable.zip", "0.0.1", "-beta", "-beta"))
+        assertEquals(-1, versionBoundaryIndex("n-zik-desktop-compagnon-0.0.11-linux-portable.tar.gz", "0.0.1"))
+        assertFalse(canBeChannelRenamed("n-zik-desktop-compagnon-0.0.11-linux-portable.tar.gz", "0.0.1", "-beta", "-beta"))
         assertThrows(IllegalStateException::class.java) {
-            channelArtifactName("n-zik-desktop-compagnon-0.0.11-linux-portable.zip", "0.0.1", "-beta", "-beta")
+            channelArtifactName("n-zik-desktop-compagnon-0.0.11-linux-portable.tar.gz", "0.0.1", "-beta", "-beta")
         }
     }
 
     @Test
     fun `an artifact that already carries the suffix is rejected`() {
         // A stale dated dev file must never be re-suffixed into a corrupted name
-        val staleDev = "n-zik-desktop-compagnon-0.0.2-dev-20261006-linux-portable.zip"
+        val staleDev = "n-zik-desktop-compagnon-0.0.2-dev-20261006-linux-portable.tar.gz"
         assertFalse(canBeChannelRenamed(staleDev, "0.0.2", "-dev-20261007", "-dev-"))
         assertThrows(IllegalStateException::class.java) { channelArtifactName(staleDev, "0.0.2", "-dev-20261007", "-dev-") }
         // No -beta-beta either
-        assertFalse(canBeChannelRenamed("n-zik-desktop-compagnon-0.0.2-beta-linux-portable.zip", "0.0.2", "-beta", "-beta"))
+        assertFalse(canBeChannelRenamed("n-zik-desktop-compagnon-0.0.2-beta-linux-portable.tar.gz", "0.0.2", "-beta", "-beta"))
         // A missing base version is rejected too
-        assertFalse(canBeChannelRenamed("n-zik-other-9.9.9-linux-portable.zip", "0.0.2", "-beta", "-beta"))
+        assertFalse(canBeChannelRenamed("n-zik-other-9.9.9-linux-portable.tar.gz", "0.0.2", "-beta", "-beta"))
         // … but the same base version is fine (the guard is on the SUFFIX, not the version)
-        assertTrue(canBeChannelRenamed("n-zik-desktop-compagnon-0.0.2-linux-portable.zip", "0.0.2", "-dev-20261007", "-dev-"))
+        assertTrue(canBeChannelRenamed("n-zik-desktop-compagnon-0.0.2-linux-portable.tar.gz", "0.0.2", "-dev-20261007", "-dev-"))
     }
 
     // ---- (b) the effective per-task artifact names the build exposes ----

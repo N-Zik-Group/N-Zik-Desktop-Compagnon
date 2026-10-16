@@ -1,7 +1,5 @@
 # Workflow Rules — N-Zik Desktop Compagnon
 
-**Version:** 1.0.0 | **Last updated:** 2026-10-05
-
 ## Session Startup Sequence
 
 1. Read AGENTS.md entirely
@@ -66,7 +64,7 @@ Before triggering the full BMAD workflow, check if the request is **doc-only and
 - Read request carefully
 - Ask clarifying questions: one clear question per decision — unrelated decisions are NEVER bundled into one question; related questions MAY be grouped in a single question tool call
 - Identify scope (packages, files, resources affected)
-- If the request touches what the PC may do with the phone → the wire contract spec (`spec-n-zik-pc-bridge`, contract 1.x, in `{project-root}/_bmad-output/`) is the reference
+- If the request touches what the PC may do with the phone → the phone's wire contract (contract 1.x, in `{project-root}/_bmad-output/`) is the reference
 
 ### Step 2: Explore
 
@@ -159,7 +157,7 @@ Example for `bmad-build` with OpenCode: `{project-root}/.agents/skills/bmad-buil
   4. Display the content in chat for checkpoint
   5. After each write, state the ABSOLUTE PATH of the spec file on disk (the path is the evidence — never just claim "saved")
 - **Where to write:** Read the skill's SKILL.md for the exact output path (resolved from config, e.g. `{project-root}/_bmad-output/`)
-- **In this project:** `{output_folder}` = `{project-root}/_bmad-output` (at the workspace root, one level above `N-Zik-Desktop-Compagnon/`) — the same shared folder the phone project uses; the bridge spec `spec-n-zik-pc-bridge` lives there
+- **In this project:** `{output_folder}` = `{project-root}/_bmad-output` (at the workspace root, one level above `N-Zik-Desktop-Compagnon/`) — the same shared folder the phone project uses
 - Show checkpoint separator, display generated content, present the checkpoint options DEFINED BY THE LOADED SKILL (CIS skills: `[a] [c] [p] [y]`; step-file skills: their `### CHECKPOINT` sections — verbatim)
 - Wait for user response before proceeding to next step
 - NEVER skip spec production — the spec IS the workflow output
