@@ -123,6 +123,7 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 │   ├── src/main/composeResources/   drawable/ (177 files) + font/ (Roboto, Rubik) + values/strings.xml (English — the ONLY file to edit;
 │   │                                the `values-*` locale dirs are Crowdin-managed)
 │   └── src/test/kotlin/             Tests mirroring the main package structure
+├── settings.gradle.kts              Single-module Gradle build (`:ComposeN-Zik` only — unlike the phone repo, there are no `extensions/` subprojects here)
 ├── gradle/libs.versions.toml        Version catalog
 ├── assets/notes/                    Done.txt + Changelog_Template.txt + TODO.txt (repo-root working files — NOT an app resources dir)
 ├── assets/design/                   icon.ico, icon-linux.png, ic_banner2.png, installer-bg.png (installer / packaging artwork)
