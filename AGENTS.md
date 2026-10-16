@@ -103,7 +103,8 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 │   │   │                    library/ (LibraryRepository/RemoteLibraryRepository, PagedList, ArtworkLoader, LibraryModels),
 │   │   │                    command/ (PlayWindow)
 │   │   ├── components/      UI ported from the phone: ui/screens/ (home, album, artist, localplaylist, player, bridge, settings, profiles),
-│   │   │                    player/ (Player, MiniPlayer, queue, seek bars, controls), menu/ (per-domain item menus),
+│   │   │                    player/ (Player, MiniPlayer, queue, seek bars, controls, timeline, background + shaders),
+│   │   │                    menu/ (per-domain item menus),
 │   │   │                    tab/ (chips, toolbars, search, sort), items/ (AlbumItem, ArtistItem, PlaylistItem, ItemContainer),
 │   │   │                    dialog/ (common: ButtonRow/CheckboxDialog/DialogFrame; updater: CheckForUpdateDialog/NewUpdateAvailableDialog),
 │   │   │                    styling/ (Dimensions, HomeItemSize), theme/ (ColorPalette, Typography), themed/ + settings/ + navigation/

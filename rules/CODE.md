@@ -100,8 +100,9 @@ New files MUST go under `app.n_zik.compagnon.*`. The tree mirrors the phone app'
 | Component type               | Location                                                        |
 | ---------------------------- | ---------------------------------------------------------------- |
 | Screens (page-level)         | `components/ui/screens/{screen}/` (home, album, artist, localplaylist, player, bridge, settings, profiles) |
-| Menus (per domain)           | `components/menu/{domain}/` (song, album, artist, playlist, player) + `components/menu/` for the shared sheet |
-| Player UI                    | `components/player/` (Player, MiniPlayer, queue, seek bars, `controls/`) |
+| UI header & sliders          | `components/ui/header/` (3 .kt — `AppHeader`, `CollapsingAppTitle`, `HeaderChannelBadge`), `components/ui/sliders/` (2 .kt — `Slider`, `SliderControl`) |
+| Menus (per domain)           | `components/menu/{domain}/` (song, album, artist, playlist, player) + `components/menu/` (ListMenu, InertMenuItem — the inert item for buttons without a contract route, see "Wire Contract") |
+| Player UI                    | `components/player/` (Player, MiniPlayer, queue, seek bars, `controls/`, `timeline/` (6 .kt — seek-bar variants + `DurationIndicator`), `background/` (4 .kt + `shaders/` 11 .kt)) |
 | Chips / toolbars / tab logic | `components/tab/` + `components/tab/toolbar/`                    |
 | Settings rows                | `components/settings/` (`SettingsSectionCard`, `ToggleSettingsEntry`, …) |
 | Theme & typography           | `components/theme/` (`ColorPalette`, `Typography`, `AnimatedAppearance`, `Hsl`) — do NOT invent new CompositionLocals |
