@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.updater.models
 
+import app.n_zik.compagnon.AppInfo
 import app.n_zik.compagnon.generated.AppVersion
 import com.sun.jna.platform.win32.Advapi32
 import com.sun.jna.platform.win32.WinReg
@@ -356,20 +357,15 @@ fun updaterEffectivelyEnabled(
  * (`n-zik-desktop-compagnon`) — the dev channel's marker is its dated version suffix (on Linux
  * it replaces the stable install in place, like beta; Windows keeps its per-channel registry
  * key and the Flatpak keeps its own app-id, so both stay separate installations there). The
- * product name is per-channel ("… BETA" / "… DEV" — the jpackage app name the build sets,
- * mirrored here so the window title and the install identity agree). The .exe file name is the
+ * product name is per-channel ("… BETA" / "… DEV" — the jpackage app name the build sets, from
+ * [AppInfo.productName] so the window title, the install identity, the app data dir and the
+ * secret store target all agree). The .exe file name is the
  * shared base + the channel-suffixed version (`n-zik-desktop-compagnon-0.0.1-dev-20261015.exe`);
  * the build writes the installer under that exact name, so the release asset and the in-app
  * updater agree on one name. The functions take the channel as a defaulted parameter so
  * callers with an explicit channel can override the inference.
  */
 object ArtifactNames {
-    /**
-     * The display name (the jpackage package name — with its spaces; it rides in the window
-     * title and the install directory name, NOT in the published .exe file name — that one is
-     * the channel's Linux base, see [exe]).
-     */
-    const val WINDOWS_PACKAGE_BASE = "N-Zik Desktop Compagnon"
 
     /**
      * The jpackage linux package name — shared by EVERY channel since the 2026-10-15 naming
@@ -392,13 +388,11 @@ object ArtifactNames {
 
     /**
      * The per-channel product name (spec AD-8: the jpackage app name — the window title, the
-     * install directory name, the Linux launcher, the Flatpak `exec`).
+     * install directory name, the Linux launcher, the Flatpak `exec`). Delegates to
+     * [AppInfo.productName] — the single source of truth, shared with the app data dir and the
+     * secret store target (the 2026-10-16 channel separation).
      */
-    fun productName(channel: String): String = when (channel) {
-        UpdaterConstants.TYPE_BETA -> "$WINDOWS_PACKAGE_BASE BETA"
-        UpdaterConstants.TYPE_DEV -> "$WINDOWS_PACKAGE_BASE DEV"
-        else -> WINDOWS_PACKAGE_BASE
-    }
+    fun productName(channel: String): String = AppInfo.productName(channel)
 
     /**
      * The release asset name of the Windows installer (spec AD-2 / AD-8, the 2026-10-09 naming

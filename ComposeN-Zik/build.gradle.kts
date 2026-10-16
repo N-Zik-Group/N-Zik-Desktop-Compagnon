@@ -389,11 +389,15 @@ tasks.register<Exec>("packageInstaller") {
             "/DICON_FILE=${project.file("../assets/design/icon.ico").absolutePath}",
             "/DVENDOR=N-Zik Group",
             "/DDESCRIPTION=Desktop companion for N-Zik: control your phone's library and playback from a large screen, and listen on your computer.",
-            // AppInfo.NAME — the app data dir name AND the Windows Credential Manager target
-            // (NOT channel-suffixed: one shared data dir across channels — verified against
-            // `CredentialStore.appDirectory()` / `WindowsCredentialSecretStore`)
-            "/DDATA_DIR_NAME=${libs.versions.nzikPackageName.get()}",
-            "/DCRED_TARGET=${libs.versions.nzikPackageName.get()}",
+            // AppInfo.productName(AppVersion.channel) — the app data dir name AND the Windows
+            // Credential Manager target (2026-10-16 channel separation: PER-CHANNEL data dir —
+            // `N-Zik Desktop Compagnon DEV` / `… BETA`, the base name for stable / debug / -git;
+            // the pre-channel shared base dir is COPIED once into the channel dir by
+            // `CredentialStore.copySharedIntoChannel` and SURVIVES as the base-named channels'
+            // live dir — verified against `CredentialStore.appDirectory()` /
+            // `WindowsCredentialSecretStore`)
+            "/DDATA_DIR_NAME=$channelDisplayName",
+            "/DCRED_TARGET=$channelDisplayName",
             nsisScript,
         )
     }

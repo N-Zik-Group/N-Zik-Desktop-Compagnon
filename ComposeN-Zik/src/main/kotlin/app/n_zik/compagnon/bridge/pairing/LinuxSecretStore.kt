@@ -28,6 +28,8 @@ class LinuxSecretStore private constructor(
     // C strings retained by the [attributes] table (g_hash_table keeps the raw pointers).
     @Suppress("unused") private val attributeCstr: Memory,
     @Suppress("unused") private val valueCstr: Memory,
+    // The keyring label of THIS channel's entry (cosmetic — the attribute value identifies it).
+    private val label: String,
 ) : SecretStore {
     private val log = Logger.getLogger("LinuxSecretStore")
 
@@ -47,7 +49,7 @@ class LinuxSecretStore private constructor(
 
     override fun write(secret: String): Boolean = withApi {
         val error = PointerByReference()
-        val stored = api.secret_password_storev_sync(schema, attributes, null, LABEL, secret, null, error)
+        val stored = api.secret_password_storev_sync(schema, attributes, null, label, secret, null, error)
         if (!stored) logError("store", error)
         stored
     } ?: false
@@ -121,8 +123,9 @@ class LinuxSecretStore private constructor(
         /** The dotted schema name (libsecret convention, e.g. `org.gnome.keyring.NetworkPassword`). */
         const val SCHEMA_NAME = "n-zik.desktop.compagnon"
         const val ATTRIBUTE = "deviceToken"
-        const val LABEL = "N-Zik Desktop Compagnon pairing token"
-        private const val VALUE = AppInfo.NAME
+
+        /** The per-channel keyring label (2026-10-16 channel separation — cosmetic, shown in the keyring UI). */
+        fun labelOf(value: String): String = "$value pairing token"
 
         /** `SECRET_SCHEMA_NONE`. */
         private const val SCHEMA_NONE = 0
@@ -162,7 +165,13 @@ class LinuxSecretStore private constructor(
          * versioned soname `libsecret-1.so.0`) — independent of the sandbox's host-dependent
          * ld cache.
          */
-        fun create(): LinuxSecretStore? = runCatching {
+        /**
+         * @param value the per-channel attribute value (the secret's identity in the keyring —
+         *        [AppInfo.productName] of the build's channel; the base name is the pre-channel
+         *        default, what stable / debug / -git still use). The keyring label is derived
+         *        from it ([labelOf]).
+         */
+        fun create(value: String = AppInfo.NAME): LinuxSecretStore? = runCatching {
             val api = Native.load("secret-1", SecretApi::class.java)
             val glib = Native.load("glib-2.0", GLibApi::class.java)
             // The glib string hash/equal used as hash-table callbacks (a `Function` is a `Pointer`
@@ -187,9 +196,9 @@ class LinuxSecretStore private constructor(
             if (schema == null) return@runCatching null
 
             // The attribute table (attribute -> value) used by every store/lookup/clear call.
-            val value = cstring(VALUE)
+            val valueCstr = cstring(value)
             val attributes = glib.g_hash_table_new_full(strHash, strEqual, null, null) ?: return@runCatching null
-            glib.g_hash_table_insert(attributes, attribute, value)
+            glib.g_hash_table_insert(attributes, attribute, valueCstr)
 
             // Probe: a lookup on our own attributes. No daemon -> `GError` -> no keyring; a
             // "no item yet" answer is a `null` password with no error.
@@ -204,7 +213,7 @@ class LinuxSecretStore private constructor(
                 return@runCatching null
             }
 
-            LinuxSecretStore(api, glib, schema, attributes, attribute, value)
+            LinuxSecretStore(api, glib, schema, attributes, attribute, valueCstr, labelOf(value))
         }.onFailure {
             // JUL has no warning(msg, throwable) overload: the stack trace rides the LogRecord.
             val record = LogRecord(Level.WARNING, "Keyring unavailable: ${it::class.simpleName}: ${it.message}")

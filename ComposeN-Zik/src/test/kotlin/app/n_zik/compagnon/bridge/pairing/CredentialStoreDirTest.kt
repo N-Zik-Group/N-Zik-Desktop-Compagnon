@@ -30,14 +30,26 @@ class CredentialStoreDirTest {
         // The expected value is built with Paths.get (not a Windows-separator string): on a
         // Linux test host the backslash base is a single component and the join uses '/',
         // so only the CHOSEN BASE is what this assertion pins.
-        val dir = CredentialStore.resolveAppDataDir("Windows 11", "C:\\Users\\x\\AppData\\Roaming", null, "C:\\Users\\x")
+        val dir = CredentialStore.resolveAppDataDir("Windows 11", "C:\\Users\\x\\AppData\\Roaming", null, "C:\\Users\\x", "N-Zik Desktop Compagnon")
         assertEquals(Paths.get("C:\\Users\\x\\AppData\\Roaming", "N-Zik Desktop Compagnon"), dir)
     }
 
     @Test
     fun `windows with a blank appdata falls back to the home dir`() {
-        val dir = CredentialStore.resolveAppDataDir("Windows 11", "  ", null, "C:\\Users\\x")
+        val dir = CredentialStore.resolveAppDataDir("Windows 11", "  ", null, "C:\\Users\\x", "N-Zik Desktop Compagnon")
         assertEquals(Paths.get("C:\\Users\\x", "N-Zik Desktop Compagnon"), dir)
+    }
+
+    @Test
+    fun `windows uses the per-channel data dir name`() {
+        // The 2026-10-16 channel separation: dev / beta carry the suffixed product name, stable
+        // keeps the base — the same rule as the install dir ([AppInfo.productName])
+        val dev = CredentialStore.resolveAppDataDir("Windows 11", "C:\\Users\\x\\AppData\\Roaming", null, "C:\\Users\\x", "N-Zik Desktop Compagnon DEV")
+        assertEquals(Paths.get("C:\\Users\\x\\AppData\\Roaming", "N-Zik Desktop Compagnon DEV"), dev)
+        val beta = CredentialStore.resolveAppDataDir("Windows 11", "C:\\Users\\x\\AppData\\Roaming", null, "C:\\Users\\x", "N-Zik Desktop Compagnon BETA")
+        assertEquals(Paths.get("C:\\Users\\x\\AppData\\Roaming", "N-Zik Desktop Compagnon BETA"), beta)
+        val stable = CredentialStore.resolveAppDataDir("Windows 11", "C:\\Users\\x\\AppData\\Roaming", null, "C:\\Users\\x", "N-Zik Desktop Compagnon")
+        assertEquals(Paths.get("C:\\Users\\x\\AppData\\Roaming", "N-Zik Desktop Compagnon"), stable)
     }
 
     // The Linux expected values are built with Paths.get too (like the Windows tests above):
@@ -46,20 +58,27 @@ class CredentialStoreDirTest {
 
     @Test
     fun `linux uses the xdg config dir`() {
-        val dir = CredentialStore.resolveAppDataDir("Linux", null, null, "/home/u")
+        val dir = CredentialStore.resolveAppDataDir("Linux", null, null, "/home/u", "N-Zik Desktop Compagnon")
         assertEquals(Paths.get("/home/u/.config/N-Zik Desktop Compagnon"), dir)
     }
 
     @Test
     fun `linux honours the xdg config home override`() {
-        val dir = CredentialStore.resolveAppDataDir("Linux", null, "/custom/config", "/home/u")
+        val dir = CredentialStore.resolveAppDataDir("Linux", null, "/custom/config", "/home/u", "N-Zik Desktop Compagnon")
         assertEquals(Paths.get("/custom/config/N-Zik Desktop Compagnon"), dir)
     }
 
     @Test
     fun `linux ignores the windows appdata var`() {
-        val dir = CredentialStore.resolveAppDataDir("Linux", "C:\\Users\\x\\AppData\\Roaming", null, "/home/u")
+        val dir = CredentialStore.resolveAppDataDir("Linux", "C:\\Users\\x\\AppData\\Roaming", null, "/home/u", "N-Zik Desktop Compagnon")
         assertEquals(Paths.get("/home/u/.config/N-Zik Desktop Compagnon"), dir)
+    }
+
+    @Test
+    fun `linux uses the per-channel xdg config dir`() {
+        // The 2026-10-16 channel separation rides the same XDG base with the suffixed name
+        val dir = CredentialStore.resolveAppDataDir("Linux", null, null, "/home/u", "N-Zik Desktop Compagnon DEV")
+        assertEquals(Paths.get("/home/u/.config/N-Zik Desktop Compagnon DEV"), dir)
     }
 
     @Test
@@ -67,15 +86,55 @@ class CredentialStoreDirTest {
         // The XDG_CONFIG_HOME override must be BLANK-free: an empty or whitespace var falls back
         // to the ~/.config default (a blank base would resolve to a CWD-relative dir)
         for (blank in listOf("", "  ")) {
-            val dir = CredentialStore.resolveAppDataDir("Linux", null, blank, "/home/u")
+            val dir = CredentialStore.resolveAppDataDir("Linux", null, blank, "/home/u", "N-Zik Desktop Compagnon")
             assertEquals(Paths.get("/home/u/.config/N-Zik Desktop Compagnon"), dir)
         }
     }
 
     @Test
     fun `an unsupported os uses the home dir`() {
-        val dir = CredentialStore.resolveAppDataDir("Mac OS X", null, null, "/Users/u")
+        val dir = CredentialStore.resolveAppDataDir("Mac OS X", null, null, "/Users/u", "N-Zik Desktop Compagnon")
         assertEquals(Paths.get("/Users/u/N-Zik Desktop Compagnon"), dir)
+    }
+
+    // ---- channel-separation copy (the 2026-10-16 shared -> per-channel dir) -----------------------------------
+
+    @Test
+    fun `copySharedIntoChannel copies the files the channel dir lacks`(@TempDir temp: Path) {
+        val shared = temp.resolve("config/N-Zik Desktop Compagnon")
+        val channel = temp.resolve("config/N-Zik Desktop Compagnon DEV")
+        Files.createDirectories(shared.resolve("cache"))
+        Files.writeString(shared.resolve("pairing.json"), "shared")
+        Files.writeString(shared.resolve("cache/track1.flac"), "audio")
+
+        CredentialStore.copySharedIntoChannel(shared, channel, log)
+
+        assertTrue(Files.isDirectory(shared), "the shared source SURVIVES the channel copy")
+        assertEquals("shared", Files.readString(channel.resolve("pairing.json")))
+        assertEquals("audio", Files.readString(channel.resolve("cache/track1.flac")))
+    }
+
+    @Test
+    fun `copySharedIntoChannel is a no-op when the shared dir does not exist`(@TempDir temp: Path) {
+        val shared = temp.resolve("config/missing")
+        val channel = temp.resolve("config/N-Zik Desktop Compagnon DEV")
+
+        CredentialStore.copySharedIntoChannel(shared, channel, log)
+
+        assertFalse(Files.exists(channel), "nothing is created when there is no shared data to copy")
+    }
+
+    @Test
+    fun `copySharedIntoChannel is a no-op when shared and channel are the same dir`(@TempDir temp: Path) {
+        // base-name channels: shared == channel, the dir must not be walked into itself
+        val dir = temp.resolve("config/N-Zik Desktop Compagnon")
+        Files.createDirectories(dir)
+        Files.writeString(dir.resolve("pairing.json"), "{}")
+
+        CredentialStore.copySharedIntoChannel(dir, dir, log)
+
+        assertTrue(Files.isDirectory(dir))
+        assertEquals("{}", Files.readString(dir.resolve("pairing.json")))
     }
 
     // ---- legacy migration ----------------------------------------------------------------------------------
@@ -165,7 +224,7 @@ class CredentialStoreDirTest {
         Files.writeString(legacy.resolve("pairing.json"), "{}")
         Files.writeString(legacy.resolve("cache/audio/track1.flac"), "audio")
 
-        val dir = CredentialStore.appDataDirFor("Linux", null, null, home.toString(), log)
+        val dir = CredentialStore.appDataDirFor("Linux", null, null, home.toString(), "N-Zik Desktop Compagnon", log)
 
         assertEquals(home.resolve(".config/N-Zik Desktop Compagnon"), dir)
         assertFalse(Files.exists(legacy), "the legacy dir must be gone after the one-time migration")
@@ -180,10 +239,72 @@ class CredentialStoreDirTest {
         Files.createDirectories(legacy)
         Files.writeString(legacy.resolve("pairing.json"), "{}")
 
-        val dir = CredentialStore.appDataDirFor("Windows 11", null, null, home.toString(), log)
+        val dir = CredentialStore.appDataDirFor("Windows 11", null, null, home.toString(), "N-Zik Desktop Compagnon", log)
 
         assertEquals(home.resolve("N-Zik Desktop Compagnon"), dir)
         assertTrue(Files.isDirectory(legacy), "off Linux the legacy dir is never touched")
+    }
+
+    @Test
+    fun `appDataDirFor with a channel name copies the shared dir but keeps it`(@TempDir temp: Path) {
+        // The 2026-10-16 channel separation wiring: a dev build resolves its OWN dir
+        // (`<xdg>/N-Zik Desktop Compagnon DEV`) and, on first launch, COPIES the files the shared
+        // base dir has that its dir lacks — the shared dir SURVIVES (it stays the live dir of the
+        // base-named channels, stable / debug / -git). Dropping the copySharedIntoChannel line, or
+        // gating it on the wrong name, would strand the channel dir — forced re-pair, green suite.
+        val home = temp.resolve("home")
+        val xdg = home.resolve(".config")
+        val shared = xdg.resolve("N-Zik Desktop Compagnon")
+        Files.createDirectories(shared.resolve("cache/audio"))
+        Files.writeString(shared.resolve("pairing.json"), "{}")
+        Files.writeString(shared.resolve("settings.json"), "shared-settings")
+        Files.writeString(shared.resolve("cache/audio/track1.flac"), "audio")
+
+        val dir = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon DEV", log)
+
+        assertEquals(xdg.resolve("N-Zik Desktop Compagnon DEV"), dir)
+        // the shared dir SURVIVES (a stable build installed side-by-side still reads it)
+        assertTrue(Files.isDirectory(shared), "the shared base dir must survive the channel copy")
+        assertEquals("{}", Files.readString(dir.resolve("pairing.json")))
+        assertEquals("shared-settings", Files.readString(dir.resolve("settings.json")))
+        assertEquals("audio", Files.readString(dir.resolve("cache/audio/track1.flac")))
+    }
+
+    @Test
+    fun `appDataDirFor with the base name does no channel copy`(@TempDir temp: Path) {
+        // stable / debug / -git keep the base name: the channel-separation copy must NOT run
+        // (shared == channel), so the dir is exactly the shared one and nothing is duplicated
+        val home = temp.resolve("home")
+        val xdg = home.resolve(".config")
+        val shared = xdg.resolve("N-Zik Desktop Compagnon")
+        Files.createDirectories(shared)
+        Files.writeString(shared.resolve("pairing.json"), "{}")
+
+        val dir = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon", log)
+
+        assertEquals(shared, dir)
+        assertEquals(1L, Files.list(dir).count(), "no duplication: the base-name dir IS the shared dir (no channel copy ran)")
+    }
+
+    @Test
+    fun `appDataDirFor channel copy never clobbers the channel dir`(@TempDir temp: Path) {
+        // the channel dir's own (fresh) files win over the shared copy — a dev build that already
+        // paired must not be reset to the shared pairing by a later launch
+        val home = temp.resolve("home")
+        val xdg = home.resolve(".config")
+        val shared = xdg.resolve("N-Zik Desktop Compagnon")
+        val channel = xdg.resolve("N-Zik Desktop Compagnon DEV")
+        Files.createDirectories(shared)
+        Files.writeString(shared.resolve("pairing.json"), "SHARED")
+        Files.createDirectories(channel)
+        Files.writeString(channel.resolve("pairing.json"), "FRESH")
+        Files.writeString(channel.resolve("cache.flac"), "channel-audio")
+
+        val dir = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon DEV", log)
+
+        assertEquals("FRESH", Files.readString(dir.resolve("pairing.json")), "the channel's own pairing must win")
+        assertEquals("channel-audio", Files.readString(dir.resolve("cache.flac")))
+        assertTrue(Files.isDirectory(shared), "the shared dir still survives")
     }
 
     @Test

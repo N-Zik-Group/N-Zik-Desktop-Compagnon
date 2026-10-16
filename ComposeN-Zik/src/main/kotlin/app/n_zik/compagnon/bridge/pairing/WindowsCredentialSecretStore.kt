@@ -16,6 +16,10 @@ import java.util.logging.Logger
  * removed by `CredDelete`. Any failure reads as "no secret", never as a crash.
  */
 class WindowsCredentialSecretStore(private val target: String) : SecretStore {
+
+    /** The credential target name (the per-channel secret name — pinned by the tests). */
+    internal val targetName: String get() = target
+
     private val log = Logger.getLogger("WindowsCredentialSecretStore")
 
     override fun read(): String? = withApi("read") { api ->

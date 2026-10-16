@@ -114,6 +114,53 @@ class CredentialStoreTest {
     }
 
     @Test
+    fun `selectSecretStore carries the per-channel target name`() {
+        // The 2026-10-16 channel separation: the secret store targets the PER-CHANNEL name
+        // (dev / beta suffixed, the base name for stable / debug / -git — the pre-channel default)
+        val dev = CredentialStore.selectSecretStore("Windows 11", "N-Zik Desktop Compagnon DEV")
+        assertTrue(dev is WindowsCredentialSecretStore)
+        assertEquals("N-Zik Desktop Compagnon DEV", (dev as WindowsCredentialSecretStore).targetName)
+        val default = CredentialStore.selectSecretStore("Windows 11")
+        assertEquals("N-Zik Desktop Compagnon", (default as WindowsCredentialSecretStore).targetName)
+    }
+
+    @Test
+    fun `the shared token is copied into the channel secret on first launch`() {
+        // The 2026-10-16 channel separation, secret side: the pre-channel shared secret holds the
+        // token — the channel build copies it into its OWN secret, and the shared entry SURVIVES
+        // (it stays the live secret of the base-named channels, stable / debug / -git)
+        val shared = InMemorySecretStore(token)
+        val channel = InMemorySecretStore()
+
+        CredentialStore.migrateSharedSecret(channel, shared)
+
+        assertEquals(token, channel.secret, "the channel secret must receive the shared token")
+        assertEquals(token, shared.secret, "the shared secret must SURVIVE (base-named channels still read it)")
+    }
+
+    @Test
+    fun `the channel secret is never overwritten by a stale shared one`() {
+        // A channel that already paired (its own token) must NOT be reset to the shared token by
+        // a later launch
+        val shared = InMemorySecretStore(token)
+        val channel = InMemorySecretStore("B".repeat(43))
+
+        CredentialStore.migrateSharedSecret(channel, shared)
+
+        assertEquals("B".repeat(43), channel.secret, "the channel's own token must win")
+        assertEquals(token, shared.secret)
+    }
+
+    @Test
+    fun `no shared token leaves the channel secret untouched`() {
+        val channel = InMemorySecretStore()
+
+        CredentialStore.migrateSharedSecret(channel, InMemorySecretStore())
+
+        assertNull(channel.secret, "nothing to copy: the channel secret stays empty")
+    }
+
+    @Test
     fun `isSessionOnly matches the default store`() {
         assertEquals(
             CredentialStore.defaultSecretStore() === SessionSecretStore,
