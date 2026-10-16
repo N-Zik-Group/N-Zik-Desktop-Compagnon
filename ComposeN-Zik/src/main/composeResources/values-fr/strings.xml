@@ -157,7 +157,7 @@
     <string name="info_find_the_song_that_is_playing">Afficher le titre en cours de lecture</string>
     <string name="playing_song_not_found_on_current_list">Impossible de trouver le titre en cours de lecture dans la liste actuelle</string>
     <string name="no_songs_playing">Aucun titre n\'est joué pour le moment</string>
-    <string name="artist_songs_count_duration">Titres %1$d • %2$s</string>
+    <string name="artist_songs_count_duration">%1$d titres • %2$s</string>
     <string name="no_song_found">Aucun titre trouvé</string>
     <string name="no_song_to_shuffle">Aucun titre en lecture aléatoire</string>
     <string name="songs_shuffled">%d titres en lecture aléatoire</string>
@@ -409,7 +409,7 @@
     <string name="install_pkg_pacman_command">Mettez à jour le pack à l\'aide de la commande suivante :</string>
     <string name="install_pkg_manual">Aucun gestionnaire de packs n\'a été détecté. Installez manuellement le pack téléchargé.</string>
     <string name="install_replacement_portable">Quittez d\'abord l\'application (ses fichiers sont verrouillés tant qu\'elle est en cours d\'exécution), puis remplacez le dossier de l\'application : supprimez le dossier actuel de l\'application, décompressez le fichier téléchargé à la place (le fichier zip s\'ouvre dans un nouveau dossier d\'application — ne le placez jamais par-dessus le dossier actuel), puis relancez l\'application.</string>
-    <string name="install_replacement_portable_linux">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, extract the downloaded .tar.gz in its place (the tarball opens into a new app folder - never over the current one), and relaunch.</string>
+    <string name="install_replacement_portable_linux">Quittez d\'abord l\'application (ses fichiers sont verrouillés tant qu\'elle est en cours d\'exécution), puis remplacez le dossier de l\'application : supprimez le dossier actuel de l\'application, décompressez le fichier .tar.gz téléchargé à la place (l\'archive se décompresse dans un nouveau dossier d\'application — elle ne remplace jamais le dossier actuel), puis relancez l\'application.</string>
     <string name="old_install_path">Installation actuelle :</string>
     <string name="beta_title">BETA</string>
     <string name="dev_title">DÉVELOPPEMENT</string>
@@ -585,11 +585,11 @@
     <string name="download_quality_format">Qualité du Téléchargement</string>
     <string name="update_downloads">Téléchargements de mises à jour</string>
     <string name="update_downloads_description">Téléchargez à nouveau les morceaux qui avaient été téléchargés dans une qualité différente</string>
-    <string name="settings_enable_autodownload_song">Activer le téléchargement automatique du titre</string>
-    <string name="auto_download_song_description">Télécharger automatiquement les chansons en fonction de vos préférences</string>
-    <string name="restarting_rimusic_is_required">Un redémarrage est requis</string>
+    <string name="settings_enable_autodownload_song">Activer le téléchargement automatique des morceaux</string>
+    <string name="auto_download_song_description">Télécharger automatiquement des morceaux en fonction de vos préférences</string>
+    <string name="restarting_rimusic_is_required">Un redémarrage est nécessaire</string>
     <string name="enable_proxy">Activer le proxy</string>
-    <string name="info_prevent_play_songs_with_age_limitation">Empêcher la lecture de titres avec une limite d\'âge</string>
+    <string name="info_prevent_play_songs_with_age_limitation">Empêcher la lecture des morceaux soumis à une restriction d\'âge</string>
     <string name="maintenance_dedup">Suppression des doublons d\'artistes portant le même nom</string>
     <string name="maintenance_no_data">Aucune donnée</string>
     <string name="maintenance_convergence">Convergence des noms</string>
@@ -608,7 +608,7 @@
     <string name="position_bottom">En bas</string>
     <string name="menu_style">Style du menu</string>
     <string name="style_list">Liste</string>
-    <string name="message_type">Type de message</string>
+    <string name="message_type">Style du message contextuel</string>
     <string name="message_type_modern">Moderne</string>
     <string name="home_tabs_settings_description">Réorganiser et afficher/masquer les onglets</string>
     <string name="transition_effect">Effet de transition</string>
@@ -642,9 +642,9 @@
     <string name="queuetype">Type de file d’attente</string>
     <string name="thumbnailtype">Type de pochette d\'album</string>
     <string name="pinfo_type">Type d\'informations</string>
-    <string name="pinfo_album_and_artist_name">Album et nom de l\'artiste</string>
+    <string name="pinfo_album_and_artist_name">En-tête « Album » et « Artiste »</string>
     <string name="pinfo_show_icons">Afficher les informations avec des icônes</string>
-    <string name="pcontrols_type">Type de contrôle</string>
+    <string name="pcontrols_type">Style de contrôle</string>
     <string name="icon_like_button">Bouton « Favoris »</string>
     <string name="show_thumbnail">Afficher la miniature</string>
     <string name="thumbnailpause">Réduire la miniature quand c\'est en pause</string>
@@ -652,7 +652,7 @@
     <string name="show_cover_thumbnail_animation">Afficher l\'animation de la miniature de la pochette</string>
     <string name="cover_thumbnail_animation_type">Type d\'animation de couverture</string>
     <string name="player_thumbnail_size">Taille de la pochette d\'album</string>
-    <string name="thumbnail_roundness">Aspect</string>
+    <string name="thumbnail_roundness">Arrondi des pochettes d\'album</string>
     <string name="artist_roundness">Polyvalence de l\'artiste</string>
     <string name="ui_roundness">Arrondi de l\'interface utilisateur</string>
     <string name="timelinesize">Taille de la chronologie du lecteur</string>
