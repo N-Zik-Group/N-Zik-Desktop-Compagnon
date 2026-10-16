@@ -389,7 +389,7 @@
     <string name="update_available">Mise à jour disponible</string>
     <string name="app_update_dialog_version">La nouvelle version %s est disponible au téléchargement !</string>
     <string name="app_update_dialog_size">La taille du fichier est de %s</string>
-    <string name="go_to_download">Aller au téléchargement</string>
+    <string name="go_to_download">Accéder au téléchargement</string>
     <string name="downloading_update">Téléchargement de la mise à jour</string>
     <string name="update_download_progress">Téléchargement de la mise à jour… %1$d%%</string>
     <string name="info_no_update_available">Aucune mise à jour disponible</string>
