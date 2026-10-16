@@ -389,6 +389,7 @@
     <string name="update_available">Actualizare disponibilă</string>
     <string name="app_update_dialog_version">Noua versiune %s poate fi descărcată!</string>
     <string name="app_update_dialog_size">Dimensiunea fişierului este %s</string>
+    <string name="go_to_download">Du-te la descărcare</string>
     <string name="downloading_update">Descărcare actualizare</string>
     <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">Nu sunt actualizări disponibile</string>
