@@ -389,6 +389,7 @@
     <string name="update_available">Opdatering tilgængelig</string>
     <string name="app_update_dialog_version">Den nye version %s kan hentes!</string>
     <string name="app_update_dialog_size">Filstørrelsen er %s</string>
+    <string name="go_to_download">Gå til download</string>
     <string name="downloading_update">Downloader opdatering</string>
     <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">Ingen opdatering tilgængelig</string>
