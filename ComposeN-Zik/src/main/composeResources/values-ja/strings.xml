@@ -389,6 +389,7 @@
     <string name="update_available">最新版あり</string>
     <string name="app_update_dialog_version">最新のバージョン %s をダウンロードできます！</string>
     <string name="app_update_dialog_size">ファイルサイズは %s です</string>
+    <string name="go_to_download">ダウンロードへ</string>
     <string name="downloading_update">アップデートをダウンロードしています</string>
     <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">利用可能なアップデートはありません</string>
