@@ -161,9 +161,14 @@ class UpdateDownloadManagerTest {
     // silent design, the per-user design and the machine-level-only jpackage exe) ----
 
     private fun helperScript(): String = UpdateDownloadManager.windowsInstallScript(
+        // ONE consistent dev-channel layout: the install dir (the channel DISPLAY name —
+        // `… DEV`) + the per-channel storage name (the channel DATA name — also `… DEV`) for
+        // the updates dir and the marker dir. A real dev install carries the same storage name
+        // everywhere (the 2026-10-16 storage regrouping made dev's storage isolated — the
+        // pre-regrouping fixture mixed the old base-name data dir with the new dev install dir)
         appExe = "C:\\Program Files\\N-Zik Desktop Compagnon DEV\\N-Zik Desktop Compagnon DEV.exe",
-        installerPath = "C:\\Users\\danie\\AppData\\Local\\N-Zik Desktop Compagnon\\updates\\n-zik-desktop-compagnon-0.0.2-dev-20260101.exe",
-        markerPath = "C:\\Users\\danie\\AppData\\Roaming\\N-Zik Desktop Compagnon\\update-install-failed.txt",
+        installerPath = "C:\\Users\\danie\\AppData\\Local\\N-Zik Desktop Compagnon DEV\\updates\\n-zik-desktop-compagnon-0.0.2-dev-20260101.exe",
+        markerPath = "C:\\Users\\danie\\AppData\\Roaming\\N-Zik Desktop Compagnon DEV\\update-install-failed.txt",
     )
 
     @Test
@@ -189,7 +194,7 @@ class UpdateDownloadManagerTest {
         // are both gone
         assertFalse(script.contains("/quiet"), "the MSI-era /quiet flag must be gone")
         assertFalse(script.contains("/S"), "the NSIS /S silent flag must be gone")
-        assertTrue(script.contains("Start-Process -FilePath 'C:\\Users\\danie\\AppData\\Local\\N-Zik Desktop Compagnon\\updates\\n-zik-desktop-compagnon-0.0.2-dev-20260101.exe' -ArgumentList '/UPDATE' -Wait -PassThru"))
+        assertTrue(script.contains("Start-Process -FilePath 'C:\\Users\\danie\\AppData\\Local\\N-Zik Desktop Compagnon DEV\\updates\\n-zik-desktop-compagnon-0.0.2-dev-20260101.exe' -ArgumentList '/UPDATE' -Wait -PassThru"))
         // No timeout and no auto-kill: a hang is now VISIBLE to the user, and killing a dialog
         // the user is looking at would be wrong
         assertFalse(script.contains("WaitForExit("), "no install timeout anymore")
@@ -216,11 +221,11 @@ class UpdateDownloadManagerTest {
         // A successful update deletes the downloaded installer (the setup is locked while it
         // runs, so the helper does it — user decision 2026-10-16); the same single-quoted path
         // literal as the launch
-        assertTrue(script.contains("Remove-Item 'C:\\Users\\danie\\AppData\\Local\\N-Zik Desktop Compagnon\\updates\\n-zik-desktop-compagnon-0.0.2-dev-20260101.exe' -ErrorAction SilentlyContinue"))
+        assertTrue(script.contains("Remove-Item 'C:\\Users\\danie\\AppData\\Local\\N-Zik Desktop Compagnon DEV\\updates\\n-zik-desktop-compagnon-0.0.2-dev-20260101.exe' -ErrorAction SilentlyContinue"))
         // Two marker writes only: the app never exited / a bad exit code (a cancel is not one)
         assertEquals(2, script.split("Set-Content -Path '").size - 1, "exactly the two failure paths write the marker")
         // The marker path is the helper's single marker, single-quoted for PowerShell
-        assertTrue(script.contains("C:\\Users\\danie\\AppData\\Roaming\\N-Zik Desktop Compagnon\\update-install-failed.txt"))
+        assertTrue(script.contains("C:\\Users\\danie\\AppData\\Roaming\\N-Zik Desktop Compagnon DEV\\update-install-failed.txt"))
     }
 
     @Test

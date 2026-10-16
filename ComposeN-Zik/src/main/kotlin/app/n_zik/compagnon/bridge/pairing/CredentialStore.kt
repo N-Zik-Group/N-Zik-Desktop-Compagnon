@@ -164,7 +164,8 @@ class CredentialStore(
                 ?.let { portableRoot ->
                     val portableDir = portableRoot.resolve(PORTABLE_DATA_DIR_NAME)
                     // The one-time copy from the base data dir (same semantics as the channel
-                    // copy: the base's files the portable dir lacks — idempotent on re-launch)
+                    // copy: the base's files the portable dir lacks, once — the walk is skipped
+                    // on re-launch: the portable dir owns its state)
                     copySharedIntoChannel(
                         resolveAppDataDir(osName, appData, xdgConfigHome, home, AppInfo.NAME),
                         portableDir,
@@ -185,8 +186,10 @@ class CredentialStore(
 
         /**
          * The data dir + the one-time migrations from their inputs (pure — the tests pin the
-         * wiring): [resolveAppDataDir] and, on Linux only, [migrateLegacyAppDataDir] of the legacy
-         * `~/N-Zik Desktop Compagnon/` into the resolved dir, then — for a channel-suffixed name
+         * wiring): [resolveAppDataDir] and, on Linux for the BASE name only, [migrateLegacyAppDataDir]
+         * of the legacy `~/N-Zik Desktop Compagnon/` into the base dir (a channel-suffixed build
+         * must not move it into its own dir — that would strand stable / beta: the data stranded
+         * in the channel dir, forced re-pair on the base), then — for a channel-suffixed name
          * only — [copySharedIntoChannel] of the pre-channel shared dir (the base name) into the
          * channel dir, then — for the legacy per-channel dir names only —
          * [mergeLegacyChannelDirInto] of the dirs once isolated by the 2026-10-16 channel
@@ -201,7 +204,12 @@ class CredentialStore(
          */
         internal fun appDataDirFor(osName: String, appData: String?, xdgConfigHome: String?, userHome: String, dataDirName: String, legacyDataDirNames: List<String>, log: Logger): Path {
             val dir = resolveAppDataDir(osName, appData, xdgConfigHome, userHome, dataDirName)
-            if (isLinuxOs(osName)) {
+            if (isLinuxOs(osName) && dataDirName == AppInfo.NAME) {
+                // The BASE dir only: the legacy dir is the pre-channel home of the data, and a
+                // channel-suffixed build launching first must not move it into its own dir (the
+                // base channels would then read an empty dir — forced re-pair, the data stranded
+                // in the channel dir). The channel build picks the data up through the base →
+                // channel copy below, once the base has it
                 migrateLegacyAppDataDir(legacyAppDataDir(userHome), dir, log)
             }
             if (dataDirName != AppInfo.NAME) {
@@ -380,8 +388,10 @@ class CredentialStore(
         /**
          * The shared-copy core of both migrations: copies every file [source] has that [target]
          * lacks into [target] (the target's own files win — fresh app state is never clobbered).
-         * Symlinks are recreated as links, never followed — a dangling (or cross-dir) target must
-         * not abort the whole walk, stranding the migration on every launch.
+         * The copy is FILE-level: empty directories are not reproduced (a dir appears in the
+         * target only because a file inside it is copied — the consumers create their dirs on
+         * write). Symlinks are recreated as links, never followed — a dangling (or cross-dir)
+         * target must not abort the whole walk, stranding the migration on every launch.
          *
          * @return `true` when at least one file was copied
          */
@@ -411,19 +421,28 @@ class CredentialStore(
         }
 
         /**
-         * The channel-separation copy (2026-10-16): copies the pre-channel SHARED data dir (the
-         * base [AppInfo.NAME]) into the per-channel dir — the files the channel dir lacks only,
-         * the channel dir's own files winning. Also the one-time copy into a self-contained
+         * The channel-separation copy (2026-10-16): the ONE-TIME copy of the pre-channel SHARED
+         * data dir (the base [AppInfo.NAME]) into the per-channel dir on first launch — the files
+         * the channel dir lacks, the channel dir's own files winning. Once the channel dir
+         * carries its own files the walk is skipped entirely (the channels are isolated after
+         * first launch: the base's later files are the base's own, never channel data — and the
+         * per-launch re-walk would cost a full stat per base file, visible on a portable's USB
+         * stick with a large audio cache). Also the one-time copy into a self-contained
          * portable's `<root>/data/` dir (same semantics). Unlike [migrateLegacyAppDataDir] the
          * shared source SURVIVES: it stays the live data dir of the base-named channels (stable
-         * / beta / debug / -git keep [AppInfo.NAME] after the 2026-10-16 storage regrouping),
-         * so a side-by-side stable + dev install keeps its own data on its own — the one-time
-         * cost is a copy, never a forced re-pair on either side.
+         * AND beta keep [AppInfo.NAME] after the 2026-10-16 storage regrouping; dev / debug /
+         * -git are isolated as `… DEV` / `… DEBUG` / `… GIT`), so a side-by-side stable + dev
+         * install keeps its own data on its own — the one-time cost is a copy, never a forced
+         * re-pair on either side.
          */
         internal fun copySharedIntoChannel(shared: Path, channel: Path, log: Logger) {
             if (!Files.isDirectory(shared) || shared == channel) return
+            // The one-time skip: the walk runs once, on the first launch into an absent or empty
+            // channel dir (a wiped channel dir recovers the base files)
+            val channelFiles = runCatching { channel.toFile().listFiles() }.getOrNull()
+            if (Files.isDirectory(channel) && channelFiles.orEmpty().isNotEmpty()) return
             if (copyMissingFilesInto(shared, channel, log)) {
-                log.info("Copied the shared app data dir $shared into the channel dir $channel")
+                log.info("Copied the shared app data dir $shared into the channel dir $channel (the one-time copy)")
             }
         }
 
@@ -463,14 +482,18 @@ class CredentialStore(
          * and shared by every [CredentialStore] and the [isSessionOnly] check, so a second probe
          * can never disagree with the first. Since the 2026-10-16 storage regrouping it targets
          * the per-channel STORAGE name ([AppInfo.dataName] — the base name, shared by stable AND
-         * beta), and — for a channel-suffixed name only — copies the device token from the
-         * pre-channel shared secret once (see [migrateSharedSecret]).
+         * beta), and — for a channel-suffixed name whose channel secret does not exist yet —
+         * copies the device token from the pre-channel shared secret once (the shared store is
+         * constructed only in that case — see [migrateSharedSecret]).
          */
         private val defaultStore: SecretStore by lazy {
             val name = AppInfo.dataName(AppVersion.channel)
             val osName = System.getProperty("os.name").orEmpty()
             val store = selectSecretStore(osName, name)
-            if (name != AppInfo.NAME) {
+            if (name != AppInfo.NAME && store.read() == null) {
+                // The channel secret already exists → nothing to migrate: the shared store is
+                // never constructed (an isolated-channel Linux build would otherwise pay the JNA
+                // load + the D-Bus probe + a lookup on EVERY launch)
                 migrateSharedSecret(store, selectSecretStore(osName, AppInfo.NAME))
             }
             store
@@ -480,8 +503,8 @@ class CredentialStore(
          * The platform's secret store: the Credential Manager on Windows (a generic credential
          * named [targetName]), the keyring on Linux (the in-memory [SessionSecretStore] when no
          * keyring daemon is running), no storage anywhere else. [targetName] is the per-channel
-         * storage name ([AppInfo.dataName] of the build's channel; the base name is what every
-         * stable / BETA / debug / -git build uses — stable and beta share it).
+         * storage name ([AppInfo.dataName] of the build's channel: the base name is shared by
+         * stable AND beta; dev / debug / -git use `… DEV` / `… DEBUG` / `… GIT`).
          */
         internal fun selectSecretStore(osName: String, targetName: String = AppInfo.NAME): SecretStore = when {
             osName.startsWith("Windows", ignoreCase = true) -> WindowsCredentialSecretStore(targetName)
@@ -493,7 +516,8 @@ class CredentialStore(
          * The channel separation, secret side: copies the device token from the pre-channel
          * SHARED secret ([AppInfo.NAME] target) into the per-channel secret when the channel
          * secret does not exist yet. The shared entry SURVIVES — it stays the live secret of
-         * the base-named channels (stable / beta / debug / -git) — and an existing channel
+         * the base-named channels (stable AND beta — dev / debug / -git are isolated as
+         * `… DEV` / `… DEBUG` / `… GIT`) — and an existing channel
          * token is never overwritten (a fresh channel pairing wins over a stale shared one).
          */
         internal fun migrateSharedSecret(channel: SecretStore, shared: SecretStore) {

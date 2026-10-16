@@ -167,9 +167,9 @@ class LinuxSecretStore private constructor(
          */
         /**
          * @param value the per-channel attribute value (the secret's identity in the keyring —
-         *        [AppInfo.productName] of the build's channel; the base name is the pre-channel
-         *        default, what stable / debug / -git still use). The keyring label is derived
-         *        from it ([labelOf]).
+         *        [AppInfo.dataName] of the build's channel, the per-channel STORAGE name: the
+         *        base name shared by stable AND beta, `… DEV` / `… DEBUG` / `… GIT` for dev /
+         *        debug / -git). The keyring label is derived from it ([labelOf]).
          */
         fun create(value: String = AppInfo.NAME): LinuxSecretStore? = runCatching {
             val api = Native.load("secret-1", SecretApi::class.java)

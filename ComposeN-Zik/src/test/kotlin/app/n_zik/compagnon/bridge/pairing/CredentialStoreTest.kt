@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.bridge.pairing
 
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -116,8 +117,8 @@ class CredentialStoreTest {
     @Test
     fun `selectSecretStore carries the per-channel target name`() {
         // The 2026-10-16 storage regrouping: the secret store targets the per-channel STORAGE
-        // name ([AppInfo.dataName] — dev / debug / git suffixed, the base name for stable /
-        // beta / debug-channel / -git — the base is what stable and beta share)
+        // name ([AppInfo.dataName] — the base name shared by stable AND beta; `… DEV` /
+        // `… DEBUG` / `… GIT` for dev / debug / -git)
         val dev = CredentialStore.selectSecretStore("Windows 11", "N-Zik Desktop Compagnon DEV")
         assertTrue(dev is WindowsCredentialSecretStore)
         assertEquals("N-Zik Desktop Compagnon DEV", (dev as WindowsCredentialSecretStore).targetName)
@@ -129,7 +130,8 @@ class CredentialStoreTest {
     fun `the shared token is copied into the channel secret on first launch`() {
         // The channel separation, secret side: the pre-channel shared secret holds the
         // token — the channel build copies it into its OWN secret, and the shared entry SURVIVES
-        // (it stays the live secret of the base-named channels, stable / beta / debug / -git)
+        // (it stays the live secret of the base-named channels — stable AND beta; dev / debug /
+        // -git are isolated)
         val shared = InMemorySecretStore(token)
         val channel = InMemorySecretStore()
 
@@ -162,10 +164,17 @@ class CredentialStoreTest {
     }
 
     @Test
-    fun `isSessionOnly matches the default store`() {
-        assertEquals(
-            CredentialStore.defaultSecretStore() === SessionSecretStore,
-            CredentialStore.isSessionOnly,
+    fun `isSessionOnly is the identity of the default store (source pin)`() {
+        // Source pin (the repo idiom for wiring checks): the live `defaultSecretStore()` call
+        // used to materialize the REAL platform store for the build channel HERE — on a paired
+        // Windows machine every `gradlew build` (the default channel is debug) did a live
+        // Credential Manager read + write of the real device token as an unasserted side effect
+        // of the test run. The getter must stay the identity of the process-wide default store,
+        // pinned without touching any OS state
+        val source = File("src/main/kotlin/app/n_zik/compagnon/bridge/pairing/CredentialStore.kt").readText()
+        assertTrue(
+            source.contains("get() = defaultStore === SessionSecretStore"),
+            "isSessionOnly must be the identity of the default store",
         )
     }
 

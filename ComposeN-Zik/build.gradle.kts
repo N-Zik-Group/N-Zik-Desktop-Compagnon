@@ -1,3 +1,4 @@
+import org.gradle.api.tasks.bundling.Compression
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
@@ -1408,9 +1409,17 @@ project.afterEvaluate {
     // Staged under the build dir (regenerated on every portable run) so it lands at the
     // app-image root inside the archive only.
     val portableMarkerDir = layout.buildDirectory.dir("compose/portable-marker").get().asFile
-    fun stagePortableMarker() {
+    /**
+     * The marker root is the DISCOVERED app-image folder name (the launcher's parent's parent) —
+     * NOT [channelDisplayName]: the two are equal by construction (jpackage names the app-image
+     * after the app, and [channelDisplayName] IS that app name), but staging under the discovered
+     * name removes the drift failure mode entirely (a rename of one without the other would
+     * otherwise place the marker as a SIBLING of the app root — the portable would silently
+     * degrade to the per-channel storage).
+     */
+    fun stagePortableMarker(appImageName: String) {
         portableMarkerDir.deleteRecursively()
-        val markerRoot = File(portableMarkerDir, channelDisplayName)
+        val markerRoot = File(portableMarkerDir, appImageName)
         markerRoot.mkdirs()
         File(markerRoot, "portable.txt").writeText("portable")
     }
@@ -1419,7 +1428,7 @@ project.afterEvaluate {
     // header is unreadable): a hand-rolled tar read (512-byte headers, the header fields only —
     // no tar dependency): the name is bytes 0..100, the octal mode at 100..107, the octal size
     // at 124..135 (data blocks are skipped). The gzip layer is decoded with a GZIPInputStream
-    // (the Tar task's GZIP compression).
+    // (the task's explicit GZIP compression — see `packageLinuxPortable`).
     fun tarEntryMode(tarFile: File, entryName: String): Int? {
         val data = ByteArrayOutputStream()
         GZIPInputStream(BufferedInputStream(tarFile.inputStream())).use { input ->
@@ -1490,13 +1499,20 @@ project.afterEvaluate {
         // The self-contained-portable marker (archive entry only — see stagePortableMarker).
         from(portableMarkerDir)
         doFirst {
-            stagePortableMarker()
+            // The marker root = the discovered app-image folder name (the launcher's grandparent)
+            val appImageName = launcherFile.get().parentFile?.parentFile?.name
+                ?: error("the app-image dir is missing: cannot stage the portable marker under it")
+            stagePortableMarker(appImageName)
         }
         // The channel suffix rides after the base version through the single rename helper (AD-2).
         archiveFileName.set(channelArtifactName("${linuxPackageName}-${libs.versions.nzikVersionName.get()}-linux-portable.tar.gz"))
         destinationDirectory.set(layout.buildDirectory.dir("compose/binaries"))
-        // `Tar` compresses with GZIP by default (Gradle 9 removed the archiveCompression/
-        // CompressionType API — the extension is what identifies the format).
+        // GZIP explicitly: Gradle 9's bare `Tar` defaults to an UNCOMPRESSED archive (the
+        // `compression` property / `Compression` enum replaced the removed archiveCompression /
+        // CompressionType API — probe-verified on this repo's Gradle 9.8.1: a bare task emits a
+        // plain tar, and the `.tar.gz` NAME alone does not select the format), and the doLast
+        // re-read below decodes the gzip layer with a GZIPInputStream (it throws on a plain tar).
+        compression = Compression.GZIP
         // MANDATORY: since Gradle 9 archive tasks fix every file permission to 0644 by default,
         // which would strip the launcher's exec bit — the on-disk mode (0755/0777 from jpackage)
         // must ride into the tar entry, or the doLast re-read below fails every build.
@@ -1589,9 +1605,11 @@ project.afterEvaluate {
         // The shared app-image (the windowsAppImage boundary above validates the layout at
         // execution, on the Windows host — the Linux host never executes the task).
         doFirst {
-            windowsAppImage.get()
-            // The self-contained-portable marker (archive entry only — see stagePortableMarker).
-            stagePortableMarker()
+            val appImageDir = windowsAppImage.get()
+            // The self-contained-portable marker (archive entry only — see stagePortableMarker):
+            // the marker root = the discovered app-image folder name (the launcher's parent — the
+            // Windows image carries the launcher at the image root, no bin/ level)
+            stagePortableMarker(appImageDir.name)
         }
         from(createDistributableImpl.flatMap { it.destinationDir })
         from(portableMarkerDir)

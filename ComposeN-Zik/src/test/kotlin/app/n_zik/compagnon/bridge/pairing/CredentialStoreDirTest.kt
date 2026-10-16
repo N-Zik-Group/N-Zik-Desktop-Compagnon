@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.bridge.pairing
 
+import java.io.File
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
@@ -146,6 +147,34 @@ class CredentialStoreDirTest {
         assertEquals("{}", Files.readString(dir.resolve("pairing.json")))
     }
 
+    @Test
+    fun `copySharedIntoChannel is one-time — a channel dir with its own files is never re-walked`(@TempDir temp: Path) {
+        // The spec's "one-time copy": once the channel dir carries its own files, the base's
+        // LATER files must not flow in (the channels are isolated after first launch — the
+        // base's fresh pairing / new cache entries are the base's own), and the per-launch full
+        // re-walk (a stat per base file) is skipped
+        val shared = temp.resolve("config/N-Zik Desktop Compagnon")
+        val channel = temp.resolve("config/N-Zik Desktop Compagnon DEV")
+        Files.createDirectories(shared)
+        Files.writeString(shared.resolve("pairing.json"), "base")
+        Files.createDirectories(channel)
+        Files.writeString(channel.resolve("pairing.json"), "channel")
+
+        // First launch after the channel dir already has its own file → the walk is skipped
+        CredentialStore.copySharedIntoChannel(shared, channel, log)
+        assertEquals("channel", Files.readString(channel.resolve("pairing.json")), "the channel's own file wins")
+        // The base gains a file AFTER first launch (a fresh base pairing, a new cache entry) —
+        // a second launch must NOT copy it in (the channel owns its state)
+        Files.writeString(shared.resolve("settings.json"), "base-later")
+        CredentialStore.copySharedIntoChannel(shared, channel, log)
+        assertFalse(Files.exists(channel.resolve("settings.json")), "the base's later files are the base's own, never channel data")
+        // An EMPTY channel dir still gets the one-time copy (a wiped channel recovers the base files)
+        val wiped = temp.resolve("config/N-Zik Desktop Compagnon DEV wiped")
+        Files.createDirectories(wiped)
+        CredentialStore.copySharedIntoChannel(shared, wiped, log)
+        assertTrue(Files.exists(wiped.resolve("settings.json")), "an empty channel dir still receives the one-time copy")
+    }
+
     // ---- legacy migration ----------------------------------------------------------------------------------
 
     @Test
@@ -242,6 +271,38 @@ class CredentialStoreDirTest {
     }
 
     @Test
+    fun `appDataDirFor with a channel name does not move the legacy dir into the channel (base only)`(@TempDir temp: Path) {
+        // The legacy bare-home dir is the PRE-CHANNEL home of the data: it migrates into the
+        // BASE dir only. A channel-suffixed build that launches FIRST must not move it into its
+        // own dir — stable / beta would then read an empty dir (forced re-pair, the data
+        // stranded in the channel dir). The channel build picks the data up through the base →
+        // channel copy instead, once the base has it
+        val home = temp.resolve("home")
+        val xdg = home.resolve(".config")
+        val legacy = home.resolve("N-Zik Desktop Compagnon")
+        Files.createDirectories(legacy.resolve("cache/audio"))
+        Files.writeString(legacy.resolve("pairing.json"), "{}")
+        Files.writeString(legacy.resolve("cache/audio/track1.flac"), "audio")
+
+        // First launch: the DEV build — the legacy dir must SURVIVE (not moved into … DEV)
+        val devDir = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon DEV", emptyList(), log)
+        assertEquals(xdg.resolve("N-Zik Desktop Compagnon DEV"), devDir)
+        assertTrue(Files.isDirectory(legacy), "the legacy dir must NOT move into the channel dir")
+        assertFalse(Files.exists(devDir.resolve("pairing.json")), "the channel dir gets nothing yet (the base dir is still empty)")
+
+        // Second launch: the stable build — the legacy dir migrates into the BASE dir
+        val stableDir = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon", emptyList(), log)
+        assertEquals(xdg.resolve("N-Zik Desktop Compagnon"), stableDir)
+        assertFalse(Files.exists(legacy), "the legacy dir migrates into the base dir on the stable launch")
+        assertEquals("{}", Files.readString(stableDir.resolve("pairing.json")))
+
+        // Third launch: the DEV build again — the base → channel one-time copy now delivers the data
+        val devDir2 = CredentialStore.appDataDirFor("Linux", null, xdg.toString(), home.toString(), "N-Zik Desktop Compagnon DEV", emptyList(), log)
+        assertEquals("{}", Files.readString(devDir2.resolve("pairing.json")), "the channel picks up the data through the base copy")
+        assertEquals("audio", Files.readString(devDir2.resolve("cache/audio/track1.flac")))
+    }
+
+    @Test
     fun `appDataDirFor skips the migration off linux`(@TempDir temp: Path) {
         val home = temp.resolve("home")
         val legacy = home.resolve("N-Zik Desktop Compagnon")
@@ -259,7 +320,7 @@ class CredentialStoreDirTest {
         // The 2026-10-16 channel separation wiring: a dev build resolves its OWN dir
         // (`<xdg>/N-Zik Desktop Compagnon DEV`) and, on first launch, COPIES the files the shared
         // base dir has that its dir lacks — the shared dir SURVIVES (it stays the live dir of the
-        // base-named channels, stable / beta / debug / -git). Dropping the copySharedIntoChannel line, or
+        // base-named channels — stable AND beta; dev / debug / -git are isolated). Dropping the copySharedIntoChannel line, or
         // gating it on the wrong name, would strand the channel dir — forced re-pair, green suite.
         val home = temp.resolve("home")
         val xdg = home.resolve(".config")
@@ -281,7 +342,7 @@ class CredentialStoreDirTest {
 
     @Test
     fun `appDataDirFor with the base name does no channel copy`(@TempDir temp: Path) {
-        // stable / debug / -git keep the base name: the channel-separation copy must NOT run
+        // stable AND beta keep the base name: the channel-separation copy must NOT run
         // (shared == channel), so the dir is exactly the shared one and nothing is duplicated
         val home = temp.resolve("home")
         val xdg = home.resolve(".config")
@@ -668,5 +729,39 @@ class CredentialStoreDirTest {
         CredentialStore.copySharedIntoChannel(base, portableDir, log)
         assertEquals("portable-settings", Files.readString(portableDir.resolve("settings.json")))
         assertEquals("BASE", Files.readString(portableDir.resolve("pairing.json")))
+    }
+
+    // ---- production wiring (source pin — the lazy composition is never executed in tests) ----
+
+    @Test
+    fun `the production storage wiring is pinned (source pin on the appDataDir + defaultStore lazies)`() {
+        // The production composition is never executed in tests (it would resolve the REAL
+        // data dir + the REAL secret store) — the source pin keeps the wiring instead: the app
+        // data dir resolves through AppInfo.dataName(channel) (the storage contract, not the
+        // install identity), the portable decision runs with the production inputs and wins
+        // over the per-channel dir, the per-channel dir goes through appDataDirFor (the
+        // migration + copy + merge-back wiring), and the default secret store targets the
+        // per-channel name with the one-time shared migration
+        val source = File("src/main/kotlin/app/n_zik/compagnon/bridge/pairing/CredentialStore.kt").readText()
+        assertTrue(
+            source.contains("portableDataRootOf(osName, System.getenv(), liveExecutablePath(), AppInfo.productName(channel))"),
+            "the portable decision must run with the production inputs and win over the per-channel dir",
+        )
+        assertTrue(
+            source.contains("AppInfo.dataName(channel)"),
+            "the app data dir must resolve under the per-channel STORAGE name (AppInfo.dataName, not the install identity)",
+        )
+        assertTrue(
+            source.contains("appDataDirFor("),
+            "the per-channel dir must go through appDataDirFor (the migration + copy + merge-back wiring)",
+        )
+        assertTrue(
+            source.contains("AppInfo.dataName(AppVersion.channel)"),
+            "the default secret store must target the per-channel storage name",
+        )
+        assertTrue(
+            source.contains("migrateSharedSecret(store, selectSecretStore(osName, AppInfo.NAME))"),
+            "the one-time shared → channel secret migration must stay wired for a channel-suffixed name",
+        )
     }
 }
