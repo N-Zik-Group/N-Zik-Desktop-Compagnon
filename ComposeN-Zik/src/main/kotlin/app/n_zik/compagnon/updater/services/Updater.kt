@@ -244,8 +244,8 @@ object Updater {
      * (release-pkg install) or none (AUR install — the updater is blocked before it
      * reaches a check on that path).
      *
-     * @throws NoSuchFileException when no same-channel release exists (the phone's mapping:
-     *   "no update available").
+     * @throws NoSuchFileException when no same-channel release exists, or the best release ships
+     *   no asset for this install mode (the phone's mapping: "no update available").
      *
      * **Toasts**: only the forced (explicit user) checks toast — the startup/background check
      * is silent (a repo with no release would otherwise toast « No update available » on every
@@ -292,9 +292,6 @@ object Updater {
         // Find the best release for this channel
         val bestRelease = findBestRelease(releases, channel) ?: throw NoSuchFileException("")
 
-        this@Updater.githubRelease = bestRelease
-        this@Updater.tagName = bestRelease.tagName
-
         // The asset of this channel for the detected install mode (the phone's `extractBuild`
         // APK-name matching, replaced by the channel artifact names; null = no asset — the
         // pacman/AUR hint shows instead of a download).
@@ -305,10 +302,20 @@ object Updater {
             packageManager,
             isReleasePackage = isReleasePackage,
         )
-        this@Updater.build = when (assetName) {
+        val resolvedBuild = when (assetName) {
             null -> null
             else -> bestRelease.builds.firstOrNull { it.name == assetName } ?: throw NoSuchFileException("")
         }
+
+        // Only publish the release once its asset resolved (the phone's ordering — its
+        // `fetchUpdate` resolves the APK first, then sets `githubRelease`: "Only publish the
+        // release once its APK resolved successfully, so a failed extraction reports 'no update'
+        // instead of a stale or undeliverable one"): a missing asset throws BEFORE the release is
+        // set, so the UI stays clean (no stale release, no "version not found" half-state, no
+        // fallback to the raw release body in place of the changelog)
+        this@Updater.githubRelease = bestRelease
+        this@Updater.tagName = bestRelease.tagName
+        this@Updater.build = resolvedBuild
 
         // The release's changelog (dev → dev.txt; stable/beta → the {code}.txt linked in the body)
         val changelogUrl = changelogUrlOf(bestRelease)

@@ -331,6 +331,53 @@ class FetchUpdateTest {
         }
     }
 
+    @Test
+    fun `a best release without the install-mode asset throws without publishing the release`() = runTest {
+        // The phone's publish ordering (its `fetchUpdate`: resolve the APK first, only then set
+        // `githubRelease` — "Only publish the release once its APK resolved successfully, so a
+        // failed extraction reports 'no update' instead of a stale or undeliverable one"): a
+        // same-channel best release that ships no asset for this install mode (a renamed-era
+        // release) must throw the "no update available" `NoSuchFileException` BEFORE the release
+        // is published — the UI stays clean (no stale release, no "version not found"
+        // half-state, no fallback to the raw release body in place of the changelog) instead of
+        // showing a release that cannot be delivered
+        val oldEraAsset = "n-zik-desktop-compagnon-dev-0.0.2.exe" // the pre-rename asset name
+        val client = clientFor(
+            """
+            [
+              {
+                "id": 1,
+                "tag_name": "v0.0.2",
+                "name": "v0.0.2",
+                "body": "Release notes with no changelog link",
+                "prerelease": false,
+                "assets": [
+                  ${assetJson("v0.0.2", oldEraAsset)}
+                ]
+              }
+            ]
+            """.trimIndent(),
+        )
+        var thrown: NoSuchFileException? = null
+        try {
+            Updater.fetchUpdate(
+                client,
+                "stable",
+                installMode = InstallMode.WINDOWS,
+                packageManager = PackageManager.NONE,
+                isReleasePackage = true,
+            )
+        } catch (e: NoSuchFileException) {
+            thrown = e
+        } finally {
+            client.close()
+        }
+        assertNotNull(thrown, "the missing asset maps to the 'no update available' NoSuchFileException")
+        assertNull(Updater.githubRelease, "the release must NOT be published when its asset is missing (the phone's ordering)")
+        assertNull(Updater.tagName)
+        assertNull(Updater.build)
+    }
+
     // ---- spec `spec-updater-parity-fixes`: the pre-fetch cleanup — a failed re-check must
     // clear the previously fetched release (no stale "update available" left to the UI) ----
 

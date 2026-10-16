@@ -67,6 +67,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import androidx.compose.runtime.snapshotFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import app.n_zik.compagnon.bridge.ConnectionState
@@ -122,6 +123,8 @@ import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.playback.services.LocalPlayback
 import app.n_zik.compagnon.playback.services.LocalPlaybackNotice
 import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.components.dialog.updater.NewUpdateAvailableDialog
 import app.n_zik.compagnon.components.ui.screens.home.LibraryTab
 import app.n_zik.compagnon.tray.AppShortcutRequests
 import app.n_zik.compagnon.tray.ShortcutDestination
@@ -367,6 +370,9 @@ fun MainActivity(
     var pages by remember { mutableStateOf(NavPageState.closed) }
     var detail by remember { mutableStateOf<CollectionHeader?>(null) }
     val preferences = LocalPreferences.current
+    // The update page's settings when unpaired (the page also opens from the root update dialog,
+    // which needs no pairing): the app's own settings.json (the paired screens use the same file)
+    val updatePrefs = remember { Preferences() }
     var navBarVisible by remember { mutableStateOf(false) }
     val menuState = remember { MenuState() }
     val onCommand: CommandLauncher = { command -> scope.launch { repository.command() } }
@@ -492,6 +498,19 @@ fun MainActivity(
 
     // Whether the last navigation was a back (the phone's pop transitions) or a forward one (a click)
     var navIsBack by remember { mutableStateOf(false) }
+    // The root update dialog's "go to download" (the phone's `onNavigateToUpdater`, AD-6): the
+    // dialog sits above the navigation, so it raises a one-shot flag consumed here — the update
+    // page opens over the current content (back returns to it)
+    LaunchedEffect(Unit) {
+        snapshotFlow { NewUpdateAvailableDialog.GoToDownloadRequest.requested }
+            .collect { requested ->
+                if (requested) {
+                    NewUpdateAvailableDialog.GoToDownloadRequest.requested = false
+                    navIsBack = false
+                    pages = pages.openUpdate()
+                }
+            }
+    }
     // The phone's home navigation (title click, the player's logo) PUSHES its home route: back returns to
     // the page it left. One level kept (the page and navigation pages left), restored by the back
     var homeReturn by remember { mutableStateOf<Pair<NavPageState, CollectionHeader?>?>(null) }
@@ -699,29 +718,33 @@ fun MainActivity(
                     if (shown.anyPageOpen) {
                         val prefs = preferences
                         Box(modifier = Modifier.fillMaxSize()) {
-                            if (shown.phoneOpen) {
+                            if (shown.updateOpen) {
+                                // The update page replaces the other pages (NAV-7): back closes it
+                                // first, landing on the settings' About tab when it opened from
+                                // the settings, on the home when it opened from the root update
+                                // dialog (the phone's `onNavigateToUpdater`) — unpaired it runs on
+                                // the app's own settings (an update check / download needs no pairing)
+                                UpdateScreen(
+                                    prefs ?: updatePrefs,
+                                    onClose = { navIsBack = true; pages = pages.copy(updateOpen = false) },
+                                )
+                            } else if (shown.phoneOpen) {
                                 PhonePanel(record, connection, onForget = onForget)
                             } else if (prefs != null) {
-                                if (shown.updateOpen) {
-                                    // The update page replaces the settings page (NAV-7): back closes it
-                                    // first, landing on the settings' About tab
-                                    UpdateScreen(prefs, onClose = { navIsBack = true; pages = pages.copy(updateOpen = false) })
-                                } else {
-                                    // The phone keeps its settings destination in the back stack under the
-                                    // update page: its state (scroll, per-tab search) survives the visit
-                                    settingsStateHolder.SaveableStateProvider(SETTINGS_STATE_KEY) {
-                                        SettingsScreen(
-                                            prefs,
-                                            audioCache,
-                                            shown.settingsTab,
-                                            onTabChanged = { pages = pages.onTabChanged(it) },
-                                            onOpenUpdate = { navIsBack = false; pages = pages.openUpdate() },
-                                            // The Réseau tab's "PC server" entry: the window's own
-                                            // Serveur PC page (the header's "Serveur PC" button's
-                                            // transition, spec `spec-fill-pc-ui-gaps-settings` §A3)
-                                            onOpenServer = { navIsBack = false; pages = pages.onPhonePress() },
-                                        )
-                                    }
+                                // The phone keeps its settings destination in the back stack under the
+                                // update page: its state (scroll, per-tab search) survives the visit
+                                settingsStateHolder.SaveableStateProvider(SETTINGS_STATE_KEY) {
+                                    SettingsScreen(
+                                        prefs,
+                                        audioCache,
+                                        shown.settingsTab,
+                                        onTabChanged = { pages = pages.onTabChanged(it) },
+                                        onOpenUpdate = { navIsBack = false; pages = pages.openUpdate() },
+                                        // The Réseau tab's "PC server" entry: the window's own
+                                        // Serveur PC page (the header's "Serveur PC" button's
+                                        // transition, spec `spec-fill-pc-ui-gaps-settings` §A3)
+                                        onOpenServer = { navIsBack = false; pages = pages.onPhonePress() },
+                                    )
                                 }
                             }
                         }
