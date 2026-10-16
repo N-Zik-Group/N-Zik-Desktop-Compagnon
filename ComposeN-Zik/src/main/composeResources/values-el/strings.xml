@@ -389,6 +389,7 @@
     <string name="update_available">Update available</string>
     <string name="app_update_dialog_version">The new version %s can be downloaded!</string>
     <string name="app_update_dialog_size">Το μέγεθος του αρχείου είναι %s</string>
+    <string name="go_to_download">Μεταβείτε στη λήψη</string>
     <string name="downloading_update">Λήψη ενημέρωσης</string>
     <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">No update available</string>
