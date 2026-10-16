@@ -389,6 +389,7 @@
     <string name="update_available">Aktualizace k dispozici</string>
     <string name="app_update_dialog_version">Novou verzi %s lze stáhnout!</string>
     <string name="app_update_dialog_size">Velikost souboru je %s</string>
+    <string name="go_to_download">Přejít ke stažení</string>
     <string name="downloading_update">Stahování aktualizace</string>
     <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">Nejsou dostupné žádné aktualizace</string>
