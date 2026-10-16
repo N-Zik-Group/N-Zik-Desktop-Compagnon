@@ -389,6 +389,7 @@
     <string name="update_available">Güncelleme mevcut</string>
     <string name="app_update_dialog_version">Yeni sürüm %s indirilebilir!</string>
     <string name="app_update_dialog_size">Dosya boyutu %s</string>
+    <string name="go_to_download">İndirmeye git</string>
     <string name="downloading_update">Güncelleme indiriliyor</string>
     <string name="update_download_progress">Güncelleme indiriliyor… %1$d%%</string>
     <string name="info_no_update_available">Güncelleme yok</string>
@@ -408,6 +409,7 @@
     <string name="install_pkg_pacman_command">Paketi şu komutla güncelleyin:</string>
     <string name="install_pkg_manual">Herhangi bir paket yöneticisi algılanmadı. İndirdiğiniz paketi manuel olarak yükleyin.</string>
     <string name="install_replacement_portable">Uygulama klasörünü değiştirin: indirdiğiniz dosyayı mevcut uygulama klasörünün üzerine açın, ardından uygulamayı yeniden başlatın.</string>
+    <string name="install_replacement_portable_linux">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, extract the downloaded .tar.gz in its place (the tarball opens into a new app folder - never over the current one), and relaunch.</string>
     <string name="old_install_path">Mevcut kurulum:</string>
     <string name="beta_title">BETA</string>
     <string name="dev_title">GELİŞTİRİCİ</string>
