@@ -44,6 +44,7 @@ import app.n_zik.compagnon.bridge.library.RemoteLibraryRepository
 import app.n_zik.compagnon.bridge.pairing.CredentialStore
 import app.n_zik.compagnon.bridge.pairing.PairingController
 import app.n_zik.compagnon.bridge.pairing.PairingListener
+import app.n_zik.compagnon.bridge.pairing.PairingState
 import app.n_zik.compagnon.bridge.state.RemotePlayerRepository
 import app.n_zik.compagnon.components.theme.AnimatedAppearance
 import app.n_zik.compagnon.components.theme.rubikFontFamily
@@ -204,6 +205,9 @@ fun App(
     // the applied tag for the visible switch): the PC's own "App language" setting — `system` keeps
     // the OS locale, a BCP-47 code applies it, an unknown one falls back to the PC's `values/`.
     val settings by preferences.settings.collectAsState()
+    // The pairing state drives the update-dialogs gate (the root update dialogs wait for the
+    // pairing screen to be over — user request 2026-10-16, see [updateDialogsVisible])
+    val pairingState by controller.state.collectAsState()
     // Synchronous first apply during the root's first composition, before [BridgeScreen] reads the
     // tag: no startup null → tag re-key.
     remember {
@@ -322,11 +326,19 @@ fun App(
                     // The root dialogs sit outside MainActivity's `LocalUiSettings`: the phone's
                     // settings (PitchBlack) reach them through the appearance state
                     CompositionLocalProvider(app.n_zik.compagnon.bridge.state.LocalUiSettings provides appearanceState.uiSettings) {
-                        NewUpdateAvailableDialog.Render()
-                        // The "ask" startup dialog (spec AD-9, the phone's `CheckForUpdateDialog` —
-                        // the v1 confirmation is gone): the phone's info card + Check / Cancel /
-                        // Turn off, active once at startup when the choice is [CheckUpdateState.Ask]
-                        CheckForUpdateDialog.Render()
+                        // The update dialogs wait for the pairing screen to be over (user request
+                        // 2026-10-16): while the state is not [PairingState.Paired] — the pairing
+                        // screen (Unpaired / Validating / Revoked) or the startup Starting phase —
+                        // they are not composed. Their own state (the object-level isActive /
+                        // isCancelled) survives the gate, so an update detected at startup pops the
+                        // instant the user lands on the paired screen, never on top of the pairing UI.
+                        if (updateDialogsVisible(pairingState)) {
+                            NewUpdateAvailableDialog.Render()
+                            // The "ask" startup dialog (spec AD-9, the phone's `CheckForUpdateDialog` —
+                            // the v1 confirmation is gone): the phone's info card + Check / Cancel /
+                            // Turn off, active once at startup when the choice is [CheckUpdateState.Ask]
+                            CheckForUpdateDialog.Render()
+                        }
                     }
                 }
             }
@@ -334,6 +346,16 @@ fun App(
         }
     }
 }
+
+/**
+ * The update-dialogs gate (user request 2026-10-16): the two root update dialogs
+ * ([NewUpdateAvailableDialog] and [CheckForUpdateDialog]) are composed only once the pairing
+ * screen is over. While the app is on the pairing UI ([PairingState.Unpaired] /
+ * [PairingState.Validating] / [PairingState.Revoked]) or still settling ([PairingState.Starting]),
+ * an update detected at startup waits in the dialogs' own (object-level) state and pops as soon
+ * as the state reaches [PairingState.Paired] — any status: the paired screen, not the pairing one.
+ */
+internal fun updateDialogsVisible(state: PairingState): Boolean = state is PairingState.Paired
 
 /** The Windows computer name, editable by the user before pairing (contract §4.3). */
 private fun defaultDeviceName(): String {
