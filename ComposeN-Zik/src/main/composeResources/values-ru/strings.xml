@@ -389,6 +389,7 @@
     <string name="update_available">Доступно обновление</string>
     <string name="app_update_dialog_version">Доступна новая версия %s!</string>
     <string name="app_update_dialog_size">Размер файла - %s</string>
+    <string name="go_to_download">Загрузить</string>
     <string name="downloading_update">Загрузка обновления</string>
     <string name="update_download_progress">Downloading update… %1$d%%</string>
     <string name="info_no_update_available">Нет доступных обновлений</string>
