@@ -36,7 +36,7 @@ If a BMAD skill fails or gets stuck:
 
 ## Known Flaky Test
 
-`PairingListenerTest` ("real listener renews the requestId…") is a known pre-existing flaky test in the full suite (passes alone — a race between the real listener thread and the test dispatcher, recorded in `assets/notes/TODO.txt`). A failure there on otherwise-green code → do NOT burn the 3-attempt build counter chasing it: re-run once (or run the class alone), and if it fails again → HALT and report as the known flaky case instead of treating it as a regression.
+`BridgeSessionTest` ("1001 alone is a stop too") is a known load-sensitive flaky test (open, recorded in `assets/notes/TODO.txt`): a real-time `withTimeout(5_000)` against a real loopback WebSocket — failed 3/3 in isolation on WSL under load, passed 6/6 in a forced A/B (`cleanTest` before each run) → a timing/load flake, not a regression. A failure there on otherwise-green code → do NOT burn the 3-attempt build counter chasing it: re-run once (or run the class alone), and if it fails again → HALT and report as the known flaky case instead of treating it as a regression. (The previous known flake — `PairingListenerTest` "real listener renews the requestId…", a listener-thread/test-dispatcher race — was FIXED 2026-10-07; if it ever fails again, verify it is the old race before treating it as a regression.)
 
 ## Network / Dependency Errors
 

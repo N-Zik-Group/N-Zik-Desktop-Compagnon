@@ -3,7 +3,7 @@
 ## Session Startup Sequence
 
 1. Read AGENTS.md entirely
-2. Read all @referenced rules files (BMAD.md, CODE.md, BUILD.md, WORKFLOW.md, SECURITY.md, RECOVERY.md, BMAD-TOOLS.md)
+2. Read all @referenced rules files (BMAD.md, CODE.md, BUILD.md, WORKFLOW.md, SECURITY.md, RECOVERY.md, LINUX-FLATPAK.md, BMAD-TOOLS.md)
 3. Match user's language (from question tool prompt or BMAD `config.user.toml`)
 4. Announce critical rules (simplified list below)
 5. Ask user using question tool: "Bug, feature, or something else?"
@@ -16,7 +16,7 @@
 
 The `question` tool always appends a free-form **"Type your own answer"** field automatically. Use it so the user is never trapped in a loop:
 
-- **Closed set → real choices.** Offer options ONLY when there is a genuine, short set of mutually distinct choices (e.g. Bug / feature / other; which IDE; commit mode 1/2/3). Every option must be a real, actionable choice.
+- **Closed set → real choices.** Offer options ONLY when there is a genuine, short set of mutually distinct choices (e.g. Bug / feature / other; which IDE; commit mode 1/2). Every option must be a real, actionable choice.
 - **Specific value → open question, NOT a choice.** When you are waiting for the user to TELL you something specific (a path, an issue link, a new version name, a description, or any value that is not a closed set), ask an **open** question. Do NOT frame it as a multiple-choice and do NOT invent a placeholder option such as "répondre", "personnalisé" or "type your answer" — that option just re-triggers the same prompt (infinite loop). Let the tool's built-in free-form field capture the typed answer.
 - **Never fabricate a loop option.** If the only option you could add is "answer / respond / custom", it is meaningless — omit it. A prompt with no genuine closed-set options is simply an open question (ask in plain text if that is cleaner).
 - One question per decision — unrelated decisions are NEVER bundled into a single multi-choice; related questions MAY be grouped in a single question tool call (see Step 1).
@@ -38,8 +38,8 @@ Use this format every session — keep it SHORT:
 7. User suggestions ≠ shortcut (still complete workflow)
 8. Ask IDE ONE at a time (path depends on IDE)
 9. The phone is the single source of truth — no business logic / streaming on the PC; no contract route → inert button with the phone's title
-10. Device token → Windows Credential Manager ONLY (never pairing.json, logs, Done.txt, code)
-11. UI strings → the single composeResources/values/strings.xml (English); %s strings are formatted at the call site (formatMessage/formatText)
+10. Device token → platform secret store ONLY (Windows Credential Manager / Linux keyring / in-memory session store — never pairing.json, logs, Done.txt, code)
+11. UI strings → composeResources/values/strings.xml (English, source of truth) ONLY — `values-*` is Crowdin-managed, never by hand; %s strings are formatted at the call site (formatMessage/formatText)
 12. NEVER skip ahead to later steps — follow Step 1→2→3... in order
 13. After any interruption, re-announce current step before continuing
 14. If you lost context, re-read the current step file
@@ -281,7 +281,7 @@ Some skills use micro-file design where each step is in its own file.
 ### Step 6: Verify
 
 - **Code hygiene gate (MANDATORY — BEFORE the build):** run a cleanup pass over every file in the diff and verify each item (per `rules/CODE.md`):
-  - Unused imports removed; no wildcard imports; imports grouped (stdlib → third-party → project)
+  - Unused imports removed; no wildcard imports (single sanctioned exception: the generated-resources wildcard `import app.n_zik.compagnon.generated.resources.*` — per CODE.md "Imports"); imports sorted LEXICOGRAPHICALLY within the block (per CODE.md "Imports" — do NOT regroup by stdlib/third-party/project)
   - No dead code: no commented-out code blocks, no unused functions/classes/variables/parameters (if intentionally kept: `// TODO(author): reason`)
   - Comment hygiene: no comments that restate the code, KDoc on public APIs, TODOs as `// TODO(author): description`
   - Indentation & formatting: consistent with the surrounding code, no trailing whitespace, newline at end of file
@@ -343,7 +343,7 @@ After the BMAD workflow completes, **MUST follow this exact flow** — NEVER ski
 
 **Step 8d: Commit (only if user says "Functional") — ASK MODE FIRST, THEN EDIT**
 
-This repo has **no version-bump machinery** (no `fastlane/`, no `Updater/`, no versionCode in the catalog; releases are manual GitHub releases — see `assets/notes/TODO.txt` story 13). The commit modes are therefore TWO, not three:
+This repo has **no version-bump machinery** (no `fastlane/`, no automation: `nzikVersionName`/`nzikVersionCode` in the catalog and `Updater/changelogs/` exist, but they are bumped/written ONLY in the manual release chore — rules/BUILD.md "Release chore — channels" — releases are per-channel GitHub releases, see `assets/notes/TODO.txt` story 13). The commit modes are therefore TWO, not three (the phone repo's Bump+commit mode does not apply here):
 
 - **MUST ask user using question tool BEFORE editing ANY file** (NEVER create or modify `assets/notes/Done.txt` before the user has chosen a mode), **translated into `{communication_language}`:**
   ```

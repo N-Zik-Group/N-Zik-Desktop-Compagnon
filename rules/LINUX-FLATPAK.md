@@ -243,7 +243,7 @@ Consequences to know:
   startup — not a failure.
 - **The test source set does NOT see the generated `Res.drawable.*` accessors** — test code that
   needs a drawable reads the file, it does not reference the accessor.
-- **`PairingListenerTest` is known flaky** — re-run once before reporting.
+- **`BridgeSessionTest` is known flaky under load** (real-time timeout vs a real loopback WebSocket — worse on the 9P mount; open, see `TODO.txt`) — re-run once before reporting. The old `PairingListenerTest` flake was FIXED 2026-10-07.
 - **Compose 1.13.0-alpha01**: no `@Composable` inside `runCatching`/`try`-`catch`;
   `Painter.toAwtImage` returns a `PainterImage` that is NOT a `RenderedImage` — encode through a
   `BufferedImage` canvas (the tray's `padTrayImage` pattern) before `ImageIO`.
@@ -255,4 +255,4 @@ Consequences to know:
 - **Hex-encode bytes UNSIGNED** — `"%02x".format(byte)` sign-extends bytes ≥ 0x80 into 8–16
   digits; use `"%02x".format(it.toInt() and 0xFF)` (the MPRIS track id + artwork file names).
 - **A Flatpak bundle is an ostree static delta, not a tar** — inspect by installing, not
-  `tar tf` (rules/BUILD.md "flatpak-builder notes").
+  `tar tf` (rules/BUILD.md "Flatpak (the 4th Linux path)" — the "flatpak-builder 1.4.x notes" bullet).

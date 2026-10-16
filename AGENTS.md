@@ -18,7 +18,7 @@
 
 - Code → `app.n_zik.compagnon.*` ONLY (single package root, single `:ComposeN-Zik` module — there is no legacy namespace in this repo)
 - Log with `java.util.logging.Logger` tagged by class name (no `println`/`printStackTrace` — see rules/CODE.md "Logging")
-- Dispatch coroutines on `NzikDispatchers` named dispatchers only (`UI`, `PLAYBACK`, `MEDIA`, `DATA` — same name/shape as the phone app); fire-and-forget / app-lifetime scopes via `NzikDispatchers.fireAndForget()` — the object is planned, see rules/CODE.md "Coroutines & Dispatchers" (transition note); never a bare `Job()`
+- Dispatch coroutines on `NzikDispatchers` named dispatchers only (`UI`, `PLAYBACK`, `MEDIA`, `DATA` — plus `VISUALIZER` and the two Room executors, ported in full from the phone app and reserved on the PC until a visualizer/database lands); fire-and-forget / app-lifetime scopes via `NzikDispatchers.fireAndForget()`; never a bare `Job()`
 - Use version catalog refs (`gradle/libs.versions.toml`)
 - The wire contract gates everything: hide or disable UI/actions without their contract feature; buttons without a contract route are `InertButton`/`InertMenuItem` carrying the phone's own title — shown, never faked (see rules/CODE.md "Wire Contract")
 - Verify build passes after changes (`gradlew.bat build`)
@@ -35,7 +35,7 @@
 - Adding new dependencies not in `gradle/libs.versions.toml`
 - Any change to the embedded VLC runtime config in `ComposeN-Zik/build.gradle.kts` (`vlcVersion`, `vlcZipUrl`, `vlcZipSha256`, `vlcRuntimeFiles`)
 - Committing code (NEVER without human testing + approval)
-- Commit mode at end of workflow: (1) Done+commit = `assets/notes/Done.txt` only, (2) Wait = nothing — ASK before editing ANY file (see rules/WORKFLOW.md Step 8d). This repo has NO version-bump / fastlane / Updater machinery — do not invent one
+- Commit mode at end of workflow: (1) Done+commit = `assets/notes/Done.txt` only, (2) Wait = nothing — ASK before editing ANY file (see rules/WORKFLOW.md Step 8d). There is NO version-bump / fastlane machinery — `nzikVersionName`/`nzikVersionCode` (catalog) and `Updater/changelogs/` exist but are touched ONLY in the manual release chore (rules/BUILD.md "Release chore — channels"), never by the commit flow — do not invent a bump-in-commit mode
 - Which IDE/tool to use (ask ONE at a time — see rules/BMAD-TOOLS.md for preferred list)
 
 ## 🚫 Never Do
@@ -102,21 +102,30 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 │   │   │                    PlayerRepository/RemotePlayerRepository, ServerClock, BridgeStateMessages),
 │   │   │                    library/ (LibraryRepository/RemoteLibraryRepository, PagedList, ArtworkLoader, LibraryModels),
 │   │   │                    command/ (PlayWindow)
-│   │   ├── components/      UI ported from the phone: ui/screens/ (home, album, artist, localplaylist, player, bridge, settings),
+│   │   ├── components/      UI ported from the phone: ui/screens/ (home, album, artist, localplaylist, player, bridge, settings, profiles),
 │   │   │                    player/ (Player, MiniPlayer, queue, seek bars, controls), menu/ (per-domain item menus),
 │   │   │                    tab/ (chips, toolbars, search, sort), items/ (AlbumItem, ArtistItem, PlaylistItem, ItemContainer),
 │   │   │                    styling/ (Dimensions, HomeItemSize), theme/ (ColorPalette, Typography), themed/ + settings/ + navigation/
 │   │   ├── core/            network/ (BridgeClient + LibraryApi/PlayerApi/AudioApi, CandidateAddresses), navigation/ (BackNavigation),
 │   │   │                    palette/ (pure-Kotlin port of androidx Palette), coil/ (ImageCacheFactory)
 │   │   ├── playback/        vlc/ (VlcAudioEngine, VlcRuntime — embedded VLC 3.0.24), cache/ (AudioCache), services/ (LocalPlayback)
-│   │   ├── enums/ + utils/  AudioQualityFormat, PairingMode, QueueLoopType…; Preferences, Toaster (formatMessage/formatText), PhoneDensity…
-│   │   └── Main.kt, MainActivity.kt, AppInfo.kt, GlobalVars.kt
-│   ├── src/main/composeResources/   drawables/ + font/ (Roboto, Rubik) + values/strings.xml (English, the ONLY strings file)
+│   │   ├── about/           About screen rows (AboutLinks, Contributors, Developer, Translator)
+│   │   ├── platform/        media controls: MPRIS (Linux) + Windows SMTC/thumb bar (MprisMapping/…, WindowsSmtc, WindowsThumbBar,
+│   │   │                    ThumbBarButtons), TaskbarMediaControls, ArtworkImages, WindowController, SingleInstance
+│   │   ├── tray/            Linux tray: StatusNotifierTray, TrayMenu/DbusMenu/AppShortcuts/TraySetup, HostDconf
+│   │   ├── updater/         in-app updater: services/ (Updater, UpdaterHttp, UpdateDownloadManager, ChangelogTranslator),
+│   │   │                    models/ (CheckUpdateState, GithubRelease, InstallMode, UpdaterConstants), ui/ (ChangelogCard, …)
+│   │   ├── enums/ + utils/  AudioQualityFormat, PairingMode, QueueLoopType…; Preferences, Toaster (formatMessage/formatText),
+│   │   │                    PhoneDensity…; coroutines/ (NzikDispatchers)
+│   │   └── Main.kt, MainActivity.kt, AppInfo.kt, GlobalVars.kt, WindowBackground.kt, WindowMinimumSize.kt
+│   ├── src/main/composeResources/   drawables/ + font/ (Roboto, Rubik) + values/strings.xml (English — the ONLY file to edit;
+│   │                                the `values-*` locale dirs are Crowdin-managed)
 │   └── src/test/kotlin/             Tests mirroring the main package structure
 ├── gradle/libs.versions.toml        Version catalog
 ├── assets/notes/                    Done.txt + Changelog_Template.txt + TODO.txt (repo-root working files — NOT an app resources dir)
 └── (WORKSPACE ROOT, one level above N-Zik-Desktop-Compagnon/: `_bmad/` + `_bmad-output/` BMAD installation + specs ·
-    `.agents/` `.agent/` `.claude/` skills · `docs/` reference projects READ-ONLY · `N-Zik/` the phone app — separate repo, NOT part of this one)
+    `.agents/` `.agent/` `.claude/` skills · `docs/` reference projects READ-ONLY · `N-Zik/` the phone app (separate repo, NOT part of this one) ·
+    `N-Zik-Website/` separate project, NOT part of this one)
 ```
 
 | What                | Where                                                                    |
@@ -125,7 +134,7 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 | Contract (bridge)   | `bridge/` (pairing, state, library, command) + `core/network/` (BridgeClient) |
 | Playback            | `playback/` (VLC engine, audio cache, local playback)                     |
 | UI                  | `components/` (screens in `components/ui/screens/`, player in `components/player/`) |
-| Strings (English)   | `ComposeN-Zik/src/main/composeResources/values/strings.xml` — single file, no `values-*` |
+| Strings (English)   | `ComposeN-Zik/src/main/composeResources/values/strings.xml` — the ONLY file to edit (English source of truth); the `values-*` locale dirs are Crowdin-managed (repo-root `crowdin.yml`), never by hand |
 | Pairing persistence | token → the platform secret store (Windows Credential Manager "N-Zik Desktop Compagnon"; Linux keyring via libsecret, in-memory session store without a keyring); non-secret fields → `%APPDATA%\<storage name>\pairing.json` (Windows) / `~/.config/<storage name>/pairing.json` (Linux — the XDG config dir, `$XDG_CONFIG_HOME` override honoured; the legacy `~/N-Zik Desktop Compagnon/` is migrated once on first launch, `CredentialStore`); the storage name is per-channel (`AppInfo.dataName` — the base name, shared by stable AND beta, `… DEV` / `… DEBUG` / `… GIT` for dev / debug / -git; the legacy beta `… BETA` dir is merged back into the base once — base wins, `… BETA` survives); a self-contained portable (the `portable.txt` marker at the app root, written only by the two portable archive tasks) instead stores its data in `<portable root>/data/` — the token STILL lives in the OS secret store; PC-local settings → `settings.json`; audio cache → `%APPDATA%\<storage name>\cache\audio\` |
 | Database            | none on the PC — the phone's local DB is the only database; schema work belongs to the N-Zik (phone) repo |
 | Tests               | `ComposeN-Zik/src/test/kotlin/`                                                   |

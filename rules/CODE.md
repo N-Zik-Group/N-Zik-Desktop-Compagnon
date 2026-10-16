@@ -217,6 +217,8 @@ All named threads/dispatchers in the app come from `NzikDispatchers` (`app.n_zik
 | `NzikDispatchers.PLAYBACK`   | single `nzik-playback`        | Audio work (VLC engine commands, `LocalPlayback`, audio-cache bookkeeping) — single thread guarantees ordering                  |
 | `NzikDispatchers.MEDIA`      | pool of 2 `nzik-media-*`      | CPU-bound media work: cover palette extraction, morphing-shape math, bitmap work, seek-bar wave sampling                       |
 | `NzikDispatchers.DATA`       | `Dispatchers.IO`              | Network & disk IO: Ktor bridge calls (REST + WS), `pairing.json`/`settings.json`, audio download, the pairing listener sockets |
+| `NzikDispatchers.VISUALIZER` | single `nzik-visualizer`      | **Reserved on the PC** (no visualizer yet) — ported in full from the phone, same name/shape; lazy + daemon, no thread until first access |
+| `NzikDispatchers.ROOM_QUERY_EXECUTOR` / `ROOM_TX_EXECUTOR` | 4-thread `nzik-room-query-*` / `nzik-room-tx-*` | **Reserved on the PC** (no database — the phone's local DB is the only one); pass to Room's `queryExecutor`/`transactionExecutor` if a database is ever added |
 
 Rules:
 
@@ -227,7 +229,7 @@ Rules:
 - Use `withContext(NzikDispatchers.X)` to move work between named dispatchers; cancel regular coroutines in `DisposableEffect`
 - Unit tests may still use `Dispatchers.setMain()`/`Dispatchers.resetMain()`; the established test style is `runTest` with virtual time (see Testing); real-socket tests (the pairing listener) run on the real dispatcher by design
 
-> **Transition — `NzikDispatchers` is planned, not yet in the tree:** creating it (in `utils/coroutines/`, same shape as the phone app's) is a tracked step (see `assets/notes/TODO.txt`, "Threading"). Until it lands, the established `CoroutineScope(SupervisorJob() + Dispatchers.X)` pattern (`Toaster.kt`, `ShuffleOkFlash.kt`, `ArtworkLoader.kt`, `BridgeSession.kt`, `PairingListener.kt`) stands in for the fire-and-forget helper. Pre-existing raw `Dispatchers.*` usages in the current tree (`Main.kt`, `MainActivity.kt`, `BridgeClient.kt`, `Player.kt`, `PairingListener.kt`) are **grandfathered** — do NOT opportunistically migrate them unless the user asks (same treatment the phone repo gives its grandfathered legacy usages).
+> **No grandfathered raw dispatchers left:** `NzikDispatchers` (in `utils/coroutines/`, ported in full from the phone app — tracked in `assets/notes/TODO.txt`, "Threading") is in the tree, and every fire-and-forget / app-lifetime scope (`Toaster`, `ShuffleOkFlash`, `ArtworkLoader`, `BridgeSession`, `PairingListener`) goes through `NzikDispatchers.fireAndForget`. The `VISUALIZER` and Room-executor entries are **reserved** (no visualizer, no database on the PC yet) — use them only when that changes.
 
 ## UI — Compose Multiplatform Desktop + Material 3
 
@@ -255,11 +257,11 @@ Menu sheets follow the phone's `CustomModalBottomSheet` semantics, ported at `Me
 ## Local Persistence (no database on the PC)
 
 - **The phone's local DB is the only database.** The PC persists nothing of the library — lists are REST snapshots in memory (`PagedList`, contract §12). Never add a database to this repo
-- **Device token:** Windows Credential Manager only (generic credential "N-Zik Desktop Compagnon", via `WindowsCredentialSecretStore`'s JNA `CredWriteW`/`CredReadW`/`CredDeleteW`). NEVER in `pairing.json`, NEVER in logs, NEVER in `Done.txt`/README/code
-- **`pairing.json`** (`%APPDATA%\N-Zik Desktop Compagnon\`): the non-secret pairing fields only (`serverIps`, `serverPort`, `serverName`, `deviceId`, `deviceName`) — a missing token or a corrupt file must read as "not paired"
+- **Device token:** the platform secret store ONLY — the Windows Credential Manager (generic credential "N-Zik Desktop Compagnon", via `WindowsCredentialSecretStore`'s JNA `CredWriteW`/`CredReadW`/`CredDeleteW`), the Linux keyring (GNOME Secret Service, via `LinuxSecretStore`'s `libsecret`), or the in-memory session store on a keyring-less Linux machine (`SessionSecretStore` — visible note on the pairing screen, re-pairing after a restart). NEVER in `pairing.json`, NEVER in logs, NEVER in `Done.txt`/README/code (see rules/SECURITY.md)
+- **`pairing.json`** (Windows `%APPDATA%\<storage name>\` / Linux `~/.config/<storage name>` — the per-channel storage name, see AGENTS.md "Pairing persistence"): the non-secret pairing fields only (`serverIps`, `serverPort`, `serverName`, `deviceId`, `deviceName`) — a missing token or a corrupt file must read as "not paired"
 - **`settings.json`** (same dir): PC-local settings via `utils/Preferences.kt`; an unreadable file reads as defaults (log a warning), never crashes
 - **"Forget this phone" / revocation must remove BOTH** the Credential Manager entry and `pairing.json` (revocation paths go through `RevocationPolicy` — reuse it, don't branch around it)
-- **Audio cache** (`%APPDATA%\N-Zik Desktop Compagnon\cache\audio\`): PC-local, replayed without asking the phone; size capped by the app's settings (the phone's "Song cache max size" values, 2 GB default; "Turn off" downloads nothing)
+- **Audio cache** (the app data dir — Windows `%APPDATA%\<storage name>\cache\audio\`, Linux `~/.config/<storage name>/cache/audio`; see rules/SECURITY.md): PC-local, replayed without asking the phone; size capped by the app's settings (the phone's "Song cache max size" values, 2 GB default; "Turn off" downloads nothing)
 
 ## Network Resilience
 
@@ -295,11 +297,11 @@ class PagedListTest {
 
 ## Known Flaky Test
 
-`PairingListenerTest` "real listener renews the requestId…" is intermittently flaky in the full suite (passes alone) — a race between the real listener thread and the test dispatcher (recorded in `TODO.txt`). One failure in an otherwise-green suite → re-run once; if it fails again → report it as the known flake, don't burn the 3-attempt build counter chasing it.
+`BridgeSessionTest` "1001 alone is a stop too" is the known flaky case (open, recorded in `TODO.txt`): a real-time `withTimeout(5_000)` against a real loopback WebSocket — failed 3/3 in isolation on WSL under load (right after a full suite + a package build on the 9P mount), passed 6/6 in a forced A/B (`cleanTest` before each run) → a load-sensitive timing flake, not a regression. A failure there on otherwise-green code → re-run once; if it fails again → HALT and report it as the known flaky case, don't burn the 3-attempt build counter chasing it. (The previous known flake — `PairingListenerTest` "real listener renews the requestId…", a listener-thread/test-dispatcher race — was FIXED 2026-10-07.)
 
 ## Translations
 
-- UI strings live ONLY in `ComposeN-Zik/src/main/composeResources/values/strings.xml` (English, the single strings file — there are no `values-*` files and no Crowdin on the PC)
+- UI strings live ONLY in `ComposeN-Zik/src/main/composeResources/values/strings.xml` (English — the source of truth). The `values-*` locale dirs are **Crowdin-managed** (repo-root `crowdin.yml`): NEVER edit them by hand — add or change strings in `values/strings.xml` and Crowdin propagates them to the locales (same rule as the phone repo)
 - Ported screens **reuse the phone's keys and English texts** — copy the phone's `strings.xml` entries when porting a screen, don't invent new keys for the same concept
 - **Format arguments:** this Compose version's `getString`/`stringResource` apply NO format arguments — any string with `%s` is formatted at the call site with `formatMessage` (suspend) / `formatText` (`utils/Toaster.kt`); the raw message is kept on a mismatch. Never add format args to a string expecting the resource loader to apply them
 
