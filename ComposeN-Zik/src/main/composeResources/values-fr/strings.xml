@@ -566,7 +566,7 @@
     <string name="import_backup">Importer une sauvegarde</string>
     <string name="import_backup_description">Importer une base de données ou des paramètres à partir d\'un fichier</string>
     <string name="title_import_settings_migration">Importer un fichier de migration.</string>
-    <string name="description_import_settings_migration">Pour les anciens utilisateurs avant la conversion.\nUtilisez l\'ancienne application pour faire une sauvegarde pour la migration.</string>
+    <string name="description_import_settings_migration">Pour les anciens utilisateurs avant la conversion.\nUtilisez l\'ancienne application pour effectuer une sauvegarde en vue de la migration.</string>
     <string name="auto_backup_location">Emplacement de sauvegarde automatique</string>
     <string name="auto_backup_location_not_set">Non défini</string>
     <string name="auto_backup_target">Destination de la sauvegarde</string>
