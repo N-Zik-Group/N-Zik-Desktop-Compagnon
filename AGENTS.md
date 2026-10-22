@@ -22,7 +22,7 @@
 - Use version catalog refs (`gradle/libs.versions.toml`)
 - The wire contract gates everything: hide or disable UI/actions without their contract feature; buttons without a contract route are `InertButton`/`InertMenuItem` carrying the phone's own title — shown, never faked (see rules/CODE.md "Wire Contract")
 - Verify build passes after changes (`gradlew.bat build`)
-- New features/bug fixes include at least one test
+- New features/bug fixes include at least one test (minimum bar, not a quota — volume bar + run strategy in rules/BUILD.md "Testing")
 - Show evidence (diffs, test output) — never just claim "done"
 - Use the question tool's choice mechanism ONLY for a genuine closed set of options; when waiting for a specific value or free-form input, ask an OPEN question — never a fake "répondre / personnalisé" option that just loops the same prompt (see rules/WORKFLOW.md "Question Tool — Choices vs. Open Answers")
 - Keep AGENTS.md + `rules/` lean and current as the project evolves — see "Rules Maintenance & Evolution"

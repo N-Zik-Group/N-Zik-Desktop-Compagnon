@@ -261,6 +261,15 @@ Test files: `ComposeN-Zik/src/test/kotlin/` — mirror the source package struct
 
 New features/bug fixes should include at least one test. If the change is pure UI with no extractable logic, note it in the report (the codebase's convention is to extract the math — sheet snap, scrubber, duration indicator — into a pure function and test it).
 
+### Test volume — a bar, not a quota
+
+"at least one test per fix" is a **minimum**, not a target: one focused test that would have caught the regression (or proves the fix) is enough. A fix spanning N distinct areas → at most one test file per area. Do not pad for coverage — a green, targeted test beats an exhaustive suite nobody re-runs.
+
+### Run strategy — targeted locally, full at the gates
+
+- **Local dev:** targeted run on the touched classes only (`gradlew.bat :ComposeN-Zik:test --tests "app.n_zik.compagnon…Test"`). A full suite is NOT required for every change.
+- **Full suite** (`gradlew.bat build` = compile + all tests; real-time timing tests flake more on the 9P/WSL mount — see "jpackage tooling (WSL)") → only before a release, or via CI.
+
 ## GitHub CI (channel workflows + test dry-run)
 
 Three GitHub Actions channel workflows (plus one non-channel test dry-run — `build-test.yaml`, dispatch-only, builds without publishing, the bullet below) under `.github/workflows/` — the channel workflows: one per channel, each run = 1 channel = 1 release = the channel's full set of 7 artifacts, unsigned, no fastlane (port of the phone repo's channel workflows):
