@@ -583,7 +583,7 @@
     <string name="history_is_empty">L’historique est vide</string>
     <string name="image_quality_format">Qualité d\'image</string>
     <string name="download_quality_format">Qualité du Téléchargement</string>
-    <string name="update_downloads">Téléchargements de mises à jour</string>
+    <string name="update_downloads">Mise à jour des téléchargements</string>
     <string name="update_downloads_description">Téléchargez à nouveau les morceaux qui avaient été téléchargés dans une qualité différente</string>
     <string name="settings_enable_autodownload_song">Activer le téléchargement automatique des morceaux</string>
     <string name="auto_download_song_description">Télécharger automatiquement des morceaux en fonction de vos préférences</string>
