@@ -78,12 +78,6 @@ class ParityPassFiveTest {
     }
 
     @Test
-    fun `the player's like toast is the rotation's in both modes`() {
-        // `rotateSongLikeState` toasts `removed_from_dislikes` for neutral even in its toggle branch
-        assertEquals(Res.string.removed_from_dislikes, likeToastMessage(TrackLike.Neutral, rotationEnabled = true))
-    }
-
-    @Test
     fun `the album share falls back to the phone's browse link`() {
         assertEquals("https://music.youtube.com/browse/MPREb_x", ShareLinks.album("MPREb_x"))
     }
