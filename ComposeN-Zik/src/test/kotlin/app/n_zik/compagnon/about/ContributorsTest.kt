@@ -26,8 +26,8 @@ class ContributorsTest {
     fun `the embedded developers parse from the real file`() {
         assertTrue(contributorsJson.isFile, "contributors.json is missing from the module")
         val developers = Contributors.parseDevelopers(contributorsJson.readText())
-        // The embedded file: the desktop repo's 3 contributors
-        assertEquals(3, developers.size)
+        // The embedded file: the desktop repo's 4 contributors
+        assertEquals(4, developers.size)
         // Sorted by `login` (the GitHub username)
         assertEquals(developers.map { it.username }.sorted(), developers.map { it.username })
     }
@@ -35,11 +35,11 @@ class ContributorsTest {
     @Test
     fun `the embedded developers carry the phone fields`() {
         val developers = Contributors.parseDevelopers(contributorsJson.readText())
-        // The first entry of the embedded file: NEVERLeVrai (id 63956787, 515 contributions —
+        // The first entry of the embedded file: NEVERLeVrai (id 63956787, 1211 contributions —
         // re-pinned when the contributors.json refresh workflow updates the list)
         val first = developers.first { it.username == "NEVARLeVrai" }
         assertEquals(63956787, first.id)
-        assertEquals(515, first.contributions)
+        assertEquals(1211, first.contributions)
         assertTrue(first.url.startsWith("https://github.com/"))
         assertTrue(first.avatar.startsWith("https://avatars.githubusercontent.com/"))
         // The embedded data has no GitHub `name` field: the display name falls back to the login
@@ -54,12 +54,12 @@ class ContributorsTest {
         val developers = Contributors.parseDevelopers(contributorsJson.readText())
         val bot = developers.first { it.username == "dependabot[bot]" }
         assertEquals(49699333, bot.id)
-        assertEquals(3, bot.contributions)
+        assertEquals(6, bot.contributions)
         assertEquals("https://github.com/apps/dependabot", bot.url)
         assertEquals("dependabot", bot.handle)
         val actions = developers.first { it.username == "github-actions[bot]" }
         assertEquals(41898282, actions.id)
-        assertEquals(4, actions.contributions)
+        assertEquals(5, actions.contributions)
         assertEquals("https://github.com/apps/github-actions", actions.url)
         assertEquals("github-actions", actions.handle)
     }
