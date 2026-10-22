@@ -131,9 +131,11 @@ New files MUST go under `app.n_zik.compagnon.*`. The tree mirrors the phone app'
 
 ## Comments
 
-- Add comments only for complex or non-obvious logic
+- Comments are the exception, not the rule — the code must read without them first
+- Add comments only for complex or non-obvious logic; explain WHY, never WHAT
 - Do NOT restate what the code already says
-- Use KDoc for public APIs (see example below)
+- Single-line `//` is the default; a comment block > 2 lines is a smell — split it or delete it
+- No narrative paragraphs, no wall-of-text blocks, no banner/header comments
 - Mark TODOs with `// TODO(author): description`
 - **Ported-code note:** when a screen/constant is copied from the phone, the KDoc states the phone origin (file/lines) and any deliberate deviation — this is the convention throughout `components/`; keep it when adding ported code
 
@@ -148,19 +150,30 @@ counter++
 val debounceMs = LIVE_RELOAD_DEBOUNCE_MS
 ```
 
-### KDoc Format
+### KDoc — concise only
+
+- Default: one line, no @tags: `/** Fetches song by id. */`
+- Multi-line KDoc ONLY for genuinely complex APIs; one short sentence per @tag, never restate the type
+- Hard cap: max 3 @tags (one line each) — beyond that, trim until only the non-obvious information remains
 
 ```kotlin
+// GOOD — one-liner for a self-evident API
+/** Marks the videoId as failed for CLIENT_FAILURE_TTL_MS. */
+
+// GOOD — multi-line only when complex, ≤ 3 short @tags
 /**
  * Reads the next page of a collection from the phone.
  *
  * @param offset 0-based offset into the phone's list
  * @param limit page size (contract default 100)
  * @return the page plus the collection total
- * @throws IOException if the phone is unreachable
  */
 suspend fun nextPage(offset: Int, limit: Int): Page
 ```
+
+### KDoc/comment cleanup (mandatory on touch)
+
+When a diff touches a file whose existing comments/KDoc violate the rules above (wall-of-text block, restated code, over-cap KDoc), trim them in the same commit — minimal trims, no semantic change to the code itself. Do NOT launch a repo-wide comment-cleanup pass on your own initiative — that is a dedicated task, run only on explicit user request.
 
 ## Dead Code
 
