@@ -134,7 +134,7 @@ class InstallModeDetectionTest {
     }
 
     // spec `spec-windows-portable-zip` D1, review loopback 2: the registry cross-check
-    // (the installer's directory page is editable — an install can sit in a custom folder) ----
+    // (the installer's directory page is editable — an install can sit in a custom folder)
 
     @Test
     fun `a custom-dir NSIS install is windows when the installer recorded its dir`(@TempDir root: File) {
@@ -226,7 +226,7 @@ class InstallModeDetectionTest {
     }
 
     // spec `spec-updater-parity-fixes`: the cross-scope reader (a per-user AND a global
-    // install of the same channel can coexist — the hive matching the instance dir wins) ----
+    // install of the same channel can coexist — the hive matching the instance dir wins)
 
     @Test
     fun `the matching hive wins over the hkcu-first degradation`() {

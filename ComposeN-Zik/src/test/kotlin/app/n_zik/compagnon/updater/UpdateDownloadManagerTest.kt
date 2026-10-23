@@ -166,7 +166,7 @@ class UpdateDownloadManagerTest {
     }
 
     // The Windows install helper script (interactive NSIS — the user decisions replaced the
-    // silent design, the per-user design and the machine-level-only jpackage exe) ----
+    // silent design, the per-user design and the machine-level-only jpackage exe)
 
     private fun helperScript(): String = UpdateDownloadManager.windowsInstallScript(
         // ONE consistent dev-channel layout: the install dir (the channel DISPLAY name —
@@ -287,7 +287,7 @@ class UpdateDownloadManagerTest {
     }
 
     // The install failure marker (the helper writes it on a failed install, the app consumes
-    // it at the next startup) ----
+    // it at the next startup)
 
     @Test
     fun `consumeInstallFailureMarker returns the content, deletes the marker, null when absent`() {

@@ -462,7 +462,7 @@ class FetchUpdateTest {
     }
 
     // spec `spec-updater-parity-fixes`: the pre-fetch cleanup — a failed re-check must
-    // clear the previously fetched release (no stale "update available" left to the UI) ----
+    // clear the previously fetched release (no stale "update available" left to the UI)
 
     @Test
     fun `a failed re-check clears the previously fetched release`() = runTest {
