@@ -26,6 +26,7 @@ class PackageNameIdentityTest {
     fun `the exposed windows package name matches the per-channel product name`() {
         // The build exposes the effective channel + the jpackage Windows package name (same
         // pattern as the LinuxPackagePinTest pins): a drift would desync the installer identity
+
         // from the in-app updater's per-channel product name (spec `spec-updater`, AD-8).
         val channel = System.getProperty("channel") ?: error("the build must expose the effective channel")
         val exposed = System.getProperty("windows.packageName") ?: error("windows.packageName is not exposed to the tests")

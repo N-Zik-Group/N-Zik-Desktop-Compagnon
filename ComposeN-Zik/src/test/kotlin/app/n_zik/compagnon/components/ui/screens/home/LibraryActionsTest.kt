@@ -220,7 +220,7 @@ class LibraryActionsTest {
         assertEquals(listOf<Sent>(Sent.Add(listOf("b"), QueuePosition.Next, 1), Sent.Add(listOf("b"), QueuePosition.End, 1)), player.sent)
     }
 
-    // ---- Contract 1.12.0: a smart-shuffle recommendation acts on its track alone ----
+    // Contract 1.12.0: a smart-shuffle recommendation acts on its track alone
 
     @Test
     fun `a recommendation click plays that track alone`() = runTest {
@@ -277,7 +277,7 @@ class LibraryActionsTest {
         assertFalse(actions.trackActions(MutableStateFlow(PagedState(items = emptyList())), 0, "a", live = true)!!.enabled)
     }
 
-    // ---- Contract 1.10.0 (`queue.fullList`): the phone builds the queue from the WHOLE list ----
+    // Contract 1.10.0 (`queue.fullList`): the phone builds the queue from the WHOLE list
 
     private val fullListFeatures = setOf("playback", "queue", "queue.fullList")
 
@@ -438,7 +438,7 @@ class LibraryActionsTest {
         assertEquals(1, messages.size)
     }
 
-    // ---- §10.2 writes (since 1.7): the explicit state, the confirmed `200` patches the lists ----
+    // §10.2 writes (since 1.7): the explicit state, the confirmed `200` patches the lists
 
     @Test
     fun `a confirmed dislike on the All chip drops the row from the list`() = runTest {
@@ -531,7 +531,7 @@ class LibraryActionsTest {
         assertEquals(listOf("7" to true), fake.playlistPins)
     }
 
-    // ---- The player's heart: a like alone moves no phone player event ----
+    // The player's heart: a like alone moves no phone player event
 
     private fun queued(): PlayerState = PlayerState(
         queue = listOf(Track("t1"), Track("t5"), Track("t5"), Track("t7")),

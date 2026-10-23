@@ -65,6 +65,7 @@ fun PlaylistsMenu() {
 
     // The phone's split (its 182-190), extracted as a pure function (spec
     // `spec-fill-pc-ui-gaps-menus`, matrix "Sous-menu Ajouter à une playlist"): pinned first, then
+
     // the rest minus the generated rewind and legacy `monthly:` playlists (never add-to targets)
     val (pinnedPlaylists, unpinnedPlaylists) = playlistsAddToSections(items)
 
@@ -177,10 +178,7 @@ private fun PlaylistCard(playlist: Playlist) {
     )
 }
 
-/**
- * The phone's `SettingIcon` (its 110-127): the accent-tinted 18 dp icon in a 32 dp box on a 10 % accent
- * square (PC drawables, no material icons).
- */
+/** The phone's `SettingIcon` (its 110-127): the accent-tinted 18 dp icon in a 32 dp box on a 10 % accent square (PC drawables, no material icons). */
 @Composable
 private fun PlaylistSettingIcon() {
     Box(

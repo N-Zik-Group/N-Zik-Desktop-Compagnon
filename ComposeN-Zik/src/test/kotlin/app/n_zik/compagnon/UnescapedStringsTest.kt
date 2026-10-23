@@ -72,7 +72,7 @@ class UnescapedStringsTest {
             .map { m -> m.groupValues[1] to m.groups["value"]!!.value }
             .toList()
 
-    // ------------------------------------------------------------------ (a) the real generated files
+    // (a) the real generated files
 
     @Test
     fun `the generated fr starting is unescaped`() {
@@ -119,7 +119,7 @@ class UnescapedStringsTest {
         assertTrue(offenders.isEmpty(), "generated values still carry Android escaping: ${offenders.take(10)}")
     }
 
-    // ---------------------------------------------------------------------- (b) the pure semantics
+    // (b) the pure semantics
 
     @Test
     fun `an escaped apostrophe becomes a plain apostrophe`() {

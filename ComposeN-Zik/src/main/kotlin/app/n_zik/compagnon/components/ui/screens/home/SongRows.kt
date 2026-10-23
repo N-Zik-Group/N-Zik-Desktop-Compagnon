@@ -4,18 +4,12 @@ import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.state.SongRecommendations
 import app.n_zik.compagnon.bridge.state.Track
 
-/**
- * A row of the Songs tab: a track of the loaded list at [loadedIndex], or a smart-shuffle
- * recommendation of the phone (contract §10.1, since 1.12.0) — `loadedIndex == null`.
- */
+/** A row of the Songs tab: a track of the loaded list at [loadedIndex], or a smart-shuffle recommendation of the phone (contract §10.1, since 1.12.0) — `loadedIndex == null`. */
 data class SongRow(val track: Track, val loadedIndex: Int?) {
     val isRecommended: Boolean get() = loadedIndex == null
 }
 
-/**
- * The phone's recommendations matching the PC's chip: they apply only when the phone's Songs tab is
- * on the same chip ([chipFilter], `null` for a PC-only chip) — an empty list otherwise.
- */
+/** The phone's recommendations matching the PC's chip: they apply only when the phone's Songs tab is on the same chip ([chipFilter], `null` for a PC-only chip) — an empty list otherwise. */
 fun matchingRecommendations(recommendations: SongRecommendations?, chipFilter: SongFilter?): List<Track> =
     if (recommendations != null && chipFilter != null && recommendations.filter == chipFilter.wire) {
         recommendations.items.map { it.track }

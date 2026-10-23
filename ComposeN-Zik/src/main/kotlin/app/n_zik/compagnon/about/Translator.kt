@@ -36,11 +36,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 
-/**
- * A translator of the N-Zik project (spec `spec-updater` AD-10 — port of the phone's
- * `Translator` model, Gson swapped for kotlinx.serialization, the same JSON field names: the
- * embedded `translators.json`).
- */
+/** A translator of the N-Zik project (spec `spec-updater` AD-10 — port of the phone's `Translator` model, Gson swapped for kotlinx.serialization, the same JSON field names: the embedded `translators.json`). */
 @Serializable
 data class Translator(
     @SerialName("username") val username: String,

@@ -3,11 +3,7 @@ package app.n_zik.compagnon.components.player
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-/**
- * The player sheet's hand-over curves (port of the phone's `miniPlayerFade` / `playerContentFade`): the
- * mini-player is fully faded out exactly when the player content starts fading in — no pop, no overlap,
- * no empty gap.
- */
+/** The player sheet's hand-over curves (port of the phone's `miniPlayerFade` / `playerContentFade`): the mini-player is fully faded out exactly when the player content starts fading in — no pop, no overlap, no empty gap. */
 class PlayerSheetTest {
 
     @Test

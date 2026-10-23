@@ -1,9 +1,6 @@
 package app.n_zik.compagnon.bridge.state
 
-/**
- * Result of [StateReducer.reduce]: the new state, whether the message was applied (its revision
- * became the state's `last`) and whether a `requestSnapshot` must be sent.
- */
+/** Result of [StateReducer.reduce]: the new state, whether the message was applied (its revision became the state's `last`) and whether a `requestSnapshot` must be sent. */
 data class Reduction(val state: SyncState, val applied: Boolean = false, val requestSnapshot: Boolean = false)
 
 /**

@@ -180,8 +180,7 @@ class LocalPlaybackTest {
         audioOutput = output,
     )
 
-    /** A fingerprint of everything the actor's work leaves behind (engine calls, forges, probes,
-     *  downloads, notices): [settle]'s progress marker. */
+    /** A fingerprint of everything the actor's work leaves behind (engine calls, forges, probes, downloads, notices): [settle]'s progress marker. */
     private fun workSignal(): Int =
         engine.calls.size * 1_000_000_000 +
             audio.forges.size * 1_000_000 +
@@ -229,6 +228,7 @@ class LocalPlaybackTest {
             if (System.currentTimeMillis() > deadline) {
                 // The budget is exhausted before the expected play call(s) arrive: fail the test explicitly
                 // (a late, misleading assertion on the last call would hide the missing play — spec
+
                 // `spec-arch-binary-package-release`, loop 2 G15)
                 throw AssertionFailedError("awaitPlay: expected $expectedCalls play call(s), got ${engine.playCalls().size} (calls: ${engine.calls})")
             }

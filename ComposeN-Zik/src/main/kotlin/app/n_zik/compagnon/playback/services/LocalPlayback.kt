@@ -154,8 +154,6 @@ class LocalPlayback(
         engine?.stop()
     }
 
-    // ---- Actor ------------------------------------------------------------------------------------
-
     private suspend fun handle(input: Input) {
         if (closed) return
         when (input) {

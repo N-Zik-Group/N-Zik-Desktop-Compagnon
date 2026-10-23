@@ -8,10 +8,7 @@ import java.util.logging.Logger
 
 private val log = Logger.getLogger("WindowMinimumSize")
 
-/**
- * The smallest window the desktop layout is designed for, in logical (DPI-scaled) pixels — the
- * same floor as the Spotify desktop app (about 1000 x 750 at any display scale).
- */
+/** The smallest window the desktop layout is designed for, in logical (DPI-scaled) pixels — the same floor as the Spotify desktop app (about 1000 x 750 at any display scale). */
 internal val PREFERRED_MINIMUM_WINDOW_SIZE = Dimension(1000, 750)
 
 /**

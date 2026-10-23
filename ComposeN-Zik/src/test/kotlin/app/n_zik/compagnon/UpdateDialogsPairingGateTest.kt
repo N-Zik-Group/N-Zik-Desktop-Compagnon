@@ -59,6 +59,7 @@ class UpdateDialogsPairingGateTest {
     fun `main gates both dialogs behind the pairing state`() {
         // Shared-source pin: the gate is referenced in Main.kt and BOTH dialogs are composed
         // after it (inside it) — a dropped gate or a render moved before the gate fails here
+
         // while the behavior tests alone could not catch it
         val source = File("src/main/kotlin/app/n_zik/compagnon/Main.kt").readText()
         val gate = source.indexOf("updateDialogsVisible(")

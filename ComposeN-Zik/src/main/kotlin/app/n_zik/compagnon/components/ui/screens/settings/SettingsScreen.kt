@@ -81,6 +81,7 @@ fun SettingsScreen(
 
     // The per-tab search queries (NAV-12): the phone keeps one Search per tab, its query surviving a
     // tab change (its destinations stay alive in the back stack); here they live at the page level,
+
     // the tabs only reading and writing their own
     var searchQueries by remember { mutableStateOf<Map<Int, String>>(emptyMap()) }
 
@@ -121,11 +122,7 @@ fun SettingsScreen(
     }
 }
 
-/**
- * The 7 settings sub-tabs (NAV-1 + spec `spec-fill-pc-ui-gaps-settings`, the phone's label + icon
- * of each, in the phone's order): the 2 new phone tabs (User Interface / Player appearance) are
- * inserted after Général, as on the phone.
- */
+/** The 7 settings sub-tabs (NAV-1 + spec `spec-fill-pc-ui-gaps-settings`, the phone's label + icon of each, in the phone's order): the 2 new phone tabs (User Interface / Player appearance) are inserted after Général, as on the phone. */
 internal val SETTINGS_TABS: List<Pair<StringResource, DrawableResource>> = listOf(
     Res.string.tab_general to Res.drawable.ic_launcher_monochrome,
     Res.string.ui_tab to Res.drawable.ui,
@@ -136,9 +133,6 @@ internal val SETTINGS_TABS: List<Pair<StringResource, DrawableResource>> = listO
     Res.string.about to Res.drawable.information,
 )
 
-/**
- * The phone's `searchCtx` filter (NAV-12, its `GeneralSettings.kt` 311): a section is shown when the
- * query is blank or one of its titles (the section card's, its entries') contains it, case-insensitively.
- */
+/** The phone's `searchCtx` filter (NAV-12, its `GeneralSettings.kt` 311): a section is shown when the query is blank or one of its titles (the section card's, its entries') contains it, case-insensitively. */
 internal fun settingsSearchCtx(query: String, vararg titles: String): Boolean =
     query.isBlank() || titles.any { title -> title.contains(query, ignoreCase = true) }

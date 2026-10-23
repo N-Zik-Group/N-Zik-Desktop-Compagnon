@@ -50,6 +50,7 @@ class ContributorsTest {
     fun `the embedded bot entries parse with their handles from the apps urls`() {
         // The desktop list's bots: the bracketed `login` and the `apps/` profile URL (the
         // `handle` is the URL's last segment, so the card shows @dependabot, not
+
         // @dependabot[bot] — the github-actions entry pins the same split on a second bot)
         val developers = Contributors.parseDevelopers(contributorsJson.readText())
         val bot = developers.first { it.username == "dependabot[bot]" }
@@ -84,6 +85,7 @@ class ContributorsTest {
     fun `the owner entry carries the crowdin profile and the bulk-imported languages`() {
         // The N-Zik project owner's bulk imports translated every target language — the entry's
         // profile is the Crowdin one (the old fast4x entry belonged to the retired upstream
+
         // bootstrap list, which is what the dynamic Crowdin list replaces)
         val translators = Contributors.parseTranslators(translatorsJson.readText())
         val owner = translators.first { it.username == "NEVARLeVrai" }

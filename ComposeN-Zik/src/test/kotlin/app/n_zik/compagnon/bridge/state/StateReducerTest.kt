@@ -262,7 +262,7 @@ class StateReducerTest {
         assertSame(state, StateReducer.reduce(state, ServerStoppedMessage(StopCode.AutoStop, "x")).state)
     }
 
-    // ---- Decoding (contract §1 tolerance, §7.5) ----
+    // Decoding (contract §1 tolerance, §7.5)
 
     @Test
     fun `decoder ignores unknown fields and falls back on unknown enum values`() {

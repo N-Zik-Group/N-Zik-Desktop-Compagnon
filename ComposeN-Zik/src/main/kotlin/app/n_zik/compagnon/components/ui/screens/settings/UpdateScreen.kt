@@ -137,6 +137,7 @@ fun UpdateScreen(
 
     // The translation language + the toggle: persisted in `settings.json` (the phone's
     // `rememberPreference` port, spec AD-9 — the loop-2 closure replaced the v1 in-memory
+
     // `remember`); an unknown persisted code reads as `System`, and the toggle's never-set
     // default is the phone's: active when the app language is not English
     val appLang = Locale.getDefault().language
@@ -156,6 +157,7 @@ fun UpdateScreen(
     val installMode = remember { currentInstallMode() }
     // The package-manager probe (memoized — the blocking `--version` scan runs once per
     // process) — off the composition thread, `null` until it resolves (the shared [InstallStep]
+
     // waits on it)
     var packageManager by remember { mutableStateOf<PackageManager?>(null) }
     LaunchedEffect(installMode) {
@@ -180,6 +182,7 @@ fun UpdateScreen(
 
     // The current changelog (the phone's trigger, L762-770): the cached changelog first, then
     // the current one over the network — only when NOT showing the new update, and re-run when
+
     // the reinstall/update flags change (the "What's new" card stays alive even with no update)
     LaunchedEffect(isReinstalling, hasUpdate) {
         if (isReinstalling || !hasUpdate) {
@@ -201,6 +204,7 @@ fun UpdateScreen(
 
     // The "BETA/DEV/…" title prefix (the shared [channelLabel] — spec
     // `spec-updater-parity-fixes`: the page and the update dialog render it from the single
+
     // shared source)
 
     // The page structure (the phone's `updater/ui/UpdateScreen.kt` Scaffold: the fixed header, the
@@ -308,6 +312,7 @@ fun UpdateScreen(
                                         showMenu = false
                                         // The package-manager probe (when still pending) is a blocking
                                         // `--version` scan — the re-download runs off the composition
+
                                         // thread
                                         NzikDispatchers.fireAndForget(NzikDispatchers.DATA).launch {
                                             redownloadCurrentVersion(installMode, packageManager)
@@ -491,8 +496,10 @@ fun UpdateScreen(
 
             // Changelog Section — the release's changelog when an update is out, else the
             // current version's (cached, then fetched — the phone's logic)
+
             // The phone's fallback chain (L775-782): the release's changelog, then its raw body,
             // then the current version's — the card never goes blank when the release changelog
+
             // was not fetched. (The phone's last-resort bundled `R.raw.release_notes` has no
             // desktop counterpart: no raw release-notes resource exists in this repo.)
             val changelogTextToDisplay = if (isReinstalling || !hasUpdate) {
@@ -611,6 +618,7 @@ fun UpdateScreen(
 
         // The bottom action (the phone's fixed bottomBar, its `UpdateScreen.kt` ~352-480: outside the
         // scrolling column, always visible): the download
+
         // / progression / install gesture, the check-for-update, the GitHub release link
         Box(
             modifier = Modifier
@@ -722,6 +730,7 @@ fun UpdateScreen(
                                     Spacer(modifier = Modifier.height(12.dp))
                                     // The phone keeps its wavy bar visible in this same situation
                                     // (its state parks at 0 % — no Content-Length, the bar stays
+
                                     // on screen) — parity: the wavy track stays visible while the
                                     // byte counter above it carries the progress the phone cannot
                                     LinearWavyProgressIndicator(
@@ -778,11 +787,13 @@ fun UpdateScreen(
                                 is UpdateDownloadManager.DownloadState.Completed -> {
                                     // Hoisted into composable scope: the click lambda is not composable,
                                     // so `stringResource` cannot be called inside it (the dialog's
+
                                     // same fix)
                                     val windowsHelperError =
                                         stringResource(Res.string.error_windows_install_helper)
                                     // The exact command of this mode (`null` = the manual modes —
                                     // the accent button keeps the "Open folder" fallback instead
+
                                     // of a misleading "Install")
                                     val command = installCommand(installMode, packageManager, state.filePath)
                                     // The per-mode install gesture (the shared card + the
@@ -810,6 +821,7 @@ fun UpdateScreen(
                                                     }
                                                     // The command-managed modes (flatpak / apt /
                                                     // dnf / pacman): copy the exact command — the
+
                                                     // user runs it in their terminal (never
                                                     // auto-run, privilege)
                                                     command != null -> copyToClipboard(
@@ -873,6 +885,7 @@ fun UpdateScreen(
                             if (Updater.build == null) {
                                 // An update release exists but carries no downloadable build for
                                 // this installation (the release lacks this channel's asset) —
+
                                 // the card must not be a silent button: it shows the hint and
                                 // re-checks on click
                                 Card(
@@ -972,6 +985,7 @@ fun UpdateScreen(
                                         Toaster.i(Res.string.checking_for_updates)
                                         // The phone's call (L402): the forced check WITHOUT
                                         // the startup dialog — the page re-renders its
+
                                         // "Update available" state instead of a dialog over it
                                         Updater.checkForUpdate(isForced = true, showDialog = false)
                                     },
@@ -1104,8 +1118,10 @@ internal suspend fun redownloadCurrentVersion(
 ) {
     // The re-download re-fetches the RUNNING version's artifact — its changelog too, so the
     // "What's new" card shows the fresh (not cached) text of this version (spec AD-9; the
+
     // page entry already does this, but a re-download implies the cached artifact was stale).
     // The seam (review loop 3 — L3-BH10): the tests pass a no-op so the unit test does no
+
     // live network call
     changelogFetcher()
     val version = AppVersion.versionName

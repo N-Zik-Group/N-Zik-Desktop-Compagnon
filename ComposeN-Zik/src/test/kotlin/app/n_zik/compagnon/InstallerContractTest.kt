@@ -146,8 +146,10 @@ class InstallerContractTest {
     fun `the uninstaller marker contract the in-app detection relies on is pinned`() {
         // spec `spec-windows-portable-zip` D1 (review 2 — VG2-1): the in-app detection
         // discriminates the NSIS install from the portable extract on the uninstaller marker —
+
         // if the installer stops writing it at the exact path the detection reads, every real
         // install would misdetect as portable with a green build. The write side is the
+
         // contract:
         assertTrue(
             nsiText.contains("WriteUninstaller \"${'$'}INSTDIR\\Uninstall ${'$'}{PRODUCT_NAME}.exe\""),
@@ -173,6 +175,7 @@ class InstallerContractTest {
         )
         // The scope defaults place the install in the product-named dir (the D1 folder-name
         // rule holds out of the box; the directory page is editable, which is why the
+
         // detection carries the registry cross-check fallback):
         assertTrue(
             nsiText.contains("InstallDir \"${'$'}PROGRAMFILES\\${'$'}{PRODUCT_NAME}\""),
@@ -226,12 +229,14 @@ class InstallerContractTest {
         )
         // The ON branch creates both shortcuts; the OFF branch deletes the existing ones
         // Pattern: \$\{If\} \$SHORTCUTS == "1"(.*?)\$\{EndIf\} — a raw string interpolates
+
         // $identifiers, so the literal \$ before the var name is written as \ + ${'$'}
         val block = Regex("""\$\{If\} \${'$'}SHORTCUTS == "1"(.*?)\$\{EndIf\}""", RegexOption.DOT_MATCHES_ALL)
             .find(nsiText)?.value
             ?: error("the SHORTCUTS gate block is not found in the NSIS script")
         // Plain-text pins on the .nsi path fragments (raw strings: ${'$'} is the only way to
         // write a literal $ that is not followed by an identifier; a backslash right before
+
         // the closing delimiter stays a literal content character)
         assertTrue(
             block.contains("""CreateDirectory "${'$'}SMPROGRAMS\N-Zik""") &&
@@ -258,6 +263,7 @@ class InstallerContractTest {
         )
         // The elevated child RE-SHOWS the page (D5 — consistent with the scope / directory
         // re-show, no state propagation): the show function must not branch on the elevation
+
         // flag to skip it (a skip here would silently drop the user's choice on a global install)
         assertTrue(
             !nsisFunction("ShortcutsShow").contains("ELEVATED"),
@@ -271,6 +277,7 @@ class InstallerContractTest {
         )
         // The UNINSTALL row (unchanged by this feature — the pin guards the regression): the
         // uninstaller deletes both shortcuts if present (Delete is a no-op when absent). Scoped
+
         // to the uninstall section — a whole-file contains would be satisfied by the
         // install-side OFF-branch Deletes above
         val uninstallSection = nsisSection("Uninstall")

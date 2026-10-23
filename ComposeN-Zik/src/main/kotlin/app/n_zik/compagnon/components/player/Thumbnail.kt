@@ -71,10 +71,7 @@ const val PLAYER_ARTWORK_SIZE_PX = 1000
 /** The phone's `Timeline.Window` of the current track: its place in the queue and its id. */
 private data class Window(val index: Int, val trackId: String, val hasArtwork: Boolean)
 
-/**
- * The direction of the player's cover horizontal swipe (the phone's `Player.kt` 1218-1241 gesture):
- * a drag to the right plays the previous track, a drag to the left the next one.
- */
+/** The direction of the player's cover horizontal swipe (the phone's `Player.kt` 1218-1241 gesture): a drag to the right plays the previous track, a drag to the left the next one. */
 enum class CoverSwipeDirection {
     /** A drag to the right beyond the threshold: the previous track. */
     Previous,
@@ -83,11 +80,7 @@ enum class CoverSwipeDirection {
     Next,
 }
 
-/**
- * The phone's swipe decision (its `Player.kt` 1229-1234): the accumulated drag distance [deltaX]
- * against [threshold] px — right = [CoverSwipeDirection.Previous], left = [CoverSwipeDirection.Next],
- * nothing in between.
- */
+/** The phone's swipe decision (its `Player.kt` 1229-1234): the accumulated drag distance [deltaX] against [threshold] px — right = [CoverSwipeDirection.Previous], left = [CoverSwipeDirection.Next], nothing in between. */
 fun coverSwipeAction(deltaX: Float, threshold: Float): CoverSwipeDirection? = when {
     deltaX > threshold -> CoverSwipeDirection.Previous
     deltaX < -threshold -> CoverSwipeDirection.Next

@@ -33,6 +33,7 @@ class FlatpakPinTest {
     fun `the app id is frozen to the reverse-domain identity`() {
         // The dev channel keeps its OWN app-id (AD-8 — a parallel product, never a replacement
         // of the stable bundle): the frozen install/upgrade/icon identity is the base id, dev
+
         // adds its .dev suffix (whatever the channel, `build.sh package beta|dev` stays green)
         val suffix = if (System.getProperty("channel") == "dev") ".dev" else ""
         assertEquals("com.nzik.desktop.compagnon$suffix", flatpakProp("flatpak.appId"),
@@ -51,8 +52,10 @@ class FlatpakPinTest {
     fun `the bundle file name is frozen to the package name and version`() {
         // The version is the channel-aware in-app version (the catalog's nzikVersionName with the
         // channel suffix — the single rename helper, AD-2) and the package name the channel-aware
+
         // Linux install identity (dev: its own -dev base, AD-8) — read them from the exposed
         // contract so the test pins the derivation, not a copy of the string (a channel-blind
+
         // pin reds `build.sh package beta|dev`).
         val version = System.getProperty("appVersion.versionName")
             ?: error("appVersion.versionName is not exposed to the tests")
@@ -66,22 +69,31 @@ class FlatpakPinTest {
     fun `the finish args keep the pairing keyring windowing audio tray sandbox`() {
         // The sandbox contract: network = the pairing listener + the phone's LAN server,
         // x11/wayland = windowing, pulseaudio = audio, device:dri = GPU rendering,
+
         // xdg-config = the data dir (~/.config/ — the XDG move of 2026-10-12; inside the sandbox
         // the app sees its per-app XDG_CONFIG_HOME under the host's ~/.config/), the legacy
+
         // ~/N-Zik Desktop Compagnon = the one-time migration source of the pre-XDG data dir
         // (pairing/settings/cache — accessed only to move it, then the dir is gone),
+
         // org.freedesktop.secrets = the keyring (the
         // current Secret Service spec bus name — the only keyring D-Bus name the app may reach,
+
         // through the flatpak runtime's D-Bus proxy, no raw bus socket; the legacy
         // org.freedesktop.SecretService name is no longer registered by modern keyrings),
+
         // org.kde.StatusNotifierWatcher = the tray host (without this talk name the sandbox's
         // D-Bus proxy filters the watcher, the SNI probe reads "no host" and the tray stays
+
         // dead — the 2026-10-12 Flatpak tray bug), org.mpris.MediaPlayer2.nzik_compagnon =
         // the MPRIS bus name the app owns for the desktop media controls (spec
+
         // `spec-tray-taskbar-media-controls`), and the SNI own name = the STATIC SNI bus name
         // the app owns for the tray item (dynamic pid-based names cannot be granted to a
+
         // sandbox — SNI_BUS_NAME, pinned against drift).
         // Exposed from the committed template, joined with the unit separator. Note: the socket
+
         // types are validated by flatpak at build time (`--socket=ipc` is rejected — ipc is a
         // `--share=` type; `dri` is a `--device=` type), so a wrong entry fails the build too.
         val args = flatpakProp("flatpak.finishArgs").split("\u001f")
@@ -106,6 +118,7 @@ class FlatpakPinTest {
     fun `the command is the wrapper launcher`() {
         // A Flatpak .desktop cannot carry Env= (flatpak ignores it) and the embedded libs carry
         // no rpath — so the entry point is the nzik wrapper, which exports the runtime dir on
+
         // LD_LIBRARY_PATH before exec-ing the jpackage launcher.
         assertEquals("nzik", flatpakProp("flatpak.command"),
             "the manifest command is the nzik wrapper (the .desktop Exec names the same wrapper)")
@@ -115,14 +128,19 @@ class FlatpakPinTest {
     fun `the wrapper exports the vlc plugin dir, the jna search path and the library search path`() {
         // The wrapper (not the .desktop — flatpak ignores Env=) is the only place the sandbox
         // environment can be set, so it must carry the runtime fixes: VLC_PLUGIN_PATH puts
+
         // the embedded plugin dir on libvlc's search path (libvlc_new() loads its mandatory
         // modules at instance creation; the --plugin-path CLI option was removed in 3.0.24, the
+
         // env var is the only lever — without it playback fails), jna.library.path puts
         // /app/lib on JNA's explicit file search (the 2026-10-08 keyring fix), and
+
         // LD_LIBRARY_PATH keeps both the embedded runtime dir AND /app/lib — JNA's first
         // attempt (the bare dlopen of the unversioned libsecret name) reads this var, so the
+
         // bundled libsecret resolves on any build host, independent of the sandbox's
         // host-dependent ld cache (the 2026-10-11 keyring regression: the libdir default
+
         // drifted with the build host's flatpak-builder — lib vs lib64 — until the manifest's
         // libsecret module normalized the install dir to /app/lib).
         val exports = String(java.util.Base64.getDecoder().decode(flatpakProp("flatpak.wrapperExports"))).split("\u001f")
@@ -144,12 +162,16 @@ class FlatpakPinTest {
     fun `the libsecret module keeps the keyring client pinned`() {
         // The freedesktop runtime does not ship libsecret-1.so: without the module the app
         // falls back to the in-memory session store inside the sandbox and the token would
+
         // not survive a restart. The module builds the pinned official GNOME source into the
         // bundle (found by JNA like the embedded libvlc), so its source must stay pinned —
+
         // a changed pin must be verified, like the VLC pins.
         // 0.21.x (not the older 0.20.x) speaks the current Secret Service spec
+
         // (org.freedesktop.secrets) that modern keyring daemons register — the 0.20 series
         // only targets the legacy org.freedesktop.SecretService name, which modern
+
         // gnome-keyring no longer provides.
         assertEquals("https://github.com/GNOME/libsecret/archive/refs/tags/0.21.8.2.tar.gz",
             flatpakProp("flatpak.libsecretUrl"),
@@ -165,6 +187,7 @@ class FlatpakPinTest {
         val manifest = Json.parseToJsonElement(text).jsonObject
         // The placeholders are the only dynamic values: app-id (+ the icon derived from it),
         // version, and the launcher name (the channel display name — the jpackage app-image
+
         // names its bin/ launcher after the app name, which carries the channel) — nothing
         // else may be substituted by the build.
         val placeholders = Regex("""__[A-Z0-9_]+__""").findAll(text).map { it.value }.toSet()
@@ -179,6 +202,7 @@ class FlatpakPinTest {
         val finishArgs = manifest["finish-args"] as? JsonArray
         // The finish-args are the frozen sandbox contract — an added permission (a broader
         // --filesystem=, a new --share=) is an intent change, not a template edit: pin the
+
         // exact set, not a subset.
         assertEquals(
             setOf(
@@ -198,6 +222,7 @@ class FlatpakPinTest {
             "the finish-args are exactly the frozen sandbox contract (an added permission must go through the spec, not the template)")
         // The module recipes are part of the contract too: a wrong libsecret recipe builds
         // green with every test passing but ships no libsecret-1.so (the keyring silently
+
         // falls back to the session store), and a cp that drops lib ships a bundle that
         // cannot launch (no JRE, no jars, no embedded VLC).
         val modules = manifest["modules"] as? JsonArray
@@ -213,8 +238,10 @@ class FlatpakPinTest {
             "the libsecret config-opts stay as committed (gtk_doc is the known gi-docgen build failure, manpage/vapi/introspection are not shipped; libdir is NOT pinned here — flatpak-builder auto-passes --libdir to meson, and a -Dlibdir config-opt next to it makes meson fail with 'Got argument libdir as both -Dlibdir and --libdir'; the install dir is normalized by the build-command below)")
         // The install-dir normalization (the 2026-10-11 keyring regression): the libdir default
         // drifts with the build host's flatpak-builder (same manifest: one host → /app/lib,
+
         // another → /app/lib64), and /app/lib64 is covered by neither of the wrapper's search
         // paths — so whenever the module installed into lib64, a build-command moves it to
+
         // /app/lib (a no-op when the build already installed into lib).
         assertEquals(
             listOf("if [ -d /app/lib64 ]; then mkdir -p /app/lib && cp -a /app/lib64/. /app/lib/ && rm -rf /app/lib64; fi"),
@@ -229,6 +256,7 @@ class FlatpakPinTest {
             "the app module copies bin + lib + share into /app (dropping lib would ship an unlaunchable bundle)")
         // The launcher chmod must ride the placeholder, not a hardcoded product name: the
         // jpackage bin/ launcher is named after the channel display name ("N-Zik Desktop
+
         // Compagnon DEV" on dev), and a stable-only name chmods a missing file → the dev
         // and beta builds fail in flatpak-builder (2026-10-08 dev run).
         assertTrue(

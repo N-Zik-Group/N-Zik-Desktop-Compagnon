@@ -184,6 +184,7 @@ class MprisMediaControls(
 
     // The track artwork (the `mpris:artUrl` entry): latest-wins per track, ONE PNG file per track
     // in the app directory (the desktops cache the notification artwork by URI — see [artworkFileName]).
+
     // When no track artwork applies (no track, no artwork feature, a failed fetch) the app's own
     // fallback tile ([artFallbackUrl]) shows instead — live request 2026-10-12.
     private val artScope = NzikDispatchers.fireAndForget(NzikDispatchers.DATA)
@@ -201,7 +202,7 @@ class MprisMediaControls(
         @Volatile
         var snapshot: MprisSnapshot = stoppedSnapshot()
 
-        // ---- org.mpris.MediaPlayer2 (the root) --------------------------------------------------------
+        // org.mpris.MediaPlayer2 (the root)
 
         // The per-channel product name — the same name the Windows panel shows (the installed shortcut's)
         override val identity: String get() = ArtifactNames.productName(AppVersion.channel)
@@ -217,7 +218,7 @@ class MprisMediaControls(
         /** `Quit` closes the app (on the EDT — Compose's `exitApplication` wants the UI thread). */
         override fun quit() = onEdt { onQuit() }
 
-        // ---- org.mpris.MediaPlayer2.Player -------------------------------------------------------------
+        // org.mpris.MediaPlayer2.Player
 
         override val playbackStatus: String get() = snapshot.playbackStatus
         override val metadata: Map<String, Variant<out Any>> get() = snapshot.metadata?.toDBusMap() ?: emptyMap()
@@ -360,7 +361,7 @@ class MprisMediaControls(
         log.info("MPRIS: media player object exported on $MPRIS_BUS_NAME")
     }
 
-    // ---- Snapshot pushes (EDT) ---------------------------------------------------------------------------
+    // Snapshot pushes (EDT)
 
     private fun pushCurrentSnapshot() {
         push(mprisSnapshot(lastState, lastConnection, lastFeatures, artUrl))
@@ -413,7 +414,7 @@ class MprisMediaControls(
         else -> throw IllegalStateException("Unknown MPRIS property $name")
     }
 
-    // ---- Track artwork (the `mpris:artUrl` entry) ----------------------------------------------------------
+    // Track artwork (the `mpris:artUrl` entry)
 
     /**
      * Keeps the `mpris:artUrl` entry in sync with the current track (called on the EDT): the PNG is
@@ -561,6 +562,7 @@ internal fun MprisMetadata.toDBusMap(): Map<String, Variant<out Any>> = buildMap
     put(MprisMetadata.TITLE, Variant(title))
     // MPRIS's `xesam:artist` is an array of STRINGS (`as` — review 2026-10-11: `a{vs}` is not a valid
     // wire signature for the entry and KDE clients drop it) — the phone's artists verbatim, blank-free;
+
     // the empty array is the "no artist" representation
     put(MprisMetadata.ARTIST, Variant(artist.filter { it.isNotBlank() }, "as"))
     lengthUs?.let { put(MprisMetadata.LENGTH, Variant(it)) }

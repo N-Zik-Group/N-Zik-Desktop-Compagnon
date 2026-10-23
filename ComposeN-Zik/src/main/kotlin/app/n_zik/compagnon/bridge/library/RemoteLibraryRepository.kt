@@ -64,10 +64,7 @@ class RemoteLibraryRepository(
     override suspend fun playlistBookmark(playlistId: String, bookmarked: Boolean): WriteResult =
         guardedWrite { api.playlistBookmark(address, deviceToken, playlistId, bookmarked) }
 
-    /**
-     * The cache bar is a secondary read: a `401 DEVICE_REVOKED` simply hides it (the main library
-     * reads carry the §6.2 confirmation).
-     */
+    /** The cache bar is a secondary read: a `401 DEVICE_REVOKED` simply hides it (the main library reads carry the §6.2 confirmation). */
     override suspend fun cacheSpace(): LibraryCache? = api.cacheSpace(address, deviceToken)
 
     /** The rewind row and the dislike mode are secondary reads, like the cache bar. */

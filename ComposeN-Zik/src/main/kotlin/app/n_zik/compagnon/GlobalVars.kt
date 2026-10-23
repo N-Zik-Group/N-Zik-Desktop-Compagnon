@@ -77,10 +77,7 @@ val LocalPlayerRepository = staticCompositionLocalOf<PlayerRepository?> { null }
  */
 val LocalLibraryActions = staticCompositionLocalOf<LibraryActions?> { null }
 
-/**
- * The §10.2 write actions (since 1.7): [LibraryActions] when the phone has the `library.write` feature,
- * `null` otherwise (or outside the main window) — the write actions stay inert then.
- */
+/** The §10.2 write actions (since 1.7): [LibraryActions] when the phone has the `library.write` feature, `null` otherwise (or outside the main window) — the write actions stay inert then. */
 @Composable
 fun libraryWrites(): LibraryActions? = LocalLibraryActions.current?.takeIf { it.canWrite }
 

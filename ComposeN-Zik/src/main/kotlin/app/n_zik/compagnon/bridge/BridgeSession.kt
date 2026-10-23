@@ -106,10 +106,7 @@ interface StateChannel {
 /** The phone refused the WebSocket upgrade (contract §6.1): [status] and the §3 error body when readable. */
 class UpgradeRefusedException(val status: Int, val error: ApiError?) : Exception("WebSocket upgrade refused: $status ${error?.code}")
 
-/**
- * Turns a non-`101` answer to a WebSocket upgrade into an [UpgradeRefusedException] carrying the
- * status and the error `code`, which Ktor's own handshake error does not expose.
- */
+/** Turns a non-`101` answer to a WebSocket upgrade into an [UpgradeRefusedException] carrying the status and the error `code`, which Ktor's own handshake error does not expose. */
 @OptIn(InternalAPI::class)
 private val UpgradeRefusal = createClientPlugin("UpgradeRefusal") {
     onResponse { response ->

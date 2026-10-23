@@ -74,6 +74,7 @@ object CheckForUpdateDialog {
 
             // The header + the three option rows are static content: on a window whose 80 %
             // height cap falls below the ~460 dp of content, the bottom row would clip — the
+
             // frame body is not scrollable, so the content scrolls in this column bounded to
             // the frame's remaining space (the DefaultDialog idiom)
             Column(

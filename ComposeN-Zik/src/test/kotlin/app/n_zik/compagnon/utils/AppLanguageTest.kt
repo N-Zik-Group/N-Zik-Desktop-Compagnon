@@ -24,8 +24,6 @@ class AppLanguageTest {
         AppLanguage.applyTag(null)
     }
 
-    // ---- resolveLanguageTag (pure) ----------------------------------------------------------------
-
     @Test
     fun `SYSTEM resolves to the OS locale`() {
         assertNull(AppLanguage.resolveLanguageTag(AppLanguage.SYSTEM))
@@ -40,8 +38,6 @@ class AppLanguageTest {
     fun `an unknown code resolves as a tag, never a crash`() {
         assertEquals("xy", AppLanguage.resolveLanguageTag("xy"))
     }
-
-    // ---- applyTag ----------------------------------------------------------------------------------
 
     @Test
     fun `applying a tag sets the JVM locale and bumps the recomposition key`() {
@@ -104,8 +100,6 @@ class AppLanguageTest {
         assertEquals("id", AppLanguage.appliedTag.value)
         assertEquals("id", Locale.getDefault().language)
     }
-
-    // ---- LANGUAGES + labelOf -----------------------------------------------------------------------
 
     @Test
     fun `the picker has the phone's 48 languages with distinct codes`() {

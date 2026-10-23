@@ -331,6 +331,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
     BoxWithConstraints {
         // The phone's `isLandscape`, DYNAMIC (user decision 2026-10-12): the window can be resized
         // taller than wide (min 1000×750 is a minimum, not a ratio) — recomputed on every resize,
+
         // never static
         val isLandscape = maxWidth > maxHeight
         // The live conditions, pure (spec §C + Design Notes §1-2, tested in ApVisibleEntriesTest)
@@ -351,6 +352,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
         val search = Search(query, onQuery, lazyListState = null)
         // The cards' search ctx (spec §C): the card's title + its rendered entries' titles (the
         // phone's search quirks — e.g. the literal "artist ui roundness", AS:1565 / 1570 — are NOT
+
         // ported)
         val presetsLayoutCtx = settingsSearchCtx(
             search.inputValue,
@@ -477,6 +479,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                     content = {
                         // "Appearance Presets" (AS:1130, action → the phone's `AppearancePresetDialog`)
                         // — INERT, shown only in PORTRAIT (the phone's `!isLandscape`, DYNAMIC): the
+
                         // phone's 6 preset bundles write ~30 phone keys with no PC equivalent — a
                         // click has no effect, a long click toasts the phone's description
                         if (vis.appearancePresets) {
@@ -491,6 +494,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Player type" (AS:1146, the phone's `playerTypeKey`, Essential) — INERT:
                         // the PC's player is coded Essential (the phone's default); the phone's
+
                         // default is shown, no dialog, a click has no effect; no description → no
                         // toast
                         OtherSettingsEntry(
@@ -502,6 +506,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Queue type" (AS:1163, the phone's `queueTypeKey`, Modern) — INERT: the
                         // phone's default (Modern) shown, no dialog, a click has no effect; no
+
                         // description → no toast
                         OtherSettingsEntry(
                             title = stringResource(Res.string.queuetype),
@@ -512,6 +517,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Thumbnail type" (AS:1180, the phone's `thumbnailTypeKey`, Modern) —
                         // INERT: the phone's default (Modern) shown, no dialog, a click has no
+
                         // effect; no description → no toast
                         OtherSettingsEntry(
                             title = stringResource(Res.string.thumbnailtype),
@@ -523,6 +529,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Header style" (AS:1198, the phone's `playerInfoTypeKey`, Modern) — INERT:
                         // the phone's default (Modern) shown, no dialog, a click has no effect; no
+
                         // description → no toast
                         OtherSettingsEntry(
                             title = stringResource(Res.string.pinfo_type),
@@ -541,6 +548,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Show info with icons" (AS:1218, the phone's `playerInfoShowIconsKey`, on)
                         // — INERT: the phone's condition (`playerInfoType == Modern`) is met (the
+
                         // PC's header is coded Modern) — the default switch state, a click has no
                         // effect; the phone's row shows no description → no toast
                         ToggleSettingsEntry(
@@ -555,6 +563,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Control style" (AS:1239, the phone's `playerControlsTypeKey`, Essential)
                         // — INERT: the phone's default (Essential) shown, no dialog, a click has no
+
                         // effect; no description → no toast
                         OtherSettingsEntry(
                             title = stringResource(Res.string.pcontrols_type),
@@ -565,6 +574,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Favorite button" (AS:1256, the phone's `iconLikeTypeKey`, Essential, 7
                         // values) — INERT: the phone's default (Essential) shown, no dialog, a
+
                         // click has no effect; no description → no toast
                         OtherSettingsEntry(
                             title = stringResource(Res.string.icon_like_button),
@@ -587,8 +597,10 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                     content = {
                         // "Show thumbnail" (AS:1287, the phone's `showthumbnailKey`) — INERT, shown
                         // only while the background is the blurred cover (LIVE from the PC key):
+
                         // the phone's effective value is always on (its composition effects
                         // AS:817-825 + its default), so the switch shows on, non-actionnable; the
+
                         // phone's row shows no description → no toast
                         if (vis.showThumbnail) {
                             ToggleSettingsEntry(
@@ -601,33 +613,18 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                             )
                         }
 
-                        /**
-                         * NOT RENDERED (static, spec §C): the phone's "Swipe Animation" (AS:1303) —
-                         * only shown when `!showthumbnail && playerType == Modern && !isLandscape`;
-                         * the effective thumbnail is always on and the PC's player is coded
-                         * Essential, so the condition is statically false. The PC key
-                         * `swipeAnimationsNoThumbnail` exists (used by the player, `Thumbnail.kt`)
-                         * but has no entry here.
-                         */
+                        /** NOT RENDERED (static, spec §C): the phone's "Swipe Animation" (AS:1303) — only shown when `!showthumbnail && playerType == Modern && !isLandscape`; the effective thumbnail is always on and the PC's player is coded Essential, so the condition is statically false. The PC key `swipeAnimationsNoThumbnail` exists (used by the player, `Thumbnail.kt`) but has no entry here. */
 
-                        /**
-                         * NOT RENDERED (static, spec §C): the phone's "Fading edge" (AS:1330) —
-                         * only shown when `showthumbnail && playerType == Modern`; the PC's player
-                         * is coded Essential.
-                         */
+                        /** NOT RENDERED (static, spec §C): the phone's "Fading edge" (AS:1330) — only shown when `showthumbnail && playerType == Modern`; the PC's player is coded Essential. */
 
-                        /**
-                         * NOT RENDERED (static, spec §C): the phone's "Carousel view" (AS:1348) and
-                         * "Thumbnail Size in Expanded Mode" (AS:1364) — only shown when
-                         * `showthumbnail && playerType == Modern && !isLandscape &&
-                         * (expandedPlayerToggle || expandedPlayer)`; the PC's player is coded
-                         * Essential.
-                         */
+                        /** NOT RENDERED (static, spec §C): the phone's "Carousel view" (AS:1348) and "Thumbnail Size in Expanded Mode" (AS:1364) — only shown when `showthumbnail && playerType == Modern && !isLandscape && (expandedPlayerToggle || expandedPlayer)`; the PC's player is coded Essential. */
 
                         // "Shrink thumbnail when paused" (AS:1382, the phone's `thumbnailpauseKey`,
                         // on) — INERT: the phone's condition (`showthumbnail && playerType ==
+
                         // Essential`) is met (the PC's player is coded Essential) — the default
                         // switch state, a click has no effect; the phone's row shows no description
+
                         // → no toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.thumbnailpause),
@@ -666,6 +663,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Cover animation type" (AS:1423, the PC key `coverThumbnailAnimation`, 3
                         // values) — WIRED, shown only while "Show cover thumbnail animation" is on
+
                         // (LIVE from the PC key)
                         if (vis.coverAnimationType) {
                             OtherSettingsEntry(
@@ -679,8 +677,10 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Thumbnail Size" (AS:1446 landscape / AS:1488 portrait, DYNAMIC from the
                         // window's orientation) — INERT: the phone's slider ported with its
+
                         // quick-value buttons, disabled at the phone's default (landscape 0 /
                         // portrait 90); no PC key, a click has no effect; the phone's row shows no
+
                         // description → no toast
                         if (vis.thumbnailSizeLandscape) {
                             InertSliderSettingsEntry(
@@ -710,6 +710,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Thumbnail roundness" (AS:1532, the phone's `thumbnailRoundnessDpKey`,
                         // 12f) — INERT: the phone's slider ported with its quick-value buttons,
+
                         // disabled at the phone's default (12); no PC key, a click has no effect;
                         // the phone's row shows no description → no toast
                         InertSliderSettingsEntry(
@@ -726,8 +727,10 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Artist roundness" (AS:1574, the phone's `artistThumbnailRoundnessDpKey`,
                         // 48f) — INERT: the phone's slider ported with its quick-value buttons,
+
                         // disabled at the phone's default (48 — the preview is a circle); no PC key,
                         // a click has no effect; the phone's row shows no description → no toast
+
                         // (the phone's search quirk, the literal "artist ui roundness", AS:1565 /
                         // 1570, is NOT ported — the ctx uses the entry's real label)
                         InertSliderSettingsEntry(
@@ -744,6 +747,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "UI Roundness" (AS:1615, the phone's `uiRoundnessDpKey`, 25f) — INERT:
                         // the phone's slider ported with its quick-value buttons, disabled at the
+
                         // phone's default (25); no PC key, a click has no effect; the phone's row
                         // shows no description → no toast
                         InertSliderSettingsEntry(
@@ -758,17 +762,9 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                             modifier = Modifier.padding(start = subIndent),
                         )
 
-                        /**
-                         * NOT RENDERED (static, spec §C): the phone's "Remove background blur when
-                         * lyrics is disabled" (AS:1659, `noblurKey`) — only shown when
-                         * `!showthumbnail`; the effective thumbnail is always on.
-                         */
+                        /** NOT RENDERED (static, spec §C): the phone's "Remove background blur when lyrics is disabled" (AS:1659, `noblurKey`) — only shown when `!showthumbnail`; the effective thumbnail is always on. */
 
-                        /**
-                         * NOT RENDERED (static, spec §C): the phone's "Stats for Nerds" (AS:1678,
-                         * `statsfornerdsKey`) — only shown when `!(showthumbnail && playerType ==
-                         * Essential)`; both halves of the condition are met on the PC.
-                         */
+                        /** NOT RENDERED (static, spec §C): the phone's "Stats for Nerds" (AS:1678, `statsfornerdsKey`) — only shown when `!(showthumbnail && playerType == Essential)`; both halves of the condition are met on the PC. */
                     },
                 )
             }
@@ -784,6 +780,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                     content = {
                         // "Player Timeline Size" (AS:1705, the phone's `playerTimelineSizeKey`,
                         // Biggest, 5 values) — INERT: the phone's default (Biggest) shown, no
+
                         // dialog, a click has no effect; no description → no toast
                         OtherSettingsEntry(
                             title = stringResource(Res.string.timelinesize),
@@ -803,6 +800,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Swap the controls with the timeline" (AS:1738, off) — INERT: the default
                         // switch state, a click has no effect; the phone's row shows no
+
                         // description → no toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.player_swap_controls_with_timeline),
@@ -823,6 +821,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // (info) "Visualizer effect require mic permission" (AS:1759) — shown only
                         // while the timeline is the visualizer bar (LIVE from the PC key), as the
+
                         // phone's `ImportantSettingsDescription`
                         if (vis.micPermissionInfo) {
                             SettingsDescription(
@@ -833,6 +832,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Transparent Timeline Bar" (AS:1771, on) — INERT: the default switch
                         // state, a click has no effect; the phone's row shows no description → no
+
                         // toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.transparentbar),
@@ -845,6 +845,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Player controls colors" (AS:1788, Monochrome, 3 values) — INERT: the
                         // phone's default (Monochrome) shown, no dialog, a click has no effect; no
+
                         // description → no toast
                         OtherSettingsEntry(
                             title = stringResource(Res.string.player_controls_colors),
@@ -855,6 +856,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Play button" (AS:1806, the phone's `playerPlayButtonTypeKey`,
                         // CircularRibbed, 5 values) — INERT: the phone's default shown (the phone's
+
                         // "Wavy circle" label), no dialog, a click has no effect; no description →
                         // no toast
                         OtherSettingsEntry(
@@ -866,6 +868,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Button zoom-out animation" (AS:1824, on) — INERT: the default switch
                         // state, a click has no effect; the phone's row shows no description → no
+
                         // toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.buttonzoomout),
@@ -878,6 +881,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Favorite button" (the phone's DUPLICATE row, AS:1840 — ported as-is,
                         // spec §C: the phone's search conditions are inconsistent (AS:1832 /
+
                         // 1837), so the phone renders the entry twice) — INERT, as the AS:1256 row
                         OtherSettingsEntry(
                             title = stringResource(Res.string.icon_like_button),
@@ -909,6 +913,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Gradient Type" (AS:1886, the PC key `animatedGradient`, 17 values) —
                         // WIRED, shown only while the background is the animated gradient (LIVE
+
                         // from the PC key, true by default)
                         if (vis.gradientType) {
                             OtherSettingsEntry(
@@ -922,8 +927,10 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Theme Shake Sensitivity" (AS:1902, the phone's `ShakeSensitivityTheme`,
                         // Disabled, 5 values) — INERT, shown only while the background is the
+
                         // animated gradient AND the gradient is an M3E one (LIVE, both keys PC,
                         // true by default): the phone's default (Disabled) is shown, no dialog (the
+
                         // enum is phone-only), a click has no effect; no description → no toast
                         if (vis.themeShakeSensitivity) {
                             OtherSettingsEntry(
@@ -937,6 +944,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Rotating album cover" (AS:1916, the PC key `rotatingAlbumCover`, off) —
                         // WIRED, shown only while the background is the blurred cover (LIVE from
+
                         // the PC key)
                         if (vis.rotatingAlbumCover) {
                             ToggleSettingsEntry(
@@ -953,6 +961,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Black Gradient at Bottom" (AS:1935, the phone's `blackgradientKey`,
                         // off) — INERT, shown only while the background is one of the two color
+
                         // gradients (LIVE from the PC key): the default switch state, a click has
                         // no effect; the phone's row shows no description → no toast
                         if (vis.blackGradientAtBottom) {
@@ -966,15 +975,11 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                             )
                         }
 
-                        /**
-                         * NOT RENDERED (static, spec §C): the phone's "Background Rotation
-                         * Animation" (AS:1951, `albumCoverRotationKey`) — only shown when
-                         * `bg == BlurredCoverColor && playerType == Modern`; the PC's player is
-                         * coded Essential.
-                         */
+                        /** NOT RENDERED (static, spec §C): the phone's "Background Rotation Animation" (AS:1951, `albumCoverRotationKey`) — only shown when `bg == BlurredCoverColor && playerType == Modern`; the PC's player is coded Essential. */
 
                         // "Enable action bar gradient" (AS:1969, the phone's `bottomgradientKey`,
                         // off) — INERT, shown only while the background is the blurred cover (LIVE
+
                         // from the PC key): the default switch state, a click has no effect; the
                         // phone's row shows no description → no toast
                         if (vis.enableActionBarGradient) {
@@ -1001,6 +1006,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Show total queue duration" (AS:1998, on) — INERT: the default switch
                         // state, a click has no effect; the phone's row shows no description → no
+
                         // toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.show_total_time_of_queue),
@@ -1013,6 +1019,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Show remaining song duration" (AS:2013, on) — INERT: the default switch
                         // state, a click has no effect; the phone's row shows no description → no
+
                         // toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.show_remaining_song_time),
@@ -1048,6 +1055,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                     content = {
                         // "Show top actions bar" (AS:2056, the phone's `showTopActionsBarKey`, on)
                         // — INERT, shown only in PORTRAIT (the phone's `!isLandscape`, DYNAMIC):
+
                         // the default switch state, a click has no effect; the phone's row shows
                         // no description → no toast
                         if (vis.showTopActionsBar) {
@@ -1061,12 +1069,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                             )
                         }
 
-                        /**
-                         * NOT RENDERED (static, spec §C): the phone's "Blank Space at Top"
-                         * (AS:2072, `topPaddingKey`) — only shown when `!isLandscape &&
-                         * !showTopActionsBar`; `showTopActionsBar` is on by default on the phone,
-                         * so the condition is statically false.
-                         */
+                        /** NOT RENDERED (static, spec §C): the phone's "Blank Space at Top" (AS:2072, `topPaddingKey`) — only shown when `!isLandscape && !showTopActionsBar`; `showTopActionsBar` is on by default on the phone, so the condition is statically false. */
 
                         // "Show next song queue" (AS:2089, off) — INERT: the default switch state,
                         // a click has no effect; the phone's row shows no description → no toast
@@ -1079,14 +1082,11 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                             onCheckedChange = {},
                         )
 
-                        /**
-                         * NOT RENDERED (static, spec §C): the phone's "Songs displayed" (AS:2100,
-                         * `showsongsKey`) and "Show album cover" (AS:2119, `showalbumcoverKey`) —
-                         * only shown when `showNextSongsInPlayer`; off by default on the phone.
-                         */
+                        /** NOT RENDERED (static, spec §C): the phone's "Songs displayed" (AS:2100, `showsongsKey`) and "Show album cover" (AS:2119, `showalbumcoverKey`) — only shown when `showNextSongsInPlayer`; off by default on the phone. */
 
                         // "Disable scrolling text" (AS:2137, the PC key `disableScrollingText`) —
                         // WIRED: MOVED from the PC's former "Others" card (the old Autres tab),
+
                         // re-ported with the phone's description as its text
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.disable_scrolling_text),
@@ -1100,8 +1100,10 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Disable song switching via swipe" (AS:2152, the phone's
                         // `disablePlayerHorizontalSwipeKey`, off) — INERT: `playerType` is
+
                         // statically Essential, so it is never the phone's vertical-swipe variant —
                         // the default switch state, a click has no effect, a long click toasts the
+
                         // phone's description
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.disable_horizontal_swipe),
@@ -1115,6 +1117,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Player Swipe Sensitivity" (AS:2163, the PC key
                         // `playerSwipeSensitivity`, 4 values) — WIRED: the phone's condition
+
                         // (`!disablePlayerHorizontalSwipe`) is met (its key is off by default)
                         OtherSettingsEntry(
                             title = stringResource(Res.string.player_swipe_sensitivity),
@@ -1138,6 +1141,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Background progress bar" (AS:2197, the phone's `backgroundProgressKey`,
                         // MiniPlayer, 4 values) — INERT: the phone's default (the phone's
+
                         // "Minimized player" label) shown, no dialog, a click has no effect; no
                         // description → no toast
                         OtherSettingsEntry(
@@ -1149,6 +1153,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Visualizer" (AS:2214, the phone's `visualizerEnabledKey`, off) — INERT
                         // (no PC key): the default switch state, a click has no effect; the
+
                         // phone's row shows no description → no toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.visualizer),
@@ -1159,15 +1164,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                             onCheckedChange = {},
                         )
 
-                        /**
-                         * NOT RENDERED (static, spec §C): the phone's 7 visualizer sub-entries —
-                         * "Save visualizer state" (AS:2227), "Visualizers Color" (AS:2237),
-                         * "Visualizer Line Thickness" (AS:2249), "Custom Color" (AS:2268, the color
-                         * picker is not ported), "Show thumbnail for visualizer" (AS:2295), "Dark
-                         * background for visualizer" (AS:2306) and "Auto-hide visualizer buttons"
-                         * (AS:2317) — all only shown when `visualizerEnabled`, off by default on
-                         * the phone.
-                         */
+                        /** NOT RENDERED (static, spec §C): the phone's 7 visualizer sub-entries — "Save visualizer state" (AS:2227), "Visualizers Color" (AS:2237), "Visualizer Line Thickness" (AS:2249), "Custom Color" (AS:2268, the color picker is not ported), "Show thumbnail for visualizer" (AS:2295), "Dark background for visualizer" (AS:2306) and "Auto-hide visualizer buttons" (AS:2317) — all only shown when `visualizerEnabled`, off by default on the phone. */
 
                         // (info) "Visualizer effect require mic permission" (AS:2328) — always
                         // shown, end of section, as the phone's `ImportantSettingsDescription`
@@ -1190,8 +1187,10 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                     content = {
                         // "Show thumbnail for lyrics" (AS:2352, the phone's
                         // `showlyricsthumbnailKey`, on) — INERT: the phone only forces it off for
+
                         // the Modern player type / no thumbnail → never on the PC — the default
                         // switch state, a click has no effect; the phone's row shows no
+
                         // description → no toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.show_lyrics_thumbnail),
@@ -1216,6 +1215,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Jump to lyrics by pressing the line" (AS:2382, on) — INERT: the default
                         // switch state, a click has no effect; the phone's row shows no
+
                         // description → no toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.click_lyrics_text),
@@ -1228,6 +1228,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Lyrics Color" (AS:2391, the phone's `LyricsColor`, White, 4 values) —
                         // INERT: the phone's default (White) shown, no dialog (the color picker is
+
                         // not ported), a click has no effect; no description → no toast
                         OtherSettingsEntry(
                             title = stringResource(Res.string.lyricscolor),
@@ -1236,11 +1237,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                             onClick = {},
                         )
 
-                        /**
-                         * NOT RENDERED (static, spec §C): the phone's "Custom Color" (AS:2404) —
-                         * only shown when `lyricsColor == Custom`; White is the phone's default
-                         * and the color picker is not ported.
-                         */
+                        /** NOT RENDERED (static, spec §C): the phone's "Custom Color" (AS:2404) — only shown when `lyricsColor == Custom`; White is the phone's default and the color picker is not ported. */
 
                         // "Save lyrics state" (AS:2436, off) — INERT: the default switch state, a
                         // click has no effect, a long click toasts the phone's description
@@ -1256,8 +1253,10 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Match Lyrics background color with Player" (AS:2452, the phone's
                         // `showBackgroundLyricsKey`, off) — INERT: the phone's condition
+
                         // (`showlyricsthumbnail`) is met (on by default) — the default switch
                         // state, a click has no effect; the phone's row shows no description → no
+
                         // toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.show_background_in_lyrics),
@@ -1270,6 +1269,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Enable lyrics popup message" (AS:2467, on) — INERT: the default switch
                         // state, a click has no effect; the phone's row shows no description → no
+
                         // toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.player_enable_lyrics_popup_message),
@@ -1294,6 +1294,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                     content = {
                         // "Transparent background" (AS:2499, on) — INERT: the default switch
                         // state, a click has no effect; the phone's row shows no description → no
+
                         // toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.action_bar_transparent_background),
@@ -1328,6 +1329,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Swipe up to open queue" (AS:2544, on) — INERT: the default switch
                         // state, a click has no effect; the phone's row shows no description → no
+
                         // toast
                         ToggleSettingsEntry(
                             title = stringResource(Res.string.swipe_up_to_open_the_queue),
@@ -1340,8 +1342,10 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Button visibility" (AS:2559, action → the phone's
                         // `PlayerActionBarSettingsDialog`) — INERT: the dialog is 100 %
+
                         // phone-side (it reorders / shows / hides the phone's action-bar buttons);
                         // on the PC a click has no effect, a long click toasts the phone's
+
                         // description
                         OtherSettingsEntry(
                             title = stringResource(Res.string.player_action_bar_buttons),
@@ -1354,11 +1358,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                 )
             }
 
-            /**
-             * NOT RENDERED (static, spec §C): the phone's "Fullscreen lyrics components" section
-             * (AS:2580, 7 entries: AS:2593 / 2609 / 2624 / 2639 / 2656 / 2686 / 2704) — only shown
-             * when `!showlyricsthumbnail`; on by default on the phone.
-             */
+            /** NOT RENDERED (static, spec §C): the phone's "Fullscreen lyrics components" section (AS:2580, 7 entries: AS:2593 / 2609 / 2624 / 2639 / 2656 / 2686 / 2704) — only shown when `!showlyricsthumbnail`; on by default on the phone. */
 
             /**
              * NOT RENDERED ⛔ (spec §C): the phone's "Notification Player" section (AS:2729) — its
@@ -1378,8 +1378,10 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                     content = {
                         // "Reset" (AS:2784) — INERT: the phone resets ITS appearance settings here
                         // (its `DefaultAppearanceSettings` + the phone-side `reset()` of the MPB /
+
                         // action-bar dialogs); on the PC a click has no effect — the 2 MPB keys are
                         // NOT reset (there is no PC default bundle) — a long click toasts the
+
                         // phone's description
                         OtherSettingsEntry(
                             title = stringResource(Res.string.settings_reset),

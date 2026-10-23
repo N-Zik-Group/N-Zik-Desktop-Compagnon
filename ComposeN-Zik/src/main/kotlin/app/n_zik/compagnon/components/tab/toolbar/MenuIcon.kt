@@ -13,10 +13,7 @@ import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.uiRoundnessShape
 
-/**
- * Port of the phone's `app/it/fast4x/rimusic/ui/components/tab/toolbar/MenuIcon.kt` (list menus only: the
- * phone's default `MenuStyle` is `List`; the grid menu, whose style `ui.settings` serves since 1.10.0, is deferred).
- */
+/** Port of the phone's `app/it/fast4x/rimusic/ui/components/tab/toolbar/MenuIcon.kt` (list menus only: the phone's default `MenuStyle` is `List`; the grid menu, whose style `ui.settings` serves since 1.10.0, is deferred). */
 interface MenuIcon : Icon {
 
     @get:Composable

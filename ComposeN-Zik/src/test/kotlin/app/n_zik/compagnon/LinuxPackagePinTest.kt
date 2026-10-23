@@ -32,6 +32,7 @@ class LinuxPackagePinTest {
     fun `both jpackage tasks carry the vlc dependency and the Audio menu group`() {
         // The plugin exposes no `depends` in the linux { } DSL and never passes jpackage's
         // --linux-package-deps itself: the args are injected through freeArgs, so pin the effective
+
         // args (joined with the unit separator, exposed that way by the build).
         for ((prop, label) in listOf("linux.freeArgs.deb" to ".deb", "linux.freeArgs.rpm" to ".rpm")) {
             val args = System.getProperty(prop) ?: error("$label: freeArgs are not exposed to the tests")
@@ -50,10 +51,13 @@ class LinuxPackagePinTest {
     fun `the jlinked runtime carries the dbus sasl module`() {
         // The compose plugin's classpath analysis never finds jdk.security.auth (the app code never
         // references com.sun.security.auth.module): without it in the jlinked JRE, dbus-java's SASL
+
         // layer cannot resolve the session-bus UID and EVERY session-bus connection inside the
         // packaged Linux artifacts fails with NoClassDefFoundError — the tray + MPRIS surfaces
+
         // silently stay off in all five Linux packaging paths, with a green build (the 2026-10-12
         // Flatpak field bug). Pinned against the EFFECTIVE task modules (exposed by the build),
+
         // not a copy of the string.
         val modules = (System.getProperty("linux.jlinkModules")
             ?: error("linux.jlinkModules is not exposed to the tests")).split("\u001f")
@@ -106,14 +110,19 @@ class LinuxPackagePinTest {
     fun `the Linux VLC runtime file list pins the self-contained subset`() {
         // The extraction allow-list (ComposeN-Zik/build.gradle.kts vlcLinuxRuntimeFiles) must stay in
         // sync with the producer (scripts/build-vlc-linux-tarball.sh — 35 entries), and this
+
         // guard runs on every host that runs the test suite, including the ones where the
         // tarball is never extracted (the release CI does not run :ComposeN-Zik:test — the local
+
         // `gradlew build` gate and `build.sh package` are where it executes). The frozen set
         // is pinned EXACTLY (order-sensitive, like the libsecret config-opts pin): a
+
         // count-plus-spot check cannot catch a one-for-one swap (a dropped non-anchored entry
         // + a duplicate keeps the size 35 and the anchors intact, and the extraction silently
+
         // ships a dead subset — e.g. without the PulseAudio output, the sandbox's only audio
         // path), so an exact list equality is the only guard that fails the swap where the
+
         // tests run.
         val files = pinProp("linux.tarballRuntimeFiles").split("\u001f")
         assertEquals(
@@ -163,12 +172,16 @@ class LinuxPackagePinTest {
     fun `the extraction allow-list stays in sync with the producer script`() {
         // The tarball's CONTENT is defined by the committed producer (scripts/build-vlc-linux-tarball.sh
         // — the source of the pinned binary; its two staged lists are the single source of truth). The
+
         // exact pin above freezes the gradle allow-list, but it cannot see a one-sided edit: if the
         // producer's list changes (a plugin swapped at a future VLC bump) and only the tarball is
+
         // re-pinned through the catalog PR, the diff is SHA-only — the file-list drift is invisible in
         // it. So this test parses the producer's staged lists (the four single-cp root files + the
+
         // RUNTIME_LIBS sonames + the AUDIO_SUBSET plugins) and compares them with the extraction
         // allow-list: a drift fails the suite on EVERY host, before the catalog PR. (Order is
+
         // irrelevant — both sides are file SETS, compared as sorted sets.)
         val script = File("../scripts/build-vlc-linux-tarball.sh").readText()
         val audioSubset = script
@@ -201,10 +214,13 @@ class LinuxPackagePinTest {
     fun `the portable archive task pins the explicit gzip and the discovered-name marker staging (source pin on the build script)`() {
         // The archive FORMAT and the marker staging live in build config the task itself never
         // executes on every host (packageLinuxPortable is Linux/WSL-only): Gradle 9's bare `Tar`
+
         // defaults to an UNCOMPRESSED archive (probe-verified on this repo's Gradle 9.8.1 — the
         // `.tar.gz` name alone does not select the format), and the doLast GZIPInputStream re-read
+
         // fails loud only where the task runs. The marker must stay an archive entry written by
         // the TWO portable tasks only (a stray `portable.txt` in the shared app-image would make
+
         // every other install self-contained-portable — the data dir would relocate, silently).
         // The source pin keeps both halves on every host:
         val buildFile = File("build.gradle.kts")
@@ -217,6 +233,7 @@ class LinuxPackagePinTest {
         assertEquals(1, build.split("File(markerRoot, \"portable.txt\").writeText(\"portable\")").size - 1, "the portable.txt marker has exactly ONE writer (the staging function, archive entry only — never on disk in the shared app-image)")
         // The staging runs under the DISCOVERED app-image folder name (A12): a rename of
         // channelDisplayName alone would place the marker as a SIBLING of the app root and the
+
         // portable would silently degrade to the per-channel storage — both call sites must pass
         // the discovered name (the Linux launcher's grandparent, the Windows image dir)
         assertTrue(build.contains("stagePortableMarker(appImageName)"), "the Linux tar must stage the marker under the discovered app-image name")
@@ -228,6 +245,7 @@ class LinuxPackagePinTest {
     fun `the package name matches the AUR pkgnames and the download URL`() {
         // The committed AUR entries are STABLE-ONLY; since the 2026-10-15 naming decision every
         // channel shares the one package base (AD-8 as amended), so the package name IS the
+
         // base name on every channel.
         val baseName = pkgName().removeSuffix("-dev")
         // Release entry: pkgname is the package identity.

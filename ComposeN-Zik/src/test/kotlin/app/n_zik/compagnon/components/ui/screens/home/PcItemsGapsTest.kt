@@ -53,8 +53,6 @@ class PcItemsGapsTest {
     private fun recommendations(filter: String?, vararg items: Pair<Int, Track>) =
         SongRecommendations(filter, items.map { (position, track) -> Recommendation(position, track) })
 
-    // ---- Wire ----
-
     @Test
     fun `Track inPlaylist decodes when sent and defaults to false from an older phone`() {
         assertTrue(BridgeJson.decodeFromString(Track.serializer(), """{"id":"a","inPlaylist":true}""").inPlaylist)
@@ -101,8 +99,6 @@ class PcItemsGapsTest {
         status = HttpStatusCode.InternalServerError
         assertNull(with.songRecommendations())
     }
-
-    // ---- Insertion ----
 
     @Test
     fun `the recommendations are inserted at their bounded positions, in order`() {
@@ -155,8 +151,6 @@ class PcItemsGapsTest {
         assertEquals(setOf("r1", "r2", "a"), rows.map { it.track.id }.toSet())
     }
 
-    // ---- Item selector ----
-
     @Test
     fun `the item selector toggles its icon and title, and hides the open menu`() {
         val menu = MenuState()
@@ -177,8 +171,6 @@ class PcItemsGapsTest {
         assertFalse(selector.isActive)
     }
 
-    // ---- "In a playlist" indicator ----
-
     @Test
     fun `the playlist indicator shows for a track in a playlist, never on the playlist's own screen`() {
         assertTrue(showsPlaylistIndicator(setting = true, showOnScreen = true, inPlaylist = true))
@@ -189,8 +181,6 @@ class PcItemsGapsTest {
         // The setting off
         assertFalse(showsPlaylistIndicator(setting = false, showOnScreen = true, inPlaylist = true))
     }
-
-    // ---- Setting ----
 
     @Test
     fun `the playlist indicator defaults to hidden and round-trips through settings json`() {

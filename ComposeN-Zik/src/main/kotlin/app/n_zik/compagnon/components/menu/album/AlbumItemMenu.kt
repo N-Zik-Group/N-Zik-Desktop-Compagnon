@@ -135,6 +135,7 @@ class AlbumItemMenu(
 
         // The like tri-state, since 1.7: the phone reads it live from the DB; here it is seeded from the
         // album and re-synced from the Albums list (the confirmed §10.2 writes patch it), so the icon
+
         // follows the tap while the menu is open
         val library = LocalLibraryActions.current
         var likeState by remember(album.id) {
@@ -199,6 +200,7 @@ class AlbumItemMenu(
 
                     // The phone's badge (its `AlbumItemMenu.kt` 261-275): 12 dp at the bottom start of a
                     // non-neutral album — `bookmark` in `favoritesIcon` when bookmarked, the phone's
+
                     // `bookmark_slash` in red when disliked
                     if (likeState != AlbumLike.Neutral) {
                         HeaderIconButton(
@@ -257,8 +259,10 @@ class AlbumItemMenu(
                 ) {
                     // The like tri-state (contract 1.7.2, the phone's `AlbumItemMenu.kt` 332-399): a tap
                     // rotates the state (neutral → bookmarked → disliked → neutral, the phone's
+
                     // `rotateLikeState`) or, with the phone's "disliked" mode off, toggles it (the phone's
                     // `toggleBookmark`) and writes the phone's target state (`POST
+
                     // /library/albums/{id}/like`; a phone before 1.7.2 keeps its binary route); inert
                     // without `library.write`
                     IconButton(

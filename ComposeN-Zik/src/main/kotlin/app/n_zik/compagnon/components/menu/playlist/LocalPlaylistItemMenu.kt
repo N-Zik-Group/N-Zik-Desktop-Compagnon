@@ -126,6 +126,7 @@ class LocalPlaylistItemMenu(
             }
             // Since 1.7.2: change id on a YouTube playlist (the wire's `isBookmarked` IS the phone's
             // `isYoutubePlaylist` column, `LibraryMapping.kt` 166 — the audit's "isBookmarked instead of
+
             // isYoutubePlaylist" was checked: same condition) or one whose browse id starts
             // with the phone's "modified:" / "VL" prefix (its 484-486); inert — no contract route
             if (playlist.isBookmarked ||
@@ -138,6 +139,7 @@ class LocalPlaylistItemMenu(
         }
         // Spec #16-#17: the phone's online playlist entries (`OnlinePlaylistItemMenu.kt` 386-398,
         // 448-462), at the end of Management, phone order (add to a playlist, then import): inert — no
+
         // contract route; "Add to a playlist" opens [PlaylistsMenu] (spec #47)
         InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist) {
             menuState.display { PlaylistsMenu() }
@@ -155,6 +157,7 @@ class LocalPlaylistItemMenu(
             ListenOnYouTube(browseId).ListMenuItem()
             // Spec #14: no per-playlist auto-sync toggle — the phone gates it on `isYouTubeSyncEnabled()` (its
             // `LocalPlaylistItemMenu.kt` 529-545), never true on the PC (no YouTube sync), like the filter chip
+
             // and the toolbars' sync buttons
         }
     }
@@ -286,6 +289,7 @@ class LocalPlaylistItemMenu(
 
                     // The phone's header bookmark badge (its `LocalPlaylistItemMenu.kt` 257-265): 12 dp in
                     // `favoritesIcon` at the bottom start, outside the clip, of a bookmarked, bookmarkeable
+
                     // playlist
                     if (canBookmark && isBookmarked) {
                         HeaderIconButton(
@@ -356,6 +360,7 @@ class LocalPlaylistItemMenu(
 
                     // Spec #15: the phone's online playlist header share (its
                     // `OnlinePlaylistItemMenu.kt` 292-306), inert — the share sheet has no desktop
+
                     // equivalent here, no contract route
                     IconButton(
                         icon = Res.drawable.share_social,

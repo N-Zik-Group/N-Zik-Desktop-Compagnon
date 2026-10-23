@@ -173,10 +173,7 @@ object ListMenu {
         }
     }
 
-    /**
-     * The menus' `SectionTitle` (identical private copy in `SongItemMenu.kt`, `AlbumItemMenu.kt` 576,
-     * `LocalArtistItemMenu.kt` 389 and `LocalPlaylistItemMenu.kt`).
-     */
+    /** The menus' `SectionTitle` (identical private copy in `SongItemMenu.kt`, `AlbumItemMenu.kt` 576, `LocalArtistItemMenu.kt` 389 and `LocalPlaylistItemMenu.kt`). */
     @Composable
     fun SectionTitle(title: String) {
         BasicText(

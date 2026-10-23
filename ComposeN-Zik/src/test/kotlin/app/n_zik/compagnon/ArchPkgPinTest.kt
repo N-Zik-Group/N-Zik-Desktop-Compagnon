@@ -62,6 +62,7 @@ class ArchPkgPinTest {
     fun `the pkgver is the sanitized full version with the single dash release number`() {
         // PKGINFO v2: `pkgver` carries the full version with the channel suffix's dashes sanitized
         // to dots — libalpm accepts only alphanumerics + dots and a SINGLE dash (the release
+
         // separator), so dev `0.0.1-dev-<date>` becomes `0.0.1.dev.<date>-1` (issue #29)
         val pkgver = archProp("arch.pkgver")
         assertEquals(appVersionName.replace('-', '.') + "-1", pkgver)
@@ -86,6 +87,7 @@ class ArchPkgPinTest {
     fun `the layout paths all derive from the package name`() {
         // The layout is the PKGBUILD's package(): the app-image in /opt/<pkg>, the space-free
         // launcher symlink in /usr/bin/<pkg>, the .desktop, the icon and the LICENSE — all named
+
         // after the package name
         assertEquals("opt/$pkgName", archProp("arch.optRoot"))
         assertEquals("usr/bin/$pkgName", archProp("arch.symlinkPath"))
@@ -133,6 +135,7 @@ class ArchPkgPinTest {
     fun `the frozen package metadata matches the release pkgsbuild`() {
         // The release entry is the layout's source of truth: the frozen package metadata must
         // never drift from it. The entry is stable-only (the dev channel is a parallel product —
+
         // its pkgname rides the -dev suffix), so compare against the base name.
         assertEquals(
             pkgName.removeSuffix("-dev"),
@@ -151,6 +154,7 @@ class ArchPkgPinTest {
     fun `the provenance marker is pinned to the app root with the frozen content`() {
         // The marker is the single signal that distinguishes a release-pkg install from an AUR
         // install for the in-app updater: it lives in the app root (opt/<pkg>/distribution.txt)
+
         // and its content is the frozen literal
         assertEquals("opt/$pkgName/distribution.txt", archProp("arch.markerPath"))
         assertEquals("github-release", archProp("arch.markerContent"))

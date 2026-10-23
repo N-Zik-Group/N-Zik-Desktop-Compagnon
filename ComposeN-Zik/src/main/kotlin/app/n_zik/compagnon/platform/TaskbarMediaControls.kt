@@ -97,6 +97,7 @@ abstract class TaskbarMediaControls {
         attached = null
         // [detachIfAttached] is invoked from [app.n_zik.compagnon.bridge.state.PlayerRepository.onClosed],
         // which fires on the CLOSING thread — that may be the WS/data thread, not the EDT: the platform's
+
         // callback must run where the AWT / COM objects were built (no-crash constraint)
         onEdt { onSessionEnded() }
     }

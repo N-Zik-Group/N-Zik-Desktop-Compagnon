@@ -94,6 +94,7 @@ object VlcRuntime {
         } else {
             // The embedded libvlc is present but failed to load (missing deps, corrupt file): roll
             // back the embedded branch (restore the previous jna.library.path) and retry the system
+
             // discovery once; only a failed system discovery leaves playback unavailable (with the
             // distro install hint, resolved like the absent-runtime case).
             if (previous.isNullOrBlank()) System.clearProperty(JNA_LIBRARY_PATH) else System.setProperty(JNA_LIBRARY_PATH, previous)

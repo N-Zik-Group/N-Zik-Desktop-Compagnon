@@ -277,7 +277,7 @@ class PreferencesTest {
         assertEquals(AlbumSwipeAction.Bookmark, settings.albumSwipeRightActionValue)
     }
 
-    // ---- Close behavior (spec `spec-tray-taskbar-media-controls`) ------------------------------------------
+    // Close behavior (spec `spec-tray-taskbar-media-controls`)
 
     @Test
     fun `a settings file without the closeBehavior key decodes with the minimize-to-tray default`() {

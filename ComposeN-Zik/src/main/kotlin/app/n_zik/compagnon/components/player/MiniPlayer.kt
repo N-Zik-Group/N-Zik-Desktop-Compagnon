@@ -97,18 +97,13 @@ import org.jetbrains.compose.resources.stringResource
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-/** Duration of the animated pop that brings the mini-player back from dismissed to rest (the phone's
- * `MiniPlayerAutoExpand.kt` constant, copied). */
+/** Duration of the animated pop that brings the mini-player back from dismissed to rest (the phone's `MiniPlayerAutoExpand.kt` constant, copied). */
 const val MINIPLAYER_POP_ANIMATION_MS = 250L
 
-/** Fade-in duration of the sheet subtree (mini-player) when it appears with new media (the phone's
- * `MiniPlayerAutoExpand.kt` constant, copied). */
+/** Fade-in duration of the sheet subtree (mini-player) when it appears with new media (the phone's `MiniPlayerAutoExpand.kt` constant, copied). */
 const val MINIPLAYER_APPEAR_FADE_MS = 300L
 
-/**
- * Frames awaited before the appearance fade starts, so the heavy first composition of the
- * mini-player does not swallow the fade (the phone's `MiniPlayerAutoExpand.kt` constant, copied).
- */
+/** Frames awaited before the appearance fade starts, so the heavy first composition of the mini-player does not swallow the fade (the phone's `MiniPlayerAutoExpand.kt` constant, copied). */
 const val MINIPLAYER_APPEAR_FADE_SKIPPED_FRAMES = 2
 
 /**
@@ -174,6 +169,7 @@ fun MiniPlayer(
     phoneName: String = "",
     // The player sheet's progress, 0f fully closed (the phone's `playerSheetState.progress`): the
     // horizontal swipe is off while the sheet is deploying or collapsing (the phone's gate, its
+
     // `MiniPlayer.kt` 440-442, 530-531)
     sheetProgress: Float = 0f,
 ) {
@@ -191,6 +187,7 @@ fun MiniPlayer(
     val currentTrack = currentState.currentTrack
     // The bar keeps its last track (the phone's mini-player port, its commit 765d811): while the media
     // is gone, the sheet plays its animated leave (its `dismiss()`, in `MainActivity`) and the bar must
+
     // keep rendering through the whole slide + fade — the phone's 400 ms media grace keeps it composed
     // that long
     val lastTrack = remember { mutableStateOf<Track?>(null) }
@@ -219,6 +216,7 @@ fun MiniPlayer(
 
     // The like of the swipe (the phone's `YouTubeSync.rotateSongLikeState`, phone's 448-452): the
     // rotation, the phone's "disliked" mode deciding it (its `Player.kt` heart pattern), a no-op
+
     // without `library.write`
     val likeWrites = LocalLibraryActions.current?.takeIf { it.canWrite }
     // Collected unconditionally (no conditional composable call): a remembered empty flow without the lists
@@ -228,6 +226,7 @@ fun MiniPlayer(
 
     // rememberSwipeToDismissBoxState keeps the confirmValueChange it got at the first composition:
     // read what the swipe needs through these, or it uses the state of that first composition. The
+
     // track is not taken from composition at all: it is read from the repository when the swipe
     // happens (issue #816 on the phone: swipe-to-like liked the first song of the queue)
     val swipeLive by rememberUpdatedState(live)
@@ -237,6 +236,7 @@ fun MiniPlayer(
     val swipeLikeRotation by rememberUpdatedState(likeRotation)
     // The phone's sheet gate (its `MiniPlayer.kt` 429, 440-442): the swipe is off while the player
     // sheet is deploying or collapsing, read through `rememberUpdatedState` like the rest, so the
+
     // `confirmValueChange` kept at the first composition always sees the live sheet progress
     val swipeSheetProgress by rememberUpdatedState(sheetProgress)
     // The callback is called again on every drag delta once the finger reaches the end anchor (it
@@ -290,6 +290,7 @@ fun MiniPlayer(
 
     // The action changes the content (new title, like icon), which recomputes the swipe anchors:
     // the state can then settle in a dismissed direction and stay displaced, its gestures being off
+
     // until it is back at rest. Bring the mini-player back to its position.
     LaunchedEffect(swipeDismissState) {
         snapshotFlow { swipeDismissState.settledValue }
@@ -301,8 +302,10 @@ fun MiniPlayer(
 
     // The phone's swipe-down (its `MainActivity.kt` 2298-2306): stops the phone's playback
     // (`stopRadio + clearMediaItems + stopService`); here the same drag sends the phone's `clear`
+
     // command (its stop). The drag travels the phone's dismissed zone (80 dp) with the
     // `miniPlayerDismissAlpha` fade (the depop, following the pointer), and the 250 ms pop brings the
+
     // bar back. A new track pops it back from a dismissed drag (the phone's `showMiniplayerIfDismissed`).
     val slideDistance = with(LocalDensity.current) { 80.dp.toPx() } // the phone's dismissed zone
     var isDragging by remember { mutableStateOf(false) }
@@ -317,6 +320,7 @@ fun MiniPlayer(
     )
     // The phone's `miniPlayerDismissAlpha` (its `MiniPlayerDismissFade.kt`): 1 at rest, fading to 0 as
     // the bar travels its dismissed distance, linear in between — it follows the pointer on a dismiss
+
     // drag (the depop) and fades back in on the pop
     val dismissAlpha = (1f - animatedDragY / slideDistance).coerceIn(0f, 1f)
 
@@ -394,6 +398,7 @@ fun MiniPlayer(
                                 if (dragOffsetY > slideDistance / 2 && live) {
                                     // The phone's dismiss: the bar settles in its dismissed zone (the
                                     // depop held there) and the phone's stop removes the media, which
+
                                     // then plays the leave on the bar's last track
                                     dragOffsetY = slideDistance
                                     onCommand { clearQueue() }
@@ -461,6 +466,7 @@ fun MiniPlayer(
 
                         // The like tri-state indicator (contract 1.7, phone's `MiniPlayer.kt` 565-568):
                         // nothing for neutral, `heart` in `favoritesIcon` when liked, the phone's
+
                         // `heart_dislike` in red when disliked. Information only — the action lives
                         // in the player's controls and the song's menu.
                         val like = mediaItem.displayedLike
@@ -610,6 +616,7 @@ fun MiniPlayer(
 
                         // MiniPlayerButton.Discover (phone's 1129-1151): no contract route — shown,
                         // without action; the phone's on-state icon / accent and its alpha 0.4 while
+
                         // its radio / auto-fill are off are phone-side state the wire does not serve.
                         // The long press keeps the phone's `discoverinfo` toast.
                         if (settings.showMiniPlayerDiscover) {
@@ -624,6 +631,7 @@ fun MiniPlayer(
 
                         // MiniPlayerButton.Visualizer (phone's 1080-1100): no contract route — shown,
                         // without action (the phone's visualizer overlay and its accent while active
+
                         // are phone-side state the wire does not serve)
                         if (settings.showMiniPlayerVisualizer) {
                             IconButton(

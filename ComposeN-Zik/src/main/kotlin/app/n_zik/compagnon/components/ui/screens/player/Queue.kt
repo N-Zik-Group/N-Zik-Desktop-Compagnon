@@ -148,6 +148,7 @@ fun Queue(
 
     // The like of the `Favourite` swipe (the phone's `YouTubeSync.rotateSongLikeState`, its
     // `SwipeableContent.kt` 224-228): the rotation, the phone's "disliked" mode deciding it (its
+
     // `Player.kt` heart pattern), a no-op without `library.write`
     val likeWrites = LocalLibraryActions.current?.takeIf { it.canWrite }
     // Collected unconditionally (no conditional composable call): a remembered empty flow without the lists
@@ -331,6 +332,7 @@ fun Queue(
                             onPlayNext = {
                                 // The phone's "Play next" swipe (its `Queue.kt` 477-494): a move after
                                 // the current track — if the song is already after the current, only
+
                                 // when it is not already in the next position
                                 if (actionsEnabled) {
                                     val currentIndex = state.currentIndex
@@ -353,6 +355,7 @@ fun Queue(
                             onRemoveFromQueue = {
                                 // The phone's removal (its `Queue.kt` 504-530): the actual index is
                                 // resolved by id at the swipe (the row's captured index can be stale),
+
                                 // then the phone's "deleted" toast of the cleaned title
                                 if (actionsEnabled) {
                                     val actualIndex = state.queue.indexOfFirst { it.id == song.id }
@@ -411,6 +414,7 @@ fun Queue(
 
                 // The phone's radio loading placeholders (its `Queue.kt` 580-588): the wire carries no
                 // radio loading state (the radio plays like any track), so the condition is always
+
                 // `false` on the PC
                 val isLoadingRadio = false
                 if (isLoadingRadio) {
@@ -440,10 +444,7 @@ fun Queue(
     }
 }
 
-/**
- * Where a dragged row lands: the index of the visible row whose centre is the nearest to the dragged row's
- * centre, moved by [offset] px; `null` when the row is not laid out.
- */
+/** Where a dragged row lands: the index of the visible row whose centre is the nearest to the dragged row's centre, moved by [offset] px; `null` when the row is not laid out. */
 private fun targetIndex(state: LazyListState, from: Int, offset: Float): Int? {
     val visible = state.layoutInfo.visibleItemsInfo
     val dragged = visible.firstOrNull { it.key.toString().substringBefore(':').toIntOrNull() == from } ?: return null
@@ -524,10 +525,7 @@ class ShuffleQueue(
     }
 }
 
-/**
- * Port of `DeleteFromQueue`: "Remove from queue" with the phone's confirmation ("Do you really want to clean
- * queue?"); without a selection (none on the PC) it empties the queue (`queue/clear`).
- */
+/** Port of `DeleteFromQueue`: "Remove from queue" with the phone's confirmation ("Do you really want to clean queue?"); without a selection (none on the PC) it empties the queue (`queue/clear`). */
 @Composable
 fun DeleteFromQueue(
     enabled: Boolean,

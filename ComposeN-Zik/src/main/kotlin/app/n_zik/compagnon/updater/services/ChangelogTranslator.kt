@@ -26,10 +26,7 @@ object ChangelogTranslator {
     private const val CHROME_USER_AGENT =
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
-    /**
-     * The Chrome User-Agent client (the Google endpoint is finicky about non-browser user agents —
-     * the phone's exact interceptor, kept verbatim): built once, kept for the app's lifetime.
-     */
+    /** The Chrome User-Agent client (the Google endpoint is finicky about non-browser user agents — the phone's exact interceptor, kept verbatim): built once, kept for the app's lifetime. */
     private val defaultClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .addInterceptor { chain ->

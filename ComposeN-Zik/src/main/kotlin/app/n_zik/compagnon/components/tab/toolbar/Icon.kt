@@ -10,10 +10,7 @@ import app.n_zik.compagnon.colorPalette
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
-/**
- * Port of the phone's `app/it/fast4x/rimusic/ui/components/tab/toolbar/Icon.kt`, with `Clickable` folded in:
- * [onLongClick] does nothing unless overridden (a right click calls it too, see [TabToolBar.Icon]).
- */
+/** Port of the phone's `app/it/fast4x/rimusic/ui/components/tab/toolbar/Icon.kt`, with `Clickable` folded in: [onLongClick] does nothing unless overridden (a right click calls it too, see [TabToolBar.Icon]). */
 interface Icon : Button {
 
     val iconId: DrawableResource

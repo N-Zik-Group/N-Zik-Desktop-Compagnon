@@ -19,12 +19,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * The phone's sort arrow for a tab whose sort the connected phone does not implement (contract < 1.6,
- * no `library.sort` feature): the same arrow and the same menu, listing all the options of
- * the tab's enum in the phone's order — but a short click does nothing and an option click closes the
- * menu without selecting anything (the list keeps the order the phone sends).
- */
+/** The phone's sort arrow for a tab whose sort the connected phone does not implement (contract < 1.6, no `library.sort` feature): the same arrow and the same menu, listing all the options of the tab's enum in the phone's order — but a short click does nothing and an option click closes the menu without selecting anything (the list keeps the order the phone sends). */
 class InertSort<T>(
     private val menuState: MenuState,
     private val options: List<SortOption<T>>,

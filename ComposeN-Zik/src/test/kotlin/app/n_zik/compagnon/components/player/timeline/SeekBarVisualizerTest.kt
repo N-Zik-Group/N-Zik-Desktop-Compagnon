@@ -3,10 +3,7 @@ package app.n_zik.compagnon.components.player.timeline
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-/**
- * [ProgressPercentage.safeValue]: a NaN input returns the zero fallback, an out-of-range input is
- * clamped to 0-1, an in-range value is kept.
- */
+/** [ProgressPercentage.safeValue]: a NaN input returns the zero fallback, an out-of-range input is clamped to 0-1, an in-range value is kept. */
 class SeekBarVisualizerTest {
 
     @Test

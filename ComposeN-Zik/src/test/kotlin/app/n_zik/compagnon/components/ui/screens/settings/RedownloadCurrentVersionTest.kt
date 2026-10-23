@@ -108,8 +108,10 @@ class RedownloadCurrentVersionTest {
     fun `a release package install re-downloads the arch package asset`() = runBlocking {
         // `runBlocking` (real time), not runTest: the download runs on the REAL NzikDispatchers
         // pool, and runTest's virtual clock would let withTimeout expire before the real
+
         // download makes progress (the UpdateDownloadManagerTest convention). The gesture's
         // fire-and-forget changelog fetch is seam'd out (a no-op in the test — no live network
+
         // call in a unit test, review loop 3 — L3-BH10).
         val client = releaseClient()
         UpdateDownloadManager.httpClientFactory = { downloadClient() }
@@ -139,6 +141,7 @@ class RedownloadCurrentVersionTest {
     fun `an aur install without marker does not download`() = runBlocking {
         // No marker → no asset selected for the pacman install → the gesture is a no-op (no
         // download started — the state stays Idle; a started download would have completed in
+
         // the in-memory engine, so the Idle check is authoritative after a settle)
         val client = releaseClient()
         UpdateDownloadManager.httpClientFactory = { downloadClient() }

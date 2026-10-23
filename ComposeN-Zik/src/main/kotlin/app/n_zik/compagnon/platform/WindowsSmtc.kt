@@ -429,7 +429,7 @@ internal class WindowsSmtc(
         const val POINTER_SIZE = 8
         const val GUID_SIZE = 16
 
-        // ---- Classes / IIDs (SDK 10.0.26100.0) ----------------------------------------------------------
+        // Classes / IIDs (SDK 10.0.26100.0)
         const val CLASS_SMTC = "Windows.Media.SystemMediaTransportControls"
         const val CLASS_STREAM_REFERENCE = "Windows.Storage.Streams.RandomAccessStreamReference"
         const val CLASS_TIMELINE = "Windows.Media.SystemMediaTransportControlsTimelineProperties"
@@ -444,7 +444,7 @@ internal class WindowsSmtc(
         const val IID_IUNKNOWN = "{00000000-0000-0000-C000-000000000046}"
         const val IID_IAGILE_OBJECT = "{94EA2B94-E9CC-49E0-C0FF-EE64CA8F5B90}"
 
-        // ---- vtable slots (IUnknown 0-2, IInspectable 3-5, own methods from 6) --------------------------
+        // vtable slots (IUnknown 0-2, IInspectable 3-5, own methods from 6)
         const val SLOT_QUERY_INTERFACE = 0
         const val SLOT_RELEASE = 2
         const val SLOT_INTEROP_GET_FOR_WINDOW = 6

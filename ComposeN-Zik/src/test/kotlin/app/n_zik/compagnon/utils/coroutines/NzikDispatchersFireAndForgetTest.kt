@@ -152,8 +152,10 @@ class NzikDispatchersFireAndForgetTest {
     fun `context overload without a Job installs a fresh SupervisorJob as the scope root`() = runBlocking {
         // A dispatcher-only context carries no Job: the documented default branch installs a
         // fresh SupervisorJob. kotlinx-coroutines exposes SupervisorJob as a factory function
+
         // only (no public class to test with `is`), so the supervisor semantics are proven
         // behaviorally: a plain Job root would be cancelled by a failed child, a
+
         // SupervisorJob root survives.
         val scope = NzikDispatchers.fireAndForget(UnconfinedTestDispatcher())
         val root = requireNotNull(scope.coroutineContext[Job]) { "fireAndForget must expose a root Job" }

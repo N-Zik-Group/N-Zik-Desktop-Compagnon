@@ -79,6 +79,7 @@ private fun BlurFilter(
         val blurRadius = if (uiSettings.showThumbnail || !uiSettings.noBlur) uiSettings.blurStrength else 0f
         // The rotation is the phone's `rotatingAlbumCover` (spec `spec-fill-pc-ui-gaps-player`): the PC's
         // local `UserSettings` key, read with the same pattern as the other player appearance keys. The
+
         // remaining blur adjuster settings stay on the phone's `LocalUiSettings`.
         val preferences = LocalPreferences.current
         val localSettings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()

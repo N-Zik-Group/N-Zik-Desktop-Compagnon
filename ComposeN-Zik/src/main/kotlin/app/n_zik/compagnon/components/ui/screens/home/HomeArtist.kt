@@ -165,6 +165,7 @@ fun HomeArtists(
 
     // Since 1.7.2 (feature `library.dislikeMode`): the phone's "disliked" mode (its `DislikeMode.Enabled`
     // per collection, read once per session by the lists) — `false` hides the Disliked chip, like on
+
     // the phone; `null` keeps the pre-1.7.2 display (the phone's own default: the mode enabled, the
     // chip shown)
     val dislikeMode by lists.dislikeMode.collectAsState()
@@ -205,12 +206,14 @@ fun HomeArtists(
 
     // The phone's toolbar of the active tab, in the phone's order, with the phone's show conditions
     // (position lock only while the chip's sort is Custom); the Compagnon's "Refresh" is added at the
+
     // end. Wired: sort, refresh. Placeholders (no contract route, a click does nothing): the rest.
     // The phone's item selector (a local toggle, never persisted): the cards' selection boxes
     val itemSelector = rememberItemSelector()
 
     // Spec #63: the phone's position lock (its `remember(sort.sortOrder) { PositionLock(sort.sortOrder) }`):
     // a local-state toggle — no command, nothing persisted; re-created on a sort-direction change
+
     // (the phone's remember key), so its color always reflects the current direction (a tap while
     // descending toasts the phone's "reorder is only possible in ascending sort")
     val positionLock = remember(chipSort.reverse) {
@@ -232,6 +235,7 @@ fun HomeArtists(
                 "search" -> add(InertButton(Res.drawable.search_circle, Res.string.search))
                 // The phone's "Auto Sync Channels" (its `HomeArtist.kt` 448, icon `sync`): the
                 // phone shows it only while its YouTube sync is enabled — never on the PC (no
+
                 // YouTube sync, no contract route — spec `spec-fill-pc-ui-gaps-menus` #44,
                 // renegotiated: not shown)
                 "sync" -> {
@@ -305,6 +309,7 @@ fun HomeArtists(
 
                         // Spec #65: the phone's sync banner (its `HomeSyncState`): the sync state is
                         // not in the contract, so it never shows on the PC — the component is
+
                         // present, never displayed
                         val isSyncing = false
                         if (isSyncing) {

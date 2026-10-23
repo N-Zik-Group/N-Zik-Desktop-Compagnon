@@ -30,6 +30,7 @@ class WindowsThumbBarTest {
     fun `the smtc artwork fetch uses the player canonical key`() {
         // The shared loader's key includes the size: the default 544 would never hit the
         // player's already-loaded 1000px entry, so every track change on Windows would fetch
+
         // the same cover a SECOND time through the phone (the two-fetch behavior the MPRIS
         // artUrl change removes)
         assertEquals(ArtworkKey.track("t42", PLAYER_ARTWORK_SIZE_PX), smtcArtworkKey("t42"))

@@ -178,10 +178,12 @@ fun LocalPlaylistSongs(
     val items = state.items
     // The phone's rewind playlists keep their top order in the database: since 1.7.1 the contract's
     // [PlaylistOrigin] carries it (the phone's name-based `RewindPlaylists.isRewind`), which gates
+
     // their toolbar buttons and their sort default
     val isRewind = playlist.origin in REWIND_ORIGINS
     // The phone's per-playlist sort (`rememberPreference("PlaylistSongsSortBy_<id>")`, default
     // `Title`; a rewind playlist with no saved sort defaults to its top order) — persisted in the
+
     // user settings, key `playlistsongs:<id>`
     val sortKey = "playlistsongs:${playlist.id}"
     val chipSort = settings?.chipSorts?.get(sortKey) ?: if (isRewind) ChipSort(sort = "rewindTop") else ChipSort()
@@ -191,8 +193,7 @@ fun LocalPlaylistSongs(
     var searchText by remember { mutableStateOf("") }
     val search = Search(searchText, { text -> searchText = text }, lazyListState)
 
-    /** The list query: the sort (absent `sort` keeps the phone's position order, "Rewind Top" asks the
-     *  phone's position order too — the rewind playlists' top order, never rewritten) and the search text. */
+    /** The list query: the sort (absent `sort` keeps the phone's position order, "Rewind Top" asks the phone's position order too — the rewind playlists' top order, never rewritten) and the search text. */
     fun applyQuery(sort: ChipSort) {
         list.setQuery(PlaylistSongsQuery(sort.playlistSongSort, sort.reverse, SongsQuery.normalizeText(searchText)))
     }
@@ -223,6 +224,7 @@ fun LocalPlaylistSongs(
 
     // The phone's own sort (contract §10.1, since 1.6 `library.sort`): `sort` and `reverse` are sent
     // to the phone, which re-sorts. As on the phone, the arrow carries the current sort's name
+
     // (`PlaylistSongsSort`'s `ToolBarButton` override). A phone before 1.6 lists its tracks in
     // position order, and the contract then had no route for the sort — the arrow is hidden
     val songSort: Sort<String>? = if (SessionContract.FEATURE_LIBRARY_SORT in library.features) {
@@ -294,8 +296,10 @@ fun LocalPlaylistSongs(
 
     // The phone's toolbar in the phone's order (`LocalPlaylistToolbarSettingsDialog.allButtonIds`),
     // with the phone's show conditions (pin / position lock / renumber / rename off on the rewind
+
     // playlists; position lock and renumber only while the sort is `Custom`; sync and listen on
     // YouTube need a YouTube browse id). Play next, enqueue and listen on YouTube are wired; the
+
     // rest are placeholders without a contract route (no action)
     // The phone's item selector (a local toggle, never persisted): the rows' selection boxes
     val itemSelector = rememberItemSelector()
@@ -362,6 +366,7 @@ fun LocalPlaylistSongs(
 
     // The phone's header bookmark (its `LocalPlaylistSongs.kt` 343, 1326-1329, the 1.7.2 write): the
     // "special playlists" (their `browseId` minus the `VL` prefix is `LM` or `SE`) refuse it with the
+
     // phone's toast, otherwise the toggle, with the phone's toasts — inert without `library.write`
     val writes = libraryWrites()
     val bookmark = Bookmark(isBookmarked = bookmarked) {
@@ -462,6 +467,7 @@ fun LocalPlaylistSongs(
 
                                 // Since 1.7.2: the phone's header duration is sent whole (the wire's
                                 // `totalDurationMs`, the full list before pagination and before the search
+
                                 // text); a phone before 1.7.2 does not send it, then the duration shows once
                                 // all tracks are loaded, as before
                                 val totalDuration = state.totalDurationMs.takeIf { it > 0L }
@@ -498,6 +504,7 @@ fun LocalPlaylistSongs(
                                 shuffle.ToolBarButton()
                                 // The phone's header bookmark (its `LocalPlaylistSongs.kt` 1326): a playlist
                                 // whose browse id is not the phone's "modified:" prefix (its
+
                                 // `canBeBookmarked`); the 1.7.2 write, with the phone's "special playlists"
                                 // refusal and toasts
                                 if (canBookmark) {
@@ -554,6 +561,7 @@ fun LocalPlaylistSongs(
                             itemSelector = itemSelector,
                             // The phone's listening-sort overlays (contract 1.7.1, phone's
                             // `LocalPlaylistSongs.kt` 1524-1551): the play count of the `playCount`
+
                             // sort, the total play time of the `playTime` / `relativePlayTime` sorts in
                             // the phone's `formattedTotalPlayTime` format (`45m` / `2h` / `3d`)
                             thumbnailOverlay = {

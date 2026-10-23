@@ -52,6 +52,7 @@ class UiSettingsPcEffectiveTest {
     fun `the phone's full 21-field payload decodes, its dropped fields are ignored`() {
         // The phone's current full payload (its `UiSettingsDto`, contract §10.5): the 14 fields the
         // model keeps plus the 7 it no longer carries — the dropped ones are ignored at decode,
+
         // not a failure, and they never reach the PC's effective settings.
         val json = """
             {

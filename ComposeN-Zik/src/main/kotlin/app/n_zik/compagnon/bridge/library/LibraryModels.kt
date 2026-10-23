@@ -52,10 +52,7 @@ data class Page<T>(
     val toolbar: List<String>? = null,
 )
 
-/**
- * `Playlist.origin` (contract §1.1, since 1.7); an unknown value reads as [Local] (a phone older
- * than 1.7.1 sends the plain [Rewind] for every generated rewind playlist — the legacy wire value).
- */
+/** `Playlist.origin` (contract §1.1, since 1.7); an unknown value reads as [Local] (a phone older than 1.7.1 sends the plain [Rewind] for every generated rewind playlist — the legacy wire value). */
 @Serializable(with = PlaylistOriginSerializer::class)
 enum class PlaylistOrigin(val wire: String) {
     Local("local"),
@@ -197,10 +194,7 @@ object ArtistFollowSerializer : KSerializer<ArtistFollow> {
     override fun deserialize(decoder: Decoder): ArtistFollow = ArtistFollow.fromWire(decoder.decodeString())
 }
 
-/**
- * The phone's follow rotation (its `rotateLikeState`, default `excludeDislikedArtists`):
- * followed → disliked → neutral → followed.
- */
+/** The phone's follow rotation (its `rotateLikeState`, default `excludeDislikedArtists`): followed → disliked → neutral → followed. */
 fun ArtistFollow.nextRotation(): ArtistFollow = when (this) {
     ArtistFollow.Followed -> ArtistFollow.Disliked
     ArtistFollow.Disliked -> ArtistFollow.Neutral
@@ -217,10 +211,7 @@ fun ArtistFollow.nextToggle(): ArtistFollow = when (this) {
     ArtistFollow.Neutral -> ArtistFollow.Followed
 }
 
-/**
- * Target state of `POST /library/albums/{id}/like` (contract §10.2, since 1.7.2): the phone's album
- * tri-state (its `AlbumDetails.AlbumBookmark`); an unknown value reads as [Neutral].
- */
+/** Target state of `POST /library/albums/{id}/like` (contract §10.2, since 1.7.2): the phone's album tri-state (its `AlbumDetails.AlbumBookmark`); an unknown value reads as [Neutral]. */
 @Serializable(with = AlbumLikeSerializer::class)
 enum class AlbumLike(val wire: String) {
     Neutral("neutral"),
@@ -249,10 +240,7 @@ fun AlbumLike.nextRotation(): AlbumLike = when (this) {
     AlbumLike.Disliked -> AlbumLike.Neutral
 }
 
-/**
- * The phone's album binary bookmark toggle (used when its "disliked" mode is off — contract 1.7.2
- * `library.dislikeMode`): bookmarked → neutral, otherwise → bookmarked.
- */
+/** The phone's album binary bookmark toggle (used when its "disliked" mode is off — contract 1.7.2 `library.dislikeMode`): bookmarked → neutral, otherwise → bookmarked. */
 fun AlbumLike.nextToggle(): AlbumLike = when (this) {
     AlbumLike.Bookmarked -> AlbumLike.Neutral
     else -> AlbumLike.Bookmarked
@@ -323,10 +311,7 @@ enum class PlaylistsFilter(val wire: String) {
     Youtube("youtube"),
 }
 
-/**
- * `rewind` of `GET /library/playlists` (contract §10, since 1.7.2): the phone's Month / Year / All
- * row of its Rewind chip; an unknown value reads as [All] (the phone's default).
- */
+/** `rewind` of `GET /library/playlists` (contract §10, since 1.7.2): the phone's Month / Year / All row of its Rewind chip; an unknown value reads as [All] (the phone's default). */
 @Serializable(with = RewindFilterSerializer::class)
 enum class RewindFilter(val wire: String) {
     Month("month"),
@@ -495,11 +480,7 @@ data class PlaylistSongsQuery(
 )
 
 
-/**
- * The whole-list reference of this Songs query (contract §10.4, since 1.10.0): the same `filter`,
- * `sort`, `reverse`, `period` and search the paged route gets, so an index in the PC's list is an
- * index in the phone's resolved list.
- */
+/** The whole-list reference of this Songs query (contract §10.4, since 1.10.0): the same `filter`, `sort`, `reverse`, `period` and search the paged route gets, so an index in the PC's list is an index in the phone's resolved list. */
 fun SongsQuery.toListRef(): app.n_zik.compagnon.bridge.state.ListRef =
     app.n_zik.compagnon.bridge.state.ListRef(
         kind = app.n_zik.compagnon.bridge.state.ListRef.KIND_SONGS,
@@ -510,10 +491,7 @@ fun SongsQuery.toListRef(): app.n_zik.compagnon.bridge.state.ListRef =
         text = text,
     )
 
-/**
- * The whole-list reference of a collection's tracks (contract §10.4, since 1.10.0); [query] is a
- * local playlist's sort and search, `null` for albums and artists (the phone's fixed order).
- */
+/** The whole-list reference of a collection's tracks (contract §10.4, since 1.10.0); [query] is a local playlist's sort and search, `null` for albums and artists (the phone's fixed order). */
 fun CollectionRef.toListRef(query: PlaylistSongsQuery? = null): app.n_zik.compagnon.bridge.state.ListRef =
     app.n_zik.compagnon.bridge.state.ListRef(
         kind = when (kind) {

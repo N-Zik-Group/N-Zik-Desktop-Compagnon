@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Test
  */
 class StatusNotifierSandboxTest {
 
-    // ---- isFlatpakSandbox --------------------------------------------------------------------------------
-
     @Test
     fun `the flatpak proxy bus address marks the sandbox`() {
         assertTrue(StatusNotifierTray.isFlatpakSandbox("unix:path=/run/flatpak/bus", null))
@@ -30,8 +28,6 @@ class StatusNotifierSandboxTest {
         assertFalse(StatusNotifierTray.isFlatpakSandbox(null, null))
         assertFalse(StatusNotifierTray.isFlatpakSandbox("tcp:host=busdev.network,port=11311", "  "))
     }
-
-    // ---- hostAvailable decision ----------------------------------------------------------------------------
 
     @Test
     fun `inside the sandbox the manifest is trusted and the probe never runs`() {

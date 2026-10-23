@@ -43,10 +43,7 @@ data class PlayerState(
             return currentTrackId?.let { id -> queue.firstOrNull { it.id == id } }
         }
 
-    /**
-     * Contract §7: `positionMs + (serverNow − serverTimeMs) × speed` while playing, bounded by
-     * `[0, durationMs]` when the duration is known.
-     */
+    /** Contract §7: `positionMs + (serverNow − serverTimeMs) × speed` while playing, bounded by `[0, durationMs]` when the duration is known. */
     fun extrapolatedPositionMs(serverNowMs: Long): Long {
         val raw = if (isPlaying) positionMs + ((serverNowMs - serverTimeMs).coerceAtLeast(0) * speed).toLong() else positionMs
         val duration = currentTrack?.durationMs
@@ -90,10 +87,7 @@ data class PlayerState(
     }
 }
 
-/**
- * Synchronisation bookkeeping of contract §7.4 / §7.5: [player] is `null` until the first snapshot,
- * [last] is the last applied revision, [awaitingSnapshot] ignores deltas until the next snapshot.
- */
+/** Synchronisation bookkeeping of contract §7.4 / §7.5: [player] is `null` until the first snapshot, [last] is the last applied revision, [awaitingSnapshot] ignores deltas until the next snapshot. */
 data class SyncState(
     val player: PlayerState? = null,
     val last: Long? = null,

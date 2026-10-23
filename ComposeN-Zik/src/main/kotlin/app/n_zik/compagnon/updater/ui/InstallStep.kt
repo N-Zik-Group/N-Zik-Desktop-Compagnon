@@ -68,8 +68,10 @@ fun InstallStep(filePath: String, installMode: InstallMode, packageManager: Pack
                 InstallMode.WINDOWS -> {
                     // The interactive in-place install runs on the "Install" click (the caller
                     // quits the app, the detached helper launches the NSIS installer with
+
                     // /UPDATE — no silent flag, the user sees the installer pages and can
                     // cancel — and the installer relaunches the app on success; nothing else
+
                     // to show here)
                 }
 
@@ -97,8 +99,10 @@ fun InstallStep(filePath: String, installMode: InstallMode, packageManager: Pack
 
                     // pacman + the release marker: the downloaded file is the binary package —
                     // the upgrade command (shown, NEVER auto-run, spec
+
                     // `spec-arch-binary-package-release`). An AUR install (no marker) is blocked
                     // before this card is ever shown, so this branch is reachable only for the
+
                     // release-pkg installs.
                     PackageManager.AUR -> command?.let {
                         CommandHint(
@@ -116,10 +120,13 @@ fun InstallStep(filePath: String, installMode: InstallMode, packageManager: Pack
 
                 // The portable installs (the Windows zip — spec `spec-windows-portable-zip` — and
                 // the Linux tarball — spec `spec-channel-storage-portable-targz`): the same
+
                 // manual-replacement gesture, but the archive format differs per OS, so the
                 // gesture string is picked by the mode (Windows: "unzip the downloaded file",
+
                 // Linux: "extract the downloaded .tar.gz"). The archive's top level IS the
                 // product folder, so the user deletes the current folder and unzips/extracts the
+
                 // new one in its place (never over the current one)
                 InstallMode.PORTABLE_WINDOWS, InstallMode.PORTABLE -> {
                     BasicText(
@@ -144,6 +151,7 @@ fun InstallStep(filePath: String, installMode: InstallMode, packageManager: Pack
             Spacer(modifier = Modifier.height(12.dp))
             // The copy action mirrors the command hint: when the mode has an exact command the
             // card offers to COPY THE COMMAND (the user runs it in their terminal — it is never
+
             // auto-run, privilege), otherwise the file path (the manual modes)
             Row(
                 modifier = Modifier.fillMaxWidth(),

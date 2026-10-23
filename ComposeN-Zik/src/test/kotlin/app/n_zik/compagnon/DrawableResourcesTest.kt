@@ -4,10 +4,7 @@ import java.io.File
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/**
- * The drawables are copied from the phone's Android resources: Compose's vector parser cannot resolve an
- * Android reference (`@android:color/…`, `?attr/…`), which crashes the composition when the icon shows.
- */
+/** The drawables are copied from the phone's Android resources: Compose's vector parser cannot resolve an Android reference (`@android:color/…`, `?attr/…`), which crashes the composition when the icon shows. */
 class DrawableResourcesTest {
 
     @Test

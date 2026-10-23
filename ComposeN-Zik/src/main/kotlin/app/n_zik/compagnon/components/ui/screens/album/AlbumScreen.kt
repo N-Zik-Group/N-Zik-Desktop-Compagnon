@@ -157,8 +157,10 @@ fun AlbumDetails(
     val enqueue = Enqueue(enabled = playbackEnabled) { collection?.onEnqueue?.invoke() }
     // The phone's header bookmark (phone's `AlbumDetails.kt` 89-175): the phone's tri-state —
     // `bookmark` in accent, `bookmark_slash` in red for a disliked album, `bookmark_outline` in text —
+
     // since 1.7.2 written with its `POST /library/albums/{id}/like`, the phone's "disliked" mode on
     // (feature `library.dislikeMode`) rotating (its `rotateLikeState`), off toggling (its `toggleBookmark`);
+
     // a phone before 1.7.2 keeps its 1.7 binary route — labelled `info_bookmark_album`; inert outside
     // a `Live` session
     var likeState by remember(album.id) {
@@ -227,6 +229,7 @@ fun AlbumDetails(
     }
     // The phone's toolbar order; shuffle, locator, play next and enqueue are wired to the contract,
     // the rest are placeholders without a contract route (no action)
+
     // The phone's download / remove buttons open their confirmations (as the artist's); NOT LINKED: no route
     val downloadAll = NoRouteConfirmButton(
         Res.drawable.downloaded, Res.string.download, Res.string.info_download_all_songs, Res.string.do_you_really_want_to_download_all,

@@ -7,10 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-/**
- * Unit tests of [VlcRuntime]'s unified embedded-vs-system decision, the platform libvlc name and
- * the distro install hint; the native load stays in the opt-in trial.
- */
+/** Unit tests of [VlcRuntime]'s unified embedded-vs-system decision, the platform libvlc name and the distro install hint; the native load stays in the opt-in trial. */
 class VlcRuntimeTest {
 
     @Test

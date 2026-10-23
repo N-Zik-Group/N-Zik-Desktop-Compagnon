@@ -187,6 +187,7 @@ fun HomeSongsScreen(
 
     // Since 1.7.2 (feature `library.dislikeMode`): the phone's "disliked" mode (its `DislikeMode.Enabled`
     // per collection, read once per session by the lists) — `false` hides the Disliked chip, like on
+
     // the phone; `null` keeps the pre-1.7.2 display (the phone's own default: the mode enabled, the
     // chip shown)
     val dislikeMode by lists.dislikeMode.collectAsState()
@@ -224,6 +225,7 @@ fun HomeSongsScreen(
 
     // Spec #63: the phone's position lock (its `remember(sort.sortOrder) { PositionLock(sort.sortOrder) }`):
     // a local-state toggle — no command, nothing persisted; re-created on a sort-direction change
+
     // (the phone's remember key), so its color always reflects the current direction (a tap while
     // descending toasts the phone's "reorder is only possible in ascending sort")
     val positionLock = remember(chipSort.reverse) {
@@ -271,6 +273,7 @@ fun HomeSongsScreen(
 
     // The phone's `hasUnmatchedSongs` (HomeSongsScreen.kt 463, the phone's full check — `Track.unmatched`,
     // contract 1.7.1): a non-YT id or the zero-duration sentinel, the phone's `local:` files excluded —
+
     // the match button is shown when one is loaded
     val hasUnmatched = state.items.any { it.unmatched() }
 
@@ -304,8 +307,10 @@ fun HomeSongsScreen(
 
     // The active chip's toolbar: the phone's default buttons of the chip (the wire's `toolbar` is no
     // longer consumed), with the phone's show conditions; the Compagnon's "Refresh" is added at the
+
     // end, always last. Wired: sort / period, search, locator, shuffle, play next, enqueue, refresh.
     // Placeholders (no contract route, a click does nothing): the rest. Built from the ids — the
+
     // button instances are fresh on every composition (reference equality), so the ids (value
     // equality) are the toolbar change's animation target (its `AnimatedContent`).
     val toolbarIds = songsToolbarButtonIds(chip)
@@ -322,6 +327,7 @@ fun HomeSongsScreen(
                 "match" -> if (hasUnmatched) add(InertButton(Res.drawable.alert, Res.string.match_album_audio_version))
                 // The phone's "Auto Sync Liked Songs" (its `HomeSongsScreen.kt` 553, icon `sync`):
                 // the phone shows it on its Liked chip only while its YouTube sync is enabled —
+
                 // never on the PC (no YouTube sync, no contract route — spec
                 // `spec-fill-pc-ui-gaps-menus` #42, renegotiated: not shown)
                 "sync_ytm_likes" -> {
@@ -398,8 +404,10 @@ fun HomeSongsScreen(
 
                     // The chip change animates the toolbar row (the phone's `AnimatedContent`, its
                     // `TabToolBar.kt` 91-98): the target is the ids (value equality — the button
+
                     // instances are reference-fresh on every composition, so a plain `List<Button>`
                     // would animate on every unrelated recomposition); both rows crossfade over the
+
                     // phone's 300 ms
                     AnimatedContent(
                         targetState = toolbarIds,
@@ -429,8 +437,10 @@ fun HomeSongsScreen(
                             )
                             // Inside the chips column, as on the phone (`HomeSongsScreen.kt` 763-782):
                             // the row's 16 dp side and 8 dp bottom padding apply to the bar too
+
                             // The cache space bar (contract 1.7.1, phone's `HomeSongsScreen.kt` 763-782): on the
                             // cached / downloaded chips, the phone's cache used over its configured cap; on the
+
                             // "Cached PC" chip, the Compagnon's own audio cache (contract §8.3) used over its
                             // ceiling — an unlimited cap hides the bar, like on the phone
                             val phoneCache = when (chip) {
@@ -446,6 +456,7 @@ fun HomeSongsScreen(
                                         maxBytes = phoneCache?.maxBytes,
                                         // The phone's label of its cap, computed from its `maxBytes` (the wire's
                                         // `maxText` is no longer consumed): the `Disabled` cap reads "Turn off"
+
                                         // (the phone's `Disabled.text`), every other cap is formatted
                                         maxText = phoneCacheCapLabelId(phoneCache?.maxBytes)?.let { stringResource(it) }
                                             ?: formatShortFileSize(phoneCache?.maxBytes ?: 0L),

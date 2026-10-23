@@ -37,6 +37,7 @@ class CheckDecisionTest {
     fun `an aur blocked install always skips, even when forced`() {
         // The provenance block (spec `spec-arch-binary-package-release`): a pacman /opt install
         // without the release marker is an AUR install — the AUR entry owns the update, so no
+
         // check at all: the block is as absolute as the build gate, a FORCED check does not
         // bypass it (the updater is disabled for this install, not cancelled by the user)
         assertEquals(
@@ -100,10 +101,13 @@ class CheckDecisionTest {
     fun `a provenance blocked check skips before any fetch starts`() {
         // The call-site wiring (spec `spec-arch-binary-package-release`, review loop 3 — L3-VG3):
         // the pure [decideCheck] pins above do not settle that `checkForUpdate` actually PASSES
+
         // the block down — this drives the fire-and-forget check through its seam with the block
         // forced on. A blocked install (even forced) must not start a fetch at all: the fetch
+
         // flag never arms and the release state stays untouched. The skip path touches no
         // network (safe on any host) — a regression of the wiring would arm
+
         // [Updater.isCheckingForUpdate] before the network call and fail here.
         val buildBefore = Updater.build
         Updater.checkForUpdate(isForced = true, showDialog = true, aurBlocked = true)

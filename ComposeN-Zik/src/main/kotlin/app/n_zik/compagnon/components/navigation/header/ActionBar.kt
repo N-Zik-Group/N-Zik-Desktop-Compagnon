@@ -45,6 +45,7 @@ private fun HamburgerMenu(
     )
     // The phone's inert entries (spec `spec-fill-pc-ui-gaps-menus` #30-#38, its `ActionBar.kt`
     // 78-163): shown in the phone's order, without action — no contract route
+
     // History (its 78-83)
     menu.add(DropdownMenu.Item(Res.drawable.history, Res.string.history) {})
     // Statistics (its 85-92)

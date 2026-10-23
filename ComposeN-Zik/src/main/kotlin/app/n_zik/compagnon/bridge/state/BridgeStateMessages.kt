@@ -13,10 +13,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.longOrNull
 
-/**
- * Wire values of the WebSocket session and the commands, contract v1 §6, §7, §9 (read from the BMAD
- * workspace, never copied here).
- */
+/** Wire values of the WebSocket session and the commands, contract v1 §6, §7, §9 (read from the BMAD workspace, never copied here). */
 object SessionContract {
     const val WS_PATH = "/ws"
 
@@ -77,16 +74,10 @@ object SessionContract {
     /** §5 / §10 (since 1.7.1): `GET /library/cache`, the phone's disk caches behind the cache bar. */
     const val FEATURE_LIBRARY_CACHE = "library.cache"
 
-    /**
-     * §5 (since 1.7.2): the `rewind` parameter of `GET /library/playlists` (applied and persisted by
-     * the phone) and `GET /library/rewind`, the state of the phone's Month / Year / All row.
-     */
+    /** §5 (since 1.7.2): the `rewind` parameter of `GET /library/playlists` (applied and persisted by the phone) and `GET /library/rewind`, the state of the phone's Month / Year / All row. */
     const val FEATURE_LIBRARY_REWIND = "library.rewind"
 
-    /**
-     * §5 (since 1.7.2): `GET /library/dislikeMode`, the phone's "disliked" mode per collection —
-     * the Disliked chips' visibility and the like rotation / toggle of the menus.
-     */
+    /** §5 (since 1.7.2): `GET /library/dislikeMode`, the phone's "disliked" mode per collection — the Disliked chips' visibility and the like rotation / toggle of the menus. */
     const val FEATURE_LIBRARY_DISLIKE_MODE = "library.dislikeMode"
 
     /** §5 (since 1.7.2): the phone's build ships FFmpeg — its "export cache" and "edit metadata" entries. */
@@ -105,10 +96,7 @@ object SessionContract {
     /** §5 / §10.1 (since 1.8.0): the `toolbar` of `GET /library/songs`: the phone's effective Home Songs toolbar of the chip. */
     const val FEATURE_LIBRARY_TOOLBAR = "library.toolbar"
 
-    /**
-     * §5 / §9 (since 1.10.0): `POST /queue/list` — the phone builds the queue from a WHOLE list
-     * (a list reference, §10.4) with its own filters, `maxSongsInQueue` cap and toasts.
-     */
+    /** §5 / §9 (since 1.10.0): `POST /queue/list` — the phone builds the queue from a WHOLE list (a list reference, §10.4) with its own filters, `maxSongsInQueue` cap and toasts. */
     const val FEATURE_QUEUE_FULL_LIST = "queue.fullList"
 
     /** §5 / §10.4 (since 1.10.0): `GET /library/locate`, a track's position in a whole list. */
@@ -195,20 +183,14 @@ enum class TrackLike(val wire: String) {
     }
 }
 
-/**
- * The phone's like rotation (its `rotateSongLikeState`, default `excludeDislikedSongs`):
- * neutral → liked → disliked → neutral.
- */
+/** The phone's like rotation (its `rotateSongLikeState`, default `excludeDislikedSongs`): neutral → liked → disliked → neutral. */
 fun TrackLike.nextRotation(): TrackLike = when (this) {
     TrackLike.Neutral -> TrackLike.Liked
     TrackLike.Liked -> TrackLike.Disliked
     TrackLike.Disliked -> TrackLike.Neutral
 }
 
-/**
- * The phone's binary like toggle (its `toggleSongLikeState`, used when its "disliked" mode is off —
- * contract 1.7.2 `library.dislikeMode`): neutral → liked, liked → neutral, disliked → liked.
- */
+/** The phone's binary like toggle (its `toggleSongLikeState`, used when its "disliked" mode is off — contract 1.7.2 `library.dislikeMode`): neutral → liked, liked → neutral, disliked → liked. */
 fun TrackLike.nextToggle(): TrackLike = when (this) {
     TrackLike.Neutral -> TrackLike.Liked
     TrackLike.Liked -> TrackLike.Neutral
@@ -267,10 +249,7 @@ data class Track(
     val totalPlayTimeMs: Long = 0L,
     /** Since 1.7.1: the song's play count (the phone's `playCount` column); the library rows only. */
     val playCount: Int = 0,
-    /**
-     * Since 1.7.1: the phone's active download state, [None] when settled (the row icon then derives
-     * from [isDownloaded]); a ≤ 1.7 phone does not send it (→ [None]).
-     */
+    /** Since 1.7.1: the phone's active download state, [None] when settled (the row icon then derives from [isDownloaded]); a ≤ 1.7 phone does not send it (→ [None]). */
     val downloadState: TrackDownloadState = TrackDownloadState.None,
     /** Since 1.7.1: the download progress, 0..1, only while [downloadState] is [TrackDownloadState.Downloading]. */
     val downloadProgress: Float? = null,
@@ -327,11 +306,7 @@ val Track.displayedLike: TrackLike
 fun Track.unmatched(): Boolean =
     (id.length != 11 || (durationMs == 0L && totalPlayTimeMs == 1L)) && !id.startsWith("local:")
 
-/**
- * Port of the phone's `Song.formattedTotalPlayTime` (phone's `models/Song.kt` 39-50): `« 45m »`,
- * `« 2h »` or `« 3d »` — the format of the phone's row overlay of the play-time sorts (the phone's
- * `formatAsTime` is not used there).
- */
+/** Port of the phone's `Song.formattedTotalPlayTime` (phone's `models/Song.kt` 39-50): `« 45m »`, `« 2h »` or `« 3d »` — the format of the phone's row overlay of the play-time sorts (the phone's `formatAsTime` is not used there). */
 val Track.formattedTotalPlayTime: String
     get() {
         val seconds = totalPlayTimeMs / 1000
@@ -361,7 +336,7 @@ object StopCodeSerializer : KSerializer<StopCode> {
     override fun deserialize(decoder: Decoder): StopCode = StopCode.fromWire(decoder.decodeString())
 }
 
-// ---- Server → client messages (contract §6.3, §7) -------------------------------------------------
+// Server → client messages (contract §6.3, §7)
 
 /** One decoded WS frame. Decoding is tolerant: an unknown `type` becomes [UnknownMessage]. */
 sealed interface ServerMessage
@@ -544,7 +519,7 @@ object ServerMessages {
     }
 }
 
-// ---- Client → server messages (contract §7.8) -----------------------------------------------------
+// Client → server messages (contract §7.8)
 
 @Serializable
 data class PingMessage(val clientTimeMs: Long, val type: String = "ping")
@@ -557,7 +532,7 @@ object ClientMessages {
     fun requestSnapshot(): String = BridgeJson.encodeToString(RequestSnapshotMessage.serializer(), RequestSnapshotMessage())
 }
 
-// ---- Commands (contract §9) ---------------------------------------------------------------------
+// Commands (contract §9)
 
 /** `200` answer of every command. */
 @Serializable

@@ -35,7 +35,7 @@ class WindowsPortablePinTest {
         else -> channelSuffix
     }
 
-    // ---- The test-side copy of the build's single rename helper (the [ChannelArtifactNameTest]
+    // The test-side copy of the build's single rename helper (the [ChannelArtifactNameTest]
     // idiom — the copy pins the documented semantics, the build's own values pin its implementation)
 
     private fun versionBoundaryIndex(fileName: String, base: String): Int {

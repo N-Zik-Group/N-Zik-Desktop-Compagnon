@@ -126,6 +126,7 @@ object Toaster {
                 .align(Alignment.BottomCenter)
                 // Adaptation: the phone's `isFloatingBarActive()` (`Toaster.kt` 99-106) raises the toasts 109 dp only
                 // with a floating bar; the PC always draws that bar (frozen on the phone's defaults), so always 109 dp —
+
                 // the phone's own `navigationBarPosition` would put the toasts over the PC's bar
                 .padding(bottom = toastBottomPaddingDp(floatingBar = true).dp),
         ) {

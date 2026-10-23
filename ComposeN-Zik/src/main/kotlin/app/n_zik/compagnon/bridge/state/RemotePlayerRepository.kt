@@ -113,8 +113,6 @@ class RemotePlayerRepository(
 
     override fun cachedArtwork(key: ArtworkKey): ImageBitmap? = artworkLoader.cached(key)
 
-    // ---- State ------------------------------------------------------------------------------------
-
     /** Serializes [patchTrackLike] (UI thread) and the reduction of [onMessage] (WS thread): no lost patch. */
     private val syncLock = Any()
 
@@ -162,7 +160,7 @@ class RemotePlayerRepository(
         }
     }
 
-    // ---- Commands (contract §9) -------------------------------------------------------------------
+    // Commands (contract §9)
 
     override suspend fun play() = send(CommandKind.Play, EmptyCommandBody.serializer()) { EmptyCommandBody(it) }
     override suspend fun pause() = send(CommandKind.Pause, EmptyCommandBody.serializer()) { EmptyCommandBody(it) }

@@ -118,10 +118,7 @@ class Target private constructor(
     }
 }
 
-/**
- * Port of `androidx.palette.graphics.Palette`: [Palette.from] takes the ARGB pixels of an image
- * (row-major, [width] × [height]), [Builder.generate] runs the library's extraction.
- */
+/** Port of `androidx.palette.graphics.Palette`: [Palette.from] takes the ARGB pixels of an image (row-major, [width] × [height]), [Builder.generate] runs the library's extraction. */
 class Palette private constructor(val swatches: List<Swatch>) {
 
     /** Port of `Palette.Swatch`: a colour ([rgb], opaque ARGB) and how many pixels it stands for. */

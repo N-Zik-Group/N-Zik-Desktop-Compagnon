@@ -35,10 +35,7 @@ fun rotateTrackLike(track: Track, writes: LibraryActions?, rotationEnabled: Bool
     }
 }
 
-/**
- * The phone's toast of the resulting like state: `rotateSongLikeState`'s three messages (the player, in
- * both modes) or `toggleSongLikeState`'s two (the song / player menus with the "disliked" mode off).
- */
+/** The phone's toast of the resulting like state: `rotateSongLikeState`'s three messages (the player, in both modes) or `toggleSongLikeState`'s two (the song / player menus with the "disliked" mode off). */
 fun likeToastMessage(next: TrackLike, rotationEnabled: Boolean): StringResource = when {
     rotationEnabled -> when (next) {
         TrackLike.Liked -> Res.string.added_to_favorites

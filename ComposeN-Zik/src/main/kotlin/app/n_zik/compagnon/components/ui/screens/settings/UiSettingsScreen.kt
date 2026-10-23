@@ -228,6 +228,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                 content = {
                     // "Interface in use" (UIS:754, the phone's `UiTypeKey`, RiMusic) — INERT: the PC is
                     // always the RiMusic interface (there is no `UiType` on the PC), so the phone's
+
                     // default is shown as a static value, no dialog, a click has no effect; the phone's
                     // row shows a value, not a description → no toast
                     OtherSettingsEntry(
@@ -239,6 +240,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Theme" (UIS:840, the phone's `colorPaletteNameKey`, Dynamic) — INERT: the PC's
                     // color palettes are coded (the phone's palette selector has no PC equivalent), so
+
                     // the phone's default is shown, no dialog, a click has no effect; no description →
                     // no toast
                     OtherSettingsEntry(
@@ -264,8 +266,10 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Theme mode" (UIS:1075, the phone's `colorPaletteModeKey`, Dark) — INERT: the
                     // phone's condition (`themeModeEnabled`, true with the default Dynamic ≠
+
                     // PureBlack / ModernBlack) is met, so the entry is rendered; the PC's palettes are
                     // coded, so the phone's default is shown, no dialog, a click has no effect; no
+
                     // description → no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.theme_mode),
@@ -288,6 +292,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                 content = {
                     // "Navigation bar position" (UIS:1118) — WIRED to the PC's `navigationBarPosition`
                     // (the phone's `NavigationBarPosition`, 5 values): MOVED from the PC's former
+
                     // "Others" card (the old Autres tab), re-ported with its value-selector dialog
                     OtherSettingsEntry(
                         title = stringResource(Res.string.navigation_bar_position),
@@ -307,6 +312,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Player position" (UIS:1158, the phone's `playerPositionKey`, Bottom) — INERT:
                     // the phone's default (Bottom) shown, no dialog, a click has no effect; no
+
                     // description → no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.player_position),
@@ -326,6 +332,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Popup message style" (UIS:1198, the phone's `messageTypeKey`, Modern) — INERT:
                     // the phone's default (Modern) shown, no dialog, a click has no effect; no
+
                     // description → no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.message_type),
@@ -336,6 +343,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Default page" (UIS:1218) — WIRED to the PC's `indexNavigationTab`: MOVED from
                     // the old Autres tab, re-ported with its value-selector dialog — PC constraint on
+
                     // the value list: `HomeScreenTabs.Default` + the four visible tabs (the phone's
                     // Quick Picks and Search tabs are absent on the PC, so not offered)
                     OtherSettingsEntry(
@@ -347,6 +355,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Home page" (UIS:1237, the phone's `HomeTabsSettingsDialog`) — INERT: the phone's
                     // dialog is 100 % phone-side (it reorders / shows / hides the phone's home tabs); on
+
                     // the PC a click has no effect, a long click toasts the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.home_tabs_settings),
@@ -358,8 +367,10 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Transition effect" (UIS:1247, the phone's `transitionEffectKey`, Fade) — INERT:
                     // the phone's default (Fade) shown (it equals the PC's coded default —
+
                     // `spec-remove-ui-sync`: the phone's appearance never reaches the PC's UI, so no
                     // live read of the contract), no dialog, a click has no effect; no description →
+
                     // no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.transition_effect),
@@ -370,6 +381,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Go back directly to home" (UIS:1266, the phone's `disableNavigationBackStackKey`,
                     // off by default) — INERT: the default switch state, a click has no effect, a long
+
                     // click toasts the phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.disable_navigation_back_stack),
@@ -383,6 +395,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Online search display order" (UIS:1277, the phone's `searchDisplayOrderKey`,
                     // SuggestionsFirst) — INERT: the phone's default (Suggestions first) shown, no
+
                     // dialog, a click has no effect; the phone's row shows a value, not a description →
                     // no toast
                     OtherSettingsEntry(
@@ -402,6 +415,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Show floating search icon" (UIS:1323) — WIRED to the PC's `showFloatingIcon`
                     // (off by default, aligned to the phone): MOVED from the old Autres tab; the phone's
+
                     // row shows no description → no toast
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.show_floating_icon),
@@ -415,6 +429,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Remember queue scroll position" (UIS:1334, the phone's
                     // `rememberQueueScrollPositionKey`, on by default) — INERT: the default switch
+
                     // state, a click has no effect, a long click toasts the phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.remember_queue_scroll_position),
@@ -440,6 +455,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                 content = {
                     // "Font type" (UIS:1363, the phone's `fontTypeKey`, Rubik) — INERT: the phone's
                     // default (the phone shows the enum name) shown, no dialog, a click has no effect;
+
                     // no description → no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.settings_use_font_type),
@@ -450,6 +466,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Use system font" (UIS:1382, the phone's `useSystemFont`, off by default) —
                     // INERT: the default switch state, a click has no effect, a long click toasts the
+
                     // phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.use_system_font),
@@ -463,6 +480,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Apply font padding" (UIS:1392, the phone's `applyFontPadding`, off by default) —
                     // INERT: the default switch state, a click has no effect, a long click toasts the
+
                     // phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.apply_font_padding),
@@ -474,10 +492,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                         onLongClick = { Toaster.i(Res.string.add_spacing_around_texts) },
                     )
 
-                    /**
-                     * NOT RENDERED ⛔ (spec §B): the phone's "Hide status bar" (UIS:1402,
-                     * `hideStatusBar`, off) — the Android status bar; there is no equivalent on the PC.
-                     */
+                    /** NOT RENDERED ⛔ (spec §B): the phone's "Hide status bar" (UIS:1402, `hideStatusBar`, off) — the Android status bar; there is no equivalent on the PC. */
                 },
             )
         }
@@ -493,6 +508,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                 content = {
                     // "Swipe for action" (UIS:1427) — WIRED to the PC's `isSwipeToActionEnabled`:
                     // MOVED from the old Autres tab (G2 #62), re-ported as its own section with its
+
                     // sub-entries
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.swipe_to_action),
@@ -506,6 +522,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // The phone's 6 sub-entries (UIS:1435-1556), each WIRED to its own PC key, with the
                     // phone's value-selector dialog of its enum — shown only while
+
                     // `isSwipeToActionEnabled` is on, evaluated LIVE from the PC key (the condition is
                     // dynamic, never static): a toggle flip makes them appear / disappear in place
                     AnimatedVisibility(visible = uiVis.swipeSubEntries) {
@@ -579,8 +596,10 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                 content = {
                     // The phone's 5 library-visibility dialogs (UIS:1581 / 1589 / 1597 / 1605 / 1613,
                     // the `QuickPicksContentSettingsDialog` / `HomeSongsSettingsDialog` /
+
                     // `HomeArtistsSettingsDialog` / `HomeAlbumsSettingsDialog` /
                     // `HomePlaylistsSettingsDialog`) — all 100 % phone-side: INERT, a click has no
+
                     // effect, a long click toasts the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.quick_picks),
@@ -623,6 +642,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
         // Sort Menu Section (the phone's UIS:1636, spec §B): the phone's search quirk (the literal
         // "sort" in its ctx, UIS:1624) is NOT ported — the ctx is computed from the entries' labels,
+
         // as on the PC
         AnimatedVisibility(
             visible = sortMenuCtx,
@@ -634,8 +654,10 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                 content = {
                     // The phone's 6 sort dialogs (UIS:1641 / 1649 / 1657 / 1665 / 1673 / 1681, the
                     // `HomeSongsSortSettingsDialog` / `HomeArtistsSortSettingsDialog` /
+
                     // `HomeAlbumsSortSettingsDialog` / `HomeLibrarySortSettingsDialog` /
                     // `LocalPlaylistSortSettingsDialog` / `HistorySortSettingsDialog`) — all 100 %
+
                     // phone-side: INERT, a click has no effect, a long click toasts the phone's
                     // description
                     OtherSettingsEntry(
@@ -695,8 +717,10 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                 content = {
                     // The phone's 5 toolbar dialogs (UIS:1708 / 1716 / 1724 / 1732 / 1740, the
                     // `HomeSongsToolbarSettingsDialog` / `HomeArtistsToolbarSettingsDialog` /
+
                     // `HomeAlbumsToolbarSettingsDialog` / `HomeLibraryToolbarSettingsDialog` /
                     // `LocalPlaylistToolbarSettingsDialog`) — all 100 % phone-side: INERT, a click has
+
                     // no effect, a long click toasts the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.songs),
@@ -748,6 +772,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                 content = {
                     // "Reset" (UIS:1765) — INERT: the phone resets ITS ~50 UI settings here (its
                     // `DefaultUiSettings` + its per-tab dialog resets); on the PC a click has no effect
+
                     // (the PC keeps its own settings), a long click toasts the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.settings_reset),
@@ -795,6 +820,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                 title = stringResource(Res.string.default_page),
                 // Default plus the four visible tabs (the phone's Quick Picks and Search tabs are
                 // absent on the PC, so not offered — spec `spec-fill-pc-ui-gaps-settings` §B, the
+
                 // constraint of the old Autres tab's dialog)
                 values = listOf(HomeScreenTabs.Default, HomeScreenTabs.Songs, HomeScreenTabs.Artists, HomeScreenTabs.Albums, HomeScreenTabs.Playlists),
                 selectedValue = indexNavigationTab,

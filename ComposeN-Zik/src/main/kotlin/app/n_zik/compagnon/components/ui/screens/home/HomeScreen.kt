@@ -92,6 +92,7 @@ fun HomeScreen(
 
     // #46: the start tab (the phone's `indexNavigationTab`) applies while the last tab used
     // (`homeScreenTabIndex`) has never been written; a persisted value (including 0) then takes
+
     // precedence. Computed once, at the first composition — a live change applies on the next launch.
     val initialTabIndex = remember {
         initialHomeTabIndex(settings.homeScreenTabIndex, settings.indexNavigationTabValue, tabs.map { it.name.lowercase() })

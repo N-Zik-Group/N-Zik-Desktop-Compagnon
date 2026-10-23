@@ -16,11 +16,7 @@ import org.junit.jupiter.api.Assertions.assertNotSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/**
- * Ported from the phone app's `NzikDispatchersTest`: the dispatcher tests use real threads
- * (`runBlocking` + latches), never virtual time — thread identity and ordering cannot be
- * faked on a test dispatcher.
- */
+/** Ported from the phone app's `NzikDispatchersTest`: the dispatcher tests use real threads (`runBlocking` + latches), never virtual time — thread identity and ordering cannot be faked on a test dispatcher. */
 class NzikDispatchersTest {
 
     @Test

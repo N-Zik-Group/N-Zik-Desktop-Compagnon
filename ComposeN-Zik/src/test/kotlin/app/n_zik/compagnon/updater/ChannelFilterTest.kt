@@ -56,8 +56,10 @@ class ChannelFilterTest {
     fun `the vlc tarball staging carrier is never same-channel`() {
         // The `vlc-*-tarball` namespace (spec `spec-vlc-tarball-ci` — the prerelease carriers of the
         // pinned Linux VLC tarball) is a staging namespace, not an app release namespace: it must
+
         // be excluded from every checking channel EXPLICITLY. Today that exclusion is an accident
         // of the non-empty-suffix rule (the tag's "v" prefix is not a version prefix, so the
+
         // extracted "suffix" is the tag's second dash segment) — this test pins it alongside the
         // `v0.0.2-git` precedent above, so a suffix-extraction change cannot re-include it.
         for (channel in listOf("stable", "beta", "dev")) {

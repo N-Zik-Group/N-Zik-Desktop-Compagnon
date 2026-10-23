@@ -10,10 +10,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/**
- * The Windows « Now Playing » panel (SMTC) view: the projection of the MPRIS snapshot (the same
- * mapping of the phone's state on both OS — AD-1).
- */
+/** The Windows « Now Playing » panel (SMTC) view: the projection of the MPRIS snapshot (the same mapping of the phone's state on both OS — AD-1). */
 class SmtcViewTest {
 
     private val playback = setOf(SessionContract.FEATURE_PLAYBACK)

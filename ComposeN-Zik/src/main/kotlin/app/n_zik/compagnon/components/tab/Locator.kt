@@ -122,6 +122,7 @@ class Locator private constructor(
             }
             // The lists draw one row per track id (`distinctBy`): the found track maps to its row in the
             // displayed rows ([getSongs] may differ from the paged list, e.g. the Songs tab's inserted
+
             // smart-shuffle recommendations, since 1.12.0)
             val target = when {
                 !dedupedRows -> raw

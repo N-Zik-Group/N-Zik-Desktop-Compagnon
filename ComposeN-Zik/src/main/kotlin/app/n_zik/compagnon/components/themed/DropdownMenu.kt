@@ -20,11 +20,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * Port of the phone's `app/it/fast4x/rimusic/ui/components/themed/DropdownMenu.kt`: a Material 3
- * `DropdownMenu` in the UI roundness, whose items are a 24 dp leading icon (`favoritesIcon`) and a text
- * (`textSecondary`).
- */
+/** Port of the phone's `app/it/fast4x/rimusic/ui/components/themed/DropdownMenu.kt`: a Material 3 `DropdownMenu` in the UI roundness, whose items are a 24 dp leading icon (`favoritesIcon`) and a text (`textSecondary`). */
 class DropdownMenu(
     val expanded: Boolean,
     val containerColor: Color = Color.Transparent,

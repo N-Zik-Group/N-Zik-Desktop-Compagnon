@@ -50,10 +50,7 @@ import org.jetbrains.compose.resources.stringResource
  */
 object NewUpdateAvailableDialog {
 
-    /**
-     * The one-shot "go to download" request (the phone's `onNavigateToUpdater` callback): the
-     * dialog's button sets it, `MainActivity` consumes it (resets it and opens the update page).
-     */
+    /** The one-shot "go to download" request (the phone's `onNavigateToUpdater` callback): the dialog's button sets it, `MainActivity` consumes it (resets it and opens the update page). */
     object GoToDownloadRequest {
         var requested: Boolean by mutableStateOf(false)
     }
@@ -123,6 +120,7 @@ object NewUpdateAvailableDialog {
 
                 // The phone's static button row: Cancel + Go to download — the button dismisses
                 // the dialog and opens the update page (the phone's `onNavigateToUpdater`); the
+
                 // download and the per-mode install gesture happen on the page, not in the dialog
                 ButtonRow(
                     buttons = listOf(

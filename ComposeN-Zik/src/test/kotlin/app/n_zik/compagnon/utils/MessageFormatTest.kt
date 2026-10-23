@@ -35,6 +35,7 @@ class MessageFormatTest {
     fun `formatMessage applies the args to a real resource`() = runBlocking {
         // The phone's `added_to_dislikes` is "Disliked %s" in English; with the l10n strings the
         // resolved language depends on the JVM locale — locale-agnostic: the argument must be
+
         // applied (no raw `%s` left) whatever the resolved language is.
         val result = formatMessage(Res.string.added_to_dislikes, "«X»")
         assertTrue(result.endsWith("«X»"))

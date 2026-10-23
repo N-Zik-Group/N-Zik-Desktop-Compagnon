@@ -212,8 +212,9 @@ fun SongItem(
         ) {
             if (showThumbnail) {
                 // The phone's `isCustomImage` (its `SongItem.kt` 251-257): the local custom artworks
-                // (`file://`, `app_covers`, `modified:`) are shown with Crop, every other artwork
-                // with FillHeight
+                // (`file://`, `app_covers`, `modified:`) are shown with Crop
+
+                // Every other artwork is shown with FillHeight
                 ImageCacheFactory.Thumbnail(
                     key = if (song.hasArtwork) ArtworkKey.track(song.id, SONG_THUMBNAIL_SIZE_PX) else null,
                     contentScale = if (song.isCustomArtwork) ContentScale.Crop else ContentScale.FillHeight,
@@ -227,9 +228,12 @@ fun SongItem(
             thumbnailOverlay()
 
             // The like tri-state (contract 1.7): a liked heart in `favoritesIcon`, the phone's
-            // `heart_dislike` in red for a disliked song, nothing for neutral (the phone's other heart
-            // styles are dropped — the contract carries no style). The row's heart is an indicator
-            // only (as on the phone): the action lives in the menu and the player.
+            // `heart_dislike` in red for a disliked song, nothing for neutral
+
+            // The phone's other heart styles are dropped — the contract carries no style
+
+            // The row's heart is an indicator only (as on the phone): the action lives in the menu
+            // and the player
             val like = song.displayedLike
             if (like != TrackLike.Neutral) {
                 HeaderIconButton(

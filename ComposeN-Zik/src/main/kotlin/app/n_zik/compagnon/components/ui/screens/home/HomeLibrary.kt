@@ -198,6 +198,7 @@ fun HomeLibrary(
 
     // Since 1.7.2 (feature `library.rewind`): the phone's Month / Year / All row state (its two
     // creation toggles + its current filter), read on the Rewind chip and after each page (the phone
+
     // may have changed its filter meanwhile)
     var rewindState by remember { mutableStateOf<RewindState?>(null) }
 
@@ -216,8 +217,7 @@ fun HomeLibrary(
         )
     }
 
-    /** The phone's chip change; "All" is the only `filter` a phone without `library.sort` serves —
-     *  its other chips are inert there (its `/library/playlists` ignores the unknown parameter). */
+    /** The phone's chip change; "All" is the only `filter` a phone without `library.sort` serves — its other chips are inert there (its `/library/playlists` ignores the unknown parameter). */
     fun selectChip(target: PlaylistsChip) {
         if (target == chip) return
         if (!sortsOnPhone && target != PlaylistsChip.All) return
@@ -264,13 +264,16 @@ fun HomeLibrary(
 
     // The phone's toolbar of the active tab, in the phone's order, with the phone's show conditions
     // (position lock only while the chip's sort is Custom); the Compagnon's "Refresh" is added at the
+
     // end. Wired: sort, refresh; delete playlists opens its confirmation. Placeholders (no contract
     // route, a click does nothing): the rest.
+
     // The phone's item selector (a local toggle, never persisted): the cards' selection boxes
     val itemSelector = rememberItemSelector()
 
     // Spec #63: the phone's position lock (its `remember(sort.sortOrder) { PositionLock(sort.sortOrder) }`):
     // a local-state toggle — no command, nothing persisted; re-created on a sort-direction change
+
     // (the phone's remember key), so its color always reflects the current direction (a tap while
     // descending toasts the phone's "reorder is only possible in ascending sort")
     val positionLock = remember(chipSort.reverse) {
@@ -291,6 +294,7 @@ fun HomeLibrary(
                 "search" -> add(search)
                 // The phone's "Auto Sync" (its `HomeLibrary.kt` 547, icon `sync`): the phone shows it
                 // only while its YouTube sync is enabled — never on the PC (no YouTube sync, no
+
                 // contract route — spec `spec-fill-pc-ui-gaps-menus` #45, renegotiated: not shown)
                 "sync" -> {
                 }
@@ -379,6 +383,7 @@ fun HomeLibrary(
 
                             // Since 1.7.2 (feature `library.rewind`, the phone's `HomeLibrary.kt` 659-729):
                             // the phone's Month / Year / All row, only under the Rewind chip while its two
+
                             // creation toggles are on (its `rowVisible`)
                             val rewindFilterMonthLabel = stringResource(Res.string.rewind_filter_month)
                             val rewindFilterYearLabel = stringResource(Res.string.rewind_filter_year)
@@ -450,6 +455,7 @@ fun HomeLibrary(
 
                             // Spec #65: the phone's sync banner (its `HomeSyncState`): the sync state is
                             // not in the contract, so it never shows on the PC — the component is
+
                             // present, never displayed
                             val isSyncing = false
                             if (isSyncing) {

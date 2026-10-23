@@ -6,10 +6,7 @@ import app.n_zik.compagnon.enums.NavigationBarType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-/**
- * The mini-player's bottom padding under the navigation bar ([playerPadBottomDp], the
- * `playerPadBottom` branch table of `MainActivity`), branch by branch, with its exact values.
- */
+/** The mini-player's bottom padding under the navigation bar ([playerPadBottomDp], the `playerPadBottom` branch table of `MainActivity`), branch by branch, with its exact values. */
 class PlayerPadBottomTest {
 
     @Test

@@ -79,6 +79,7 @@ class TraySetupTest {
     fun `the resolved menu tint is one of the two session colors`() {
         // [primeMenuTint] runs off the UI thread (from main()): on Linux it reads the host dconf
         // color-scheme, on Windows it is a no-op (no dconf — the AWT taskbar keeps the full-color
+
         // untinted app icon) and the tint stays the white default. Either way the tint is one of
         // the two session colors, never a third.
         primeMenuTint()

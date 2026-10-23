@@ -38,11 +38,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * An entry of a sort menu: the label and the icon of one value of the phone's sort enum, and the
- * value it selects — or `null` when the option has no contract route (it is shown like on the phone,
- * but a click does nothing).
- */
+/** An entry of a sort menu: the label and the icon of one value of the phone's sort enum, and the value it selects — or `null` when the option has no contract route (it is shown like on the phone, but a click does nothing). */
 data class SortOption<T>(
     val labelId: StringResource,
     val iconId: DrawableResource,

@@ -191,10 +191,7 @@ private fun Screen(state: PairingState, controller: PairingController) {
     }
 }
 
-/**
- * The page header of the phone's "PC server" screen (`BridgeServerScreen.kt` 124-137): `HeaderWithIcon` (the
- * app's name with the `devices` icon, disabled) then the centred `SettingsDescription`.
- */
+/** The page header of the phone's "PC server" screen (`BridgeServerScreen.kt` 124-137): `HeaderWithIcon` (the app's name with the `devices` icon, disabled) then the centred `SettingsDescription`. */
 @Composable
 private fun Header() {
     HeaderWithIcon(
@@ -222,6 +219,7 @@ private fun Progress(text: String) {
     ) {
         // The phone's big loader (its `themed/Loader.kt` 20-40: the Expressive `LoadingIndicator`,
         // 100 dp, `accent`) — renegotiated 2026-10-11, the PC's page loads show it, not a small
+
         // circular
         LoadingIndicator(
             color = colorPalette().accent,

@@ -45,10 +45,7 @@ object Contributors {
         ignoreUnknownKeys = true
     }
 
-    /**
-     * Parses a `contributors.json` payload (PURE — the phone's `initDevelopers` de-Androided):
-     * the list sorted by `login`; ANY failure → `emptyList()` (the phone's catch).
-     */
+    /** Parses a `contributors.json` payload (PURE — the phone's `initDevelopers` de-Androided): the list sorted by `login`; ANY failure → `emptyList()` (the phone's catch). */
     fun parseDevelopers(payload: String): List<Developer> = try {
         json.decodeFromString<JsonArray>(payload)
             .map { json.decodeFromJsonElement<Developer>(it) }
@@ -107,10 +104,7 @@ object Contributors {
     @Composable
     fun countTranslators(): Int = translators().size
 
-    /**
-     * The developers' cards (the phone's `ShowDevelopers`): the 600 dp scrolling list, empty when
-     * the embedded list could not be read.
-     */
+    /** The developers' cards (the phone's `ShowDevelopers`): the 600 dp scrolling list, empty when the embedded list could not be read. */
     @Composable
     fun ShowDevelopers() {
         val list = developers()

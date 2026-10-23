@@ -150,6 +150,7 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
 
                     // "Enable proxy" (OS:455, the phone's `isProxyEnabledKey`, off by default) —
                     // INERT: the default switch state, a click has no effect. The phone's row
+
                     // shows no description → no toast
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.enable_proxy),
@@ -185,6 +186,7 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
                 content = {
                     // "Parental control" (OS:639, the phone's `parentalControlEnabledKey`, off by
                     // default) — INERT: the default switch state, a click has no effect, a long
+
                     // click toasts the phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.parental_control),
@@ -211,6 +213,7 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
                 content = {
                     // The phone's pass table (MSC:141 / 150 / 159 / 168): on the PC the pass
                     // states are null (the PC has no maintenance subsystem), so each row shows
+
                     // the phone's own no-data default — "No data" (the phone's
                     // `lastRunLine` / `maintenanceHealth` on a missing snapshot, MSC:145-171)
                     SettingsInfoEntry(
@@ -236,6 +239,7 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
 
                     // "Open maintenance" (MSC:174) — INERT: the phone opens its Maintenance sheet
                     // (100 % phone-side — the sheet's jobs, crash log, DB counts, ...); on the PC
+
                     // a click has no effect, a long click toasts the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.maintenance_open),
@@ -247,6 +251,7 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
 
                     // "Enable debug log" (MSC:184, the phone's `logDebugEnabledKey`, off by
                     // default) — INERT: the default switch state, a click has no effect, a long
+
                     // click toasts the phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.enable_log_debug),
@@ -267,6 +272,7 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
 
                     // "Export logs" (MSC:202) — INERT: the phone's `CopyLogsDialog` is 100 %
                     // phone-side (it exports the phone's debug / crash logs); on the PC a click
+
                     // has no effect, a long click toasts the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.export_logs),
@@ -290,6 +296,7 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
                 content = {
                     // "Settings reset" (OS:685) — INERT: the phone resets ITS settings here (its
                     // `DefaultOtherSettings`); on the PC a click has no effect, a long click toasts
+
                     // the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.settings_reset),

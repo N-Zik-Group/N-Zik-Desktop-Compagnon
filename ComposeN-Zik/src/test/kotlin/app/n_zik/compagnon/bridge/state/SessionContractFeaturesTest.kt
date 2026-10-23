@@ -3,10 +3,7 @@ package app.n_zik.compagnon.bridge.state
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-/**
- * The contract §5 `features` wire literals: the phone advertises exactly these strings, so a
- * changed literal would silently hide its screen (the PC gates on the feature, never the version).
- */
+/** The contract §5 `features` wire literals: the phone advertises exactly these strings, so a changed literal would silently hide its screen (the PC gates on the feature, never the version). */
 class SessionContractFeaturesTest {
 
     @Test

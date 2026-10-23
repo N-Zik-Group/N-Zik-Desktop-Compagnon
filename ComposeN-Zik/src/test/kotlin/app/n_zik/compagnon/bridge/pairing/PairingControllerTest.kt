@@ -431,8 +431,10 @@ class PairingControllerTest {
     fun `an offer that crosses a user operation never runs it in parallel`() {
         // Real threads: the virtual-time tests cannot produce a two-thread interleaving. The
         // machine is now driven from two places at once (the Compose handlers on the UI thread
+
         // and the listener's `onOffer` on the app scope's data dispatcher). Every iteration
         // releases the user's manual submit and the listener's offer simultaneously while the
+
         // state is still `Unpaired` (a shared latch), so the crossing is real, not a decided
         // order — repeated, so a single lucky interleaving cannot carry the test.
         val threads = Executors.newFixedThreadPool(2)
@@ -484,6 +486,7 @@ class PairingControllerTest {
                     listener.onOffer!!.invoke(offer())
                     // The `updateUnpaired` race: while the operation is held in flight on
                     // `Validating`, emit a request update through the listener's flow — a late
+
                     // update must never touch a state that is no longer `Unpaired`.
                     waitFor("the operation to be held on Validating") {
                         controller.state.value is PairingState.Validating
@@ -499,6 +502,7 @@ class PairingControllerTest {
 
                 // The pool has a free thread for the listener's request collector while the held
                 // operation parks on the gate: a short settle lets the update race land before
+
                 // the state is asserted.
                 Thread.sleep(200)
                 assertTrue(
@@ -512,6 +516,7 @@ class PairingControllerTest {
 
                 // Exactly one completed meta/validate/save round: if the operation the takeover
                 // cancelled had already sent its `meta` request before the interruption, one
+
                 // aborted call rides along; the completing round always has exactly one
                 // `validate` (and, with it, exactly one save).
                 val rounds = api.calls.subList(callsBefore, api.calls.size)

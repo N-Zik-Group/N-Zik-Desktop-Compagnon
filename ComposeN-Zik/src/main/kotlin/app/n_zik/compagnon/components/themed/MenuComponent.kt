@@ -67,10 +67,7 @@ fun Enqueue(
     }
 }
 
-/**
- * "Add to favorites" (contract §10.2, since 1.7): the phone's `LikeComponent` — an explicit like
- * (`state = liked`), not a rotation; it keeps the phone's label and heart icon.
- */
+/** "Add to favorites" (contract §10.2, since 1.7): the phone's `LikeComponent` — an explicit like (`state = liked`), not a rotation; it keeps the phone's label and heart icon. */
 @Composable
 fun AddToFavorites(
     enabled: Boolean = true,

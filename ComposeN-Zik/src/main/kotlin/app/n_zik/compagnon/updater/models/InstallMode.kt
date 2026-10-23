@@ -79,11 +79,7 @@ fun isNsisWindowsInstall(
     return sameWindowsDir(recorded, launcherDir.path)
 }
 
-/**
- * Windows dir comparison for the D1 registry cross-check: case-insensitive (Windows paths are)
- * and trailing-backslash-insensitive (NSIS records `$INSTDIR` without one — a trailing separator
- * is not a different dir).
- */
+/** Windows dir comparison for the D1 registry cross-check: case-insensitive (Windows paths are) and trailing-backslash-insensitive (NSIS records `$INSTDIR` without one — a trailing separator is not a different dir). */
 private fun sameWindowsDir(recorded: String, dir: String): Boolean {
     val strip = { s: String -> s.trim().removeSuffix("\\") }
     return strip(recorded).equals(strip(dir), ignoreCase = true)
@@ -145,6 +141,7 @@ private fun registryInstallDirUnder(root: WinReg.HKEY, key: String): String? =
         try {
             // Two-pass REG_SZ read: the size first (bytes, the terminating zero included), then
             // the value. The probe reports the size via lpcbData (lpData = null) and returns
+
             // either SUCCESS (zero-length value) or ERROR_INSUFFICIENT_BUFFER.
             val size = IntByReference(0)
             val probe = Advapi32.INSTANCE.RegQueryValueEx(
@@ -224,6 +221,7 @@ fun liveExecutablePath(): String = commandLinePath().let { fallback ->
         return runCatching { procSelfExe.toRealPath().toString() }.onFailure {
             // The provenance read degrades to the pre-G9 behavior (the command-line path) on a
             // resolution failure — this is the only diagnostic of that degradation (review loop 3
+
             // — L3-BH2): an unresolvable /proc/self/exe means an /opt install would be misdetected
             // PORTABLE with a null marker, and the block would invert silently
             log.warning("Failed to resolve /proc/self/exe — the provenance falls back to the command-line path: ${it.message}")
@@ -328,6 +326,7 @@ fun currentIsAurBlocked(
     val blocked = isAurBlocked(installMode, marker, probe)
     // The provenance verdict (review loop 3 — L3-BH2): FINE by default — enable it to see why
     // the in-app updater is off on a given install (the silent degradation otherwise leaves no
+
     // trace in the log)
     log.fine("Updater provenance: mode=$installMode, marker=$marker, aurBlocked=$blocked")
     return blocked
@@ -366,13 +365,7 @@ fun updaterEffectivelyEnabled(
  */
 object ArtifactNames {
 
-    /**
-     * The jpackage linux package name — shared by EVERY channel since the 2026-10-15 naming
-     * decision (the dev channel's own `-dev` base was removed: its marker is the dated version
-     * suffix only, so on Linux dev replaces the stable install in place, like beta — Windows
-     * keeps its per-channel registry key, the Flatpak keeps its own app-id). The frozen install
-     * identity — `/opt/n-zik-desktop-compagnon`.
-     */
+    /** The jpackage linux package name — shared by EVERY channel since the 2026-10-15 naming decision (the dev channel's own `-dev` base was removed: its marker is the dated version suffix only, so on Linux dev replaces the stable install in place, like beta — Windows keeps its per-channel registry key, the Flatpak keeps its own app-id). The frozen install identity — `/opt/n-zik-desktop-compagnon`. */
     const val LINUX_PACKAGE_BASE = "n-zik-desktop-compagnon"
 
     /**
@@ -472,10 +465,7 @@ object ArtifactNames {
     }
 }
 
-/**
- * The system package manager of a package-managed install (spec AD-4). Probed at runtime (which
- * binary answers) — not part of the pure detection, so not pinned by the tests.
- */
+/** The system package manager of a package-managed install (spec AD-4). Probed at runtime (which binary answers) — not part of the pure detection, so not pinned by the tests. */
 enum class PackageManager { DEB, RPM, AUR, NONE }
 
 /**

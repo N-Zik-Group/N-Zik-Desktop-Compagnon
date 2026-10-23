@@ -73,6 +73,7 @@ class ArtifactNamesChannelTest {
     fun `the dev names carry the dev product name and the shared linux package base`() {
         // AD-8 as amended 2026-10-15: the dev is still its own product on Windows (its own
         // product name + registry key) and keeps its own Flatpak app-id, but its Linux package
+
         // base is the SHARED one (n-zik-desktop-compagnon) — the channel marker is the dated
         // version suffix only, for ALL the release assets (the .exe included)
         val v = "0.0.3-dev-20261007"

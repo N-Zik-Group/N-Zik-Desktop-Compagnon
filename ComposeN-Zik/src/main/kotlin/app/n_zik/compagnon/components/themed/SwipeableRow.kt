@@ -155,6 +155,7 @@ fun SwipeableRow(
 
     // The action changes the row (removal, move), which recomputes the swipe anchors: the state can
     // then settle in a dismissed direction and stay displaced, its gestures being off until it is
+
     // back at rest. Bring the row back to its position.
     LaunchedEffect(dismissState) {
         snapshotFlow { dismissState.settledValue }

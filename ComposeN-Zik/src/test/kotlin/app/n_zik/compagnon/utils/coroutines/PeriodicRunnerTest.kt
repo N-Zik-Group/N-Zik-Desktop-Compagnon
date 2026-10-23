@@ -69,6 +69,7 @@ class PeriodicRunnerTest {
     fun `a slow action extends the period, fixed delay not fixed rate`() = runTest {
         // The KDoc pins `scheduleWithFixedDelay` semantics: the next tick starts only when the
         // action finishes. A slow action (20 virtual seconds) with a 10 s interval must delay
+
         // the next call by the action's duration — nothing would catch that if the loop were
         // `scheduleAtFixedRate`.
         val callTimes = mutableListOf<Long>()

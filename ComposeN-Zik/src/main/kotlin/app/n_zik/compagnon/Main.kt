@@ -81,12 +81,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 fun main() {
     // Must run before the AWT toolkit loads: on Windows, the pixels a window resize exposes
     // are then erased natively with the window's background color (see applyWindowBackground)
-    // the moment the OS reports the new size, instead of showing white / black until the next
-    // Compose frame
+
+    // The erase happens the moment the OS reports the new size, instead of showing white /
+    // black until the next Compose frame
     System.setProperty(ERASE_BACKGROUND_ON_RESIZE_PROPERTY, "true")
     // A duplicate launch (the desktop icon, the media notification's click, a `flatpak run`)
-    // re-shows the first instance's window through its MPRIS `Raise` and exits here — a parallel
-    // player would play the phone's track twice (SingleInstance)
+    // re-shows the first instance's window through its MPRIS `Raise` and exits here
+
+    // A parallel player would play the phone's track twice (SingleInstance)
     if (SingleInstance.isDuplicate()) return
     // The tray/menu icon's session tint (one small dconf read — the startup thread is free for it,
     // the composition is not; Linux-only, a no-op on Windows)
@@ -98,8 +100,9 @@ private fun runApplication() = application {
     // The window's Escape key is the phone's system back (story 11c), routed to the paired screen
     val backDispatcher = remember { BackDispatcher() }
     // The app-lifetime singletons hoist to the application scope: the tray and the close-button
-    // decision act on them from outside the window's content, and the taskbar media surface
-    // (spec `spec-tray-taskbar-media-controls`) lives longer than any session
+    // decision act on them from outside the window's content
+
+    // The taskbar media surface (spec `spec-tray-taskbar-media-controls`) lives longer than any session
     val preferences = remember { Preferences() }
     val windowController = remember { WindowController() }
     val taskbar = remember { createTaskbarMediaControls(windowController, ::exitApplication) }
@@ -108,13 +111,17 @@ private fun runApplication() = application {
     remember { taskbar.setupPlatform() }
     // The taskbar's thumbnail toolbar must be (re)added BEFORE the window's re-show — the taskbar's
     // thumbnail button reads the stored toolbar only when it (re)creates itself on the show
+
     // (live-verified 2026-10-11); showAndFocus invokes this right before setVisible(true)
     remember { windowController.onShowHook = { taskbar.onWindowShow() } }
     // The system tray (frozen spec's menu « Ouvrir / actions extensibles / Quitter ») composes only
-    // after the window's first frame: Compose's Tray turns its Painter icon into an AWT image, and
-    // that conversion needs the Compose graphics implementation — the window's scene registers it
-    // on its first frame. Composing it at the application's first composition (before any frame)
-    // dies with "No Compose UI graphics implementation is registered" (observed live on Windows)
+    // after the window's first frame
+
+    // Compose's Tray turns its Painter icon into an AWT image, and that conversion needs the
+    // Compose graphics implementation — the window's scene registers it on its first frame
+
+    // Composing it at the application's first composition (before any frame) dies with
+    // "No Compose UI graphics implementation is registered" (observed live on Windows)
     var trayReady by remember { mutableStateOf(false) }
     Window(
         onCloseRequest = {
@@ -145,8 +152,10 @@ private fun runApplication() = application {
         }
         CompositionLocalProvider(LocalBackDispatcher provides backDispatcher) {
             // The AWT window behind the content scope: its layers are painted with the app's
-            // background color so a resize never exposes the layer defaults (black canvas
-            // clear, light Swing "Panel.background" — the black / white flash)
+            // background color
+
+            // A resize then never exposes the layer defaults (black canvas clear, light Swing
+            // "Panel.background" — the black / white flash)
             App(awtWindow = window, preferences = preferences, taskbar = taskbar)
         }
     }
@@ -166,8 +175,10 @@ fun App(
     taskbar: TaskbarMediaControls,
 ) {
     // The app scope carries only non-UI work (pairing machine, pairing listener, the WS session):
-    // it runs on the data dispatcher, never on the Swing EDT, and an unhandled failure is logged
-    // by the shared fire-and-forget handler instead of dying uncaught on a pool thread.
+    // it runs on the data dispatcher, never on the Swing EDT
+
+    // An unhandled failure is logged by the shared fire-and-forget handler instead of dying
+    // uncaught on a pool thread
     val scope = remember { NzikDispatchers.fireAndForget(NzikDispatchers.DATA) }
     val client = remember { BridgeClient() }
     val wsClient = remember { BridgeSession.httpClient() }
@@ -175,8 +186,9 @@ fun App(
     // — the desktop equivalent of the phone's global `appContext().preferences` (attached once)
     remember { Updater.attach(preferences) }
     // The dialog's cancelled flag is re-armed to its default on every launch (the phone's
-    // `NewUpdateAvailableDialog.kt` L105 — `!IS_AUTOUPDATE`, here `!updaterEnabled`): the
-    // persisted `updateCancelled` setting is WRITE-ONLY, like on the phone — it is never read
+    // `NewUpdateAvailableDialog.kt` L105 — `!IS_AUTOUPDATE`, here `!updaterEnabled`)
+
+    // The persisted `updateCancelled` setting is WRITE-ONLY, like on the phone — it is never read
     // back, so a dismissal only cancels the dialog for THIS run, not across launches
     remember { NewUpdateAvailableDialog.isCancelled = !AppVersion.updaterEnabled }
     val audioCache = remember { AudioCache(maxBytes = { preferences.settings.value.songCacheMaxBytes }) }
@@ -201,9 +213,12 @@ fun App(
         }
     }
     // The applied locale is the composition root's recomposition key
-    // (`stringResource` is not locale-state-tracked on desktop, so [BridgeScreen] keys its content on
-    // the applied tag for the visible switch): the PC's own "App language" setting — `system` keeps
-    // the OS locale, a BCP-47 code applies it, an unknown one falls back to the PC's `values/`.
+    // (`stringResource` is not locale-state-tracked on desktop, so [BridgeScreen] re-keys its
+
+    // content on the applied tag for the visible switch)
+
+    // The PC's own "App language" setting: `system` keeps the OS locale, a BCP-47 code applies
+    // it, an unknown one falls back to the PC's `values/`
     val settings by preferences.settings.collectAsState()
     // The pairing state drives the update-dialogs gate (the root update dialogs wait for the
     // pairing screen to be over — user request 2026-10-16, see [updateDialogsVisible])
@@ -219,20 +234,31 @@ fun App(
     }
     // The startup update check (spec `spec-updater` loop 2): the phone's 3-state
     // `CheckUpdateState` (replacing the v1 boolean), read once at startup on the updater-enabled
-    // channels (not debug / -git):
-    //  - On  : the non-forced check, unless the dialog was cancelled during THIS run (the
-    //          in-memory flag only — the phone's rule; the persisted setting is write-only
-    //          and never suppresses the startup check across launches);
-    //  - Ask : the phone's full `CheckForUpdateDialog` (its `Skeleton.kt` call site, ported 1:1 —
-    //          the loop-2 closure replaced the v1 themed confirmation with the phone's own dialog:
-    //          info card + Check / Cancel / Turn off);
-    //  - Off : nothing.
+
+    // channels (not debug / -git)
+
+    // - On: the non-forced check, unless the dialog was cancelled during THIS run (the
+    //   in-memory flag only — the phone's rule; the persisted setting is write-only and never
+
+    //   suppresses the startup check across launches)
+
+    // - Ask: the phone's full `CheckForUpdateDialog` (its `Skeleton.kt` call site, ported 1:1 —
+    //   the loop-2 closure replaced the v1 themed confirmation with the phone's own dialog:
+
+    //   info card + Check / Cancel / Turn off)
+
+    // - Off: nothing.
+
     // The provenance block (spec `spec-arch-binary-package-release`): a pacman /opt install
     // without the release marker is an AUR install — the AUR entry owns the update, so no
-    // startup check at all (same treatment as the git channel). The block composition (it may
-    // spawn the package-manager probes) never runs on the composition thread — off to the
-    // DATA thread, and short-circuited before the probe when the build is not updater-enabled
-    // or the mode is not package-managed (loop 2 G13).
+
+    // startup check at all (same treatment as the git channel)
+
+    // The block composition (it may spawn the package-manager probes) never runs on the
+    // composition thread — off to the DATA thread
+
+    // And it is short-circuited before the probe when the build is not updater-enabled or the
+    // mode is not package-managed (loop 2 G13)
     LaunchedEffect(Unit) {
         if (AppVersion.updaterEnabled) {
             val aurBlocked = withContext(NzikDispatchers.DATA) { currentIsAurBlocked() }
@@ -262,8 +288,10 @@ fun App(
         // The tray's styled menu is its own window, outside this composition: it reads the live
         // appearance from here (the palette, the roundness, the fonts)
         SideEffect { TrayMenuAppearance.current.value = appearance }
-        // The phone draws its Material components without a `MaterialTheme`: the default light scheme, with
-        // Android's Roboto (story 11c); the app ripple is bounded, in the palette's text colour
+        // The phone draws its Material components without a `MaterialTheme`: the default light scheme,
+        // with Android's Roboto (story 11c)
+
+        // The app ripple is bounded, in the palette's text colour
         // (phone's `MainActivity.kt` 1595-1598, 2072-2074)
         val rippleConfiguration = remember(appearance.colorPalette.text) {
             RippleConfiguration(color = appearance.colorPalette.text)
@@ -279,11 +307,13 @@ fun App(
                 label = "rootBackground",
             )
             // The AWT window background follows the same animated color as the root Box below: the
-            // pixels the OS erases while the window is resized then match the app (including
-            // during a palette fade) instead of flashing until the next frame. The apply runs only
-            // when the color actually changed: the palette fade repaints every frame, and the AWT
-            // tree walk behind applyWindowBackground (idempotent, set up once in main) is not worth
-            // re-running on each of them
+            // pixels the OS erases while the window is resized then match the app, including
+
+            // during a palette fade — instead of flashing until the next frame. The apply runs
+            // only when the color actually changed: the palette fade repaints every frame, and the AWT
+
+            // tree walk behind applyWindowBackground (idempotent, set up once in main) is not
+            // worth re-running on each of them
             val appliedWindowBackground = remember { mutableStateOf<Color?>(null) }
             SideEffect(rootBackgroundColor) {
                 if (rootBackgroundColor != appliedWindowBackground.value) {
@@ -298,8 +328,10 @@ fun App(
                         playerFactory = { active ->
                             val repository = RemotePlayerRepository.create(active, client, wsClient, controller.revocation, scope)
                             // The system media surface (frozen spec): its buttons forward to THIS
-                            // repository, and the identity-guarded detach lands when the
-                            // DisposableEffect (or "Forget this phone") closes it
+                            // repository
+
+                            // The identity-guarded detach lands when the DisposableEffect (or
+                            // "Forget this phone") closes it
                             taskbar.attach(repository)
                             repository.onClosed { taskbar.detachIfAttached(repository) }
                             repository
@@ -323,20 +355,27 @@ fun App(
                     )
                     // The new-update dialog (spec `spec-updater` AD-6, the phone's `Skeleton.kt`
                     // call site): drawn at the root, above the bridge screen
+
                     // The root dialogs sit outside MainActivity's `LocalUiSettings`: the phone's
                     // settings (PitchBlack) reach them through the appearance state
                     CompositionLocalProvider(app.n_zik.compagnon.bridge.state.LocalUiSettings provides appearanceState.uiSettings) {
                         // The update dialogs wait for the pairing screen to be over (user request
                         // 2026-10-16): while the state is not [PairingState.Paired] — the pairing
+
                         // screen (Unpaired / Validating / Revoked) or the startup Starting phase —
-                        // they are not composed. Their own state (the object-level isActive /
-                        // isCancelled) survives the gate, so an update detected at startup pops the
-                        // instant the user lands on the paired screen, never on top of the pairing UI.
+                        // they are not composed
+
+                        // Their own state (the object-level isActive / isCancelled) survives the
+                        // gate, so an update detected at startup pops the instant the user lands
+
+                        // on the paired screen, never on top of the pairing UI
                         if (updateDialogsVisible(pairingState)) {
                             NewUpdateAvailableDialog.Render()
                             // The "ask" startup dialog (spec AD-9, the phone's `CheckForUpdateDialog` —
-                            // the v1 confirmation is gone): the phone's info card + Check / Cancel /
-                            // Turn off, active once at startup when the choice is [CheckUpdateState.Ask]
+                            // the v1 confirmation is gone)
+
+                            // The phone's info card + Check / Cancel / Turn off, active once at startup
+                            // when the choice is [CheckUpdateState.Ask]
                             CheckForUpdateDialog.Render()
                         }
                     }

@@ -4,10 +4,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/**
- * Spec `spec-settings-navigation` NAV-12: the phone's `searchCtx` filter — a section shows when the
- * query is blank or one of its titles (the section card's, its entries') contains it, case-insensitively.
- */
+/** Spec `spec-settings-navigation` NAV-12: the phone's `searchCtx` filter — a section shows when the query is blank or one of its titles (the section card's, its entries') contains it, case-insensitively. */
 class SettingsSearchCtxTest {
 
     @Test

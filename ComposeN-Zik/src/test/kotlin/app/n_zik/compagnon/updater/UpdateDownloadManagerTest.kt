@@ -74,12 +74,16 @@ class UpdateDownloadManagerTest {
     fun `a truncated download fails with the localized truncation message`() = runBlocking {
         // `runBlocking` (real time, the codebase test convention — see MessageFormatTest), not
         // runTest: the download runs on the REAL NzikDispatchers pool, and runTest's virtual
+
         // clock would let withTimeout expire before the real download makes progress.
         //
+
         // A 50-byte body against a Content-Length of 100. With the Ktor CIO client the engine
         // validates the body against its Content-Length while RECEIVING the response and rejects
+
         // the short body at the `get()` call — before any byte reaches the disk. So the download
         // fails with the localized truncation string (never the raw engine message, never a
+
         // "completed" half-file), and there is no partial file on disk (deviation from the spec
         // matrix "the file is kept": the bytes simply never get there with this client).
         val client = mockClient(ByteArray(50) { it.toByte() }, contentLength = "100")
@@ -107,10 +111,13 @@ class UpdateDownloadManagerTest {
 
         // Wait for the download to LEAVE Starting, then cancel. The 1 MB in-memory mock body
         // can be fully consumed BEFORE this wait even reads the state (fast filesystem +
+
         // in-memory engine): the StateFlow then conflates to Completed and a
         // `first { Downloading }` wait would never match. So wait for ANY non-Starting state —
+
         // whatever it is, the cancel below is authoritative (the manager's cancel fence turns
         // a late Completed/Failed into a cancel, and cancelDownload's synchronous backstop
+
         // deletes the file when the job already finished), so the terminal state is Idle with
         // the file gone on every platform.
         withTimeout(10_000) {
@@ -121,6 +128,7 @@ class UpdateDownloadManagerTest {
         assertInstanceOf(DownloadState.Idle::class.java, withTimeout(10_000) { UpdateDownloadManager.downloadState.first { it is DownloadState.Idle } })
         // The file is deleted either way — by the job's cleanup after it closes its stream
         // (cancel mid-download; a file cannot be deleted while its handle is open — Windows)
+
         // or by cancelDownload's synchronous backstop (the download completed first) — so wait
         // for its absence instead of asserting it right after cancelDownload() returns
         val file = File(dir.toFile(), assetName)
@@ -157,14 +165,16 @@ class UpdateDownloadManagerTest {
         assertFalse(UpdateDownloadManager.isSafeAssetName("a..b.exe"))
     }
 
-    // ---- The Windows install helper script (interactive NSIS — the user decisions replaced the
+    // The Windows install helper script (interactive NSIS — the user decisions replaced the
     // silent design, the per-user design and the machine-level-only jpackage exe) ----
 
     private fun helperScript(): String = UpdateDownloadManager.windowsInstallScript(
         // ONE consistent dev-channel layout: the install dir (the channel DISPLAY name —
         // `… DEV`) + the per-channel storage name (the channel DATA name — also `… DEV`) for
+
         // the updates dir and the marker dir, under AppData\Roaming (the app data dir —
         // production's %APPDATA%; a pre-regrouping fixture mix of Local and the old base-name
+
         // data dirs was a layout no production install carries)
         appExe = "C:\\Program Files\\N-Zik Desktop Compagnon DEV\\N-Zik Desktop Compagnon DEV.exe",
         installerPath = "C:\\Users\\danie\\AppData\\Roaming\\N-Zik Desktop Compagnon DEV\\updates\\n-zik-desktop-compagnon-0.0.2-dev-20260101.exe",
@@ -189,8 +199,10 @@ class UpdateDownloadManagerTest {
         val script = helperScript()
         // The interactive launch with /UPDATE: the "existing installation" upgrade/repair/
         // remove page is skipped (the scope defaults to the current install's scope); the
+
         // scope-choice page still shows (the UAC prompt only when the user picks the global
         // scope — then the progress), so the MSI-era /quiet flag AND the NSIS /S silent flag
+
         // are both gone
         assertFalse(script.contains("/quiet"), "the MSI-era /quiet flag must be gone")
         assertFalse(script.contains("/S"), "the NSIS /S silent flag must be gone")
@@ -207,6 +219,7 @@ class UpdateDownloadManagerTest {
         val script = helperScript()
         // The exit codes the NSIS installer returns (the NSIS script header pins the contract):
         // 0 → relaunch, but only when the app is NOT already running (the installer's finish
+
         // page may have launched it) and its path still exists (the cross-scope migration edge:
         // the old path is gone → no relaunch, no marker)
         assertTrue(script.contains("if (\$code -eq 0) {"))
@@ -220,6 +233,7 @@ class UpdateDownloadManagerTest {
         assertTrue(script.contains("install failed with exit code \$code"))
         // A successful update deletes the downloaded installer (the setup is locked while it
         // runs, so the helper does it — user decision 2026-10-16); the same single-quoted path
+
         // literal as the launch
         assertTrue(script.contains("Remove-Item 'C:\\Users\\danie\\AppData\\Roaming\\N-Zik Desktop Compagnon DEV\\updates\\n-zik-desktop-compagnon-0.0.2-dev-20260101.exe' -ErrorAction SilentlyContinue"))
         // Two marker writes only: the app never exited / a bad exit code (a cancel is not one)
@@ -233,6 +247,7 @@ class UpdateDownloadManagerTest {
         val script = helperScript()
         // The 2026-10-16 field bug: the statements were joined with bare spaces, which is a
         // ParserError for the single -Command line — the helper died before its first line
+
         // (the app quit, the installer never launched, no marker, silent). The text pins keep
         // the separator on non-Windows hosts; the parse test next door proves it for real.
         assertTrue(script.contains("\$w=0; while"), "the init and the wait loop must be ';' -joined")
@@ -271,7 +286,7 @@ class UpdateDownloadManagerTest {
         assertTrue(script.contains("Set-Content -Path 'C:\\it''s\\marker.txt'"))
     }
 
-    // ---- The install failure marker (the helper writes it on a failed install, the app consumes
+    // The install failure marker (the helper writes it on a failed install, the app consumes
     // it at the next startup) ----
 
     @Test

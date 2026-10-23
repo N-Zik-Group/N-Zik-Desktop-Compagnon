@@ -30,10 +30,7 @@ internal fun shouldReleasePendingSeekPosition(
     heldForMs >= PENDING_SEEK_RELEASE_TIMEOUT_MS ||
         abs(playerPositionMs - pendingTargetMs) <= PENDING_SEEK_SETTLE_TOLERANCE_MS
 
-/**
- * The position a skip button (±5/10/30 s) adjusts from, evaluated at tap time: the in-flight drag, else a
- * still-pending seek target (consecutive taps chain from the target), else the live position.
- */
+/** The position a skip button (±5/10/30 s) adjusts from, evaluated at tap time: the in-flight drag, else a still-pending seek target (consecutive taps chain from the target), else the live position. */
 internal fun skipBasePosition(
     scrubbingMs: Long?,
     pendingTargetMs: Long?,

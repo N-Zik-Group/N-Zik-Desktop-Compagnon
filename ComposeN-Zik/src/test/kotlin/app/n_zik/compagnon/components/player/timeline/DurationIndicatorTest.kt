@@ -3,10 +3,7 @@ package app.n_zik.compagnon.components.player.timeline
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-/**
- * The remaining-time label ticks on the same whole-second boundary as the elapsed label
- * (port of the phone's `TimelineLabelsTest`).
- */
+/** The remaining-time label ticks on the same whole-second boundary as the elapsed label (port of the phone's `TimelineLabelsTest`). */
 class DurationIndicatorTest {
 
     @Test

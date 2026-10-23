@@ -170,8 +170,10 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                 content = {
                     // "Image cache max size" (DS:304-352, the phone's `coilDiskCacheMaxSizeKey`,
                     // `CoilDiskCacheMaxSize.128MB`) — INERT: the phone's default value shown (the
+
                     // enum's name, "128MB", as the phone renders it), a click has no effect. The
                     // phone's row shows a value, not a description → no toast. The phone's trash and
+
                     // "used" indicator are not ported (the PC's image cache is fixed, spec §A2)
                     OtherSettingsEntry(
                         title = stringResource(Res.string.image_cache_max_size),
@@ -244,8 +246,10 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // "Song download max size" (DS:426-451, the phone's `exoPlayerDiskDownloadCacheMaxSizeKey`,
                     // `ExoPlayerDiskDownloadCacheMaxSize.2GB`) — INERT (user decision 2026-10-12: the phone's
+
                     // `downloadCache` always exists on the phone, so the phone renders the row): the phone's
                     // default value shown (the enum's name, "2GB", as the phone renders it), a click has no
+
                     // effect. The phone's row shows a value, not a description → no toast. The phone's trash
                     // and "used" indicator are not ported (the PC has no download cache, spec §A2)
                     OtherSettingsEntry(
@@ -276,6 +280,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                 content = {
                     // "Export backup" (DS:507-515) — INERT: the phone's dialog is 100 % phone-side
                     // (it exports the phone's DB / settings to the phone's storage); a click has no
+
                     // effect, a long click toasts the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.export_backup),
@@ -305,6 +310,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // "Import settings migration" (DS:534) — INERT: the phone's `ImportMigration` is
                     // 100 % phone-side (the old app's DB format); a click has no effect, a long click
+
                     // toasts the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.title_import_settings_migration),
@@ -328,6 +334,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                 content = {
                     // "Auto backup location" (ABK:73, the phone's `autoBackupUri`, "") — INERT: the
                     // phone's SAF folder picker, its default (unset) shown; the phone's row shows a
+
                     // value, not a description → no toast. The phone's "location not set" warning
                     // (ABK:80) is not ported (nothing is ever set on the PC)
                     OtherSettingsEntry(
@@ -339,6 +346,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // "Auto backup target" (ABK:84, the phone's `autoBackupTarget`, DATABASE) — INERT:
                     // the phone's selector, its default label shown; a click has no effect; the phone's
+
                     // row shows a value, not a description → no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.auto_backup_target),
@@ -360,6 +368,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // "Max backups" (ABK:137, the phone's `autoBackupMaxBackups`, 5) — INERT: the
                     // phone's numeric input, its default shown, a click has no effect; the phone's row
+
                     // shows a value, not a description → no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.auto_backup_max_backups),
@@ -368,14 +377,11 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                         onClick = {},
                     )
 
-                    /**
-                     * NOT RENDERED ⛔ (spec §A2): the phone's "Pre-install backup" (ABK:144,
-                     * `autoBackupPreInstallKey`, off) — the Android APK install hook; there is no
-                     * equivalent on the PC.
-                     */
+                    /** NOT RENDERED ⛔ (spec §A2): the phone's "Pre-install backup" (ABK:144, `autoBackupPreInstallKey`, off) — the Android APK install hook; there is no equivalent on the PC. */
 
                     // "Auto backup interval" (ABK:154, the phone's `autoBackupInterval`, NONE) — INERT:
                     // the phone's selector, its default label shown; a click has no effect; the phone's
+
                     // row shows a value, not a description → no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.auto_backup_interval),
@@ -409,6 +415,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                 content = {
                     // "Pause search history" (DS:576, `pauseSearchHistoryKey`, off by default) — INERT:
                     // the default switch state, a click has no effect, a long click toasts the phone's
+
                     // description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.pause_search_history),
@@ -422,6 +429,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // "Pause listen history" (DS:593, `pauseListenHistoryKey`, off by default) — INERT:
                     // the default switch state, a click has no effect, a long click toasts the phone's
+
                     // description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.player_pause_listen_history),
@@ -435,6 +443,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // "Clear search history" (DS:609) — INERT: the phone deletes its search DB; the PC
                     // has no search history (the phone's text at 0 queries — "History is empty" —
+
                     // shown), a click has no effect; the phone's row shows a count, not a description
                     // → no toast
                     OtherSettingsEntry(
@@ -446,6 +455,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // "Clear listen history" (DS:627) — INERT: the phone deletes its events DB; the PC
                     // has no listen history (the phone's text at 0 events — "History is empty" —
+
                     // shown), a click has no effect; the phone's row shows a count, not a description
                     // → no toast
                     OtherSettingsEntry(
@@ -469,6 +479,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                 content = {
                     // "Settings reset" (DS:668) — INERT: the phone resets ITS settings here (its
                     // `DefaultDataSettings`); on the PC a click has no effect, a long click toasts
+
                     // the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.settings_reset),

@@ -158,14 +158,17 @@ class CredentialStore(
             val home = System.getProperty("user.home").orEmpty()
             val channel = AppVersion.channel
             // The self-contained-portable decision wins over the per-channel dir (spec
-            // `spec-channel-storage-portable-targz`): the marker is the sole signal, and every
-            // resolution failure degrades to the per-channel dir below (safe — no data lost)
+            // `spec-channel-storage-portable-targz`)
+
+            // The marker is the sole signal, and every resolution failure degrades to the
+            // per-channel dir below (safe — no data lost)
             portableDataRootOf(osName, System.getenv(), liveExecutablePath(), AppInfo.productName(channel))
                 ?.let { portableRoot ->
                     val portableDir = portableRoot.resolve(PORTABLE_DATA_DIR_NAME)
                     // The one-time copy from the base data dir (same semantics as the channel
-                    // copy: the base's files the portable dir lacks, once — the walk is skipped
-                    // on re-launch: the portable dir owns its state)
+                    // copy: the base's files the portable dir lacks, once)
+
+                    // The walk is skipped on re-launch: the portable dir owns its state
                     copySharedIntoChannel(
                         resolveAppDataDir(osName, appData, xdgConfigHome, home, AppInfo.NAME),
                         portableDir,
@@ -206,10 +209,13 @@ class CredentialStore(
             val dir = resolveAppDataDir(osName, appData, xdgConfigHome, userHome, dataDirName)
             if (isLinuxOs(osName) && dataDirName == AppInfo.NAME) {
                 // The BASE dir only: the legacy dir is the pre-channel home of the data, and a
-                // channel-suffixed build launching first must not move it into its own dir (the
-                // base channels would then read an empty dir — forced re-pair, the data stranded
-                // in the channel dir). The channel build picks the data up through the base →
-                // channel copy below, once the base has it
+                // channel-suffixed build launching first must not move it into its own dir
+
+                // The base channels would then read an empty dir — forced re-pair, the data
+                // stranded in the channel dir
+
+                // The channel build picks the data up through the base → channel copy below,
+                // once the base has it
                 migrateLegacyAppDataDir(legacyAppDataDir(userHome), dir, log)
             }
             if (dataDirName != AppInfo.NAME) {
@@ -370,8 +376,9 @@ class CredentialStore(
                 log.info("Migrated the legacy app data dir $legacy to $target")
             }.onFailure { first ->
                 // A cross-filesystem move of a NON-EMPTY dir fails where the rename cannot cross
-                // the mount (DirectoryNotEmptyException — plain `Files.move` included): fall back
-                // to the copy + merge routine, which works on any filesystem
+                // the mount (DirectoryNotEmptyException — plain `Files.move` included)
+
+                // Fall back to the copy + merge routine, which works on any filesystem
                 log.warning("Could not move the legacy app data dir $legacy to $target (${first::class.simpleName}) — falling back to a copy")
                 runCatching { mergeLegacyInto(legacy, target, log) }
                     .onFailure { t -> log.warning("Could not migrate the legacy app data dir $legacy to $target (${t::class.simpleName})") }
@@ -438,8 +445,10 @@ class CredentialStore(
         internal fun copySharedIntoChannel(shared: Path, channel: Path, log: Logger) {
             if (!Files.isDirectory(shared) || shared == channel) return
             // The one-time skip: the walk runs on a channel dir that carries no files of its own
-            // (an absent or file-less dir — a wiped channel dir, or a first copy that died
-            // partway having only created subdirs, recovers the base files on the next launch).
+            // (an absent or file-less dir — a wiped channel dir, or a first copy that died partway
+
+            // having only created subdirs, recovers the base files on the next launch)
+
             // A subdir alone is NOT "initialized": the walk creates dirs only as parents of
             // copied files, so a file-less dir is by definition a dir the walk never finished
             val channelFiles = runCatching { channel.toFile().listFiles() }.getOrNull()
@@ -495,8 +504,10 @@ class CredentialStore(
             val store = selectSecretStore(osName, name)
             if (name != AppInfo.NAME && store.read() == null) {
                 // The channel secret already exists → nothing to migrate: the shared store is
-                // never constructed (an isolated-channel Linux build would otherwise pay the JNA
-                // load + the D-Bus probe + a lookup on EVERY launch)
+                // never constructed
+
+                // An isolated-channel Linux build would otherwise pay the JNA load + the D-Bus
+                // probe + a lookup on EVERY launch
                 migrateSharedSecret(store, selectSecretStore(osName, AppInfo.NAME))
             }
             store

@@ -140,7 +140,7 @@ interface LibraryApi {
         query: PlaylistSongsQuery? = null,
     ): LibraryResult<Track>
 
-    // ---- Writes (contract §10.2, since 1.7): the explicit state, local Room only ----
+    // Writes (contract §10.2, since 1.7): the explicit state, local Room only
 
     /** `POST /library/songs/{id}/like`, the id percent-encoded. */
     suspend fun songLike(address: ServerAddress, deviceToken: String, songId: String, state: TrackLike): WriteResult
@@ -181,10 +181,7 @@ interface LibraryApi {
      */
     suspend fun dislikeMode(address: ServerAddress, deviceToken: String): DislikeMode?
 
-    /**
-     * `GET /library/locate` (contract §10.4, since 1.10.0, feature `library.locate`): the position of
-     * [trackId] in the WHOLE list [list]; `-1` when absent, `null` on any non-`200` answer.
-     */
+    /** `GET /library/locate` (contract §10.4, since 1.10.0, feature `library.locate`): the position of [trackId] in the WHOLE list [list]; `-1` when absent, `null` on any non-`200` answer. */
     suspend fun locate(address: ServerAddress, deviceToken: String, list: ListRef, trackId: String): LocateAnswer? = null
 
     /**
@@ -193,9 +190,6 @@ interface LibraryApi {
      */
     suspend fun uiSettings(address: ServerAddress, deviceToken: String): UiSettings? = null
 
-    /**
-     * `GET /library/songs/recommendations` (contract §10.1, since 1.12.0, feature `library.recommendations`):
-     * the phone's smart-shuffle recommendations; `null` on a failed read.
-     */
+    /** `GET /library/songs/recommendations` (contract §10.1, since 1.12.0, feature `library.recommendations`): the phone's smart-shuffle recommendations; `null` on a failed read. */
     suspend fun songRecommendations(address: ServerAddress, deviceToken: String): SongRecommendations? = null
 }

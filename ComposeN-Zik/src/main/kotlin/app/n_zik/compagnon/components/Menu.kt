@@ -161,9 +161,10 @@ fun BottomSheetMenu(state: MenuState, modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(top = 24.dp)
                     .layout { measurable, constraints ->
-                        // Read fraction in LAYOUT phase (not composition) → no recomposition. The 24 dp
-                        // top gap is inside the sheet box, so it is subtracted to keep the sheet at
-                        // exactly [fraction] of the window height
+                        // Read fraction in LAYOUT phase (not composition) → no recomposition
+
+                        // The 24 dp top gap is inside the sheet box, so it is subtracted to keep the
+                        // sheet at exactly [fraction] of the window height
                         val f = sheetFraction.value.coerceIn(0.05f, 1f)
                         val sheetHeight = (sheetMaxHeightPx * f - sheetTopGapPx).toInt().coerceAtLeast(1)
                         val placeable = measurable.measure(

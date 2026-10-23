@@ -117,11 +117,7 @@ val M3ECoverColors.allAchromatic: Boolean
 fun m3eDynamicColorPaletteOf(bitmap: PaletteBitmap, isDark: Boolean): ColorPalette? =
     extractM3ECoverColors(bitmap, isDark)?.let { m3eDominantDynamicPaletteOf(it, bitmap, isDark) }
 
-/**
- * Achromatic (neutralized) covers get the neutral ramp from the neutralized dominant (tone from its
- * lightness), capped / floored by [m3eCapAchromaticBackgrounds]; colored covers delegate to
- * `dynamicColorPaletteOf(bitmap, isDark)`.
- */
+/** Achromatic (neutralized) covers get the neutral ramp from the neutralized dominant (tone from its lightness), capped / floored by [m3eCapAchromaticBackgrounds]; colored covers delegate to `dynamicColorPaletteOf(bitmap, isDark)`. */
 internal fun m3eDominantDynamicPaletteOf(
     colors: M3ECoverColors,
     bitmap: PaletteBitmap,
@@ -139,11 +135,7 @@ internal fun m3eDominantDynamicPaletteOf(
     }
 }
 
-/**
- * Caps (light tone in a dark theme) / floors (dark tone in a light theme) the five background
- * lightnesses of an achromatic dynamic ramp when the ramp's tone mismatches the theme; the same
- * instance otherwise.
- */
+/** Caps (light tone in a dark theme) / floors (dark tone in a light theme) the five background lightnesses of an achromatic dynamic ramp when the ramp's tone mismatches the theme; the same instance otherwise. */
 internal fun ColorPalette.m3eCapAchromaticBackgrounds(
     themeIsDark: Boolean,
     toneIsDark: Boolean,
@@ -179,10 +171,7 @@ internal fun ColorPalette.m3eCapAchromaticBackgrounds(
     )
 }
 
-/**
- * Pure copy of `Player.saturate()`: +0.35 saturation in a dark theme when the input saturation is at
- * least 0.1, lightness forced to at least 0.5 in a light theme.
- */
+/** Pure copy of `Player.saturate()`: +0.35 saturation in a dark theme when the input saturation is at least 0.1, lightness forced to at least 0.5 in a light theme. */
 fun m3eSaturate(color: Int, lightTheme: Boolean): Color {
     val hsl = FloatArray(3)
     colorToHSL(color, hsl)

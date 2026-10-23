@@ -28,8 +28,7 @@ data class PagedState<T>(
     val error: LibraryError? = null,
     val notFound: Boolean = false,
     val revoked: Boolean = false,
-    /** Since 1.7.2: the total duration in ms of the FULL list, before pagination and before `text`
-     *  (the phone's `GET /library/playlists/{id}/songs`, its header duration); `0` on every other route. */
+    /** Since 1.7.2: the total duration in ms of the FULL list, before pagination and before `text` (the phone's `GET /library/playlists/{id}/songs`, its header duration); `0` on every other route. */
     val totalDurationMs: Long = 0L,
     /**
      * Since 1.7.3 (feature `library.sortMenu`): the phone's effective sort menu of the chip behind

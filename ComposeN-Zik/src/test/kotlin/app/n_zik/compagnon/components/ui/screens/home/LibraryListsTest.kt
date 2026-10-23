@@ -197,7 +197,7 @@ class LibraryListsTest {
         }
     }
 
-    // ---- Smart shuffle (contract §10.1, since 1.12.0 `library.recommendations`) ----
+    // Smart shuffle (contract §10.1, since 1.12.0 `library.recommendations`)
 
     @Test
     fun `a songs delta re-reads the recommendations, a later null read clears them`() = runTest {
@@ -229,7 +229,7 @@ class LibraryListsTest {
         assertNull(lists.songRecommendations.value)
     }
 
-    // ---- Live (contract §7.2, since 1.7.3 `library.live`) ----
+    // Live (contract §7.2, since 1.7.3 `library.live`)
 
     @Test
     fun `a libraryChanged reloads the loaded family only, coalesced`() = runTest {
@@ -470,7 +470,7 @@ class LibraryListsTest {
         assertEquals(1, library.playlistReads)
     }
 
-    // ---- Chip-aware patches of the other three entities (since 1.7) ----
+    // Chip-aware patches of the other three entities (since 1.7)
 
     @Test
     fun `an album bookmark follows the phone's chip semantics`() = runTest {

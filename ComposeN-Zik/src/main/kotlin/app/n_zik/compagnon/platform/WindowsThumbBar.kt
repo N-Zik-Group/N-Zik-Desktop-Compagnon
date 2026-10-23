@@ -66,6 +66,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
 
     // The WndProc subclass — every field kept for the app's lifetime: `wndProcCallback` is the strong
     // reference that keeps the JNA trampoline alive, `wndProcPointer` the trampoline installed in the
+
     // window, `originalWndProc` what every non-taskbar message is forwarded to (the Compose window
     // proc — forwarding to DefWindowProc instead would drop the Compose behavior, so no).
     private var wndProcCallback: WndProcCallback? = null
@@ -74,6 +75,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
 
     // The buttons: the last specs (driving the enable/glyph updates) and the per-glyph HICONs —
     // created once, kept until the process exit (the taskbar references them through the buttons)
+
     // (internal read: the tests check a push landing before the setup is kept)
     internal var specs: List<ThumbBarSpec> = thumbBarSpecs(null, ConnectionState.Connecting, emptySet())
         private set
@@ -84,19 +86,23 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
 
     // `true` once [setup] hit a hard failure (a native error — e.g. a Win32 function this Windows
     // build does not export): [setup] is then permanently off, so the app stays stable and there is
+
     // no retry log on every state push (frozen spec: the taskbar buttons must never crash the app)
     private var setupFatal = false
 
     // The taskbar's thumbnail button is re-created when the window is hidden and re-shown, and it
     // picks up the stored toolbar ONLY at its own creation (live-verified 2026-10-11: both the add
+
     // and the update report S_OK into the void on the fresh button — the buttons never appeared).
     // So [onWindowShow] (the pre-show hook, [WindowController.onShowHook]) re-adds the toolbar
+
     // BEFORE the show, and [reShowButtons] (WM_SHOWWINDOW) runs the bounded retry as the
     // belt-and-braces. `hiddenSinceLastShow` distinguishes the first show from a re-show
     private var hiddenSinceLastShow = false
 
     // `true` when the setup ran before the window's first show: the toolbar added then never
     // appears on the button the show creates (live-observed 2026-10-12), so the first
+
     // WM_SHOWWINDOW recreates the button a beat later ([scheduleFirstShowRecreate])
     private var firstShowPending = false
 
@@ -139,6 +145,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
     override fun onWindowShow() {
         // The taskbar's thumbnail button (re)created on the show reads the stored toolbar at its
         // own creation: (re)add it BEFORE the show makes the window visible (the caller —
+
         // WindowController.showAndFocus — runs it on the EDT, right before setVisible(true))
         val ok = reAddButtons()
         log.info("ThumbBar: pre-show toolbar re-add — ok=$ok, enabled=${specs.all { it.enabled }}")
@@ -154,6 +161,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         lastFeatures = features
         // The panel keeps the view until its setup when it is not up yet
         // The progress bar's position: the phone's position extrapolated to now (the panel then runs
+
         // the bar on its own from the rate, until the next push)
         val positionMs = attachedRepository?.serverNowMs()?.let { now -> state?.extrapolatedPositionMs(now) } ?: 0L
         smtc.show(smtcView(mprisSnapshot(state, connection, features, artUrl = null), positionMs))
@@ -161,6 +169,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         if (taskbar == null) {
             // The window may not have been realized when the first attach ran the setup (a session
             // auto-reconnects at startup, before the window's first show): retry on each state push
+
             // until the buttons are installed — setup is guarded, a no-op once the taskbar is up
             setup()
             return
@@ -168,6 +177,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         if (!updateButtons()) {
             // The push raced a (re)created thumbnail button — re-add with bounded retries, or the
             // buttons would stay in the last successfully-pushed state (e.g. the disabled specs the
+
             // very first addButtons carried at setup); the full hide→show case is [reShowButtons]
             scheduleRepushRetry("state push")
         }
@@ -190,6 +200,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         val window = windowController.currentWindow()
         // The HWND is the pointer's OWN value (`Pointer.nativeValue`), not a dereference of it —
         // `getLong(0)` reads memory AT the handle address and dies with "Invalid memory access"
+
         // (probe-verified: nativeValue → IsWindow=true, getLong(0) → java.lang.Error)
         val hwndValue = window
             ?.let { runCatching { Native.getComponentPointer(it) }.getOrNull() }
@@ -224,6 +235,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
             hwnd = hwndValue
             // Explorer broadcasts the registered message when its taskbar (re)starts: the buttons are
             // then (re)added from the WndProc, so an explorer restart never loses them — a 0 result
+
             // means the registration failed (rare): the buttons still work, they just won't self-heal
             // after an explorer restart, and the WndProc guards against matching WM_NULL
             taskbarButtonCreatedMsg = User32RawApi.INSTANCE.RegisterWindowMessageW(TASKBAR_BUTTON_CREATED)
@@ -245,8 +257,10 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         } catch (t: Throwable) {
             // A native failure (e.g. an `UnsatisfiedLinkError` for a function this Windows build does
             // not export) is permanent — it used to escape into the EDT and kill the event thread.
+
             // The buttons stay off for the app's lifetime, the window keeps its original proc (the
             // subclass is installed only after [installWindowProc] succeeds), the rest of the app is
+
             // untouched (frozen spec: no crash under any condition)
             setupFatal = true
             taskbar = null
@@ -302,6 +316,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         originalWndProc = original
         // Primitive longs for HWND/WPARAM/LPARAM/LRESULT: the jna-platform `WinDef.WPARAM`/`LPARAM`
         // structures surface as OPAQUE pointers in the callback — `toPointer().getLong(0)` threw
+
         // on every single window message, freezing the Compose window and crashing the JVM in
         // awt.dll (probe-verified on this machine)
         val callback = object : WndProcCallback {
@@ -353,6 +368,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         if (original != 0L) {
             // JNA's Function.invokeLong takes the argument array (not varargs); the WndProc ABI is
             // (HWND, UINT, WPARAM, LPARAM) — on x64 Windows the single calling convention already is
+
             // stdcall, [Function.ALT_CONVENTION] being the 32-bit-compatible spelling
             return Function.getFunction(Pointer(original), Function.ALT_CONVENTION)
                 .invokeLong(arrayOf<Any?>(hwnd, nMsg, wParam, lParam))
@@ -371,8 +387,6 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
             ThumbBarButton.Next.id -> forward { next() }
         }
     }
-
-    // ---- ITaskbarList3 vtable ------------------------------------------------------------------------
 
     /** One vtable call on the `ITaskbarList3` pointer: slot [slot] (0-based, live-verified — see the class KDoc). */
     private fun comCall(slot: Int, vararg args: Any?): Int {
@@ -474,8 +488,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         }
     }
 
-    /** The first show after a pre-show setup: the button is recreated once the show has settled —
-     *  never from inside WM_SHOWWINDOW itself (the taskbar is mid-way through creating the button). */
+    /** The first show after a pre-show setup: the button is recreated once the show has settled — never from inside WM_SHOWWINDOW itself (the taskbar is mid-way through creating the button). */
     private fun scheduleFirstShowRecreate() {
         log.info("ThumbBar: first show — recreating the taskbar button in ${FIRST_SHOW_RECREATE_DELAY_MS}ms")
         val timer = Timer(FIRST_SHOW_RECREATE_DELAY_MS) { event ->
@@ -547,7 +560,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         return icons.getOrPut(glyph) { createIcon(glyph) }.hIcon
     }
 
-    // ---- Icon building (Java2D glyph → 1-bit AND mask + 32-bit color plane → legacy CreateIcon) -------
+    // Icon building (Java2D glyph → 1-bit AND mask + 32-bit color plane → legacy CreateIcon)
 
     private enum class IconGlyph { Previous, Play, Pause, Next }
 
@@ -569,6 +582,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
 
         // The 1-bit AND mask: ICON_SIZE/8 bytes per row, a set bit = transparent. A pixel is marked
         // transparent below the 128 alpha threshold so antialiased edges never draw a hard box (the
+
         // color plane keeps the true values either way)
         val andMask = ByteArray(ICON_SIZE / 8 * ICON_SIZE)
         // The 32-bit color (XOR) plane: one 0xAARRGGBB word per pixel, bottom-up (memory row 0 is
@@ -622,10 +636,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         }
     }
 
-    /**
-     * `ole32` with the COM bootstrap as plain ints — the house JNA pattern (the jna-platform `Ole32`
-     * maps the HRESULTs to a JNA `NativeLong` that this codebase does not want to unwrap).
-     */
+    /** `ole32` with the COM bootstrap as plain ints — the house JNA pattern (the jna-platform `Ole32` maps the HRESULTs to a JNA `NativeLong` that this codebase does not want to unwrap). */
     @Suppress("FunctionName")
     private interface Ole32Api : Library {
         fun CoInitializeEx(pUnkReserved: Pointer?, dwCoInit: Int): Int
@@ -643,8 +654,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         }
     }
 
-    /** The WndProc signature with primitive longs — see [installWindowProc] for why the
-     *  jna-platform structures are out. */
+    /** The WndProc signature with primitive longs — see [installWindowProc] for why the jna-platform structures are out. */
     private interface WndProcCallback : Callback {
         fun callback(hWnd: Long, nMsg: Int, wParam: Long, lParam: Long): Long
     }
@@ -681,7 +691,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
     }
 
     private companion object {
-        // ---- vtable (live-verified on this machine — see the class KDoc) ------------------------------
+        // vtable (live-verified on this machine — see the class KDoc)
         const val SLOT_HR_INIT = 3
         // ITaskbarList's own methods, right after HrInit (ShObjIdl_core.h order)
         const val SLOT_ADD_TAB = 4
@@ -692,7 +702,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
 
         const val VTABLE_STRIDE = 8
 
-        // ---- THUMBBUTTON layout (552 bytes on x64, live-verified) --------------------------------------
+        // THUMBBUTTON layout (552 bytes on x64, live-verified)
         const val THUMBBUTTON_SIZE = 552
         const val OFFSET_DW_MASK = 0
         const val OFFSET_ID = 4
@@ -703,7 +713,6 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         const val THB_FLAGS = 0x8
         const val THBF_DISABLED = 0x1
 
-        // ---- COM ---------------------------------------------------------------------------------------
         const val CLSID_TASKBAR_LIST = "{56FDF344-FD6D-11D0-958A-006097C9A090}"
         const val IID_IUNKNOWN = "{00000000-0000-0000-C000-000000000046}"
         const val CLSCTX_INPROC_SERVER = 1
@@ -715,7 +724,6 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         const val RPC_E_CHANGED_MODE = -2147417855 // 0x80010101
         const val E_FAIL = -2147467259 // 0x80004005
 
-        // ---- Win32 --------------------------------------------------------------------------------------
         const val GWLP_WNDPROC = -4
         const val WM_COMMAND = 0x0111
         const val WM_SHOWWINDOW = 0x0018
@@ -730,7 +738,7 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
 
         val GLYPH_COLOR: Color = Color(0xFFFFFF) // white (user decision 2026-10-11: the glyphs are white, not the app accent)
 
-        // ---- Setup retry (the window may not be realized on the first attach) --------------------------
+        // Setup retry (the window may not be realized on the first attach)
         const val SETUP_RETRY_DELAY_MS = 500
         const val SETUP_RETRY_MAX_ATTEMPTS = 20
 

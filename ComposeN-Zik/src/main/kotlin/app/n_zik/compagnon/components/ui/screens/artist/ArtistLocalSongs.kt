@@ -140,11 +140,13 @@ fun ArtistLocalSongs(
     val collection = actions.collectionActions(header.ref, live)
     // The phone's Library-tab action row (`ArtistLocalSongs.kt` 209-273): the follow pill rotates and
     // writes its target state (since 1.7), download all / remove downloads are placeholders (their toasts
+
     // are the phone's long-press hints, on click here), enqueue / shuffle are wired to the contract
     val playbackEnabled = live && collection != null && songs.isNotEmpty()
 
     // The follow pill's state, since 1.7: the phone reads its artist live from the DB (`FollowButton.kt`
     // 140-143); here it is seeded from the header and re-synced from the Artists list (the confirmed
+
     // §10.2 writes patch it), so it tracks the phone's state across the write
     var followState by remember(header.artist.id) {
         mutableStateOf(
@@ -170,6 +172,7 @@ fun ArtistLocalSongs(
     val writeEnabled = live && actions.canWrite
     // Since 1.7.2 (feature `library.dislikeMode`): the phone's "disliked" mode off makes the follow a
     // binary toggle (the phone's `toggleBookmark`, its `FollowButton.kt` 74-81); `null` keeps the
+
     // rotation (the phone's default)
     val dislikeMode by (actions.lists?.dislikeMode ?: remember { MutableStateFlow<DislikeMode?>(null) })
         .collectAsState()
@@ -218,10 +221,13 @@ fun ArtistLocalSongs(
                     ) {
                         // The phone's `FollowButton.ToolBarButton()` (`FollowButton.kt` 139-181): the 100 × 32 dp
                         // pill, "Following" (accent / onAccent) when followed, "Disliked" (red / onAccent) when
+
                         // disliked, "Follow" (background2 / text) otherwise. A tap rotates the state (neutral →
                         // followed → disliked → neutral, the phone's `rotateLikeState`) or, with the phone's
+
                         // "disliked" mode off (since 1.7.2), toggles it (the phone's `toggleBookmark`) and
                         // writes the phone's target state (`library.write`, since 1.7); without the feature it
+
                         // stays inert
                         Box(
                             modifier = Modifier
@@ -262,6 +268,7 @@ fun ArtistLocalSongs(
 
                         // The phone's 216-271: a click asks the phone's confirmation, a long press (right
                         // click) tells what the button does, the ripple is clipped to the UI roundness.
+
                         // Contract adaptation: no download route — the confirmation's "Confirm" starts
                         // nothing on the phone (the PC never fakes a download)
                         HeaderIconButton(

@@ -17,7 +17,7 @@ class AlbumSwipeDecisionTest {
     private val rotation = DislikeMode(albums = true)
     private val binary = DislikeMode(albums = false)
 
-    // ---- mode `null`: the binary toggle through the `bookmark` endpoint ----
+    // mode `null`: the binary toggle through the `bookmark` endpoint
 
     @Test
     fun `without the mode, a neutral album is bookmarked`() {
@@ -34,7 +34,7 @@ class AlbumSwipeDecisionTest {
         assertEquals(AlbumSwipeDecision.Bookmark(true), albumSwipeDecision(true, false, null))
     }
 
-    // ---- mode covering the albums: the tri-state rotation through the `like` endpoint ----
+    // mode covering the albums: the tri-state rotation through the `like` endpoint
 
     @Test
     fun `with the rotation, a neutral album becomes bookmarked`() {
@@ -51,7 +51,7 @@ class AlbumSwipeDecisionTest {
         assertEquals(AlbumSwipeDecision.Like(AlbumLike.Neutral), albumSwipeDecision(true, false, rotation))
     }
 
-    // ---- mode off for the albums: the binary toggle through the `like` endpoint ----
+    // mode off for the albums: the binary toggle through the `like` endpoint
 
     @Test
     fun `with the binary toggle, a neutral album becomes bookmarked`() {

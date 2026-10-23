@@ -141,6 +141,7 @@ class SongItemMenu(
         val lastFmUnlove = InertMenuItem(Res.drawable.heart_dislike, Res.string.lastfm_unlove)
         // Since 1.7.2 (feature `library.ffmpeg`): the phone's "edit metadata" and "export cached"
         // entries are shown only when its build ships FFmpeg, as on the phone (its `SongItemMenu.kt`
+
         // 545, 625)
         val hasFfmpeg = SessionContract.FEATURE_LIBRARY_FFMPEG in (LocalLibraryActions.current?.library?.features ?: emptySet())
         val exportCache = InertMenuItem(Res.drawable.export_outline, Res.string.export_cached, descriptionId = Res.string.info_export_cached_or_downloaded_song)
@@ -298,18 +299,25 @@ class SongItemMenu(
                         ) {
                             // The like tri-state (contract 1.7), as on the phone: `heart` in `favoritesIcon`
                             // when liked, the phone's `heart_dislike` in red when disliked,
+
                             // `heart_outline` in text when neutral. The phone's heart rotates
                             // (neutral → liked → disliked → neutral, its default `excludeDislikedSongs`)
+
                             // without closing the sheet; here it writes the phone's target state. Since
                             // 1.7.1 the state follows the track's live list — the menu collects it (a
+
                             // confirmed write patches it, recomposing the menu, as on the phone, where
                             // the menu reads the track's own row live) — and the menu's own tap (a local
+
                             // optimistic update: as on the phone, the track keeps its new state in the
                             // DB even when the write drops it from the list, a chip its new state no
+
                             // longer matches). A `null` list (the queue, the player's own menu) keeps
                             // the track captured when the menu opened. Since 1.7.2 (feature
+
                             // `library.dislikeMode`): the phone's "disliked" mode off makes the tap a binary
                             // toggle (the phone's `toggleSongLikeState`, its `SongItemMenu.kt` 729-733);
+
                             // `null` keeps the rotation (the phone's default)
                             var likeState by remember(song.id) { mutableStateOf(song.displayedLike) }
                             val trackList by (actions.currentTrackList
@@ -322,6 +330,7 @@ class SongItemMenu(
                             }
                             // Outside a list (the queue, the player's own menu): the player state's
                             // queued track, patched by the optimistic like and re-synced by the phone's
+
                             // queue delta, so a like made elsewhere while the menu is open shows too
                             val playerState by (app.n_zik.compagnon.LocalPlayerRepository.current?.state
                                 ?: remember { MutableStateFlow(null) }).collectAsState()
@@ -351,6 +360,7 @@ class SongItemMenu(
                                         val next = if (rotationEnabled) like.nextRotation() else like.nextToggle()
                                         // The phone's toast of the resulting state once its write is done (its
                                         // `YouTubeSync.kt` 106-116, 174-183): the rotation's three messages or
+
                                         // the toggle's two (the shared messages, title cleaned of the prefixes)
                                         val label = likeToastLabel(song.title, song.artists)
                                         writes.likeSong(song.id, next) { confirmed ->

@@ -18,11 +18,7 @@ import java.util.logging.Logger
 internal object HostDconf {
     private val log = Logger.getLogger("HostDconf")
 
-    /**
-     * The string value of [schema]/[key] in the host's dconf user DB (dconf key form —
-     * `org/gnome/desktop/interface` + `color-scheme`), or `null` (no readable DB, the key absent,
-     * a non-string value, or an unreadable/corrupt file).
-     */
+    /** The string value of [schema]/[key] in the host's dconf user DB (dconf key form — `org/gnome/desktop/interface` + `color-scheme`), or `null` (no readable DB, the key absent, a non-string value, or an unreadable/corrupt file). */
     fun readString(schema: String, key: String): String? {
         val file = userDbFile() ?: run {
             log.info("HostDconf: no dconf user DB — the theme tint falls back to the default")
@@ -86,10 +82,7 @@ internal class Gvdb(private val bytes: ByteArray) {
         nItems = (rootEnd - itemsStart) / 24
     }
 
-    /**
-     * The string value stored at the full dconf [path] (`/schema/path/key`), or `null` (the key
-     * absent, not a value item, or a non-string value).
-     */
+    /** The string value stored at the full dconf [path] (`/schema/path/key`), or `null` (the key absent, not a value item, or a non-string value). */
     fun lookupString(path: String): String? {
         val item = lookup(path) ?: return null
         val start = item.valueStart
@@ -98,6 +91,7 @@ internal class Gvdb(private val bytes: ByteArray) {
         val blob = bytes.copyOfRange(start, end)
         // The value layout: raw data + padding + the type descriptor LAST (a one-byte tag for
         // simple types, the ASCII type string otherwise). Only strings are read — for a string
+
         // value the two zero padding bytes precede the `s` tag.
         return if (blob.last() == 's'.code.toByte()) blob.copyOfRange(0, blob.size - 3).decodeToString() else null
     }

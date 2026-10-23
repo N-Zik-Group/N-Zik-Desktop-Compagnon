@@ -116,10 +116,7 @@ internal fun queueToolBarProgress(fraction: Float): Float {
     return if (progress > 1f - 1e-4f) 1f else progress
 }
 
-/**
- * The queue panel shared by the player and [MiniPlayerQueueOverlay] (the phone copies the same code in both,
- * `Player.kt` 2378-2523): scrim, panel resized from its handle, [Queue], [QueueToolBar].
- */
+/** The queue panel shared by the player and [MiniPlayerQueueOverlay] (the phone copies the same code in both, `Player.kt` 2378-2523): scrim, panel resized from its handle, [Queue], [QueueToolBar]. */
 @Composable
 internal fun BoxScope.QueuePanel(
     queuePanelHeightFraction: Animatable<Float, *>,
@@ -227,8 +224,10 @@ internal fun BoxScope.QueuePanel(
 
         // QueueToolBar at bottom of panel — slides down and fades out when closing.
         // PC (story 11c, the mini-player hidden at 65 %): on the desktop an alpha below 1 renders the layer
+
         // offscreen, clipped to the toolbar's 60 dp, and the mini-player it draws 72 dp above was cut away
         // until the panel was pulled higher (alpha 0.9999996 at rest). The alpha is applied per draw instead
+
         // (`ModulateAlpha`, no offscreen clip), and the rest progress is snapped to 1 ([queueToolBarProgress]).
         QueueToolBar(
             modifier = Modifier

@@ -169,15 +169,9 @@ data class UserSettings(
     @SerialName(changelogCacheKey) val changelogCache: String? = null,
     /** The version code the [changelogCache] belongs to (the phone's `cached_changelog_version`; -1 = none). */
     @SerialName(changelogCacheVersionKey) val changelogCacheVersion: Int = -1,
-    /**
-     * The changelog's translation language (the phone's `otherLanguageAppUpdate`): an `UpdateLanguage`
-     * BCP-47 code, "system" for the app language; an unknown code reads as "system" at the read site.
-     */
+    /** The changelog's translation language (the phone's `otherLanguageAppUpdate`): an `UpdateLanguage` BCP-47 code, "system" for the app language; an unknown code reads as "system" at the read site. */
     @SerialName(otherLanguageAppUpdateKey) val otherLanguageAppUpdate: String = "system",
-    /**
-     * The changelog translation toggle (the phone's `updateTranslationActive`); `null` = never set, and
-     * its default is the phone's — active when the app language is not English (decided at the read site).
-     */
+    /** The changelog translation toggle (the phone's `updateTranslationActive`); `null` = never set, and its default is the phone's — active when the app language is not English (decided at the read site). */
     @SerialName(updateTranslationActiveKey) val updateTranslationActive: Boolean? = null,
     /** The phone's "Rotating album cover" (its `rotatingAlbumCoverKey`): the blurred cover background turns in 30 s. */
     @SerialName(rotatingAlbumCoverKey) val rotatingAlbumCover: Boolean = false,
@@ -195,11 +189,7 @@ data class UserSettings(
     @SerialName(swipeAnimationsNoThumbnailKey) val swipeAnimationsNoThumbnail: String = SwipeAnimationNoThumbnail.Sliding.name,
     /** The phone's cover swipe sensitivity name (its `playerSwipeSensitivityKey`); an unknown name reads as [PlayerSwipeSensitivity.Medium]. */
     @SerialName(playerSwipeSensitivityKey) val playerSwipeSensitivity: String = PlayerSwipeSensitivity.Medium.name,
-    /**
-     * The phone's mini-player "Discover" button (its `showMiniPlayerDiscoverKey`, off by default on the
-     * phone; off on the PC too — user decision 2026-10-11: the default mini-player row is the transport
-     * controls plus the audio output only).
-     */
+    /** The phone's mini-player "Discover" button (its `showMiniPlayerDiscoverKey`, off by default on the phone; off on the PC too — user decision 2026-10-11: the default mini-player row is the transport controls plus the audio output only). */
     @SerialName(showMiniPlayerDiscoverKey) val showMiniPlayerDiscover: Boolean = false,
     /** The phone's mini-player "Visualizer" button (its `showMiniPlayerVisualizerKey`, off by default on the phone; off on the PC too — user decision 2026-10-11). */
     @SerialName(showMiniPlayerVisualizerKey) val showMiniPlayerVisualizer: Boolean = false,
@@ -349,8 +339,10 @@ class Preferences(private val file: Path = CredentialStore.appDirectory().resolv
     init {
         // One-time migration (spec `spec-remove-ui-sync`): the old phone-mirroring sentinels are
         // gone — `auto_pc` and `auto_tel` both resolve to the PC's OS locale, now the `system`
+
         // sentinel. Idempotent: a fresh install or an already-migrated file decodes `system`
         // directly, and nothing is written. A pre-spec file's orphaned `lastPhoneLanguage` key is
+
         // ignored at decode (`ignoreUnknownKeys`) and dropped on the next write.
         if (_settings.value.language in setOf("auto_pc", "auto_tel")) { // the persisted old values; their constants were deleted with the sentinels
             update { it.copy(language = AppLanguage.SYSTEM) }

@@ -221,6 +221,7 @@ fun MiniPlayerButtonsSettingsDialog(
 
         // The 17 rows, in the phone's default order (MPB:45-67): bounded by BOTH the old 480 dp
         // cap and the frame's remaining space (`weight(1f, fill = false)` — the frame body is not
+
         // scrollable, so the list scrolls here and the button row below always stays visible)
         Column(
             modifier = Modifier
@@ -236,8 +237,10 @@ fun MiniPlayerButtonsSettingsDialog(
                 }
                 // The 15 inert rows are frozen at the phone defaults (never togglable);
                 // the 2 functional rows follow the max-checked gate (functional count
+
                 // only — see [mpbRowCanToggle]). The `when (row.id)` / else mapping below
                 // targets exactly those 2 functional rows (discover / visualizer) —
+
                 // extend it if a third functional row is ever added
                 val enabled = row.functional && mpbRowCanToggle(isChecked, working.functionalCheckedCount)
                 MpbDialogRow(
@@ -259,6 +262,7 @@ fun MiniPlayerButtonsSettingsDialog(
 
         // Reset / Cancel / Confirm (the phone's `ToggleListDialog` roles, on the shared
         // [ButtonRow]; the confirm label uses the PC's `confirm` string, as every other PC
+
         // dialog)
         ButtonRow(
             buttons = listOf(

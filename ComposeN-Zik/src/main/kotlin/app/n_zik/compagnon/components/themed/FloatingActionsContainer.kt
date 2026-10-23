@@ -88,11 +88,7 @@ import org.jetbrains.compose.resources.stringResource
  * [MultiFloatingActionsContainer].
  */
 
-/**
- * `floatingActionsBottomPadding()`: no system bar on PC, plus the collapsed mini player (72 dp with the
- * floating bar), plus the room of a bottom navigation bar (40 dp): the button stays above the
- * floating bar as on the phone.
- */
+/** `floatingActionsBottomPadding()`: no system bar on PC, plus the collapsed mini player (72 dp with the floating bar), plus the room of a bottom navigation bar (40 dp): the button stays above the floating bar as on the phone. */
 private val FLOATING_ACTIONS_BOTTOM_PADDING: Dp = 72.dp + 40.dp
 
 @Composable
@@ -288,6 +284,7 @@ private fun MultiFloatingActionsButton(
 
     // The phone's long-press drag offsets (its `multiFloatActionIconOffsetX/Y`): read once from the
     // settings, moved locally during the drag, persisted on the drag end (the phone persists on
+
     // every drag delta — see the KDoc above)
     val settings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
     var offsetX by remember { mutableFloatStateOf(settings.multiFloatActionIconOffsetX) }

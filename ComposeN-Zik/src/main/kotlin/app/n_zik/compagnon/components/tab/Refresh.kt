@@ -6,10 +6,7 @@ import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * Compagnon only (no phone equivalent: the phone reads its own database): the toolbar's "Refresh" button,
- * which reloads the list from the phone (contract §12, the library is never kept).
- */
+/** Compagnon only (no phone equivalent: the phone reads its own database): the toolbar's "Refresh" button, which reloads the list from the phone (contract §12, the library is never kept). */
 class Refresh(private val onRefresh: () -> Unit) : MenuIcon {
     override val iconId: DrawableResource = Res.drawable.refresh
     override val menuIconTitle: String

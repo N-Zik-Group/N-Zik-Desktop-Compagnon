@@ -211,7 +211,7 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
         return if (code == BridgeErrorCode.NOT_FOUND) ArtworkResult.NotFound else ArtworkResult.Failed(response.status.value, code)
     }
 
-    // ---- Audio (contract §8) ---------------------------------------------------------------------
+    // Audio (contract §8)
     // The signed URL is a transfer credential: it is never logged (the route "audio" stands for it).
 
     override suspend fun forgeAudioUrl(address: ServerAddress, deviceToken: String, trackId: String, quality: String): ForgeResult {
@@ -295,7 +295,7 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
             null
         }
 
-    // ---- Library (contract §10.1) ----------------------------------------------------------------
+    // Library (contract §10.1)
 
     override suspend fun songs(address: ServerAddress, deviceToken: String, offset: Int, limit: Int, query: SongsQuery): LibraryResult<Track> =
         library(address, deviceToken, "library/songs", Track.serializer(), offset, limit) {
@@ -423,7 +423,7 @@ class BridgeClient(engine: HttpClientEngine = CIO.create()) : BridgeApi, PlayerA
         return response.decode(SongRecommendations.serializer())
     }
 
-    // ---- Library writes (contract §10.2, since 1.7): the explicit state, local Room only ----
+    // Library writes (contract §10.2, since 1.7): the explicit state, local Room only
 
     override suspend fun songLike(address: ServerAddress, deviceToken: String, songId: String, state: TrackLike): WriteResult =
         write(address, deviceToken, "library/songs/${songId.encodeURLPathPart()}/like", SongLikeAnswer.serializer(),

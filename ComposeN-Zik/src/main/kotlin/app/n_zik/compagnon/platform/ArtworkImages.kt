@@ -7,10 +7,7 @@ import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 import kotlin.math.roundToInt
 
-/**
- * The track artwork as an AWT image — shared by the system media surfaces that hand the artwork to
- * the OS (MPRIS writes it as a `file://` PNG, the Windows SMTC streams the PNG bytes).
- */
+/** The track artwork as an AWT image — shared by the system media surfaces that hand the artwork to the OS (MPRIS writes it as a `file://` PNG, the Windows SMTC streams the PNG bytes). */
 internal fun ImageBitmap.toBufferedImage(): BufferedImage {
     val pixelMap = toPixelMap()
     val image = BufferedImage(pixelMap.width, pixelMap.height, BufferedImage.TYPE_INT_ARGB)

@@ -122,8 +122,10 @@ fun ControlsEssential(
 
     // The like button (contract 1.7): the phone's tri-state indicator (`heart_outline` in text, `heart`
     // in `favoritesIcon`, the phone's `heart_dislike` in red), and the phone's rotation when the phone
+
     // has `library.write` (otherwise an inert indicator, as in contract v1). Since 1.7.2 (feature
     // `library.dislikeMode`): the phone's "disliked" mode off makes the tap a binary toggle, as its own
+
     // player button does (its `YouTubeSync.kt` 51-58, the rotation's or the toggle's toast with it)
     val like = mediaItem?.displayedLike ?: TrackLike.Neutral
     val likeWrites = LocalLibraryActions.current?.takeIf { it.canWrite }

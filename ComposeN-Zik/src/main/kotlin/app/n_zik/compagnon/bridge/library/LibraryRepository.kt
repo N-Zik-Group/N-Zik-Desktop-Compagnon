@@ -23,7 +23,7 @@ interface LibraryRepository {
     suspend fun albums(offset: Int, limit: Int, query: AlbumsQuery): LibraryResult<Album>
     suspend fun artists(offset: Int, limit: Int, query: ArtistsQuery): LibraryResult<Artist>
 
-    // ---- Writes (contract §10.2, since 1.7): the explicit state, local Room only ----
+    // Writes (contract §10.2, since 1.7): the explicit state, local Room only
 
     /** `POST /library/songs/{id}/like`. */
     suspend fun songLike(songId: String, state: TrackLike): WriteResult
@@ -90,10 +90,7 @@ interface LibraryRepository {
         query: PlaylistSongsQuery? = null,
     ): LibraryResult<Track>
 
-    /**
-     * The first tracks of [collection], read page after page, up to [max] (the default is one more than
-     * `/queue/play` takes, so that a longer collection is noticed and truncated with a notice).
-     */
+    /** The first tracks of [collection], read page after page, up to [max] (the default is one more than `/queue/play` takes, so that a longer collection is noticed and truncated with a notice). */
     suspend fun collectionTracks(collection: CollectionRef, max: Int = LibraryContract.TRACK_IDS_MAX + 1): LibraryResult<Track> {
         val tracks = mutableListOf<Track>()
         var total = Int.MAX_VALUE

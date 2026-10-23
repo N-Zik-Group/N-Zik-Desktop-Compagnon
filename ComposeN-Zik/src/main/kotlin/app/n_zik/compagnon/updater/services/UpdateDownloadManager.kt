@@ -103,11 +103,7 @@ object UpdateDownloadManager {
     /** Injectable failure-marker directory for the JVM tests (`@TempDir`); `null` in production. */
     private var markerTestDirectory: Path? = null
 
-    /**
-     * The HTTP client factory (the house test seam — [Updater.fetchUpdate] takes its [HttpClient]
-     * the same way): the tests replace it with a Ktor `MockEngine`, the production default is the
-     * updater's CIO client ([updaterHttpClient]).
-     */
+    /** The HTTP client factory (the house test seam — [Updater.fetchUpdate] takes its [HttpClient] the same way): the tests replace it with a Ktor `MockEngine`, the production default is the updater's CIO client ([updaterHttpClient]). */
     internal var httpClientFactory: () -> HttpClient = ::updaterHttpClient
 
     /** Sets the test download directory (JVM tests only — `null` restores the production default). */
@@ -142,10 +138,12 @@ object UpdateDownloadManager {
             log.severe("Refusing an unsafe asset name: $assetName")
             // Cancel the in-flight download FIRST: the token set below would orphan its job —
             // it would keep writing bytes to disk under a token that can no longer write the
+
             // state (the happy path below already cancels, after the validation)
             cancelDownload()
             // `getString` is suspend — the failure state is emitted from a coroutine (the token
             // guard keeps a superseding startDownload / cancelDownload from being overridden by
+
             // this late write)
             val token = Any()
             downloadToken = token
@@ -233,8 +231,10 @@ object UpdateDownloadManager {
 
                 // Loop 2: a body that ended before its Content-Length is a truncated download —
                 // the file is kept (the download can be re-run) but the state is a failure, never
+
                 // a "completed" half-file. (Safety net: the Ktor CIO client validates the body
                 // against its Content-Length while RECEIVING the response and throws on a short
+
                 // body before any byte reaches the disk — that path is mapped in the Exception
                 // handler below; a streaming engine without that validation would reach this check.)
                 if (contentLength > 0 && totalBytesRead != contentLength && !cancelRequested) {
@@ -252,8 +252,10 @@ object UpdateDownloadManager {
                 } else if (downloadToken === token) {
                     // The cancel fence: the user cancelled AFTER the last byte was read (the
                     // microsecond race — the job was about to report Completed when the cancel
+
                     // arrived). The cancel is authoritative: treat it as a cancel (Idle is what
                     // cancelDownload already wrote; this write covers the order where this branch
+
                     // lands first), and the finally below deletes the file like any cancelled
                     // download.
                     cancelled = true
@@ -263,8 +265,10 @@ object UpdateDownloadManager {
             } catch (e: CancellationException) {
                 // Download was cancelled — the state resets here (the phone's cancellation
                 // branch); the token guard keeps a stale cancel from touching the state of a
+
                 // download that already replaced this one. The FILE cleanup is in the finally,
                 // after the output stream is closed (a file cannot be deleted while its handle
+
                 // is open — Windows).
                 cancelled = true
                 if (downloadToken === token) {
@@ -275,8 +279,10 @@ object UpdateDownloadManager {
             } catch (e: Exception) {
                 // The file is KEPT on failure (the matrix: the error dialog shows, the file stays —
                 // the download can be re-run without re-fetching from scratch). With the Ktor CIO
+
                 // client a truncated body never reaches this branch as a stream end: the engine
                 // validates the body against its Content-Length while receiving the response and
+
                 // throws — mapped to the localized truncation string instead of the raw engine
                 // message (the bytes never reached the disk, so there is no partial file to keep).
                 log.warning("Update download failed: ${e::class.simpleName} (${e.message})")
@@ -290,6 +296,7 @@ object UpdateDownloadManager {
                 } else if (downloadToken === token) {
                     // The cancel fence: a failure racing the cancel — the user's cancel is the
                     // last word (no error dialog after a cancel). The finally below deletes the
+
                     // file like any cancelled download.
                     cancelled = true
                     _downloadState.value = DownloadState.Idle
@@ -297,11 +304,13 @@ object UpdateDownloadManager {
             } finally {
                 // Close this job's stream FIRST: on Windows a file cannot be deleted while its
                 // handle is open, so the cancel cleanup below (and the synchronous backstop in
+
                 // cancelDownload) needs the handle released.
                 runCatching { outputStream?.close() }
                 if (cancelled && downloadToken === token) {
                     // Cancel cleanup, job-side: delete ONLY this download's own file (validated
                     // at start — no path escape). The token guard keeps a superseded job from
+
                     // deleting the file of the download that replaced it (a new startDownload
                     // set a new token).
                     runCatching { File(downloadDirectory().toFile(), assetName).delete() }
@@ -333,6 +342,7 @@ object UpdateDownloadManager {
         if (asset != null) {
             // Synchronous backstop: it works when the job has already finished (its handle is
             // closed). While the job is still running, its own handle is open (Windows: the
+
             // delete fails silently) and the job-side cleanup deletes the file after closing
             // the stream.
             runCatching { File(downloadDirectory().toFile(), asset).delete() }
@@ -362,7 +372,7 @@ object UpdateDownloadManager {
         }
     }
 
-    // ---- Windows install (spec `spec-updater`, AD-4 — interactive + machine-level with UAC — the user decisions) ----
+    // Windows install (spec `spec-updater`, AD-4 — interactive + machine-level with UAC — the user decisions)
 
     /** The failure marker written by the install helper when the install failed (loop 2). */
     const val INSTALL_FAILURE_MARKER = "update-install-failed.txt"
@@ -465,6 +475,7 @@ object UpdateDownloadManager {
             "if (\$code -eq 0) {",
             // the setup is locked while it runs, so it cannot remove its own file — the helper
             // deletes the downloaded installer right after a successful update (user decision
+
             // 2026-10-16); a decline (1 / 2 / 1223) keeps the file so the install can be re-run
             "  Remove-Item '$installer' -ErrorAction SilentlyContinue",
             "  \$running=Get-Process -ErrorAction SilentlyContinue | Where-Object Path -eq \$appExe",
@@ -510,6 +521,7 @@ object UpdateDownloadManager {
         val appExe = runCatching { ProcessHandle.current().info().command().orElse(null) }.getOrNull().orEmpty()
         // With an empty path the helper's wait loop (matched by EXACT path) would see "no app"
         // immediately and launch the installer over the still-running, file-locking instance —
+
         // refuse instead (the caller keeps the app alive and shows an error)
         if (appExe.isEmpty()) {
             log.severe("Windows install refused: the app executable path is empty (ProcessHandle.command() unavailable)")

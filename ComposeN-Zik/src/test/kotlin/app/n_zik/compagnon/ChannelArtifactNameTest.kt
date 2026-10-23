@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test
  */
 class ChannelArtifactNameTest {
 
-    // ---- The test-side copy of the build's helpers (the build globals parameterized) ----
+    // The test-side copy of the build's helpers (the build globals parameterized)
 
     private fun versionBoundaryIndex(fileName: String, base: String): Int {
         var from = 0
@@ -51,7 +51,7 @@ class ChannelArtifactNameTest {
         return fileName.substring(0, index + base.length) + suffix + fileName.substring(index + base.length)
     }
 
-    // ---- The build's globals of this test run (the system properties the build exposes) ----
+    // The build's globals of this test run (the system properties the build exposes)
 
     private val channel = System.getProperty("channel") ?: error("the build must expose the effective channel")
 
@@ -69,7 +69,7 @@ class ChannelArtifactNameTest {
         else -> channelSuffix
     }
 
-    // ---- (a) the pure semantics of the copy (every channel shape, not only this test run's) ----
+    // (a) the pure semantics of the copy (every channel shape, not only this test run's)
 
     @Test
     fun `the suffix is inserted right after the base version`() {
@@ -119,7 +119,7 @@ class ChannelArtifactNameTest {
         assertTrue(canBeChannelRenamed("n-zik-desktop-compagnon-0.0.2-linux-portable.tar.gz", "0.0.2", "-dev-20261007", "-dev-"))
     }
 
-    // ---- (b) the effective per-task artifact names the build exposes ----
+    // (b) the effective per-task artifact names the build exposes
 
     @Test
     fun `the effective per-task artifact names are the channel-renamed jpackage names`() {
@@ -148,6 +148,7 @@ class ChannelArtifactNameTest {
         )
         // The NSIS installer output name rides on the channel's package base (the build writes it
         // directly — the CI uploads it as-is, no rename step): it must be the channel-renamed
+
         // package-base name AND the exact name the in-app updater (ArtifactNames.exe) downloads by
         assertEquals(
             channelArtifactName("$linuxPackageName-$baseVersion.exe", baseVersion, channelSuffix, channelSuffixPrefix),

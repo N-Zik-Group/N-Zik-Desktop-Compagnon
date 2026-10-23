@@ -108,6 +108,7 @@ class LocalArtistItemMenu(
         ListMenu.SectionTitle(stringResource(Res.string.playback))
         // Spec #13: the phone's online artist "Start radio" (`OnlineArtistItemMenu.kt` 385-417,
         // `start_radio`, empty long press), ported at the head of Playback: inert — the radio is a
+
         // phone-side playback feature, no contract route
         InertMenuItem(Res.drawable.radio, Res.string.start_radio).ListMenuItem()
         playAll.ListMenuItem()
@@ -134,6 +135,7 @@ class LocalArtistItemMenu(
         val marquee: Modifier = if (settings.disableScrollingText) Modifier else Modifier.basicMarquee(iterations = Int.MAX_VALUE)
         // The follow state, since 1.7: the phone reads it live from the DB (its `likeState` flow); here
         // it is seeded from the artist and re-synced from the Artists list (the confirmed §10.2 writes
+
         // patch it), so the icon follows the write while the menu is open
         val library = LocalLibraryActions.current
         var followState by remember(artist.id) {
@@ -199,6 +201,7 @@ class LocalArtistItemMenu(
 
                     // The like tri-state badge (contract 1.7, phone's 182-196): `bookmark` in
                     // favoritesIcon when followed, the phone's `bookmark_slash` in red when disliked,
+
                     // nothing when neutral
                     val badge = when (followState) {
                         ArtistFollow.Followed -> colorPalette().favoritesIcon
@@ -250,8 +253,10 @@ class LocalArtistItemMenu(
                 ) {
                     // The like tri-state (contract 1.7, phone's 242-297): a tap rotates the state
                     // (neutral → followed → disliked → neutral, the phone's `rotateLikeState`) or, with
+
                     // the phone's "disliked" mode off (since 1.7.2), toggles it (the phone's
                     // `toggleBookmark`) and writes the phone's target state (`library.write`); without
+
                     // the feature it stays inert
                     IconButton(
                         // The phone's icon (its 242-247): `bookmark_slash` in red when disliked

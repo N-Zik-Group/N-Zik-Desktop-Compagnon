@@ -31,12 +31,11 @@ class CredentialStoreDirTest {
 
     private val log = Logger.getLogger("CredentialStoreDirTest")
 
-    // ---- resolveAppDataDir matrix ------------------------------------------------------------------------
-
     @Test
     fun `windows uses the appdata dir`() {
         // The expected value is built with Paths.get (not a Windows-separator string): on a
         // Linux test host the backslash base is a single component and the join uses '/',
+
         // so only the CHOSEN BASE is what this assertion pins.
         val dir = CredentialStore.resolveAppDataDir("Windows 11", "C:\\Users\\x\\AppData\\Roaming", null, "C:\\Users\\x", "N-Zik Desktop Compagnon")
         assertEquals(Paths.get("C:\\Users\\x\\AppData\\Roaming", "N-Zik Desktop Compagnon"), dir)
@@ -52,6 +51,7 @@ class CredentialStoreDirTest {
     fun `windows uses the per-channel data dir name`() {
         // The storage name rides as the path component (whatever name the caller passes —
         // [AppInfo.dataName] in production: the base for stable / beta, the suffixed name for
+
         // dev / debug / git). This pins the resolution, not the mapping (pinned in AppInfoTest)
         val dev = CredentialStore.resolveAppDataDir("Windows 11", "C:\\Users\\x\\AppData\\Roaming", null, "C:\\Users\\x", "N-Zik Desktop Compagnon DEV")
         assertEquals(Paths.get("C:\\Users\\x\\AppData\\Roaming", "N-Zik Desktop Compagnon DEV"), dev)
@@ -63,6 +63,7 @@ class CredentialStoreDirTest {
 
     // The Linux expected values are built with Paths.get too (like the Windows tests above):
     // on a Windows test host the '/' base is joined with '\' so only the CHOSEN BASE is pinned;
+
     // on a Linux host both forms agree.
 
     @Test
@@ -107,7 +108,7 @@ class CredentialStoreDirTest {
         assertEquals(Paths.get("/Users/u/N-Zik Desktop Compagnon"), dir)
     }
 
-    // ---- channel-separation copy (the 2026-10-16 shared -> per-channel dir) -----------------------------------
+    // channel-separation copy (the 2026-10-16 shared -> per-channel dir)
 
     @Test
     fun `copySharedIntoChannel copies the files the channel dir lacks`(@TempDir temp: Path) {
@@ -151,6 +152,7 @@ class CredentialStoreDirTest {
     fun `copySharedIntoChannel is one-time — a channel dir with its own files is never re-walked`(@TempDir temp: Path) {
         // The spec's "one-time copy": once the channel dir carries its own files, the base's
         // LATER files must not flow in (the channels are isolated after first launch — the
+
         // base's fresh pairing / new cache entries are the base's own), and the per-launch full
         // re-walk (a stat per base file) is skipped
         val shared = temp.resolve("config/N-Zik Desktop Compagnon")
@@ -179,8 +181,10 @@ class CredentialStoreDirTest {
     fun `copySharedIntoChannel re-walks a channel dir that carries subdirs but no files (an interrupted first copy)`(@TempDir temp: Path) {
         // The skip counts FILES only: the walk creates dirs only as parents of copied files, so a
         // dir whose top level holds subdirs alone is by definition a first copy that died partway
+
         // (it copied into cache/ before the top-level entries) — it must be re-walked on the next
         // launch, or the channel keeps a PERMANENT partial state (missing pairing.json → forced
+
         // re-pair). A dir that carries its own file is still skipped (the test above)
         val shared = temp.resolve("config/N-Zik Desktop Compagnon")
         val channel = temp.resolve("config/N-Zik Desktop Compagnon DEV")
@@ -200,8 +204,6 @@ class CredentialStoreDirTest {
         assertTrue(Files.exists(channel.resolve("settings.json")), "the missing top-level files arrive on the re-walk")
         assertEquals("partial", Files.readString(channel.resolve("cache/track2.flac")), "the partial copy's own file is never clobbered")
     }
-
-    // ---- legacy migration ----------------------------------------------------------------------------------
 
     @Test
     fun `the legacy dir is moved when the target does not exist yet`(@TempDir temp: Path) {
@@ -281,6 +283,7 @@ class CredentialStoreDirTest {
     fun `appDataDirFor runs the one-time migration on linux only`(@TempDir temp: Path) {
         // The CALL-SITE wiring (dropping the migrateLegacyAppDataDir line, or gating it on the
         // wrong OS, would strand the legacy dir — every consumer reads the empty new dir, forced
+
         // re-pair, green suite): a planted legacy dir must be moved into the resolved XDG dir
         val home = temp.resolve("home")
         val legacy = home.resolve("N-Zik Desktop Compagnon")
@@ -300,8 +303,10 @@ class CredentialStoreDirTest {
     fun `appDataDirFor with a channel name does not move the legacy dir into the channel (base only)`(@TempDir temp: Path) {
         // The legacy bare-home dir is the PRE-CHANNEL home of the data: it migrates into the
         // BASE dir only. A channel-suffixed build that launches FIRST must not move it into its
+
         // own dir — stable / beta would then read an empty dir (forced re-pair, the data
         // stranded in the channel dir). The channel build picks the data up through the base →
+
         // channel copy instead, once the base has it
         val home = temp.resolve("home")
         val xdg = home.resolve(".config")
@@ -332,6 +337,7 @@ class CredentialStoreDirTest {
     fun `appDataDirFor with beta's base name migrates the legacy dir too (the gate is the name, not the channel)`(@TempDir temp: Path) {
         // Beta SHARES the base storage name (2026-10-16 regrouping) — a beta launch IS a
         // base-named launch: the legacy bare-home dir must migrate into the base dir on it (the
+
         // gate is `dataDirName == AppInfo.NAME`, so re-tightening it to "stable only" would strand
         // beta's legacy data with a green suite), and the legacy `… BETA` merge-back runs alongside
         val home = temp.resolve("home")
@@ -371,8 +377,10 @@ class CredentialStoreDirTest {
     fun `appDataDirFor with a channel name copies the shared dir but keeps it`(@TempDir temp: Path) {
         // The 2026-10-16 channel separation wiring: a dev build resolves its OWN dir
         // (`<xdg>/N-Zik Desktop Compagnon DEV`) and, on first launch, COPIES the files the shared
+
         // base dir has that its dir lacks — the shared dir SURVIVES (it stays the live dir of the
         // base-named channels — stable AND beta; dev / debug / -git are isolated). Dropping the copySharedIntoChannel line, or
+
         // gating it on the wrong name, would strand the channel dir — forced re-pair, green suite.
         val home = temp.resolve("home")
         val xdg = home.resolve(".config")
@@ -433,8 +441,10 @@ class CredentialStoreDirTest {
     fun `a dangling symlink in the legacy dir does not abort the merge`(@TempDir temp: Path) {
         // A symlink is copied AS a link (never followed): a dangling (or cross-dir) target must
         // not throw and abort the whole walk — the rest of the merge then never ran, the legacy
+
         // dir survived, and every launch re-tried and re-failed the migration
         // Symlink creation needs elevated rights (or developer mode) on Windows — skipped where
+
         // the host cannot create symlinks (the house pattern: the cross-device test below skips
         // on single-filesystem hosts)
         val probe = temp.resolve("symlink-probe")
@@ -462,8 +472,10 @@ class CredentialStoreDirTest {
     fun `a non-empty legacy dir on another filesystem is migrated by copy`(@TempDir temp: Path) {
         // A cross-filesystem move of a NON-EMPTY dir is impossible (the rename cannot cross the
         // mount — DirectoryNotEmptyException, even for the plain `Files.move` fallback): the copy
+
         // fallback must migrate the data instead of leaving it behind (the invisible re-pair cost).
         // Needs two distinct filesystems on the test host (WSL: the 9P mount vs ext4; some Linux
+
         // boxes: a /dev/shm tmpfs) — skipped where the host provides one.
         val other = listOf(Paths.get("/dev/shm"), Paths.get("/mnt/d"))
             .firstOrNull { p ->
@@ -501,7 +513,7 @@ class CredentialStoreDirTest {
         }
     }
 
-    // ---- storage regrouping (2026-10-16: stable + beta share the base, dev / debug / git isolated) ----
+    // storage regrouping (2026-10-16: stable + beta share the base, dev / debug / git isolated)
 
     @Test
     fun `the legacyDataDirNamesFor beta is the legacy BETA dir and the other channels none`() {
@@ -523,8 +535,10 @@ class CredentialStoreDirTest {
     fun `appDataDirFor for beta merges the legacy BETA dir into the base (the base wins, BETA survives)`(@TempDir temp: Path) {
         // The 2026-10-16 storage regrouping, beta side: beta now SHAREDs the base storage with
         // stable. A beta build that still has the legacy isolated `… BETA` dir from the
+
         // 2026-10-16 channel separation merges its files back into the base — the base's own
         // files win, the legacy-only files arrive, and the `… BETA` dir SURVIVES (a copy, never
+
         // a move: the pairing can never be lost)
         val home = temp.resolve("home")
         val xdg = home.resolve(".config")
@@ -628,7 +642,7 @@ class CredentialStoreDirTest {
         assertEquals(1L, Files.list(dir).count(), "no duplication, no merge: the base dir is exactly the base dir")
     }
 
-    // ---- self-contained portable decision (portableDataRootOf — the marker matrix) ----
+    // self-contained portable decision (portableDataRootOf — the marker matrix)
 
     private val windowsProduct = "N-Zik Desktop Compagnon"
 
@@ -692,6 +706,7 @@ class CredentialStoreDirTest {
     fun `a marker with any other content degrades to null (the strict reader)`(@TempDir temp: Path) {
         // The reader is strict: a stray or forged marker with ANY other content must not
         // relocate the data dir (only the exact constant counts — the write side is equally
+
         // strict, the archive entry is written by the two portable tasks only)
         for (content in listOf("", "PORTABLE", "portable\n", "portable ", "portable-extra")) {
             val exe = plantWindowsPortable(temp.resolve("case-${content.hashCode()}"), marker = content)
@@ -703,6 +718,7 @@ class CredentialStoreDirTest {
     fun `an NSIS Windows install is excluded even with a marker (the uninstaller file wins)`(@TempDir temp: Path) {
         // The same discriminator the updater's isNsisWindowsInstall uses (duplicated here —
         // bridge/ must not import updater/): the launcher folder carrying the uninstaller
+
         // `Uninstall <product>.exe` is an NSIS install, never a portable
         val exe = plantWindowsPortable(temp)
         Files.writeString(exe.parent.resolve("Uninstall $windowsProduct.exe"), "uninstaller")
@@ -758,6 +774,7 @@ class CredentialStoreDirTest {
     fun `the portable data dir wiring resolves the root data dir with the one-time base copy`(@TempDir temp: Path) {
         // The production composition of the decision (the lazy appDataDir does exactly this —
         // root wins → <root>/data/ + the one-time copy from the base data dir): the base's
+
         // files the portable dir lacks arrive, the base dir SURVIVES, and a second launch is a
         // no-op (only missing files are copied)
         val home = temp.resolve("home")
@@ -783,16 +800,19 @@ class CredentialStoreDirTest {
         assertEquals("BASE", Files.readString(portableDir.resolve("pairing.json")))
     }
 
-    // ---- production wiring (source pin — the lazy composition is never executed in tests) ----
+    // production wiring (source pin — the lazy composition is never executed in tests)
 
     @Test
     fun `the production storage wiring is pinned (source pin on the appDataDir + defaultStore lazies)`() {
         // The production composition is never executed in tests (it would resolve the REAL
         // data dir + the REAL secret store) — the source pin keeps the wiring instead: the app
+
         // data dir resolves through AppInfo.dataName(channel) (the storage contract, not the
         // install identity), the portable decision runs with the production inputs and wins
+
         // over the per-channel dir, the per-channel dir goes through appDataDirFor (the
         // migration + copy + merge-back wiring), and the default secret store targets the
+
         // per-channel name with the one-time shared migration
         val sourceFile = File("src/main/kotlin/app/n_zik/compagnon/bridge/pairing/CredentialStore.kt")
         if (!sourceFile.isFile) error("the source pin needs $sourceFile — run the tests with the ComposeN-Zik module dir as the working directory (cwd=${File(".").absolutePath})")

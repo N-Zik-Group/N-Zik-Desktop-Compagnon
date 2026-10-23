@@ -38,6 +38,7 @@ class WindowController {
         onEdt {
             // A manually minimized window (taskbar minimize button) stays "shown" but minimized:
             // restore it first, or setVisible alone would leave it on the taskbar instead of in
+
             // front (the `extendedState` API — this JDK's `Frame` has no `isIconified`/`setIconified`)
             (window as? Frame)?.let { frame ->
                 if ((frame.extendedState and Frame.ICONIFIED) != 0) frame.extendedState = Frame.NORMAL

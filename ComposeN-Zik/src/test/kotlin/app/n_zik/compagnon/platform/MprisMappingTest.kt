@@ -60,8 +60,6 @@ class MprisMappingTest {
         )
     }
 
-    // ---- PlaybackStatus / Can* -------------------------------------------------------------------------
-
     @Test
     fun `without a live session the surface is stopped with every gate closed`() {
         val snapshot = mprisSnapshot(stateOf(track(), isPlaying = true), ConnectionState.Reconnecting(1000), playbackFeatures, null)
@@ -112,8 +110,6 @@ class MprisMappingTest {
         assertFalse(snapshot.canPause)
         assertFalse(snapshot.canControl)
     }
-
-    // ---- Metadata ---------------------------------------------------------------------------------------
 
     @Test
     fun `the metadata maps the wire fields verbatim without album`() {
@@ -166,8 +162,6 @@ class MprisMappingTest {
         assertNull(withoutArt.metadata?.artUrl)
     }
 
-    // ---- PropertiesChanged diff --------------------------------------------------------------------------
-
     @Test
     fun `the first push announces every player property`() {
         val changed = propertiesChanged(null, mprisSnapshot(stateOf(track(), isPlaying = true), ConnectionState.Live, playbackFeatures, null))
@@ -203,7 +197,7 @@ class MprisMappingTest {
         assertTrue("PlaybackStatus" in changed && "Metadata" in changed && "CanGoNext" in changed && "CanControl" in changed)
     }
 
-    // ---- Metadata wire map (the D-Bus `a{sv}`) --------------------------------------------------------------
+    // Metadata wire map (the D-Bus `a{sv}`)
 
     @Test
     fun `the wire map carries the frozen entries, the xesam artist as an as array`() {
@@ -232,7 +226,7 @@ class MprisMappingTest {
         assertNull(map[MprisMetadata.ART_URL])
     }
 
-    // ---- Progress bar (Position / CanSeek / Rate / Seeked) ---------------------------------------------------
+    // Progress bar (Position / CanSeek / Rate / Seeked)
 
     @Test
     fun `the track path is a valid object path and keeps two ids distinct`() {
@@ -245,6 +239,7 @@ class MprisMappingTest {
     fun `the hex encodings are unsigned two digits per byte`() {
         // UTF-8 bytes ≥ 0x80 (any non-ASCII track id): a signed Byte sign-extends through the
         // Formatter (é would render ffffffffc3 ffffffffa9) — the documented two-digits-per-byte
+
         // form is unsigned. é = UTF-8 c3 a9. The same encoding serves the MPRIS object path AND
         // the per-track artwork file name.
         assertEquals("/app/n_zik/compagnon/track/tc3a9", mprisTrackPath("é"))

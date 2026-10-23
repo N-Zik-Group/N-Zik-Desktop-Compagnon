@@ -284,6 +284,7 @@ fun Player(
             when (playerBackgroundColors) {
                 // The phone's condition `playerType == Essential || (showthumbnail && !albumCoverRotation)`:
                 // the PC is Essential (its only layout), so the branch is unconditional. The phone's
+
                 // `bottomgradient` is off by default and has no PC setting entry: the gradient renders its
                 // false branch (transparent), the swipe stays.
                 PlayerBackgroundColors.BlurredCoverColor -> {
@@ -366,6 +367,7 @@ fun Player(
                     when (type) {
                         // The phone's shared branch (its `Player.kt` 1024-1081): the two rotating gradients
                         // of the cover's local palette and the theme, masked, then the M3E morphing shapes
+
                         // in the cover's saturated / darkened swatches for the M3E styles
                         AnimatedGradient.FluidThemeColorGradient, AnimatedGradient.FluidCoverColorGradient,
                         AnimatedGradient.M3EMorphingTheme, AnimatedGradient.M3EMorphingCover -> {
@@ -477,6 +479,7 @@ fun Player(
                         }
                         // if [animatedGradient] is [AnimatedGradient.Random] then it should choose
                         // [tempGradient]. If [tempGradient] is [AnimatedGradient.Random], you have
+
                         // a problem.
                         AnimatedGradient.Random -> throw IllegalStateException("Anything but this")
                     }
@@ -832,10 +835,7 @@ fun Player(
     }
 }
 
-/**
- * Whether the full player takes the phone's landscape layout: the window is wider than tall, the phone's
- * orientation test (`Configuration.ORIENTATION_LANDSCAPE`).
- */
+/** Whether the full player takes the phone's landscape layout: the window is wider than tall, the phone's orientation test (`Configuration.ORIENTATION_LANDSCAPE`). */
 internal fun isPlayerLandscape(width: Dp, height: Dp): Boolean = width > height
 
 /** The phone's `Modifier.conditional` (its `Player.kt` 888-895): applies a composable modifier only when [condition]. */

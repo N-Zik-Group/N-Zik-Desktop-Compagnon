@@ -155,8 +155,10 @@ class PairingListenerTest {
             assertEquals(200, status)
             // The CIO server writes the 200 BEFORE it runs the accepted-callback (which closes
             // the listener and enqueues onOffer onto the test dispatcher — pairingOfferModule:
+
             // respondText, then onAccepted -> scope.launch). A single runCurrent() can race that
             // enqueue under load (the full-build CI thread is delayed), so wait in REAL time
+
             // (yielding to the CIO thread) until the offer is enqueued and processed. `received`
             // is only mutated by the dispatcher task, so it is safe to read here.
             val deadline = System.currentTimeMillis() + 5_000

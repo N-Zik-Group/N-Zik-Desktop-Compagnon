@@ -43,10 +43,7 @@ private const val APP_TITLE_COLLAPSE_ANIMATION_MS = 250
 /** Boundary jitter tolerated before the header title collapses. */
 private val APP_TITLE_COLLAPSE_TOLERANCE = 2.dp
 
-/**
- * Collapse decision for the header title row: the sliding extras must slide behind the logo when the width
- * actually available to the row is below its ideal width by more than [tolerancePx].
- */
+/** Collapse decision for the header title row: the sliding extras must slide behind the logo when the width actually available to the row is below its ideal width by more than [tolerancePx]. */
 internal fun shouldCollapseTitle(availablePx: Int, idealPx: Int, tolerancePx: Int): Boolean {
     if (idealPx <= 0) return false
     return availablePx < idealPx - tolerancePx

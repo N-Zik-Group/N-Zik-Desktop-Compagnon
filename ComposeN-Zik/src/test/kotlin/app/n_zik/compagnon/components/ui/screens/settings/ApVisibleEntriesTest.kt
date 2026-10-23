@@ -37,7 +37,7 @@ class ApVisibleEntriesTest {
         playerTimelineType = timeline,
     )
 
-    // ---- Orientation: the 4 landscape-dynamic entries (phone defaults: AnimatedGradient + M3E) ----
+    // Orientation: the 4 landscape-dynamic entries (phone defaults: AnimatedGradient + M3E)
 
     @Test
     fun `landscape shows only the landscape thumbnail size`() {
@@ -57,7 +57,7 @@ class ApVisibleEntriesTest {
         assertTrue(vis.thumbnailSizePortrait, "the portrait thumbnail-size branch shows in portrait")
     }
 
-    // ---- Live keys: the background color ----
+    // Live keys: the background color
 
     @Test
     fun `blurred cover background shows its three sub entries`() {
@@ -105,7 +105,7 @@ class ApVisibleEntriesTest {
         }
     }
 
-    // ---- Live keys: the animated gradient + isM3E ----
+    // Live keys: the animated gradient + isM3E
 
     @Test
     fun `the gradient type and the shake sensitivity follow the animated gradient background`() {
@@ -131,7 +131,7 @@ class ApVisibleEntriesTest {
         )
     }
 
-    // ---- Live keys: the cover animation + the timeline ----
+    // Live keys: the cover animation + the timeline
 
     @Test
     fun `the cover animation type follows its parent toggle`() {
@@ -145,7 +145,7 @@ class ApVisibleEntriesTest {
         assertFalse(apVisibleEntries(input(timeline = PlayerTimelineType.Wavy)).micPermissionInfo)
     }
 
-    // ---- MiniPlayer buttons dialog logic (spec §D) ----
+    // MiniPlayer buttons dialog logic (spec §D)
 
     @Test
     fun `an unchecked MPB row is blocked at max checked`() {

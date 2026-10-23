@@ -174,6 +174,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                 content = {
                     // "Jump previous" (GS:369, `jumpPreviousKey`, "3"): the phone's numeric input — INERT
                     // on the PC (no PC key): the default value shown, no dialog, a click has no effect;
+
                     // the phone's row shows a value, not a description → no long-press toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.jump_previous),
@@ -184,6 +185,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // "Min listening time" (GS:395, `exoPlayerMinTimeForEventKey`, 20s) — INERT: the
                     // phone's default value shown, no dialog, a click has no effect; no description →
+
                     // no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.min_listening_time),
@@ -194,6 +196,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // "Exclude songs with duration limit" (GS:432, `DurationInMinutes.Disabled`) — INERT:
                     // the default (Disabled) shown, no dialog, a click has no effect; no description →
+
                     // no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.exclude_songs_with_duration_limit),
@@ -204,6 +207,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // The phone's Disliked exclusions (GS:476 / 503 / 530, `DislikeMode.Enabled` by
                     // default) — INERT: the default (On) shown, no dialog, a click has no effect. The
+
                     // phone's live `dislikeMode` display is not ported (contract read-only, spec
                     // decision); the phone's row shows a value, not a description → no toast
                     OtherSettingsEntry(
@@ -267,6 +271,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                 content = {
                     // "Pause on volume zero" (GS:664, `isPauseOnVolumeZeroEnabled`, off by default) —
                     // INERT: the default switch state, a click has no effect, a long click toasts the
+
                     // phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.player_pause_on_volume_zero),
@@ -278,14 +283,11 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                         onLongClick = { Toaster.i(Res.string.info_pauses_player_when_volume_zero) },
                     )
 
-                    /**
-                     * NOT RENDERED ⛔ (spec §A1): the phone's "Pause on headphone disconnect" (GS:675,
-                     * `pauseOnHeadphoneDisconnect`, on by default) — an Android BroadcastReceiver
-                     * (the headphone-unplug event); there is no equivalent on the PC.
-                     */
+                    /** NOT RENDERED ⛔ (spec §A1): the phone's "Pause on headphone disconnect" (GS:675, `pauseOnHeadphoneDisconnect`, on by default) — an Android BroadcastReceiver (the headphone-unplug event); there is no equivalent on the PC. */
 
                     // "Keep player minimized" (GS:686, `keepPlayerMinimized`, on by default) — INERT:
                     // the default switch state, a click has no effect, a long click toasts the
+
                     // phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.player_keep_minimized),
@@ -299,6 +301,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // "Disable closing player by swiping down" (GS:697, `disableClosingPlayerSwipingDown`,
                     // off by default) — INERT: the default switch state, a click has no effect, a long
+
                     // click toasts the phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.player_collapsed_disable_swiping_down),
@@ -312,6 +315,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // "Auto load songs in queue" (GS:708, `autoLoadSongsInQueue`, on by default) —
                     // INERT: the default switch state, a click has no effect, a long click toasts the
+
                     // phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.player_auto_load_songs_in_queue),
@@ -337,6 +341,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                 content = {
                     // "Max songs in queue" (GS:742, `MaxSongs.Unlimited`) — INERT: the default (Unlimited)
                     // shown, no dialog, a click has no effect (the cap is applied on the phone's side,
+
                     // contract §9); no description → no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.max_songs_in_queue),
@@ -345,13 +350,11 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                         onClick = {},
                     )
 
-                    /**
-                     * NOT RENDERED ⛔ (spec §A1): the phone's "Max songs in queue (Android Auto)"
-                     * (GS:759, `maxSongsInQueueAndroidAuto`, Unlimited) — Android Auto only.
-                     */
+                    /** NOT RENDERED ⛔ (spec §A1): the phone's "Max songs in queue (Android Auto)" (GS:759, `maxSongsInQueueAndroidAuto`, Unlimited) — Android Auto only. */
 
                     // "Discover" (GS:825, `discoverIsEnabled`, off by default) — INERT: no PC key, the
                     // default switch state, a click has no effect, a long click toasts the phone's
+
                     // description (the same toast the inert Discover button of the mini-player uses)
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.discover),
@@ -365,6 +368,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // "Playlist indicator" (GS:834, the phone's `playlistindicator`, off by default) —
                     // WIRED to the PC's `playlistIndicator` (step 1 aligned the PC default to the
+
                     // phone's off): persisted, the song rows' "in a playlist" badge follows
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.playlistindicator),
@@ -378,6 +382,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // "Now playing indicator" (GS:846, `nowPlayingIndicator`, `MusicAnimationType.Bubbles`)
                     // — INERT: the phone's default label (Bubbles) shown, no dialog, a click has no
+
                     // effect; no description → no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.now_playing_indicator),
@@ -407,6 +412,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // "Persistent queue" (GS:902, `persistentQueue`, off by default) — INERT: the
                     // default switch state, a click has no effect, a long click toasts the phone's
+
                     // description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.persistent_queue),
@@ -431,6 +437,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // "Skip media on error" (GS:968, `skipMediaOnError`, off by default) — INERT: the
                     // default switch state, a click has no effect, a long click toasts the phone's
+
                     // description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.skip_media_on_error),
@@ -475,6 +482,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // "Loudness normalization" (GS:1043, `volumeNormalization`, off by default) — INERT:
                     // the default switch state, a click has no effect, a long click toasts the
+
                     // phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.loudness_normalization),
@@ -495,6 +503,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // "Bass boost" (GS:1146, `bassboostEnabled`, off by default) — INERT: the default
                     // switch state, a click has no effect; the phone's row has no description text →
+
                     // no toast
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.settings_audio_bass_boost),
@@ -513,6 +522,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // "Audio reverb" (GS:1206, `audioReverb`, `PresetsReverb.NONE`) — INERT: the phone's
                     // default label (None) shown, no dialog, a click has no effect; no description →
+
                     // no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.settings_audio_reverb),
@@ -550,6 +560,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                 content = {
                     // "Settings reset" (GS:1403) — INERT: the phone resets ITS settings here (its
                     // `DefaultGeneralSettings`); on the PC a click has no effect, a long click toasts
+
                     // the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.settings_reset),

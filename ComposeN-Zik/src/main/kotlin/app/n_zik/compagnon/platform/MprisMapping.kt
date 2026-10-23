@@ -79,6 +79,7 @@ fun mprisSnapshot(
     }
     // MPRIS v2.2: `CanPlay` / `CanPause` are properties of the CURRENT TRACK, not of the playback
     // state ("the value should not depend on whether the track is currently paused or playing") —
+
     // both track the `playback` feature AND a loaded track, open in every state of a loaded track.
     val hasTrack = metadata != null
     val canPlay = playback && hasTrack

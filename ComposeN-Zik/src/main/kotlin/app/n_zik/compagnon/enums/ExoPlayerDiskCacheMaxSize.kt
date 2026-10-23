@@ -34,10 +34,7 @@ enum class ExoPlayerDiskCacheMaxSize(
             else -> this.name
         }
 
-    /**
-     * Ceiling of the audio cache in bytes: `0` = nothing is downloaded ([Disabled]), `null` = no ceiling
-     * ([Unlimited]); [Custom] is [customMegabytes] MB.
-     */
+    /** Ceiling of the audio cache in bytes: `0` = nothing is downloaded ([Disabled]), `null` = no ceiling ([Unlimited]); [Custom] is [customMegabytes] MB. */
     fun cacheBytes(customMegabytes: Int): Long? = when (this) {
         Disabled -> 0L
         Unlimited -> null

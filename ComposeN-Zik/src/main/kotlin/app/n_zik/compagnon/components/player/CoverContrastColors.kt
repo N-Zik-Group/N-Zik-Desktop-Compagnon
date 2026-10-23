@@ -8,10 +8,7 @@ import app.n_zik.compagnon.components.theme.ColorPalette
  * ported player uses). Dropped: `m3eRecapRestoredDynamicPalette` (no palette is restored across restarts).
  */
 
-/**
- * The outline (halo) color for the player's title/artist text: white at [alpha] on a light-tone ramp,
- * black at [alpha] on a dark-tone one, keyed on the effective tone of the palette.
- */
+/** The outline (halo) color for the player's title/artist text: white at [alpha] on a light-tone ramp, black at [alpha] on a dark-tone one, keyed on the effective tone of the palette. */
 internal fun textOutlineColor(effectiveIsDark: Boolean, alpha: Float): Color =
     if (effectiveIsDark) Color.Black.copy(alpha = alpha) else Color.White.copy(alpha = alpha)
 

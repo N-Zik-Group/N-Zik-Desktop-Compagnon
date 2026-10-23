@@ -54,10 +54,7 @@ internal fun playerContentFade(progress: Float): Float =
 internal fun miniPlayerFade(progress: Float): Float =
     1f - (progress / PLAYER_SHEET_HANDOVER_PROGRESS).coerceIn(0f, 1f)
 
-/**
- * Geometry of the deploy card at progress [p] (port of the phone's `computeCardGeometry`,
- * `CustomBottomSheet.kt` 50, without the collapsed insets: no navigation rail beside the PC mini-player).
- */
+/** Geometry of the deploy card at progress [p] (port of the phone's `computeCardGeometry`, `CustomBottomSheet.kt` 50, without the collapsed insets: no navigation rail beside the PC mini-player). */
 internal data class CardGeometry(
     val left: Float,
     val width: Float,
@@ -86,10 +83,7 @@ internal fun cardGeometry(
     return CardGeometry(cardLeft, cardWidth, cardHeight, cornerPx)
 }
 
-/**
- * Shape that follows the exact animated card rect (port of the phone's `CardClipShape`), so the clip and
- * the background drawn behind stay in sync.
- */
+/** Shape that follows the exact animated card rect (port of the phone's `CardClipShape`), so the clip and the background drawn behind stay in sync. */
 private class CardClipShape(private val geometry: CardGeometry) : Shape {
     override fun createOutline(
         size: Size,
@@ -196,6 +190,7 @@ fun PlayerSheet(
     ) {
         // Player content — always in composition; the draw is skipped below the alpha threshold instead
         // of just setting alpha = 0 (progress is read in draw phase only, never in composition: a
+
         // composition read would recompose the whole sheet on every frame, the phone's note)
         Box(
             modifier = Modifier

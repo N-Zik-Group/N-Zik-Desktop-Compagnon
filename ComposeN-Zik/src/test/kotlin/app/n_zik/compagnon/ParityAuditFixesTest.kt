@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test
 /** The pure logic behind the PC UI parity fixes of the 2026-10-09 audit. */
 class ParityAuditFixesTest {
 
-    // ---- Zone 4: the menu content stack (the phone's `MenuState`) ----
+    // Zone 4: the menu content stack (the phone's `MenuState`)
 
     @Test
     fun `a sub-menu stacks over its menu and pop goes back, then closes`() {
@@ -55,7 +55,7 @@ class ParityAuditFixesTest {
         assertFalse(state.hasPrevious)
     }
 
-    // ---- Zone 3: the skip buttons' seek guard (the phone's `newPosition < 0` return) ----
+    // Zone 3: the skip buttons' seek guard (the phone's `newPosition < 0` return)
 
     @Test
     fun `forward while the duration is unknown sends nothing`() {
@@ -66,7 +66,7 @@ class ParityAuditFixesTest {
         assertEquals(0L, skipTarget(2_000L, 5_000L, Long::minus, ::maxOf, 0L))
     }
 
-    // ---- Zone 5: the numeric input has no maximum (the phone only checks the minimum) ----
+    // Zone 5: the numeric input has no maximum (the phone only checks the minimum)
 
     @Test
     fun `numeric input keeps a value over the maximum and refuses empty or below min`() {
@@ -82,7 +82,7 @@ class ParityAuditFixesTest {
         assertEquals(0f, inProgressFraction(0, 5))
     }
 
-    // ---- Zone 3: the like toast (the phone's messages, cleaned label) ----
+    // Zone 3: the like toast (the phone's messages, cleaned label)
 
     @Test
     fun `like toast messages follow the rotation or the toggle`() {
@@ -94,7 +94,7 @@ class ParityAuditFixesTest {
         assertNull(likeToastLabel(" ", "Artist"))
     }
 
-    // ---- Zone 1: the playlist mosaic (the phone's four tracks with a thumbnail, else the first) ----
+    // Zone 1: the playlist mosaic (the phone's four tracks with a thumbnail, else the first)
 
     @Test
     fun `playlist mosaic keeps the tracks that have an artwork`() {
@@ -105,7 +105,7 @@ class ParityAuditFixesTest {
         assertEquals(listOf(ArtworkKey.track("x", 256)), playlistThumbnails(emptyList(), "x", 256))
     }
 
-    // ---- Transverse: the locator loads the pages up to the phone's position ----
+    // Transverse: the locator loads the pages up to the phone's position
 
     @Test
     fun `loadThrough reads the pages up to the index, false past the end`() = runTest {

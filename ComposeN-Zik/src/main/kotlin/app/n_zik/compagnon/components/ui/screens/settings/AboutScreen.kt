@@ -114,8 +114,10 @@ fun AboutScreen(
     val updaterEnabled = AppVersion.updaterEnabled
     // The provenance block (spec `spec-arch-binary-package-release`): the install mode + the
     // release marker are detected once (neither changes at runtime); the AUR block state
+
     // resolves the package-manager probe OFF the composition thread — and only when it can
     // matter (a package-managed install WITHOUT the marker — a marked release-pkg install or
+
     // any other mode short-circuits, no probe spawn at all — loop 2 G13).
     val installMode = remember { currentInstallMode() }
     val distributionMarker = remember { currentDistributionMarker() }
@@ -136,10 +138,13 @@ fun AboutScreen(
 
     // The tab's own scroll (the phone's destination structure, its `About.kt` 87-94).
     // Scroll-bounding audit (the intermittent "infinity maximum height" crash report): every
+
     // vertically scrollable component in this tree is bounded — this root [verticalScroll] is
     // measured with the settings page's own size (the `AnimatedContent(fillMaxSize())` inside the
+
     // page's `weight(1f)` box), and the only nested scrollables are the contributors'
     // [androidx.compose.foundation.lazy.LazyColumn]s, each inside its fixed 600 dp
+
     // [Contributors] box (a fixed-height container is safe under an unbounded offer). No
     // hardening is needed — the structure mirrors the phone's.
     Column(
@@ -334,6 +339,7 @@ fun AboutScreen(
 
                     // Update Check Card (the phone's accent-shadow card, its `About.kt` 301-305):
                     // the [clip] before the clickable bounds the click ripple to the rounded
+
                     // card — the square-corner ripple leak of the v2 clickable-without-clip
                     Card(
                         modifier = Modifier
@@ -461,6 +467,7 @@ fun AboutScreen(
                                 ) {
                                     // fillMaxSize (not fillMaxWidth) — the phone's About.kt uses
                                     // fillMaxSize so the label is centered VERTICALLY in the 36dp
+
                                     // card; fillMaxWidth left it top-aligned.
                                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                         BasicText(
@@ -472,8 +479,10 @@ fun AboutScreen(
                             } else {
                                 // The source builds (debug / -git): the phone's !IS_AUTOUPDATE branch —
                                 // the disabled variant, the explanation, no navigation
+
                                 // fillMaxSize (not fillMaxWidth) per the phone's About.kt disabled
                                 // branch — the card content must be vertically centered, not
+
                                 // top-aligned (round-4 audit MINOR-2)
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
@@ -515,6 +524,7 @@ fun AboutScreen(
                                     Spacer(modifier = Modifier.height(8.dp))
                                     // The disabled copy of the card (loop 2 G10): an AUR-blocked
                                     // install is NOT a source build — its updater is present,
+
                                     // blocked by provenance (the AUR entry owns the update), so
                                     // it gets the AUR-specific copy, not the source-build one.
                                     BasicText(

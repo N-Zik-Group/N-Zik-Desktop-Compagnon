@@ -164,8 +164,6 @@ class PairingController(
         }
     }
 
-    // ---- Unpaired -------------------------------------------------------------------------------
-
     fun setDeviceName(name: String) = updateUnpaired { it.copy(deviceName = name.take(BridgeContract.DEVICE_NAME_MAX_LENGTH)) }
 
     fun showManual() = updateUnpaired { it.copy(mode = PairingMode.Manual) }
@@ -267,10 +265,13 @@ class PairingController(
     ) {
         closeListener()
         // Atomic transition: only the operation that still sees `Unpaired` may enter `Validating`,
-        // so a racing caller (the listener's `onOffer` vs a user submit) cannot double-drive it.
+        // so a racing caller (the listener's `onOffer` vs a user submit) cannot double-drive it
+
         // An operation that takes over a cancelled one already on `Validating` continues the
-        // round instead of bailing: the cancelled operation no longer drives the state, and
-        // bailing here would strand it on `Validating` (nothing else may drive it from there).
+        // round instead of bailing
+
+        // The cancelled operation no longer drives the state, and bailing here would strand it
+        // on `Validating` (nothing else may drive it from there)
         val current = _state.value
         if (current is PairingState.Unpaired) {
             if (!_state.compareAndSet(current, PairingState.Validating(manual = requestId == null))) return
@@ -309,8 +310,6 @@ class PairingController(
             is ValidateResult.Failed -> enterUnpaired(returnTo, PairingError.Unexpected(result.status, result.code))
         }
     }
-
-    // ---- Paired ---------------------------------------------------------------------------------
 
     /** "Retry" on the unreachable / other-PC screens: a user action, never automatic. */
     fun retry() = runOperation { checkPairing() }
@@ -377,8 +376,6 @@ class PairingController(
         closeListener()
         _state.value = PairingState.Revoked
     }
-
-    // ---- Plumbing -------------------------------------------------------------------------------
 
     /** Empty manual form, prefilled with the last phone address of this session when there is one. */
     private fun prefilledManualForm(): ManualForm {

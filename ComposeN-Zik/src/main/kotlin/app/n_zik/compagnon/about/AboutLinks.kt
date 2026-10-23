@@ -14,10 +14,7 @@ object AboutLinks {
     /** The author's GitHub (the app-info card's "by N-Zik-Group" link). */
     const val REPO_OWNER_URL = "https://github.com/N-Zik-Group"
 
-    /**
-     * The new-issue URL of a kind — `"bug"` → the phone's bug template, anything else the feature
-     * template (the phone's exact query strings, kept verbatim).
-     */
+    /** The new-issue URL of a kind — `"bug"` → the phone's bug template, anything else the feature template (the phone's exact query strings, kept verbatim). */
     fun issueUrl(kind: String): String = when (kind) {
         "bug" -> "$DESKTOP_REPO_URL/issues/new?assignees=&labels=bug&template=bug_report.yaml"
         else -> "$DESKTOP_REPO_URL/issues/new?assignees=&labels=feature_request&template=feature_request.yaml"

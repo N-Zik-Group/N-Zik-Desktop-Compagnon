@@ -26,6 +26,7 @@ class AppInfoTest {
     fun `the data name is the storage name per channel (stable + beta share the base, dev, debug, git are isolated)`() {
         // The 2026-10-16 storage regrouping: the app data dir + the secret store target follow
         // THIS mapping (not the install identity): stable and beta share the base (the beta
+
         // tests against the stable user's real data), dev / debug / git are isolated. The
         // mapping is the storage contract — a drift forces re-pairings or strands data
         assertEquals("N-Zik Desktop Compagnon", AppInfo.dataName("stable"))
@@ -39,6 +40,7 @@ class AppInfoTest {
     fun `the build channel dataName property mirrors AppInfo dataName of the build channel`() {
         // The cross pin Gradle <-> app (spec `spec-channel-storage-portable-targz`): the NSIS
         // DATA_DIR_NAME / CRED_TARGET defines are the build mirror of `AppInfo.dataName`
+
         // (`channelDataName` in build.gradle.kts, exposed to the JVM tests as `channel.dataName`):
         // the installer's cleanup target and the app's own storage must agree on every channel
         val prop = System.getProperty("channel.dataName")

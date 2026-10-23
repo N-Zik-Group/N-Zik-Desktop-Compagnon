@@ -67,6 +67,7 @@ class AurPkgbuildTest {
         val text = gitPkgbuild.readText()
         // The makepkg source syntax is "name::url": the custom clone-dir name comes BEFORE the "::"
         // (makepkg's get_url() strips the prefix before the first "::"). It pins the lowercase clone
+
         // dir, while pkgver()/package() cd into ${_pkgname} (a case-sensitive FS would reject the
         // mixed-case GitHub repo basename otherwise).
         assertTrue(
@@ -110,6 +111,7 @@ class AurPkgbuildTest {
     fun `both entries expose a space-free launcher for the desktop entry`() {
         // The app-image launcher sits in bin/ (named after the display name, which contains spaces);
         // a .desktop Exec pointing at that raw /opt path is fragile, so both entries install the app
+
         // under /opt/<package name> (the same dir as the .deb/.rpm), create a space-free
         // /usr/bin/<pkgname> symlink to the launcher, and point the Exec at the symlink.
         for ((file, label) in listOf(releasePkgbuild to "release", gitPkgbuild to "git")) {

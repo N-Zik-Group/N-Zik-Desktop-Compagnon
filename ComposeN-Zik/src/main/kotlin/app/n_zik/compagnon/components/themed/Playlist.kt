@@ -43,8 +43,7 @@ fun Playlist(
     isBookmarked: Boolean = false,
     /** Since 1.7.1: the phone's `isEditable` — the lock badge on a non-editable YouTube playlist. */
     isEditable: Boolean = true,
-    /** Since 1.7.2: the phone's custom cover (`ArtworkKey.playlist`); a missing one (a `404`) keeps
-     *  [thumbnails], as on the phone. */
+    /** Since 1.7.2: the phone's custom cover (`ArtworkKey.playlist`); a missing one (a `404`) keeps [thumbnails], as on the phone. */
     customCover: ArtworkKey? = null,
 ) {
     // Since 1.7.2: the phone's custom cover (its `checkFileExists(context, "thumbnail/playlist_<id>")`,

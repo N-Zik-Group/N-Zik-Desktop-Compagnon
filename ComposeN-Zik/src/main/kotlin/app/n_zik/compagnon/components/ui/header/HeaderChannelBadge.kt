@@ -48,10 +48,7 @@ private const val HEADER_BADGE_V_PADDING = 1
  */
 private const val HEADER_BADGE_MARQUEE_ITERATIONS = 3
 
-/**
- * The badge style: 14sp bold (port of the phone's `headerBadgeStyle`, the "Rescue Center" burger
- * item size — the maximum text size for header badges).
- */
+/** The badge style: 14sp bold (port of the phone's `headerBadgeStyle`, the "Rescue Center" burger item size — the maximum text size for header badges). */
 @Composable
 private fun headerBadgeStyle(): TextStyle = typography().xs.bold
 
@@ -114,8 +111,10 @@ fun HeaderChannelBadge(
     ) {
         // Uppercase per the phone's build-type badges ("BETA" / "DEV" / "MINIFIED" — the phone's
         // build-type strings are uppercase; the desktop's *_title strings are uppercase in
+
         // values/strings.xml, but the values-* locale copies stay mixed-case until the next
         // Crowdin resync, so the case is applied at render — round-4 audit MINOR-1, consistent
+
         // with the About card badge and the update flow)
         BasicText(
             text = badgeText.uppercase(),
@@ -126,6 +125,7 @@ fun HeaderChannelBadge(
                 .widthIn(max = maxWidth)
                 // Finite marquee: scrolls a few full passes, then stops on the start position
                 // (BasicMarquee snaps the offset back to zero when done) — dropped when the
+
                 // global "Disable scrolling text" setting is on (the phone's
                 // `disableScrollingTextKey`, its `HeaderBadgeBox` L90, L119)
                 .then(if (settings.disableScrollingText) Modifier else Modifier.basicMarquee(iterations = HEADER_BADGE_MARQUEE_ITERATIONS)),

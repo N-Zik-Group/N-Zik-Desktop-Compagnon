@@ -127,6 +127,7 @@ fun NetworkSettingsScreen(
                 content = {
                     // "PC server" (NS:168 / 172, the phone's `bridge_server`) — WIRED (nav): the click
                     // opens the window's own Serveur PC page (the phone navigates to its
+
                     // `bridgeServer` route), its label / description / icon ported as is
                     OtherSettingsEntry(
                         title = stringResource(Res.string.bridge_server),
@@ -149,8 +150,10 @@ fun NetworkSettingsScreen(
                 content = {
                     // The phone's status rows (NS:205 / 222 / 239) show the format plus its detected
                     // network quality; the PC has neither a network-quality detection nor image /
+
                     // download quality keys (the PC's image / download qualities are the phone's) —
                     // read-only rows: the audio row live with the PC's current `audioQualityFormat`,
+
                     // image / download the phone's default ("Auto")
                     SettingsInfoEntry(
                         title = stringResource(Res.string.image_quality_format),
@@ -195,6 +198,7 @@ fun NetworkSettingsScreen(
 
                     // "Image quality format" (NS:270, `imageQualityFormatKey`, Auto) — INERT: the
                     // phone's default (Auto) shown, no dialog, a click has no effect (no PC key: the
+
                     // PC's image quality is the phone's); the phone's row shows a value, not a
                     // description → no toast
                     OtherSettingsEntry(
@@ -206,6 +210,7 @@ fun NetworkSettingsScreen(
 
                     // "Download quality format" (DQS:48, `downloadQualityFormatKey`, Auto) — INERT:
                     // the phone's default (Auto) shown, no dialog, a click has no effect (no PC key:
+
                     // the PC has no download cache); the phone's row shows a value, not a
                     // description → no toast
                     OtherSettingsEntry(
@@ -217,6 +222,7 @@ fun NetworkSettingsScreen(
 
                     // "Update downloads" (DQS:95, action) — INERT: the phone re-downloads its
                     // non-compliant downloads; the PC has none, a click has no effect, a long click
+
                     // toasts the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.update_downloads),
@@ -254,6 +260,7 @@ fun NetworkSettingsScreen(
                 content = {
                     // "Auto-download song" (NS:410, `autoDownloadSongKey`, off by default) — INERT:
                     // the default switch state, a click has no effect, a long click toasts the
+
                     // phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.settings_enable_autodownload_song),
@@ -287,6 +294,7 @@ fun NetworkSettingsScreen(
                 content = {
                     // "Settings reset" (NS:476) — INERT: the phone resets ITS settings here (its
                     // `DefaultNetworkSettings`); on the PC a click has no effect, a long click toasts
+
                     // the phone's description
                     OtherSettingsEntry(
                         title = stringResource(Res.string.settings_reset),

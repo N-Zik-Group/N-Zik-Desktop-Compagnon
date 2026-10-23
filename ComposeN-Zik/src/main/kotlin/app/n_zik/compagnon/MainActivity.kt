@@ -131,11 +131,7 @@ import app.n_zik.compagnon.tray.ShortcutDestination
 import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.getString
 
-/**
- * The phone's `appearance` / `fadeFromAppearance` state of `MainActivity.setContent`
- * (`app/n_zik/android/MainActivity.kt` 1024-1066): the appearance shown by `AnimatedAppearance`, and the one
- * it fades from when a change is animated.
- */
+/** The phone's `appearance` / `fadeFromAppearance` state of `MainActivity.setContent` (`app/n_zik/android/MainActivity.kt` 1024-1066): the appearance `AnimatedAppearance` shows, and the one it fades from when a change is animated. */
 @Stable
 class AppearanceState(initial: Appearance) {
     var appearance by mutableStateOf(initial)
@@ -293,8 +289,7 @@ internal data class NavPageState(
         if (settingsOpen) this
         else copy(phoneOpen = false, settingsOpen = true, settingsTab = 0, updateOpen = false)
 
-    /** The header's "Serveur PC" button: the Serveur PC page replaces the settings page (with its update
-     * sub-page); a press on the already-open Serveur PC page does nothing. */
+    /** The header's "Serveur PC" button: the Serveur PC page replaces the settings page (with its update sub-page); a press on the already-open Serveur PC page does nothing. */
     fun onPhonePress(): NavPageState =
         if (phoneOpen) this
         else copy(settingsOpen = false, updateOpen = false, phoneOpen = true)
@@ -396,9 +391,10 @@ fun MainActivity(
     }
 
     // Since 1.10.0 (feature `ui.settings`): the phone's UI settings are fetched at session start and
-    // on each `libraryChanged` (§10.5) and applied through [UiSettingsHolder] — the PC consumes only
-    // `topN`, everything else stays the PC's coded defaults. The last read value survives a
-    // reconnection; the defaults until a first successful read (or without the feature)
+    // on each `libraryChanged` (§10.5) and applied through [UiSettingsHolder]
+
+    // The PC consumes only `topN`, everything else stays the PC's coded defaults. The last read
+    // value survives a reconnection; the defaults until a first successful read (or without the feature)
     val uiSettingsHolder = remember(library) { UiSettingsHolder(library) }
     val uiSettings by uiSettingsHolder.settings.collectAsState()
     val sessionLive = connection == ConnectionState.Live
@@ -425,9 +421,10 @@ fun MainActivity(
     }
 
     val track = state?.currentTrack
-    // Dynamic palette: the phone calls setDynamicPalette on each media item transition (in one step) and
-    // on a palette name / mode or system theme change (animated: its `animateTheme` / `animateGlobal`,
-    // `MainActivity.kt` 1318, 1323, 1486, 1527)
+    // Dynamic palette: the phone calls setDynamicPalette on each media item transition (in one step)
+    // and on a palette name / mode or system theme change
+
+    // Animated in the phone's `animateTheme` / `animateGlobal` (`MainActivity.kt` 1318, 1323, 1486, 1527)
     val lastTheme = remember { arrayOfNulls<Any>(1) }
     LaunchedEffect(track?.id, track?.hasArtwork, uiSettings.colorPaletteName, uiSettings.colorPaletteMode, systemDark) {
         val theme = Triple(uiSettings.colorPaletteName, uiSettings.colorPaletteMode, systemDark)
@@ -444,8 +441,10 @@ fun MainActivity(
     androidx.compose.runtime.SideEffect { appearanceState.uiSettings = uiSettings }
 
     // Media presence grace: a transient null between two track changes must not drop the sheet
-    // (port of the phone's 400 ms grace, phone's `MainActivity.kt` 2198-2223). Once the absence persists,
-    // the player is dismissed and the queue overlay closed (`showQueueOverlay = false`, phone's 2215).
+    // (port of the phone's 400 ms grace, phone's `MainActivity.kt` 2198-2223)
+
+    // Once the absence persists, the player is dismissed and the queue overlay closed
+    // (`showQueueOverlay = false`, phone's 2215)
     var mediaPresent by remember { mutableStateOf(repository.state.value?.currentTrack != null) }
     LaunchedEffect(track?.id) {
         if (track == null) {
@@ -460,14 +459,19 @@ fun MainActivity(
     }
 
     // The phone's mini-player pop/depop port (its commit 765d811, its `MainActivity.kt` 2112-2155): the
-    // sheet subtree stays composed until the animated leave has settled (its `shouldComposePlayerSheet`),
-    // each presentation fades in with the 300 ms appear fade (its `appearAlpha`, the 2 heavy frames
-    // skipped first — the mini-player keeps its last track so the whole slide + fade stays visible), and
-    // the leave is the phone's animated `dismiss()` — the sheet slides below the screen while the
-    // dismissed-zone alpha fades it (its `miniPlayerDismissAlpha`, linear across the travel) — instead
-    // of vanishing in place. A presentation after an in-flight leave resumes the pop from wherever it
-    // stopped (the phone's race fix). No AnimatedVisibility: it would add a second full-screen layer
-    // with the default Auto compositing strategy (the phone's note: lag).
+    // sheet subtree stays composed until the animated leave has settled (its `shouldComposePlayerSheet`)
+
+    // Each presentation fades in with the 300 ms appear fade (its `appearAlpha`, the 2 heavy frames
+    // skipped first — the mini-player keeps its last track so the whole slide + fade stays visible)
+
+    // The leave is the phone's animated `dismiss()` — the sheet slides below the screen while the
+    // dismissed-zone alpha fades it (its `miniPlayerDismissAlpha`, linear across the travel)
+
+    // It never vanishes in place; a presentation after an in-flight leave resumes the pop from
+    // wherever it stopped (the phone's race fix)
+
+    // No AnimatedVisibility: it would add a second full-screen layer with the default Auto
+    // compositing strategy (the phone's note: lag)
     val sheetDismiss = remember { Animatable(0f) } // 0 = presented, 1 = dismissed (below the screen)
     val appearAlpha = remember { Animatable(0f) }  // the phone's `appearAlpha`: 0 hidden → 1 shown
     var sheetComposed by remember { mutableStateOf(repository.state.value?.currentTrack != null) }
@@ -499,8 +503,9 @@ fun MainActivity(
     // Whether the last navigation was a back (the phone's pop transitions) or a forward one (a click)
     var navIsBack by remember { mutableStateOf(false) }
     // The root update dialog's "go to download" (the phone's `onNavigateToUpdater`, AD-6): the
-    // dialog sits above the navigation, so it raises a one-shot flag consumed here — the update
-    // page opens over the current content (back returns to it)
+    // dialog sits above the navigation, so it raises a one-shot flag consumed here
+
+    // The update page opens over the current content (back returns to it)
     LaunchedEffect(Unit) {
         snapshotFlow { NewUpdateAvailableDialog.GoToDownloadRequest.requested }
             .collect { requested ->
@@ -522,8 +527,10 @@ fun MainActivity(
     }
 
     // A tray app shortcut (Home / Songs / Albums / Artists / Playlists): back home — the player and
-    // the queue closed — then the shortcut's tab, if any, handed to the home screen. The shortcuts without a PC
-    // destination only re-showed the window (the tray did that) and are dropped here
+    // the queue closed — then the shortcut's tab, if any, handed to the home screen
+
+    // The shortcuts without a PC destination only re-showed the window (the tray did that) and are
+    // dropped here
     var requestedTab by remember { mutableStateOf<LibraryTab?>(null) }
     val pendingShortcut by AppShortcutRequests.pending.collectAsState()
     LaunchedEffect(pendingShortcut) {
@@ -674,8 +681,9 @@ fun MainActivity(
                 },
         ) {
             // The scroll-hide connection rides the content, not the window: the player sheet, the queue
-            // overlay and the menus are the Column's siblings, so their nested scroll never hides the
-            // bars — on the phone they are separate windows (`CustomModalBottomSheet`) and reach none of
+            // overlay and the menus are the Column's siblings, so their nested scroll never hides the bars
+
+            // On the phone they are separate windows (`CustomModalBottomSheet`) and reach none of
             // the activity's scroll listeners
             Column(
                 modifier = Modifier
@@ -704,6 +712,7 @@ fun MainActivity(
                 }
                 // The navigation pages replace the home (the connection banner and the lists are
                 // hidden with it — like the phone's destinations replacing the home content)
+
                 // The phone's page transition (its `transitionEffect`, `ui.settings` since 1.10.0) between
                 // the home and the navigation pages, keyed on which page shows
                 AnimatedContent(
@@ -719,11 +728,13 @@ fun MainActivity(
                         val prefs = preferences
                         Box(modifier = Modifier.fillMaxSize()) {
                             if (shown.updateOpen) {
-                                // The update page replaces the other pages (NAV-7): back closes it
-                                // first, landing on the settings' About tab when it opened from
-                                // the settings, on the home when it opened from the root update
-                                // dialog (the phone's `onNavigateToUpdater`) — unpaired it runs on
-                                // the app's own settings (an update check / download needs no pairing)
+                                // The update page replaces the other pages (NAV-7): back closes it first,
+                                // landing on the settings' About tab when it opened from the settings,
+
+                                // on the home when it opened from the root update dialog (the phone's
+                                // `onNavigateToUpdater`)
+
+                                // Unpaired it runs on the app's own settings (an update check / download needs no pairing)
                                 UpdateScreen(
                                     prefs ?: updatePrefs,
                                     onClose = { navIsBack = true; pages = pages.copy(updateOpen = false) },
@@ -740,9 +751,11 @@ fun MainActivity(
                                         shown.settingsTab,
                                         onTabChanged = { pages = pages.onTabChanged(it) },
                                         onOpenUpdate = { navIsBack = false; pages = pages.openUpdate() },
-                                        // The Réseau tab's "PC server" entry: the window's own
-                                        // Serveur PC page (the header's "Serveur PC" button's
-                                        // transition, spec `spec-fill-pc-ui-gaps-settings` §A3)
+                                        // The Réseau tab's "PC server" entry: the window's own Serveur PC
+                                        // page
+
+                                        // The header's "Serveur PC" button's transition
+                                        // (spec `spec-fill-pc-ui-gaps-settings` §A3)
                                         onOpenServer = { navIsBack = false; pages = pages.onPhonePress() },
                                     )
                                 }
@@ -770,13 +783,16 @@ fun MainActivity(
                 }
             }
 
-            // The mini-player's bottom padding (the phone's `Skeleton.kt` 317-332): above the bar when
-            // it is shown — the home's navigation bar (reported by [HomeScreen]) or the settings
-            // page's sub-tab bar (the Serveur PC page and the update page have none). With the
-            // home's bar it follows its position: the floating bar's height (icon-only / with
-            // labels) plus its 25 dp padding and the phone's 4 dp gap, the fixed bottom bar's
-            // `standardNavBarHeight` plus the 4 dp, 5 dp with the top or side bars; without it, the
-            // floating bar's 25 dp padding (5 dp with a fixed bar).
+            // The mini-player's bottom padding (the phone's `Skeleton.kt` 317-332): above the bar when it
+            // is shown — the home's navigation bar (reported by [HomeScreen]) or the settings page's
+
+            // sub-tab bar (the Serveur PC page and the update page have none)
+
+            // With the home's bar it follows its position: the floating bar's height (icon-only / with
+            // labels) plus its 25 dp padding and the phone's 4 dp gap
+
+            // The fixed bottom bar's `standardNavBarHeight` plus the 4 dp, 5 dp with the top or side
+            // bars; without a bar, the floating bar's 25 dp padding (5 dp with a fixed bar)
             val barUnderMiniPlayer = if (pages.anyPageOpen) pages.settingsOpen && !pages.updateOpen else navBarVisible
             val settings by (preferences?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
             val playerPadBottom by animateDpAsState(
@@ -801,14 +817,15 @@ fun MainActivity(
                             .graphicsLayer {
                                 // The phone's sheet alpha (its commit 765d811): the 300 ms appear fade x
                                 // the dismissed-zone fade — the linear fade across the dismissed travel
-                                // (its `miniPlayerDismissAlpha`) that follows the leave's spring and the
-                                // pop's tween
+
+                                // Its `miniPlayerDismissAlpha` follows the leave's spring and the pop's tween
                                 alpha = appearAlpha.value * (1f - sheetDismiss.value)
                                 // The leave slides the sheet below the screen (its animated `dismiss()`);
                                 // at rest there is no translation
                                 translationY = sheetDismiss.value * size.height
                                 // The phone's performance fix: with the default Auto strategy, an alpha
                                 // below 1 renders the whole full-screen sheet subtree into a full-screen
+
                                 // offscreen buffer on every frame; ModulateAlpha applies the alpha per
                                 // draw op (the phone's trade-off note)
                                 compositingStrategy = CompositingStrategy.ModulateAlpha
@@ -826,9 +843,10 @@ fun MainActivity(
                 }
             }
 
-            // The queue overlay is drawn ABOVE the sheet so its panel (65 % height) is not
-            // hidden by the PlayerSheet's full-size box; the menu and the toasters (composed after
-            // the overlay) stay above all
+            // The queue overlay is drawn ABOVE the sheet so its panel (65 % height) is not hidden by
+            // the PlayerSheet's full-size box
+
+            // The menu and the toasters (composed after the overlay) stay above all
             MiniPlayerQueueOverlay(
                 showSheet = showQueueOverlay,
                 onDismiss = { showQueueOverlay = false },

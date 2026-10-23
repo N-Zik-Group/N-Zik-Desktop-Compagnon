@@ -215,7 +215,7 @@ class BridgeClientLibraryTest {
         assertEquals(LibraryResult.Unreachable, client { throw IOException("refused") }.playlists(address, token, 0, 100, PlaylistsQuery()))
     }
 
-    // ---- Writes (contract §10.2, since 1.7): the explicit state, answered with the resulting state ----
+    // Writes (contract §10.2, since 1.7): the explicit state, answered with the resulting state
 
     @Test
     fun `the four writes POST the explicit state with the Bearer`() = runTest {

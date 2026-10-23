@@ -3,10 +3,7 @@ package app.n_zik.compagnon.components.player.background
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-/**
- * [roundDecimals] (the library's `utils.round` port): the time stepped to the given number of
- * digits, so the shader's uniforms barely change between frames.
- */
+/** [roundDecimals] (the library's `utils.round` port): the time stepped to the given number of digits, so the shader's uniforms barely change between frames. */
 class ShaderTest {
 
     @Test

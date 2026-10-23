@@ -175,17 +175,23 @@ class LinuxSecretStore private constructor(
             val api = Native.load("secret-1", SecretApi::class.java)
             val glib = Native.load("glib-2.0", GLibApi::class.java)
             // The glib string hash/equal used as hash-table callbacks (a `Function` is a `Pointer`
-            // on the native function's address). Resolved on the already-loaded library instance:
-            // JNA's two-argument `Function.getFunction(symbol, library)` is misleading — the first
-            // argument is the library name (verified on the JNA 5.19.1 bytecode), so the static
-            // form read as symbol-first requested `libg_str_hash.so` and failed.
+            // on the native function's address)
+
+            // Resolved on the already-loaded library instance: JNA's two-argument
+            // `Function.getFunction(symbol, library)` is misleading
+
+            // The first argument is the library name (verified on the JNA 5.19.1 bytecode)
+
+            // So the static form read as symbol-first requested `libg_str_hash.so` and failed
             val glibNative = Native.getNativeLibrary(glib)
             val strHash = glibNative.getFunction("g_str_hash")
             val strEqual = glibNative.getFunction("g_str_equal")
 
-            // The schema: one string attribute, [ATTRIBUTE]. The table value is the attribute type
-            // enum cast to a pointer (libsecret reads it back with `GPOINTER_TO_INT`, 0.20.x and
-            // 0.21.x alike); `SECRET_SCHEMA_ATTRIBUTE_STRING` is 0, i.e. the null pointer.
+            // The schema: one string attribute, [ATTRIBUTE]. The table value is the attribute
+            // type enum cast to a pointer
+
+            // libsecret reads it back with `GPOINTER_TO_INT`, 0.20.x and 0.21.x alike;
+            // `SECRET_SCHEMA_ATTRIBUTE_STRING` is 0, i.e. the null pointer
             val schemaName = cstring(SCHEMA_NAME)
             val attribute = cstring(ATTRIBUTE)
             val schemaTypes = glib.g_hash_table_new_full(strHash, strEqual, null, null) ?: return@runCatching null

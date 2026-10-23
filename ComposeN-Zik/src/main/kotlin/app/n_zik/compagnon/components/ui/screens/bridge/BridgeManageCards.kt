@@ -62,6 +62,7 @@ fun PairedScreen(state: PairingState.Paired, onRetry: () -> Unit, onForget: () -
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         // The phone's LT connecting state (its `ListenTogetherScreen.kt` 579-583,
                         // `InlineLoader` 1135-1140: the same 100 dp `LoadingIndicator`, centred in
+
                         // full width) — renegotiated 2026-10-11, the PC's page loads show the big
                         // loader, not a small circular
                         modifier = Modifier.fillMaxWidth(),

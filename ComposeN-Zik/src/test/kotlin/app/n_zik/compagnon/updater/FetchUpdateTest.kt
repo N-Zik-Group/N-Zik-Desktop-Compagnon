@@ -228,6 +228,7 @@ class FetchUpdateTest {
     fun `the vlc tarball staging release does not change the channel pick`() = runTest {
         // The tarball prerelease (its real asset name vlc-3.0.24-linux-x64.tar.gz) sits in the
         // list alongside the app tags — the pick of every checking channel is unchanged (the
+
         // filter is tag-based; the prerelease flag is never read by fetchUpdate)
         val expectedPicks = linkedMapOf(
             "stable" to "v0.0.2",
@@ -251,6 +252,7 @@ class FetchUpdateTest {
     fun `a repo with only the vlc tarball staging release reports no update`() = runTest {
         // The tarball prerelease is the ONLY release: `findBestRelease` returns null for every
         // channel (the carrier is not same-channel), so `fetchUpdate` maps to the same
+
         // "no update available" path as an empty list — it throws NoSuchFileException and the
         // static state stays untouched (the actual behavior at Updater.fetchUpdate)
         val client = clientFor("[" + tarballReleaseJson() + "]")
@@ -318,6 +320,7 @@ class FetchUpdateTest {
     fun `a marked pacman install picks the arch package asset, an aur install picks none`() = runTest {
         // The Arch package asset (spec `spec-arch-binary-package-release`): the release marker decides —
         // a package-managed install on pacman gets the binary package only when it is a
+
         // release-pkg install; without the marker (an AUR install) no asset is selected (its
         // updater is blocked before it reaches a check on that path)
         val client = clientFor(
@@ -352,10 +355,13 @@ class FetchUpdateTest {
     fun `a best release without the install-mode asset throws without publishing the release`() = runTest {
         // The phone's publish ordering (its `fetchUpdate`: resolve the APK first, only then set
         // `githubRelease` — "Only publish the release once its APK resolved successfully, so a
+
         // failed extraction reports 'no update' instead of a stale or undeliverable one"): a
         // same-channel best release that ships no asset for this install mode (a renamed-era
+
         // release) must throw the "no update available" `NoSuchFileException` BEFORE the release
         // is published — the UI stays clean (no stale release, no "version not found"
+
         // half-state, no fallback to the raw release body in place of the changelog) instead of
         // showing a release that cannot be delivered
         val oldEraAsset = "n-zik-desktop-compagnon-dev-0.0.2.exe" // the pre-rename asset name
@@ -399,6 +405,7 @@ class FetchUpdateTest {
     fun `a newest release without the install-mode asset falls back to the older one that ships it`() = runTest {
         // The phone's `shipsInstallableAsset` rule (parity audit S1): a release that ships no
         // asset for this install mode is SKIPPED — the next-best release that ships it becomes
+
         // the candidate (a newest release without the .exe must not end the whole check in
         // "no update available")
         val exe = ArtifactNames.exe("0.0.1")
@@ -454,13 +461,14 @@ class FetchUpdateTest {
         assertNull(Updater.tagName)
     }
 
-    // ---- spec `spec-updater-parity-fixes`: the pre-fetch cleanup — a failed re-check must
+    // spec `spec-updater-parity-fixes`: the pre-fetch cleanup — a failed re-check must
     // clear the previously fetched release (no stale "update available" left to the UI) ----
 
     @Test
     fun `a failed re-check clears the previously fetched release`() = runTest {
         // RECHECK_FAILED: a prior successful check left the release state set; a re-check that
         // fails with an HTTP error must clear it — the stale release (with its working download
+
         // button) must not survive the failed fetch (the phone's pre-fetch cleanup, ported)
         primeReleaseState("v0.0.1", ArtifactNames.exe("0.0.1"))
         val client = HttpClient(
@@ -482,6 +490,7 @@ class FetchUpdateTest {
     fun `a no-release re-check clears the previously fetched release`() = runTest {
         // RECHECK_NO_RELEASE: the re-fetch returns no same-channel release (the
         // NoSuchFileException path) — the previously fetched release is cleared, the
+
         // "no update available" mapping keeps its existing behavior
         primeReleaseState("v0.0.1", ArtifactNames.exe("0.0.1"))
         val client = clientFor(releasesJson("v0.0.1-beta"))
@@ -505,6 +514,7 @@ class FetchUpdateTest {
     fun `a blank 200 body re-check clears the previously fetched release`() = runTest {
         // The last pre-success exit (HTTP 200 + a blank body — a proxy error page with no
         // content): the previously fetched release is cleared like the other failure paths
+
         // (the previous changelog is not this seam's: checkForUpdate clears it at the start
         // of the check)
         primeReleaseState("v0.0.1", ArtifactNames.exe("0.0.1"))
@@ -525,6 +535,7 @@ class FetchUpdateTest {
     fun `a successful re-check refreshes the previously fetched release`() = runTest {
         // RECHECK_OK (no regression): a re-fetch that succeeds replaces the stale release with
         // the new result — the pre-fetch cleanup must not make a successful re-check lose the
+
         // release
         primeReleaseState("v0.0.1", ArtifactNames.exe("0.0.1"))
         val client = clientFor(

@@ -61,10 +61,12 @@ object Updater {
     var githubRelease: GithubRelease? by mutableStateOf(null)
     // Loop 2: reactive — a re-check from the update page must refresh the dialog / the page
     // card without recomposing anything by hand (the phone's `build` / `tagName` were plain
+
     // fields because Android re-reads them on rotation; Compose Desktop needs the state).
     var build: GithubRelease.Build? by mutableStateOf(null)
     // `internal` (the test seam, like [fetchUpdate] / [decideCheck]): the pre-fetch cleanup
     // (spec `spec-updater-parity-fixes`) must be pinnable — a failed re-check clears the tag
+
     // like [githubRelease] / [build]
     internal var tagName: String? by mutableStateOf(null)
 
@@ -90,10 +92,7 @@ object Updater {
         persist { it.copy(checkUpdateState = state.wire) }
     }
 
-    /**
-     * Extracts the version suffix from a version / tag string (port of the phone's
-     * `extractVersionSuffix` L78-81): `v0.0.2-beta` → `beta`, `v0.0.2-dev-20260901` → `dev`.
-     */
+    /** Extracts the version suffix from a version / tag string (port of the phone's `extractVersionSuffix` L78-81): `v0.0.2-beta` → `beta`, `v0.0.2-dev-20260901` → `dev`. */
     fun extractVersionSuffix(versionStr: String): String {
         val parts = versionStr.removePrefix(UpdaterConstants.PREFIX_VERSION).split("-")
         return if (parts.size > 1) parts[1] else ""
@@ -111,6 +110,7 @@ object Updater {
         val suffix = extractVersionSuffix(AppVersion.versionName)
         // Stable (no suffix) and tags that already carry the channel suffix are shown as-is —
         // no duplication (the phone's `endsWith` guard, here suffix-aware for the full
+
         // desktop suffix names)
         return if (suffix.isEmpty() || extractVersionSuffix(tag).startsWith(suffix)) tag else "$tag-$suffix"
     }
@@ -220,10 +220,7 @@ object Updater {
         }
     }
 
-    /**
-     * The version code linked in the release body (the phone's regex, kept — spec AD-3: the body
-     * carries the raw changelog link `Updater/changelogs/<code>.txt`, written by the release chore).
-     */
+    /** The version code linked in the release body (the phone's regex, kept — spec AD-3: the body carries the raw changelog link `Updater/changelogs/<code>.txt`, written by the release chore). */
     internal fun changelogVersionCodeOf(releaseBody: String): String? =
         Regex("${UpdaterConstants.CHANGELOGS_PATH}/(\\d+)\\.txt").find(releaseBody)?.groupValues?.get(1)
 
@@ -278,8 +275,10 @@ object Updater {
     ) = withContext(NzikDispatchers.DATA) {
         // Clear any previously found release so a failed fetch or a no-update result never
         // leaves a stale update visible to the UI (the phone's pre-fetch cleanup, ported to the
+
         // PC's three release states — spec `spec-updater-parity-fixes`: a failed forced
         // re-check must hide the previous release, its download gesture with it; the previous
+
         // changelog is already cleared by checkForUpdate at the start of the check)
         this@Updater.githubRelease = null
         this@Updater.build = null
@@ -308,6 +307,7 @@ object Updater {
 
         // Find the best release for this channel, skipping the releases that ship no asset for
         // this install mode (the phone's `shipsInstallableAsset` rule — a newest release without
+
         // the user's artifact falls back to the older one that ships it)
         val bestRelease = findBestRelease(
             releases,
@@ -319,6 +319,7 @@ object Updater {
 
         // The asset of this channel for the detected install mode (the phone's `extractBuild`
         // APK-name matching, replaced by the channel artifact names; null = no asset — the
+
         // pacman/AUR hint shows instead of a download).
         val releaseVersion = bestRelease.tagName.removePrefix(UpdaterConstants.PREFIX_VERSION)
         val assetName = ArtifactNames.forMode(
@@ -334,8 +335,10 @@ object Updater {
 
         // Only publish the release once its asset resolved (the phone's ordering — its
         // `fetchUpdate` resolves the APK first, then sets `githubRelease`: "Only publish the
+
         // release once its APK resolved successfully, so a failed extraction reports 'no update'
         // instead of a stale or undeliverable one"): a missing asset throws BEFORE the release is
+
         // set, so the UI stays clean (no stale release, no "version not found" half-state, no
         // fallback to the raw release body in place of the changelog)
         this@Updater.githubRelease = bestRelease
@@ -502,8 +505,10 @@ object Updater {
                 updaterEnabled = AppVersion.updaterEnabled,
                 // The provenance block (spec `spec-arch-binary-package-release`): a pacman /opt
                 // install without the release marker is an AUR install — the AUR entry owns the
+
                 // update, so no check at all (not even a forced one). The live composition runs
                 // on the DATA thread (the launch above), off the UI thread (loop 2 G13); the
+
                 // `aurBlocked` seam (review loop 3 — L3-VG3) bypasses it when forced.
                 aurBlocked = aurBlocked ?: currentIsAurBlocked(),
                 // The in-memory dialog-cancellation flag only (the phone's skip rule, L417):
@@ -543,6 +548,7 @@ object Updater {
                 NewUpdateAvailableDialog.isCancelled = true
                 // Only a forced check may reset the persisted cancelled flag (finding #22): the
                 // user's "don't check" gesture survives background startup checks; an explicit
+
                 // check that found nothing clears it so future updates can be offered again.
                 if (isForced) {
                     persist { it.copy(updateCancelled = false) }

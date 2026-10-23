@@ -14,11 +14,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 
-/**
- * Real keyring round trip on Linux (the Windows convention of a test-target that is always
- * cleaned up), skipped on machines without a Secret Service daemon, where the session fallback
- * is asserted instead.
- */
+/** Real keyring round trip on Linux (the Windows convention of a test-target that is always cleaned up), skipped on machines without a Secret Service daemon, where the session fallback is asserted instead. */
 @EnabledOnOs(OS.LINUX)
 class LinuxSecretStoreTest {
 

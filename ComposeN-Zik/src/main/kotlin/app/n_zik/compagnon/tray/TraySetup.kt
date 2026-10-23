@@ -109,10 +109,13 @@ fun ApplicationScope.TraySetup(
     val title = stringResource(Res.string.tray_tooltip)
     // The tray shows the app icon the player screen uses (`ic_launcher_monochrome` — the "material"
     // look): the tray icon AND the tray menu's « Open » row (a full-color logo would stand out
+
     // against the monochrome menu icons). The full-color in-app tile (`app_icon`) is the WINDOWS
     // taskbar's icon instead: the dconf-based tint is Linux-only (there is no dconf on Windows —
+
     // the white monochrome glyph would be invisible on a light taskbar), so Windows keeps the
     // full-color untinted glyph (no regression to the AWT path). `ic_launcher` (the full-color
+
     // launcher tile) stays with the desktop launchers.
     val iconPainter = painterResource(Res.drawable.ic_launcher_monochrome)
     val windowsTrayPainter = painterResource(Res.drawable.app_icon)
@@ -139,6 +142,7 @@ fun ApplicationScope.TraySetup(
 
     // The session's monochrome tint ([menuIconTint]): resolved once before the UI exists
     // ([primeMenuTint] from `main()`) — the composition itself never touches the disk. Linux-only
+
     // by construction (see [primeMenuTint]).
     val menuTint = menuIconTint()
     val linux = System.getProperty("os.name", "").lowercase().startsWith("linux")
@@ -154,11 +158,13 @@ fun ApplicationScope.TraySetup(
         TrayBackend.StatusNotifier -> {
             // The native DBusMenu's icons: each distinct row icon rendered once as a tinted
             // `icon-data` (a PNG in memory — the host draws it without any icon theme). Linux-only
+
             // work: the AWT backend never consumes the PNGs, so they are not rendered there
             val iconData = rememberIconData((model.top + model.shortcuts + model.bottom).mapNotNull { it.icon }.distinct(), menuTint)
             val menuRows = model.toMenuRows { icon -> icon?.let { iconData[it] } }
             // The SNI registration can still fail at runtime (no watcher on the host side, or the
             // static bus name taken by another instance): the AWT tray then takes over where the
+
             // platform supports it (X11 — never on a Wayland-only session).
             var sniUnavailable by remember { mutableStateOf(false) }
             StatusNotifierItem(
@@ -258,8 +264,10 @@ private fun StatusNotifierItem(iconPainter: Painter, tint: Color, title: String,
             }
             // The GNOME AppIndicator extension races the menu proxy's name-owner discovery with the
             // first GetLayout: when the owner is found afterward, it re-fetches the layout but drops
+
             // the `ready-changed` that would run the attach — the right-click menu stays empty. The
             // delayed Menu announcement makes it rebuild the menu client on solid name-owner state
+
             // (live-verified 2026-10-12; StatusNotifierTray.announceMenu documents the rest).
             delay(MENU_ANNOUNCE_DELAY_MS)
             newItem.announceMenu()
@@ -271,8 +279,10 @@ private fun StatusNotifierItem(iconPainter: Painter, tint: Color, title: String,
     }
     // The settings changed (the shortcut list or its order) — the native menu follows live: the
     // LayoutUpdated signal makes the host re-fetch the layout (right away when it is open, on the
+
     // next open otherwise). The first run is a no-op: the rows equal the constructor's, and
     // DBusMenu.updateRows guards the signal on the visible content.
+
     // The `LayoutUpdated` signal is a D-Bus call — off the EDT, as every other call of the tray
     // (the LaunchedEffect body runs on the composition thread)
     LaunchedEffect(menuRows) {
@@ -341,6 +351,7 @@ private fun rememberIconData(icons: List<DrawableResource>, tint: Color): Map<Dr
 private fun iconPng(painter: Painter, tint: Color): ByteArray {
     // `toAwtImage` returns a Compose `PainterImage` — an AWT `Image` that is NOT a `RenderedImage`
     // (Compose 1.13.0-alpha01): `ImageIO` needs a `RenderedImage`, so encode through a
+
     // `BufferedImage` canvas (the tray icon's own path — [padTrayImage])
     val size = (MENU_ICON_PX * TRAY_ICON_PADDING_SCALE).roundToInt()
     val icon = painter.toAwtImage(Density(1f), LayoutDirection.Ltr, Size(size.toFloat(), size.toFloat()))
@@ -373,10 +384,7 @@ private const val TRAY_ICON_PX = 64
 /** The icon's scale within its canvas: the margin around a full-bleed icon (the panels are not full-bleed). */
 private const val TRAY_ICON_PADDING_SCALE = 0.8f
 
-/**
- * How long after the SNI registration the `Menu` property is re-announced (the GNOME extension's
- * menu-client rebuild — the app's own registration + the host's indicator setup fit well inside).
- */
+/** How long after the SNI registration the `Menu` property is re-announced (the GNOME extension's menu-client rebuild — the app's own registration + the host's indicator setup fit well inside). */
 private const val MENU_ANNOUNCE_DELAY_MS = 1500L
 
 /** The menu rows' icon render size (px) for the DBusMenu's `icon-data` (see [iconPng]). */

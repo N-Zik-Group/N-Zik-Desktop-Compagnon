@@ -144,6 +144,7 @@ fun AudioDeviceMenu(onDismiss: () -> Unit, phoneName: String) {
     )
     // The message is platform-aware (VlcRuntime.unavailableMessageIsEmbedded, pure in os.name), not
     // a file-existence check: the embedded-VLC one on Windows (the build embeds VLC by design, so a
+
     // load failure there is an app problem, not a missing package), the system-install one on Linux
     // (its install hint was resolved with the load, so reading it here is a field access, not a file IO)
     val unavailableText = if (VlcRuntime.unavailableMessageIsEmbedded(System.getProperty("os.name").orEmpty())) {
@@ -211,8 +212,10 @@ fun AudioDeviceMenu(onDismiss: () -> Unit, phoneName: String) {
 
         // Spec #28-#29: the phone's hardware device list (its `AudioDeviceMenu.kt` 451-533) and its
         // discovery error state (its 406-439). The contract carries no phone hardware device (1.12.0):
+
         // [phoneDevices] is empty (TODO: the contract would have to carry the phone's devices for this
         // list to show) and [phoneDiscoveryError] is never set (the phone's discovery never runs here
+
         // and cannot fail) — neither is rendered for now
         val phoneDevices = emptyList<PhoneAudioDevice>()
         var phoneDiscoveryError by remember { mutableStateOf<String?>(null) }
@@ -373,11 +376,7 @@ private fun PhoneDeviceEntry(dev: PhoneAudioDevice) {
     )
 }
 
-/**
- * Port of the phone's device-name heuristics (`AudioDeviceUtils.kt` 55-102): buds / speaker / car,
- * matched on the lowercased name — used by [phoneDeviceIcon] for the inert phone device list
- * (spec `spec-fill-pc-ui-gaps-menus` #28).
- */
+/** Port of the phone's device-name heuristics (`AudioDeviceUtils.kt` 55-102): buds / speaker / car, matched on the lowercased name — used by [phoneDeviceIcon] for the inert phone device list (spec `spec-fill-pc-ui-gaps-menus` #28). */
 private fun isBuds(name: String?): Boolean {
     if (name == null) return false
     val lowerName = name.lowercase()

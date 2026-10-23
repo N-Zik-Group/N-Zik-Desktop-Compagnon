@@ -34,10 +34,7 @@ object AppLanguage {
      */
     val appliedTag: StateFlow<String?> = _appliedTag.asStateFlow()
 
-    /**
-     * Pure resolution of the setting: [SYSTEM] → `null` (the OS locale); anything else is a manual
-     * BCP-47 code used as is (an unknown code falls back to the PC's `values/`, the English one).
-     */
+    /** Pure resolution of the setting: [SYSTEM] → `null` (the OS locale); anything else is a manual BCP-47 code used as is (an unknown code falls back to the PC's `values/`, the English one). */
     fun resolveLanguageTag(setting: String): String? = when (setting) {
         SYSTEM -> null
         else -> setting

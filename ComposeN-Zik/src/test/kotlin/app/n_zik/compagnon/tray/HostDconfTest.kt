@@ -69,7 +69,7 @@ class HostDconfTest {
         assertTrue(scheme == null || scheme in setOf("default", "prefer-light", "prefer-dark"))
     }
 
-    // ---- userDbFile candidate order (the Flatpak-sandbox-critical path) ---------------------------------
+    // userDbFile candidate order (the Flatpak-sandbox-critical path)
 
     @Test
     fun `the xdg config home candidate wins when it exists`(@TempDir temp: Path) {

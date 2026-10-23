@@ -179,8 +179,10 @@ fun PlaylistItem(
                     if (name != null) {
                         // The origin icon (contract 1.7, phone's `PlaylistItem.kt` 301-333): the pinned
                         // playlists show the pin in accent with priority (the phone's `pinned:` name
+
                         // prefix check), then the origin, with the phone's own assets. Since 1.7.1 the
                         // generated rewind playlists keep their period icon; the legacy `rewind` wire
+
                         // value (a ≤ 1.7 phone) falls back to the phone's all-time icon.
                         val (painter, tint) = when {
                             isPinned -> Res.drawable.pin_filled to colorPalette().accent
@@ -224,6 +226,7 @@ fun PlaylistItem(
 
                     // The lock badge (contract 1.7.1, phone's `Playlist.kt` 101-114): the themed card of a
                     // non-editable YouTube playlist — the red `locked` icon in an `text` circle, 18 dp, at
+
                     // the bottom start, inside the thumbnail clip, like on the phone
                     if (lockBadge) {
                         Image(

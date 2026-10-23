@@ -92,6 +92,7 @@ fun PaletteFade(
     val fraction = remember { Animatable(1f) }
     // Palette currently shown by this scope. Null before the first target is
     // known; afterwards it always holds the last displayed palette, so a new
+
     // target never flashes before the fade starts from the previous one.
     var displayed by remember { mutableStateOf<ColorPalette?>(null) }
 

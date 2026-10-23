@@ -50,6 +50,7 @@ class InstallModeDetectionTest {
     fun `a windows launch without the NSIS marker is portable windows`() {
         // spec `spec-windows-portable-zip` D1: the portable extract never carries the uninstaller —
         // the env / scope inputs are irrelevant, only the marker (plus the product-named folder)
+
         // decides; the launcher sits at the install root (no bin/ level on Windows)
         assertEquals(
             InstallMode.PORTABLE_WINDOWS,
@@ -68,6 +69,7 @@ class InstallModeDetectionTest {
     fun `the product-named folder with the NSIS uninstaller is windows`(@TempDir root: File) {
         // The installer contract (installer.nsi): the app-image is copied as-is into $INSTDIR —
         // the launcher at the install root, the uninstaller ALWAYS written next to it. The marker
+
         // is the portable/installed discriminator, not the scope location
         val product = "N-Zik Desktop Compagnon"
         val installDir = File(root, product)
@@ -91,6 +93,7 @@ class InstallModeDetectionTest {
     fun `the scope location is secondary, the marker is the discriminator`(@TempDir root: File) {
         // A per-user install under a REDIRECTED %LOCALAPPDATA% (a product-named folder outside the
         // usual scope dirs) still detects as WINDOWS with the marker — the literal scope-root check
+
         // is NOT a requirement (review loopback 1 — BH-4)
         val product = "N-Zik Desktop Compagnon"
         val redirected = File(root, "redirected-profile/AppData Local/$product")
@@ -104,6 +107,7 @@ class InstallModeDetectionTest {
         )
         // ...and a portable extract placed INTO a scope dir is NOT an install without the marker
         // (review loopback 1 — ECH-1: the beta product folder shape, the scope dir alone must not
+
         // classify it)
         val beta = "N-Zik Desktop Compagnon BETA"
         val scopeExtract = File(root, "AppData/Local/$beta")
@@ -129,13 +133,14 @@ class InstallModeDetectionTest {
         )
     }
 
-    // ---- spec `spec-windows-portable-zip` D1, review loopback 2: the registry cross-check
+    // spec `spec-windows-portable-zip` D1, review loopback 2: the registry cross-check
     // (the installer's directory page is editable — an install can sit in a custom folder) ----
 
     @Test
     fun `a custom-dir NSIS install is windows when the installer recorded its dir`(@TempDir root: File) {
         // The installer's directory page is EDITABLE: an install in a folder NOT named after the
         // product still carries the marker — the channel registry key's InstallDir (written by
+
         // the installer at install time) completes the detection. The registry read is injected
         // (no real registry in the test)
         val product = "N-Zik Desktop Compagnon"
@@ -194,6 +199,7 @@ class InstallModeDetectionTest {
     fun `the folder-name rule short-circuits before any registry read`(@TempDir root: File) {
         // The production registry read is a fallback: a product-named folder with the marker must
         // detect as an install WITHOUT consulting the registry (a failing registry — e.g. the
+
         // key manually deleted — must not degrade a regular install)
         val product = "N-Zik Desktop Compagnon"
         val installDir = File(root, product)
@@ -219,13 +225,14 @@ class InstallModeDetectionTest {
         assertEquals(AppVersion.channel, channelSeen, "the registry read is keyed by the build's channel")
     }
 
-    // ---- spec `spec-updater-parity-fixes`: the cross-scope reader (a per-user AND a global
+    // spec `spec-updater-parity-fixes`: the cross-scope reader (a per-user AND a global
     // install of the same channel can coexist — the hive matching the instance dir wins) ----
 
     @Test
     fun `the matching hive wins over the hkcu-first degradation`() {
         // preferMatchingInstallDir (pure, testable off-Windows): the running instance's
         // directory decides which hive's record is returned — HKCU when it matches, HKLM when
+
         // it does, HKCU-then-HKLM when neither does (the pre-audit reader order, now an
         // explicit fallback)
         val x = "C:\\Program Files\\N-Zik Desktop Compagnon"
@@ -257,10 +264,13 @@ class InstallModeDetectionTest {
     fun `a global instance in a custom dir is windows, not portable`(@TempDir root: File) {
         // The acceptance case: a per-user AND a global NSIS install of the same channel coexist;
         // the global instance runs from a custom dir (the HKLM.InstallDir) while HKCU carries
+
         // the per-user install's dir — the reader must return the matching HKLM record, so
         // detectInstallMode stays WINDOWS (the pre-audit HKCU-first read returned the per-user
+
         // dir and misdetected the global instance PORTABLE_WINDOWS — wrong asset + gesture).
         // The production reader is simulated through the injectable seam: the per-user record
+
         // does NOT match the instance dir, the global one does
         val product = "N-Zik Desktop Compagnon"
         val globalDir = File(root, "Program Files/MyApps")
@@ -295,8 +305,10 @@ class InstallModeDetectionTest {
     fun `the production registry reader round-trips the installer recorded dir`() {
         // The tests above inject the registry source; this exercises the PRODUCTION reader
         // (loopback 2, option B) against the real registry: the exact key path the installer
+
         // writes (`Software\N-Zik\DesktopCompagnon\{channel}` — InstallerContractTest pins the
         // write side), the two-pass REG_SZ read, and the absent-key -> null degradation. A
+
         // throwaway channel key (never collides with the app's channels), cleaned up afterwards
         val channel = "zz-roundtrip-${System.currentTimeMillis()}"
         val key = "HKCU\\Software\\N-Zik\\DesktopCompagnon\\$channel"
@@ -327,8 +339,10 @@ class InstallModeDetectionTest {
     fun `both hives coexisting returns the hive matching the instance dir`() {
         // The cross-scope coexistence against the REAL registry (spec `spec-updater-parity-fixes`):
         // a per-user AND a global record of the same channel — the reader returns the hive
+
         // matching the instance dir, not merely the HKCU-first one. The HKLM write needs
         // elevation; when the dev host is not elevated the coexistence cannot be staged, and
+
         // the test reports a SKIP (Assumptions — not a pass; the pure helper pins the
         // cross-scope rows off-Windows, the round-trip pins the production reader)
         val channel = "zz-cross-scope-${System.currentTimeMillis()}"
@@ -373,14 +387,19 @@ class InstallModeDetectionTest {
     fun `the default registry seam derives the instance dir from the launcher path`() {
         // The production default `registryInstallDir` lambda (isNsisWindowsInstall — the same
         // expression detectInstallMode's default carries) derives the instance dir from the
+
         // executable path (spec `spec-updater-parity-fixes`): every other registry test
         // injects its own lambda, so a wrong derivation would silently degrade to the
+
         // HKCU-first bug with nothing failing. Stage a per-user AND a global record under a
         // throwaway channel key, place the launcher + marker in a custom (non-product-named)
+
         // dir that equals the HKLM record's InstallDir, and call isNsisWindowsInstall WITHOUT
         // the lambda argument — the default seam must derive the launcher folder as the
+
         // instance dir and pick the matching HKLM record (a HKCU-first read would claim the
         // per-user dir → the launch would misread as portable). A non-elevated host reports a
+
         // SKIP (Assumptions — the pure helper pins the cross-scope rows off-Windows)
         val product = "N-Zik Desktop Compagnon"
         val channel = "zz-default-seam-${System.currentTimeMillis()}"
@@ -487,8 +506,10 @@ class InstallModeDetectionTest {
     fun `an appimage mount path falls through to portable`() {
         // The 2026-10-09 rework removed the APPIMAGE mode from detection (spec
         // `spec-channel-version-naming`): a legacy AppImage mount (`/tmp/.mount_*`) is no longer
+
         // recognized — it falls through to the portable/generic path, so a legacy AppImage install
         // gets the portable gesture (accepted consequence, the "pas besoin" family: the
+
         // releases no longer carry an AppImage asset)
         assertEquals(
             InstallMode.PORTABLE,
@@ -501,6 +522,7 @@ class InstallModeDetectionTest {
         val version = "0.0.2-beta"
         // The 2026-10-09 naming rework / AD-8: the published .exe is the channel's Linux base
         // (the CI renames the jpackage output — the spaced product name never appears in the
+
         // asset name); the other assets carry the channel suffix after the base version
         assertEquals("n-zik-desktop-compagnon-$version.exe", ArtifactNames.forMode(InstallMode.WINDOWS, version, PackageManager.NONE))
         // The portable-Windows install (spec `spec-windows-portable-zip`) gets the Windows
@@ -530,7 +552,7 @@ class InstallModeDetectionTest {
         assertEquals(PackageManager.RPM, probePackageManager(probe = { it == "dnf" || it == "pacman" }))
     }
 
-    // ---- spec `spec-arch-binary-package-release`: the release marker + the AUR block ----
+    // spec `spec-arch-binary-package-release`: the release marker + the AUR block
 
     @Test
     fun `a marked pacman install gets the arch package asset`() {
@@ -598,6 +620,7 @@ class InstallModeDetectionTest {
     fun `the live composition is testable through the injectable defaults`() {
         // currentIsAurBlocked / updaterEffectivelyEnabled with injected parameters: the production
         // composition (currentInstallMode / currentDistributionMarker / probePackageManager) is the
+
         // same wiring the live gates use — an inversion of the marker negation would fail here
         assertTrue(currentIsAurBlocked(installMode = InstallMode.PACKAGE_MANAGED, marker = null, probe = { PackageManager.AUR }))
         assertFalse(currentIsAurBlocked(installMode = InstallMode.PACKAGE_MANAGED, marker = "github-release", probe = { PackageManager.AUR }))
@@ -609,7 +632,7 @@ class InstallModeDetectionTest {
         assertFalse(updaterEffectivelyEnabled(buildEnabled = false, aurBlocked = true))
     }
 
-    // ---- the live executable-path resolution (loop 2 G9) ----
+    // the live executable-path resolution (loop 2 G9)
 
     @Test
     fun `the app root of a resolved launcher path is the opt app dir`() {
@@ -619,6 +642,7 @@ class InstallModeDetectionTest {
         assertEquals("/opt/n-zik-desktop-compagnon", appRootOfResolvedPath("/opt/n-zik-desktop-compagnon/bin/N-Zik Desktop Compagnon DEV"))
         // The UNRESOLVED launch path (/usr/bin/<pkg> — the symlink the .desktop Exec carries): the
         // parent is /usr, so no marker can be read from it — this is the loop-2 bug: the
+
         // production launch carries the SYMLINK path in its own cmdline
         assertEquals("/usr", appRootOfResolvedPath("/usr/bin/n-zik-desktop-compagnon"))
         // Paths whose parent is not a bin/ dir have no app root
@@ -630,8 +654,10 @@ class InstallModeDetectionTest {
     fun `the marker reader is strict on content`(@TempDir root: File) {
         // The reader accepts EXACTLY the release marker content (spec
         // `spec-arch-binary-package-release`, review loop 3 — L3-EC2): a stray or forged
+
         // distribution.txt with any other content must read as NO marker (the write side is
         // equally strict — packageArch fails the build on any other content). No symlink needed
+
         // (the reader is pure over the path) — this runs on any host, developer mode or not.
         val optRoot = File(root, "opt/n-zik-desktop-compagnon")
         File(optRoot, "bin").mkdirs()
@@ -659,6 +685,7 @@ class InstallModeDetectionTest {
     fun `the resolved path is what the detection runs on`() {
         // The composition the production gate uses: detectInstallMode over the RESOLVED path
         // (the loop-2 fix — over the unresolved /usr/bin path, an /opt install would be
+
         // misdetected PORTABLE)
         assertEquals(
             InstallMode.PACKAGE_MANAGED,
@@ -675,8 +702,10 @@ class InstallModeDetectionTest {
     fun `the live entry points are the pure helpers over the live data`() {
         // The live composition (spec `spec-arch-binary-package-release` G9, review loop 3 —
         // L3-VG2): the pure helpers are pinned above; this pins the wiring — that the live
+
         // kernel-resolved path actually feeds [detectInstallMode] / [distributionMarkerAt] (a
         // resolution regression would mis-detect a release-pkg install as PORTABLE with a null
+
         // marker, and nothing else would catch it).
         val resolved = liveExecutablePath()
         assertTrue(resolved.isNotBlank(), "liveExecutablePath must not be empty")

@@ -82,10 +82,7 @@ import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.utils.semiBold
 
-/**
- * The four library tabs, in the phone's order (`HomeScreen.kt` `navBarContent`; no Quick picks: not in the
- * contract), with the phone's tab labels and icons.
- */
+/** The four library tabs, in the phone's order (`HomeScreen.kt` `navBarContent`; no Quick picks: not in the contract), with the phone's tab labels and icons. */
 enum class LibraryTab(val feature: String, val textId: StringResource, val iconId: DrawableResource) {
     Songs(SessionContract.FEATURE_LIBRARY_SONGS, Res.string.songs, Res.drawable.musical_notes),
     Artists(SessionContract.FEATURE_LIBRARY_ARTISTS, Res.string.artists, Res.drawable.people),
@@ -271,7 +268,7 @@ class LibraryLists(
         }
     }
 
-    // ---- Live (contract §7.2, since 1.7.3 `library.live`) ----------------------------------------
+    // Live (contract §7.2, since 1.7.3 `library.live`)
 
     private val liveKinds = mutableSetOf<String>()
     private var liveJob: Job? = null
@@ -309,7 +306,7 @@ class LibraryLists(
         }
     }
 
-    // ---- Smart shuffle (contract §10.1, since 1.12.0 `library.recommendations`) --------------------
+    // Smart shuffle (contract §10.1, since 1.12.0 `library.recommendations`)
 
     private val _songRecommendations = MutableStateFlow<SongRecommendations?>(null)
 
@@ -336,10 +333,7 @@ class LibraryLists(
      */
     suspend fun cacheSpace(): LibraryCache? = library.cacheSpace()
 
-    /**
-     * The phone's Month / Year / All row (contract §10, since 1.7.2), read on the Rewind chip:
-     * `null` hides the row (feature absent or a failed read).
-     */
+    /** The phone's Month / Year / All row (contract §10, since 1.7.2), read on the Rewind chip: `null` hides the row (feature absent or a failed read). */
     suspend fun rewindState(): RewindState? = library.rewindState()
 
     /**
@@ -603,10 +597,7 @@ class LibraryLists(
         }
     }
 
-    /**
-     * The Playlists tab's search text (contract 1.7.2, the phone's `text`), surviving a change of tab;
-     * it reaches the phone after a short pause of typing ([SEARCH_DEBOUNCE_MS]).
-     */
+    /** The Playlists tab's search text (contract 1.7.2, the phone's `text`), surviving a change of tab; it reaches the phone after a short pause of typing ([SEARCH_DEBOUNCE_MS]). */
     private val _playlistsSearch = MutableStateFlow("")
     val playlistsSearch: StateFlow<String> = _playlistsSearch.asStateFlow()
     private var playlistsSearchJob: Job? = null
@@ -679,10 +670,7 @@ class LibraryLists(
     }
 }
 
-/**
- * The library's playback actions, all through the phone (`queue/play`, `queue/add`); nothing changes
- * locally, the queue and the bar follow the WS. [message] shows a short text (snackbar, the phone's toast).
- */
+/** The library's playback actions, all through the phone (`queue/play`, `queue/add`); nothing changes locally, the queue and the bar follow the WS. [message] shows a short text (snackbar, the phone's toast). */
 class LibraryActions(
     val player: PlayerRepository,
     val library: LibraryRepository,
@@ -708,10 +696,12 @@ class LibraryActions(
     /** The §10.2 writes (since 1.7) need the phone's `library.write` feature: without it the actions stay inert. */
     val canWrite: Boolean get() = SessionContract.FEATURE_LIBRARY_WRITE in library.features
 
-    // ---- §10.2 writes (since 1.7): the explicit state, local Room only ----
+    // §10.2 writes (since 1.7): the explicit state, local Room only
     //
+
     // Optimistic (the phone's own write is local and instant): the loaded lists are patched at the
     // click, so the menus and rows react at once as on the phone; the confirmed `200` re-patches with
+
     // the phone's resulting state (a no-op when it agrees) and a failure re-reads the lists the
     // optimistic update touched (they hold a state the phone never wrote).
 
@@ -870,10 +860,7 @@ class LibraryActions(
         scope.launch { player.addTracks(listOf(track.id), position) }
     }
 
-    /**
-     * A click on a smart-shuffle recommendation (contract §10.1, since 1.12.0): the track is not in the
-     * phone's list, so only this track is played (`queue/play`).
-     */
+    /** A click on a smart-shuffle recommendation (contract §10.1, since 1.12.0): the track is not in the phone's list, so only this track is played (`queue/play`). */
     fun playSingle(track: Track) {
         scope.launch { player.playTracks(listOf(track.id)) }
     }
@@ -893,11 +880,7 @@ class LibraryActions(
         )
     }
 
-    /**
-     * The toolbar's "Play next" / "Enqueue" on a whole list: since 1.10.0 the phone's whole [listRef] through
-     * its own `addNextOffMain` / `enqueueOffMain` (its filters); before, the loaded tracks (500 at most, with
-     * a notice).
-     */
+    /** The toolbar's "Play next" / "Enqueue" on a whole list: since 1.10.0 the phone's whole [listRef] through its own `addNextOffMain` / `enqueueOffMain` (its filters); before, the loaded tracks (500 at most, with a notice). */
     fun addAll(tracks: List<Track>, position: QueuePosition, total: Int = tracks.size, listRef: ListRef? = null) {
         if (listRef != null && fullList) {
             val action = if (position == QueuePosition.Next) ListAction.Next else ListAction.End
@@ -951,16 +934,14 @@ class LibraryActions(
             enabled = live,
             // Since 1.7.1: the menu's heart follows the track's live state — the menu collects this
             // list (a confirmed like write patches it, recomposing the menu, as on the phone); the menu
+
             // also keeps the state of the tap itself, so a row the write drops (a chip its new state no
             // longer matches) still shows the written state on its heart
             currentTrackList = tracks,
         )
     }
 
-    /**
-     * The item menu's actions of a playlist, album or artist: the phone always opens the menu, so without
-     * the `queue` feature its playback entries are inert ([INERT_ACTIONS]).
-     */
+    /** The item menu's actions of a playlist, album or artist: the phone always opens the menu, so without the `queue` feature its playback entries are inert ([INERT_ACTIONS]). */
     fun collectionMenuActions(ref: CollectionRef, live: Boolean): ItemActions =
         collectionActions(ref, live) ?: INERT_ACTIONS.copy(onShuffle = {})
 

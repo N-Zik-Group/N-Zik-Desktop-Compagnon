@@ -76,7 +76,7 @@ class ParityPassThreeTest {
             },
         )
 
-    // ---- Row 16: locate / uiSettings on the wire ----
+    // Row 16: locate / uiSettings on the wire
 
     @Test
     fun `locate sends the list reference parameters and reads the index`() = runTest {
@@ -123,8 +123,6 @@ class ParityPassThreeTest {
         assertEquals(3, with.locate(ListRef("songs"), "t"))
     }
 
-    // ---- Row 16: the locator's target row in a de-duplicated list ----
-
     @Test
     fun `the locator maps a raw index to its de-duplicated row`() {
         val ids = listOf("a", "b", "a", "c")
@@ -134,12 +132,11 @@ class ParityPassThreeTest {
         assertEquals(-1, locatorRow(ids, 9))
     }
 
-    // ---- Row 17: phoneToastText ----
-
     @Test
     fun `a relayed toast uses the PC string of its key, numbers formatted, else the phone's text`() = runTest {
         // `getString` resolves through the JVM locale, and Crowdin now ships locale copies (the French
         // `songs_shuffled` reads "12 titres en lecture aléatoire" on a French host): pin English for the
+
         // exact-text assertion, whatever the host's language.
         AppLanguage.applyTag("en")
         val texts = withContext(Dispatchers.Default) {
@@ -153,7 +150,7 @@ class ParityPassThreeTest {
         assertEquals(listOf("12 songs shuffled", "Texte du téléphone"), texts)
     }
 
-    // ---- Row 18: the palette from the phone's settings ----
+    // Row 18: the palette from the phone's settings
 
     @Test
     fun `static palettes follow the phone's name and mode`() {
@@ -178,7 +175,7 @@ class ParityPassThreeTest {
         assertEquals(PureBlackColorPalette, state.appearance.colorPalette)
     }
 
-    // ---- Row 19: the player's inline queue closes before the player ----
+    // Row 19: the player's inline queue closes before the player
 
     @Test
     fun `the back closes the player's queue, then the player`() {
@@ -187,8 +184,6 @@ class ParityPassThreeTest {
         // A closed player never reports its queue
         assertEquals(BackStep.Page, backStep(false, false, false, playerOpen = false, pageOpen = true, playerQueueOpen = true))
     }
-
-    // ---- Row 20: the sorted mosaic path ----
 
     @Test
     fun `with library sort the mosaic reads one reversed play-time page and keeps four with artwork`() = runTest {
