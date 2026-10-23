@@ -185,8 +185,6 @@ class WindowsThumbBar(private val windowController: WindowController) : TaskbarM
         updateButtons()
     }
 
-    // ---- Setup / state --------------------------------------------------------------------------------
-
     private fun setup() {
         if (setupFatal) return
         val window = windowController.currentWindow()

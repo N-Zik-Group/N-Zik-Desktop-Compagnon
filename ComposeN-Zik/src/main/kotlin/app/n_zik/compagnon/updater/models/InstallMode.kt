@@ -180,16 +180,14 @@ private const val ERROR_INSUFFICIENT_BUFFER = 122
  * `/opt/n-zik-desktop-compagnon` — spec AD-8 as amended 2026-10-15: the dev channel's marker is
  * its dated version suffix, not a separate path); anything else is portable.
  *
- * @param osName `System.getProperty("os.name")`
- * @param env the process environment (`System.getenv()`)
  * @param executablePath the RESOLVED path of the running executable (see [liveExecutablePath] —
- * the production launch goes through the `/usr/bin/<pkg>` symlink, so the unresolved argv[0]
- * would misclassify an `/opt` install as portable)
- * @param windowsProductName the per-channel product name of this build (AD-8 — the jpackage
- * app name the NSIS installer lays out; the production default is this build's own channel
- * product name, the tests inject theirs)
- * @param registryInstallDir the D1 registry cross-check source (the production default reads
- * the installer's recorded `InstallDir`, the tests inject theirs)
+ *   the production launch goes through the `/usr/bin/<pkg>` symlink, so the unresolved argv[0]
+ *   would misclassify an `/opt` install as portable)
+ * @param windowsProductName the per-channel product name of this build (AD-8 — the jpackage app
+ *   name the NSIS installer lays out; the production default is this build's own channel product
+ *   name, the tests inject theirs)
+ * @param registryInstallDir the D1 registry cross-check source (the production default reads the
+ *   installer's recorded `InstallDir`, the tests inject theirs)
  */
 fun detectInstallMode(
     osName: String,

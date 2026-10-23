@@ -236,8 +236,6 @@ internal class WindowsSmtc(
         }
     }
 
-    // ---- Internals -------------------------------------------------------------------------------------
-
     private fun apply(view: SmtcView) {
         val smtcPtr = smtc ?: return
         vcall(smtcPtr, SLOT_SMTC_PUT_IS_ENABLED, view.enabled.toWinRt())

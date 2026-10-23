@@ -69,12 +69,8 @@ import org.jetbrains.compose.resources.stringResource
  * evaluates, so [apVisibleEntries] stays pure and testable in both orientations (spec
  * `spec-fill-pc-ui-gaps-settings`, Design Notes §1-2).
  *
- * @param isLandscape the window is wider than tall (`BoxWithConstraints`, recomputed on every
- *   resize — the window can be resized taller than wide, user decision 2026-10-12)
- * @param playerBackgroundColors the PC key `playerBackgroundColors` (7 values)
- * @param animatedGradient the PC key `animatedGradient` (17 values)
- * @param showCoverThumbnailAnimation the PC key `showCoverThumbnailAnimation`
- * @param playerTimelineType the PC key `playerTimelineType` (8 values)
+ * [isLandscape] is the window's orientation (`BoxWithConstraints`, recomputed on every resize —
+ * the window can be resized taller than wide, user decision 2026-10-12).
  */
 data class ApVisibilityInput(
     val isLandscape: Boolean,

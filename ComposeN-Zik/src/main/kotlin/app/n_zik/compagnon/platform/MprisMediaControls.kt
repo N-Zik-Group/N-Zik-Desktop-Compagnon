@@ -263,8 +263,6 @@ class MprisMediaControls(
 
     private val mprisObject = MprisObject()
 
-    // ---- Lifecycle hooks --------------------------------------------------------------------------------
-
     override fun onPlatformSetup() {
         // The D-Bus handshake runs off the EDT (the Unix-socket build + the bus-name request can block)
         if (connection != null || setupBusy) return
@@ -324,8 +322,6 @@ class MprisMediaControls(
         artUrl = null
         push(stoppedSnapshot())
     }
-
-    // ---- Setup ------------------------------------------------------------------------------------------
 
     /** Builds the connection, exports the object, owns the bus name — all in [NzikDispatchers.DATA]. */
     private suspend fun setup() {

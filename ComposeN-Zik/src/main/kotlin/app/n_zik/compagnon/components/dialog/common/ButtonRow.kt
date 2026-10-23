@@ -33,16 +33,13 @@ import org.jetbrains.compose.resources.painterResource
 /**
  * One pill button for [ButtonRow] (port of the phone's
  * `app/n_zik/android/components/dialog/common/ButtonRow.kt` — PC: [icon] is a Compose-resources
- * [DrawableResource] instead of the phone's `Int` res id).
+ * [DrawableResource] instead of the phone's `Int` res id, drawn fixed-size before the label).
  *
- * @param text label rendered on a single line; when it does not fit in the cell it is bounded to
- *   the cell and scrolled with a continuous marquee. May be empty for icon-only pills.
- * @param primary renders the accent pill with [ColorPalette.onAccent] text.
- * @param danger renders the filled red cancel pill (the cancel role).
- * @param enabled disabled pills stay visible ([ColorPalette.textDisabled] text) but do not fire
- *   [onClick].
- * @param icon optional fixed-size icon drawn before the label.
- * @param textColor explicit label color overriding the resolved one (e.g. a dimmed reset).
+ * [text] renders on a single line — a label wider than its cell is bounded to it and scrolled
+ * with a continuous marquee (it may be empty for icon-only pills); [primary] / [danger] pick the
+ * accent and the red cancel pill; a disabled [enabled] pill stays visible
+ * ([ColorPalette.textDisabled] text) but does not fire [onClick]; [textColor] overrides the
+ * resolved label color (e.g. a dimmed reset).
  */
 data class DialogButton(
     val text: String,
