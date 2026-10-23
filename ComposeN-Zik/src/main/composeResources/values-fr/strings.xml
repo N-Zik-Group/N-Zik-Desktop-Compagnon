@@ -647,10 +647,10 @@
     <string name="pcontrols_type">Style de contrôle</string>
     <string name="icon_like_button">Bouton « Favoris »</string>
     <string name="show_thumbnail">Afficher la miniature</string>
-    <string name="thumbnailpause">Réduire la miniature quand c\'est en pause</string>
+    <string name="thumbnailpause">Réduire la miniature lorsque la lecture est en pause</string>
     <string name="crop_video_thumbnails">Recadrer les miniatures des vidéos</string>
     <string name="show_cover_thumbnail_animation">Afficher l\'animation de la miniature de la pochette</string>
-    <string name="cover_thumbnail_animation_type">Type d\'animation de couverture</string>
+    <string name="cover_thumbnail_animation_type">Type d\'animation de pochette</string>
     <string name="player_thumbnail_size">Taille de la pochette d\'album</string>
     <string name="thumbnail_roundness">Arrondi des pochettes d\'album</string>
     <string name="artist_roundness">Polyvalence de l\'artiste</string>
