@@ -294,7 +294,7 @@ Some skills use micro-file design where each step is in its own file.
   - no file under `build/` or any VLC binary appears as tracked/untracked (the VLC runtime is downloaded at build time, never committed)
   - no diff touches the pinned VLC config in `ComposeN-Zik/build.gradle.kts` (`vlcVersion`/`vlcZipUrl`/`vlcZipSha256`/`vlcRuntimeFiles`) without the user's prior approval (AGENTS.md "Ask First")
   - no token material appears anywhere in the diff (scan changed files for the device token / Credential Manager strings)
-  - no diff touches `ComposeN-Zik/src/main/composeResources/values-*/` — the Crowdin-managed locale files (only `values/strings.xml` may change; AGENTS.md Never Do / rules/CODE.md Translations)
+  - no diff touches `ComposeN-Zik/src/main/composeResources/values-*/` — the Crowdin-managed locale files (only `values/strings.xml` may change; AGENTS.md Never Do / rules/CODE.md Translations) — EXCEPTION: a removal-only change that strips a string key now absent from `values/strings.xml` (no translation-value edits; AGENTS.md "Always Do")
   - all new `.kt` files live under `app.n_zik.compagnon.*`
   — if any of these appears, HALT, revert it and report to the user
 - Show evidence: paste the build output tail + test results — never just claim "done"

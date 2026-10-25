@@ -29,6 +29,7 @@
 - Delegate context-heavy exploration/reading to sub-agents (`explore`/`general`) to keep the main context lean and avoid compaction — see "Sub-agents & Context"
 - Match user's language for communication
 - Code comments & commits in English
+- Removing a string key from `composeResources/values/strings.xml` requires removing it from every `composeResources/values-*/strings.xml` too (a dead key left in a locale degrades translator context; Crowdin then drops it from its side) — see rules/CODE.md "Translations"
 
 ## ⚠️ Ask First
 
@@ -42,7 +43,7 @@
 
 - Put business logic or a streaming stack on the PC (the phone stays the source of truth — see the project identity above)
 - Write the device token anywhere except the platform secret store — the Windows Credential Manager, the Linux keyring, or the in-memory session store on a keyring-less Linux machine (never in `pairing.json`, logs, `Done.txt`, README, or code — see rules/SECURITY.md)
-- Edit the `values-*` locale strings files — Crowdin takes care of them: the only strings file to edit is `ComposeN-Zik/src/main/composeResources/values/strings.xml` (the English single source of truth); add or change strings there, and the `values-*` locale files are never touched by hand (same rule as the phone's AGENTS.md)
+- Edit the `values-*` locale strings files translation values — Crowdin takes care of them: the only strings file to edit is `ComposeN-Zik/src/main/composeResources/values/strings.xml` (the English single source of truth); add or change strings there, and the `values-*` locale files are never touched by hand (same rule as the phone's AGENTS.md). EXCEPTION: removing a string key that no longer exists in the source also requires removing it from every `values-*` locale file (a dead key in a locale degrades translator context) — see rules/CODE.md "Translations"
 - Write code before completing full BMAD workflow
 - Skip BMAD workflow steps
 - Skip the Step 8b code-review gate, or edit `assets/notes/Done.txt` before the user chose a commit mode (Step 8d) — exception: doc-only edits (rules/WORKFLOW.md "Doc-Only Exception") follow their own commit-approval flow and are NOT subject to the Step 8d mode question
