@@ -238,6 +238,23 @@ Rules:
 - Branch naming: `feat/<name>`, `fix/<name>`, `chore/<name>`
 - If merge conflict → HALT, report to user
 
+## Git Worktrees — Parallel Work
+
+When a new task starts while the main checkout holds in-progress work (uncommitted changes), do NOT work in the dirty tree: propose a git worktree via the question tool; on approval, create it and run the whole task there, so the user keeps working in `N-Zik-Desktop-Compagnon/` in parallel.
+
+- **Base on remote code, never on the local dirty state** (from `N-Zik-Desktop-Compagnon/`):
+
+  ```bash
+  git fetch origin
+  git worktree add ../worktrees/compagnon/<branch> -b <branch> origin/main
+  ```
+
+  `<branch>` follows "Branching" (`feat/<name>`, `fix/<name>`, `chore/<name>`); `../worktrees/compagnon/` = the `worktrees/` folder at the workspace root (one level above `N-Zik-Desktop-Compagnon/`, outside the repo — the phone app uses `worktrees/n-zik/`, so the two repos never collide).
+- **Setup = the README's plain clone** (README "Clone the repo"): this repo has no submodules and no gitignored local files to create — the fresh worktree checkout needs nothing beyond the checkout itself.
+- Run all `gradlew`/`git` commands from the worktree root, exactly as from `N-Zik-Desktop-Compagnon/` (`gradlew.bat` on Windows, `./gradlew` on Linux). The first build is slower (cold per-checkout project cache; the dependency cache and the pinned VLC zip are shared through the Gradle user home — no re-download).
+- Git refuses a branch already checked out elsewhere — worktree branches are always fresh
+- Cleanup after the branch is merged/pushed: `git worktree remove ../worktrees/compagnon/<branch>` — ask the user before removing; never `--force` on a worktree with uncommitted work
+
 ## Testing — JUnit 5 (Jupiter) + kotlinx-coroutines-test + Ktor test tools
 
 Single framework: **JUnit 5 (Jupiter)** on the JUnit Platform (`useJUnitPlatform()`). There is no vintage engine, no Robolectric, no Compose UI test harness, and no mock framework in the catalog — fakes are the Ktor `MockEngine` (HTTP clients), a real CIO server on loopback (where a real socket is the subject), and `runTest` virtual time (timings). For a new test, mirror the framework of the test files it belongs to (check neighboring imports).

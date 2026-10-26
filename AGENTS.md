@@ -164,6 +164,8 @@ gradlew.bat :ComposeN-Zik:createDistributable -Pchannel=stable   # Raw app-image
 gradlew.bat :ComposeN-Zik:createReleaseDistributable             # Raw app-image folder (release build type, no channel gate)
 ```
 
+> **Parallel work (worktrees):** when a new task starts while `N-Zik-Desktop-Compagnon/` holds in-progress (uncommitted) work, do NOT work in the dirty tree — propose a git worktree from remote code per rules/BUILD.md "Git Worktrees — Parallel Work".
+>
 > **Windows:** `gradlew.bat`, run from the repo root `N-Zik-Desktop-Compagnon/`. **Linux:** `./gradlew` (or `build.sh`). JDK 21 (Gradle toolchain).
 >
 > **First build (Windows host):** downloads the official VLC 3.0.24 win64 zip (about 83 MB) from download.videolan.org, checked against its pinned SHA-256; the zip is kept in the Gradle user home so `clean` does not re-download it — see rules/BUILD.md "Embedded VLC runtime". **Linux host:** the download/extract tasks are disabled and local playback uses the **system libvlc** (VLC must be installed, e.g. `sudo apt install vlc` — the app shows the right package command per distro).
