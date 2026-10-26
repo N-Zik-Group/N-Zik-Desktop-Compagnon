@@ -254,6 +254,7 @@ When a new task starts while the main checkout holds in-progress work (uncommitt
 - Run all `gradlew`/`git` commands from the worktree root, exactly as from `N-Zik-Desktop-Compagnon/` (`gradlew.bat` on Windows, `./gradlew` on Linux). The first build is slower (cold per-checkout project cache; the dependency cache and the pinned VLC zip are shared through the Gradle user home — no re-download).
 - Git refuses a branch already checked out elsewhere — worktree branches are always fresh
 - Cleanup after the branch is merged/pushed: `git worktree remove ../worktrees/compagnon/<branch>` — ask the user before removing; never `--force` on a worktree with uncommitted work
+- **End of task (merge + cleanup):** when the worktree task is complete and verified, propose merging the branch into `main`; after the user's approval execute the merge remotely when possible, without touching the user's local checkout (fast-forward: `git push origin <branch>:main`; otherwise open a PR), then remove the worktree and delete the branch (local `git branch -d <branch>` + remote `git push origin --delete <branch>`) — every step only after the user's approval
 
 ## Testing — JUnit 5 (Jupiter) + kotlinx-coroutines-test + Ktor test tools
 
