@@ -242,19 +242,20 @@ Rules:
 
 When a new task starts while the main checkout holds in-progress work (uncommitted changes), do NOT work in the dirty tree: propose a git worktree via the question tool; on approval, create it and run the whole task there, so the user keeps working in `N-Zik-Desktop-Compagnon/` in parallel.
 
-- **Base on remote code, never on the local dirty state** (from `N-Zik-Desktop-Compagnon/`):
+- **Work on `main` directly — no feature branch** (user preference 2026-10-26: avoids useless branches + merges): the worktree is DETACHED on `origin/main`, commits land on the detached HEAD, and after approval they are pushed straight to `origin/main` — the user's local `main` checkout (unpushed commits, uncommitted work) is never touched; the user syncs it at their own pace (from `N-Zik-Desktop-Compagnon/`):
 
   ```bash
   git fetch origin
-  git worktree add ../worktrees/compagnon/<branch> -b <branch> origin/main
+  git worktree add --detach ../worktrees/compagnon/main origin/main
+  # ... work, commit on the detached HEAD ...
+  git push origin HEAD:main        # fast-forward: the base is origin/main
   ```
 
-  `<branch>` follows "Branching" (`feat/<name>`, `fix/<name>`, `chore/<name>`); `../worktrees/compagnon/` = the `worktrees/` folder at the workspace root (one level above `N-Zik-Desktop-Compagnon/`, outside the repo — the phone app uses `worktrees/n-zik/`, so the two repos never collide).
+  `../worktrees/compagnon/` = the `worktrees/` folder at the workspace root (one level above `N-Zik-Desktop-Compagnon/`, outside the repo — the phone app uses `worktrees/n-zik/`, so the two repos never collide). If `origin/main` moved between the fetch and the push, redo on top of the new `origin/main`.
 - **Setup = the README's plain clone** (README "Clone the repo"): this repo has no submodules and no gitignored local files to create — the fresh worktree checkout needs nothing beyond the checkout itself.
 - Run all `gradlew`/`git` commands from the worktree root, exactly as from `N-Zik-Desktop-Compagnon/` (`gradlew.bat` on Windows, `./gradlew` on Linux). The first build is slower (cold per-checkout project cache; the dependency cache and the pinned VLC zip are shared through the Gradle user home — no re-download).
-- Git refuses a branch already checked out elsewhere — worktree branches are always fresh
-- Cleanup after the branch is merged/pushed: `git worktree remove ../worktrees/compagnon/<branch>` — ask the user before removing; never `--force` on a worktree with uncommitted work
-- **End of task (merge + cleanup):** when the worktree task is complete and verified, propose merging the branch into `main`; after the user's approval execute the merge remotely when possible, without touching the user's local checkout (fast-forward: `git push origin <branch>:main`; otherwise open a PR), then remove the worktree and delete the branch (local `git branch -d <branch>` + remote `git push origin --delete <branch>`) — every step only after the user's approval
+- **Removal (Windows, validated 2026-10-26):** verify clean first (`git -C <wt> status --porcelain` empty — never `--force` on a worktree with uncommitted work), then `git worktree remove <wt>`. It can fail on the physical dir with "Filename too long" (Windows MAX_PATH, deep `build/` paths) while still removing the git metadata: delete the leftover tree with robocopy — mirror an empty temp dir onto it (`robocopy <empty> <wt> /MIR /R:1 /W:1 /NFL /NDL /NJH /NJS`, exit 1-3 = success), then `cmd /c rmdir <wt>` + remove the empty parent dirs
+- **End of task (push + cleanup):** when the worktree task is complete and verified, propose the push to `origin/main`; after the user's approval: `git push origin HEAD:main`, then remove the worktree per the procedure above (ask the user before removing)
 
 ## Testing — JUnit 5 (Jupiter) + kotlinx-coroutines-test + Ktor test tools
 

@@ -164,7 +164,7 @@ gradlew.bat :ComposeN-Zik:createDistributable -Pchannel=stable   # Raw app-image
 gradlew.bat :ComposeN-Zik:createReleaseDistributable             # Raw app-image folder (release build type, no channel gate)
 ```
 
-> **Parallel work (worktrees):** when a new task starts while `N-Zik-Desktop-Compagnon/` holds in-progress (uncommitted) work, do NOT work in the dirty tree — propose a git worktree from remote code per rules/BUILD.md "Git Worktrees — Parallel Work". At task end, propose the merge into main; after approval remove the worktree and delete the branch (same rule).
+> **Parallel work (worktrees):** when a new task starts while `N-Zik-Desktop-Compagnon/` holds in-progress (uncommitted) work, do NOT work in the dirty tree — propose a git worktree per rules/BUILD.md "Git Worktrees — Parallel Work": a DETACHED worktree on `origin/main` (no feature branch — work commits straight on main, then push `HEAD:main` after approval). At task end, propose the push to `origin/main`; after approval push and remove the worktree (same rule).
 >
 > **Windows:** `gradlew.bat`, run from the repo root `N-Zik-Desktop-Compagnon/`. **Linux:** `./gradlew` (or `build.sh`). JDK 21 (Gradle toolchain).
 >
