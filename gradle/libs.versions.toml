@@ -30,7 +30,7 @@ ktor = "3.6.0"
 # dependency, same version + hard OkHttp runtime requirement as the phone).
 translator = "1.1.2"
 okhttp3 = "5.5.0"
-kotlinx-serialization = "1.11.0"
+kotlinx-serialization = "1.12.0"
 kotlinx-coroutines = "1.11.0"
 jna = "5.19.1"
 # Linux MPRIS media controls (spec `spec-tray-taskbar-media-controls`, user approval 2026-10-11):
