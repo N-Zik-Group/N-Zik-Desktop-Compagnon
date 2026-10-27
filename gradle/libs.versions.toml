@@ -29,7 +29,7 @@ ktor = "3.6.0"
 # In-app updater changelog translation (spec `spec-updater`, loop 2 — the single sanctioned new
 # dependency, same version + hard OkHttp runtime requirement as the phone).
 translator = "1.1.2"
-okhttp3 = "5.5.0"
+okhttp3 = "5.5.1"
 kotlinx-serialization = "1.11.0"
 kotlinx-coroutines = "1.11.0"
 jna = "5.19.1"
