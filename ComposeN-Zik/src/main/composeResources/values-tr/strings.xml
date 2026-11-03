@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <!-- About -->
     <string name="about_action_report_issue">Sorun bildir</string>
     <string name="about_action_view_source">Kaynak kodunu görüntüle</string>
@@ -10,7 +9,6 @@
     <string name="about_github_link_description">GitHub\'a yönlendirileceksiniz</string>
     <string name="about_title">Hakkında</string>
     <string name="about_translators_title">Çevirmenler</string>
-
     <!-- Accessibility -->
     <string name="accessibility_app_icon">Uygulamanın simgesi</string>
     <string name="accessibility_app_icon_in_player">oynatıcıdaki uygulama simgesi</string>
@@ -20,17 +18,14 @@
     <string name="accessibility_number_of_songs_in_queue">Kuyrukta bulunan şarkı sayısı</string>
     <string name="accessibility_origin_indicator">origin_indicator</string>
     <string name="accessibility_song_album_cover">albüm kapağını göster</string>
-
     <!-- Album -->
     <string name="album_action_bookmark">Albümü yer imlerine ekle</string>
     <string name="album_action_open">Albüme git</string>
     <string name="album_left_swipe">Albüm Sola Kaydırma</string>
     <string name="album_loading_song_count_format">%1$d şarkı yükleniyor…</string>
     <string name="album_right_swipe">Albüm Sağa Kaydırma</string>
-
     <!-- App -->
     <string name="app_subtitle">N-Zik için yardımcı</string>
-
     <!-- Artist -->
     <string name="artist_action_follow">Takip et</string>
     <string name="artist_action_play_local_songs">Tüm yerel şarkıları çal</string>
@@ -39,7 +34,6 @@
     <string name="artist_roundness">Sanatçının yuvarlaklığı</string>
     <string name="artist_songs_count_duration">%1$d Şarkı • %2$s</string>
     <string name="artist_songs_unavailable_message">Şarkılar bulunamadı</string>
-
     <!-- Audio -->
     <string name="audio_devices">Ses cihazları</string>
     <string name="audio_effects">Ses Efektleri</string>
@@ -51,7 +45,6 @@
     <string name="audio_quality_format_low">Düşük</string>
     <string name="audio_reverb_none">Yok</string>
     <string name="audio_waveform_action_refresh">Waveform\'u güncelle</string>
-
     <!-- Backup -->
     <string name="backup_action_export">Yedeklemeyi dışa aktar</string>
     <string name="backup_action_import_legacy_migration">Taşıma dosyasını içe aktar</string>
@@ -66,15 +59,12 @@
     <string name="backup_import_description">Veritabanını veya ayarları bir dosyadan içe aktar</string>
     <string name="backup_legacy_migration_description">Dönüşümden önceki eski kullanıcılar için.\nTaşıma için yedekleme yapmak üzere eski uygulamayı kullanın.</string>
     <string name="backup_target_database_label">Veritabanı</string>
-
     <!-- Bridge -->
     <string name="bridge_audio_output_pc_subtitle">Bilgisayarda ses (N-Zik Masaüstü Yardımcısı)</string>
     <string name="bridge_server">Bilgisayar sunucusu</string>
     <string name="bridge_server_description">N-Zik Masaüstü Yardımcısı ile aynı Wi-Fi ağındaki bir bilgisayardan kütüphanenizi kontrol etmesine izin verin</string>
-
     <!-- Cached -->
     <string name="cached_pc">Önbelleğe alınmış bilgisayar</string>
-
     <!-- Calendar -->
     <string name="calendar_period_one_month">1 Ay</string>
     <string name="calendar_period_one_week">1 Hafta</string>
@@ -82,15 +72,12 @@
     <string name="calendar_period_six_months">6 Ay</string>
     <string name="calendar_period_three_months">3 Ay</string>
     <string name="calendar_today">Bugün</string>
-
     <!-- Cancel -->
     <string name="cancel">İptal</string>
-
     <!-- Close -->
     <string name="close_behavior">Davranışı kapat</string>
     <string name="close_behavior_minimize">Simge durumuna küçült</string>
     <string name="close_behavior_quit">Uygulamadan çık</string>
-
     <!-- Command -->
     <string name="command_clear">Kuyruğu temizle</string>
     <string name="command_copied">Komut kopyalandı</string>
@@ -109,7 +96,6 @@
     <string name="command_shuffle">Karıştır</string>
     <string name="command_speed">Hız</string>
     <string name="command_unknown">Bir komut</string>
-
     <!-- Common -->
     <string name="common_action_clear">Temizle</string>
     <string name="common_action_confirm">Onayla</string>
@@ -152,7 +138,6 @@
     <string name="common_translation_title">Çeviri</string>
     <string name="common_validation_empty_value">Değer boş olamaz</string>
     <string name="common_validation_minimum_value">Değer şundan büyük olmalıdır</string>
-
     <!-- Connection -->
     <string name="connection_connecting">Bağlanıyor…</string>
     <string name="connection_kicked">Telefon bağlantısı kesildi. Eşleştirme korunur.</string>
@@ -163,16 +148,12 @@
     <string name="connection_reconnecting_in">Telefonla bağlantı kesildi. %1$d saniye içinde yeniden bağlanılıyor…</string>
     <string name="connection_replaced">Bu bilgisayarın başka bir penceresi oturumu devraldı.</string>
     <string name="connection_server_stopped">Sunucu durdu. Telefonunuzdaki N-Zik uygulamasından sunucuyu yeniden başlatın, ardından yeniden bağlanın.</string>
-
     <!-- Contributors -->
     <string name="contributors">Katkıda bulunanlar</string>
-
     <!-- Dismiss -->
     <string name="dismiss">Kapat</string>
-
     <!-- Download -->
     <string name="download_pc">Bilgisayara indir</string>
-
     <!-- Downloads -->
     <string name="downloads_action_download_all">Tüm şarkıları indir</string>
     <string name="downloads_action_refresh_quality">İndirilenleri güncelle</string>
@@ -183,7 +164,6 @@
     <string name="downloads_quality_format">İndirme Kalitesi</string>
     <string name="downloads_refresh_quality_description">Farklı bir kalitede indirilmiş şarkıları yeniden indirin</string>
     <string name="downloads_title">İndir</string>
-
     <!-- Error -->
     <string name="error_code_rejected">Kod geçersiz veya süresi dolmuş. Telefonunuzdaki kodu kontrol edin ve tekrar deneyin.</string>
     <string name="error_incompatible_version">Telefon sürümü uyumsuz (sözleşme %1$s). N-Zik Masaüstü Yardımcısı veya N-Zik uygulamasını güncelleyin.</string>
@@ -196,29 +176,22 @@
     <string name="error_update_check_failed">Güncelleme kontrolü başarısız oldu (%1$s)</string>
     <string name="error_update_download_failed">Güncelleme indirme başarısız oldu (%1$s)</string>
     <string name="error_windows_install_helper">Windows yükleyicisi başlatılamadı. İndirdiğiniz yükleyiciyi manuel olarak çalıştırın.</string>
-
     <!-- Export -->
     <string name="export_cached_song_action">Önbelleğe alınmış veya indirilmiş şarkıyı dışa aktar</string>
     <string name="export_cached_songs_action">Önbelleğe alınanı dışa aktar</string>
-
     <!-- Fake -->
     <string name="fake_audio_bar">Sahte Ses Dalgası (Waveform)</string>
-
     <!-- Forget -->
     <string name="forget_phone">Bu telefonu unut</string>
     <string name="forget_phone_text">Bu bilgisayardaki eşleştirmeyi kaldırır</string>
-
     <!-- Git -->
     <string name="git_title">GIT</string>
-
     <!-- Home -->
     <string name="home_tabs_settings">Ana sayfa</string>
     <string name="home_tabs_settings_description">Sekmeleri yeniden sıralama ve gösterme/gizleme</string>
     <string name="home_title">Ana Sayfa</string>
-
     <!-- Import -->
     <string name="import_backup">Yedeklemeyi içe aktar</string>
-
     <!-- Install -->
     <string name="install_copy_command">Komutu kopyala</string>
     <string name="install_copy_path">Yolu kopyala</string>
@@ -230,14 +203,11 @@
     <string name="install_pkg_pacman_command">Paketi şu komutla güncelleyin:</string>
     <string name="install_replacement_portable">Uygulama klasörünü değiştirin: indirdiğiniz dosyayı mevcut uygulama klasörünün üzerine açın, ardından uygulamayı yeniden başlatın.</string>
     <string name="install_replacement_portable_linux">Önce uygulamayı kapatın (uygulama çalışırken dosyaları kilitlidir), ardından uygulama klasörünü değiştirin: mevcut uygulama klasörünü silin, indirilen .tar.gz dosyasını onun yerine açın (tar dosyası yeni bir uygulama klasörü olarak açılır — asla mevcut klasörün üzerine yazmaz) ve uygulamayı yeniden başlatın.</string>
-
     <!-- Interface -->
     <string name="interface_in_use">Kullanılan arayüz</string>
-
     <!-- Lastfm -->
     <string name="lastfm_love">Last.fm\'de beğen</string>
     <string name="lastfm_unlove">Last.fm\'de beğenme</string>
-
     <!-- Library -->
     <string name="library_action_bookmark">Yer imi</string>
     <string name="library_action_randomize">Rastgeleleştirme</string>
@@ -287,7 +257,6 @@
     <string name="library_sync_progress_format">%1$d / %2$d</string>
     <string name="library_tracks_failed">Parçalar okunamadı: %1$s</string>
     <string name="library_youtube_playlists_label">YT/YTM</string>
-
     <!-- Listen -->
     <string name="listen_together_auto_approval_joins">Katılma isteklerini otomatik onayla</string>
     <string name="listen_together_auto_approval_joins_description">Katılma isteklerini manuel olarak incelemeden otomatik olarak onayla</string>
@@ -314,7 +283,6 @@
     <string name="listen_together_username">Kullanıcı adı</string>
     <string name="listen_together_view_logs">Günlükleri görüntüle</string>
     <string name="listen_together_view_logs_description">Bağlantı olaylarını ve mesajlarını hata ayıklama</string>
-
     <!-- Local -->
     <string name="local_playback_failed">Bu şarkı bu bilgisayarda çalınamadı.</string>
     <string name="local_playback_invalid_url">Bu şarkı bu bilgisayarda çalınamadı.</string>
@@ -324,17 +292,14 @@
     <string name="local_playback_unavailable_linux">Bu bilgisayarda ses özelliği kullanılamıyor. %1$s ile VLC\'yi yükleyin ve uygulamayı yeniden başlatın.</string>
     <string name="local_playback_unreachable">Telefonunuza cevap verilmedi.</string>
     <string name="local_playback_upstream_failed">Telefonunuz bu şarkıyı indiremedi.</string>
-
     <!-- Logs -->
     <string name="logs_action_export">Günlükleri dışa aktar</string>
     <string name="logs_export_debug_description">Hata ayıklama günlüğünü bir dosyaya aktar</string>
-
     <!-- Lyrics -->
     <string name="lyrics_alignment_left_label">Sol</string>
     <string name="lyrics_alignment_right_label">Sağ</string>
     <string name="lyrics_color">Şarkı Sözleri Rengi</string>
     <string name="lyrics_title">Şarkı sözleri</string>
-
     <!-- Maintenance -->
     <string name="maintenance_card_desc">Uygulama durumuna genel bakış: son önyükleme testleri ve çalışan alt sistemler</string>
     <string name="maintenance_convergence">Adların birleştirilmesi</string>
@@ -346,7 +311,6 @@
     <string name="maintenance_open">Açık</string>
     <string name="maintenance_open_desc">Tam bakım sayfasını açın</string>
     <string name="maintenance_title">Bakım</string>
-
     <!-- Manual -->
     <string name="manual_code">Eşleştirme kodu</string>
     <string name="manual_code_invalid">Kod 6 karakterden oluşur, örneğin ABC-DEF.</string>
@@ -357,11 +321,9 @@
     <string name="manual_port_invalid">1 ile 65535 arasında bir bağlantı noktası girin.</string>
     <string name="manual_submit">Eşleştir</string>
     <string name="manual_title">Manuel eşleştirme</string>
-
     <!-- Message -->
     <string name="message_type">Açılır pencere mesajı stili</string>
     <string name="message_type_modern">Modern</string>
-
     <!-- Metadata -->
     <string name="metadata_action_change_artists">Yazarları Değiştir</string>
     <string name="metadata_action_change_cover">Kapağı Değiştir</string>
@@ -372,10 +334,8 @@
     <string name="metadata_playlist_action_change_browse_id">Çalma Listesi Gözatma Kimliğini Değiştir</string>
     <string name="metadata_unknown_artist">Bilinmeyen Sanatçı</string>
     <string name="metadata_unknown_title">Bilinmeyen Başlık</string>
-
     <!-- Miniplayer -->
     <string name="miniplayer_button_like">Beğen</string>
-
     <!-- Navigation -->
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Alt Yüzer</string>
@@ -383,14 +343,11 @@
     <string name="navigation_position_top_label">Üst</string>
     <string name="navigation_style_icon_and_text_label">Simge ve metin</string>
     <string name="navigation_style_icon_only_label">Sadece simge</string>
-
     <!-- Network -->
     <string name="network_settings_description">Ağ bölümü, uygulamanın performansını ve veri kullanımını optimize etmeye yönelik ayarları içerir</string>
     <string name="network_status">Kalite Durumu</string>
-
     <!-- Not -->
     <string name="not_selectable">Seçilemez</string>
-
     <!-- Notice -->
     <string name="notice_failed">%1$s başarısız oldu (HTTP %2$d, %3$s).</string>
     <string name="notice_late_error">%1$s telefonda başarısız oldu (%2$s, komut %3$s).</string>
@@ -403,10 +360,8 @@
     <string name="notice_truncated">%1$s: %3$d parçadan sadece %2$d gönderildi.</string>
     <string name="notice_unavailable">%1$s: telefonun oynatıcısı kullanılamıyor. Daha sonra tekrar deneyin.</string>
     <string name="notice_unreachable">%1$s: telefon cevap vermedi.</string>
-
     <!-- Old -->
     <string name="old_install_path">Mevcut kurulum:</string>
-
     <!-- Pair -->
     <string name="pair_device_name">Bu bilgisayarın adı</string>
     <string name="pair_device_name_invalid">1 ile 64 karakterden oluşan bir ad girin.</string>
@@ -421,7 +376,6 @@
     <string name="pair_qr_waiting">Telefonunuzu bekliyoruz…</string>
     <string name="pair_show_qr">QR kodunu göster</string>
     <string name="pair_title">Telefonunuzla eşleştirin</string>
-
     <!-- Paired -->
     <string name="paired_as">Bu bilgisayar telefonda %1$s olarak görünüyor.</string>
     <string name="paired_checking">Bağlantı kontrol ediliyor…</string>
@@ -433,16 +387,12 @@
     <string name="paired_session_only">Bu bilgisayarda anahtarlık bulunmadığından, eşleştirme yalnızca bu oturum için bellekte saklanır: yeniden başlattıktan sonra eşleştirmeyi tekrarlayın.</string>
     <string name="paired_title">Eşleştirildi</string>
     <string name="paired_with">%1$s ile eşleştirildi</string>
-
     <!-- Parental -->
     <string name="parental_control">Ebeveyn kontrolü</string>
-
     <!-- Path -->
     <string name="path_copied">Yol kopyalandı</string>
-
     <!-- Phone -->
     <string name="phone_panel_title">Telefon</string>
-
     <!-- Player -->
     <string name="player_action_bar">Oyuncu eylem çubuğu</string>
     <string name="player_action_bar_buttons">Düğmenin görünürlüğü</string>
@@ -559,7 +509,6 @@
     <string name="player_timeline_thin_bar_label">İnce çubuk</string>
     <string name="player_timeline_wavy_label">Dalgalı zaman çizelgesi</string>
     <string name="player_type">Oynatıcı türü</string>
-
     <!-- Playlist -->
     <string name="playlist_action_add">Çalma listesine ekle</string>
     <string name="playlist_action_create">Yeni çalma listesi</string>
@@ -579,46 +528,35 @@
     <string name="playlist_right_swipe">Çalma Listesi Sağa Kaydırma</string>
     <string name="playlist_selection_action_deselect">Seçimi kaldır</string>
     <string name="playlist_top">En Popüler Çalma Listesi</string>
-
     <!-- Profile -->
     <string name="profile_base_name">N-Zik Hayranı</string>
     <string name="profile_title">Profiller</string>
-
     <!-- Proxy -->
     <string name="proxy">Proxy</string>
-
     <!-- Queue -->
     <string name="queue_discover_description">Favorilerde veya çalma listelerinde bulunan şarkıları kuyruktan kaldır</string>
     <string name="queue_discover_title">Keşfet</string>
-
     <!-- Radio -->
     <string name="radio_action_start">Radyo başlat</string>
-
     <!-- Recommendations -->
     <string name="recommendations_action_smart_shuffle">Akıllı öneriler</string>
     <string name="recommendations_minimum_playback_duration_label">Minimum oynatma süresi</string>
     <string name="recommendations_title">Hızlı Seçimler</string>
-
     <!-- Reconnect -->
     <string name="reconnect">Yeniden bağlan</string>
-
     <!-- Recovery -->
     <string name="recovery_center">Kurtarma Merkezi</string>
-
     <!-- Request -->
     <string name="request_a_feature">Bir özellik isteyin veya bir fikir önerin</string>
-
     <!-- Revoked -->
     <string name="revoked_description">Bu bilgisayar telefonun eşleştirilmiş cihazları listesinden kaldırıldı. Kullanmaya devam etmek için cihazı yeniden eşleştirin.</string>
     <string name="revoked_pair_again">Tekrar eşleştir</string>
     <string name="revoked_title">Eşleştirme iptal edildi</string>
-
     <!-- Rewind -->
     <string name="rewind_filter_month">Ay</string>
     <string name="rewind_filter_year">Yıl</string>
     <string name="rewind_title">Geri Sarma</string>
     <string name="rewind_top_sort">Geri Sarma Üst</string>
-
     <!-- Search -->
     <string name="search_display_order">Çevrimiçi arama sonuçlarının görüntülenme sırası</string>
     <string name="search_display_order_suggestions_first">Önce öneriler</string>
@@ -627,7 +565,6 @@
     <string name="search_history_pause_description">Ne yeni aranan sorguları kaydet ne de geçmişi göster</string>
     <string name="search_history_pause_label">Arama geçmişini duraklat</string>
     <string name="search_title">Ara</string>
-
     <!-- Settings -->
     <string name="settings_about_page_description">Hakkında bölümünde uygulama, geliştiriciler, sorun giderme ve güncelleme seçenekleri hakkında bilgiler yer almaktadır</string>
     <string name="settings_app_behavior_title">Uygulama Davranışı</string>
@@ -778,49 +715,37 @@
     <string name="settings_title">Ayarlar</string>
     <string name="settings_transition_fade">Soldur</string>
     <string name="settings_use_font_type">Yazı tipi</string>
-
     <!-- Song -->
     <string name="song_matching_action_open">Albüm/Ses versiyon</string>
     <string name="song_matching_unmatched_label">Eşleşmeyen şarkılar</string>
     <string name="song_metadata_update_action_open">Güncelleme iletişim kutusunu aç</string>
-
     <!-- Sort -->
     <string name="sort_artist_and_album">Sanatçı, Albüm</string>
-
     <!-- Stable -->
     <string name="stable_title">STABLE</string>
-
     <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Sınırsız</string>
     <string name="statistics_title">İstatistikler</string>
     <string name="statistics_top_period_title">… içindeki en iyi %s</string>
-
     <!-- Sync -->
     <string name="sync_action_sync">Senkronize et</string>
     <string name="sync_likes">Beğenilen Şarkıları Otomatik Olarak Senkronize Et</string>
-
     <!-- Theme -->
     <string name="theme_palette_dynamic">Dinamik</string>
     <string name="theme_shake_sensitivity_disabled">Devre dışı</string>
-
     <!-- This -->
     <string name="this_pc">Bu bilgisayar</string>
-
     <!-- Thumbnail -->
     <string name="thumbnail_action_edit">Küçük Resmi Düzenle</string>
     <string name="thumbnail_action_reset">Küçük Resmi Sıfırla</string>
-
     <!-- Title -->
     <string name="title_backup_and_restore">Yedekle ve geri yükle</string>
-
     <!-- Tray -->
     <string name="tray_open">Açık</string>
     <string name="tray_quit">Çık</string>
     <string name="tray_tooltip">N-Zik Masaüstü Yardımcısı</string>
-
     <!-- Troubleshooting -->
     <string name="troubleshooting">Sorun giderme</string>
-
     <!-- Unreachable -->
     <string name="unreachable_description">%1$s adresinde %2$s yanıt vermedi. Sunucusu durdurulmuş olabilir veya IP adresi değişmiş olabilir. Eşleştirme korunur.</string>
     <string name="unreachable_edit_ip">IP\'yi Düzenle</string>
@@ -828,14 +753,12 @@
     <string name="unreachable_port_kept">Bağlantı noktası %1$d (korunur)</string>
     <string name="unreachable_save_ip">Kaydet ve yeniden dene</string>
     <string name="unreachable_title">Telefona ulaşılamıyor</string>
-
     <!-- Update -->
     <string name="update_check_off_aur">Bu uygulama AUR\'dan yüklendi: Bu yükleme için uygulama içi güncelleyici devre dışı bırakılmıştır. AUR yardımcı programınızı kullanarak AUR girdisini (n-zik-desktop-compagnon) güncelleyin.</string>
     <string name="update_check_off_build">Bu mesajı görüyorsanız, derlemenizde otomatik güncelleme özelliği etkin değil demektir, lütfen uygulamayı GitHub\'dan manuel olarak güncelleyin.</string>
     <string name="update_download_indeterminate">%1$s indirildi (boyutu bilinmiyor)</string>
     <string name="update_download_truncated">Güncelleme indirme işlemi yarıda kesildi. Kısmi dosya saklandı — lütfen indirmeyi tekrar deneyin.</string>
     <string name="update_unknown">Bilinmeyen</string>
-
     <!-- Updates -->
     <string name="updates_action_check">Güncellemeyi kontrol et</string>
     <string name="updates_action_check_now">Şimdi kontrol et</string>
@@ -871,17 +794,13 @@
     <string name="updates_reinstalling_version_progress">Yeniden yükleme: %1$s (%2$s)</string>
     <string name="updates_starting_status">Başlatılıyor…</string>
     <string name="updates_up_to_date">Güncel</string>
-
     <!-- Validating -->
     <string name="validating">Telefonunuzla eşleştirme…</string>
-
     <!-- Visualizer -->
     <string name="visualizer_animation_bubbles">Kabarcıklar</string>
     <string name="visualizer_bar">Görselleştirme çubuğu</string>
     <string name="visualizer_microphone_permission_message">Görselleştirici efekti mikrofon izni gerektirir, lütfen izin ver.</string>
     <string name="visualizer_title">Görselleştirme</string>
-
     <!-- Window -->
     <string name="window">Pencere</string>
-
 </resources>

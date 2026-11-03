@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <!-- About -->
     <string name="about_action_report_issue">সমস্যা রিপোর্ট করুন</string>
     <string name="about_action_view_source">সোর্সকোড দেখুন</string>
@@ -10,7 +9,6 @@
     <string name="about_github_link_description">আপনাকে গিটহাবে নিয়ে যাওয়া হবে</string>
     <string name="about_title">পরিচিতি</string>
     <string name="about_translators_title">Translators</string>
-
     <!-- Accessibility -->
     <string name="accessibility_app_icon">App\'s icon</string>
     <string name="accessibility_app_icon_in_player">app icon in player</string>
@@ -20,17 +18,14 @@
     <string name="accessibility_number_of_songs_in_queue">Number of songs in queue</string>
     <string name="accessibility_origin_indicator">origin_indicator</string>
     <string name="accessibility_song_album_cover">song album cover</string>
-
     <!-- Album -->
     <string name="album_action_bookmark">এলবাম বুকমার্ক</string>
     <string name="album_action_open">এলবামে যান</string>
     <string name="album_left_swipe">Album Left Swipe</string>
     <string name="album_loading_song_count_format">Loading %1$d songs…</string>
     <string name="album_right_swipe">Album Right Swipe</string>
-
     <!-- App -->
     <string name="app_subtitle">Companion for N-Zik</string>
-
     <!-- Artist -->
     <string name="artist_action_follow">অনুসরণ করুন</string>
     <string name="artist_action_play_local_songs">Play all local songs</string>
@@ -39,7 +34,6 @@
     <string name="artist_roundness">Artist roundness</string>
     <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
     <string name="artist_songs_unavailable_message">কোনো গান নাই এখনো</string>
-
     <!-- Audio -->
     <string name="audio_devices">Audio devices</string>
     <string name="audio_effects">Audio Effects</string>
@@ -51,7 +45,6 @@
     <string name="audio_quality_format_low">নিচু</string>
     <string name="audio_reverb_none">কোনটি নয়</string>
     <string name="audio_waveform_action_refresh">Update waveform</string>
-
     <!-- Backup -->
     <string name="backup_action_export">Export backup</string>
     <string name="backup_action_import_legacy_migration">Import migration file.</string>
@@ -66,15 +59,12 @@
     <string name="backup_import_description">Import database or settings from a file</string>
     <string name="backup_legacy_migration_description">For old users before conversion.\nUse old app to make a backup for migration.</string>
     <string name="backup_target_database_label">ডাটাবেস</string>
-
     <!-- Bridge -->
     <string name="bridge_audio_output_pc_subtitle">Sound on the PC (N-Zik Desktop Compagnon)</string>
     <string name="bridge_server">PC server</string>
     <string name="bridge_server_description">Let N-Zik Desktop Compagnon control your library from a PC on the same Wi-Fi network</string>
-
     <!-- Cached -->
     <string name="cached_pc">Cached PC</string>
-
     <!-- Calendar -->
     <string name="calendar_period_one_month">১ মাস</string>
     <string name="calendar_period_one_week">১ সপ্তাহ</string>
@@ -82,15 +72,12 @@
     <string name="calendar_period_six_months">৬ মাস</string>
     <string name="calendar_period_three_months">৩ মাস</string>
     <string name="calendar_today">আজ</string>
-
     <!-- Cancel -->
     <string name="cancel">বাতিল</string>
-
     <!-- Close -->
     <string name="close_behavior">Close behavior</string>
     <string name="close_behavior_minimize">Minimize to tray</string>
     <string name="close_behavior_quit">Quit the app</string>
-
     <!-- Command -->
     <string name="command_clear">Clear the queue</string>
     <string name="command_copied">Command copied</string>
@@ -109,7 +96,6 @@
     <string name="command_shuffle">এলোমেলো বাজান</string>
     <string name="command_speed">Speed</string>
     <string name="command_unknown">A command</string>
-
     <!-- Common -->
     <string name="common_action_clear">পরিষ্কার</string>
     <string name="common_action_confirm">নিশ্চিত করুন</string>
@@ -152,7 +138,6 @@
     <string name="common_translation_title">অনুবাদ</string>
     <string name="common_validation_empty_value">ভ্যালু খালি রাখা যাবে না</string>
     <string name="common_validation_minimum_value">Value must be greater than</string>
-
     <!-- Connection -->
     <string name="connection_connecting">Connecting…</string>
     <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
@@ -163,16 +148,12 @@
     <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
     <string name="connection_replaced">Another window of this PC took over the session.</string>
     <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
-
     <!-- Contributors -->
     <string name="contributors">সহযোগী</string>
-
     <!-- Dismiss -->
     <string name="dismiss">Dismiss</string>
-
     <!-- Download -->
     <string name="download_pc">Download PC</string>
-
     <!-- Downloads -->
     <string name="downloads_action_download_all">সব গান ডাউনলোড করুন</string>
     <string name="downloads_action_refresh_quality">Update downloads</string>
@@ -183,7 +164,6 @@
     <string name="downloads_quality_format">Download Quality</string>
     <string name="downloads_refresh_quality_description">Re-download the songs that were downloaded with a different quality</string>
     <string name="downloads_title">ডাউনলোড</string>
-
     <!-- Error -->
     <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
     <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
@@ -196,29 +176,22 @@
     <string name="error_update_check_failed">The update check failed (%1$s)</string>
     <string name="error_update_download_failed">The update download failed (%1$s)</string>
     <string name="error_windows_install_helper">The Windows installer could not be started. Run the downloaded installer manually.</string>
-
     <!-- Export -->
     <string name="export_cached_song_action">Export cached or downloaded song</string>
     <string name="export_cached_songs_action">Export cached</string>
-
     <!-- Fake -->
     <string name="fake_audio_bar">ফেইক অডিও বার</string>
-
     <!-- Forget -->
     <string name="forget_phone">Forget this phone</string>
     <string name="forget_phone_text">Removes the pairing from this PC</string>
-
     <!-- Git -->
     <string name="git_title">GIT</string>
-
     <!-- Home -->
     <string name="home_tabs_settings">Home page</string>
     <string name="home_tabs_settings_description">Reorder and show/hide tabs</string>
     <string name="home_title">Home</string>
-
     <!-- Import -->
     <string name="import_backup">Import backup</string>
-
     <!-- Install -->
     <string name="install_copy_command">Copy command</string>
     <string name="install_copy_path">Copy path</string>
@@ -230,14 +203,11 @@
     <string name="install_pkg_pacman_command">Upgrade the package with:</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
     <string name="install_replacement_portable_linux">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, extract the downloaded .tar.gz in its place (the tarball opens into a new app folder - never over the current one), and relaunch.</string>
-
     <!-- Interface -->
     <string name="interface_in_use">যে ইন্টারফেস ব্যাবহৃত হচ্ছে</string>
-
     <!-- Lastfm -->
     <string name="lastfm_love">Love on Last.fm</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
-
     <!-- Library -->
     <string name="library_action_bookmark">Bookmark</string>
     <string name="library_action_randomize">Randomizer</string>
@@ -287,7 +257,6 @@
     <string name="library_sync_progress_format">%1$d / %2$d</string>
     <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
     <string name="library_youtube_playlists_label">YT/YTM</string>
-
     <!-- Listen -->
     <string name="listen_together_auto_approval_joins">Auto-approve join requests</string>
     <string name="listen_together_auto_approval_joins_description">Automatically approve join requests without reviewing them manually</string>
@@ -314,7 +283,6 @@
     <string name="listen_together_username">ইউজার নেম</string>
     <string name="listen_together_view_logs">View logs</string>
     <string name="listen_together_view_logs_description">Debug connection events and messages</string>
-
     <!-- Local -->
     <string name="local_playback_failed">This song could not be played on this PC.</string>
     <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
@@ -324,17 +292,14 @@
     <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
     <string name="local_playback_unreachable">Your phone did not answer.</string>
     <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
-
     <!-- Logs -->
     <string name="logs_action_export">Export logs</string>
     <string name="logs_export_debug_description">Export debug log to a file</string>
-
     <!-- Lyrics -->
     <string name="lyrics_alignment_left_label">বামে</string>
     <string name="lyrics_alignment_right_label">ডানে</string>
     <string name="lyrics_color">লিরিক কালার</string>
     <string name="lyrics_title">Lyrics</string>
-
     <!-- Maintenance -->
     <string name="maintenance_card_desc">App state at a glance: last boot passes and live subsystems</string>
     <string name="maintenance_convergence">Name convergence</string>
@@ -346,7 +311,6 @@
     <string name="maintenance_open">Open</string>
     <string name="maintenance_open_desc">Open the full maintenance sheet</string>
     <string name="maintenance_title">Maintenance</string>
-
     <!-- Manual -->
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
@@ -357,11 +321,9 @@
     <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
     <string name="manual_submit">Pair</string>
     <string name="manual_title">Manual pairing</string>
-
     <!-- Message -->
     <string name="message_type">Message type</string>
     <string name="message_type_modern">মডার্ন</string>
-
     <!-- Metadata -->
     <string name="metadata_action_change_artists">Change Authors</string>
     <string name="metadata_action_change_cover">কভার ঠিক করুন</string>
@@ -372,10 +334,8 @@
     <string name="metadata_playlist_action_change_browse_id">Change Playlist Browse ID</string>
     <string name="metadata_unknown_artist">Unknown Artist</string>
     <string name="metadata_unknown_title">Unknown Title</string>
-
     <!-- Miniplayer -->
     <string name="miniplayer_button_like">Like</string>
-
     <!-- Navigation -->
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Bottom Floating</string>
@@ -383,14 +343,11 @@
     <string name="navigation_position_top_label">উপর</string>
     <string name="navigation_style_icon_and_text_label">আইকন ও টেক্সট</string>
     <string name="navigation_style_icon_only_label">শুধু আইকন</string>
-
     <!-- Network -->
     <string name="network_settings_description">The network section contains settings to optimize the app\'s performance and data usage</string>
     <string name="network_status">Quality Status</string>
-
     <!-- Not -->
     <string name="not_selectable">Not selectable</string>
-
     <!-- Notice -->
     <string name="notice_failed">%1$s failed (HTTP %2$d, %3$s).</string>
     <string name="notice_late_error">%1$s failed on the phone (%2$s, command %3$s).</string>
@@ -403,10 +360,8 @@
     <string name="notice_truncated">%1$s: only %2$d of %3$d tracks were sent.</string>
     <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
     <string name="notice_unreachable">%1$s: the phone did not answer.</string>
-
     <!-- Old -->
     <string name="old_install_path">Current install:</string>
-
     <!-- Pair -->
     <string name="pair_device_name">Name of this PC</string>
     <string name="pair_device_name_invalid">Enter a name of 1 to 64 characters.</string>
@@ -421,7 +376,6 @@
     <string name="pair_qr_waiting">Waiting for your phone…</string>
     <string name="pair_show_qr">Show the QR code</string>
     <string name="pair_title">Pair with your phone</string>
-
     <!-- Paired -->
     <string name="paired_as">This PC appears as %1$s on the phone.</string>
     <string name="paired_checking">Checking the connection…</string>
@@ -433,16 +387,12 @@
     <string name="paired_session_only">No keyring is available on this PC, so the pairing is kept only in memory for this session: pair again after a restart.</string>
     <string name="paired_title">Paired</string>
     <string name="paired_with">Paired with %1$s</string>
-
     <!-- Parental -->
     <string name="parental_control">পারিবারিক কন্ট্রোল</string>
-
     <!-- Path -->
     <string name="path_copied">Path copied</string>
-
     <!-- Phone -->
     <string name="phone_panel_title">Phone</string>
-
     <!-- Player -->
     <string name="player_action_bar">প্লেয়ার একশন বার</string>
     <string name="player_action_bar_buttons">Button visibility</string>
@@ -559,7 +509,6 @@
     <string name="player_timeline_thin_bar_label">Thin Bar</string>
     <string name="player_timeline_wavy_label">ঢেউ খেলানো</string>
     <string name="player_type">Player Type</string>
-
     <!-- Playlist -->
     <string name="playlist_action_add">প্লে-লিস্টে রাখুন</string>
     <string name="playlist_action_create">নতুন প্লে-লিস্ট</string>
@@ -579,46 +528,35 @@
     <string name="playlist_right_swipe">Playlist Right Swipe</string>
     <string name="playlist_selection_action_deselect">ডি-সিলেক্ট</string>
     <string name="playlist_top">প্লে-লিস্ট টপ</string>
-
     <!-- Profile -->
     <string name="profile_base_name">N-Zik Fan</string>
     <string name="profile_title">Profiles</string>
-
     <!-- Proxy -->
     <string name="proxy">প্রক্সি</string>
-
     <!-- Queue -->
     <string name="queue_discover_description">Removes Liked and Playlist songs from queue</string>
     <string name="queue_discover_title">Discover</string>
-
     <!-- Radio -->
     <string name="radio_action_start">রেডিও চালু</string>
-
     <!-- Recommendations -->
     <string name="recommendations_action_smart_shuffle">স্মার্ট রেকমেন্ডেশন</string>
     <string name="recommendations_minimum_playback_duration_label">সর্বনিম্ন শোনার সময়</string>
     <string name="recommendations_title">কুইক পিকস</string>
-
     <!-- Reconnect -->
     <string name="reconnect">Reconnect</string>
-
     <!-- Recovery -->
     <string name="recovery_center">Rescue Center</string>
-
     <!-- Request -->
     <string name="request_a_feature">ফিচারের আবেদন করুন কিংবা নতুন আইডিয়া দিন</string>
-
     <!-- Revoked -->
     <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
     <string name="revoked_pair_again">Pair again</string>
     <string name="revoked_title">Pairing revoked</string>
-
     <!-- Rewind -->
     <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">বছর</string>
     <string name="rewind_title">Rewind</string>
     <string name="rewind_top_sort">Rewind Top</string>
-
     <!-- Search -->
     <string name="search_display_order">Online search display order</string>
     <string name="search_display_order_suggestions_first">Suggestions first</string>
@@ -627,7 +565,6 @@
     <string name="search_history_pause_description">নতুন খোঁজা কুয়েরি সেভ করবেন না সাথে হিস্টোরি দেখবেন না</string>
     <string name="search_history_pause_label">খোঁজার ইতিহাস স্থগিত করুন</string>
     <string name="search_title">খুঁজুন</string>
-
     <!-- Settings -->
     <string name="settings_about_page_description">The about section shows information about the app, the developers, troubleshooting and update options</string>
     <string name="settings_app_behavior_title">App Behavior</string>
@@ -778,49 +715,37 @@
     <string name="settings_title">সেটিংস</string>
     <string name="settings_transition_fade">বিবর্ণ</string>
     <string name="settings_use_font_type">ফন্ট টাইপ ব্যাবহার করুন</string>
-
     <!-- Song -->
     <string name="song_matching_action_open">Match Album/Audio version</string>
     <string name="song_matching_unmatched_label">Unmatched song</string>
     <string name="song_metadata_update_action_open">Open update dialog</string>
-
     <!-- Sort -->
     <string name="sort_artist_and_album">Artist, Album</string>
-
     <!-- Stable -->
     <string name="stable_title">STABLE</string>
-
     <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">আনলিমিটেড</string>
     <string name="statistics_title">পরিসংখ্যান</string>
     <string name="statistics_top_period_title">View top %s of …</string>
-
     <!-- Sync -->
     <string name="sync_action_sync">সিঙ্ক</string>
     <string name="sync_likes">Auto Sync Liked Songs</string>
-
     <!-- Theme -->
     <string name="theme_palette_dynamic">ডায়নামিক</string>
     <string name="theme_shake_sensitivity_disabled">নিষ্ক্রিয়</string>
-
     <!-- This -->
     <string name="this_pc">This PC</string>
-
     <!-- Thumbnail -->
     <string name="thumbnail_action_edit">Edit Thumbnail</string>
     <string name="thumbnail_action_reset">Reset Thumbnail</string>
-
     <!-- Title -->
     <string name="title_backup_and_restore">ব্যাকআপ ও রিস্টোর</string>
-
     <!-- Tray -->
     <string name="tray_open">Open</string>
     <string name="tray_quit">Quit</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
-
     <!-- Troubleshooting -->
     <string name="troubleshooting">ভুলভ্রান্তি</string>
-
     <!-- Unreachable -->
     <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
     <string name="unreachable_edit_ip">Edit IP</string>
@@ -828,14 +753,12 @@
     <string name="unreachable_port_kept">Port %1$d (kept)</string>
     <string name="unreachable_save_ip">Save and retry</string>
     <string name="unreachable_title">Phone unreachable</string>
-
     <!-- Update -->
     <string name="update_check_off_aur">This app was installed from the AUR: the in-app updater is disabled for this install. Update the AUR entry (n-zik-desktop-compagnon) with your AUR helper.</string>
     <string name="update_check_off_build">App installed by an APK distributor should let its distributor update the app!</string>
     <string name="update_download_indeterminate">Downloaded %1$s (unknown size)</string>
     <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
     <string name="update_unknown">অজানা</string>
-
     <!-- Updates -->
     <string name="updates_action_check">আপডেট চেক করুন</string>
     <string name="updates_action_check_now">Check Now</string>
@@ -871,17 +794,13 @@
     <string name="updates_reinstalling_version_progress">Reinstalling: %1$s (%2$s)</string>
     <string name="updates_starting_status">Starting…</string>
     <string name="updates_up_to_date">Up to date</string>
-
     <!-- Validating -->
     <string name="validating">Pairing with your phone…</string>
-
     <!-- Visualizer -->
     <string name="visualizer_animation_bubbles">Bubbles</string>
     <string name="visualizer_bar">Visualizer bar</string>
     <string name="visualizer_microphone_permission_message">ভিজুয়ালাইজার ইফেক্টের জন্য মাইকের পার্মিশন দরকার, দয়াকরে দিন।</string>
     <string name="visualizer_title">ভিজ্যুয়ালাইজার</string>
-
     <!-- Window -->
     <string name="window">Window</string>
-
 </resources>
