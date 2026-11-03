@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <!-- About -->
     <string name="about_action_report_issue">Signaler un problème</string>
     <string name="about_action_view_source">Afficher le code source</string>
@@ -10,7 +9,6 @@
     <string name="about_github_link_description">Vous allez être redirigé vers GitHub.</string>
     <string name="about_title">À propos</string>
     <string name="about_translators_title">Traducteurs</string>
-
     <!-- Accessibility -->
     <string name="accessibility_app_icon">Icône de l\'application</string>
     <string name="accessibility_app_icon_in_player">icône de l\'application dans le lecteur</string>
@@ -20,17 +18,14 @@
     <string name="accessibility_number_of_songs_in_queue">Nombre de titres dans la file d\'attente</string>
     <string name="accessibility_origin_indicator">indicateur_origine</string>
     <string name="accessibility_song_album_cover">pochette d\'album</string>
-
     <!-- Album -->
     <string name="album_action_bookmark">Ajouter l\'album à vos favoris</string>
     <string name="album_action_open">Aller à l\'album</string>
     <string name="album_left_swipe">Balayage vers la gauche de l\'album</string>
     <string name="album_loading_song_count_format">Chargement de %1$d titres…</string>
     <string name="album_right_swipe">Balayage vers la droite de l\'album</string>
-
     <!-- App -->
     <string name="app_subtitle">Guide d\'accompagnement pour N-Zik</string>
-
     <!-- Artist -->
     <string name="artist_action_follow">Suivre</string>
     <string name="artist_action_play_local_songs">Écouter tous les titres stockés localement</string>
@@ -39,7 +34,6 @@
     <string name="artist_roundness">Polyvalence de l\'artiste</string>
     <string name="artist_songs_count_duration">%1$d titres • %2$s</string>
     <string name="artist_songs_unavailable_message">Aucun titre disponible</string>
-
     <!-- Audio -->
     <string name="audio_devices">Périphériques audio</string>
     <string name="audio_effects">Effets Audio</string>
@@ -51,7 +45,6 @@
     <string name="audio_quality_format_low">Bas</string>
     <string name="audio_reverb_none">Aucun</string>
     <string name="audio_waveform_action_refresh">Mettre à jour la forme d\'onde</string>
-
     <!-- Backup -->
     <string name="backup_action_export">Exporter la sauvegarde</string>
     <string name="backup_action_import_legacy_migration">Importer un fichier de migration.</string>
@@ -66,15 +59,12 @@
     <string name="backup_import_description">Importer une base de données ou des paramètres à partir d\'un fichier</string>
     <string name="backup_legacy_migration_description">Pour les anciens utilisateurs avant la conversion.\nUtilisez l\'ancienne application pour effectuer une sauvegarde en vue de la migration.</string>
     <string name="backup_target_database_label">Base de données</string>
-
     <!-- Bridge -->
     <string name="bridge_audio_output_pc_subtitle">Son sur PC (N-Zik Desktop Compagnon)</string>
     <string name="bridge_server">Serveur PC</string>
     <string name="bridge_server_description">Laissez N-Zik Desktop Compagnon gérer votre bibliothèque depuis un PC connecté au même réseau Wi-Fi</string>
-
     <!-- Cached -->
     <string name="cached_pc">Ordinateur en cache</string>
-
     <!-- Calendar -->
     <string name="calendar_period_one_month">1 Mois</string>
     <string name="calendar_period_one_week">1 Semaine</string>
@@ -82,15 +72,12 @@
     <string name="calendar_period_six_months">6 Mois</string>
     <string name="calendar_period_three_months">3 Mois</string>
     <string name="calendar_today">Aujourd\'hui</string>
-
     <!-- Cancel -->
     <string name="cancel">Annuler</string>
-
     <!-- Close -->
     <string name="close_behavior">Comportement de fermeture</string>
     <string name="close_behavior_minimize">Réduire dans la barre des tâches</string>
     <string name="close_behavior_quit">Quitter l\'application</string>
-
     <!-- Command -->
     <string name="command_clear">Vider la file d\'attente</string>
     <string name="command_copied">Commande copiée</string>
@@ -109,7 +96,6 @@
     <string name="command_shuffle">Aléatoire</string>
     <string name="command_speed">Vitesse</string>
     <string name="command_unknown">Une commande</string>
-
     <!-- Common -->
     <string name="common_action_clear">Effacer</string>
     <string name="common_action_confirm">Confirmer</string>
@@ -152,7 +138,6 @@
     <string name="common_translation_title">Traduction</string>
     <string name="common_validation_empty_value">La valeur ne peut pas être vide</string>
     <string name="common_validation_minimum_value">La valeur doit être supérieure à</string>
-
     <!-- Connection -->
     <string name="connection_connecting">Connexion en cours…</string>
     <string name="connection_kicked">Déconnecté du téléphone. L\'appairage est conservé.</string>
@@ -163,16 +148,12 @@
     <string name="connection_reconnecting_in">Connexion au téléphone perdue. Reconnexion dans %1$d s…</string>
     <string name="connection_replaced">Une autre fenêtre de cet ordinateur a pris le contrôle de la session.</string>
     <string name="connection_server_stopped">Le serveur s\'est arrêté. Redémarrez-le depuis l\'application N-Zik sur votre téléphone, puis reconnectez-vous.</string>
-
     <!-- Contributors -->
     <string name="contributors">Contributeurs</string>
-
     <!-- Dismiss -->
     <string name="dismiss">Ignorer</string>
-
     <!-- Download -->
     <string name="download_pc">Télécharger pour PC</string>
-
     <!-- Downloads -->
     <string name="downloads_action_download_all">Télécharger tous les titres</string>
     <string name="downloads_action_refresh_quality">Mise à jour des téléchargements</string>
@@ -183,7 +164,6 @@
     <string name="downloads_quality_format">Qualité du Téléchargement</string>
     <string name="downloads_refresh_quality_description">Téléchargez à nouveau les morceaux qui avaient été téléchargés dans une qualité différente</string>
     <string name="downloads_title">Télécharger</string>
-
     <!-- Error -->
     <string name="error_code_rejected">Code invalide ou périmé. Vérifiez le code sur votre téléphone et réessayez.</string>
     <string name="error_incompatible_version">Version mobile incompatible (abonnement %1$s). Mettez à jour N-Zik Desktop Compagnon ou N-Zik.</string>
@@ -196,29 +176,22 @@
     <string name="error_update_check_failed">La vérification des mises à jour a échoué (%1$s)</string>
     <string name="error_update_download_failed">Le téléchargement de la mise à jour a échoué (%1$s)</string>
     <string name="error_windows_install_helper">Le programme d\'installation Windows n\'a pas pu être lancé. Lancez manuellement le programme d\'installation que vous avez téléchargé.</string>
-
     <!-- Export -->
     <string name="export_cached_song_action">Exporter le titre mis en cache ou téléchargé</string>
     <string name="export_cached_songs_action">Exporter la mémoire cache</string>
-
     <!-- Fake -->
     <string name="fake_audio_bar">Ondes sonores</string>
-
     <!-- Forget -->
     <string name="forget_phone">Oublier ce téléphone</string>
     <string name="forget_phone_text">Supprime l\'appairage de cet ordinateur</string>
-
     <!-- Git -->
     <string name="git_title">GIT</string>
-
     <!-- Home -->
     <string name="home_tabs_settings">Page d\'accueil</string>
     <string name="home_tabs_settings_description">Réorganiser et afficher/masquer les onglets</string>
     <string name="home_title">Accueil</string>
-
     <!-- Import -->
     <string name="import_backup">Importer une sauvegarde</string>
-
     <!-- Install -->
     <string name="install_copy_command">Copier la commande</string>
     <string name="install_copy_path">Copier le chemin d\'accès</string>
@@ -230,14 +203,11 @@
     <string name="install_pkg_pacman_command">Mettez à jour le pack à l\'aide de la commande suivante :</string>
     <string name="install_replacement_portable">Quittez d\'abord l\'application (ses fichiers sont verrouillés tant qu\'elle est en cours d\'exécution), puis remplacez le dossier de l\'application : supprimez le dossier actuel de l\'application, décompressez le fichier téléchargé à la place (le fichier zip s\'ouvre dans un nouveau dossier d\'application — ne le placez jamais par-dessus le dossier actuel), puis relancez l\'application.</string>
     <string name="install_replacement_portable_linux">Quittez d\'abord l\'application (ses fichiers sont verrouillés tant qu\'elle est en cours d\'exécution), puis remplacez le dossier de l\'application : supprimez le dossier actuel de l\'application, décompressez le fichier .tar.gz téléchargé à la place (l\'archive se décompresse dans un nouveau dossier d\'application — elle ne remplace jamais le dossier actuel), puis relancez l\'application.</string>
-
     <!-- Interface -->
     <string name="interface_in_use">Interface en cours d\'utilisation</string>
-
     <!-- Lastfm -->
     <string name="lastfm_love">Aimer sur Last.fm</string>
     <string name="lastfm_unlove">Retirer des favoris sur Last.fm</string>
-
     <!-- Library -->
     <string name="library_action_bookmark">Ajouter aux favoris</string>
     <string name="library_action_randomize">Générateur aléatoire</string>
@@ -287,7 +257,6 @@
     <string name="library_sync_progress_format">%1$d / %2$d</string>
     <string name="library_tracks_failed">Les pistes n\'ont pas pu être lues : %1$s</string>
     <string name="library_youtube_playlists_label">YouTube / YouTube Music</string>
-
     <!-- Listen -->
     <string name="listen_together_auto_approval_joins">Approuver automatiquement les demandes d\'adhésion</string>
     <string name="listen_together_auto_approval_joins_description">Approuver automatiquement les demandes d\'adhésion sans les examiner manuellement</string>
@@ -314,7 +283,6 @@
     <string name="listen_together_username">Nom d’utilisateur</string>
     <string name="listen_together_view_logs">Afficher les journaux</string>
     <string name="listen_together_view_logs_description">Déboguer les événements et les messages liés à la connexion</string>
-
     <!-- Local -->
     <string name="local_playback_failed">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
     <string name="local_playback_invalid_url">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
@@ -324,17 +292,14 @@
     <string name="local_playback_unavailable_linux">Le son ne fonctionne pas sur cet ordinateur. Installez VLC à l\'aide de %1$s, puis redémarrez l\'application.</string>
     <string name="local_playback_unreachable">Votre téléphone n\'a pas répondu.</string>
     <string name="local_playback_upstream_failed">Votre téléphone n\'a pas pu télécharger ce morceau.</string>
-
     <!-- Logs -->
     <string name="logs_action_export">Exporter les journaux</string>
     <string name="logs_export_debug_description">Exporter le journal de débogage vers un fichier</string>
-
     <!-- Lyrics -->
     <string name="lyrics_alignment_left_label">À gauche</string>
     <string name="lyrics_alignment_right_label">À droite</string>
     <string name="lyrics_color">Couleur des paroles</string>
     <string name="lyrics_title">Paroles</string>
-
     <!-- Maintenance -->
     <string name="maintenance_card_desc">Aperçu de l\'état de l\'application : tests de démarrage réussis et sous-systèmes actifs</string>
     <string name="maintenance_convergence">Convergence des noms</string>
@@ -346,7 +311,6 @@
     <string name="maintenance_open">Ouvrir</string>
     <string name="maintenance_open_desc">Ouvrir la fiche d\'entretien complète</string>
     <string name="maintenance_title">Maintenance</string>
-
     <!-- Manual -->
     <string name="manual_code">Code d\'appariement</string>
     <string name="manual_code_invalid">Le code comporte 6 caractères, par exemple ABC-DEF.</string>
@@ -357,11 +321,9 @@
     <string name="manual_port_invalid">Entrez un numéro de port compris entre 1 et 65 535.</string>
     <string name="manual_submit">Appairer</string>
     <string name="manual_title">Appairage manuel</string>
-
     <!-- Message -->
     <string name="message_type">Style du message contextuel</string>
     <string name="message_type_modern">Moderne</string>
-
     <!-- Metadata -->
     <string name="metadata_action_change_artists">Mettre à jour les auteurs</string>
     <string name="metadata_action_change_cover">Mettre à jour la pochette</string>
@@ -372,10 +334,8 @@
     <string name="metadata_playlist_action_change_browse_id">Modifier l\'identifiant de navigation de la playlist</string>
     <string name="metadata_unknown_artist">Artiste inconnu</string>
     <string name="metadata_unknown_title">Titre inconnu</string>
-
     <!-- Miniplayer -->
     <string name="miniplayer_button_like">J\'aime</string>
-
     <!-- Navigation -->
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Bas flottant</string>
@@ -383,14 +343,11 @@
     <string name="navigation_position_top_label">En haut</string>
     <string name="navigation_style_icon_and_text_label">Texte et icône</string>
     <string name="navigation_style_icon_only_label">Icône uniquement</string>
-
     <!-- Network -->
     <string name="network_settings_description">La section « Réseau » contient des paramètres permettant d\'optimiser les performances de l\'application et l\'utilisation des données</string>
     <string name="network_status">État de la qualité</string>
-
     <!-- Not -->
     <string name="not_selectable">Non sélectionnable</string>
-
     <!-- Notice -->
     <string name="notice_failed">%1$s a échoué (HTTP %2$d, %3$s).</string>
     <string name="notice_late_error">%1$s a échoué sur le téléphone (%2$s, commande %3$s).</string>
@@ -403,10 +360,8 @@
     <string name="notice_truncated">%1$s : seuls %2$d titres sur %3$d ont été envoyés.</string>
     <string name="notice_unavailable">%1$s : le lecteur du téléphone n\'est pas disponible. Veuillez réessayer plus tard.</string>
     <string name="notice_unreachable">%1$s : le téléphone n\'a pas répondu.</string>
-
     <!-- Old -->
     <string name="old_install_path">Installation actuelle :</string>
-
     <!-- Pair -->
     <string name="pair_device_name">Nom de cet ordinateur</string>
     <string name="pair_device_name_invalid">Saisissez un nom comportant entre 1 et 64 caractères.</string>
@@ -421,7 +376,6 @@
     <string name="pair_qr_waiting">En attente de votre téléphone…</string>
     <string name="pair_show_qr">Afficher le QR code</string>
     <string name="pair_title">Appairez-le avec votre téléphone</string>
-
     <!-- Paired -->
     <string name="paired_as">Cet ordinateur apparaît sous le nom de %1$s sur le téléphone.</string>
     <string name="paired_checking">Vérification de la connexion…</string>
@@ -433,16 +387,12 @@
     <string name="paired_session_only">Aucun porte-clés n\'est disponible sur ce PC, l\'appairage est donc conservé uniquement en mémoire pour cette session : veuillez procéder à un nouvel appairage après un redémarrage.</string>
     <string name="paired_title">Appairé</string>
     <string name="paired_with">Associé à %1$s</string>
-
     <!-- Parental -->
     <string name="parental_control">Contrôle parental</string>
-
     <!-- Path -->
     <string name="path_copied">Chemin d\'accès copié</string>
-
     <!-- Phone -->
     <string name="phone_panel_title">Téléphone</string>
-
     <!-- Player -->
     <string name="player_action_bar">Barre d\'action du lecteur</string>
     <string name="player_action_bar_buttons">Visibilité des boutons</string>
@@ -559,7 +509,6 @@
     <string name="player_timeline_thin_bar_label">Barre fine</string>
     <string name="player_timeline_wavy_label">Ligne du temps ondulée</string>
     <string name="player_type">Type de lecteur</string>
-
     <!-- Playlist -->
     <string name="playlist_action_add">Ajouter à la playlist</string>
     <string name="playlist_action_create">Nouvelle playlist</string>
@@ -579,46 +528,35 @@
     <string name="playlist_right_swipe">Balayage vers la droite de la playlist</string>
     <string name="playlist_selection_action_deselect">Désélectionner</string>
     <string name="playlist_top">Playlist la plus écoutée</string>
-
     <!-- Profile -->
     <string name="profile_base_name">Fan de N-Zik</string>
     <string name="profile_title">Profils</string>
-
     <!-- Proxy -->
     <string name="proxy">Proxy</string>
-
     <!-- Queue -->
     <string name="queue_discover_description">Supprimer les titres de la file d\'attente s\'ils figurent dans les favoris ou dans des playlists</string>
     <string name="queue_discover_title">Découvrir</string>
-
     <!-- Radio -->
     <string name="radio_action_start">Lancer la radio</string>
-
     <!-- Recommendations -->
     <string name="recommendations_action_smart_shuffle">Recommandations Intelligentes</string>
     <string name="recommendations_minimum_playback_duration_label">Durée d\'écoute minimale</string>
     <string name="recommendations_title">Sélection Rapide</string>
-
     <!-- Reconnect -->
     <string name="reconnect">Se reconnecter</string>
-
     <!-- Recovery -->
     <string name="recovery_center">Centre de Secours</string>
-
     <!-- Request -->
     <string name="request_a_feature">Demander une fonctionnalité ou proposer une idée</string>
-
     <!-- Revoked -->
     <string name="revoked_description">Cet ordinateur a été supprimé de la liste des appareils appairés avec ce téléphone. Appairez-le à nouveau pour continuer à l\'utiliser.</string>
     <string name="revoked_pair_again">Re-appairer</string>
     <string name="revoked_title">Appairage annulé</string>
-
     <!-- Rewind -->
     <string name="rewind_filter_month">Mois</string>
     <string name="rewind_filter_year">Année</string>
     <string name="rewind_title">Rétrospective</string>
     <string name="rewind_top_sort">Meilleures Rétrospectives</string>
-
     <!-- Search -->
     <string name="search_display_order">Ordre d\'affichage des résultats de recherche en ligne</string>
     <string name="search_display_order_suggestions_first">Suggestions d\'abord</string>
@@ -627,7 +565,6 @@
     <string name="search_history_pause_description">Ne pas enregistrer de nouvelles recherches ainsi que l’historique</string>
     <string name="search_history_pause_label">Suspendre l’historique de recherche</string>
     <string name="search_title">Rechercher</string>
-
     <!-- Settings -->
     <string name="settings_about_page_description">La section « À propos » contient des informations sur l\'application, ses développeurs, le dépannage et les options de mise à jour.</string>
     <string name="settings_app_behavior_title">Comportement de l\'application</string>
@@ -778,49 +715,37 @@
     <string name="settings_title">Paramètres</string>
     <string name="settings_transition_fade">Fondu</string>
     <string name="settings_use_font_type">Utiliser la police</string>
-
     <!-- Song -->
     <string name="song_matching_action_open">Faire correspondre l\'album/la version audio</string>
     <string name="song_matching_unmatched_label">Titre sans correspondance</string>
     <string name="song_metadata_update_action_open">Ouvrir la boîte de dialogue de mise à jour</string>
-
     <!-- Sort -->
     <string name="sort_artist_and_album">Artiste, Album</string>
-
     <!-- Stable -->
     <string name="stable_title">STABLE</string>
-
     <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Illimité</string>
     <string name="statistics_title">Statistiques</string>
     <string name="statistics_top_period_title">Les %s meilleurs de…</string>
-
     <!-- Sync -->
     <string name="sync_action_sync">Synchronisation</string>
     <string name="sync_likes">Synchronisation automatique des morceaux aimés</string>
-
     <!-- Theme -->
     <string name="theme_palette_dynamic">Dynamique</string>
     <string name="theme_shake_sensitivity_disabled">Désactivé</string>
-
     <!-- This -->
     <string name="this_pc">Cet ordinateur</string>
-
     <!-- Thumbnail -->
     <string name="thumbnail_action_edit">Éditer la miniature</string>
     <string name="thumbnail_action_reset">Réinitialiser la miniature</string>
-
     <!-- Title -->
     <string name="title_backup_and_restore">Sauvegarde et Restauration</string>
-
     <!-- Tray -->
     <string name="tray_open">Ouvrir</string>
     <string name="tray_quit">Quitter</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
-
     <!-- Troubleshooting -->
     <string name="troubleshooting">Dépannage</string>
-
     <!-- Unreachable -->
     <string name="unreachable_description">%1$s n\'a pas répondu à %2$s. Son serveur est peut-être arrêté, ou son adresse IP a peut-être changé. L\'appairage est conservé.</string>
     <string name="unreachable_edit_ip">Modifier l\'adresse IP</string>
@@ -828,14 +753,12 @@
     <string name="unreachable_port_kept">Port %1$d (conservé)</string>
     <string name="unreachable_save_ip">Enregistrer et réessayer</string>
     <string name="unreachable_title">Téléphone injoignable</string>
-
     <!-- Update -->
     <string name="update_check_off_aur">Cette application a été installée à partir de l\'AUR : le système de mise à jour intégré est désactivé pour cette installation. Mettez à jour l\'entrée AUR (n-zik-desktop-compagnon) à l\'aide de votre outil de gestion de l\'AUR.</string>
     <string name="update_check_off_build">Si ce message s\'affiche, cela signifie que la mise à jour automatique n\'est pas activée pour votre version. Veuillez mettre à jour l\'application manuellement depuis GitHub.</string>
     <string name="update_download_indeterminate">%1$s téléchargé (taille inconnue)</string>
     <string name="update_download_truncated">Le téléchargement de la mise à jour a été interrompu. Le fichier partiel a été conservé — essayez de le télécharger à nouveau.</string>
     <string name="update_unknown">Inconnu</string>
-
     <!-- Updates -->
     <string name="updates_action_check">Vérifier les mises à jour</string>
     <string name="updates_action_check_now">Vérifiez dès maintenant</string>
@@ -871,17 +794,13 @@
     <string name="updates_reinstalling_version_progress">Réinstallation : %1$s (%2$s)</string>
     <string name="updates_starting_status">C\'est parti…</string>
     <string name="updates_up_to_date">À jour</string>
-
     <!-- Validating -->
     <string name="validating">Appairage avec votre téléphone…</string>
-
     <!-- Visualizer -->
     <string name="visualizer_animation_bubbles">Bulles</string>
     <string name="visualizer_bar">Barre de visualisation</string>
     <string name="visualizer_microphone_permission_message">L\'effet « Visualizer » nécessite l\'autorisation d\'accès au micro ; veuillez l\'accorder.</string>
     <string name="visualizer_title">Visualiseur</string>
-
     <!-- Window -->
     <string name="window">Fenêtre</string>
-
 </resources>
