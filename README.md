@@ -94,7 +94,7 @@ The app is released on **channels** (the phone's discipline, adapted): **stable*
 
 ## 📚 Wiki
 
-[![Ask DeepWiki](https://img.shields.io/badge/Ask-DeepWiki-8d5cff?style=for-the-badge)](https://deepwiki.com/N-Zik-Group/N-Zik-Desktop-Compagnon)
+[![Ask DeepWiki](https://img.shields.io/badge/Ask-DeepWiki-8d5cff?style=flat)](https://deepwiki.com/N-Zik-Group/N-Zik-Desktop-Compagnon)
 
 <br>
 
