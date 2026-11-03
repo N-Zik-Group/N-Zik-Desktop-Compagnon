@@ -39,8 +39,8 @@
 
 <div align="center">
   <img src="assets/stats/download-card.svg" alt="N-Zik Compagnon Stats" /><br>
-  <img src="assets/stats/chart.svg" alt="Download Growth" /><br>
-  <img src="assets/stats/star-chart.svg" alt="Star Growth" />
+  <img src="assets/stats/download-growth.svg" alt="Download Growth" /><br>
+  <img src="assets/stats/star-growth.svg" alt="Star Growth" />
 
   <br><br>
 
