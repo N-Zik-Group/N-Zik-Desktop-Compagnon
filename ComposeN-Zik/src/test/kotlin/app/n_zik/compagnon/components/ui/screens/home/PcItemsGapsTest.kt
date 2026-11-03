@@ -13,11 +13,7 @@ import app.n_zik.compagnon.components.showsPlaylistIndicator
 import app.n_zik.compagnon.components.tab.ItemSelector
 import app.n_zik.compagnon.core.network.BridgeClient
 import app.n_zik.compagnon.core.network.ServerAddress
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.checked_filled
-import app.n_zik.compagnon.generated.resources.item_deselect
-import app.n_zik.compagnon.generated.resources.item_select
-import app.n_zik.compagnon.generated.resources.unchecked_outline
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.Preferences
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -158,14 +154,14 @@ class PcItemsGapsTest {
         val selector = ItemSelector(mutableStateOf(false), menu)
         assertFalse(selector.isActive)
         assertEquals(Res.drawable.unchecked_outline, selector.iconId)
-        assertEquals(Res.string.item_select, selector.messageId)
+        assertEquals(Res.string.common_action_select, selector.messageId)
 
         selector.onShortClick()
 
         assertTrue(selector.isActive)
         assertFalse(menu.isDisplayed)
         assertEquals(Res.drawable.checked_filled, selector.iconId)
-        assertEquals(Res.string.item_deselect, selector.messageId)
+        assertEquals(Res.string.playlist_selection_action_deselect, selector.messageId)
 
         selector.onShortClick()
         assertFalse(selector.isActive)

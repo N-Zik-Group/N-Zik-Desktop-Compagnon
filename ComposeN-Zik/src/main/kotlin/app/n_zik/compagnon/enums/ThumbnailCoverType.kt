@@ -11,7 +11,7 @@ import org.jetbrains.compose.resources.StringResource
 enum class ThumbnailCoverType(
     val textId: StringResource,
 ) {
-    Vinyl(Res.string.cover_type_vinyl),
-    CD(Res.string.cover_type_cd),
-    CDwithCover(Res.string.cover_type_cd_with_cover);
+    Vinyl(Res.string.player_cover_style_vinyl),
+    CD(Res.string.player_cover_style_cd),
+    CDwithCover(Res.string.player_cover_style_cd_with_cover);
 }

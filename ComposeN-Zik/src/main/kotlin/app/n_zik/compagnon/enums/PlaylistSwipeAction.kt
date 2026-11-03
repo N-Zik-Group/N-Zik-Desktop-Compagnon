@@ -19,15 +19,15 @@ enum class PlaylistSwipeAction(
     val iconId: DrawableResource,
     val textId: StringResource,
 ) {
-    NoAction(Res.drawable.close, Res.string.none),
+    NoAction(Res.drawable.close, Res.string.common_option_none),
 
-    PlayNext(Res.drawable.play_skip_forward, Res.string.play_next),
+    PlayNext(Res.drawable.play_skip_forward, Res.string.player_action_play_next),
 
-    Download(Res.drawable.download, Res.string.download),
+    Download(Res.drawable.download, Res.string.downloads_title),
 
-    Favourite(Res.drawable.heart_outline, Res.string.favorites),
+    Favourite(Res.drawable.heart_outline, Res.string.library_favorites_title),
 
-    Enqueue(Res.drawable.enqueue, Res.string.enqueue);
+    Enqueue(Res.drawable.enqueue, Res.string.player_action_enqueue);
 
     /** The phone's `getStateIcon`, mapped on the PC's track like and download state. */
     fun getStateIcon(track: Track): DrawableResource? = when (this) {

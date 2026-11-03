@@ -1,22 +1,5 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.components.settings.OtherSettingsEntry
-import app.n_zik.compagnon.components.settings.SettingsDescription
-import app.n_zik.compagnon.components.settings.SettingsSectionCard
-import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
-import app.n_zik.compagnon.components.tab.Search
-import app.n_zik.compagnon.components.themed.HeaderWithIcon
-import app.n_zik.compagnon.components.themed.ValueSelectorDialog
-import app.n_zik.compagnon.enums.AlbumSwipeAction
-import app.n_zik.compagnon.enums.HomeScreenTabs
-import app.n_zik.compagnon.enums.NavigationBarPosition
-import app.n_zik.compagnon.enums.NavigationBarType
-import app.n_zik.compagnon.enums.PlaylistSwipeAction
-import app.n_zik.compagnon.enums.QueueSwipeAction
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.utils.Preferences
-import app.n_zik.compagnon.utils.Toaster
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -37,6 +20,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.settings.OtherSettingsEntry
+import app.n_zik.compagnon.components.settings.SettingsDescription
+import app.n_zik.compagnon.components.settings.SettingsSectionCard
+import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
+import app.n_zik.compagnon.components.tab.Search
+import app.n_zik.compagnon.components.themed.HeaderWithIcon
+import app.n_zik.compagnon.components.themed.ValueSelectorDialog
+import app.n_zik.compagnon.enums.AlbumSwipeAction
+import app.n_zik.compagnon.enums.HomeScreenTabs
+import app.n_zik.compagnon.enums.NavigationBarPosition
+import app.n_zik.compagnon.enums.NavigationBarType
+import app.n_zik.compagnon.enums.PlaylistSwipeAction
+import app.n_zik.compagnon.enums.QueueSwipeAction
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.utils.Toaster
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -125,69 +125,69 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
     // The cards' search ctx (spec §B): the card's title + its rendered entries' titles
     val themeCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.theme),
+        stringResource(Res.string.common_color_source_theme),
         stringResource(Res.string.interface_in_use),
-        stringResource(Res.string.theme_mode),
+        stringResource(Res.string.settings_theme_mode_label),
     )
     val userInterfaceCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.user_interface),
-        stringResource(Res.string.navigation_bar_position),
-        stringResource(Res.string.navigation_bar_type),
+        stringResource(Res.string.settings_interface_title),
+        stringResource(Res.string.settings_navigation_position_label),
+        stringResource(Res.string.settings_navigation_style_label),
         stringResource(Res.string.player_position),
-        stringResource(Res.string.menu_style),
+        stringResource(Res.string.settings_menu_style_label),
         stringResource(Res.string.message_type),
-        stringResource(Res.string.default_page),
+        stringResource(Res.string.settings_home_default_page_label),
         stringResource(Res.string.home_tabs_settings),
-        stringResource(Res.string.transition_effect),
-        stringResource(Res.string.disable_navigation_back_stack),
+        stringResource(Res.string.settings_navigation_transition_effect_label),
+        stringResource(Res.string.settings_navigation_back_to_home_label),
         stringResource(Res.string.search_display_order),
-        stringResource(Res.string.show_floating_icon),
-        stringResource(Res.string.remember_queue_scroll_position),
+        stringResource(Res.string.settings_search_floating_button_visible_label),
+        stringResource(Res.string.settings_player_queue_remember_scroll_label),
     )
     val fontCtx = settingsSearchCtx(
         search.inputValue,
         stringResource(Res.string.settings_use_font_type),
-        stringResource(Res.string.use_system_font),
-        stringResource(Res.string.apply_font_padding),
+        stringResource(Res.string.settings_font_use_system_label),
+        stringResource(Res.string.settings_font_include_padding_label),
     )
     val swipeCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.swipe_to_action),
-        stringResource(Res.string.queue_and_local_playlists_left_swipe),
+        stringResource(Res.string.settings_swipe_actions_title),
+        stringResource(Res.string.settings_library_queue_playlist_swipe_left_label),
         stringResource(Res.string.playlist_left_swipe),
         stringResource(Res.string.playlist_right_swipe),
         stringResource(Res.string.album_left_swipe),
         stringResource(Res.string.album_right_swipe),
-        stringResource(Res.string.queue_and_local_playlists_right_swipe),
+        stringResource(Res.string.settings_library_queue_playlist_swipe_right_label),
     )
     val homePageCtx = settingsSearchCtx(
         search.inputValue,
         stringResource(Res.string.home_tabs_settings),
-        stringResource(Res.string.quick_picks),
-        stringResource(Res.string.songs),
-        stringResource(Res.string.artists),
-        stringResource(Res.string.albums),
-        stringResource(Res.string.playlists),
+        stringResource(Res.string.recommendations_title),
+        stringResource(Res.string.library_songs_title),
+        stringResource(Res.string.library_artists_title),
+        stringResource(Res.string.library_albums_title),
+        stringResource(Res.string.library_playlists_title),
     )
     val sortMenuCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.sort_menu),
-        stringResource(Res.string.songs),
-        stringResource(Res.string.artists),
-        stringResource(Res.string.albums),
-        stringResource(Res.string.playlists),
-        stringResource(Res.string.local_playlist_sort),
-        stringResource(Res.string.history),
+        stringResource(Res.string.library_sort_menu),
+        stringResource(Res.string.library_songs_title),
+        stringResource(Res.string.library_artists_title),
+        stringResource(Res.string.library_albums_title),
+        stringResource(Res.string.library_playlists_title),
+        stringResource(Res.string.settings_local_playlist_title),
+        stringResource(Res.string.library_history_title),
     )
     val toolbarCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.toolbar),
-        stringResource(Res.string.songs),
-        stringResource(Res.string.artists),
-        stringResource(Res.string.albums),
-        stringResource(Res.string.playlists),
-        stringResource(Res.string.local_playlist_sort),
+        stringResource(Res.string.settings_library_toolbar_title),
+        stringResource(Res.string.library_songs_title),
+        stringResource(Res.string.library_artists_title),
+        stringResource(Res.string.library_albums_title),
+        stringResource(Res.string.library_playlists_title),
+        stringResource(Res.string.settings_local_playlist_title),
     )
     val settingsResetCtx = settingsSearchCtx(search.inputValue, stringResource(Res.string.settings_reset))
 
@@ -199,7 +199,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
             .verticalScroll(rememberScrollState()),
     ) {
         HeaderWithIcon(
-            title = stringResource(Res.string.user_interface),
+            title = stringResource(Res.string.settings_interface_title),
             iconId = Res.drawable.ui,
             enabled = false,
             showIcon = true,
@@ -208,7 +208,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
         )
 
         SettingsDescription(
-            text = stringResource(Res.string.ui_settings_description),
+            text = stringResource(Res.string.settings_interface_page_description),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
@@ -223,7 +223,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
             enter = fadeIn(animationSpec = tween(600)) + scaleIn(animationSpec = tween(600), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.theme),
+                title = stringResource(Res.string.common_color_source_theme),
                 icon = Res.drawable.color_palette,
                 content = {
                     // "Interface in use" (UIS:754, the phone's `UiTypeKey`, RiMusic) — INERT: the PC is
@@ -244,8 +244,8 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                     // the phone's default is shown, no dialog, a click has no effect; no description →
                     // no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.theme),
-                        text = stringResource(Res.string.dynamic),
+                        title = stringResource(Res.string.common_color_source_theme),
+                        text = stringResource(Res.string.theme_palette_dynamic),
                         icon = Res.drawable.color_palette,
                         onClick = {},
                     )
@@ -272,8 +272,8 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // description → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.theme_mode),
-                        text = stringResource(Res.string.dark),
+                        title = stringResource(Res.string.settings_theme_mode_label),
+                        text = stringResource(Res.string.settings_theme_dark_mode_label),
                         icon = Res.drawable.sparkles,
                         onClick = {},
                     )
@@ -287,7 +287,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
             enter = fadeIn(animationSpec = tween(700)) + scaleIn(animationSpec = tween(700), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.user_interface),
+                title = stringResource(Res.string.settings_interface_title),
                 icon = Res.drawable.ui,
                 content = {
                     // "Navigation bar position" (UIS:1118) — WIRED to the PC's `navigationBarPosition`
@@ -295,7 +295,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // "Others" card (the old Autres tab), re-ported with its value-selector dialog
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.navigation_bar_position),
+                        title = stringResource(Res.string.settings_navigation_position_label),
                         text = stringResource(navigationBarPosition.textId),
                         icon = Res.drawable.locate,
                         onClick = { showNavPosDialog = true },
@@ -304,7 +304,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                     // "Navigation bar style" (UIS:1138) — WIRED to the PC's `navigationBarType` (the
                     // phone's `NavigationBarType`, 2 values): MOVED from the old Autres tab, idem
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.navigation_bar_type),
+                        title = stringResource(Res.string.settings_navigation_style_label),
                         text = stringResource(navigationBarType.textId),
                         icon = Res.drawable.burger,
                         onClick = { showNavTypeDialog = true },
@@ -316,7 +316,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                     // description → no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.player_position),
-                        text = stringResource(Res.string.position_bottom),
+                        text = stringResource(Res.string.player_position_bottom_label),
                         icon = Res.drawable.position,
                         onClick = {},
                     )
@@ -324,8 +324,8 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                     // "Menu style" (UIS:1178, the phone's `menuStyleKey`, List) — INERT: the phone's
                     // default (List) shown, no dialog, a click has no effect; no description → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.menu_style),
-                        text = stringResource(Res.string.style_list),
+                        title = stringResource(Res.string.settings_menu_style_label),
+                        text = stringResource(Res.string.library_layout_list_label),
                         icon = Res.drawable.reorder,
                         onClick = {},
                     )
@@ -347,7 +347,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                     // the value list: `HomeScreenTabs.Default` + the four visible tabs (the phone's
                     // Quick Picks and Search tabs are absent on the PC, so not offered)
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.default_page),
+                        title = stringResource(Res.string.settings_home_default_page_label),
                         text = stringResource(indexNavigationTab.textId),
                         icon = Res.drawable.star_brilliant,
                         onClick = { showStartTabDialog = true },
@@ -373,8 +373,8 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.transition_effect),
-                        text = stringResource(Res.string.te_fade),
+                        title = stringResource(Res.string.settings_navigation_transition_effect_label),
+                        text = stringResource(Res.string.settings_transition_fade),
                         icon = Res.drawable.images_sharp,
                         onClick = {},
                     )
@@ -384,13 +384,13 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // click toasts the phone's description
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.disable_navigation_back_stack),
-                        text = stringResource(Res.string.disable_navigation_back_stack_description),
+                        title = stringResource(Res.string.settings_navigation_back_to_home_label),
+                        text = stringResource(Res.string.settings_navigation_back_to_home_description),
                         icon = Res.drawable.chevron_back,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.disable_navigation_back_stack_description) },
+                        onLongClick = { Toaster.i(Res.string.settings_navigation_back_to_home_description) },
                     )
 
                     // "Online search display order" (UIS:1277, the phone's `searchDisplayOrderKey`,
@@ -418,7 +418,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // row shows no description → no toast
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.show_floating_icon),
+                        title = stringResource(Res.string.settings_search_floating_button_visible_label),
                         text = "",
                         icon = Res.drawable.maximize,
                         isChecked = settings.showFloatingIcon,
@@ -432,13 +432,13 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // state, a click has no effect, a long click toasts the phone's description
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.remember_queue_scroll_position),
-                        text = stringResource(Res.string.remember_queue_scroll_position_description),
+                        title = stringResource(Res.string.settings_player_queue_remember_scroll_label),
+                        text = stringResource(Res.string.settings_player_queue_remember_scroll_description),
                         icon = Res.drawable.reorder,
                         isChecked = true,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.remember_queue_scroll_position_description) },
+                        onLongClick = { Toaster.i(Res.string.settings_player_queue_remember_scroll_description) },
                     )
                 },
             )
@@ -469,13 +469,13 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // phone's description
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.use_system_font),
-                        text = stringResource(Res.string.use_font_by_the_system),
+                        title = stringResource(Res.string.settings_font_use_system_label),
+                        text = stringResource(Res.string.settings_font_use_system_description),
                         icon = Res.drawable.settings,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.use_font_by_the_system) },
+                        onLongClick = { Toaster.i(Res.string.settings_font_use_system_description) },
                     )
 
                     // "Apply font padding" (UIS:1392, the phone's `applyFontPadding`, off by default) —
@@ -483,13 +483,13 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // phone's description
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.apply_font_padding),
-                        text = stringResource(Res.string.add_spacing_around_texts),
+                        title = stringResource(Res.string.settings_font_include_padding_label),
+                        text = stringResource(Res.string.settings_font_include_padding_description),
                         icon = Res.drawable.resize,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.add_spacing_around_texts) },
+                        onLongClick = { Toaster.i(Res.string.settings_font_include_padding_description) },
                     )
 
                     /** NOT RENDERED ⛔ (spec §B): the phone's "Hide status bar" (UIS:1402, `hideStatusBar`, off) — the Android status bar; there is no equivalent on the PC. */
@@ -503,7 +503,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
             enter = fadeIn(animationSpec = tween(900)) + scaleIn(animationSpec = tween(900), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.swipe_to_action),
+                title = stringResource(Res.string.settings_swipe_actions_title),
                 icon = Res.drawable.arrow_forward,
                 content = {
                     // "Swipe for action" (UIS:1427) — WIRED to the PC's `isSwipeToActionEnabled`:
@@ -511,8 +511,8 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // sub-entries
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.swipe_to_action),
-                        text = stringResource(Res.string.activate_the_action_menu_by_swiping_the_song_left_or_right),
+                        title = stringResource(Res.string.settings_swipe_actions_title),
+                        text = stringResource(Res.string.settings_swipe_actions_description),
                         icon = Res.drawable.arrow_forward,
                         isChecked = settings.isSwipeToActionEnabled,
                         onCheckedChange = {
@@ -530,7 +530,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                             // "Queue and Local Playlists Left Swipe" (UIS:1440, the PC key
                             // `queueSwipeLeftAction`, 6 values)
                             OtherSettingsEntry(
-                                title = stringResource(Res.string.queue_and_local_playlists_left_swipe),
+                                title = stringResource(Res.string.settings_library_queue_playlist_swipe_left_label),
                                 text = stringResource(settings.queueSwipeLeftActionValue.textId),
                                 icon = Res.drawable.arrow_left,
                                 onClick = { showQSLeftDialog = true },
@@ -574,7 +574,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                             // "Queue and Local Playlists Right Swipe" (UIS:1540, the PC key
                             // `queueSwipeRightAction`, 6 values)
                             OtherSettingsEntry(
-                                title = stringResource(Res.string.queue_and_local_playlists_right_swipe),
+                                title = stringResource(Res.string.settings_library_queue_playlist_swipe_right_label),
                                 text = stringResource(settings.queueSwipeRightActionValue.textId),
                                 icon = Res.drawable.arrow_right,
                                 onClick = { showQSRightDialog = true },
@@ -602,39 +602,39 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // effect, a long click toasts the phone's description
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.quick_picks),
-                        text = stringResource(Res.string.library_visibility_description),
+                        title = stringResource(Res.string.recommendations_title),
+                        text = stringResource(Res.string.settings_library_sections_visibility_description),
                         icon = Res.drawable.sparkles,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.library_visibility_description) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_sections_visibility_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.songs),
-                        text = stringResource(Res.string.library_visibility_description),
+                        title = stringResource(Res.string.library_songs_title),
+                        text = stringResource(Res.string.settings_library_sections_visibility_description),
                         icon = Res.drawable.musical_notes,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.library_visibility_description) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_sections_visibility_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.artists),
-                        text = stringResource(Res.string.library_visibility_description),
+                        title = stringResource(Res.string.library_artists_title),
+                        text = stringResource(Res.string.settings_library_sections_visibility_description),
                         icon = Res.drawable.people,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.library_visibility_description) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_sections_visibility_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.albums),
-                        text = stringResource(Res.string.library_visibility_description),
+                        title = stringResource(Res.string.library_albums_title),
+                        text = stringResource(Res.string.settings_library_sections_visibility_description),
                         icon = Res.drawable.album,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.library_visibility_description) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_sections_visibility_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.playlists),
-                        text = stringResource(Res.string.library_visibility_description),
+                        title = stringResource(Res.string.library_playlists_title),
+                        text = stringResource(Res.string.settings_library_sections_visibility_description),
                         icon = Res.drawable.library,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.library_visibility_description) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_sections_visibility_description) },
                     )
                 },
             )
@@ -649,7 +649,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
             enter = fadeIn(animationSpec = tween(1000)) + scaleIn(animationSpec = tween(1000), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.sort_menu),
+                title = stringResource(Res.string.library_sort_menu),
                 icon = Res.drawable.arrow_up,
                 content = {
                     // The phone's 6 sort dialogs (UIS:1641 / 1649 / 1657 / 1665 / 1673 / 1681, the
@@ -661,46 +661,46 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
                     // phone-side: INERT, a click has no effect, a long click toasts the phone's
                     // description
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.songs),
-                        text = stringResource(Res.string.customize_sort_options),
+                        title = stringResource(Res.string.library_songs_title),
+                        text = stringResource(Res.string.settings_library_sort_options_description),
                         icon = Res.drawable.musical_notes,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.customize_sort_options) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_sort_options_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.artists),
-                        text = stringResource(Res.string.customize_sort_options),
+                        title = stringResource(Res.string.library_artists_title),
+                        text = stringResource(Res.string.settings_library_sort_options_description),
                         icon = Res.drawable.people,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.customize_sort_options) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_sort_options_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.albums),
-                        text = stringResource(Res.string.customize_sort_options),
+                        title = stringResource(Res.string.library_albums_title),
+                        text = stringResource(Res.string.settings_library_sort_options_description),
                         icon = Res.drawable.album,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.customize_sort_options) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_sort_options_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.playlists),
-                        text = stringResource(Res.string.customize_sort_options),
+                        title = stringResource(Res.string.library_playlists_title),
+                        text = stringResource(Res.string.settings_library_sort_options_description),
                         icon = Res.drawable.library,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.customize_sort_options) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_sort_options_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.local_playlist_sort),
-                        text = stringResource(Res.string.customize_sort_options),
+                        title = stringResource(Res.string.settings_local_playlist_title),
+                        text = stringResource(Res.string.settings_library_sort_options_description),
                         icon = Res.drawable.playlist,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.customize_sort_options) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_sort_options_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.history),
-                        text = stringResource(Res.string.customize_sort_options),
+                        title = stringResource(Res.string.library_history_title),
+                        text = stringResource(Res.string.settings_library_sort_options_description),
                         icon = Res.drawable.time,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.customize_sort_options) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_sort_options_description) },
                     )
                 },
             )
@@ -712,7 +712,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
             enter = fadeIn(animationSpec = tween(1000)) + scaleIn(animationSpec = tween(1000), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.toolbar),
+                title = stringResource(Res.string.settings_library_toolbar_title),
                 icon = Res.drawable.ellipsis_horizontal,
                 content = {
                     // The phone's 5 toolbar dialogs (UIS:1708 / 1716 / 1724 / 1732 / 1740, the
@@ -723,39 +723,39 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
                     // no effect, a long click toasts the phone's description
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.songs),
-                        text = stringResource(Res.string.customize_toolbar),
+                        title = stringResource(Res.string.library_songs_title),
+                        text = stringResource(Res.string.settings_library_toolbar_customization_description),
                         icon = Res.drawable.musical_notes,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.customize_toolbar) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_toolbar_customization_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.artists),
-                        text = stringResource(Res.string.customize_toolbar),
+                        title = stringResource(Res.string.library_artists_title),
+                        text = stringResource(Res.string.settings_library_toolbar_customization_description),
                         icon = Res.drawable.people,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.customize_toolbar) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_toolbar_customization_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.albums),
-                        text = stringResource(Res.string.customize_toolbar),
+                        title = stringResource(Res.string.library_albums_title),
+                        text = stringResource(Res.string.settings_library_toolbar_customization_description),
                         icon = Res.drawable.album,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.customize_toolbar) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_toolbar_customization_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.playlists),
-                        text = stringResource(Res.string.customize_toolbar),
+                        title = stringResource(Res.string.library_playlists_title),
+                        text = stringResource(Res.string.settings_library_toolbar_customization_description),
                         icon = Res.drawable.library,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.customize_toolbar) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_toolbar_customization_description) },
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.local_playlist_sort),
-                        text = stringResource(Res.string.customize_toolbar),
+                        title = stringResource(Res.string.settings_local_playlist_title),
+                        text = stringResource(Res.string.settings_library_toolbar_customization_description),
                         icon = Res.drawable.playlist,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.customize_toolbar) },
+                        onLongClick = { Toaster.i(Res.string.settings_library_toolbar_customization_description) },
                     )
                 },
             )
@@ -789,7 +789,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
         if (showNavPosDialog) {
             ValueSelectorDialog(
-                title = stringResource(Res.string.navigation_bar_position),
+                title = stringResource(Res.string.settings_navigation_position_label),
                 values = NavigationBarPosition.entries.toList(),
                 selectedValue = navigationBarPosition,
                 onValueSelected = {
@@ -803,7 +803,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
         if (showNavTypeDialog) {
             ValueSelectorDialog(
-                title = stringResource(Res.string.navigation_bar_type),
+                title = stringResource(Res.string.settings_navigation_style_label),
                 values = NavigationBarType.entries.toList(),
                 selectedValue = navigationBarType,
                 onValueSelected = {
@@ -817,7 +817,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
         if (showStartTabDialog) {
             ValueSelectorDialog(
-                title = stringResource(Res.string.default_page),
+                title = stringResource(Res.string.settings_home_default_page_label),
                 // Default plus the four visible tabs (the phone's Quick Picks and Search tabs are
                 // absent on the PC, so not offered — spec `spec-fill-pc-ui-gaps-settings` §B, the
 
@@ -835,7 +835,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
         if (showQSLeftDialog) {
             ValueSelectorDialog(
-                title = stringResource(Res.string.queue_and_local_playlists_left_swipe),
+                title = stringResource(Res.string.settings_library_queue_playlist_swipe_left_label),
                 values = QueueSwipeAction.entries.toList(),
                 selectedValue = settings.queueSwipeLeftActionValue,
                 onValueSelected = {
@@ -905,7 +905,7 @@ fun UiSettingsScreen(preferences: Preferences, query: String, onQuery: (String) 
 
         if (showQSRightDialog) {
             ValueSelectorDialog(
-                title = stringResource(Res.string.queue_and_local_playlists_right_swipe),
+                title = stringResource(Res.string.settings_library_queue_playlist_swipe_right_label),
                 values = QueueSwipeAction.entries.toList(),
                 selectedValue = settings.queueSwipeRightActionValue,
                 onValueSelected = {

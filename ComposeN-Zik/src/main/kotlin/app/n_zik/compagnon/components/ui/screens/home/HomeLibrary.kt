@@ -8,8 +8,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
@@ -56,6 +56,7 @@ import app.n_zik.compagnon.bridge.library.RewindState
 import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.Track
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.ButtonsRow
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.Sort
@@ -77,17 +78,16 @@ import app.n_zik.compagnon.components.tab.TabHeader
 import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
-import app.n_zik.compagnon.components.tab.toolbar.NoRouteConfirmButton
 import app.n_zik.compagnon.components.tab.toolbar.InertSort
-import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.tab.toolbar.NoRouteConfirmButton
 import app.n_zik.compagnon.components.theme.onOverlay
 import app.n_zik.compagnon.components.theme.overlay
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
 import app.n_zik.compagnon.components.themed.HeaderInfo
 import app.n_zik.compagnon.components.themed.MultiFloatingActionsContainer
-import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.thumbnailShape
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
@@ -256,7 +256,7 @@ fun HomeLibrary(
     // The phone's "delete playlists" (its `HomeLibrary.kt` 367-375, 609-631): its confirmation of the shown
     // playlists, no help on a right click — NOT LINKED, Confirm only closes it (no contract route)
     val deletePlaylists = NoRouteConfirmButton(
-        Res.drawable.trash, Res.string.delete_playlists_label, null, Res.string.delete_playlists_confirm_all,
+        Res.drawable.trash, Res.string.playlist_action_delete_selected, null, Res.string.playlist_delete_all_confirmation_count_format,
         // The phone counts its shown playlists (`itemsOnDisplay`): the list's whole total here
         dialogTextArg = state.total ?: state.items.distinctBy { it.id }.size,
     )
@@ -298,13 +298,13 @@ fun HomeLibrary(
                 // contract route — spec `spec-fill-pc-ui-gaps-menus` #45, renegotiated: not shown)
                 "sync" -> {
                 }
-                "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
+                "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.player_action_shuffle, descriptionId = Res.string.player_action_shuffle_hint))
                 "item_selector" -> add(itemSelector)
-                "play_next" -> add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
-                "enqueue" -> add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
-                "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
-                "import_menu" -> add(InertButton(Res.drawable.import_outline, Res.string.import_playlist))
-                "export_dialog" -> add(InertButton(Res.drawable.export_outline, Res.string.export_playlist))
+                "play_next" -> add(InertButton(Res.drawable.play_skip_forward, Res.string.player_action_play_next))
+                "enqueue" -> add(InertButton(Res.drawable.enqueue, Res.string.player_action_enqueue))
+                "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.playlist_action_add))
+                "import_menu" -> add(InertButton(Res.drawable.import_outline, Res.string.playlist_action_import))
+                "export_dialog" -> add(InertButton(Res.drawable.export_outline, Res.string.playlist_action_export))
                 "delete_playlists" -> add(deletePlaylists)
                 "item_size" -> add(
                     ItemSize.init(itemSize) { size ->
@@ -352,7 +352,7 @@ fun HomeLibrary(
                     Column {
                         Column {
                             CollapsibleTitleRow(titleOffsetState, titleHeightState) {
-                                TabHeader(stringResource(Res.string.playlists)) {
+                                TabHeader(stringResource(Res.string.library_playlists_title)) {
                                     // The phone's `items.size` (`HomeLibrary.kt` 606): every playlist, whatever the chip
                                     HeaderInfo((allPlaylistsCount ?: state.total ?: state.items.size).toString(), Res.drawable.playlist)
                                 }
@@ -387,7 +387,7 @@ fun HomeLibrary(
                             // creation toggles are on (its `rowVisible`)
                             val rewindFilterMonthLabel = stringResource(Res.string.rewind_filter_month)
                             val rewindFilterYearLabel = stringResource(Res.string.rewind_filter_year)
-                            val rewindFilterAllLabel = stringResource(Res.string.all)
+                            val rewindFilterAllLabel = stringResource(Res.string.common_option_all)
                             AnimatedVisibility(
                                 visible = chip == PlaylistsChip.Rewind && rewindState?.rowVisible == true,
                                 enter = fadeIn(animationSpec = tween(200)) + expandVertically(animationSpec = tween(200)),
@@ -421,7 +421,7 @@ fun HomeLibrary(
                                         ),
                                         onClick = {
                                             menuState.display {
-                                                ListMenu.Menu(title = stringResource(Res.string.filter_by)) {
+                                                ListMenu.Menu(title = stringResource(Res.string.library_filter_by_title)) {
                                                     ListMenu.Entry(
                                                         text = rewindFilterMonthLabel,
                                                         icon = { RewindFilterIcon(Res.drawable.stat_month) },
@@ -534,7 +534,7 @@ fun HomeLibrary(
                                             detectDragGesturesAfterLongPress(
                                                 onDrag = { change, _ -> change.consume() },
                                                 // One toast per inert drag gesture: the order is the phone's, never written here
-                                                onDragEnd = { Toaster.i(Res.string.info_lock_unlock_reorder_songs) },
+                                                onDragEnd = { Toaster.i(Res.string.playlist_reorder_lock_toggle_label) },
                                             )
                                         },
                                     contentAlignment = Alignment.Center,
@@ -554,7 +554,7 @@ fun HomeLibrary(
                 }
 
                 if (!state.loading && state.error == null && state.items.isEmpty() && state.total != null) {
-                    NoItems(stringResource(Res.string.no_items))
+                    NoItems(stringResource(Res.string.common_empty_items))
                 }
             }
         }
@@ -602,10 +602,10 @@ private fun playlistSortOverlay(sort: PlaylistSort, preview: Playlist) {
 
 /** The phone's `PlaylistsType` label of the [chip]. */
 private fun chipLabel(chip: PlaylistsChip): StringResource = when (chip) {
-    PlaylistsChip.All -> Res.string.all
-    PlaylistsChip.Pinned -> Res.string.pinned_playlists
-    PlaylistsChip.Rewind -> Res.string.rewind
-    PlaylistsChip.Youtube -> Res.string.yt_playlists
+    PlaylistsChip.All -> Res.string.common_option_all
+    PlaylistsChip.Pinned -> Res.string.playlist_pinned_title
+    PlaylistsChip.Rewind -> Res.string.rewind_title
+    PlaylistsChip.Youtube -> Res.string.library_youtube_playlists_label
 }
 
 /** The phone's default order of its Playlists toolbar (`HomeLibraryToolbarSettingsDialog.allButtonIds`). */

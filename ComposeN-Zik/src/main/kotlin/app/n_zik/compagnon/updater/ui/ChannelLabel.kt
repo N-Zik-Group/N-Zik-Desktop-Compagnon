@@ -42,10 +42,10 @@ internal fun channelLabelOf(title: String): String = title.uppercase(Locale.ROOT
  * (the page renders no prefix, the dialog never renders one for a non-updater channel).
  */
 internal fun channelTitleRes(channel: String): StringResource? = when (channel) {
-    "beta" -> Res.string.beta_title
+    "beta" -> Res.string.updates_build_beta_label
     "stable" -> Res.string.stable_title
-    "dev" -> Res.string.dev_title
+    "dev" -> Res.string.updates_build_dev_label
     "git" -> Res.string.git_title
-    "debug" -> Res.string.debug_title
+    "debug" -> Res.string.updates_build_debug_label
     else -> null
 }

@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,13 +31,13 @@ import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.ui.sliders.SliderControl
 import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.utils.LocalPreferences
-import app.n_zik.compagnon.utils.UserSettings
-import kotlinx.coroutines.flow.MutableStateFlow
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
+import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.semiBold
 import kotlin.math.round
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -86,14 +86,14 @@ class PlaybackSettingsMenu private constructor(
         var draggedVolume by remember { mutableStateOf<Float?>(null) }
         val playbackVolume = draggedVolume ?: settings?.playbackVolume ?: 1f
 
-        ListMenu.Menu(title = stringResource(Res.string.controls_header_customize)) {
+        ListMenu.Menu(title = stringResource(Res.string.player_controls_action_customize)) {
             // Section: Playback
-            SectionTitle(stringResource(Res.string.playback))
+            SectionTitle(stringResource(Res.string.common_playback_section_title))
 
             // Speed
             ListSliderMenuItem(
                 icon = Res.drawable.slow_motion,
-                title = stringResource(Res.string.controls_title_playback_speed),
+                title = stringResource(Res.string.player_controls_speed_title),
                 value = playbackSpeed,
                 onValueChange = {
                     val rounded = round(it * 10f) / 10f
@@ -118,7 +118,7 @@ class PlaybackSettingsMenu private constructor(
             var pitch by remember { mutableStateOf(1f) }
             ListSliderMenuItem(
                 icon = Res.drawable.equalizer,
-                title = stringResource(Res.string.controls_title_playback_pitch),
+                title = stringResource(Res.string.player_controls_pitch_title),
                 value = pitch,
                 onValueChange = { pitch = round(it * 10f) / 10f },
                 valueRange = 0.1f..5f,
@@ -134,7 +134,7 @@ class PlaybackSettingsMenu private constructor(
             var medley by remember { mutableStateOf(0f) }
             ListSliderMenuItem(
                 icon = Res.drawable.playbackduration,
-                title = stringResource(Res.string.controls_title_medley_duration),
+                title = stringResource(Res.string.player_controls_medley_duration_title),
                 value = medley,
                 onValueChange = { medley = round(it) },
                 valueRange = 0f..60f,
@@ -147,12 +147,12 @@ class PlaybackSettingsMenu private constructor(
             )
 
             // Section: Volume
-            SectionTitle(stringResource(Res.string.volume))
+            SectionTitle(stringResource(Res.string.player_statistics_volume_label))
 
             // Playback Volume (written when the slider is released)
             ListSliderMenuItem(
                 icon = Res.drawable.volume_up,
-                title = stringResource(Res.string.controls_title_playback_volume),
+                title = stringResource(Res.string.player_controls_playback_volume_title),
                 value = playbackVolume,
                 onValueChange = {
                     val rounded = round(it * 100f) / 100f
@@ -176,7 +176,7 @@ class PlaybackSettingsMenu private constructor(
             var deviceVolume by remember { mutableStateOf(0f) }
             ListSliderMenuItem(
                 icon = Res.drawable.master_volume,
-                title = stringResource(Res.string.controls_title_device_volume),
+                title = stringResource(Res.string.player_controls_device_volume_title),
                 value = deviceVolume,
                 onValueChange = { deviceVolume = round(it * 100f) / 100f },
                 valueRange = 0f..1f,
@@ -193,7 +193,7 @@ class PlaybackSettingsMenu private constructor(
             var blur by remember { mutableStateOf(25f) }
             ListSliderMenuItem(
                 icon = Res.drawable.droplet,
-                title = stringResource(Res.string.controls_title_blur_effect),
+                title = stringResource(Res.string.player_controls_blur_effect_title),
                 value = blur,
                 onValueChange = { blur = round(it) },
                 valueRange = 0f..50f,
@@ -244,7 +244,7 @@ class PlaybackSettingsMenu private constructor(
             var boost by remember { mutableStateOf(0f) }
             ListSliderMenuItem(
                 icon = Res.drawable.volume_up,
-                title = stringResource(Res.string.loudness_boost_level),
+                title = stringResource(Res.string.audio_loudness_boost_level),
                 value = boost,
                 onValueChange = { boost = it },
                 valueRange = -30f..30f,

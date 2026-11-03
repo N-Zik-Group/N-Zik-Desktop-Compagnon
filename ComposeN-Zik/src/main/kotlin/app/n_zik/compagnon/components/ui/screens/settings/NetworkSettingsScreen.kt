@@ -1,18 +1,5 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.components.settings.OtherSettingsEntry
-import app.n_zik.compagnon.components.settings.SettingsDescription
-import app.n_zik.compagnon.components.settings.SettingsInfoEntry
-import app.n_zik.compagnon.components.settings.SettingsSectionCard
-import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
-import app.n_zik.compagnon.components.tab.Search
-import app.n_zik.compagnon.components.themed.HeaderWithIcon
-import app.n_zik.compagnon.components.themed.ValueSelectorDialog
-import app.n_zik.compagnon.enums.AudioQualityFormat
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.utils.Preferences
-import app.n_zik.compagnon.utils.Toaster
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -31,6 +18,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.settings.OtherSettingsEntry
+import app.n_zik.compagnon.components.settings.SettingsDescription
+import app.n_zik.compagnon.components.settings.SettingsInfoEntry
+import app.n_zik.compagnon.components.settings.SettingsSectionCard
+import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
+import app.n_zik.compagnon.components.tab.Search
+import app.n_zik.compagnon.components.themed.HeaderWithIcon
+import app.n_zik.compagnon.components.themed.ValueSelectorDialog
+import app.n_zik.compagnon.enums.AudioQualityFormat
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.utils.Toaster
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -69,21 +69,21 @@ fun NetworkSettingsScreen(
     val networkStatusCtx = settingsSearchCtx(
         search.inputValue,
         stringResource(Res.string.network_status),
-        stringResource(Res.string.image_quality_format),
+        stringResource(Res.string.settings_network_image_quality_label),
         stringResource(Res.string.audio_quality_format),
-        stringResource(Res.string.download_quality_format),
+        stringResource(Res.string.downloads_quality_format),
     )
     val qualityCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.quality),
+        stringResource(Res.string.settings_network_quality_title),
         stringResource(Res.string.audio_quality_format),
-        stringResource(Res.string.image_quality_format),
-        stringResource(Res.string.download_quality_format),
-        stringResource(Res.string.update_downloads),
+        stringResource(Res.string.settings_network_image_quality_label),
+        stringResource(Res.string.downloads_quality_format),
+        stringResource(Res.string.downloads_action_refresh_quality),
     )
     val downloadCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.download),
+        stringResource(Res.string.downloads_title),
         stringResource(Res.string.settings_enable_autodownload_song),
     )
     val settingsResetCtx = settingsSearchCtx(search.inputValue, stringResource(Res.string.settings_reset))
@@ -98,7 +98,7 @@ fun NetworkSettingsScreen(
             .verticalScroll(rememberScrollState()),
     ) {
         HeaderWithIcon(
-            title = stringResource(Res.string.tab_network),
+            title = stringResource(Res.string.settings_network_title),
             iconId = Res.drawable.network,
             enabled = false,
             showIcon = true,
@@ -156,7 +156,7 @@ fun NetworkSettingsScreen(
 
                     // image / download the phone's default ("Auto")
                     SettingsInfoEntry(
-                        title = stringResource(Res.string.image_quality_format),
+                        title = stringResource(Res.string.settings_network_image_quality_label),
                         text = stringResource(Res.string.audio_quality_automatic),
                         icon = Res.drawable.image,
                     )
@@ -166,7 +166,7 @@ fun NetworkSettingsScreen(
                         icon = Res.drawable.audio_quality,
                     )
                     SettingsInfoEntry(
-                        title = stringResource(Res.string.download_quality_format),
+                        title = stringResource(Res.string.downloads_quality_format),
                         text = stringResource(Res.string.audio_quality_automatic),
                         icon = Res.drawable.download,
                     )
@@ -180,7 +180,7 @@ fun NetworkSettingsScreen(
             enter = fadeIn(animationSpec = tween(800)) + scaleIn(animationSpec = tween(800), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.quality),
+                title = stringResource(Res.string.settings_network_quality_title),
                 icon = Res.drawable.audio_quality,
                 content = {
                     // "Audio quality format" (NS:256, `audioQualityFormatKey`): WIRED — the quality
@@ -202,7 +202,7 @@ fun NetworkSettingsScreen(
                     // PC's image quality is the phone's); the phone's row shows a value, not a
                     // description → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.image_quality_format),
+                        title = stringResource(Res.string.settings_network_image_quality_label),
                         text = stringResource(Res.string.audio_quality_automatic),
                         icon = Res.drawable.image,
                         onClick = {},
@@ -214,7 +214,7 @@ fun NetworkSettingsScreen(
                     // the PC has no download cache); the phone's row shows a value, not a
                     // description → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.download_quality_format),
+                        title = stringResource(Res.string.downloads_quality_format),
                         text = stringResource(Res.string.audio_quality_automatic),
                         icon = Res.drawable.download,
                         onClick = {},
@@ -225,11 +225,11 @@ fun NetworkSettingsScreen(
 
                     // toasts the phone's description
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.update_downloads),
-                        text = stringResource(Res.string.update_downloads_description),
+                        title = stringResource(Res.string.downloads_action_refresh_quality),
+                        text = stringResource(Res.string.downloads_refresh_quality_description),
                         icon = Res.drawable.download,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.update_downloads_description) },
+                        onLongClick = { Toaster.i(Res.string.downloads_refresh_quality_description) },
                     )
 
                     /**
@@ -255,7 +255,7 @@ fun NetworkSettingsScreen(
             enter = fadeIn(animationSpec = tween(900)) + scaleIn(animationSpec = tween(900), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.download),
+                title = stringResource(Res.string.downloads_title),
                 icon = Res.drawable.arrow_down,
                 content = {
                     // "Auto-download song" (NS:410, `autoDownloadSongKey`, off by default) — INERT:
@@ -264,12 +264,12 @@ fun NetworkSettingsScreen(
                     // phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.settings_enable_autodownload_song),
-                        text = stringResource(Res.string.auto_download_song_description),
+                        text = stringResource(Res.string.settings_downloads_automatic_description),
                         icon = Res.drawable.download,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.auto_download_song_description) },
+                        onLongClick = { Toaster.i(Res.string.settings_downloads_automatic_description) },
                     )
 
                     /**

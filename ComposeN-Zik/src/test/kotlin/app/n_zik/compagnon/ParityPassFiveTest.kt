@@ -13,8 +13,6 @@ import app.n_zik.compagnon.components.player.ShareLinks
 import app.n_zik.compagnon.components.player.likeToastMessage
 import app.n_zik.compagnon.core.navigation.BackStep
 import app.n_zik.compagnon.core.navigation.backStep
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.removed_from_dislikes
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull

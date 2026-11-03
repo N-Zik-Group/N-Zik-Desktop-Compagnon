@@ -38,12 +38,12 @@ fun rotateTrackLike(track: Track, writes: LibraryActions?, rotationEnabled: Bool
 /** The phone's toast of the resulting like state: `rotateSongLikeState`'s three messages (the player, in both modes) or `toggleSongLikeState`'s two (the song / player menus with the "disliked" mode off). */
 fun likeToastMessage(next: TrackLike, rotationEnabled: Boolean): StringResource = when {
     rotationEnabled -> when (next) {
-        TrackLike.Liked -> Res.string.added_to_favorites
-        TrackLike.Disliked -> Res.string.added_to_dislikes
-        TrackLike.Neutral -> Res.string.removed_from_dislikes
+        TrackLike.Liked -> Res.string.library_favorites_added
+        TrackLike.Disliked -> Res.string.library_dislikes_added
+        TrackLike.Neutral -> Res.string.library_dislikes_removed
     }
-    next == TrackLike.Liked -> Res.string.added_to_favorites
-    else -> Res.string.removed_from_favorites
+    next == TrackLike.Liked -> Res.string.library_favorites_added
+    else -> Res.string.library_favorites_removed
 }
 
 /** The phone's quoted label `"title - artists"` (prefixes cleaned), `null` without a title. */
@@ -91,5 +91,5 @@ object ShareLinks {
     /** The phone's album share fallback (`AlbumItemMenu.kt` 411; the album's `shareUrl` is not in the contract). */
     fun album(albumId: String) = "https://music.youtube.com/browse/$albumId"
 
-    fun copy(url: String) = app.n_zik.compagnon.updater.ui.copyToClipboard(url, Res.string.value_copied)
+    fun copy(url: String) = app.n_zik.compagnon.updater.ui.copyToClipboard(url, Res.string.common_clipboard_copy_success)
 }

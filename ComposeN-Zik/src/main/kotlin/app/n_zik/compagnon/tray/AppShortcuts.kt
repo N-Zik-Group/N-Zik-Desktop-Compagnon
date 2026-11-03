@@ -23,16 +23,16 @@ enum class AppShortcut(
 ) {
     // PC additions (user decision 2026-10-12): the home itself, its Songs tab, and the phone's
     // Quick picks tab — inert, Quick picks is not in the contract
-    Home("home", Res.string.home, Res.drawable.shortcut_home, ShortcutDestination.Home),
-    QuickPicks("quick_picks", Res.string.quick_picks, Res.drawable.shortcut_quick_picks, null),
-    Songs("songs", Res.string.songs, Res.drawable.shortcut_songs, ShortcutDestination.Tab(LibraryTab.Songs)),
+    Home("home", Res.string.home_title, Res.drawable.shortcut_home, ShortcutDestination.Home),
+    QuickPicks("quick_picks", Res.string.recommendations_title, Res.drawable.shortcut_quick_picks, null),
+    Songs("songs", Res.string.library_songs_title, Res.drawable.shortcut_songs, ShortcutDestination.Tab(LibraryTab.Songs)),
     // The phone's launcher shortcuts
-    Search("search", Res.string.search, Res.drawable.shortcut_search, null),
-    Albums("albums", Res.string.albums, Res.drawable.shortcut_albums, ShortcutDestination.Tab(LibraryTab.Albums)),
-    Artists("artists", Res.string.artists, Res.drawable.shortcut_artists, ShortcutDestination.Tab(LibraryTab.Artists)),
-    Library("library", Res.string.playlists, Res.drawable.shortcut_library, ShortcutDestination.Tab(LibraryTab.Playlists)),
-    Profiles("profiles", Res.string.profiles, Res.drawable.shortcut_profiles, null),
-    Rescue("rescue", Res.string.rescue_center, Res.drawable.shortcut_rescue, null);
+    Search("search", Res.string.search_title, Res.drawable.shortcut_search, null),
+    Albums("albums", Res.string.library_albums_title, Res.drawable.shortcut_albums, ShortcutDestination.Tab(LibraryTab.Albums)),
+    Artists("artists", Res.string.library_artists_title, Res.drawable.shortcut_artists, ShortcutDestination.Tab(LibraryTab.Artists)),
+    Library("library", Res.string.library_playlists_title, Res.drawable.shortcut_library, ShortcutDestination.Tab(LibraryTab.Playlists)),
+    Profiles("profiles", Res.string.profile_title, Res.drawable.shortcut_profiles, null),
+    Rescue("rescue", Res.string.recovery_center, Res.drawable.shortcut_rescue, null);
 
     val locked: Boolean get() = this == Rescue
 

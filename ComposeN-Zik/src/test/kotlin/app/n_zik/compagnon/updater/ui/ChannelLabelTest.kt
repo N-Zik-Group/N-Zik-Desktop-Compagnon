@@ -16,11 +16,11 @@ class ChannelLabelTest {
 
     @Test
     fun `every channel maps to its own title string`() {
-        assertEquals(Res.string.beta_title, channelTitleRes("beta"))
+        assertEquals(Res.string.updates_build_beta_label, channelTitleRes("beta"))
         assertEquals(Res.string.stable_title, channelTitleRes("stable"))
-        assertEquals(Res.string.dev_title, channelTitleRes("dev"))
+        assertEquals(Res.string.updates_build_dev_label, channelTitleRes("dev"))
         assertEquals(Res.string.git_title, channelTitleRes("git"))
-        assertEquals(Res.string.debug_title, channelTitleRes("debug"))
+        assertEquals(Res.string.updates_build_debug_label, channelTitleRes("debug"))
     }
 
     @Test

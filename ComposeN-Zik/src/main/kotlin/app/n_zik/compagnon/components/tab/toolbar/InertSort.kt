@@ -8,11 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.MenuState
 import app.n_zik.compagnon.components.SortOption
 import app.n_zik.compagnon.components.menu.ListMenu
-import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.uiRoundnessShape
 import org.jetbrains.compose.resources.DrawableResource
@@ -34,7 +34,7 @@ class InertSort<T>(
 
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.sorting_order)
+        get() = stringResource(Res.string.library_sort_order_title)
 
     override fun onShortClick() {}
 

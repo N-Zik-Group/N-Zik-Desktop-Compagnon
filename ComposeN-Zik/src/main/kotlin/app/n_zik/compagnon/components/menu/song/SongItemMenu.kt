@@ -1,7 +1,5 @@
 package app.n_zik.compagnon.components.menu.song
 
-import app.n_zik.compagnon.components.player.likeToastLabel
-import app.n_zik.compagnon.components.player.likeToastMessage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,11 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalLibraryActions
-import app.n_zik.compagnon.libraryWrites
-import app.n_zik.compagnon.bridge.state.SessionContract
-import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.library.DislikeMode
 import app.n_zik.compagnon.bridge.library.PagedState
+import app.n_zik.compagnon.bridge.state.SessionContract
+import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.bridge.state.TrackSource
 import app.n_zik.compagnon.bridge.state.displayedLike
@@ -40,6 +37,8 @@ import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.menu.playlist.PlaylistsMenu
 import app.n_zik.compagnon.components.menu.splitArtistNames
 import app.n_zik.compagnon.components.navigation.header.TabToolBar
+import app.n_zik.compagnon.components.player.likeToastLabel
+import app.n_zik.compagnon.components.player.likeToastMessage
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.themed.AddToFavorites
@@ -49,6 +48,7 @@ import app.n_zik.compagnon.components.themed.PlayNext
 import app.n_zik.compagnon.components.themed.RemoveFromQueue
 import app.n_zik.compagnon.components.ui.screens.home.ItemActions
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.libraryWrites
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.cleanPrefix
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -112,27 +112,27 @@ class SongItemMenu(
         val menuState = LocalMenuState.current
         val playNext = PlayNext(enabled = actions.enabled, onClick = actions.onPlayNext)
         val enqueue = Enqueue(enabled = actions.enabled, onClick = actions.onEnqueue)
-        val startRadio = InertMenuItem(Res.drawable.radio, Res.string.start_radio)
+        val startRadio = InertMenuItem(Res.drawable.radio, Res.string.radio_action_start)
         // The phone's `LikeComponent`: an explicit like (not a rotation); inert without `library.write`
         val addToFavorite: MenuIcon = libraryWrites()?.let {
             AddToFavorites(enabled = actions.enabled) {
                 it.likeSong(song.id, TrackLike.Liked)
                 // The phone's `LikeComponent` success toast (its `LikeComponent.kt` 39)
-                Toaster.s(Res.string.done)
+                Toaster.s(Res.string.common_action_done)
             }
-        } ?: InertMenuItem(Res.drawable.heart, Res.string.add_to_favorites)
+        } ?: InertMenuItem(Res.drawable.heart, Res.string.library_favorites_action_add)
         // Spec #47: opens the phone's "Add to playlist" sheet, ported as [PlaylistsMenu] (inert in turn)
-        val addToPlaylist = InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist) {
+        val addToPlaylist = InertMenuItem(Res.drawable.add_in_playlist, Res.string.playlist_action_add) {
             menuState.display { PlaylistsMenu() }
         }
         // Spec #1, #3, #7, #9: the phone's waveform refresh (`SongItemMenu.kt` 354-389), inert — the
         // waveform cache lives on the phone, no contract route
-        val updateWaveform = InertMenuItem(Res.drawable.playing_indicator, Res.string.update_waveform)
+        val updateWaveform = InertMenuItem(Res.drawable.playing_indicator, Res.string.audio_waveform_action_refresh)
         // Spec #2, #8: the phone's "Suggest to host" (`SongItemMenu.kt` 497-532), remote songs only,
         // inert — no Listen Together contract route, the PC is never a guest
         val suggestToHost = InertMenuItem(Res.drawable.musical_notes, Res.string.listen_together_suggest)
         // Spec #48: the room entry opens the phone's room page, ported as [ListenTogetherMenu] (inert in turn)
-        val listenTogetherEntry = InertMenuItem(Res.drawable.people, Res.string.listen_together, descriptionId = null) {
+        val listenTogetherEntry = InertMenuItem(Res.drawable.people, Res.string.listen_together_title, descriptionId = null) {
             menuState.display { ListenTogetherMenu() }
         }
         // Spec #4-#6, #10-#12: the phone's Last.fm entries (`SongItemMenu.kt` 637-662), inert — scrobbling
@@ -144,62 +144,62 @@ class SongItemMenu(
 
         // 545, 625)
         val hasFfmpeg = SessionContract.FEATURE_LIBRARY_FFMPEG in (LocalLibraryActions.current?.library?.features ?: emptySet())
-        val exportCache = InertMenuItem(Res.drawable.export_outline, Res.string.export_cached, descriptionId = Res.string.info_export_cached_or_downloaded_song)
+        val exportCache = InertMenuItem(Res.drawable.export_outline, Res.string.export_cached_songs_action, descriptionId = Res.string.export_cached_song_action)
 
         // Section: Info
-        ListMenu.SectionTitle(stringResource(Res.string.information))
-        InertMenuItem(Res.drawable.information, Res.string.information, descriptionId = null).ListMenuItem()
+        ListMenu.SectionTitle(stringResource(Res.string.common_information_title))
+        InertMenuItem(Res.drawable.information, Res.string.common_information_title, descriptionId = null).ListMenuItem()
 
         if (playerMenu) {
-            val equalizer = InertMenuItem(Res.drawable.equalizer, Res.string.equalizer, descriptionId = null)
-            val sleepTimer = InertMenuItem(Res.drawable.sleep, Res.string.sleep_timer, descriptionId = null)
+            val equalizer = InertMenuItem(Res.drawable.equalizer, Res.string.settings_audio_equalizer_label, descriptionId = null)
+            val sleepTimer = InertMenuItem(Res.drawable.sleep, Res.string.player_sleep_timer_title, descriptionId = null)
             if (isLocal) {
                 // The phone's local order: Management (edit metadata), Playback (equalizer, sleep timer,
                 // favorites, playlist, album / artist ids), then delete / export
                 if (hasFfmpeg) {
-                    ListMenu.SectionTitle(stringResource(Res.string.management))
-                    InertMenuItem(Res.drawable.cover_edit, Res.string.edit_metadata).ListMenuItem()
+                    ListMenu.SectionTitle(stringResource(Res.string.library_management_section_title))
+                    InertMenuItem(Res.drawable.cover_edit, Res.string.metadata_action_edit).ListMenuItem()
                 }
-                ListMenu.SectionTitle(stringResource(Res.string.playback))
+                ListMenu.SectionTitle(stringResource(Res.string.common_playback_section_title))
                 updateWaveform.ListMenuItem()
                 equalizer.ListMenuItem()
                 sleepTimer.ListMenuItem()
                 addToFavorite.ListMenuItem()
                 addToPlaylist.ListMenuItem()
-                InertMenuItem(Res.drawable.title_edit, Res.string.update_album_browse_id).ListMenuItem()
-                InertMenuItem(Res.drawable.title_edit, Res.string.update_artist_browse_id).ListMenuItem()
+                InertMenuItem(Res.drawable.title_edit, Res.string.metadata_album_action_change_browse_id).ListMenuItem()
+                InertMenuItem(Res.drawable.title_edit, Res.string.metadata_artist_action_change_browse_id).ListMenuItem()
                 if (hasFfmpeg) exportCache.ListMenuItem()
             } else {
                 // The phone's remote order: Playback (radio, equalizer, sleep timer), Listen Together,
                 // Management (title, authors, cover, favorites, playlist, update, ids, delete), Navigation
-                ListMenu.SectionTitle(stringResource(Res.string.playback))
+                ListMenu.SectionTitle(stringResource(Res.string.common_playback_section_title))
                 startRadio.ListMenuItem()
                 equalizer.ListMenuItem()
                 sleepTimer.ListMenuItem()
-                ListMenu.SectionTitle(stringResource(Res.string.listen_together))
+                ListMenu.SectionTitle(stringResource(Res.string.listen_together_title))
                 listenTogetherEntry.ListMenuItem()
                 suggestToHost.ListMenuItem()
-                ListMenu.SectionTitle(stringResource(Res.string.management))
+                ListMenu.SectionTitle(stringResource(Res.string.library_management_section_title))
                 updateWaveform.ListMenuItem()
-                InertMenuItem(Res.drawable.title_edit, Res.string.update_title).ListMenuItem()
-                InertMenuItem(Res.drawable.artists_edit, Res.string.update_authors).ListMenuItem()
-                InertMenuItem(Res.drawable.cover_edit, Res.string.update_cover).ListMenuItem()
+                InertMenuItem(Res.drawable.title_edit, Res.string.metadata_action_change_title).ListMenuItem()
+                InertMenuItem(Res.drawable.artists_edit, Res.string.metadata_action_change_artists).ListMenuItem()
+                InertMenuItem(Res.drawable.cover_edit, Res.string.metadata_action_change_cover).ListMenuItem()
                 addToFavorite.ListMenuItem()
                 addToPlaylist.ListMenuItem()
-                InertMenuItem(Res.drawable.refresh, Res.string.update, descriptionId = Res.string.info_open_update_dialog).ListMenuItem()
-                InertMenuItem(Res.drawable.title_edit, Res.string.update_album_browse_id).ListMenuItem()
-                InertMenuItem(Res.drawable.title_edit, Res.string.update_artist_browse_id).ListMenuItem()
-                InertMenuItem(Res.drawable.trash, Res.string.delete).ListMenuItem()
-                ListMenu.SectionTitle(stringResource(Res.string.navigation))
-                InertMenuItem(Res.drawable.album, Res.string.go_to_album, descriptionId = null).ListMenuItem()
-                val names = splitArtistNames(cleanPrefix(song.artists.orEmpty()), listOf(stringResource(Res.string.and)))
+                InertMenuItem(Res.drawable.refresh, Res.string.common_action_update, descriptionId = Res.string.song_metadata_update_action_open).ListMenuItem()
+                InertMenuItem(Res.drawable.title_edit, Res.string.metadata_album_action_change_browse_id).ListMenuItem()
+                InertMenuItem(Res.drawable.title_edit, Res.string.metadata_artist_action_change_browse_id).ListMenuItem()
+                InertMenuItem(Res.drawable.trash, Res.string.common_action_delete).ListMenuItem()
+                ListMenu.SectionTitle(stringResource(Res.string.common_navigation_section_title))
+                InertMenuItem(Res.drawable.album, Res.string.album_action_open, descriptionId = null).ListMenuItem()
+                val names = splitArtistNames(cleanPrefix(song.artists.orEmpty()), listOf(stringResource(Res.string.common_artist_conjunction_and)))
                 if (names.size <= 1) {
-                    InertMenuItem(Res.drawable.people, Res.string.more_of, " ${cleanPrefix(song.artists.orEmpty())}", descriptionId = null).ListMenuItem()
+                    InertMenuItem(Res.drawable.people, Res.string.artist_more_from, " ${cleanPrefix(song.artists.orEmpty())}", descriptionId = null).ListMenuItem()
                 } else {
-                    names.forEach { InertMenuItem(Res.drawable.people, Res.string.more_of, " $it", descriptionId = null).ListMenuItem() }
+                    names.forEach { InertMenuItem(Res.drawable.people, Res.string.artist_more_from, " $it", descriptionId = null).ListMenuItem() }
                 }
-                InertMenuItem(Res.drawable.play, Res.string.listen_on, descriptionId = null).ListMenuItem()
-                ListMenu.SectionTitle(stringResource(Res.string.social_lastfm))
+                InertMenuItem(Res.drawable.play, Res.string.player_listen_on_title, descriptionId = null).ListMenuItem()
+                ListMenu.SectionTitle(stringResource(Res.string.settings_lastfm_title))
                 lastFmLove.ListMenuItem()
                 lastFmUnlove.ListMenuItem()
             }
@@ -209,12 +209,12 @@ class SongItemMenu(
         if (isLocal) {
             // Section: Management (the phone shows it only with its FFmpeg builds)
             if (hasFfmpeg) {
-                ListMenu.SectionTitle(stringResource(Res.string.management))
-                InertMenuItem(Res.drawable.cover_edit, Res.string.edit_metadata).ListMenuItem()
+                ListMenu.SectionTitle(stringResource(Res.string.library_management_section_title))
+                InertMenuItem(Res.drawable.cover_edit, Res.string.metadata_action_edit).ListMenuItem()
             }
 
             // Section: Playback
-            ListMenu.SectionTitle(stringResource(Res.string.playback))
+            ListMenu.SectionTitle(stringResource(Res.string.common_playback_section_title))
             startRadio.ListMenuItem()
             playNext.ListMenuItem()
             enqueue.ListMenuItem()
@@ -226,41 +226,41 @@ class SongItemMenu(
             if (hasFfmpeg) exportCache.ListMenuItem()
         } else {
             // Section: Playback
-            ListMenu.SectionTitle(stringResource(Res.string.playback))
+            ListMenu.SectionTitle(stringResource(Res.string.common_playback_section_title))
             startRadio.ListMenuItem()
             playNext.ListMenuItem()
             enqueue.ListMenuItem()
             RemoveFromQueueItem()
 
             // Section: Listen Together
-            ListMenu.SectionTitle(stringResource(Res.string.listen_together))
+            ListMenu.SectionTitle(stringResource(Res.string.listen_together_title))
             listenTogetherEntry.ListMenuItem()
             suggestToHost.ListMenuItem()
 
             // Section: Management
-            ListMenu.SectionTitle(stringResource(Res.string.management))
-            InertMenuItem(Res.drawable.title_edit, Res.string.update_title).ListMenuItem()
-            InertMenuItem(Res.drawable.artists_edit, Res.string.update_authors).ListMenuItem()
-            InertMenuItem(Res.drawable.cover_edit, Res.string.update_cover).ListMenuItem()
-            InertMenuItem(Res.drawable.title_edit, Res.string.update_album_browse_id).ListMenuItem()
-            InertMenuItem(Res.drawable.title_edit, Res.string.update_artist_browse_id).ListMenuItem()
+            ListMenu.SectionTitle(stringResource(Res.string.library_management_section_title))
+            InertMenuItem(Res.drawable.title_edit, Res.string.metadata_action_change_title).ListMenuItem()
+            InertMenuItem(Res.drawable.artists_edit, Res.string.metadata_action_change_artists).ListMenuItem()
+            InertMenuItem(Res.drawable.cover_edit, Res.string.metadata_action_change_cover).ListMenuItem()
+            InertMenuItem(Res.drawable.title_edit, Res.string.metadata_album_action_change_browse_id).ListMenuItem()
+            InertMenuItem(Res.drawable.title_edit, Res.string.metadata_artist_action_change_browse_id).ListMenuItem()
             addToFavorite.ListMenuItem()
             addToPlaylist.ListMenuItem()
-            InertMenuItem(Res.drawable.refresh, Res.string.update, descriptionId = Res.string.info_open_update_dialog).ListMenuItem()
-            InertMenuItem(Res.drawable.trash, Res.string.delete).ListMenuItem()
+            InertMenuItem(Res.drawable.refresh, Res.string.common_action_update, descriptionId = Res.string.song_metadata_update_action_open).ListMenuItem()
+            InertMenuItem(Res.drawable.trash, Res.string.common_action_delete).ListMenuItem()
             if (hasFfmpeg) exportCache.ListMenuItem()
             updateWaveform.ListMenuItem()
 
             // Section: Navigation
-            ListMenu.SectionTitle(stringResource(Res.string.navigation))
-            InertMenuItem(Res.drawable.album, Res.string.go_to_album).ListMenuItem()
-            val artistNames = splitArtistNames(cleanPrefix(song.artists.orEmpty()), listOf(stringResource(Res.string.and)))
+            ListMenu.SectionTitle(stringResource(Res.string.common_navigation_section_title))
+            InertMenuItem(Res.drawable.album, Res.string.album_action_open).ListMenuItem()
+            val artistNames = splitArtistNames(cleanPrefix(song.artists.orEmpty()), listOf(stringResource(Res.string.common_artist_conjunction_and)))
             if (artistNames.size <= 1) {
-                InertMenuItem(Res.drawable.people, Res.string.more_of, " ${cleanPrefix(song.artists.orEmpty())}", descriptionId = Res.string.artists).ListMenuItem()
+                InertMenuItem(Res.drawable.people, Res.string.artist_more_from, " ${cleanPrefix(song.artists.orEmpty())}", descriptionId = Res.string.library_artists_title).ListMenuItem()
             } else {
-                artistNames.forEach { InertMenuItem(Res.drawable.people, Res.string.more_of, " $it", descriptionId = null).ListMenuItem() }
+                artistNames.forEach { InertMenuItem(Res.drawable.people, Res.string.artist_more_from, " $it", descriptionId = null).ListMenuItem() }
             }
-            ListMenu.SectionTitle(stringResource(Res.string.social_lastfm))
+            ListMenu.SectionTitle(stringResource(Res.string.settings_lastfm_title))
             lastFmLove.ListMenuItem()
             lastFmUnlove.ListMenuItem()
         }

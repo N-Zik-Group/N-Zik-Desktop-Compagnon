@@ -5,9 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ripple
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -21,6 +18,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,6 +41,7 @@ import app.n_zik.compagnon.bridge.state.TrackDownloadState
 import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.bridge.state.TrackSource
 import app.n_zik.compagnon.bridge.state.displayedLike
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.ItemSelector
 import app.n_zik.compagnon.components.tab.SongRowSelectionBox
@@ -48,27 +49,26 @@ import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.theme.favoritesOverlay
 import app.n_zik.compagnon.components.theme.onOverlay
 import app.n_zik.compagnon.components.theme.overlay
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.utils.center
-import app.n_zik.compagnon.utils.color
-import app.n_zik.compagnon.utils.medium
-import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.typography
-import app.n_zik.compagnon.thumbnailShape
-import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.components.themed.HeaderIconButton
 import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.components.themed.NowPlayingSongIndicator
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.thumbnailShape
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.UserSettings
+import app.n_zik.compagnon.utils.center
 import app.n_zik.compagnon.utils.cleanPrefix
+import app.n_zik.compagnon.utils.color
 import app.n_zik.compagnon.utils.formatAsDuration
 import app.n_zik.compagnon.utils.hasExplicitPrefix
+import app.n_zik.compagnon.utils.medium
 import app.n_zik.compagnon.utils.onSecondaryClick
 import app.n_zik.compagnon.utils.secondary
+import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.utils.shimmer
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.DrawableResource
@@ -269,7 +269,7 @@ fun SongItem(
                 if (song.isExplicit || song.title.hasExplicitPrefix()) {
                     SongIndicator(icon = Res.drawable.explicit)
                 }
-                val safeTitle = if (song.title.isBlank() || song.title == "null") stringResource(Res.string.unknown_title) else song.title
+                val safeTitle = if (song.title.isBlank() || song.title == "null") stringResource(Res.string.metadata_unknown_title) else song.title
                 SongText(
                     text = cleanPrefix(safeTitle),
                     style = typography().xs.semiBold,
@@ -281,7 +281,7 @@ fun SongItem(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 // Cleaned like the phone's `cleanArtistsText()`: the queue's bridge metadata can carry prefixes
                 val artistsText = cleanPrefix(song.artists.orEmpty())
-                val safeArtists = if (artistsText.isBlank() || artistsText == "null") stringResource(Res.string.unknown_artist) else artistsText
+                val safeArtists = if (artistsText.isBlank() || artistsText == "null") stringResource(Res.string.metadata_unknown_artist) else artistsText
                 SongText(
                     text = safeArtists,
                     style = typography().xs.semiBold.secondary,

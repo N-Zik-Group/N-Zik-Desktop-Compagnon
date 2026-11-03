@@ -79,11 +79,11 @@ class ChipSortOptionsTest {
         // The phone's labels (its `OnDeviceSongSortBy.kt` 17-25)
         assertEquals(
             listOf(
-                Res.string.sort_title,
-                Res.string.sort_date_added,
-                Res.string.sort_artist,
-                Res.string.sort_duration,
-                Res.string.sort_album,
+                Res.string.library_sort_title,
+                Res.string.library_sort_date_added,
+                Res.string.library_sort_artist,
+                Res.string.library_sort_duration,
+                Res.string.library_sort_album,
             ),
             onDeviceSongSortOptions.map { it.labelId },
         )

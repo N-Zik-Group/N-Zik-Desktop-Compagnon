@@ -1,31 +1,21 @@
 package app.n_zik.compagnon.components.ui.screens.album
 
-import app.n_zik.compagnon.components.tab.toolbar.NoRouteConfirmButton
-import androidx.compose.foundation.layout.height
-import app.n_zik.compagnon.utils.formatText
-import app.n_zik.compagnon.utils.UserSettings
-import app.n_zik.compagnon.utils.LocalPreferences
-import androidx.compose.foundation.lazy.items
-import app.n_zik.compagnon.bridge.library.toListRef
-import app.n_zik.compagnon.components.tab.toolbar.InertButton
-import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.components.themed.HeaderIconButton
-import app.n_zik.compagnon.components.themed.Loader
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -49,6 +39,8 @@ import app.n_zik.compagnon.bridge.library.DislikeMode
 import app.n_zik.compagnon.bridge.library.LibraryRepository
 import app.n_zik.compagnon.bridge.library.nextRotation
 import app.n_zik.compagnon.bridge.library.nextToggle
+import app.n_zik.compagnon.bridge.library.toListRef
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.SongItem
 import app.n_zik.compagnon.components.menu.song.SongItemMenu
@@ -58,13 +50,14 @@ import app.n_zik.compagnon.components.tab.Locator
 import app.n_zik.compagnon.components.tab.SongShuffler
 import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.Button
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.utils.medium
-import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.components.tab.toolbar.InertButton
+import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
+import app.n_zik.compagnon.components.tab.toolbar.NoRouteConfirmButton
 import app.n_zik.compagnon.components.themed.AutoResizeText
 import app.n_zik.compagnon.components.themed.Enqueue
 import app.n_zik.compagnon.components.themed.FontSizeRange
+import app.n_zik.compagnon.components.themed.HeaderIconButton
+import app.n_zik.compagnon.components.themed.Loader
 import app.n_zik.compagnon.components.themed.PlayNext
 import app.n_zik.compagnon.components.ui.screens.DynamicOrientationLayout
 import app.n_zik.compagnon.components.ui.screens.home.CollectionHeader
@@ -74,12 +67,19 @@ import app.n_zik.compagnon.components.ui.screens.home.PagedStatus
 import app.n_zik.compagnon.components.ui.screens.home.rememberCollectionSongs
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.align
 import app.n_zik.compagnon.utils.center
 import app.n_zik.compagnon.utils.color
 import app.n_zik.compagnon.utils.fadingEdge
 import app.n_zik.compagnon.utils.formatAsTime
+import app.n_zik.compagnon.utils.formatText
+import app.n_zik.compagnon.utils.medium
+import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.DrawableResource
@@ -183,7 +183,7 @@ fun AlbumDetails(
         .collectAsState()
     val bookmark = object : MenuIcon, app.n_zik.compagnon.components.tab.toolbar.Descriptive {
         // The phone's bookmark is `Descriptive` (`info_bookmark_album`): a right click shows it
-        override val messageId: org.jetbrains.compose.resources.StringResource = Res.string.info_bookmark_album
+        override val messageId: org.jetbrains.compose.resources.StringResource = Res.string.album_action_bookmark
         override val iconId: DrawableResource = when (likeState) {
             AlbumLike.Bookmarked -> Res.drawable.bookmark
             AlbumLike.Disliked -> Res.drawable.bookmark_slash
@@ -198,7 +198,7 @@ fun AlbumDetails(
             }
         override val menuIconTitle: String
             @Composable
-            get() = stringResource(Res.string.info_bookmark_album)
+            get() = stringResource(Res.string.album_action_bookmark)
         override fun onShortClick() {
             if (live && actions.canWrite) {
                 // Since 1.7.2: the tri-state write, rotation or toggle per the phone's "disliked" mode;
@@ -219,9 +219,9 @@ fun AlbumDetails(
                 }
                 // The phone's toast (its `AlbumDetails.kt` 155-172)
                 val messageId = when (target) {
-                    AlbumLike.Bookmarked -> Res.string.added_to_favorites
-                    AlbumLike.Disliked -> Res.string.added_to_dislikes
-                    AlbumLike.Neutral -> Res.string.removed_from_favorites
+                    AlbumLike.Bookmarked -> Res.string.library_favorites_added
+                    AlbumLike.Disliked -> Res.string.library_dislikes_added
+                    AlbumLike.Neutral -> Res.string.library_favorites_removed
                 }
                 if (album.title.isNotBlank()) Toaster.s(messageId, "\"${album.title}\"") else Toaster.s(messageId)
             }
@@ -232,11 +232,11 @@ fun AlbumDetails(
 
     // The phone's download / remove buttons open their confirmations (as the artist's); NOT LINKED: no route
     val downloadAll = NoRouteConfirmButton(
-        Res.drawable.downloaded, Res.string.download, Res.string.info_download_all_songs, Res.string.do_you_really_want_to_download_all,
+        Res.drawable.downloaded, Res.string.downloads_title, Res.string.downloads_action_download_all, Res.string.downloads_download_all_confirmation,
     )
     val deleteDownloads = NoRouteConfirmButton(
-        Res.drawable.download, Res.string.info_remove_all_downloaded_songs, Res.string.info_remove_all_downloaded_songs,
-        Res.string.do_you_really_want_to_delete_download,
+        Res.drawable.download, Res.string.downloads_action_remove_all, Res.string.downloads_action_remove_all,
+        Res.string.downloads_delete_all_confirmation,
     )
     downloadAll.Render()
     deleteDownloads.Render()
@@ -245,21 +245,21 @@ fun AlbumDetails(
     val toolbar = buildList<Button> {
         add(downloadAll)
         add(deleteDownloads)
-        if (collection != null) add(shuffle) else add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
-        add(InertButton(Res.drawable.radio, Res.string.start_radio))
+        if (collection != null) add(shuffle) else add(InertButton(Res.drawable.shuffle, Res.string.player_action_shuffle, descriptionId = Res.string.player_action_shuffle_hint))
+        add(InertButton(Res.drawable.radio, Res.string.radio_action_start))
         add(locator)
         add(itemSelector)
-        add(InertButton(Res.drawable.title_edit, Res.string.update_title))
-        add(InertButton(Res.drawable.artists_edit, Res.string.update_authors))
-        add(InertButton(Res.drawable.cover_edit, Res.string.update_cover))
+        add(InertButton(Res.drawable.title_edit, Res.string.metadata_action_change_title))
+        add(InertButton(Res.drawable.artists_edit, Res.string.metadata_action_change_artists))
+        add(InertButton(Res.drawable.cover_edit, Res.string.metadata_action_change_cover))
         if (collection != null) {
             add(playNext)
             add(enqueue)
         } else {
-            add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
-            add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
+            add(InertButton(Res.drawable.play_skip_forward, Res.string.player_action_play_next))
+            add(InertButton(Res.drawable.enqueue, Res.string.player_action_enqueue))
         }
-        add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
+        add(InertButton(Res.drawable.add_in_playlist, Res.string.playlist_action_add))
     }
 
     val albumSettings by (LocalPreferences.current?.settings ?: remember { MutableStateFlow(UserSettings()) }).collectAsState()
@@ -285,7 +285,7 @@ fun AlbumDetails(
                     if (header.trackCount > 0) {
                         Spacer(modifier = Modifier.height(8.dp))
                         BasicText(
-                            text = formatText(stringResource(Res.string.loading_songs_count), header.trackCount),
+                            text = formatText(stringResource(Res.string.album_loading_song_count_format), header.trackCount),
                             style = typography().xxs.copy(color = colorPalette().textDisabled),
                         )
                     }
@@ -347,7 +347,7 @@ fun AlbumDetails(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            val songCount = "${state.total ?: items.size} ${stringResource(Res.string.songs)}"
+                            val songCount = "${state.total ?: items.size} ${stringResource(Res.string.library_songs_title)}"
                             // Since 1.10.0 the phone serves the whole album's duration at once (`totalDurationMs`)
                             val totalDuration = when {
                                 state.totalDurationMs > 0L -> formatAsTime(state.totalDurationMs)
@@ -379,7 +379,7 @@ fun AlbumDetails(
 
                     item("songsTitle") {
                         BasicText(
-                            text = stringResource(Res.string.songs),
+                            text = stringResource(Res.string.library_songs_title),
                             style = typography().m.semiBold.align(TextAlign.Start),
                             modifier = sectionTextModifier.fillMaxWidth(),
                         )

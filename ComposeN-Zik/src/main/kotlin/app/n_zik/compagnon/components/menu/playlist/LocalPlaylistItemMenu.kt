@@ -1,11 +1,5 @@
 package app.n_zik.compagnon.components.menu.playlist
 
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.components.menu.InertMenuItem
-import app.n_zik.compagnon.components.themed.HeaderIconButton
-import app.n_zik.compagnon.components.themed.IconButton
-import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -13,11 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -36,29 +32,33 @@ import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.library.Playlist
 import app.n_zik.compagnon.bridge.library.PlaylistOrigin
 import app.n_zik.compagnon.bridge.state.Track
-import app.n_zik.compagnon.libraryWrites
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.items.playlistThumbnails
+import app.n_zik.compagnon.components.menu.InertMenuItem
 import app.n_zik.compagnon.components.menu.ListMenu
-import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.components.menu.album.MENU_THUMBNAIL_SIZE_PX
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.SongShuffler
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.utils.LocalPreferences
-import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.utils.UserSettings
-import kotlinx.coroutines.flow.MutableStateFlow
-import app.n_zik.compagnon.typography
-import app.n_zik.compagnon.components.themed.Enqueue
-import app.n_zik.compagnon.components.themed.PlayNext
+import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.components.theme.favoritesIcon
+import app.n_zik.compagnon.components.themed.Enqueue
+import app.n_zik.compagnon.components.themed.HeaderIconButton
+import app.n_zik.compagnon.components.themed.IconButton
+import app.n_zik.compagnon.components.themed.PlayNext
 import app.n_zik.compagnon.components.ui.screens.home.ItemActions
 import app.n_zik.compagnon.components.ui.screens.home.LibraryActions
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.libraryWrites
 import app.n_zik.compagnon.thumbnailShape
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.secondary
+import app.n_zik.compagnon.utils.semiBold
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -109,20 +109,20 @@ class LocalPlaylistItemMenu(
     @Composable
     fun ListMenu() = ListMenu.Menu(title = null, showDragHandle = false) {
         val menuState = app.n_zik.compagnon.components.LocalMenuState.current
-        ListMenu.SectionTitle(stringResource(Res.string.playback))
+        ListMenu.SectionTitle(stringResource(Res.string.common_playback_section_title))
         actions.onShuffle?.let { SongShuffler(enabled = actions.enabled, onShuffle = it).ListMenuItem() }
         PlayNext(enabled = actions.enabled, isEmpty = playlist.trackCount == 0, onClick = actions.onPlayNext).ListMenuItem()
 
-        ListMenu.SectionTitle(stringResource(Res.string.management))
+        ListMenu.SectionTitle(stringResource(Res.string.library_management_section_title))
         Enqueue(enabled = actions.enabled, isEmpty = playlist.trackCount == 0, onClick = actions.onEnqueue).ListMenuItem()
-        InertMenuItem(Res.drawable.downloaded, Res.string.download, descriptionId = null).ListMenuItem()
-        InertMenuItem(Res.drawable.download, Res.string.info_remove_all_downloaded_songs, descriptionId = null).ListMenuItem()
+        InertMenuItem(Res.drawable.downloaded, Res.string.downloads_title, descriptionId = null).ListMenuItem()
+        InertMenuItem(Res.drawable.download, Res.string.downloads_action_remove_all, descriptionId = null).ListMenuItem()
         // The phone's show conditions (its 479-488): rename off on the rewind playlists (their
         // language-neutral name), change id and delete off on the non-editable playlists
         val isRewind = playlist.origin in REWIND_ORIGINS
         if (playlist.isEditable) {
             if (!isRewind) {
-                InertMenuItem(Res.drawable.title_edit, Res.string.rename_playlist, descriptionId = null).ListMenuItem()
+                InertMenuItem(Res.drawable.title_edit, Res.string.playlist_rename_dialog_title, descriptionId = null).ListMenuItem()
             }
             // Since 1.7.2: change id on a YouTube playlist (the wire's `isBookmarked` IS the phone's
             // `isYoutubePlaylist` column, `LibraryMapping.kt` 166 — the audit's "isBookmarked instead of
@@ -133,27 +133,27 @@ class LocalPlaylistItemMenu(
                 playlist.browseId?.startsWith("modified:") == true ||
                 playlist.browseId?.startsWith("VL") == true
             ) {
-                InertMenuItem(Res.drawable.title_edit, Res.string.update_playlist_browse_id).ListMenuItem()
+                InertMenuItem(Res.drawable.title_edit, Res.string.metadata_playlist_action_change_browse_id).ListMenuItem()
             }
-            InertMenuItem(Res.drawable.trash, Res.string.delete, descriptionId = null).ListMenuItem()
+            InertMenuItem(Res.drawable.trash, Res.string.common_action_delete, descriptionId = null).ListMenuItem()
         }
         // Spec #16-#17: the phone's online playlist entries (`OnlinePlaylistItemMenu.kt` 386-398,
         // 448-462), at the end of Management, phone order (add to a playlist, then import): inert — no
 
         // contract route; "Add to a playlist" opens [PlaylistsMenu] (spec #47)
-        InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist) {
+        InertMenuItem(Res.drawable.add_in_playlist, Res.string.playlist_action_add) {
             menuState.display { PlaylistsMenu() }
         }.ListMenuItem()
-        InertMenuItem(Res.drawable.add_in_playlist, Res.string.import_playlist).ListMenuItem()
+        InertMenuItem(Res.drawable.add_in_playlist, Res.string.playlist_action_import).ListMenuItem()
 
         // Section: Navigation — a YouTube playlist (the wire's `isBookmarked` = the phone's
         // `isYoutubePlaylist`): "Listen on YouTube" opens its `music.youtube.com` page (the phone's 510-525)
         val browseId = playlist.browseId
         if (playlist.isBookmarked) {
-            ListMenu.SectionTitle(stringResource(Res.string.navigation))
+            ListMenu.SectionTitle(stringResource(Res.string.common_navigation_section_title))
             // Spec #18: the phone's channel "More of" (its `OnlinePlaylistItemMenu.kt` 482-493), no suffix
             // — no channel name on the PC; inert, no contract route
-            InertMenuItem(Res.drawable.people, Res.string.more_of).ListMenuItem()
+            InertMenuItem(Res.drawable.people, Res.string.artist_more_from).ListMenuItem()
             ListenOnYouTube(browseId).ListMenuItem()
             // Spec #14: no per-playlist auto-sync toggle — the phone gates it on `isYouTubeSyncEnabled()` (its
             // `LocalPlaylistItemMenu.kt` 529-545), never true on the PC (no YouTube sync), like the filter chip
@@ -167,7 +167,7 @@ class LocalPlaylistItemMenu(
         override val iconId: org.jetbrains.compose.resources.DrawableResource = Res.drawable.play
         override val menuIconTitle: String
             @Composable
-            get() = stringResource(Res.string.listen_on_youtube)
+            get() = stringResource(Res.string.player_action_listen_on_youtube)
 
         override fun onShortClick() {
             browseId?.let { app.n_zik.compagnon.utils.openInBrowser("https://music.youtube.com/playlist?list=$it") }
@@ -185,7 +185,7 @@ class LocalPlaylistItemMenu(
         onState(!current)
         writes.bookmarkPlaylist(playlist.id, !current, onFailed = { onState(current) }) { confirmed ->
             onState(confirmed)
-            Toaster.s(if (confirmed) Res.string.added_to_favorites else Res.string.removed_from_favorites)
+            Toaster.s(if (confirmed) Res.string.library_favorites_added else Res.string.library_favorites_removed)
         }
     }
 
@@ -317,7 +317,7 @@ class LocalPlaylistItemMenu(
                         modifier = marquee,
                     )
                     BasicText(
-                        text = "${playlist.trackCount} ${stringResource(Res.string.songs)}",
+                        text = "${playlist.trackCount} ${stringResource(Res.string.library_songs_title)}",
                         style = typography().xs.semiBold.secondary.copy(color = colorPalette().textSecondary),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

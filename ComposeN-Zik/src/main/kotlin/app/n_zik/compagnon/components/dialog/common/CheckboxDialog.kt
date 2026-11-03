@@ -3,10 +3,12 @@ package app.n_zik.compagnon.components.dialog.common
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,8 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import org.jetbrains.compose.resources.DrawableResource
@@ -98,7 +98,7 @@ abstract class CheckboxDialog(activeState: MutableState<Boolean>) {
                 danger = true,
             ),
             DialogButton(
-                text = stringResource(Res.string.confirm),
+                text = stringResource(Res.string.common_action_confirm),
                 onClick = ::onConfirm,
                 primary = true,
             ),
@@ -119,7 +119,7 @@ abstract class CheckboxDialog(activeState: MutableState<Boolean>) {
                     override val id: String = "select_all"
                     override val menuIconTitle: String
                         @Composable
-                        get() = stringResource(Res.string.all)
+                        get() = stringResource(Res.string.common_option_all)
 
                     override fun onShortClick() {
                         // Disable uncheck

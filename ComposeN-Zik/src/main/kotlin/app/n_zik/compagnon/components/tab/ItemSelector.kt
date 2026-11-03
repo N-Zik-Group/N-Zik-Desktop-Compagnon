@@ -54,7 +54,7 @@ class ItemSelector(
         get() = if (isActive) Res.drawable.checked_filled else Res.drawable.unchecked_outline
 
     override val messageId: StringResource
-        get() = if (isActive) Res.string.item_deselect else Res.string.item_select
+        get() = if (isActive) Res.string.playlist_selection_action_deselect else Res.string.common_action_select
 
     override val menuIconTitle: String
         @Composable

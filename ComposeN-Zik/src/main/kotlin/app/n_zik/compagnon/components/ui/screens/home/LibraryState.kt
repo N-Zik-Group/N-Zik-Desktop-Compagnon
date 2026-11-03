@@ -1,10 +1,5 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
-import app.n_zik.compagnon.LocalLibraryActions
-import app.n_zik.compagnon.components.themed.Loader
-import app.n_zik.compagnon.utils.Toaster
-import app.n_zik.compagnon.utils.formatMessage
-import app.n_zik.compagnon.utils.formatText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,19 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
+import app.n_zik.compagnon.LocalLibraryActions
 import app.n_zik.compagnon.bridge.command.PlayWindow
 import app.n_zik.compagnon.bridge.library.Album
 import app.n_zik.compagnon.bridge.library.AlbumLike
@@ -64,7 +47,6 @@ import app.n_zik.compagnon.bridge.library.PlaylistsQuery
 import app.n_zik.compagnon.bridge.library.RewindState
 import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongsQuery
-import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.bridge.library.toListRef
 import app.n_zik.compagnon.bridge.state.ListAction
 import app.n_zik.compagnon.bridge.state.ListRef
@@ -76,18 +58,36 @@ import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.bridge.state.displayedLike
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.themed.Loader
 import app.n_zik.compagnon.core.network.LibraryResult
 import app.n_zik.compagnon.core.network.WriteResult
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.formatMessage
+import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.semiBold
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 
 /** The four library tabs, in the phone's order (`HomeScreen.kt` `navBarContent`; no Quick picks: not in the contract), with the phone's tab labels and icons. */
 enum class LibraryTab(val feature: String, val textId: StringResource, val iconId: DrawableResource) {
-    Songs(SessionContract.FEATURE_LIBRARY_SONGS, Res.string.songs, Res.drawable.musical_notes),
-    Artists(SessionContract.FEATURE_LIBRARY_ARTISTS, Res.string.artists, Res.drawable.people),
-    Albums(SessionContract.FEATURE_LIBRARY_ALBUMS, Res.string.albums, Res.drawable.album),
-    Playlists(SessionContract.FEATURE_LIBRARY_PLAYLISTS, Res.string.playlists, Res.drawable.library),
+    Songs(SessionContract.FEATURE_LIBRARY_SONGS, Res.string.library_songs_title, Res.drawable.musical_notes),
+    Artists(SessionContract.FEATURE_LIBRARY_ARTISTS, Res.string.library_artists_title, Res.drawable.people),
+    Albums(SessionContract.FEATURE_LIBRARY_ALBUMS, Res.string.library_albums_title, Res.drawable.album),
+    Playlists(SessionContract.FEATURE_LIBRARY_PLAYLISTS, Res.string.library_playlists_title, Res.drawable.library),
     ;
 
     companion object {
@@ -904,7 +904,7 @@ class LibraryActions(
         }
         scope.launch {
             if (tracks.isEmpty()) {
-                (info ?: message)(getString(Res.string.no_song_to_shuffle))
+                (info ?: message)(getString(Res.string.player_shuffle_empty_message))
                 return@launch
             }
             val selection = PlayWindow.shuffled(tracks.map { it.id })
@@ -985,7 +985,7 @@ class LibraryActions(
                     if (result.page.items.isNotEmpty()) {
                         block(result.page.items.map { it.id }, result.page.total)
                     } else {
-                        message(getString(Res.string.no_song_found))
+                        message(getString(Res.string.player_no_song_found))
                     }
                 LibraryResult.NotFound -> message(getString(Res.string.library_not_found))
                 LibraryResult.Revoked -> Unit
@@ -1056,7 +1056,7 @@ fun PagedStatus(state: PagedState<*>, onRetry: () -> Unit, modifier: Modifier = 
                 style = typography().xs.semiBold.copy(color = colorPalette().textSecondary, textAlign = TextAlign.Center),
             )
             TextButton(onClick = onRetry) {
-                Text(stringResource(Res.string.retry), style = typography().xs.semiBold, color = colorPalette().accent)
+                Text(stringResource(Res.string.common_action_retry), style = typography().xs.semiBold, color = colorPalette().accent)
             }
         }
         state.loading -> Loader(modifier = modifier.fillMaxWidth())

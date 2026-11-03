@@ -1,26 +1,5 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
-import app.n_zik.compagnon.bridge.state.PlayerBackgroundColors
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.components.settings.OtherSettingsEntry
-import app.n_zik.compagnon.components.settings.SettingsDescription
-import app.n_zik.compagnon.components.settings.SettingsInfoEntry
-import app.n_zik.compagnon.components.settings.SettingsSectionCard
-import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
-import app.n_zik.compagnon.components.tab.Search
-import app.n_zik.compagnon.components.theme.BoundedCornerSize
-import app.n_zik.compagnon.components.themed.HeaderWithIcon
-import app.n_zik.compagnon.components.themed.MiniPlayerButtonsSettingsDialog
-import app.n_zik.compagnon.components.themed.ValueSelectorDialog
-import app.n_zik.compagnon.components.ui.sliders.SliderControl
-import app.n_zik.compagnon.enums.AnimatedGradient
-import app.n_zik.compagnon.enums.PlayerSwipeSensitivity
-import app.n_zik.compagnon.enums.PlayerTimelineType
-import app.n_zik.compagnon.enums.ThumbnailCoverType
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.uiRoundnessShape
-import app.n_zik.compagnon.utils.Preferences
-import app.n_zik.compagnon.utils.Toaster
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -61,6 +40,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.n_zik.compagnon.bridge.state.PlayerBackgroundColors
+import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.settings.OtherSettingsEntry
+import app.n_zik.compagnon.components.settings.SettingsDescription
+import app.n_zik.compagnon.components.settings.SettingsInfoEntry
+import app.n_zik.compagnon.components.settings.SettingsSectionCard
+import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
+import app.n_zik.compagnon.components.tab.Search
+import app.n_zik.compagnon.components.theme.BoundedCornerSize
+import app.n_zik.compagnon.components.themed.HeaderWithIcon
+import app.n_zik.compagnon.components.themed.MiniPlayerButtonsSettingsDialog
+import app.n_zik.compagnon.components.themed.ValueSelectorDialog
+import app.n_zik.compagnon.components.ui.sliders.SliderControl
+import app.n_zik.compagnon.enums.AnimatedGradient
+import app.n_zik.compagnon.enums.PlayerSwipeSensitivity
+import app.n_zik.compagnon.enums.PlayerTimelineType
+import app.n_zik.compagnon.enums.ThumbnailCoverType
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.uiRoundnessShape
+import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.utils.Toaster
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -357,87 +357,87 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
         val presetsLayoutCtx = settingsSearchCtx(
             search.inputValue,
             stringResource(Res.string.player_presets_and_layout),
-            stringResource(Res.string.appearancepresets),
-            stringResource(Res.string.playertype),
-            stringResource(Res.string.queuetype),
-            stringResource(Res.string.thumbnailtype),
-            stringResource(Res.string.pinfo_type),
-            stringResource(Res.string.pinfo_album_and_artist_name),
-            stringResource(Res.string.pinfo_show_icons),
-            stringResource(Res.string.pcontrols_type),
-            stringResource(Res.string.icon_like_button),
+            stringResource(Res.string.settings_player_appearance_presets_title),
+            stringResource(Res.string.player_type),
+            stringResource(Res.string.settings_player_queue_style_label),
+            stringResource(Res.string.settings_player_artwork_style_label),
+            stringResource(Res.string.settings_player_header_style_label),
+            stringResource(Res.string.settings_player_header_album_artist_description),
+            stringResource(Res.string.settings_player_header_icons_visible_label),
+            stringResource(Res.string.settings_player_controls_style_label),
+            stringResource(Res.string.settings_player_favorite_button_style_label),
         )
         val coverThumbnailCtx = settingsSearchCtx(
             search.inputValue,
-            stringResource(Res.string.cover_and_thumbnail),
-            stringResource(Res.string.show_thumbnail),
-            stringResource(Res.string.thumbnailpause),
-            stringResource(Res.string.crop_video_thumbnails),
-            stringResource(Res.string.show_cover_thumbnail_animation),
-            stringResource(Res.string.cover_thumbnail_animation_type),
+            stringResource(Res.string.settings_player_artwork_section_title),
+            stringResource(Res.string.settings_player_artwork_visible_label),
+            stringResource(Res.string.settings_player_artwork_shrink_when_paused_label),
+            stringResource(Res.string.settings_player_crop_video_artwork_label),
+            stringResource(Res.string.settings_player_artwork_animation_enabled_label),
+            stringResource(Res.string.settings_player_artwork_animation_style_label),
             stringResource(Res.string.player_thumbnail_size),
-            stringResource(Res.string.thumbnail_roundness),
+            stringResource(Res.string.settings_player_artwork_corner_radius_label),
             stringResource(Res.string.artist_roundness),
-            stringResource(Res.string.ui_roundness),
+            stringResource(Res.string.settings_interface_corner_radius_label),
         )
         val timelineCtx = settingsSearchCtx(
             search.inputValue,
-            stringResource(Res.string.timeline_and_controls),
-            stringResource(Res.string.timelinesize),
-            stringResource(Res.string.miniplayer_buttons_config),
+            stringResource(Res.string.settings_player_timeline_controls_section_title),
+            stringResource(Res.string.settings_player_timeline_size_label),
+            stringResource(Res.string.player_mini_buttons_config),
             stringResource(Res.string.player_swap_controls_with_timeline),
-            stringResource(Res.string.timeline),
-            stringResource(Res.string.transparentbar),
+            stringResource(Res.string.settings_player_timeline_label),
+            stringResource(Res.string.settings_player_timeline_transparent_label),
             stringResource(Res.string.player_controls_colors),
-            stringResource(Res.string.play_button),
-            stringResource(Res.string.buttonzoomout),
-            stringResource(Res.string.icon_like_button),
+            stringResource(Res.string.settings_player_play_button_label),
+            stringResource(Res.string.settings_player_button_zoom_out_animation_label),
+            stringResource(Res.string.settings_player_favorite_button_style_label),
         )
         val colorsCtx = settingsSearchCtx(
             search.inputValue,
-            stringResource(Res.string.colors_and_background),
-            stringResource(Res.string.background_colors),
-            stringResource(Res.string.gradienttype),
-            stringResource(Res.string.shake_sensitivity_theme),
-            stringResource(Res.string.rotating_cover_title),
-            stringResource(Res.string.blackgradient),
-            stringResource(Res.string.bottomgradient),
-            stringResource(Res.string.textoutline),
-            stringResource(Res.string.show_total_time_of_queue),
-            stringResource(Res.string.show_remaining_song_time),
-            stringResource(Res.string.skip_time_buttons),
+            stringResource(Res.string.settings_player_background_section_title),
+            stringResource(Res.string.settings_player_background_colors_label),
+            stringResource(Res.string.settings_player_gradient_style_label),
+            stringResource(Res.string.settings_player_m3e_motion_sensitivity_label),
+            stringResource(Res.string.settings_player_rotating_artwork_title),
+            stringResource(Res.string.settings_player_bottom_black_gradient_label),
+            stringResource(Res.string.settings_player_action_bar_gradient_label),
+            stringResource(Res.string.settings_player_text_outline_label),
+            stringResource(Res.string.settings_player_queue_duration_visible_label),
+            stringResource(Res.string.settings_player_remaining_duration_visible_label),
+            stringResource(Res.string.settings_player_seek_time_buttons_label),
         )
         val behaviorCtx = settingsSearchCtx(
             search.inputValue,
             stringResource(Res.string.player_behavior_and_visuals),
-            stringResource(Res.string.show_player_top_actions_bar),
-            stringResource(Res.string.show_next_songs_in_player),
-            stringResource(Res.string.disable_scrolling_text),
-            stringResource(Res.string.disable_horizontal_swipe),
+            stringResource(Res.string.settings_player_top_action_bar_visible_label),
+            stringResource(Res.string.settings_player_next_queue_visible_label),
+            stringResource(Res.string.settings_player_disable_text_marquee_label),
+            stringResource(Res.string.settings_player_disable_horizontal_swipe_label),
             stringResource(Res.string.player_swipe_sensitivity),
             stringResource(Res.string.player_rotating_buttons),
-            stringResource(Res.string.background_progress_bar),
-            stringResource(Res.string.visualizer),
-            stringResource(Res.string.require_mic_permission),
+            stringResource(Res.string.settings_player_background_progress_label),
+            stringResource(Res.string.visualizer_title),
+            stringResource(Res.string.visualizer_microphone_permission_message),
         )
         val lyricsCtx = settingsSearchCtx(
             search.inputValue,
-            stringResource(Res.string.txt_lyrics),
-            stringResource(Res.string.show_lyrics_thumbnail),
-            stringResource(Res.string.toggle_lyrics),
-            stringResource(Res.string.click_lyrics_text),
-            stringResource(Res.string.lyricscolor),
-            stringResource(Res.string.save_lyrics_state),
-            stringResource(Res.string.show_background_in_lyrics),
+            stringResource(Res.string.lyrics_title),
+            stringResource(Res.string.settings_lyrics_artwork_visible_label),
+            stringResource(Res.string.settings_player_tap_artwork_toggle_lyrics_label),
+            stringResource(Res.string.settings_lyrics_seek_on_line_press_label),
+            stringResource(Res.string.lyrics_color),
+            stringResource(Res.string.settings_lyrics_remember_state_label),
+            stringResource(Res.string.settings_lyrics_match_player_background_label),
             stringResource(Res.string.player_enable_lyrics_popup_message),
         )
         val actionBarCtx = settingsSearchCtx(
             search.inputValue,
             stringResource(Res.string.player_action_bar),
-            stringResource(Res.string.action_bar_transparent_background),
-            stringResource(Res.string.actionspacedevenly),
-            stringResource(Res.string.tapqueue),
-            stringResource(Res.string.swipe_up_to_open_the_queue),
+            stringResource(Res.string.settings_player_action_bar_transparent_background_label),
+            stringResource(Res.string.settings_player_actions_spaced_evenly_label),
+            stringResource(Res.string.settings_player_queue_tap_to_open_label),
+            stringResource(Res.string.settings_player_queue_swipe_up_label),
             stringResource(Res.string.player_action_bar_buttons),
         )
         val settingsResetCtx = settingsSearchCtx(search.inputValue, stringResource(Res.string.settings_reset))
@@ -459,7 +459,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
             )
 
             SettingsDescription(
-                text = stringResource(Res.string.appearance_settings_description),
+                text = stringResource(Res.string.settings_player_appearance_page_description),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
             )
@@ -484,11 +484,11 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // click has no effect, a long click toasts the phone's description
                         if (vis.appearancePresets) {
                             OtherSettingsEntry(
-                                title = stringResource(Res.string.appearancepresets),
-                                text = stringResource(Res.string.appearancepresetssecondary),
+                                title = stringResource(Res.string.settings_player_appearance_presets_title),
+                                text = stringResource(Res.string.settings_player_appearance_presets_preview_description),
                                 icon = Res.drawable.ui,
                                 onClick = {},
-                                onLongClick = { Toaster.i(Res.string.appearancepresetssecondary) },
+                                onLongClick = { Toaster.i(Res.string.settings_player_appearance_presets_preview_description) },
                             )
                         }
 
@@ -498,8 +498,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // default is shown, no dialog, a click has no effect; no description → no
                         // toast
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.playertype),
-                            text = stringResource(Res.string.pcontrols_essential),
+                            title = stringResource(Res.string.player_type),
+                            text = stringResource(Res.string.player_controls_style_essential),
                             icon = Res.drawable.play,
                             onClick = {},
                         )
@@ -509,8 +509,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // description → no toast
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.queuetype),
-                            text = stringResource(Res.string.pcontrols_modern),
+                            title = stringResource(Res.string.settings_player_queue_style_label),
+                            text = stringResource(Res.string.player_controls_style_modern),
                             icon = Res.drawable.sort_grid,
                             onClick = {},
                         )
@@ -520,8 +520,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // effect; no description → no toast
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.thumbnailtype),
-                            text = stringResource(Res.string.pcontrols_modern),
+                            title = stringResource(Res.string.settings_player_artwork_style_label),
+                            text = stringResource(Res.string.player_controls_style_modern),
                             icon = Res.drawable.cd,
                             onClick = {},
                             modifier = Modifier.padding(start = subIndent),
@@ -532,8 +532,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // description → no toast
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.pinfo_type),
-                            text = stringResource(Res.string.pcontrols_modern),
+                            title = stringResource(Res.string.settings_player_header_style_label),
+                            text = stringResource(Res.string.player_controls_style_modern),
                             icon = Res.drawable.information,
                             onClick = {},
                         )
@@ -541,7 +541,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "Album and Artist header" (AS:1206, the phone's bare `SettingsDescription`)
                         // — read-only info row, as on the phone
                         SettingsInfoEntry(
-                            title = stringResource(Res.string.pinfo_album_and_artist_name),
+                            title = stringResource(Res.string.settings_player_header_album_artist_description),
                             text = "",
                             icon = Res.drawable.information,
                         )
@@ -552,7 +552,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // PC's header is coded Modern) — the default switch state, a click has no
                         // effect; the phone's row shows no description → no toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.pinfo_show_icons),
+                            title = stringResource(Res.string.settings_player_header_icons_visible_label),
                             text = "",
                             icon = Res.drawable.information,
                             isChecked = true,
@@ -566,8 +566,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // effect; no description → no toast
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.pcontrols_type),
-                            text = stringResource(Res.string.pcontrols_essential),
+                            title = stringResource(Res.string.settings_player_controls_style_label),
+                            text = stringResource(Res.string.player_controls_style_essential),
                             icon = Res.drawable.burger,
                             onClick = {},
                         )
@@ -577,8 +577,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // click has no effect; no description → no toast
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.icon_like_button),
-                            text = stringResource(Res.string.pcontrols_essential),
+                            title = stringResource(Res.string.settings_player_favorite_button_style_label),
+                            text = stringResource(Res.string.player_controls_style_essential),
                             icon = Res.drawable.heart,
                             onClick = {},
                         )
@@ -592,7 +592,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                 enter = fadeIn(animationSpec = tween(600)) + scaleIn(animationSpec = tween(600), initialScale = 0.9f),
             ) {
                 SettingsSectionCard(
-                    title = stringResource(Res.string.cover_and_thumbnail),
+                    title = stringResource(Res.string.settings_player_artwork_section_title),
                     icon = Res.drawable.album,
                     content = {
                         // "Show thumbnail" (AS:1287, the phone's `showthumbnailKey`) — INERT, shown
@@ -604,7 +604,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // phone's row shows no description → no toast
                         if (vis.showThumbnail) {
                             ToggleSettingsEntry(
-                                title = stringResource(Res.string.show_thumbnail),
+                                title = stringResource(Res.string.settings_player_artwork_visible_label),
                                 text = "",
                                 icon = Res.drawable.image,
                                 isChecked = true,
@@ -627,7 +627,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // → no toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.thumbnailpause),
+                            title = stringResource(Res.string.settings_player_artwork_shrink_when_paused_label),
                             text = "",
                             icon = Res.drawable.pause,
                             isChecked = true,
@@ -639,7 +639,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "Crop video thumbnails" (AS:1395, on) — INERT: the default switch state, a
                         // click has no effect; the phone's row shows no description → no toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.crop_video_thumbnails),
+                            title = stringResource(Res.string.settings_player_crop_video_artwork_label),
                             text = "",
                             icon = Res.drawable.images_sharp,
                             isChecked = true,
@@ -651,7 +651,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "Show cover thumbnail animation" (AS:1411, the PC key
                         // `showCoverThumbnailAnimation`, off) — WIRED
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.show_cover_thumbnail_animation),
+                            title = stringResource(Res.string.settings_player_artwork_animation_enabled_label),
                             text = "",
                             icon = Res.drawable.images_sharp,
                             isChecked = settings.showCoverThumbnailAnimation,
@@ -667,7 +667,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // (LIVE from the PC key)
                         if (vis.coverAnimationType) {
                             OtherSettingsEntry(
-                                title = stringResource(Res.string.cover_thumbnail_animation_type),
+                                title = stringResource(Res.string.settings_player_artwork_animation_style_label),
                                 text = stringResource(settings.coverThumbnailAnimationValue.textId),
                                 icon = Res.drawable.images_sharp,
                                 onClick = { showCoverAnimationTypeDialog = true },
@@ -714,7 +714,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // disabled at the phone's default (12); no PC key, a click has no effect;
                         // the phone's row shows no description → no toast
                         InertSliderSettingsEntry(
-                            title = stringResource(Res.string.thumbnail_roundness),
+                            title = stringResource(Res.string.settings_player_artwork_corner_radius_label),
                             icon = Res.drawable.image,
                             value = 12f,
                             range = 0f..48f,
@@ -751,7 +751,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // phone's default (25); no PC key, a click has no effect; the phone's row
                         // shows no description → no toast
                         InertSliderSettingsEntry(
-                            title = stringResource(Res.string.ui_roundness),
+                            title = stringResource(Res.string.settings_interface_corner_radius_label),
                             icon = Res.drawable.ui,
                             value = 25f,
                             range = 0f..40f,
@@ -775,7 +775,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                 enter = fadeIn(animationSpec = tween(600)) + scaleIn(animationSpec = tween(600), initialScale = 0.9f),
             ) {
                 SettingsSectionCard(
-                    title = stringResource(Res.string.timeline_and_controls),
+                    title = stringResource(Res.string.settings_player_timeline_controls_section_title),
                     icon = Res.drawable.horizontal_straight_line,
                     content = {
                         // "Player Timeline Size" (AS:1705, the phone's `playerTimelineSizeKey`,
@@ -783,8 +783,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // dialog, a click has no effect; no description → no toast
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.timelinesize),
-                            text = stringResource(Res.string.biggest),
+                            title = stringResource(Res.string.settings_player_timeline_size_label),
+                            text = stringResource(Res.string.common_size_biggest),
                             icon = Res.drawable.resize,
                             onClick = {},
                         )
@@ -792,8 +792,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "MiniPlayer buttons" (AS:1724, action → the ported dialog, spec §D) —
                         // WIRED: its 2 functional rows (Discover / Visualizer) act on their PC keys
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.miniplayer_buttons_config),
-                            text = stringResource(Res.string.miniplayer_buttons_config_description),
+                            title = stringResource(Res.string.player_mini_buttons_config),
+                            text = stringResource(Res.string.player_mini_buttons_config_description),
                             icon = Res.drawable.ui,
                             onClick = { showMpbDialog = true },
                         )
@@ -813,7 +813,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // "Timeline" (AS:1753, the PC key `playerTimelineType`, 8 values) — WIRED
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.timeline),
+                            title = stringResource(Res.string.settings_player_timeline_label),
                             text = stringResource(settings.playerTimelineTypeValue.textId),
                             icon = Res.drawable.playing_indicator,
                             onClick = { showTimelineDialog = true },
@@ -825,7 +825,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // phone's `ImportantSettingsDescription`
                         if (vis.micPermissionInfo) {
                             SettingsDescription(
-                                text = stringResource(Res.string.require_mic_permission),
+                                text = stringResource(Res.string.visualizer_microphone_permission_message),
                                 important = true,
                             )
                         }
@@ -835,7 +835,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.transparentbar),
+                            title = stringResource(Res.string.settings_player_timeline_transparent_label),
                             text = "",
                             icon = Res.drawable.eye_off,
                             isChecked = true,
@@ -849,7 +849,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // description → no toast
                         OtherSettingsEntry(
                             title = stringResource(Res.string.player_controls_colors),
-                            text = stringResource(Res.string.monochrome),
+                            text = stringResource(Res.string.player_controls_monochrome_label),
                             icon = Res.drawable.color_palette,
                             onClick = {},
                         )
@@ -860,8 +860,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "Wavy circle" label), no dialog, a click has no effect; no description →
                         // no toast
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.play_button),
-                            text = stringResource(Res.string.circular_ribbed),
+                            title = stringResource(Res.string.settings_player_play_button_label),
+                            text = stringResource(Res.string.player_play_button_wavy_circle_label),
                             icon = Res.drawable.play,
                             onClick = {},
                         )
@@ -871,7 +871,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.buttonzoomout),
+                            title = stringResource(Res.string.settings_player_button_zoom_out_animation_label),
                             text = "",
                             icon = Res.drawable.resize,
                             isChecked = true,
@@ -884,8 +884,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // 1837), so the phone renders the entry twice) — INERT, as the AS:1256 row
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.icon_like_button),
-                            text = stringResource(Res.string.pcontrols_essential),
+                            title = stringResource(Res.string.settings_player_favorite_button_style_label),
+                            text = stringResource(Res.string.player_controls_style_essential),
                             icon = Res.drawable.play,
                             onClick = {},
                         )
@@ -899,13 +899,13 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                 enter = fadeIn(animationSpec = tween(600)) + scaleIn(animationSpec = tween(600), initialScale = 0.9f),
             ) {
                 SettingsSectionCard(
-                    title = stringResource(Res.string.colors_and_background),
+                    title = stringResource(Res.string.settings_player_background_section_title),
                     icon = Res.drawable.color_palette,
                     content = {
                         // "Background colors" (AS:1868, the PC key `playerBackgroundColors`, 7
                         // values) — WIRED
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.background_colors),
+                            title = stringResource(Res.string.settings_player_background_colors_label),
                             text = stringResource(settings.playerBackgroundColorsValue.textId),
                             icon = Res.drawable.droplet,
                             onClick = { showBackgroundColorsDialog = true },
@@ -917,7 +917,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // from the PC key, true by default)
                         if (vis.gradientType) {
                             OtherSettingsEntry(
-                                title = stringResource(Res.string.gradienttype),
+                                title = stringResource(Res.string.settings_player_gradient_style_label),
                                 text = stringResource(settings.animatedGradientValue.textId),
                                 icon = Res.drawable.color_palette,
                                 onClick = { showGradientTypeDialog = true },
@@ -934,8 +934,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // enum is phone-only), a click has no effect; no description → no toast
                         if (vis.themeShakeSensitivity) {
                             OtherSettingsEntry(
-                                title = stringResource(Res.string.shake_sensitivity_theme),
-                                text = stringResource(Res.string.shake_sensitivity_theme_disabled),
+                                title = stringResource(Res.string.settings_player_m3e_motion_sensitivity_label),
+                                text = stringResource(Res.string.theme_shake_sensitivity_disabled),
                                 icon = Res.drawable.shake_gesture,
                                 onClick = {},
                                 modifier = Modifier.padding(start = 25.dp),
@@ -948,7 +948,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // the PC key)
                         if (vis.rotatingAlbumCover) {
                             ToggleSettingsEntry(
-                                title = stringResource(Res.string.rotating_cover_title),
+                                title = stringResource(Res.string.settings_player_rotating_artwork_title),
                                 text = "",
                                 icon = Res.drawable.sync,
                                 isChecked = settings.rotatingAlbumCover,
@@ -966,7 +966,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // no effect; the phone's row shows no description → no toast
                         if (vis.blackGradientAtBottom) {
                             ToggleSettingsEntry(
-                                title = stringResource(Res.string.blackgradient),
+                                title = stringResource(Res.string.settings_player_bottom_black_gradient_label),
                                 text = "",
                                 icon = Res.drawable.drop_half_fill,
                                 isChecked = false,
@@ -984,7 +984,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // phone's row shows no description → no toast
                         if (vis.enableActionBarGradient) {
                             ToggleSettingsEntry(
-                                title = stringResource(Res.string.bottomgradient),
+                                title = stringResource(Res.string.settings_player_action_bar_gradient_label),
                                 text = "",
                                 icon = Res.drawable.droplet,
                                 isChecked = false,
@@ -996,7 +996,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "Enable Text Outline" (AS:1983, off) — INERT: the default switch state,
                         // a click has no effect; the phone's row shows no description → no toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.textoutline),
+                            title = stringResource(Res.string.settings_player_text_outline_label),
                             text = "",
                             icon = Res.drawable.text,
                             isChecked = false,
@@ -1009,7 +1009,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.show_total_time_of_queue),
+                            title = stringResource(Res.string.settings_player_queue_duration_visible_label),
                             text = "",
                             icon = Res.drawable.time,
                             isChecked = true,
@@ -1022,7 +1022,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.show_remaining_song_time),
+                            title = stringResource(Res.string.settings_player_remaining_duration_visible_label),
                             text = "",
                             icon = Res.drawable.time,
                             isChecked = true,
@@ -1033,7 +1033,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "Skip time buttons" (AS:2027, on) — INERT: the default switch state, a
                         // click has no effect; the phone's row shows no description → no toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.skip_time_buttons),
+                            title = stringResource(Res.string.settings_player_seek_time_buttons_label),
                             text = "",
                             icon = Res.drawable.play_forward,
                             isChecked = true,
@@ -1060,7 +1060,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // no description → no toast
                         if (vis.showTopActionsBar) {
                             ToggleSettingsEntry(
-                                title = stringResource(Res.string.show_player_top_actions_bar),
+                                title = stringResource(Res.string.settings_player_top_action_bar_visible_label),
                                 text = "",
                                 icon = Res.drawable.enqueue,
                                 isChecked = true,
@@ -1074,7 +1074,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "Show next song queue" (AS:2089, off) — INERT: the default switch state,
                         // a click has no effect; the phone's row shows no description → no toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.show_next_songs_in_player),
+                            title = stringResource(Res.string.settings_player_next_queue_visible_label),
                             text = "",
                             icon = Res.drawable.arrow_forward,
                             isChecked = false,
@@ -1089,8 +1089,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // re-ported with the phone's description as its text
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.disable_scrolling_text),
-                            text = stringResource(Res.string.scrolling_text_is_used_for_long_texts),
+                            title = stringResource(Res.string.settings_player_disable_text_marquee_label),
+                            text = stringResource(Res.string.settings_player_disable_text_marquee_description),
                             icon = Res.drawable.text,
                             isChecked = settings.disableScrollingText,
                             onCheckedChange = {
@@ -1106,13 +1106,13 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // phone's description
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.disable_horizontal_swipe),
-                            text = stringResource(Res.string.disable_song_switching_via_swipe),
+                            title = stringResource(Res.string.settings_player_disable_horizontal_swipe_label),
+                            text = stringResource(Res.string.settings_player_disable_song_swipe_label),
                             icon = Res.drawable.sync,
                             isChecked = false,
                             enabled = false,
                             onCheckedChange = {},
-                            onLongClick = { Toaster.i(Res.string.disable_song_switching_via_swipe) },
+                            onLongClick = { Toaster.i(Res.string.settings_player_disable_song_swipe_label) },
                         )
 
                         // "Player Swipe Sensitivity" (AS:2163, the PC key
@@ -1145,8 +1145,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "Minimized player" label) shown, no dialog, a click has no effect; no
                         // description → no toast
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.background_progress_bar),
-                            text = stringResource(Res.string.minimized_player),
+                            title = stringResource(Res.string.settings_player_background_progress_label),
+                            text = stringResource(Res.string.player_progress_mini_player),
                             icon = Res.drawable.horizontal_straight_line,
                             onClick = {},
                         )
@@ -1156,7 +1156,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // phone's row shows no description → no toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.visualizer),
+                            title = stringResource(Res.string.visualizer_title),
                             text = "",
                             icon = Res.drawable.sound_effect,
                             isChecked = false,
@@ -1169,7 +1169,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // (info) "Visualizer effect require mic permission" (AS:2328) — always
                         // shown, end of section, as the phone's `ImportantSettingsDescription`
                         SettingsDescription(
-                            text = stringResource(Res.string.require_mic_permission),
+                            text = stringResource(Res.string.visualizer_microphone_permission_message),
                             important = true,
                         )
                     },
@@ -1182,7 +1182,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                 enter = fadeIn(animationSpec = tween(700)) + scaleIn(animationSpec = tween(700), initialScale = 0.9f),
             ) {
                 SettingsSectionCard(
-                    title = stringResource(Res.string.txt_lyrics),
+                    title = stringResource(Res.string.lyrics_title),
                     icon = Res.drawable.song_lyrics,
                     content = {
                         // "Show thumbnail for lyrics" (AS:2352, the phone's
@@ -1193,7 +1193,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // description → no toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.show_lyrics_thumbnail),
+                            title = stringResource(Res.string.settings_lyrics_artwork_visible_label),
                             text = "",
                             icon = Res.drawable.image,
                             isChecked = true,
@@ -1204,13 +1204,13 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "Toggle lyrics" (AS:2367, on) — INERT: the default switch state, a click
                         // has no effect, a long click toasts the phone's description
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.toggle_lyrics),
-                            text = stringResource(Res.string.by_tapping_on_the_thumbnail),
+                            title = stringResource(Res.string.settings_player_tap_artwork_toggle_lyrics_label),
+                            text = stringResource(Res.string.settings_player_tap_artwork_toggle_lyrics_description),
                             icon = Res.drawable.song_lyrics,
                             isChecked = true,
                             enabled = false,
                             onCheckedChange = {},
-                            onLongClick = { Toaster.i(Res.string.by_tapping_on_the_thumbnail) },
+                            onLongClick = { Toaster.i(Res.string.settings_player_tap_artwork_toggle_lyrics_description) },
                         )
 
                         // "Jump to lyrics by pressing the line" (AS:2382, on) — INERT: the default
@@ -1218,7 +1218,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // description → no toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.click_lyrics_text),
+                            title = stringResource(Res.string.settings_lyrics_seek_on_line_press_label),
                             text = "",
                             icon = Res.drawable.arrow_down,
                             isChecked = true,
@@ -1231,8 +1231,8 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // not ported), a click has no effect; no description → no toast
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.lyricscolor),
-                            text = stringResource(Res.string.color_white),
+                            title = stringResource(Res.string.lyrics_color),
+                            text = stringResource(Res.string.common_color_white),
                             icon = Res.drawable.color_palette,
                             onClick = {},
                         )
@@ -1242,13 +1242,13 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "Save lyrics state" (AS:2436, off) — INERT: the default switch state, a
                         // click has no effect, a long click toasts the phone's description
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.save_lyrics_state),
-                            text = stringResource(Res.string.save_lyrics_state_description),
+                            title = stringResource(Res.string.settings_lyrics_remember_state_label),
+                            text = stringResource(Res.string.settings_lyrics_remember_state_description),
                             icon = Res.drawable.bookmark,
                             isChecked = false,
                             enabled = false,
                             onCheckedChange = {},
-                            onLongClick = { Toaster.i(Res.string.save_lyrics_state_description) },
+                            onLongClick = { Toaster.i(Res.string.settings_lyrics_remember_state_description) },
                         )
 
                         // "Match Lyrics background color with Player" (AS:2452, the phone's
@@ -1259,7 +1259,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.show_background_in_lyrics),
+                            title = stringResource(Res.string.settings_lyrics_match_player_background_label),
                             text = "",
                             icon = Res.drawable.image,
                             isChecked = false,
@@ -1297,7 +1297,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.action_bar_transparent_background),
+                            title = stringResource(Res.string.settings_player_action_bar_transparent_background_label),
                             text = "",
                             icon = Res.drawable.eye,
                             isChecked = true,
@@ -1308,7 +1308,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "Spaced evenly" (AS:2514, on) — INERT: the default switch state, a click
                         // has no effect; the phone's row shows no description → no toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.actionspacedevenly),
+                            title = stringResource(Res.string.settings_player_actions_spaced_evenly_label),
                             text = "",
                             icon = Res.drawable.horizontal_bold_line,
                             isChecked = true,
@@ -1319,7 +1319,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                         // "Tap to open queue" (AS:2529, on) — INERT: the default switch state, a
                         // click has no effect; the phone's row shows no description → no toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.tapqueue),
+                            title = stringResource(Res.string.settings_player_queue_tap_to_open_label),
                             text = "",
                             icon = Res.drawable.gesture,
                             isChecked = true,
@@ -1332,7 +1332,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         // toast
                         ToggleSettingsEntry(
-                            title = stringResource(Res.string.swipe_up_to_open_the_queue),
+                            title = stringResource(Res.string.settings_player_queue_swipe_up_label),
                             text = "",
                             icon = Res.drawable.gesture,
                             isChecked = true,
@@ -1398,7 +1398,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
             if (showBackgroundColorsDialog) {
                 ValueSelectorDialog(
-                    title = stringResource(Res.string.background_colors),
+                    title = stringResource(Res.string.settings_player_background_colors_label),
                     values = PlayerBackgroundColors.entries.toList(),
                     selectedValue = settings.playerBackgroundColorsValue,
                     onValueSelected = {
@@ -1412,7 +1412,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
             if (showGradientTypeDialog) {
                 ValueSelectorDialog(
-                    title = stringResource(Res.string.gradienttype),
+                    title = stringResource(Res.string.settings_player_gradient_style_label),
                     values = AnimatedGradient.entries.toList(),
                     selectedValue = settings.animatedGradientValue,
                     onValueSelected = {
@@ -1426,7 +1426,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
             if (showTimelineDialog) {
                 ValueSelectorDialog(
-                    title = stringResource(Res.string.timeline),
+                    title = stringResource(Res.string.settings_player_timeline_label),
                     values = PlayerTimelineType.entries.toList(),
                     selectedValue = settings.playerTimelineTypeValue,
                     onValueSelected = {
@@ -1440,7 +1440,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
             if (showCoverAnimationTypeDialog) {
                 ValueSelectorDialog(
-                    title = stringResource(Res.string.cover_thumbnail_animation_type),
+                    title = stringResource(Res.string.settings_player_artwork_animation_style_label),
                     values = ThumbnailCoverType.entries.toList(),
                     selectedValue = settings.coverThumbnailAnimationValue,
                     onValueSelected = {

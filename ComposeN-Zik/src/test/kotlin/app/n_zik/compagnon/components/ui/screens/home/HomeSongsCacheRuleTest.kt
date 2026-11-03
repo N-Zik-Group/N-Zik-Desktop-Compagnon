@@ -1,7 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
-import app.n_zik.compagnon.generated.resources.Res
-import app.n_zik.compagnon.generated.resources.turn_off
+import app.n_zik.compagnon.generated.resources.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -11,7 +10,7 @@ import org.junit.jupiter.api.Test
 /**
  * The phone-cache cap label rule (spec `spec-remove-ui-sync`): the wire's `maxText` is no longer
  * consumed, the label is computed from the phone's `maxBytes` — the `Disabled` cap (1 MB decimal,
- * the phone's `ExoPlayerDiskCacheMaxSize.Disabled`) reads "Turn off" ([Res.string.turn_off]), every
+ * the phone's `ExoPlayerDiskCacheMaxSize.Disabled`) reads "Turn off" ([Res.string.common_action_turn_off]), every
  * other cap is formatted (`null` label id), and `null` (the phone's `Unlimited`) hides the bar.
  */
 class HomeSongsCacheRuleTest {
@@ -48,8 +47,8 @@ class HomeSongsCacheRuleTest {
     @Test
     fun `the disabled cap labels the phone's Turn off string, every other cap formats its bytes`() {
         // The sentinel reads the phone's own "Turn off" (its `Disabled.text`)
-        assertEquals(Res.string.turn_off, phoneCacheCapLabelId(1_000_000L))
-        assertEquals(Res.string.turn_off, phoneCacheCapLabelId(PHONE_CACHE_DISABLED_MAX_BYTES))
+        assertEquals(Res.string.common_action_turn_off, phoneCacheCapLabelId(1_000_000L))
+        assertEquals(Res.string.common_action_turn_off, phoneCacheCapLabelId(PHONE_CACHE_DISABLED_MAX_BYTES))
         // Ladder caps, custom caps and `null` all mean "format the bytes" (or hide the bar)
         val caps = listOf(
             32_000_000L, 512_000_000L, 1_024_000_000L, 2_048_000_000L, 4_096_000_000L, 8_192_000_000L,

@@ -1,12 +1,5 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
-import app.n_zik.compagnon.components.navigation.tabTransition
-import app.n_zik.compagnon.LocalBottomBarOffset
-import app.n_zik.compagnon.components.navigation.nav.HorizontalNavigationBar
-import app.n_zik.compagnon.components.navigation.nav.NavigationTab
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.playback.cache.AudioCache
-import app.n_zik.compagnon.utils.Preferences
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +13,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
+import app.n_zik.compagnon.LocalBottomBarOffset
+import app.n_zik.compagnon.components.navigation.nav.HorizontalNavigationBar
+import app.n_zik.compagnon.components.navigation.nav.NavigationTab
+import app.n_zik.compagnon.components.navigation.tabTransition
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.playback.cache.AudioCache
+import app.n_zik.compagnon.utils.Preferences
 import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
@@ -124,13 +124,13 @@ fun SettingsScreen(
 
 /** The 7 settings sub-tabs (NAV-1 + spec `spec-fill-pc-ui-gaps-settings`, the phone's label + icon of each, in the phone's order): the 2 new phone tabs (User Interface / Player appearance) are inserted after Général, as on the phone. */
 internal val SETTINGS_TABS: List<Pair<StringResource, DrawableResource>> = listOf(
-    Res.string.tab_general to Res.drawable.ic_launcher_monochrome,
-    Res.string.ui_tab to Res.drawable.ui,
+    Res.string.settings_general_title to Res.drawable.ic_launcher_monochrome,
+    Res.string.settings_interface_page_title to Res.drawable.ui,
     Res.string.player_appearance to Res.drawable.color_palette,
-    Res.string.tab_data to Res.drawable.server,
-    Res.string.tab_network to Res.drawable.network,
-    Res.string.tab_miscellaneous to Res.drawable.equalizer,
-    Res.string.about to Res.drawable.information,
+    Res.string.settings_data_title to Res.drawable.server,
+    Res.string.settings_network_title to Res.drawable.network,
+    Res.string.settings_miscellaneous_title to Res.drawable.equalizer,
+    Res.string.about_title to Res.drawable.information,
 )
 
 /** The phone's `searchCtx` filter (NAV-12, its `GeneralSettings.kt` 311): a section is shown when the query is blank or one of its titles (the section card's, its entries') contains it, case-insensitively. */

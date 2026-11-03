@@ -1,28 +1,12 @@
 package app.n_zik.compagnon
 
+import java.io.File
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.io.File
 
-/**
- * The build-time string unescape (spec `spec-updater`, user report 2026-10-07 — the Android
- * escaping convention `\'` / `\"` / `\\` is visible in the desktop UI because the Compose
- * desktop resource pipeline does not unescape it, unlike aapt2 on Android):
- *
- *  * (a) the REAL generated files — the test task depends on `unescapeStringsXml`
- *    (wired in `ComposeN-Zik/build.gradle.kts`), so the assertions below run against the copies the
- *    build actually generated (one `strings.xml` per generated values directory, under
- *    `build/generated/composeResourcesUnescaped`): the French `app_subtitle` (the source still
- *    carries the Android `\'` escaping) is unescaped, the French `starting` carries the plain
- *    Crowdin value (`C'est parti…` — its source apostrophe escaped, unescaped like app_subtitle),
- *    and no generated value still carries an escaped apostrophe;
- *  * (b) the pure semantics of the unescape — the single left-to-right pass over the value of
- *    each `<string>` element. The build script carries its own copy of this function (build
- *    scripts cannot call test sources); case (a) pins the build's implementation on the real
- *    Crowdin data, and these cases pin the documented semantics.
- */
+/** Checks the build's generated catalogs and its Android escape semantics. */
 class UnescapedStringsTest {
 
     private companion object {
@@ -30,12 +14,7 @@ class UnescapedStringsTest {
         val generatedRoot = File("build/generated/composeResourcesUnescaped")
     }
 
-    /**
-     * The semantic reference of the build script's `unescapeAndroidStrings` (single left-to-right
-     * pass over the value of each `<string>` element): `\'` → `'`, `\"` → `"`, `\\` → `\`; a
-     * trailing backslash or a backslash before an unhandled character is kept as-is; the XML
-     * structure around the values is untouched.
-     */
+    // Keep the build-script copy covered: build scripts cannot call test-source helpers.
     private fun unescapeAndroidStrings(xml: String): String {
         val stringElement = Regex("(<string name=\"[^\"]+\"[^>]*>)(.*?)(</string>)", RegexOption.DOT_MATCHES_ALL)
         return stringElement.replace(xml) { m ->
@@ -69,18 +48,17 @@ class UnescapedStringsTest {
     private fun stringValues(xml: String): List<Pair<String, String>> =
         Regex("<string name=\"([^\"]+)\">(?<value>.*?)</string>", RegexOption.DOT_MATCHES_ALL)
             .findAll(xml)
-            .map { m -> m.groupValues[1] to m.groups["value"]!!.value }
+            .map { m -> m.groupValues[1] to requireNotNull(m.groups["value"]).value }
             .toList()
 
     // (a) the real generated files
 
     @Test
-    fun `the generated fr starting is unescaped`() {
+    fun `the generated fr updates starting status is unescaped`() {
         val fr = generatedRoot.resolve("values-fr/strings.xml")
         assertTrue(fr.isFile, "the generated unescaped fr strings.xml is missing: ${fr.path} (run :ComposeN-Zik:test — it depends on unescapeStringsXml)")
-        // The Crowdin-owned fr value: the source still carries the Android escaped apostrophe
-        // (C\'est parti…) — the generated copy must carry the plain one, like app_subtitle below
-        assertEquals("C'est parti…", stringName(fr.readText(), "starting"))
+        // Crowdin values retain Android escaping in source, so the build must unescape them.
+        assertEquals("C'est parti…", stringName(fr.readText(), "updates_starting_status"))
     }
 
     @Test
@@ -94,11 +72,11 @@ class UnescapedStringsTest {
     fun `every values directory is generated and no value still carries an escaped apostrophe`() {
         assertTrue(generatedRoot.isDirectory, "the generated unescaped res dir is missing: ${generatedRoot.path}")
         // `listFiles` takes a two-argument FilenameFilter (dir, name)
-        val sources = File("src/main/composeResources")
-            .listFiles { _, name -> name.startsWith("values") }!!
+        val sources = requireNotNull(File("src/main/composeResources")
+            .listFiles { _, name -> name.startsWith("values") })
             .filter { it.isDirectory }
-        val generated = generatedRoot
-            .listFiles { _, name -> name.startsWith("values") }!!
+        val generated = requireNotNull(generatedRoot
+            .listFiles { _, name -> name.startsWith("values") })
             .filter { it.isDirectory }
         assertEquals(sources.size, generated.size, "expected one generated dir per source values* dir")
         sources.forEach { source ->

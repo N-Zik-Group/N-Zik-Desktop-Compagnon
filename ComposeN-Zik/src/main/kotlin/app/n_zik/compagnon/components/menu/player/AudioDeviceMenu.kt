@@ -1,6 +1,5 @@
 package app.n_zik.compagnon.components.menu.player
 
-import app.n_zik.compagnon.generated.resources.*
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -22,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,6 +42,7 @@ import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.ui.sliders.SliderControl
 import app.n_zik.compagnon.enums.AudioQualityFormat
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.playback.vlc.VlcRuntime
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
@@ -228,7 +228,7 @@ fun AudioDeviceMenu(onDismiss: () -> Unit, phoneName: String) {
             phoneDevices.forEach { dev -> PhoneDeviceEntry(dev) }
         }
 
-        SectionTitle(stringResource(Res.string.volume))
+        SectionTitle(stringResource(Res.string.player_statistics_volume_label))
         VolumeRow(
             currentVolume = playbackVolume,
             maxVolume = 1f,
@@ -317,7 +317,7 @@ private fun PhoneDiscoveryError(errorMessage: String) {
         Spacer(modifier = Modifier.height(16.dp))
         // The phone's Retry (its `AudioDeviceMenu.kt` 430-438): inert, nothing to re-discover
         Button(onClick = {}) {
-            Text(text = stringResource(Res.string.retry))
+            Text(text = stringResource(Res.string.common_action_retry))
         }
     }
 }
@@ -486,7 +486,7 @@ private fun VolumeRow(
         }
 
         BasicText(
-            text = stringResource(Res.string.volume),
+            text = stringResource(Res.string.player_statistics_volume_label),
             style = typography().s.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = colorPalette().text,

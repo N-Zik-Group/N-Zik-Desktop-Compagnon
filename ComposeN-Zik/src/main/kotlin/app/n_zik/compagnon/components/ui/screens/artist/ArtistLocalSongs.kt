@@ -1,13 +1,8 @@
 package app.n_zik.compagnon.components.ui.screens.artist
 
-import app.n_zik.compagnon.components.themed.ConfirmationDialog
-import androidx.compose.foundation.lazy.items
-import app.n_zik.compagnon.bridge.library.toListRef
-import app.n_zik.compagnon.generated.resources.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -21,7 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,20 +43,16 @@ import app.n_zik.compagnon.bridge.library.LibraryRepository
 import app.n_zik.compagnon.bridge.library.PagedState
 import app.n_zik.compagnon.bridge.library.nextRotation
 import app.n_zik.compagnon.bridge.library.nextToggle
+import app.n_zik.compagnon.bridge.library.toListRef
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.SongItem
 import app.n_zik.compagnon.components.menu.song.SongItemMenu
 import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.styling.Dimensions
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.utils.LocalPreferences
-import app.n_zik.compagnon.utils.UserSettings
-import app.n_zik.compagnon.utils.Toaster
-import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.typography
-import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.components.tab.ShuffleOkFlash
 import app.n_zik.compagnon.components.themed.AutoResizeText
+import app.n_zik.compagnon.components.themed.ConfirmationDialog
 import app.n_zik.compagnon.components.themed.FontSizeRange
 import app.n_zik.compagnon.components.themed.HeaderIconButton
 import app.n_zik.compagnon.components.ui.screens.album.DETAIL_COVER_SIZE_PX
@@ -70,8 +63,15 @@ import app.n_zik.compagnon.components.ui.screens.home.PagedStatus
 import app.n_zik.compagnon.components.ui.screens.home.rememberCollectionSongs
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.uiRoundnessShape
+import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.fadingEdge
 import app.n_zik.compagnon.utils.formatText
+import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.stringResource
 
@@ -185,14 +185,14 @@ fun ArtistLocalSongs(
     // whatever the scroll position
     if (showConfirmDownloadAllDialog) {
         ConfirmationDialog(
-            text = stringResource(Res.string.do_you_really_want_to_download_all),
+            text = stringResource(Res.string.downloads_download_all_confirmation),
             onDismiss = { showConfirmDownloadAllDialog = false },
             onConfirm = { showConfirmDownloadAllDialog = false },
         )
     }
     if (showConfirmDeleteDownloadDialog) {
         ConfirmationDialog(
-            text = stringResource(Res.string.do_you_really_want_to_delete_download),
+            text = stringResource(Res.string.downloads_delete_all_confirmation),
             onDismiss = { showConfirmDeleteDownloadDialog = false },
             onConfirm = { showConfirmDeleteDownloadDialog = false },
         )
@@ -252,9 +252,9 @@ fun ArtistLocalSongs(
                             BasicText(
                                 text = stringResource(
                                     when (followState) {
-                                        ArtistFollow.Followed -> Res.string.following
-                                        ArtistFollow.Disliked -> Res.string.disliked
-                                        ArtistFollow.Neutral -> Res.string.follow
+                                        ArtistFollow.Followed -> Res.string.artist_following_status
+                                        ArtistFollow.Disliked -> Res.string.library_disliked_title
+                                        ArtistFollow.Neutral -> Res.string.artist_action_follow
                                     },
                                 ),
                                 style = typography().s.copy(
@@ -277,7 +277,7 @@ fun ArtistLocalSongs(
                             iconSize = 24.dp,
                             modifier = Modifier.clip(uiRoundnessShape()),
                             onClick = { showConfirmDownloadAllDialog = true },
-                            onLongClick = { Toaster.i(Res.string.info_download_all_songs) },
+                            onLongClick = { Toaster.i(Res.string.downloads_action_download_all) },
                         )
                         HeaderIconButton(
                             icon = Res.drawable.downloaded,
@@ -285,7 +285,7 @@ fun ArtistLocalSongs(
                             iconSize = 24.dp,
                             modifier = Modifier.clip(uiRoundnessShape()),
                             onClick = { showConfirmDeleteDownloadDialog = true },
-                            onLongClick = { Toaster.i(Res.string.info_remove_all_downloaded_songs) },
+                            onLongClick = { Toaster.i(Res.string.downloads_action_remove_all) },
                         )
                         HeaderIconButton(
                             icon = Res.drawable.enqueue,
@@ -294,7 +294,7 @@ fun ArtistLocalSongs(
                             enabled = playbackEnabled,
                             modifier = Modifier.clip(uiRoundnessShape()),
                             onClick = { collection?.onEnqueue?.invoke() },
-                            onLongClick = { Toaster.i(Res.string.info_enqueue_songs) },
+                            onLongClick = { Toaster.i(Res.string.player_action_enqueue_songs) },
                         )
                         HeaderIconButton(
                             // Issue #866: the app-wide shuffle confirmation flash
@@ -307,7 +307,7 @@ fun ArtistLocalSongs(
                                 ShuffleOkFlash.trigger()
                                 collection?.onShuffle?.invoke()
                             },
-                            onLongClick = { Toaster.i(Res.string.info_shuffle) },
+                            onLongClick = { Toaster.i(Res.string.player_action_shuffle_hint) },
                         )
                     }
                 }
@@ -329,7 +329,7 @@ fun ArtistLocalSongs(
                     item(key = "empty") {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             Text(
-                                text = stringResource(Res.string.info_no_songs_yet),
+                                text = stringResource(Res.string.artist_songs_unavailable_message),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = colorPalette().textSecondary,
                                 modifier = Modifier.align(Alignment.Center),
@@ -434,9 +434,9 @@ fun ArtistHeader(artist: Artist, isLandscape: Boolean) {
  */
 internal fun followToast(target: ArtistFollow, name: String) {
     val messageId = when (target) {
-        ArtistFollow.Followed -> Res.string.added_to_favorites
-        ArtistFollow.Disliked -> Res.string.added_to_dislikes
-        ArtistFollow.Neutral -> Res.string.removed_from_favorites
+        ArtistFollow.Followed -> Res.string.library_favorites_added
+        ArtistFollow.Disliked -> Res.string.library_dislikes_added
+        ArtistFollow.Neutral -> Res.string.library_favorites_removed
     }
     if (name.isNotBlank()) Toaster.s(messageId, "\"$name\"") else Toaster.s(messageId)
 }

@@ -72,9 +72,9 @@ import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.scrollingInfo
 import app.n_zik.compagnon.utils.smoothScrollToTop
+import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -233,14 +233,14 @@ fun BoxScope.MultiFloatingActionsContainer(
             items = listOf(
                 FabItem(
                     icon = Res.drawable.settings,
-                    label = stringResource(Res.string.txt_settings),
+                    label = stringResource(Res.string.settings_debug_title),
                     // Inert — no contract route for the phone's home dialogs
                     onFabItemClicked = {},
-                    onFabItemLongClicked = { Toaster.i(Res.string.txt_settings) },
+                    onFabItemLongClicked = { Toaster.i(Res.string.settings_debug_title) },
                 ),
                 FabItem(
                     icon = Res.drawable.search,
-                    label = stringResource(Res.string.search),
+                    label = stringResource(Res.string.search_title),
                     onFabItemClicked = { onClickSearch() },
                 ),
             ),

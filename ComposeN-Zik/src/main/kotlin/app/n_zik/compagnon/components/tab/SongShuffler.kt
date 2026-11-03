@@ -5,9 +5,9 @@ import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.MenuState
 import app.n_zik.compagnon.components.tab.toolbar.Descriptive
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import org.jetbrains.compose.resources.StringResource
 import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -38,10 +38,10 @@ class SongShuffler private constructor(
     override val isEnabled: Boolean get() = enabled
 
     /** The phone's `Descriptive` message (`SongShuffler.kt` 62): shown on a right click (its long press). */
-    override val messageId: StringResource = Res.string.info_shuffle
+    override val messageId: StringResource = Res.string.player_action_shuffle_hint
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.shuffle)
+        get() = stringResource(Res.string.player_action_shuffle)
 
     override fun onShortClick() {
         onShuffle()

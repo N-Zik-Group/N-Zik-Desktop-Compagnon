@@ -1,6 +1,5 @@
 package app.n_zik.compagnon.components.ui.screens.player
 
-import app.n_zik.compagnon.components.tab.ShuffleOkFlash
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -59,6 +58,7 @@ import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.Locator
 import app.n_zik.compagnon.components.tab.PositionLock
 import app.n_zik.compagnon.components.tab.Search
+import app.n_zik.compagnon.components.tab.ShuffleOkFlash
 import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.ConfirmDialog
 import app.n_zik.compagnon.components.tab.toolbar.Descriptive
@@ -188,7 +188,7 @@ fun Queue(
         val deleteDialog = DeleteFromQueue(actionsEnabled) {
             onCommand { clearQueue() }
             // The phone's toast after clearing its queue (its `Queue.kt` 301-303)
-            Toaster.s(Res.string.deleted)
+            Toaster.s(Res.string.common_delete_success)
             onDismiss(repeat.type)
         }
         val queueArrow = QueueArrow { onDismiss(repeat.type) }
@@ -207,9 +207,9 @@ fun Queue(
             add(search)
             // Spec #46: the phone's "Discover" (its `Queue.kt` 345-350, 3rd position — the phone's default
             // preferences hide it): inert — no contract route, no discovery on the PC
-            add(InertButton(Res.drawable.discover, Res.string.discover, descriptionId = Res.string.discoverinfo))
-            add(InertButton(Res.drawable.downloaded, Res.string.info_download_all_songs))
-            add(InertButton(Res.drawable.download, Res.string.info_remove_all_downloaded_songs))
+            add(InertButton(Res.drawable.discover, Res.string.queue_discover_title, descriptionId = Res.string.queue_discover_description))
+            add(InertButton(Res.drawable.downloaded, Res.string.downloads_action_download_all))
+            add(InertButton(Res.drawable.download, Res.string.downloads_action_remove_all))
             if (queueFeature) {
                 add(positionLock)
                 add(repeat)
@@ -224,11 +224,11 @@ fun Queue(
             add(
                 InertButton(
                     Res.drawable.add_in_playlist,
-                    Res.string.add_to_playlist,
+                    Res.string.playlist_action_add,
                     onOpen = { menuState.display { PlaylistsMenu() } },
                 ),
             )
-            add(InertButton(Res.drawable.export_outline, Res.string.export_playlist))
+            add(InertButton(Res.drawable.export_outline, Res.string.playlist_action_export))
         }
 
         QueueToolBarState.mediaItemCount = items.size
@@ -361,7 +361,7 @@ fun Queue(
                                     val actualIndex = state.queue.indexOfFirst { it.id == song.id }
                                     if (actualIndex in state.queue.indices) {
                                         onCommand { remove(actualIndex, song.id) }
-                                        Toaster.s(Res.string.deleted_item, cleanPrefix(song.title))
+                                        Toaster.s(Res.string.player_queue_deleted_item_format, cleanPrefix(song.title))
                                     }
                                 }
                             },
@@ -474,7 +474,7 @@ class Repeat(
     override val iconId: DrawableResource = Res.drawable.repeat
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.repeat)
+        get() = stringResource(Res.string.player_action_repeat)
     override val icon: Painter
         @Composable
         get() = painterResource(type.iconId)
@@ -505,7 +505,7 @@ class ShuffleQueue(
 
     override val iconId: DrawableResource
         get() = if (ShuffleOkFlash.active) Res.drawable.shuffle_ok else Res.drawable.shuffle
-    override val messageId: StringResource = Res.string.shuffle
+    override val messageId: StringResource = Res.string.player_action_shuffle
     override val menuIconTitle: String
         @Composable
         get() = stringResource(messageId)
@@ -541,13 +541,13 @@ class DeleteFromQueueButton(
     private val onDeleteConfirm: ConfirmDialog.() -> Unit,
 ) : MenuIcon, Descriptive, ConfirmDialog {
     override val iconId: DrawableResource = Res.drawable.trash
-    override val messageId: StringResource = Res.string.remove_from_queue
+    override val messageId: StringResource = Res.string.player_queue_action_remove
     override val menuIconTitle: String
         @Composable
         get() = stringResource(messageId)
     override val dialogTitle: String
         @Composable
-        get() = stringResource(Res.string.clean_queue_confirm)
+        get() = stringResource(Res.string.player_queue_clear_confirmation)
 
     override val isEnabled: Boolean
         get() = enabled

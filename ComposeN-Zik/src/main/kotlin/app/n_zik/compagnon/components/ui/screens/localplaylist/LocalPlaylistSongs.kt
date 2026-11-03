@@ -1,14 +1,5 @@
 package app.n_zik.compagnon.components.ui.screens.localplaylist
 
-import app.n_zik.compagnon.components.themed.PinPlaylist
-import androidx.compose.foundation.lazy.items
-import app.n_zik.compagnon.bridge.library.toListRef
-import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
-import app.n_zik.compagnon.uiRoundnessShape
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.components.themed.HeaderIconButton
-import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
@@ -35,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,55 +38,61 @@ import app.n_zik.compagnon.bridge.library.LibraryRepository
 import app.n_zik.compagnon.bridge.library.PlaylistOrigin
 import app.n_zik.compagnon.bridge.library.PlaylistSongsQuery
 import app.n_zik.compagnon.bridge.library.SongsQuery
+import app.n_zik.compagnon.bridge.library.toListRef
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.formattedTotalPlayTime
 import app.n_zik.compagnon.bridge.state.unmatched
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.SongItem
-import app.n_zik.compagnon.components.songSortOverlay
 import app.n_zik.compagnon.components.Sort
 import app.n_zik.compagnon.components.SortOption
-import app.n_zik.compagnon.components.playlistSongSortOptions
 import app.n_zik.compagnon.components.items.playlistThumbnails
 import app.n_zik.compagnon.components.menu.song.SongItemMenu
 import app.n_zik.compagnon.components.navigation.header.TabToolBar
+import app.n_zik.compagnon.components.playlistSongSortOptions
+import app.n_zik.compagnon.components.songSortOverlay
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.Locator
 import app.n_zik.compagnon.components.tab.Search
-import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.SongShuffler
+import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
 import app.n_zik.compagnon.components.tab.toolbar.NoRouteConfirmButton
 import app.n_zik.compagnon.components.themed.Bookmark
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.core.network.ArtworkKey
-import app.n_zik.compagnon.libraryWrites
-import app.n_zik.compagnon.utils.Toaster
-import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.components.themed.Enqueue
+import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
+import app.n_zik.compagnon.components.themed.HeaderIconButton
 import app.n_zik.compagnon.components.themed.HeaderWithIcon
 import app.n_zik.compagnon.components.themed.IconInfo
+import app.n_zik.compagnon.components.themed.PinPlaylist
 import app.n_zik.compagnon.components.themed.PlayNext
 import app.n_zik.compagnon.components.themed.Playlist
 import app.n_zik.compagnon.components.ui.screens.home.CollectionHeader
 import app.n_zik.compagnon.components.ui.screens.home.LibraryActions
-import app.n_zik.compagnon.components.ui.screens.home.LoadMoreEffect
 import app.n_zik.compagnon.components.ui.screens.home.LibraryLists
+import app.n_zik.compagnon.components.ui.screens.home.LoadMoreEffect
 import app.n_zik.compagnon.components.ui.screens.home.PagedStatus
 import app.n_zik.compagnon.components.ui.screens.home.rememberPlaylistSongs
+import app.n_zik.compagnon.core.network.ArtworkKey
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.libraryWrites
 import app.n_zik.compagnon.thumbnailShape
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.ChipSort
 import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.formatAsTime
+import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.StringResource
 
 /** The playlist card's cover is `Dimensions.thumbnails.playlist` = 128 dp: `size` ≈ 2× in px. */
 private const val PLAYLIST_CARD_SIZE_PX = 256
@@ -269,11 +269,11 @@ fun LocalPlaylistSongs(
 
     // The phone's download / remove buttons open their confirmations (as the album's); NOT LINKED: no route
     val downloadAll = NoRouteConfirmButton(
-        Res.drawable.downloaded, Res.string.download, Res.string.info_download_all_songs, Res.string.do_you_really_want_to_download_all,
+        Res.drawable.downloaded, Res.string.downloads_title, Res.string.downloads_action_download_all, Res.string.downloads_download_all_confirmation,
     )
     val deleteDownloads = NoRouteConfirmButton(
-        Res.drawable.download, Res.string.info_remove_all_downloaded_songs, Res.string.info_remove_all_downloaded_songs,
-        Res.string.do_you_really_want_to_delete_download,
+        Res.drawable.download, Res.string.downloads_action_remove_all, Res.string.downloads_action_remove_all,
+        Res.string.downloads_delete_all_confirmation,
     )
     downloadAll.Render()
     deleteDownloads.Render()
@@ -282,10 +282,10 @@ fun LocalPlaylistSongs(
     val listenOnYouTube = object : app.n_zik.compagnon.components.tab.toolbar.MenuIcon,
         app.n_zik.compagnon.components.tab.toolbar.Descriptive {
         override val iconId = Res.drawable.play
-        override val messageId = Res.string.listen_on_youtube
+        override val messageId = Res.string.player_action_listen_on_youtube
         override val menuIconTitle: String
             @Composable
-            get() = stringResource(Res.string.listen_on_youtube)
+            get() = stringResource(Res.string.player_action_listen_on_youtube)
 
         override fun onShortClick() {
             val browseId = playlist.browseId?.removePrefix("modified:")?.removePrefix("VL").orEmpty()
@@ -318,37 +318,37 @@ fun LocalPlaylistSongs(
                                 // The confirmed state wins; a failure rolls the toggle back
                                 w.pinPlaylist(playlist.id, !previous) { confirmed -> pinned = confirmed ?: previous }
                             }
-                        } ?: InertButton(Res.drawable.pin_filled, Res.string.info_pin_unpin_playlist),
+                        } ?: InertButton(Res.drawable.pin_filled, Res.string.playlist_action_toggle_pinned),
                     )
                 }
                 // Since 1.7.2: the phone's search (its toolbar button, its header search bar and its `text`)
                 "search" -> add(search)
                 "position_lock" -> if (chipSort.sort == "custom" && !isRewind) {
-                    add(InertButton(Res.drawable.locked, Res.string.info_lock_unlock_reorder_songs))
+                    add(InertButton(Res.drawable.locked, Res.string.playlist_reorder_lock_toggle_label))
                 }
                 "match" -> if (hasUnmatchedSongs) {
-                    add(InertButton(Res.drawable.alert, Res.string.match_album_audio_version))
+                    add(InertButton(Res.drawable.alert, Res.string.song_matching_action_open))
                 }
                 "renumber" -> if (chipSort.sort == "custom" && !isRewind) {
-                    add(InertButton(Res.drawable.position, Res.string.renumber_songs_positions))
+                    add(InertButton(Res.drawable.position, Res.string.playlist_action_shuffle_positions))
                 }
                 "download_all" -> add(downloadAll)
                 "delete_downloads" -> add(deleteDownloads)
                 "item_selector" -> add(itemSelector)
-                "play_next" -> if (collection != null) add(playNext) else add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
-                "enqueue" -> if (collection != null) add(enqueue) else add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
-                "add_to_favorite" -> add(InertButton(Res.drawable.heart, Res.string.add_to_favorites))
-                "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
+                "play_next" -> if (collection != null) add(playNext) else add(InertButton(Res.drawable.play_skip_forward, Res.string.player_action_play_next))
+                "enqueue" -> if (collection != null) add(enqueue) else add(InertButton(Res.drawable.enqueue, Res.string.player_action_enqueue))
+                "add_to_favorite" -> add(InertButton(Res.drawable.heart, Res.string.library_favorites_action_add))
+                "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.playlist_action_add))
                 // The phone's 1372-1373: only with a YouTube browse id
-                "sync" -> if (!playlist.browseId.isNullOrBlank()) add(InertButton(Res.drawable.sync, Res.string.sync))
+                "sync" -> if (!playlist.browseId.isNullOrBlank()) add(InertButton(Res.drawable.sync, Res.string.sync_action_sync))
                 "listen_on_yt" -> if (!playlist.browseId.isNullOrBlank()) add(listenOnYouTube)
-                "import_menu" -> add(InertButton(Res.drawable.import_outline, Res.string.import_playlist))
-                "rename" -> if (!isRewind) add(InertButton(Res.drawable.title_edit, Res.string.rename_playlist))
-                "delete" -> add(InertButton(Res.drawable.trash, Res.string.delete))
-                "export" -> add(InertButton(Res.drawable.export_outline, Res.string.export_playlist))
-                "thumbnail_picker" -> add(InertButton(Res.drawable.image, Res.string.edit_thumbnail))
-                "reset_thumbnail" -> add(InertButton(Res.drawable.image, Res.string.reset_thumbnail))
-                "update" -> add(InertButton(Res.drawable.refresh, Res.string.update, descriptionId = Res.string.info_open_update_dialog))
+                "import_menu" -> add(InertButton(Res.drawable.import_outline, Res.string.playlist_action_import))
+                "rename" -> if (!isRewind) add(InertButton(Res.drawable.title_edit, Res.string.playlist_rename_dialog_title))
+                "delete" -> add(InertButton(Res.drawable.trash, Res.string.common_action_delete))
+                "export" -> add(InertButton(Res.drawable.export_outline, Res.string.playlist_action_export))
+                "thumbnail_picker" -> add(InertButton(Res.drawable.image, Res.string.thumbnail_action_edit))
+                "reset_thumbnail" -> add(InertButton(Res.drawable.image, Res.string.thumbnail_action_reset))
+                "update" -> add(InertButton(Res.drawable.refresh, Res.string.common_action_update, descriptionId = Res.string.song_metadata_update_action_open))
             }
         }
     }
@@ -371,7 +371,7 @@ fun LocalPlaylistSongs(
     val writes = libraryWrites()
     val bookmark = Bookmark(isBookmarked = bookmarked) {
         if (playlist.browseId?.removePrefix("VL") in listOf("LM", "SE")) {
-            Toaster.e(Res.string.cannot_bookmark_special_playlist)
+            Toaster.e(Res.string.playlist_bookmark_unsupported_message)
         } else {
             writes?.let {
                 // The phone toasts once its write is done (its 345-371): after the confirmed `200`
@@ -379,7 +379,7 @@ fun LocalPlaylistSongs(
                 bookmarked = !previous
                 it.bookmarkPlaylist(playlist.id, !previous, onFailed = { bookmarked = previous }) { confirmed ->
                     bookmarked = confirmed
-                    Toaster.s(if (confirmed) Res.string.added_to_favorites else Res.string.removed_from_favorites)
+                    Toaster.s(if (confirmed) Res.string.library_favorites_added else Res.string.library_favorites_removed)
                 }
             }
         }
@@ -497,7 +497,7 @@ fun LocalPlaylistSongs(
                                         modifier = Modifier.clip(uiRoundnessShape()),
                                         onClick = {},
                                         // The phone's long-press help (its 1314-1319)
-                                        onLongClick = { Toaster.i(Res.string.info_smart_recommendation) },
+                                        onLongClick = { Toaster.i(Res.string.recommendations_action_smart_shuffle) },
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(10.dp))
@@ -583,7 +583,7 @@ fun LocalPlaylistSongs(
                                 if (song.unmatched()) {
                                     Icon(
                                         painter = painterResource(Res.drawable.alert),
-                                        contentDescription = stringResource(Res.string.unmatched_song),
+                                        contentDescription = stringResource(Res.string.song_matching_unmatched_label),
                                         tint = Color(0xFFFF9800),
                                         modifier = Modifier
                                             .padding(start = 8.dp)
@@ -597,7 +597,7 @@ fun LocalPlaylistSongs(
                                 // As on the phone (LocalPlaylistSongs.kt 1557-1558): a track not matched to
                                 // the phone's library cannot be played (its toast)
                                 if (song.unmatched()) {
-                                    Toaster.w(Res.string.playback_blocked_match_first)
+                                    Toaster.w(Res.string.player_matching_required_message)
                                 } else if (live && actions.available) {
                                     actions.playFrom(list.state.value.items, index, song.id, header.ref.toListRef(list.query.value))
                                 }
@@ -644,20 +644,20 @@ private val REWIND_ORIGINS = setOf(
 
 /** The phone's `PlaylistSongSortBy.text` of the stored sort name (its menu label). */
 private fun sortLabel(name: String): StringResource = when (name) {
-    "title" -> Res.string.sort_title
-    "artist" -> Res.string.sort_artist
-    "album" -> Res.string.sort_album
+    "title" -> Res.string.library_sort_title
+    "artist" -> Res.string.library_sort_artist
+    "album" -> Res.string.library_sort_album
     "artistAndAlbum" -> Res.string.sort_artist_and_album
-    "duration" -> Res.string.sort_duration
-    "playCount" -> Res.string.sort_play_count
-    "playTime" -> Res.string.sort_listening_time
-    "relativePlayTime" -> Res.string.relative_listening_time
-    "dateAdded" -> Res.string.sort_date_added
-    "datePlayed" -> Res.string.sort_date_played
-    "dateLiked" -> Res.string.sort_date_liked
-    "albumYear" -> Res.string.sort_album_year
-    "downloaded" -> Res.string.sort_downloaded
-    "custom" -> Res.string.sort_custom_order
+    "duration" -> Res.string.library_sort_duration
+    "playCount" -> Res.string.library_sort_play_count
+    "playTime" -> Res.string.library_sort_listening_time
+    "relativePlayTime" -> Res.string.library_sort_relative_listening_time
+    "dateAdded" -> Res.string.library_sort_date_added
+    "datePlayed" -> Res.string.library_sort_date_played
+    "dateLiked" -> Res.string.library_sort_date_liked
+    "albumYear" -> Res.string.library_sort_album_year
+    "downloaded" -> Res.string.library_sort_downloaded
+    "custom" -> Res.string.library_sort_custom_order
     else -> Res.string.rewind_top_sort
 }
 

@@ -1,763 +1,887 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- About -->
+    <string name="about_action_report_issue">Rapporter en feil</string>
+    <string name="about_action_view_source">Vis kildekoden</string>
+    <string name="about_authorship_preposition">av</string>
+    <string name="about_contributors_alphabetical_order_label">I alfabetisk rekkefølge:</string>
+    <string name="about_developers">Utviklere / Designere</string>
+    <string name="about_github_link_description">Du vil bli omdirigert til GitHub</string>
+    <string name="about_title">Om</string>
+    <string name="about_translators_title">Oversettere</string>
+
+    <!-- Accessibility -->
+    <string name="accessibility_app_icon">Appens ikon</string>
+    <string name="accessibility_app_icon_in_player">app ikon i spiller</string>
+    <string name="accessibility_background_image">Bakgrunns bilde</string>
+    <string name="accessibility_blurred_background">uklar_bakgrunn</string>
+    <string name="accessibility_disc_background">dyppen bakgrunn</string>
+    <string name="accessibility_number_of_songs_in_queue">Antall sanger i kø</string>
+    <string name="accessibility_origin_indicator">origin_indikator</string>
+    <string name="accessibility_song_album_cover">sang albumomslag</string>
+
+    <!-- Album -->
+    <string name="album_action_bookmark">Bokmerke album</string>
+    <string name="album_action_open">Gå til album</string>
+    <string name="album_left_swipe">Album Left Swipe</string>
+    <string name="album_loading_song_count_format">Loading %1$d songs…</string>
+    <string name="album_right_swipe">Album Right Swipe</string>
+
+    <!-- App -->
     <string name="app_subtitle">Companion for N-Zik</string>
-    <string name="starting">Starter…</string>
-    <string name="pair_title">Pair with your phone</string>
-    <string name="pair_qr_description">In N-Zik on your phone, open Manage server, start pairing, then tap Scan and point the camera at this code.</string>
-    <string name="pair_device_name">Name of this PC</string>
-    <string name="pair_device_name_invalid">Enter a name of 1 to 64 characters.</string>
-    <string name="pair_qr_waiting">Waiting for your phone…</string>
-    <string name="pair_qr_preparing">Preparing the QR code…</string>
-    <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_renew_hint">The code renews itself every 2 minutes.</string>
-    <string name="pair_manual_entry">Manual entry</string>
-    <string name="pair_manual_entry_text">Type the address and code shown on your phone</string>
-    <string name="pair_show_qr">Show the QR code</string>
-    <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
-    <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
-    <string name="manual_title">Manual pairing</string>
-    <string name="manual_description">On your phone, Manage server shows the IP address, the port and a 6-character code.</string>
-    <string name="manual_ip">Phone IP address</string>
-    <string name="manual_port">Port</string>
-    <string name="manual_code">Pairing code</string>
-    <string name="manual_ip_invalid">Enter an IPv4 address, for example 192.168.1.14.</string>
-    <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
-    <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
-    <string name="manual_submit">Pair</string>
-    <string name="validating">Pairing with your phone…</string>
+
+    <!-- Artist -->
+    <string name="artist_action_follow">Følg</string>
+    <string name="artist_action_play_local_songs">Spill alle lokale sanger</string>
+    <string name="artist_following_status">Følger</string>
+    <string name="artist_more_from">Mer av</string>
+    <string name="artist_roundness">Artist roundness</string>
+    <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
+    <string name="artist_songs_unavailable_message">Ingen sanger tilgjengelig</string>
+
+    <!-- Audio -->
+    <string name="audio_devices">Audio devices</string>
+    <string name="audio_effects">Lyd Effekter</string>
+    <string name="audio_loudness_boost_level">Nivå for lydstyrke</string>
+    <string name="audio_output_title">Audio output</string>
+    <string name="audio_quality_automatic">Automatisk</string>
+    <string name="audio_quality_format">Lyd Kvalitet</string>
+    <string name="audio_quality_format_high">Høy</string>
+    <string name="audio_quality_format_low">Lav</string>
+    <string name="audio_reverb_none">Ingen</string>
+    <string name="audio_waveform_action_refresh">Update waveform</string>
+
+    <!-- Backup -->
+    <string name="backup_action_export">Export backup</string>
+    <string name="backup_action_import_legacy_migration">Importer overføringsfil.</string>
+    <string name="backup_auto_interval">Auto Backup Interval</string>
+    <string name="backup_auto_interval_none">Deaktivert</string>
+    <string name="backup_auto_location">Auto Backup Location</string>
+    <string name="backup_auto_location_not_set">Not set</string>
+    <string name="backup_auto_max_backups">Max Backups to Keep</string>
+    <string name="backup_auto_target">Backup Target</string>
+    <string name="backup_auto_title">Automatic Backup</string>
+    <string name="backup_export_description">Export database or settings to a file</string>
+    <string name="backup_import_description">Import database or settings from a file</string>
+    <string name="backup_legacy_migration_description">For old users before conversion.\nUse old app to make a backup for migration.</string>
+    <string name="backup_target_database_label">Database</string>
+
+    <!-- Bridge -->
+    <string name="bridge_audio_output_pc_subtitle">Sound on the PC (N-Zik Desktop Compagnon)</string>
+    <string name="bridge_server">PC server</string>
+    <string name="bridge_server_description">Let N-Zik Desktop Compagnon control your library from a PC on the same Wi-Fi network</string>
+
+    <!-- Cached -->
+    <string name="cached_pc">Cached PC</string>
+
+    <!-- Calendar -->
+    <string name="calendar_period_one_month">1 Måned</string>
+    <string name="calendar_period_one_week">1 Uke</string>
+    <string name="calendar_period_one_year">1 År</string>
+    <string name="calendar_period_six_months">6 Måneder</string>
+    <string name="calendar_period_three_months">3 Måneder</string>
+    <string name="calendar_today">I dag</string>
+
+    <!-- Cancel -->
+    <string name="cancel">Avbryt</string>
+
+    <!-- Close -->
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
+
+    <!-- Command -->
+    <string name="command_clear">Clear the queue</string>
+    <string name="command_copied">Command copied</string>
+    <string name="command_jump">Play from the queue</string>
+    <string name="command_move">Move in the queue</string>
+    <string name="command_next">Next</string>
+    <string name="command_output">Audio output</string>
+    <string name="command_pause">pause</string>
+    <string name="command_play">Spill</string>
+    <string name="command_previous">Previous</string>
+    <string name="command_queue_add">Add to queue</string>
+    <string name="command_queue_play">Spill</string>
+    <string name="command_remove">Remove from the queue</string>
+    <string name="command_repeat">Gjenta</string>
+    <string name="command_seek">Seek</string>
+    <string name="command_shuffle">Tilfeldig rekkefølge</string>
+    <string name="command_speed">Speed</string>
+    <string name="command_unknown">A command</string>
+
+    <!-- Common -->
+    <string name="common_action_clear">Tøm</string>
+    <string name="common_action_confirm">Bekreft</string>
+    <string name="common_action_delete">Slett</string>
+    <string name="common_action_done">Ferdig</string>
+    <string name="common_action_reset">Tilbakestill</string>
+    <string name="common_action_retry">Prøv igjen</string>
+    <string name="common_action_select">Velg</string>
+    <string name="common_action_translate">Oversett</string>
+    <string name="common_action_turn_off">Slå av</string>
+    <string name="common_action_update">Oppdater</string>
+    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_brand_github">GitHub</string>
+    <string name="common_clipboard_copy_success">Kopiert</string>
+    <string name="common_color_source_theme">Tema</string>
+    <string name="common_color_white">Hvit</string>
+    <string name="common_delete_success">Slettet</string>
+    <string name="common_empty_items">Ingen elementer</string>
+    <string name="common_error_no_internet">Ingen nettverksforbindelse</string>
+    <string name="common_information_title">Informasjon</string>
+    <string name="common_limit_unlimited_label">Ubegrenset</string>
+    <string name="common_menu_label">Meny</string>
+    <string name="common_navigation_section_title">Navigation</string>
+    <string name="common_option_all">All tid</string>
+    <string name="common_option_custom">Egendefinert</string>
+    <string name="common_option_default">Standard</string>
+    <string name="common_option_disabled">Deaktivert</string>
+    <string name="common_option_none">Ingen</string>
+    <string name="common_option_random">Random</string>
+    <string name="common_other_section_title">Andre</string>
+    <string name="common_playback_section_title">Avspilling</string>
+    <string name="common_size_big">Stor</string>
+    <string name="common_size_biggest">Størst</string>
+    <string name="common_size_label">Størrelse</string>
+    <string name="common_size_medium">Medium</string>
+    <string name="common_size_small">Liten</string>
+    <string name="common_state_off">Av</string>
+    <string name="common_state_on">På</string>
+    <string name="common_storage_used_suffix">used</string>
+    <string name="common_translation_title">Oversettelse</string>
+    <string name="common_validation_empty_value">Verdien kan ikke være tom</string>
+    <string name="common_validation_minimum_value">Value must be greater than</string>
+
+    <!-- Connection -->
+    <string name="connection_connecting">Connecting…</string>
+    <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
+    <string name="connection_live">Connected</string>
+    <string name="connection_offline">Disconnected</string>
+    <string name="connection_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
+    <string name="connection_reconnecting">Reconnecting…</string>
+    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
+    <string name="connection_replaced">Another window of this PC took over the session.</string>
+    <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
+
+    <!-- Contributors -->
+    <string name="contributors">Bidragsytere</string>
+
+    <!-- Dismiss -->
+    <string name="dismiss">Dismiss</string>
+
+    <!-- Download -->
+    <string name="download_pc">Download PC</string>
+
+    <!-- Downloads -->
+    <string name="downloads_action_download_all">Last ned alle sanger</string>
+    <string name="downloads_action_refresh_quality">Update downloads</string>
+    <string name="downloads_action_remove_all">Fjern alle nedlastede sanger</string>
+    <string name="downloads_cancelled">Nedlasting avbrutt</string>
+    <string name="downloads_delete_all_confirmation">Vil du virkelig slette nedlastingen?</string>
+    <string name="downloads_download_all_confirmation">Ønsker du virkelig å laste ned alt?</string>
+    <string name="downloads_quality_format">Download Quality</string>
+    <string name="downloads_refresh_quality_description">Re-download the songs that were downloaded with a different quality</string>
+    <string name="downloads_title">Last ned</string>
+
+    <!-- Error -->
     <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
-    <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
     <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
-    <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
-    <string name="error_storage_failed">The pairing could not be saved in the Windows Credential Manager.</string>
     <string name="error_listener_failed">The pairing listener could not be opened. Pair manually below.</string>
+    <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
+    <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
+    <string name="error_storage_failed">The pairing could not be saved in the Windows Credential Manager.</string>
     <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
     <string name="error_unknown_code">no code</string>
-    <string name="dismiss">Dismiss</string>
-    <string name="paired_title">Paired</string>
-    <string name="paired_with">Paired with %1$s</string>
+    <string name="error_update_check_failed">The update check failed (%1$s)</string>
+    <string name="error_update_download_failed">The update download failed (%1$s)</string>
+    <string name="error_windows_install_helper">The Windows installer could not be started. Run the downloaded installer manually.</string>
+
+    <!-- Export -->
+    <string name="export_cached_song_action">Export cached or downloaded song</string>
+    <string name="export_cached_songs_action">Export cached</string>
+
+    <!-- Fake -->
+    <string name="fake_audio_bar">Falsk Waveform</string>
+
+    <!-- Forget -->
+    <string name="forget_phone">Forget this phone</string>
+    <string name="forget_phone_text">Removes the pairing from this PC</string>
+
+    <!-- Git -->
+    <string name="git_title">GIT</string>
+
+    <!-- Home -->
+    <string name="home_tabs_settings">Home page</string>
+    <string name="home_tabs_settings_description">Reorder and show/hide tabs</string>
+    <string name="home_title">Home</string>
+
+    <!-- Import -->
+    <string name="import_backup">Import backup</string>
+
+    <!-- Install -->
+    <string name="install_copy_command">Copy command</string>
+    <string name="install_copy_path">Copy path</string>
+    <string name="install_file_saved_at">The update file is saved at:</string>
+    <string name="install_flatpak_command">Update in place with:</string>
+    <string name="install_open_folder">Open folder</string>
+    <string name="install_pkg_command">Install the package with:</string>
+    <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
+    <string name="install_pkg_pacman_command">Upgrade the package with:</string>
+    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
+    <string name="install_replacement_portable_linux">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, extract the downloaded .tar.gz in its place (the tarball opens into a new app folder - never over the current one), and relaunch.</string>
+
+    <!-- Interface -->
+    <string name="interface_in_use">Grensesnitt i bruk</string>
+
+    <!-- Lastfm -->
+    <string name="lastfm_love">Love on Last.fm</string>
+    <string name="lastfm_unlove">Unlove on Last.fm</string>
+
+    <!-- Library -->
+    <string name="library_action_bookmark">Bookmark</string>
+    <string name="library_action_randomize">Randomizer</string>
+    <string name="library_albums_title">Album</string>
+    <string name="library_artists_title">Artister</string>
+    <string name="library_cached_title">Bufret</string>
+    <string name="library_cleanup_title">Smart papirkurv</string>
+    <string name="library_disliked_title">Disliked</string>
+    <string name="library_dislikes_added">Disliked %s</string>
+    <string name="library_dislikes_removed">Removed %s from dislikes</string>
+    <string name="library_downloaded_title">Nedlastet</string>
+    <string name="library_empty">Nothing here.</string>
+    <string name="library_error_unreachable">The phone could not be reached.</string>
+    <string name="library_favorites_action_add">Legg til i favoritter</string>
+    <string name="library_favorites_added">Lagt til i favoritter</string>
+    <string name="library_favorites_removed">Fjernet fra favoritter</string>
+    <string name="library_favorites_title">Favoritter</string>
+    <string name="library_filter_by_title">Filter By</string>
+    <string name="library_history_title">Historikk</string>
+    <string name="library_layout_list_label">Liste</string>
+    <string name="library_management_section_title">Management</string>
+    <string name="library_none">The phone shares no library with this PC.</string>
+    <string name="library_not_found">Not found on the phone. It may have been deleted.</string>
+    <string name="library_on_device_title">On device phone</string>
+    <string name="library_playlists_title">Spillelister</string>
+    <string name="library_refresh">Refresh</string>
+    <string name="library_songs_title">Sanger</string>
+    <string name="library_sort_album">Album</string>
+    <string name="library_sort_album_year">Album År</string>
+    <string name="library_sort_artist">Artist</string>
+    <string name="library_sort_custom_order">Egendefinert ordre</string>
+    <string name="library_sort_date_added">Dato lagt til</string>
+    <string name="library_sort_date_liked">Favorisert dato</string>
+    <string name="library_sort_date_played">Dato avspilt</string>
+    <string name="library_sort_downloaded">Nedlastet</string>
+    <string name="library_sort_duration">Varighet</string>
+    <string name="library_sort_listening_time">Lyttetid</string>
+    <string name="library_sort_menu">Sort Menu</string>
+    <string name="library_sort_name">Navn</string>
+    <string name="library_sort_order_title">Sorteringsrekkefølge</string>
+    <string name="library_sort_play_count">Play Count</string>
+    <string name="library_sort_relative_listening_time">Relative Listening Time</string>
+    <string name="library_sort_songs_number">Antall sanger</string>
+    <string name="library_sort_title">Tittel</string>
+    <string name="library_sync_current_item_format">Syncing: %1$s</string>
+    <string name="library_sync_failed_count_suffix">Sync failed</string>
+    <string name="library_sync_progress_format">%1$d / %2$d</string>
+    <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
+    <string name="library_youtube_playlists_label">YT/YTM</string>
+
+    <!-- Listen -->
+    <string name="listen_together_auto_approval_joins">Auto-approve join requests</string>
+    <string name="listen_together_auto_approval_joins_description">Automatically approve join requests without reviewing them manually</string>
+    <string name="listen_together_auto_approval_suggestions">Auto-approve song suggestions</string>
+    <string name="listen_together_auto_approval_suggestions_description">Automatically approve and queue song suggestions from guests</string>
+    <string name="listen_together_blocked_users">Blocked users</string>
+    <string name="listen_together_connect">Connect</string>
+    <string name="listen_together_connection">Connection</string>
+    <string name="listen_together_create_room">Create room</string>
+    <string name="listen_together_create_room_description">Create a room and share the code with your friends</string>
+    <string name="listen_together_disconnected">Disconnected</string>
+    <string name="listen_together_enter_room_code">Enter a room code</string>
+    <string name="listen_together_history">Local history</string>
+    <string name="listen_together_history_description">Record Listen Together tracks in your local history</string>
+    <string name="listen_together_join_room">Join room</string>
+    <string name="listen_together_no_blocked_users">No blocked users</string>
+    <string name="listen_together_not_set">Not set</string>
+    <string name="listen_together_room">Room</string>
+    <string name="listen_together_server_url">Server URL</string>
+    <string name="listen_together_suggest">Suggest to host</string>
+    <string name="listen_together_sync_volume">Sync host volume</string>
+    <string name="listen_together_sync_volume_description">Guests will match the host\'s volume level</string>
+    <string name="listen_together_title">Listen Together</string>
+    <string name="listen_together_username">Brukernavn</string>
+    <string name="listen_together_view_logs">View logs</string>
+    <string name="listen_together_view_logs_description">Debug connection events and messages</string>
+
+    <!-- Local -->
+    <string name="local_playback_failed">This song could not be played on this PC.</string>
+    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
+    <string name="local_playback_not_found">This song is no longer on your phone.</string>
+    <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
+    <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
+    <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
+    <string name="local_playback_unreachable">Your phone did not answer.</string>
+    <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
+
+    <!-- Logs -->
+    <string name="logs_action_export">Export logs</string>
+    <string name="logs_export_debug_description">Export debug log to a file</string>
+
+    <!-- Lyrics -->
+    <string name="lyrics_alignment_left_label">Venstre</string>
+    <string name="lyrics_alignment_right_label">Høyre</string>
+    <string name="lyrics_color">Sangtekst farge</string>
+    <string name="lyrics_title">Tekster</string>
+
+    <!-- Maintenance -->
+    <string name="maintenance_card_desc">App state at a glance: last boot passes and live subsystems</string>
+    <string name="maintenance_convergence">Name convergence</string>
+    <string name="maintenance_db_cleanup">Artist link cleanup</string>
+    <string name="maintenance_debug_logging_title">Aktiver feilsøkingslogger</string>
+    <string name="maintenance_dedup">Same-name artist dedup</string>
+    <string name="maintenance_live_subsystems">Live subsystems</string>
+    <string name="maintenance_no_data">No data</string>
+    <string name="maintenance_open">Open</string>
+    <string name="maintenance_open_desc">Open the full maintenance sheet</string>
+    <string name="maintenance_title">Maintenance</string>
+
+    <!-- Manual -->
+    <string name="manual_code">Pairing code</string>
+    <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
+    <string name="manual_description">On your phone, Manage server shows the IP address, the port and a 6-character code.</string>
+    <string name="manual_ip">Phone IP address</string>
+    <string name="manual_ip_invalid">Enter an IPv4 address, for example 192.168.1.14.</string>
+    <string name="manual_port">Port</string>
+    <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
+    <string name="manual_submit">Pair</string>
+    <string name="manual_title">Manual pairing</string>
+
+    <!-- Message -->
+    <string name="message_type">Popup message style</string>
+    <string name="message_type_modern">Moderne</string>
+
+    <!-- Metadata -->
+    <string name="metadata_action_change_artists">Change Authors</string>
+    <string name="metadata_action_change_cover">Endre forside</string>
+    <string name="metadata_action_change_title">Endre tittel</string>
+    <string name="metadata_action_edit">Edit Metadata</string>
+    <string name="metadata_album_action_change_browse_id">Change Album Browse ID</string>
+    <string name="metadata_artist_action_change_browse_id">Change Artist Browse ID</string>
+    <string name="metadata_playlist_action_change_browse_id">Change Playlist Browse ID</string>
+    <string name="metadata_unknown_artist">Ukjent artist</string>
+    <string name="metadata_unknown_title">Ukjent tittel</string>
+
+    <!-- Miniplayer -->
+    <string name="miniplayer_button_like">Like</string>
+
+    <!-- Navigation -->
+    <string name="navigation_action_picture_in_picture">PIP</string>
+    <string name="navigation_position_bottom_floating_label">Bunn flytende</string>
+    <string name="navigation_position_bottom_label">Bunn</string>
+    <string name="navigation_position_top_label">Topp</string>
+    <string name="navigation_style_icon_and_text_label">Ikon og tekst</string>
+    <string name="navigation_style_icon_only_label">Kun ikon</string>
+
+    <!-- Network -->
+    <string name="network_settings_description">Nettverksdelen inneholder innstillinger for å optimalisere programmets ytelse og databruk</string>
+    <string name="network_status">Kvalitet Status</string>
+
+    <!-- Not -->
+    <string name="not_selectable">Ikke valgbar</string>
+
+    <!-- Notice -->
+    <string name="notice_failed">%1$s failed (HTTP %2$d, %3$s).</string>
+    <string name="notice_late_error">%1$s failed on the phone (%2$s, command %3$s).</string>
+    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
+    <string name="notice_not_found">%1$s: not found on the phone.</string>
+    <string name="notice_other_active">%1$s: another PC (%2$s) is connected to the phone.</string>
+    <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
+    <string name="notice_rejected">%1$s: refused by the phone.</string>
+    <string name="notice_server_stopping">%1$s: the phone’s server is stopping.</string>
+    <string name="notice_truncated">%1$s: only %2$d of %3$d tracks were sent.</string>
+    <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
+    <string name="notice_unreachable">%1$s: the phone did not answer.</string>
+
+    <!-- Old -->
+    <string name="old_install_path">Current install:</string>
+
+    <!-- Pair -->
+    <string name="pair_device_name">Name of this PC</string>
+    <string name="pair_device_name_invalid">Enter a name of 1 to 64 characters.</string>
+    <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
+    <string name="pair_manual_entry">Manual entry</string>
+    <string name="pair_manual_entry_text">Type the address and code shown on your phone</string>
+    <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
+    <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
+    <string name="pair_qr_description">In N-Zik on your phone, open Manage server, start pairing, then tap Scan and point the camera at this code.</string>
+    <string name="pair_qr_preparing">Preparing the QR code…</string>
+    <string name="pair_qr_renew_hint">The code renews itself every 2 minutes.</string>
+    <string name="pair_qr_waiting">Waiting for your phone…</string>
+    <string name="pair_show_qr">Show the QR code</string>
+    <string name="pair_title">Pair with your phone</string>
+
+    <!-- Paired -->
     <string name="paired_as">This PC appears as %1$s on the phone.</string>
     <string name="paired_checking">Checking the connection…</string>
+    <string name="paired_error">The phone answered with an error (HTTP %1$d, %2$s).</string>
+    <string name="paired_incompatible">Phone version incompatible (contract %1$s).</string>
     <string name="paired_ok">The phone is reachable.</string>
     <string name="paired_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
     <string name="paired_other_active_unknown">another device</string>
-    <string name="paired_incompatible">Phone version incompatible (contract %1$s).</string>
-    <string name="paired_error">The phone answered with an error (HTTP %1$d, %2$s).</string>
     <string name="paired_session_only">No keyring is available on this PC, so the pairing is kept only in memory for this session: pair again after a restart.</string>
-    <string name="retry">Prøv igjen</string>
-    <string name="forget_phone">Forget this phone</string>
-    <string name="forget_phone_text">Removes the pairing from this PC</string>
-    <string name="unreachable_title">Phone unreachable</string>
+    <string name="paired_title">Paired</string>
+    <string name="paired_with">Paired with %1$s</string>
+
+    <!-- Parental -->
+    <string name="parental_control">Foreldrekontroll</string>
+
+    <!-- Path -->
+    <string name="path_copied">Path copied</string>
+
+    <!-- Phone -->
+    <string name="phone_panel_title">Phone</string>
+
+    <!-- Player -->
+    <string name="player_action_bar">Spiller handlingslinje</string>
+    <string name="player_action_bar_buttons">Button visibility</string>
+    <string name="player_action_bar_buttons_description">Configure which buttons appear in the player action bar</string>
+    <string name="player_action_enqueue">Legg i kø</string>
+    <string name="player_action_enqueue_songs">Legg sanger i kø</string>
+    <string name="player_action_listen_on_youtube">Lytt på YouTube</string>
+    <string name="player_action_locate_current_song">Vis spillende sang</string>
+    <string name="player_action_next">Next</string>
+    <string name="player_action_play_next">Spill neste</string>
+    <string name="player_action_previous">Previous</string>
+    <string name="player_action_repeat">Gjenta</string>
+    <string name="player_action_seek_forward">Videresend</string>
+    <string name="player_action_seek_forward_30_seconds">Videresend 30 sekunder</string>
+    <string name="player_action_seek_forward_5_seconds">Videresend 5 sekunder</string>
+    <string name="player_action_shuffle">Tilfeldig rekkefølge</string>
+    <string name="player_action_shuffle_hint">Tilfeldig rekkefølge</string>
+    <string name="player_appearance">Spillerens utseende</string>
+    <string name="player_auto_load_songs_in_queue">Auto last sanger i kø</string>
+    <string name="player_auto_load_songs_in_queue_description">Legger til sanger når køen er i ferd med å avsluttes</string>
+    <string name="player_background_animated_gradient_label">Animated Gradient</string>
+    <string name="player_background_artwork_blurred_label">Uskarpt sangomslag</string>
+    <string name="player_background_artwork_fluid_gradient_label">Flytende gradering fra sangomslag</string>
+    <string name="player_background_artwork_gradient_label">Gradert fra sangdekke</string>
+    <string name="player_background_artwork_label">Match sang coverbilde</string>
+    <string name="player_background_artwork_m3e_morphing_label">Morphing shapes from cover</string>
+    <string name="player_background_black_cherry_cosmos">Black Cherry Cosmos</string>
+    <string name="player_background_glossy_gradient">Glossy Gradient</string>
+    <string name="player_background_golden_magma">Golden Magma</string>
+    <string name="player_background_gradient_flow">Gradient Flow</string>
+    <string name="player_background_ice_reflection">Ice Reflection</string>
+    <string name="player_background_ink_flow">Ink Flow</string>
+    <string name="player_background_linear_gradient">Linear Gradient</string>
+    <string name="player_background_mesh_gradient">Mesh Gradient</string>
+    <string name="player_background_mesmerizing_lens">Mesmerizing Lens</string>
+    <string name="player_background_oil_flow">Oil Flow</string>
+    <string name="player_background_palette_label">Color Palette</string>
+    <string name="player_background_purple_liquid">Purple Liquid</string>
+    <string name="player_background_stage">Stage</string>
+    <string name="player_background_theme_fluid_gradient_label">Flytende gradering fra tema</string>
+    <string name="player_background_theme_gradient_label">Gradient fra tema</string>
+    <string name="player_background_theme_label">Bruk tema</string>
+    <string name="player_background_theme_m3e_morphing_label">Morphing shapes from theme</string>
+    <string name="player_behavior_and_visuals">Spiller oppførsel &amp; Visualer</string>
+    <string name="player_collapsed_disable_swiping_down">Deaktiver sveiping ned</string>
+    <string name="player_controls">Spiller kontroller</string>
+    <string name="player_controls_action_customize">Tilpass</string>
+    <string name="player_controls_blur_effect_title">Uskarphetseffekt</string>
+    <string name="player_controls_colors">Spilleren kontrollerer farger</string>
+    <string name="player_controls_device_volume_title">Enhetsvolum</string>
+    <string name="player_controls_medley_duration_title">Medley varighet</string>
+    <string name="player_controls_monochrome_label">Monokrom</string>
+    <string name="player_controls_pitch_title">Avspilling tonehøyde</string>
+    <string name="player_controls_playback_volume_title">Volum for avspilling</string>
+    <string name="player_controls_speed_title">Avspillingshastighet</string>
+    <string name="player_controls_style_essential">Essensiell</string>
+    <string name="player_controls_style_modern">Moderne</string>
+    <string name="player_cover_style_cd">CD</string>
+    <string name="player_cover_style_cd_with_cover">CD with Cover</string>
+    <string name="player_cover_style_vinyl">Vinyl</string>
+    <string name="player_current_song_not_in_list">Could not find playing song on current list</string>
+    <string name="player_effects">Player Effects</string>
+    <string name="player_enable_lyrics_popup_message">Aktiver sangtekst popup-melding</string>
+    <string name="player_enable_rotation_buttons">Aktiver knapprotasjon ved klikk</string>
+    <string name="player_keep_minimized">Behold minimert</string>
+    <string name="player_listen_on_title">Hør på</string>
+    <string name="player_matching_required_message">Avspilling blokkert, vennligst match først</string>
+    <string name="player_mini_action_add_to_playlist">Legg til spilleliste</string>
+    <string name="player_mini_action_shuffle">Tilfeldig rekkefølge</string>
+    <string name="player_mini_button_audio_output">Audio output</string>
+    <string name="player_mini_button_discover">Oppdag</string>
+    <string name="player_mini_button_download">Last ned</string>
+    <string name="player_mini_button_lyrics">Tekster</string>
+    <string name="player_mini_button_play_pause">Play/Pause</string>
+    <string name="player_mini_button_queue">Queue</string>
+    <string name="player_mini_button_radio">Radio</string>
+    <string name="player_mini_button_repeat">Gjenta</string>
+    <string name="player_mini_button_share">Share</string>
+    <string name="player_mini_button_sleep_timer">Innsovningstimer</string>
+    <string name="player_mini_button_video">Video</string>
+    <string name="player_mini_button_visualizer">Visualisering</string>
+    <string name="player_mini_buttons_config">MiniPlayer buttons</string>
+    <string name="player_mini_buttons_config_description">Configure the 4 buttons in the miniplayer</string>
+    <string name="player_no_current_song">No song is playing at the moment</string>
+    <string name="player_no_song_found">Ingen sang funnet</string>
+    <string name="player_pause_listen_history">Pause lyttehistorikk</string>
+    <string name="player_pause_listen_history_info">Lagrer ikke avspillingshendelser brukt til statistikk, historie og forslag i hurtigvalg</string>
+    <string name="player_pause_on_volume_zero">Pause når lyden skrus av</string>
+    <string name="player_play_button_wavy_circle_label">Bølgende sirkel</string>
+    <string name="player_position">Spillerposisjon</string>
+    <string name="player_position_bottom_label">Bunn</string>
+    <string name="player_presets_and_layout">Forhåndsinnstillinger &amp; Layout</string>
+    <string name="player_progress_mini_player">Minimert spiller</string>
+    <string name="player_queue_action_remove">Fjern fra kø</string>
+    <string name="player_queue_clear_confirmation">Vil du virkelig rydde køen?</string>
+    <string name="player_queue_deleted_item_format">%1$s slettet</string>
+    <string name="player_rotating_buttons">Roterende knapper</string>
+    <string name="player_seek_backward_five_seconds">Spol tilbake 5 sekunder</string>
+    <string name="player_seek_backward_thirty_seconds">Spol tilbake 30 sekunder</string>
+    <string name="player_shuffle_empty_message">No song to shuffle</string>
+    <string name="player_shuffled_song_count_format">%d songs shuffled</string>
+    <string name="player_sleep_timer_title">Innsovningstimer</string>
+    <string name="player_statistics_volume_label">Volume</string>
+    <string name="player_swap_controls_with_timeline">Bytt kontroller med tidslinjen</string>
+    <string name="player_swipe_sensitivity">Spillerens Sveip følsomhet</string>
+    <string name="player_swipe_sensitivity_high_label">Høy</string>
+    <string name="player_swipe_sensitivity_low_label">Lav</string>
+    <string name="player_swipe_sensitivity_medium_label">Medium</string>
+    <string name="player_swipe_sensitivity_very_high_label">Svært høy</string>
+    <string name="player_thumbnail_size">Miniatyrbildestørrelse</string>
+    <string name="player_timeline_colored_bar_label">Farget søyle</string>
+    <string name="player_timeline_fat_bar_label">Fett Bar</string>
+    <string name="player_timeline_pin_bar_label">Fest Linje</string>
+    <string name="player_timeline_thin_bar_label">Tynn bar</string>
+    <string name="player_timeline_wavy_label">Bølgende tidslinje</string>
+    <string name="player_type">Avspiller Type</string>
+
+    <!-- Playlist -->
+    <string name="playlist_action_add">Legg til spilleliste</string>
+    <string name="playlist_action_create">Ny spilleliste</string>
+    <string name="playlist_action_delete_selected">Delete playlists</string>
+    <string name="playlist_action_export">Eksporter spilleliste</string>
+    <string name="playlist_action_import">Importer spilleliste</string>
+    <string name="playlist_action_shuffle_positions">Stokk om sangposisjoner</string>
+    <string name="playlist_action_toggle_pinned">Fest/Løsne spilleliste</string>
+    <string name="playlist_bookmark_unsupported_message">Cannot bookmark Liked Songs or Episodes playlist</string>
+    <string name="playlist_create_dialog_title">Lag ny spilleliste</string>
+    <string name="playlist_delete_all_confirmation_count_format">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="playlist_left_swipe">Playlist Left Swipe</string>
+    <string name="playlist_pinned_title">Festet</string>
+    <string name="playlist_rename_dialog_title">Rename playlist</string>
+    <string name="playlist_reorder_ascending_sort_required_message">Omsortering er bare mulig i stigende sortering</string>
+    <string name="playlist_reorder_lock_toggle_label">Lås/lås opp omorganisering av sanger</string>
+    <string name="playlist_right_swipe">Playlist Right Swipe</string>
+    <string name="playlist_selection_action_deselect">Velg bort</string>
+    <string name="playlist_top">Topp spilleliste</string>
+
+    <!-- Profile -->
+    <string name="profile_base_name">N-Zik Fan</string>
+    <string name="profile_title">Profiles</string>
+
+    <!-- Proxy -->
+    <string name="proxy">Mellomtjener</string>
+
+    <!-- Queue -->
+    <string name="queue_discover_description">Fjern sanger fra køen om inkludert i favoritter eller spillelister</string>
+    <string name="queue_discover_title">Oppdag</string>
+
+    <!-- Radio -->
+    <string name="radio_action_start">Start radio</string>
+
+    <!-- Recommendations -->
+    <string name="recommendations_action_smart_shuffle">Smarte anbefalinger</string>
+    <string name="recommendations_minimum_playback_duration_label">Minimum avspillingsvarighet</string>
+    <string name="recommendations_title">Raske valg</string>
+
+    <!-- Reconnect -->
+    <string name="reconnect">Reconnect</string>
+
+    <!-- Recovery -->
+    <string name="recovery_center">Rescue Center</string>
+
+    <!-- Request -->
+    <string name="request_a_feature">Be om en funksjon eller foreslå en idé</string>
+
+    <!-- Revoked -->
+    <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
+    <string name="revoked_pair_again">Pair again</string>
+    <string name="revoked_title">Pairing revoked</string>
+
+    <!-- Rewind -->
+    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_year">År</string>
+    <string name="rewind_title">Rewind</string>
+    <string name="rewind_top_sort">Rewind Top</string>
+
+    <!-- Search -->
+    <string name="search_display_order">på nettbasert søkeordre</string>
+    <string name="search_display_order_suggestions_first">Forslag først</string>
+    <string name="search_history_action_clear">Tøm søkehistorikk</string>
+    <string name="search_history_empty_message">Historikken er tom</string>
+    <string name="search_history_pause_description">Hverken lagre nye søk eller vis historikk</string>
+    <string name="search_history_pause_label">Pause søkehistorikk</string>
+    <string name="search_title">Search...</string>
+
+    <!-- Settings -->
+    <string name="settings_about_page_description">Om delen viser informasjon om appen, utviklerne, feilsøking og oppdatering</string>
+    <string name="settings_app_behavior_title">Appens oppførsel</string>
+    <string name="settings_app_language_label">Appspråk</string>
+    <string name="settings_audio_bass_boost">Audio bass boost</string>
+    <string name="settings_audio_crossfade_description">Aktiver jevn overgang mellom sanger</string>
+    <string name="settings_audio_crossfade_label">Crossfade</string>
+    <string name="settings_audio_equalizer_label">Lydmikser</string>
+    <string name="settings_audio_loudness_normalization_description">Juster volumet til et bestemt nivå</string>
+    <string name="settings_audio_loudness_normalization_label">Normalisering av lydstyrke</string>
+    <string name="settings_audio_reverb">Audio reverb</string>
+    <string name="settings_audio_skip_silence_description">Hopp over stille deler under avspilling</string>
+    <string name="settings_audio_skip_silence_label">Hopp over stillhet</string>
+    <string name="settings_bass_boost_level">Bass boost level</string>
+    <string name="settings_cache_action_set_custom_size">Angi egendefinert hurtigbuffer</string>
+    <string name="settings_cache_custom_size_input_hint">Angi verdi i MB</string>
+    <string name="settings_cache_delete_confirmation">Vil du virkelig slette buffer?</string>
+    <string name="settings_cache_eviction_description">Når mellomlager har gått tom for plass, fjernes ressursene som ikke har blitt åpnet på lengst tid</string>
+    <string name="settings_cache_image_size_limit_label">Maks størrelse på bildebuffer</string>
+    <string name="settings_cache_song_size_limit_label">Maks størrelse på sangbuffer</string>
+    <string name="settings_cache_title">Mellomlager</string>
+    <string name="settings_data_page_description">Dataseksjonen inneholder innstillinger som endrer hvordan appen håndterer data lokalt og eksternt</string>
+    <string name="settings_data_title">Data</string>
+    <string name="settings_debug_title">Innstillinger</string>
+    <string name="settings_downloads_automatic_description">Last ned sanger automatisk basert på dine innstillinger</string>
+    <string name="settings_downloads_storage_limit_label">Sang maks nedlastingsstørrelse</string>
+    <string name="settings_enable_autodownload_song">Tillat automatisk sangnedlasting</string>
+    <string name="settings_font_include_padding_description">Legg til mellomrom rundt tekst</string>
+    <string name="settings_font_include_padding_label">Bruk skriftutfylling</string>
+    <string name="settings_font_use_system_description">Bruk skrifttypen som er aktivert av systemet</string>
+    <string name="settings_font_use_system_label">Bruk systemskrift</string>
+    <string name="settings_general_page_description">Det generelle avsnittet inneholder innstillinger for den generelle funksjonaliteten til appen</string>
+    <string name="settings_general_title">General</string>
+    <string name="settings_history_action_clear_listening">Slett littehistorie</string>
+    <string name="settings_home_default_page_label">Standardside</string>
+    <string name="settings_interface_corner_radius_label">UI Rundhet</string>
+    <string name="settings_interface_page_description">Brukergrensesnittet inneholder innstillinger for å endre det globale grensesnittet og navigasjon</string>
+    <string name="settings_interface_page_title">UI</string>
+    <string name="settings_interface_title">Brukergrensesnitt</string>
+    <string name="settings_languages_title">Språk</string>
+    <string name="settings_lastfm_title">Last.fm</string>
+    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
+    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
+    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
+    <string name="settings_library_now_playing_indicator_label">Spilles nå indikator</string>
+    <string name="settings_library_playlist_indicator_description">Merk sanger som ble lagt til i spillelisten</string>
+    <string name="settings_library_playlist_indicator_label">Indikator for spilleliste</string>
+    <string name="settings_library_queue_playlist_swipe_left_label">Queue and Local Playlists Left Swipe</string>
+    <string name="settings_library_queue_playlist_swipe_right_label">Queue and Local Playlists Right Swipe</string>
+    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
+    <string name="settings_library_sort_options_description">Customize sort options</string>
+    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
+    <string name="settings_library_toolbar_title">Toolbar</string>
+    <string name="settings_local_playlist_title">Local Playlist</string>
+    <string name="settings_logging_error_file_description">Hvis aktivert, opprett en loggfil for å utheve feil</string>
+    <string name="settings_loudness_base_gain">Grunnforsterkning for lydstyrke</string>
+    <string name="settings_lyrics_artwork_visible_label">Vis miniatyrbilde for sangtekst</string>
+    <string name="settings_lyrics_match_player_background_label">Tilpass bakgrunnsfargen for sangtekster sammen med spilleren</string>
+    <string name="settings_lyrics_remember_state_description">Behold tilstanden til sangtekster mellom økter</string>
+    <string name="settings_lyrics_remember_state_label">Lagre tilstanden til sangteksten</string>
+    <string name="settings_lyrics_seek_on_line_press_label">Gå til sangtekst ved å trykke på linjen</string>
+    <string name="settings_menu_style_label">Menystil</string>
+    <string name="settings_miscellaneous_page_description">Diverse del inneholder ulike valgfrie innstillinger og hjelpesystemer</string>
+    <string name="settings_miscellaneous_title">Diverse</string>
+    <string name="settings_navigation_back_to_home_description">Når aktivert, trykk Tilbake hopper over mellomliggende sider og returnerer direkte til startskjermen</string>
+    <string name="settings_navigation_back_to_home_label">Gå tilbake direkte til hjem</string>
+    <string name="settings_navigation_position_label">Navigasjonsbar plassering</string>
+    <string name="settings_navigation_style_label">Stil for navigasjonslinje</string>
+    <string name="settings_navigation_transition_effect_label">Overgangseffekt</string>
+    <string name="settings_network_image_quality_label">Bilde kvalitet</string>
+    <string name="settings_network_quality_title">Kvalitet</string>
+    <string name="settings_network_title">Nettverk</string>
+    <string name="settings_parental_age_restriction_description">Hindre avspilling av sanger med aldersbegrensning</string>
+    <string name="settings_playback_duration_limit_label">Ekskluder sanger med varighetsgrense</string>
+    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
+    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
+    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
+    <string name="settings_playback_pause_at_zero_volume_description">Pause sangen når volumet når 0 og gjenoppta det når volumet er større enn 0</string>
+    <string name="settings_playback_pause_between_songs_label">Pause mellom sanger</string>
+    <string name="settings_playback_previous_restart_threshold_label">Forrige sang maks. forløpt varighet</string>
+    <string name="settings_playback_skip_on_error_description">Hvis det oppstår en feil, hopp til neste sang</string>
+    <string name="settings_playback_skip_on_error_label">Hopp over sang ved feil</string>
+    <string name="settings_player_action_bar_gradient_label">Slå på gradering av handlingslinje</string>
+    <string name="settings_player_action_bar_transparent_background_label">Gjennomsiktig bakgrunn</string>
+    <string name="settings_player_actions_spaced_evenly_label">Mellomrom jevnt</string>
+    <string name="settings_player_appearance_page_description">Utseendet inneholder innstillinger for spillerens visuelle utseende</string>
+    <string name="settings_player_appearance_presets_preview_description">Previews will be in low quality</string>
+    <string name="settings_player_appearance_presets_title">Appearance Presets</string>
+    <string name="settings_player_artwork_animation_enabled_label">Vis cover miniatyrbilde animasjon</string>
+    <string name="settings_player_artwork_animation_style_label">Cover animasjonstype</string>
+    <string name="settings_player_artwork_corner_radius_label">Miniatyrbilde rundhet</string>
+    <string name="settings_player_artwork_section_title">Dekk til &amp; Miniatyrbilde</string>
+    <string name="settings_player_artwork_shrink_when_paused_label">Forminsk miniatyrbilde ved pausering</string>
+    <string name="settings_player_artwork_style_label">Thumbnail type</string>
+    <string name="settings_player_artwork_visible_label">Vis miniatyrbilder</string>
+    <string name="settings_player_background_colors_label">Bakgrunnsfarger</string>
+    <string name="settings_player_background_progress_label">Bakgrunns fremdriftslinje</string>
+    <string name="settings_player_background_section_title">Farger &amp; Bakgrunn</string>
+    <string name="settings_player_bottom_black_gradient_label">Svart gradient på Bunnen</string>
+    <string name="settings_player_button_zoom_out_animation_label">Knappen zoom-out-animasjon</string>
+    <string name="settings_player_controls_style_label">Styre stil</string>
+    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
+    <string name="settings_player_disable_horizontal_swipe_label">Deaktiver vannrett swipe</string>
+    <string name="settings_player_disable_song_swipe_label">Deaktiver sangbytte via sveip</string>
+    <string name="settings_player_disable_text_marquee_description">Rullende tekst brukes for lange tekster</string>
+    <string name="settings_player_disable_text_marquee_label">Deaktiver rullende tekst</string>
+    <string name="settings_player_favorite_button_style_label">Favoritt knapp</string>
+    <string name="settings_player_gradient_style_label">Gradient Type</string>
+    <string name="settings_player_header_album_artist_description">Album og Artistens overskrift</string>
+    <string name="settings_player_header_icons_visible_label">Vis informasjon med ikoner</string>
+    <string name="settings_player_header_style_label">Topptekst stil</string>
+    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
+    <string name="settings_player_next_queue_visible_label">Vis neste sangkø</string>
+    <string name="settings_player_persistent_queue_description">Lagre og gjenopprette spillende sanger</string>
+    <string name="settings_player_persistent_queue_label">Vedvarende spiller</string>
+    <string name="settings_player_play_button_label">Avspillingsknapp</string>
+    <string name="settings_player_prevent_collapsed_dismissal_description">Unngå å lukke spilleren og rydde i køen ved å sveipe ned mens den er minimert</string>
+    <string name="settings_player_queue_duration_visible_label">Vis total kø varighet</string>
+    <string name="settings_player_queue_remember_scroll_description">Hold rulleposisjonen når du lukker og gjenåpner spillerens køen</string>
+    <string name="settings_player_queue_remember_scroll_label">Husk køens rulleposisjon</string>
+    <string name="settings_player_queue_size_limit_label">Maks sanger i kø</string>
+    <string name="settings_player_queue_style_label">Kø type</string>
+    <string name="settings_player_queue_swipe_up_label">Dra opp for å åpne køen</string>
+    <string name="settings_player_queue_tap_to_open_label">Trykk for å åpne køen</string>
+    <string name="settings_player_remaining_duration_visible_label">Vis gjenstående sang varighet</string>
+    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
+    <string name="settings_player_seek_time_buttons_label">Hopp over tidsknapper</string>
+    <string name="settings_player_start_minimized_description">Når du klikker på en sang, starter spiller minimert</string>
+    <string name="settings_player_tap_artwork_toggle_lyrics_description">Ved å trykke på miniatyrbildet</string>
+    <string name="settings_player_tap_artwork_toggle_lyrics_label">Vis/Skjul sangtekster</string>
+    <string name="settings_player_text_outline_label">Aktiver tekstomriss</string>
+    <string name="settings_player_timeline_controls_section_title">Tidslinje &amp; Kontroller</string>
+    <string name="settings_player_timeline_label">Tidslinje</string>
+    <string name="settings_player_timeline_size_label">Størrelse på spillerens tidslinje</string>
+    <string name="settings_player_timeline_transparent_label">Gjennomsiktig Tidslinje</string>
+    <string name="settings_player_top_action_bar_visible_label">Vis øverste handlingslinje</string>
+    <string name="settings_preference_saved_message">Preferanse lagret</string>
+    <string name="settings_proxy_enabled_label">Aktiver Proxy</string>
+    <string name="settings_queue_management_title">Kø administrering</string>
+    <string name="settings_reset">Tilbakestill</string>
+    <string name="settings_restart_required_message">Omstart er nødvendig</string>
+    <string name="settings_restore_default_settings">Gjenopprett standardinnstillinger</string>
+    <string name="settings_search_floating_button_visible_label">Vis flytende søkeikon</string>
+    <string name="settings_swipe_actions_description">Utfør handlinger ved å sveipe til venstre eller høyre på en sang i en loddrett liste over sanger</string>
+    <string name="settings_swipe_actions_title">Sveip for handling</string>
+    <string name="settings_theme_dark_mode_label">Mørk</string>
+    <string name="settings_theme_mode_label">Tema-modus</string>
+    <string name="settings_title">Innstillinger</string>
+    <string name="settings_transition_fade">Ton</string>
+    <string name="settings_use_font_type">Font type</string>
+
+    <!-- Song -->
+    <string name="song_matching_action_open">Match Album/Lyd versjon</string>
+    <string name="song_matching_unmatched_label">Umatchet sang</string>
+    <string name="song_metadata_update_action_open">Open update dialog</string>
+
+    <!-- Sort -->
+    <string name="sort_artist_and_album">Artist, Album</string>
+
+    <!-- Stable -->
+    <string name="stable_title">TILBAKESTILL</string>
+
+    <!-- Statistics -->
+    <string name="statistics_items_limit_unlimited">Ubegrenset</string>
+    <string name="statistics_title">Statistikk</string>
+    <string name="statistics_top_period_title">Topp %s av …</string>
+
+    <!-- Sync -->
+    <string name="sync_action_sync">Synkroniser</string>
+    <string name="sync_likes">Auto Sync Liked Songs</string>
+
+    <!-- Theme -->
+    <string name="theme_palette_dynamic">Dynamisk</string>
+    <string name="theme_shake_sensitivity_disabled">Deaktivert</string>
+
+    <!-- This -->
+    <string name="this_pc">This PC</string>
+
+    <!-- Thumbnail -->
+    <string name="thumbnail_action_edit">Rediger miniatyrbilde</string>
+    <string name="thumbnail_action_reset">Nullstill miniatyrbilde</string>
+
+    <!-- Title -->
+    <string name="title_backup_and_restore">Sikkerhetskopiering og gjenoppretting</string>
+
+    <!-- Tray -->
+    <string name="tray_open">Open</string>
+    <string name="tray_quit">Quit</string>
+    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
+
+    <!-- Troubleshooting -->
+    <string name="troubleshooting">Feilsøking</string>
+
+    <!-- Unreachable -->
     <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
     <string name="unreachable_edit_ip">Edit IP</string>
     <string name="unreachable_edit_ip_text">Keep the pairing, change the phone’s IP address only</string>
     <string name="unreachable_port_kept">Port %1$d (kept)</string>
     <string name="unreachable_save_ip">Save and retry</string>
-    <string name="cancel">Avbryt</string>
-    <string name="revoked_title">Pairing revoked</string>
-    <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
-    <string name="revoked_pair_again">Pair again</string>
-    <string name="phone_panel_title">Phone</string>
-    <string name="phone_panel_open">Phone: %1$s</string>
-    <string name="close">Close</string>
-    <string name="connection_live">Connected</string>
-    <string name="connection_connecting">Connecting…</string>
-    <string name="connection_reconnecting">Reconnecting…</string>
-    <string name="connection_offline">Disconnected</string>
-    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
-    <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
-    <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
-    <string name="connection_replaced">Another window of this PC took over the session.</string>
-    <string name="connection_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
-    <string name="reconnect">Reconnect</string>
-    <string name="player_nothing_playing">Nothing is playing</string>
-    <string name="player_unknown_artist">Unknown artist</string>
-    <string name="player_untitled">Untitled</string>
-    <string name="player_play">Spill</string>
-    <string name="player_pause">pause</string>
-    <string name="player_next">Next</string>
-    <string name="player_previous">Previous</string>
-    <string name="player_speed">Avspillingshastighet</string>
-    <string name="player_speed_value">%1$sx</string>
-    <string name="player_repeat_off">Repeat: off</string>
-    <string name="player_repeat_all">Repeat: all</string>
-    <string name="player_repeat_one">Repeat: one</string>
-    <string name="player_shuffle_on">Shuffle: on</string>
-    <string name="player_shuffle_off">Shuffle: off</string>
-    <string name="player_open_full">Open the player</string>
-    <string name="player_close_full">Close the player</string>
-    <string name="player_waiting_state">Waiting for the phone’s playback state…</string>
-    <string name="queue_title">Queue</string>
-    <string name="queue_count">%1$d tracks</string>
-    <string name="queue_empty">The queue is empty. Start playing something on your phone.</string>
-    <string name="queue_track_menu">Track options</string>
-    <string name="queue_play">Spill</string>
-    <string name="queue_move_up">Move up</string>
-    <string name="queue_move_down">Move down</string>
-    <string name="queue_remove">Remove</string>
-    <string name="queue_clear">Clear queue</string>
-    <string name="queue_clear_confirm_title">Clear the queue?</string>
-    <string name="queue_clear_confirm_text">Every track is removed from the phone’s queue and playback stops.</string>
-    <string name="command_play">Spill</string>
-    <string name="command_pause">pause</string>
-    <string name="command_seek">Seek</string>
-    <string name="command_next">Next</string>
-    <string name="command_previous">Previous</string>
-    <string name="command_speed">Speed</string>
-    <string name="command_repeat">Gjenta</string>
-    <string name="command_shuffle">Tilfeldig rekkefølge</string>
-    <string name="command_jump">Play from the queue</string>
-    <string name="command_remove">Remove from the queue</string>
-    <string name="command_move">Move in the queue</string>
-    <string name="command_clear">Clear the queue</string>
-    <string name="command_queue_play">Spill</string>
-    <string name="command_queue_add">Add to queue</string>
-    <string name="command_output">Audio output</string>
-    <string name="command_unknown">A command</string>
-    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
-    <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
-    <string name="notice_rejected">%1$s: refused by the phone.</string>
-    <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
-    <string name="notice_server_stopping">%1$s: the phone’s server is stopping.</string>
-    <string name="notice_other_active">%1$s: another PC (%2$s) is connected to the phone.</string>
-    <string name="notice_not_found">%1$s: not found on the phone.</string>
-    <string name="notice_unreachable">%1$s: the phone did not answer.</string>
-    <string name="notice_truncated">%1$s: only %2$d of %3$d tracks were sent.</string>
-    <string name="notice_failed">%1$s failed (HTTP %2$d, %3$s).</string>
-    <string name="notice_late_error">%1$s failed on the phone (%2$s, command %3$s).</string>
-    <string name="songs">Sanger</string>
-    <string name="artists">Artister</string>
-    <string name="albums">Album</string>
-    <string name="playlists">Spillelister</string>
-    <string name="all">All tid</string>
-    <string name="favorites">Favoritter</string>
-    <string name="cached">Bufret</string>
-    <string name="on_device">On device phone</string>
-    <string name="done">Ferdig</string>
-    <string name="downloaded">Nedlastet</string>
-    <string name="playlist_top">Topp spilleliste</string>
-    <string name="disliked">Disliked</string>
-    <string name="search">Search...</string>
-    <string name="clear">Tøm</string>
-    <string name="sorting_order">Sorteringsrekkefølge</string>
-    <string name="sort_title">Tittel</string>
-    <string name="sort_artist">Artist</string>
-    <string name="sort_artist_and_album">Artist, Album</string>
-    <string name="sort_listening_time">Lyttetid</string>
-    <string name="no_items">Ingen elementer</string>
-    <string name="not_selectable">Ikke valgbar</string>
-    <string name="unknown_title">Ukjent tittel</string>
-    <string name="unknown_artist">Ukjent artist</string>
-    <string name="playback">Avspilling</string>
-    <string name="management">Management</string>
-    <string name="play_next">Spill neste</string>
-    <string name="enqueue">Legg i kø</string>
-    <string name="shuffle">Tilfeldig rekkefølge</string>
-    <string name="play_all_local_songs">Spill alle lokale sanger</string>
-    <string name="info_find_the_song_that_is_playing">Vis spillende sang</string>
-    <string name="playing_song_not_found_on_current_list">Could not find playing song on current list</string>
-    <string name="no_songs_playing">No song is playing at the moment</string>
-    <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
-    <string name="no_song_found">Ingen sang funnet</string>
-    <string name="no_song_to_shuffle">No song to shuffle</string>
-    <string name="songs_shuffled">%d songs shuffled</string>
-    <string name="info_no_songs_yet">Ingen sanger tilgjengelig</string>
-    <string name="bookmark">Bookmark</string>
-    <string name="info_bookmark_album">Bokmerke album</string>
-    <string name="follow">Følg</string>
-    <string name="following">Følger</string>
-    <string name="item_select">Velg</string>
-    <string name="item_deselect">Velg bort</string>
-    <string name="info_download_all_songs">Last ned alle sanger</string>
-    <string name="info_smart_recommendation">Smarte anbefalinger</string>
-    <string name="import_playlist">Importer spilleliste</string>
-    <string name="export_playlist">Eksporter spilleliste</string>
-    <string name="info_open_update_dialog">Open update dialog</string>
-    <string name="smart_trash">Smart papirkurv</string>
-    <string name="info_shuffle">Tilfeldig rekkefølge</string>
-    <string name="info_pin_unpin_playlist">Fest/Løsne spilleliste</string>
-    <string name="info_enqueue_songs">Legg sanger i kø</string>
-    <string name="info_export_cached_or_downloaded_song">Export cached or downloaded song</string>
-    <string name="edit_thumbnail">Rediger miniatyrbilde</string>
-    <string name="reset_thumbnail">Nullstill miniatyrbilde</string>
-    <string name="randomizer">Randomizer</string>
-    <string name="size">Størrelse</string>
-    <string name="small">Liten</string>
-    <string name="medium">Medium</string>
-    <string name="big">Stor</string>
-    <string name="sort_name">Navn</string>
-    <string name="sort_album">Album</string>
-    <string name="sort_duration">Varighet</string>
-    <string name="sort_play_count">Play Count</string>
-    <string name="relative_listening_time">Relative Listening Time</string>
-    <string name="sort_date_added">Dato lagt til</string>
-    <string name="sort_date_played">Dato avspilt</string>
-    <string name="sort_date_liked">Favorisert dato</string>
-    <string name="sort_downloaded">Nedlastet</string>
-    <string name="sort_custom_order">Egendefinert ordre</string>
-    <string name="sort_songs_number">Antall sanger</string>
-    <string name="sort_album_year">Album År</string>
-    <string name="match_album_audio_version">Match Album/Lyd versjon</string>
-    <string name="autosync_likes">Auto Sync Liked Songs</string>
-    <string name="statistics">Statistikk</string>
-    <string name="header_view_top_of">Topp %s av …</string>
-    <string name="max_items_unlimited">Ubegrenset</string>
-    <string name="today">I dag</string>
-    <string name="_1_week">1 Uke</string>
-    <string name="_1_month">1 Måned</string>
-    <string name="_3_month">3 Måneder</string>
-    <string name="_6_month">6 Måneder</string>
-    <string name="_1_year">1 År</string>
-    <string name="download_pc">Download PC</string>
-    <string name="cached_pc">Cached PC</string>
-    <string name="library_none">The phone shares no library with this PC.</string>
-    <string name="library_refresh">Refresh</string>
-    <string name="library_back">Back</string>
-    <string name="library_empty">Nothing here.</string>
-    <string name="library_error_unreachable">The phone could not be reached.</string>
-    <string name="library_not_found">Not found on the phone. It may have been deleted.</string>
-    <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
-    <string name="queue_open">Queue</string>
-    <string name="discover">Oppdag</string>
-    <string name="discoverinfo">Fjern sanger fra køen om inkludert i favoritter eller spillelister</string>
-    <string name="confirm">Bekreft</string>
-    <string name="value_copied">Kopiert</string>
-    <string name="controls_header_customize">Tilpass</string>
-    <string name="controls_title_playback_speed">Avspillingshastighet</string>
-    <string name="controls_title_playback_pitch">Avspilling tonehøyde</string>
-    <string name="controls_title_medley_duration">Medley varighet</string>
-    <string name="controls_title_device_volume">Enhetsvolum</string>
-    <string name="cd_background_image">Bakgrunns bilde</string>
-    <string name="cd_app_icon_in_player">app ikon i spiller</string>
-    <string name="cd_number_of_songs_in_queue">Antall sanger i kø</string>
-    <string name="cd_app_s_icon">Appens ikon</string>
-    <string name="cd_song_album_cover">sang albumomslag</string>
-    <string name="cd_disc_background">dyppen bakgrunn</string>
-    <string name="rewind">Rewind</string>
-    <string name="history">Historikk</string>
-    <string name="profiles">Profiles</string>
-    <string name="menu_go_to_picture_in_picture">PIP</string>
-    <string name="enable_log_debug">Aktiver feilsøkingslogger</string>
-    <string name="maintenance">Maintenance</string>
-    <string name="rescue_center">Rescue Center</string>
-    <string name="rewind_5_seconds">Spol tilbake 5 sekunder</string>
-    <string name="rewind_30_seconds">Spol tilbake 30 sekunder</string>
-    <string name="forward">Videresend</string>
-    <string name="forward_5_seconds">Videresend 5 sekunder</string>
-    <string name="forward_30_seconds">Videresend 30 sekunder</string>
-    <string name="remove_from_queue">Fjern fra kø</string>
-    <string name="clean_queue_confirm">Vil du virkelig rydde køen?</string>
-    <string name="info_lock_unlock_reorder_songs">Lås/lås opp omorganisering av sanger</string>
-    <string name="info_reorder_is_possible_only_in_ascending_sort">Omsortering er bare mulig i stigende sortering</string>
-    <string name="repeat">Gjenta</string>
-    <string name="bridge_server">PC server</string>
-    <string name="audio_devices">Audio devices</string>
-    <string name="audio_output_title">Audio output</string>
-    <string name="volume">Volume</string>
-    <string name="controls_title_playback_volume">Volum for avspilling</string>
-    <string name="player_effects">Player Effects</string>
-    <string name="controls_title_blur_effect">Uskarphetseffekt</string>
-    <string name="audio_effects">Lyd Effekter</string>
-    <string name="settings_bass_boost_level">Bass boost level</string>
-    <string name="settings_loudness_base_gain">Grunnforsterkning for lydstyrke</string>
-    <string name="loudness_boost_level">Nivå for lydstyrke</string>
-    <string name="audio_quality_format">Lyd Kvalitet</string>
-    <string name="audio_quality_automatic">Automatisk</string>
-    <string name="audio_quality_format_high">Høy</string>
-    <string name="audio_quality_format_low">Lav</string>
-    <string name="quality">Kvalitet</string>
-    <string name="other">Andre</string>
-    <string name="disable_scrolling_text">Deaktiver rullende tekst</string>
-    <string name="scrolling_text_is_used_for_long_texts">Rullende tekst brukes for lange tekster</string>
-    <string name="settings">Innstillinger</string>
-    <string name="languages">Språk</string>
-    <string name="app_language">Appspråk</string>
-    <string name="profile_base_name">N-Zik Fan</string>
-    <string name="cd_blurred_background">uklar_bakgrunn</string>
-    <string name="cd_origin_indicator">origin_indikator</string>
-    <string name="bridge_audio_output_pc_subtitle">Sound on the PC (N-Zik Desktop Compagnon)</string>
-    <string name="pinned_playlists">Festet</string>
-    <string name="new_playlist">Ny spilleliste</string>
-    <string name="create_new_playlist">Lag ny spilleliste</string>
-    <string name="yt_playlists">YT/YTM</string>
-    <string name="delete_playlists_label">Delete playlists</string>
-    <string name="rewind_top_sort">Rewind Top</string>
-    <string name="renumber_songs_positions">Stokk om sangposisjoner</string>
-    <string name="information">Informasjon</string>
-    <string name="navigation">Navigation</string>
-    <string name="listen_together">Listen Together</string>
-    <string name="listen_together_connection">Connection</string>
-    <string name="listen_together_connect">Connect</string>
-    <string name="listen_together_disconnected">Disconnected</string>
-    <string name="listen_together_room">Room</string>
-    <string name="listen_together_create_room">Create room</string>
-    <string name="listen_together_create_room_desc">Create a room and share the code with your friends</string>
-    <string name="listen_together_join_room">Join room</string>
-    <string name="listen_together_enter_room_code">Enter a room code</string>
-    <string name="listen_together_server_url">Server URL</string>
-    <string name="listen_together_username">Brukernavn</string>
-    <string name="listen_together_auto_approval_joins">Auto-approve join requests</string>
-    <string name="listen_together_auto_approval_joins_desc">Automatically approve join requests without reviewing them manually</string>
-    <string name="listen_together_auto_approval_suggestions">Auto-approve song suggestions</string>
-    <string name="listen_together_auto_approval_suggestions_desc">Automatically approve and queue song suggestions from guests</string>
-    <string name="listen_together_sync_volume">Sync host volume</string>
-    <string name="listen_together_sync_volume_desc">Guests will match the host\'s volume level</string>
-    <string name="listen_together_history">Local history</string>
-    <string name="listen_together_history_desc">Record Listen Together tracks in your local history</string>
-    <string name="listen_together_view_logs">View logs</string>
-    <string name="listen_together_view_logs_desc">Debug connection events and messages</string>
-    <string name="listen_together_blocked_users">Blocked users</string>
-    <string name="listen_together_not_set">Not set</string>
-    <string name="listen_together_no_blocked_users">No blocked users</string>
-    <string name="listen_together_suggest">Suggest to host</string>
-    <string name="update_title">Endre tittel</string>
-    <string name="update_authors">Change Authors</string>
-    <string name="update_cover">Endre forside</string>
-    <string name="start_radio">Start radio</string>
-    <string name="add_to_favorites">Legg til i favoritter</string>
-    <string name="add_to_playlist">Legg til spilleliste</string>
-    <string name="go_to_album">Gå til album</string>
-    <string name="more_of">Mer av</string>
-    <string name="update_album_browse_id">Change Album Browse ID</string>
-    <string name="update_artist_browse_id">Change Artist Browse ID</string>
-    <string name="update">Oppdater</string>
-    <string name="delete">Slett</string>
-    <string name="export_cached">Export cached</string>
-    <string name="edit_metadata">Edit Metadata</string>
-    <string name="rename_playlist">Rename playlist</string>
-    <string name="download">Last ned</string>
-    <string name="info_remove_all_downloaded_songs">Fjern alle nedlastede sanger</string>
-    <string name="tab_data">Data</string>
-    <string name="data_settings_description">Dataseksjonen inneholder innstillinger som endrer hvordan appen håndterer data lokalt og eksternt</string>
-    <string name="tab_general">General</string>
-    <string name="tab_network">Nettverk</string>
-    <string name="tab_miscellaneous">Diverse</string>
-    <string name="general_settings_description">Det generelle avsnittet inneholder innstillinger for den generelle funksjonaliteten til appen</string>
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
-    <string name="window">Window</string>
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
-    <string name="app_shortcuts_settings">App shortcuts</string>
-    <string name="app_shortcuts_settings_description">Choose and reorder launcher shortcuts</string>
-    <string name="app_shortcuts_rescue_locked">Rescue cannot be disabled</string>
-    <string name="reset">Tilbakestill</string>
-    <string name="home">Home</string>
-    <string name="toast_preference_saved">Preferanse lagret</string>
-    <string name="network_settings_description">Nettverksdelen inneholder innstillinger for å optimalisere programmets ytelse og databruk</string>
-    <string name="other_settings_description">Diverse del inneholder ulike valgfrie innstillinger og hjelpesystemer</string>
-    <string name="cache">Mellomlager</string>
-    <string name="cache_cleared">Når mellomlager har gått tom for plass, fjernes ressursene som ikke har blitt åpnet på lengst tid</string>
-    <string name="song_cache_max_size">Maks størrelse på sangbuffer</string>
-    <string name="turn_off">Slå av</string>
-    <string name="unlimited">Ubegrenset</string>
-    <string name="custom">Egendefinert</string>
-    <string name="used">used</string>
-    <string name="set_custom_cache">Angi egendefinert hurtigbuffer</string>
-    <string name="enter_value_in_mb">Angi verdi i MB</string>
-    <string name="do_you_really_want_to_delete_cache">Vil du virkelig slette buffer?</string>
-    <string name="playback_blocked_match_first">Avspilling blokkert, vennligst match først</string>
-    <string name="unmatched_song">Umatchet sang</string>
-    <string name="value_cannot_be_empty">Verdien kan ikke være tom</string>
-    <string name="value_must_be_greater_than">Value must be greater than</string>
-    <string name="filter_by">Filter By</string>
-    <string name="rewind_filter_month">Month</string>
-    <string name="rewind_filter_year">År</string>
-    <string name="added_to_favorites">Lagt til i favoritter</string>
-    <string name="added_to_dislikes">Disliked %s</string>
-    <string name="removed_from_dislikes">Removed %s from dislikes</string>
-    <string name="removed_from_favorites">Fjernet fra favoritter</string>
-    <string name="update_playlist_browse_id">Change Playlist Browse ID</string>
-    <string name="cannot_bookmark_special_playlist">Cannot bookmark Liked Songs or Episodes playlist</string>
-    <string name="this_pc">This PC</string>
-    <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
-    <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
-    <string name="local_playback_not_found">This song is no longer on your phone.</string>
-    <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
-    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
-    <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
-    <string name="local_playback_unreachable">Your phone did not answer.</string>
-    <string name="local_playback_failed">This song could not be played on this PC.</string>
-    <string name="update_current_version">Current version</string>
-    <string name="enable_check_for_update">Aktiver automatisk oppdateringskontroll</string>
-    <string name="update_check_when_enabled">When enabled, a new version of this channel is checked at startup and the update dialog offers it.</string>
-    <string name="update_check_off_build">Hvis du ser denne meldingen betyr det at bygget ditt ikke har blitt aktivert autooppdatert, oppdaterer du appen manuelt fra github</string>
+    <string name="unreachable_title">Phone unreachable</string>
+
+    <!-- Update -->
     <string name="update_check_off_aur">This app was installed from the AUR: the in-app updater is disabled for this install. Update the AUR entry (n-zik-desktop-compagnon) with your AUR helper.</string>
-    <string name="info_check_update_now">Sjekk nå</string>
-    <string name="update_available">Oppdatering tilgjengelig</string>
-    <string name="app_update_dialog_version">Den nye versjonen %s kan lastes ned!</string>
-    <string name="app_update_dialog_size">Filstørrelsen er %s</string>
-    <string name="go_to_download">Gå til nedlasting</string>
-    <string name="downloading_update">Laster ned oppdatering</string>
-    <string name="update_download_progress">Downloading update… %1$d%%</string>
-    <string name="info_no_update_available">Ingen tilgjengelige oppdateringer</string>
-    <string name="update_download_completed">Oppdater nedlastede</string>
-    <string name="error_update_check_failed">The update check failed (%1$s)</string>
-    <string name="error_update_download_failed">The update download failed (%1$s)</string>
-    <string name="error_no_internet">Ingen nettverksforbindelse</string>
-    <string name="install_now">Install now</string>
-    <string name="install_file_saved_at">The update file is saved at:</string>
-    <string name="install_open_folder">Open folder</string>
-    <string name="install_copy_path">Copy path</string>
-    <string name="install_copy_command">Copy command</string>
-    <string name="path_copied">Path copied</string>
-    <string name="command_copied">Command copied</string>
-    <string name="install_flatpak_command">Update in place with:</string>
-    <string name="install_pkg_command">Install the package with:</string>
-    <string name="install_pkg_pacman_command">Upgrade the package with:</string>
-    <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, extract the downloaded .tar.gz in its place (the tarball opens into a new app folder - never over the current one), and relaunch.</string>
-    <string name="old_install_path">Current install:</string>
-    <string name="beta_title">META</string>
-    <string name="dev_title">DEV</string>
-    <string name="git_title">GIT</string>
-    <string name="debug_title">DEBUG</string>
-    <string name="check_update">Se etter oppdatering</string>
-    <string name="check_update_ask">Check for updates now?</string>
-    <string name="check_at_github_for_updates">Sjekke Github for oppdateringer?</string>
-    <string name="when_an_update_is_available_you_will_be_asked_if_you_want_to_install_info">Når en oppdatering er tilgjengelig, vil du bli spurt om du vil installere den. Ingen automatiske installeringer vil bli utført bak din rygg.</string>
-    <string name="but_these_updates_would_not_go_through">Men disse oppdateringene ville ikke gå gjennom ytterligere screening utført på f.eks IzzyOnDroid eller F-Droid.</string>
-    <string name="you_can_still_turn_it_on_or_off_from_the_settings">Du kan fortsatt skru det på/av fra innstillingene.</string>
-    <string name="checking_for_updates">Sjekker etter oppdateringer…</string>
-    <string name="auto_update_enabled">Aktivert</string>
-    <string name="auto_update_ask">Spør</string>
-    <string name="auto_update_disabled">Deaktivert</string>
-    <string name="on">På</string>
-    <string name="off">Av</string>
-    <string name="ask">Spør</string>
-    <string name="github">GitHub</string>
-    <string name="up_to_date">Opp til dato</string>
-    <string name="never_checked">Aldri sjekket</string>
-    <string name="last_check">Siste sjekk: %s</string>
-    <string name="update_unknown">Ukjent</string>
-    <string name="update_not_available_yet">Oppdateringen er ikke tilgjengelig ennå eller versjon ikke funnet</string>
-    <string name="update_file_size">Filstørrelse: %s</string>
-    <string name="downloading_actual_version">Reinstallerer: %1$s (%2$s)</string>
-    <string name="reinstalling_update">Reinstallerer oppdatering</string>
-    <string name="redownload_update">Last ned igjen siste oppdatering</string>
-    <string name="download_cancelled">Nedlasting avbrutt</string>
-    <string name="update_cache_cleared">Hurtiglager tømt</string>
-    <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
+    <string name="update_check_off_build">Hvis du ser denne meldingen betyr det at bygget ditt ikke har blitt aktivert autooppdatert, oppdaterer du appen manuelt fra github</string>
     <string name="update_download_indeterminate">Downloaded %1$s (unknown size)</string>
-    <string name="error_windows_install_helper">The Windows installer could not be started. Run the downloaded installer manually.</string>
-    <string name="install">Installer</string>
-    <string name="stable_title">TILBAKESTILL</string>
-    <string name="menu">Meny</string>
-    <string name="translate">Oversett</string>
-    <string name="info_translation">Oversettelse</string>
-    <string name="whats_new_in">Hva er nytt i %s</string>
-    <string name="about">Om</string>
-    <string name="about_description">Om delen viser informasjon om appen, utviklerne, feilsøking og oppdatering</string>
-    <string name="by_string">av</string>
-    <string name="troubleshooting">Feilsøking</string>
-    <string name="view_the_source_code">Vis kildekoden</string>
-    <string name="report_an_issue">Rapporter en feil</string>
-    <string name="request_a_feature">Be om en funksjon eller foreslå en idé</string>
-    <string name="you_will_be_redirected_to_github">Du vil bli omdirigert til GitHub</string>
-    <string name="contributors">Bidragsytere</string>
-    <string name="translators">Oversettere</string>
-    <string name="about_developers">Utviklere / Designere</string>
-    <string name="in_alphabetical_order">I alfabetisk rekkefølge:</string>
-    <string name="do_you_really_want_to_download_all">Ønsker du virkelig å laste ned alt?</string>
-    <string name="do_you_really_want_to_delete_download">Vil du virkelig slette nedlastingen?</string>
-    <string name="loading_songs_count">Loading %1$d songs…</string>
-    <string name="equalizer">Lydmikser</string>
-    <string name="sleep_timer">Innsovningstimer</string>
-    <string name="listen_on">Hør på</string>
-    <string name="listen_on_youtube">Lytt på YouTube</string>
-    <string name="update_waveform">Update waveform</string>
-    <string name="social_lastfm">Last.fm</string>
-    <string name="lastfm_love">Love on Last.fm</string>
-    <string name="lastfm_unlove">Unlove on Last.fm</string>
-    <string name="deleted">Slettet</string>
-    <string name="deleted_item">%1$s slettet</string>
-    <string name="and">and</string>
-    <string name="sync">Synkroniser</string>
-    <string name="delete_playlists_confirm_all">Are you sure you want to delete ALL %d playlists?</string>
-    <string name="visualizer">Visualisering</string>
-    <string name="swipe_to_action">Sveip for handling</string>
-    <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">Utfør handlinger ved å sveipe til venstre eller høyre på en sang i en loddrett liste over sanger</string>
-    <string name="navigation_bar_position">Navigasjonsbar plassering</string>
-    <string name="navigation_bar_type">Stil for navigasjonslinje</string>
-    <string name="direction_left">Venstre</string>
-    <string name="direction_right">Høyre</string>
-    <string name="direction_top">Topp</string>
-    <string name="direction_bottom">Bunn</string>
-    <string name="direction_bottom_floating">Bunn flytende</string>
-    <string name="icon_and_text">Ikon og tekst</string>
-    <string name="only_icon">Kun ikon</string>
-    <string name="default_page">Standardside</string>
-    <string name="quick_picks">Raske valg</string>
-    <string name="syncing_item">Syncing: %1$s</string>
-    <string name="syncing_progress">%1$d / %2$d</string>
-    <string name="syncing_failed">Sync failed</string>
-    <string name="txt_settings">Innstillinger</string>
-    <string name="none">Ingen</string>
-    <string name="ui_tab">UI</string>
-    <string name="player_appearance">Spillerens utseende</string>
-    <string name="user_interface">Brukergrensesnitt</string>
-    <string name="ui_settings_description">Brukergrensesnittet inneholder innstillinger for å endre det globale grensesnittet og navigasjon</string>
-    <string name="appearance_settings_description">Utseendet inneholder innstillinger for spillerens visuelle utseende</string>
-    <string name="theme">Tema</string>
-    <string name="settings_use_font_type">Font type</string>
-    <string name="home_tabs_settings">Home page</string>
-    <string name="sort_menu">Sort Menu</string>
-    <string name="toolbar">Toolbar</string>
-    <string name="settings_reset">Tilbakestill</string>
-    <string name="player_presets_and_layout">Forhåndsinnstillinger &amp; Layout</string>
-    <string name="cover_and_thumbnail">Dekk til &amp; Miniatyrbilde</string>
-    <string name="timeline_and_controls">Tidslinje &amp; Kontroller</string>
-    <string name="colors_and_background">Farger &amp; Bakgrunn</string>
-    <string name="player_behavior_and_visuals">Spiller oppførsel &amp; Visualer</string>
-    <string name="txt_lyrics">Tekster</string>
-    <string name="player_action_bar">Spiller handlingslinje</string>
-    <string name="player_controls">Spiller kontroller</string>
-    <string name="queue_management">Kø administrering</string>
-    <string name="app_behavior">Appens oppførsel</string>
-    <string name="title_backup_and_restore">Sikkerhetskopiering og gjenoppretting</string>
-    <string name="auto_backup_title">Automatic Backup</string>
-    <string name="network_status">Kvalitet Status</string>
-    <string name="bridge_server_description">Let N-Zik Desktop Compagnon control your library from a PC on the same Wi-Fi network</string>
-    <string name="proxy">Mellomtjener</string>
-    <string name="parental_control">Foreldrekontroll</string>
-    <string name="maintenance_card_desc">App state at a glance: last boot passes and live subsystems</string>
-    <string name="jump_previous">Forrige sang maks. forløpt varighet</string>
-    <string name="min_listening_time">Minimum avspillingsvarighet</string>
-    <string name="exclude_songs_with_duration_limit">Ekskluder sanger med varighetsgrense</string>
-    <string name="vt_disabled">Deaktivert</string>
-    <string name="exclude_disliked_songs">Exclude disliked songs</string>
-    <string name="exclude_disliked_artists">Exclude disliked artists</string>
-    <string name="exclude_disliked_albums">Exclude disliked albums</string>
-    <string name="pause_between_songs">Pause mellom sanger</string>
-    <string name="crossfade">Crossfade</string>
-    <string name="crossfade_description">Aktiver jevn overgang mellom sanger</string>
-    <string name="player_pause_on_volume_zero">Pause når lyden skrus av</string>
-    <string name="info_pauses_player_when_volume_zero">Pause sangen når volumet når 0 og gjenoppta det når volumet er større enn 0</string>
-    <string name="player_keep_minimized">Behold minimert</string>
-    <string name="when_click_on_a_song_player_start_minimized">Når du klikker på en sang, starter spiller minimert</string>
-    <string name="player_collapsed_disable_swiping_down">Deaktiver sveiping ned</string>
-    <string name="avoid_closing_the_player_cleaning_queue_by_swiping_down">Unngå å lukke spilleren og rydde i køen ved å sveipe ned mens den er minimert</string>
-    <string name="player_auto_load_songs_in_queue">Auto last sanger i kø</string>
-    <string name="player_auto_load_songs_in_queue_description">Legger til sanger når køen er i ferd med å avsluttes</string>
-    <string name="max_songs_in_queue">Maks sanger i kø</string>
-    <string name="playlistindicator">Indikator for spilleliste</string>
-    <string name="playlistindicatorinfo">Merk sanger som ble lagt til i spillelisten</string>
-    <string name="now_playing_indicator">Spilles nå indikator</string>
-    <string name="music_animations_bubbles">Bobler</string>
-    <string name="persistent_queue">Vedvarende spiller</string>
-    <string name="save_and_restore_playing_songs">Lagre og gjenopprette spillende sanger</string>
-    <string name="skip_media_on_error">Hopp over sang ved feil</string>
-    <string name="skip_media_on_error_description">Hvis det oppstår en feil, hopp til neste sang</string>
-    <string name="skip_silence">Hopp over stillhet</string>
-    <string name="skip_silent_parts_during_playback">Hopp over stille deler under avspilling</string>
-    <string name="loudness_normalization">Normalisering av lydstyrke</string>
-    <string name="autoadjust_the_volume">Juster volumet til et bestemt nivå</string>
-    <string name="settings_audio_bass_boost">Audio bass boost</string>
-    <string name="settings_audio_reverb">Audio reverb</string>
-    <string name="reverb_none">Ingen</string>
-    <string name="settings_restore_default_settings">Gjenopprett standardinnstillinger</string>
-    <string name="image_cache_max_size">Maks størrelse på bildebuffer</string>
-    <string name="song_download_max_size">Sang maks nedlastingsstørrelse</string>
-    <string name="export_backup">Export backup</string>
-    <string name="export_backup_description">Export database or settings to a file</string>
-    <string name="import_backup">Import backup</string>
-    <string name="import_backup_description">Import database or settings from a file</string>
-    <string name="title_import_settings_migration">Importer overføringsfil.</string>
-    <string name="description_import_settings_migration">For old users before conversion.\nUse old app to make a backup for migration.</string>
-    <string name="auto_backup_location">Auto Backup Location</string>
-    <string name="auto_backup_location_not_set">Not set</string>
-    <string name="auto_backup_target">Backup Target</string>
-    <string name="database">Database</string>
-    <string name="auto_backup_max_backups">Max Backups to Keep</string>
-    <string name="auto_backup_interval">Auto Backup Interval</string>
-    <string name="auto_backup_interval_none">Deaktivert</string>
-    <string name="pause_search_history">Pause søkehistorikk</string>
-    <string name="neither_save_new_searched_query">Hverken lagre nye søk eller vis historikk</string>
-    <string name="player_pause_listen_history">Pause lyttehistorikk</string>
-    <string name="player_pause_listen_history_info">Lagrer ikke avspillingshendelser brukt til statistikk, historie og forslag i hurtigvalg</string>
-    <string name="clear_search_history">Tøm søkehistorikk</string>
-    <string name="clear_listen_history">Slett littehistorie</string>
-    <string name="history_is_empty">Historikken er tom</string>
-    <string name="image_quality_format">Bilde kvalitet</string>
-    <string name="download_quality_format">Download Quality</string>
-    <string name="update_downloads">Update downloads</string>
-    <string name="update_downloads_description">Re-download the songs that were downloaded with a different quality</string>
-    <string name="settings_enable_autodownload_song">Tillat automatisk sangnedlasting</string>
-    <string name="auto_download_song_description">Last ned sanger automatisk basert på dine innstillinger</string>
-    <string name="restarting_rimusic_is_required">Omstart er nødvendig</string>
-    <string name="enable_proxy">Aktiver Proxy</string>
-    <string name="info_prevent_play_songs_with_age_limitation">Hindre avspilling av sanger med aldersbegrensning</string>
-    <string name="maintenance_dedup">Same-name artist dedup</string>
-    <string name="maintenance_no_data">No data</string>
-    <string name="maintenance_convergence">Name convergence</string>
-    <string name="maintenance_db_cleanup">Artist link cleanup</string>
-    <string name="maintenance_live_subsystems">Live subsystems</string>
-    <string name="maintenance_open">Open</string>
-    <string name="maintenance_open_desc">Open the full maintenance sheet</string>
-    <string name="if_enabled_create_a_log_file_to_highlight_errors">Hvis aktivert, opprett en loggfil for å utheve feil</string>
-    <string name="export_logs">Export logs</string>
-    <string name="export_debug_log_description">Export debug log to a file</string>
-    <string name="interface_in_use">Grensesnitt i bruk</string>
-    <string name="theme_mode">Tema-modus</string>
-    <string name="dark">Mørk</string>
-    <string name="dynamic">Dynamisk</string>
-    <string name="player_position">Spillerposisjon</string>
-    <string name="position_bottom">Bunn</string>
-    <string name="menu_style">Menystil</string>
-    <string name="style_list">Liste</string>
-    <string name="message_type">Popup message style</string>
-    <string name="message_type_modern">Moderne</string>
-    <string name="home_tabs_settings_description">Reorder and show/hide tabs</string>
-    <string name="transition_effect">Overgangseffekt</string>
-    <string name="te_fade">Ton</string>
-    <string name="disable_navigation_back_stack">Gå tilbake direkte til hjem</string>
-    <string name="disable_navigation_back_stack_description">Når aktivert, trykk Tilbake hopper over mellomliggende sider og returnerer direkte til startskjermen</string>
-    <string name="search_display_order">på nettbasert søkeordre</string>
-    <string name="search_display_order_suggestions_first">Forslag først</string>
-    <string name="show_floating_icon">Vis flytende søkeikon</string>
-    <string name="remember_queue_scroll_position">Husk køens rulleposisjon</string>
-    <string name="remember_queue_scroll_position_description">Hold rulleposisjonen når du lukker og gjenåpner spillerens køen</string>
-    <string name="use_system_font">Bruk systemskrift</string>
-    <string name="use_font_by_the_system">Bruk skrifttypen som er aktivert av systemet</string>
-    <string name="apply_font_padding">Bruk skriftutfylling</string>
-    <string name="add_spacing_around_texts">Legg til mellomrom rundt tekst</string>
-    <string name="queue_and_local_playlists_left_swipe">Queue and Local Playlists Left Swipe</string>
-    <string name="playlist_left_swipe">Playlist Left Swipe</string>
-    <string name="playlist_right_swipe">Playlist Right Swipe</string>
-    <string name="album_left_swipe">Album Left Swipe</string>
-    <string name="album_right_swipe">Album Right Swipe</string>
-    <string name="queue_and_local_playlists_right_swipe">Queue and Local Playlists Right Swipe</string>
-    <string name="library_visibility_description">Choose which sections appear in the library</string>
-    <string name="local_playlist_sort">Local Playlist</string>
-    <string name="customize_sort_options">Customize sort options</string>
-    <string name="customize_toolbar">Customize the toolbar</string>
-    <string name="appearancepresets">Appearance Presets</string>
-    <string name="appearancepresetssecondary">Previews will be in low quality</string>
-    <string name="playertype">Avspiller Type</string>
-    <string name="pcontrols_essential">Essensiell</string>
-    <string name="pcontrols_modern">Moderne</string>
-    <string name="queuetype">Kø type</string>
-    <string name="thumbnailtype">Thumbnail type</string>
-    <string name="pinfo_type">Topptekst stil</string>
-    <string name="pinfo_album_and_artist_name">Album og Artistens overskrift</string>
-    <string name="pinfo_show_icons">Vis informasjon med ikoner</string>
-    <string name="pcontrols_type">Styre stil</string>
-    <string name="icon_like_button">Favoritt knapp</string>
-    <string name="show_thumbnail">Vis miniatyrbilder</string>
-    <string name="thumbnailpause">Forminsk miniatyrbilde ved pausering</string>
-    <string name="crop_video_thumbnails">Crop video thumbnails</string>
-    <string name="show_cover_thumbnail_animation">Vis cover miniatyrbilde animasjon</string>
-    <string name="cover_thumbnail_animation_type">Cover animasjonstype</string>
-    <string name="player_thumbnail_size">Miniatyrbildestørrelse</string>
-    <string name="thumbnail_roundness">Miniatyrbilde rundhet</string>
-    <string name="artist_roundness">Artist roundness</string>
-    <string name="ui_roundness">UI Rundhet</string>
-    <string name="timelinesize">Størrelse på spillerens tidslinje</string>
-    <string name="biggest">Størst</string>
-    <string name="miniplayer_buttons_config">MiniPlayer buttons</string>
-    <string name="miniplayer_buttons_config_description">Configure the 4 buttons in the miniplayer</string>
-    <string name="player_swap_controls_with_timeline">Bytt kontroller med tidslinjen</string>
-    <string name="timeline">Tidslinje</string>
-    <string name="require_mic_permission">Visualisereffekten krever mikrofon tillatelse, vennligst gi dette.</string>
-    <string name="transparentbar">Gjennomsiktig Tidslinje</string>
-    <string name="player_controls_colors">Spilleren kontrollerer farger</string>
-    <string name="monochrome">Monokrom</string>
-    <string name="play_button">Avspillingsknapp</string>
-    <string name="circular_ribbed">Bølgende sirkel</string>
-    <string name="buttonzoomout">Knappen zoom-out-animasjon</string>
-    <string name="background_colors">Bakgrunnsfarger</string>
-    <string name="gradienttype">Gradient Type</string>
-    <string name="shake_sensitivity_theme">Theme Shake Sensitivity</string>
-    <string name="shake_sensitivity_theme_disabled">Deaktivert</string>
-    <string name="rotating_cover_title">Rotating album cover</string>
-    <string name="blackgradient">Svart gradient på Bunnen</string>
-    <string name="bottomgradient">Slå på gradering av handlingslinje</string>
-    <string name="textoutline">Aktiver tekstomriss</string>
-    <string name="show_total_time_of_queue">Vis total kø varighet</string>
-    <string name="show_remaining_song_time">Vis gjenstående sang varighet</string>
-    <string name="skip_time_buttons">Hopp over tidsknapper</string>
-    <string name="show_player_top_actions_bar">Vis øverste handlingslinje</string>
-    <string name="show_next_songs_in_player">Vis neste sangkø</string>
-    <string name="disable_horizontal_swipe">Deaktiver vannrett swipe</string>
-    <string name="disable_song_switching_via_swipe">Deaktiver sangbytte via sveip</string>
-    <string name="player_swipe_sensitivity">Spillerens Sveip følsomhet</string>
-    <string name="player_rotating_buttons">Roterende knapper</string>
-    <string name="player_enable_rotation_buttons">Aktiver knapprotasjon ved klikk</string>
-    <string name="background_progress_bar">Bakgrunns fremdriftslinje</string>
-    <string name="minimized_player">Minimert spiller</string>
-    <string name="show_lyrics_thumbnail">Vis miniatyrbilde for sangtekst</string>
-    <string name="toggle_lyrics">Vis/Skjul sangtekster</string>
-    <string name="by_tapping_on_the_thumbnail">Ved å trykke på miniatyrbildet</string>
-    <string name="click_lyrics_text">Gå til sangtekst ved å trykke på linjen</string>
-    <string name="lyricscolor">Sangtekst farge</string>
-    <string name="color_white">Hvit</string>
-    <string name="save_lyrics_state">Lagre tilstanden til sangteksten</string>
-    <string name="save_lyrics_state_description">Behold tilstanden til sangtekster mellom økter</string>
-    <string name="show_background_in_lyrics">Tilpass bakgrunnsfargen for sangtekster sammen med spilleren</string>
-    <string name="player_enable_lyrics_popup_message">Aktiver sangtekst popup-melding</string>
-    <string name="action_bar_transparent_background">Gjennomsiktig bakgrunn</string>
-    <string name="actionspacedevenly">Mellomrom jevnt</string>
-    <string name="tapqueue">Trykk for å åpne køen</string>
-    <string name="swipe_up_to_open_the_queue">Dra opp for å åpne køen</string>
-    <string name="player_action_bar_buttons">Button visibility</string>
-    <string name="player_action_bar_buttons_description">Configure which buttons appear in the player action bar</string>
-    <string name="cover_type_vinyl">Vinyl</string>
-    <string name="cover_type_cd">CD</string>
-    <string name="cover_type_cd_with_cover">CD with Cover</string>
-    <string name="bg_colors_fluid_gradient_background_from_theme">Flytende gradering fra tema</string>
-    <string name="bg_colors_fluid_gradient_background_from_cover">Flytende gradering fra sangomslag</string>
-    <string name="bg_colors_m3e_morphing_theme">Morphing shapes from theme</string>
-    <string name="bg_colors_m3e_morphing_cover">Morphing shapes from cover</string>
-    <string name="linear">Linear Gradient</string>
-    <string name="mesh">Mesh Gradient</string>
-    <string name="mesmerizinglens">Mesmerizing Lens</string>
-    <string name="glossygradient">Glossy Gradient</string>
-    <string name="gradientflow">Gradient Flow</string>
-    <string name="purpleliquid">Purple Liquid</string>
-    <string name="inkflow">Ink Flow</string>
-    <string name="oilflow">Oil Flow</string>
-    <string name="icereflection">Ice Reflection</string>
-    <string name="stage">Stage</string>
-    <string name="goldenmagma">Golden Magma</string>
-    <string name="blackcherrycosmos">Black Cherry Cosmos</string>
-    <string name="random">Random</string>
-    <string name="_default">Standard</string>
-    <string name="wavy_timeline">Bølgende tidslinje</string>
-    <string name="pin_bar">Fest Linje</string>
-    <string name="bodied_bar">Fett Bar</string>
-    <string name="fake_audio_bar">Falsk Waveform</string>
-    <string name="thin_bar">Tynn bar</string>
-    <string name="colored_bar">Farget søyle</string>
+    <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
+    <string name="update_unknown">Ukjent</string>
+
+    <!-- Updates -->
+    <string name="updates_action_check">Se etter oppdatering</string>
+    <string name="updates_action_check_now">Sjekk nå</string>
+    <string name="updates_action_download_current_version">Last ned igjen siste oppdatering</string>
+    <string name="updates_action_install">Installer</string>
+    <string name="updates_action_open_download">Gå til nedlasting</string>
+    <string name="updates_automatic_check_title">Aktiver automatisk oppdateringskontroll</string>
+    <string name="updates_available">Oppdatering tilgjengelig</string>
+    <string name="updates_available_download_size">Filstørrelsen er %s</string>
+    <string name="updates_available_version_message">Den nye versjonen %s kan lastes ned!</string>
+    <string name="updates_build_beta_label">META</string>
+    <string name="updates_build_debug_label">DEBUG</string>
+    <string name="updates_build_dev_label">DEV</string>
+    <string name="updates_cache_cleared">Hurtiglager tømt</string>
+    <string name="updates_changelog_title">Hva er nytt i %s</string>
+    <string name="updates_check_mode_ask">Spør</string>
+    <string name="updates_check_mode_ask_status">Spør</string>
+    <string name="updates_check_mode_disabled_status">Deaktivert</string>
+    <string name="updates_check_mode_enabled_status">Aktivert</string>
+    <string name="updates_check_permission_description">Når en oppdatering er tilgjengelig, vil du bli spurt om du vil installere den. Ingen automatiske installeringer vil bli utført bak din rygg.</string>
+    <string name="updates_check_permission_message">Sjekke Github for oppdateringer?</string>
+    <string name="updates_check_permission_screening_note">Men disse oppdateringene ville ikke gå gjennom ytterligere screening utført på f.eks IzzyOnDroid eller F-Droid.</string>
+    <string name="updates_check_permission_settings_note">Du kan fortsatt skru det på/av fra innstillingene.</string>
+    <string name="updates_checking_status">Sjekker etter oppdateringer…</string>
+    <string name="updates_download_completed">Oppdater nedlastede</string>
+    <string name="updates_downloading_status">Laster ned oppdatering</string>
+    <string name="updates_file_size">Filstørrelse: %s</string>
+    <string name="updates_last_check_format">Siste sjekk: %s</string>
+    <string name="updates_never_checked">Aldri sjekket</string>
+    <string name="updates_no_update_available">Ingen tilgjengelige oppdateringer</string>
+    <string name="updates_not_available_yet">Oppdateringen er ikke tilgjengelig ennå eller versjon ikke funnet</string>
+    <string name="updates_reinstalling_status">Reinstallerer oppdatering</string>
+    <string name="updates_reinstalling_version_progress">Reinstallerer: %1$s (%2$s)</string>
+    <string name="updates_starting_status">Starter…</string>
+    <string name="updates_up_to_date">Opp til dato</string>
+
+    <!-- Validating -->
+    <string name="validating">Pairing with your phone…</string>
+
+    <!-- Visualizer -->
+    <string name="visualizer_animation_bubbles">Bobler</string>
     <string name="visualizer_bar">Visualiserbar</string>
-    <string name="ps_low">Lav</string>
-    <string name="ps_medium">Medium</string>
-    <string name="ps_high">Høy</string>
-    <string name="ps_very_high">Svært høy</string>
-    <string name="bg_colors_background_from_cover">Match sang coverbilde</string>
-    <string name="bg_colors_background_from_theme">Bruk tema</string>
-    <string name="bg_colors_gradient_background_from_cover">Gradert fra sangdekke</string>
-    <string name="bg_colors_gradient_background_from_theme">Gradient fra tema</string>
-    <string name="bg_colors_blurred_cover_background">Uskarpt sangomslag</string>
-    <string name="colorpalette">Color Palette</string>
-    <string name="animatedgradient">Animated Gradient</string>
-    <string name="miniplayer_button_skip_back">Previous</string>
-    <string name="miniplayer_button_play_pause">Play/Pause</string>
-    <string name="miniplayer_button_skip_forward">Next</string>
-    <string name="miniplayer_button_shuffle">Tilfeldig rekkefølge</string>
-    <string name="miniplayer_button_repeat">Gjenta</string>
-    <string name="miniplayer_button_queue">Queue</string>
-    <string name="miniplayer_button_audio_output">Audio output</string>
-    <string name="miniplayer_button_sleep_timer">Innsovningstimer</string>
-    <string name="miniplayer_button_like">Like</string>
-    <string name="miniplayer_button_add_to_playlist">Legg til spilleliste</string>
-    <string name="miniplayer_button_download">Last ned</string>
-    <string name="miniplayer_button_share">Share</string>
-    <string name="miniplayer_button_radio">Radio</string>
-    <string name="miniplayer_button_discover">Oppdag</string>
-    <string name="miniplayer_button_lyrics">Tekster</string>
-    <string name="miniplayer_button_visualizer">Visualisering</string>
-    <string name="miniplayer_button_video">Video</string>
+    <string name="visualizer_microphone_permission_message">Visualisereffekten krever mikrofon tillatelse, vennligst gi dette.</string>
+    <string name="visualizer_title">Visualisering</string>
+
+    <!-- Window -->
+    <string name="window">Window</string>
+
 </resources>

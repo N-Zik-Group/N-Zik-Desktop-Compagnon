@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- About -->
+    <string name="about_action_report_issue">Prijavite problem</string>
+    <string name="about_action_view_source">Pogledajte izvorni kod</string>
+    <string name="about_contributors_alphabetical_order_label">Po abecednom redu:</string>
+    <string name="about_github_link_description">Bićete preusmereni na GitHub</string>
+    <string name="about_title">O aplikaciji</string>
+    <string name="about_translators_title">Translators</string>
+
+    <!-- Album -->
+    <string name="album_action_bookmark">Označi album</string>
+    <string name="album_action_open">Idi na album</string>
+    <string name="album_left_swipe">Album Left Swipe</string>
+    <string name="album_right_swipe">Album Right Swipe</string>
+
+    <!-- Artist -->
+    <string name="artist_action_follow">Prati</string>
+    <string name="artist_following_status">Pratim</string>
+    <string name="artist_more_from">Još od</string>
+    <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
+    <string name="artist_songs_unavailable_message">Još uvek nema pesama</string>
+
+    <!-- Audio -->
+    <string name="audio_quality_automatic">Automatski</string>
+    <string name="audio_quality_format">Format kvaliteta Zvuka</string>
+    <string name="audio_quality_format_high">Visok</string>
+    <string name="audio_quality_format_low">Nizak</string>
+
+    <!-- Backup -->
+    <string name="backup_action_import_legacy_migration">Import migration file.</string>
+    <string name="backup_legacy_migration_description">For old users before conversion.\nUse old app to make a backup for migration.</string>
+    <string name="backup_target_database_label">Baza podataka</string>
+
+    <!-- Calendar -->
+    <string name="calendar_period_one_month">1 Mesec</string>
+    <string name="calendar_period_one_week">1 Nedelja</string>
+    <string name="calendar_period_one_year">1 Godina</string>
+    <string name="calendar_period_six_months">6 Meseca</string>
+    <string name="calendar_period_three_months">3 meseca</string>
+    <string name="calendar_today">Danas</string>
+
+    <!-- Common -->
+    <string name="common_action_clear">Obriši</string>
+    <string name="common_action_confirm">Potvrdi</string>
+    <string name="common_action_delete">Obriši</string>
+    <string name="common_action_done">Gotovo</string>
+    <string name="common_action_select">Izabеri</string>
+    <string name="common_action_translate">Prevedi</string>
+    <string name="common_action_turn_off">Isključi</string>
+    <string name="common_action_update">Update</string>
+    <string name="common_clipboard_copy_success">Kopirano</string>
+    <string name="common_color_source_theme">Tema</string>
+    <string name="common_delete_success">Obrisano</string>
+    <string name="common_error_no_internet">No network connection</string>
+    <string name="common_information_title">Informacija</string>
+    <string name="common_limit_unlimited_label">Neograničeno</string>
+    <string name="common_option_all">Sve</string>
+    <string name="common_option_custom">Prilagođeno</string>
+    <string name="common_option_default">Podrazumevano</string>
+    <string name="common_option_disabled">Onemogućeno</string>
+    <string name="common_option_none">Nema</string>
+    <string name="common_option_random">Random</string>
+    <string name="common_size_big">Velika</string>
+    <string name="common_size_biggest">Najveća</string>
+    <string name="common_size_label">Veličina</string>
+    <string name="common_size_medium">Srednja</string>
+    <string name="common_size_small">Mala</string>
+    <string name="common_translation_title">Prevod</string>
+    <string name="common_validation_empty_value">Vrednost nе možе biti prazna</string>
+
+    <!-- Downloads -->
+    <string name="downloads_action_download_all">Preuzmi sve pesme</string>
+    <string name="downloads_action_remove_all">Uklonite sve preuzete pesme</string>
+    <string name="downloads_delete_all_confirmation">Da li zaista želite da izbrišete preuzimanje?</string>
+    <string name="downloads_download_all_confirmation">Da li zaista želite da preuzmete sve?</string>
+    <string name="downloads_title">Prеuzimanjе</string>
+
+    <!-- Export -->
+    <string name="export_cached_song_action">Export cached or downloaded song</string>
+    <string name="export_cached_songs_action">Export cached</string>
+
+    <!-- Home -->
+    <string name="home_title">Home</string>
+
+    <!-- Library -->
+    <string name="library_action_bookmark">Bookmark</string>
+    <string name="library_albums_title">Albumi</string>
+    <string name="library_artists_title">Izvođači</string>
+    <string name="library_cached_title">Keširano</string>
+    <string name="library_dislikes_added">Disliked %s</string>
+    <string name="library_dislikes_removed">Removed %s from dislikes</string>
+    <string name="library_downloaded_title">Preuzimanja</string>
+    <string name="library_favorites_action_add">Add to favorites</string>
+    <string name="library_favorites_added">Dodato u omiljeno</string>
+    <string name="library_favorites_removed">Uklonjeno iz omiljenog</string>
+    <string name="library_favorites_title">Omiljeno</string>
+    <string name="library_filter_by_title">Filter By</string>
+    <string name="library_history_title">Istorija</string>
+    <string name="library_layout_list_label">Lista</string>
+    <string name="library_playlists_title">Plejliste</string>
+    <string name="library_songs_title">Pesme</string>
+    <string name="library_sort_album">Album</string>
+    <string name="library_sort_album_year">Godina Albuma</string>
+    <string name="library_sort_artist">Izvođač</string>
+    <string name="library_sort_date_added">Datum Dodavanja</string>
+    <string name="library_sort_date_liked">Datum Sviđanja</string>
+    <string name="library_sort_date_played">Datum Puštanja</string>
+    <string name="library_sort_duration">Trajanje</string>
+    <string name="library_sort_listening_time">Vreme slušanja</string>
+    <string name="library_sort_name">Ime</string>
+    <string name="library_sort_order_title">Redosled sortiranja</string>
+    <string name="library_sort_relative_listening_time">Relative Listening Time</string>
+    <string name="library_sort_songs_number">Brojevi Pesama</string>
+    <string name="library_sort_title">Naslov</string>
+    <string name="library_youtube_playlists_label">YT/YTM</string>
+
+    <!-- Lyrics -->
+    <string name="lyrics_alignment_left_label">Levo</string>
+    <string name="lyrics_alignment_right_label">Desno</string>
+    <string name="lyrics_color">Boja Sthova</string>
+
+    <!-- Maintenance -->
+    <string name="maintenance_debug_logging_title">Omogući zapis otklanjanja grešaka</string>
+
+    <!-- Metadata -->
+    <string name="metadata_action_change_artists">Ažuriraj Autore</string>
+    <string name="metadata_action_change_cover">Ažuriraj Omot</string>
+    <string name="metadata_action_change_title">Ažuriraj Naslov</string>
+
+    <!-- Navigation -->
+    <string name="navigation_action_picture_in_picture">PIP</string>
+    <string name="navigation_position_bottom_label">Dno</string>
+    <string name="navigation_position_top_label">Vrh</string>
+    <string name="navigation_style_icon_and_text_label">Ikona i tekst</string>
+    <string name="navigation_style_icon_only_label">Samo ikona</string>
+
+    <!-- Parental -->
+    <string name="parental_control">Roditeljska kontrola</string>
+
+    <!-- Player -->
+    <string name="player_action_enqueue">Dodaj u red</string>
+    <string name="player_action_enqueue_songs">Pesme u redu</string>
+    <string name="player_action_listen_on_youtube">Slušaj na YouTube</string>
+    <string name="player_action_locate_current_song">Pronađi pesmu koja svira</string>
+    <string name="player_action_play_next">Pusti sledeću</string>
+    <string name="player_action_repeat">Repeat</string>
+    <string name="player_action_shuffle">Nasumično</string>
+    <string name="player_action_shuffle_hint">Nasumično</string>
+    <string name="player_appearance">Izgled</string>
+    <string name="player_auto_load_songs_in_queue">Auto load songs in queue</string>
+    <string name="player_auto_load_songs_in_queue_description">Adds songs when the queue is about to end</string>
+    <string name="player_background_animated_gradient_label">Animated Gradient</string>
+    <string name="player_background_artwork_label">Pozadine sa omota</string>
+    <string name="player_background_black_cherry_cosmos">Black Cherry Cosmos</string>
+    <string name="player_background_glossy_gradient">Glossy Gradient</string>
+    <string name="player_background_golden_magma">Golden Magma</string>
+    <string name="player_background_gradient_flow">Gradient Flow</string>
+    <string name="player_background_ice_reflection">Ice Reflection</string>
+    <string name="player_background_ink_flow">Ink Flow</string>
+    <string name="player_background_linear_gradient">Linear Gradient</string>
+    <string name="player_background_mesh_gradient">Mesh Gradient</string>
+    <string name="player_background_mesmerizing_lens">Mesmerizing Lens</string>
+    <string name="player_background_oil_flow">Oil Flow</string>
+    <string name="player_background_palette_label">Color Palette</string>
+    <string name="player_background_purple_liquid">Purple Liquid</string>
+    <string name="player_background_stage">Stage</string>
+    <string name="player_background_theme_label">Pozadine od teme</string>
+    <string name="player_collapsed_disable_swiping_down">Onemogući prevlačenje nadole</string>
+    <string name="player_controls_action_customize">Prilagodi</string>
+    <string name="player_controls_blur_effect_title">Efekat zamućenja</string>
+    <string name="player_controls_device_volume_title">Device volume</string>
+    <string name="player_controls_medley_duration_title">Medley duration</string>
+    <string name="player_controls_pitch_title">Playback pitch</string>
+    <string name="player_controls_playback_volume_title">Playback Volume</string>
+    <string name="player_controls_speed_title">Playback speed</string>
+    <string name="player_controls_style_essential">Esencijalne</string>
+    <string name="player_controls_style_modern">Moderne</string>
+    <string name="player_cover_style_cd">CD</string>
+    <string name="player_cover_style_cd_with_cover">CD with Cover</string>
+    <string name="player_cover_style_vinyl">Vinyl</string>
+    <string name="player_current_song_not_in_list">Could not find playing song on current list</string>
+    <string name="player_enable_lyrics_popup_message">Omogući iskačuću poruku za stihove</string>
+    <string name="player_enable_rotation_buttons">Omogući rotaciju dugmadi kada se klikne</string>
+    <string name="player_keep_minimized">Drži minimiziranog</string>
+    <string name="player_listen_on_title">Slušaj na</string>
+    <string name="player_no_current_song">No song is playing at the moment</string>
+    <string name="player_pause_listen_history">Pause listen history</string>
+    <string name="player_pause_listen_history_info">Does not save playback events used for statistics, history and suggestions in quick pics</string>
+    <string name="player_pause_on_volume_zero">Pause on volume zero</string>
+    <string name="player_play_button_wavy_circle_label">Kružno rebrasto</string>
+    <string name="player_position">Pozicija plejera</string>
+    <string name="player_position_bottom_label">Dno</string>
+    <string name="player_progress_mini_player">Minimiziran plejer</string>
+    <string name="player_queue_action_remove">Ukloni iz redosleda</string>
+    <string name="player_rotating_buttons">Rotirajuća dugmad</string>
+    <string name="player_shuffle_empty_message">No song to shuffle</string>
+    <string name="player_sleep_timer_title">Tajmer za spavanje</string>
+    <string name="player_swap_controls_with_timeline">Zamenite kontrole sa vremenskom linijom</string>
+    <string name="player_thumbnail_size">Veličina Sličica</string>
+    <string name="player_timeline_colored_bar_label">Colored bar</string>
+    <string name="player_timeline_fat_bar_label">Debela</string>
+    <string name="player_timeline_pin_bar_label">Pin</string>
+    <string name="player_timeline_thin_bar_label">Tanak Bar</string>
+    <string name="player_timeline_wavy_label">Talasasta </string>
+    <string name="player_type">Player Type</string>
+
+    <!-- Playlist -->
+    <string name="playlist_action_add">Dodaj na plejlistu</string>
+    <string name="playlist_action_create">Nova plejlista</string>
+    <string name="playlist_action_export">Izvezi plejlistu</string>
+    <string name="playlist_action_import">Uvezi plejlistu</string>
+    <string name="playlist_action_shuffle_positions">Promeni numeraciju pozicija</string>
+    <string name="playlist_action_toggle_pinned">Zakači/Otkači plejlistu</string>
+    <string name="playlist_create_dialog_title">Create new playlist</string>
+    <string name="playlist_left_swipe">Playlist Left Swipe</string>
+    <string name="playlist_pinned_title">Zakačene Plejliste</string>
+    <string name="playlist_rename_dialog_title">Rename playlist</string>
+    <string name="playlist_reorder_ascending_sort_required_message">Promena redosleda je moguća samo u rastućem sortiranju</string>
+    <string name="playlist_reorder_lock_toggle_label">Zaključaj/otključaj redosled pesama</string>
+    <string name="playlist_right_swipe">Playlist Right Swipe</string>
+    <string name="playlist_selection_action_deselect">Poništi</string>
+    <string name="playlist_top">Vrh Plejliste</string>
+
+    <!-- Queue -->
+    <string name="queue_discover_description">Uklanja pesme koje vam se Sviđaju i pesme sa Plejliste iz reda</string>
+    <string name="queue_discover_title">Otkrij</string>
+
+    <!-- Radio -->
+    <string name="radio_action_start">Pokreni radio</string>
+
+    <!-- Recommendations -->
+    <string name="recommendations_action_smart_shuffle">Pametna preporuka</string>
+    <string name="recommendations_minimum_playback_duration_label">Min. vreme slušanja</string>
+    <string name="recommendations_title">Brzi odabiri</string>
+
+    <!-- Search -->
+    <string name="search_display_order">Online search display order</string>
+    <string name="search_display_order_suggestions_first">Suggestions first</string>
+    <string name="search_history_action_clear">Obriši istoriju pretrage</string>
+    <string name="search_history_empty_message">Istorija je prazna</string>
+    <string name="search_history_pause_description">Ne čuvajte nove tražene upite niti prikazujte istoriju</string>
+    <string name="search_history_pause_label">Pauzirajte istoriju pretrage</string>
+    <string name="search_title">Pretraga</string>
+
+    <!-- Settings -->
+    <string name="settings_app_language_label">Jezik aplikacije</string>
+    <string name="settings_audio_bass_boost">Audio bass boost</string>
+    <string name="settings_audio_equalizer_label">Ekvilajzer</string>
+    <string name="settings_audio_loudness_normalization_description">Podesi jačinu zvuka na fiksni nivo</string>
+    <string name="settings_audio_loudness_normalization_label">Normalizacija glasnoće</string>
+    <string name="settings_audio_reverb">Audio reverb</string>
+    <string name="settings_audio_skip_silence_description">Preskoči delove tišine prilikom reprodukcije</string>
+    <string name="settings_audio_skip_silence_label">Preskoči tišinu</string>
+    <string name="settings_bass_boost_level">Bass boost level</string>
+    <string name="settings_cache_action_set_custom_size">Podesite prilagođeni keš</string>
+    <string name="settings_cache_custom_size_input_hint">Unesite vrednost u MB</string>
+    <string name="settings_cache_delete_confirmation">Da li zaista želite da izbrišete keš?</string>
+    <string name="settings_cache_eviction_description">Kada u kešu ponestane prostora, resursi kojima se najduže nije pristupalo se brišu</string>
+    <string name="settings_cache_image_size_limit_label">Maksimalna veličina keša slika</string>
+    <string name="settings_cache_song_size_limit_label">Maksimalna veličina keša pesme</string>
+    <string name="settings_cache_title">Keš</string>
+    <string name="settings_data_title">Podaci</string>
+    <string name="settings_downloads_storage_limit_label">Maksimalna veličina za preuzimanje pesme</string>
+    <string name="settings_enable_autodownload_song">Enable auto download song</string>
+    <string name="settings_font_include_padding_description">Dodajte razmak oko tekstova</string>
+    <string name="settings_font_include_padding_label">Primeni povećanje fonta</string>
+    <string name="settings_font_use_system_description">Koristi font koji primenjuje sistem</string>
+    <string name="settings_font_use_system_label">Koristi sistemski font</string>
+    <string name="settings_general_title">General</string>
+    <string name="settings_home_default_page_label">Podrazumevana stranica</string>
+    <string name="settings_interface_page_title">UI</string>
+    <string name="settings_interface_title">Korisnički interfejs</string>
+    <string name="settings_languages_title">Jezici</string>
+    <string name="settings_library_now_playing_indicator_label">Now Playing Indicator</string>
+    <string name="settings_library_playlist_indicator_description">Označava da li je pesma već dodata na Plejlistu</string>
+    <string name="settings_library_playlist_indicator_label">Indikator Plejliste</string>
+    <string name="settings_library_queue_playlist_swipe_left_label">Queue and Local Playlists Left Swipe</string>
+    <string name="settings_library_queue_playlist_swipe_right_label">Queue and Local Playlists Right Swipe</string>
+    <string name="settings_logging_error_file_description">Ako je omogućeno, kreirajte datoteku zapisa da biste istakli greške</string>
+    <string name="settings_loudness_base_gain">Loudness base gain</string>
+    <string name="settings_lyrics_artwork_visible_label">Prikaži Sličicu za Stihove</string>
+    <string name="settings_lyrics_match_player_background_label">Prikaži boju pozadine u Stihovima</string>
+    <string name="settings_lyrics_remember_state_description">Keep lyrics state between sessions</string>
+    <string name="settings_lyrics_remember_state_label">Save lyrics state</string>
+    <string name="settings_lyrics_seek_on_line_press_label">Klik na tekst stihova</string>
+    <string name="settings_menu_style_label">Stil menija</string>
+    <string name="settings_miscellaneous_title">Razno</string>
+    <string name="settings_navigation_position_label">Položaj trake za navigaciju</string>
+    <string name="settings_navigation_style_label">Tip trake za navigaciju</string>
+    <string name="settings_navigation_transition_effect_label">Prelazni efekat</string>
+    <string name="settings_network_quality_title">Quality</string>
+    <string name="settings_parental_age_restriction_description">Sprečite puštanje pesama sa starosnim ograničenjem</string>
+    <string name="settings_playback_duration_limit_label">Izuzmi pesme sa ograničenjem trajanja</string>
+    <string name="settings_playback_pause_at_zero_volume_description">Pauses the player when the volume reaches 0 and resumes when the volume is greater than 0</string>
+    <string name="settings_playback_pause_between_songs_label">Pauza između pesama</string>
+    <string name="settings_playback_previous_restart_threshold_label">Previous Button Will Restart the Current Song After the Following Seconds Have Passed</string>
+    <string name="settings_playback_skip_on_error_description">If an error occurs, the media is changed</string>
+    <string name="settings_playback_skip_on_error_label">Autoskip on error</string>
+    <string name="settings_player_action_bar_gradient_label">Prikaži Prelaznu boju</string>
+    <string name="settings_player_action_bar_transparent_background_label">Prozirna pozadina</string>
+    <string name="settings_player_actions_spaced_evenly_label">Espaciados uniformemente</string>
+    <string name="settings_player_appearance_presets_preview_description">Previews will be in low quality</string>
+    <string name="settings_player_appearance_presets_title">Appearance Presets</string>
+    <string name="settings_player_artwork_animation_enabled_label">Show cover thumbnail animation</string>
+    <string name="settings_player_artwork_animation_style_label">Cover animation type</string>
+    <string name="settings_player_artwork_corner_radius_label">Zaobljenost sličice</string>
+    <string name="settings_player_artwork_shrink_when_paused_label">Smanji sličicu kada je pauza</string>
+    <string name="settings_player_artwork_style_label">Tipo de miniatura</string>
+    <string name="settings_player_artwork_visible_label">Prikaži Sličicu</string>
+    <string name="settings_player_background_colors_label">Boje pozadine</string>
+    <string name="settings_player_background_progress_label">Pozadinska traka napretka</string>
+    <string name="settings_player_bottom_black_gradient_label">Degradado negro en la parte inferior</string>
+    <string name="settings_player_button_zoom_out_animation_label">Animacija za Udalji Dugme</string>
+    <string name="settings_player_controls_style_label">Kontrole tipa</string>
+    <string name="settings_player_disable_horizontal_swipe_label">Onemogući horizontalno prevlačenje</string>
+    <string name="settings_player_disable_song_swipe_label">Onemogući prebacivanje pesama prevlačenjem</string>
+    <string name="settings_player_disable_text_marquee_description">Pomeranje teksta se koristi za dugačke tekstove</string>
+    <string name="settings_player_disable_text_marquee_label">Onemogući pomeranje teksta</string>
+    <string name="settings_player_favorite_button_style_label">Dugme za sviđanje</string>
+    <string name="settings_player_gradient_style_label">Gradient Type</string>
+    <string name="settings_player_header_album_artist_description">Ime albuma i izvođača</string>
+    <string name="settings_player_header_icons_visible_label">Show info with icons</string>
+    <string name="settings_player_header_style_label">Vrsta informacije</string>
+    <string name="settings_player_next_queue_visible_label">Prikaži sledeće pesme u plejeru</string>
+    <string name="settings_player_persistent_queue_description">Sačuvaj i vrati pesme koje se reprodukuju</string>
+    <string name="settings_player_persistent_queue_label">Uporni niz</string>
+    <string name="settings_player_play_button_label">Plej dugme</string>
+    <string name="settings_player_prevent_collapsed_dismissal_description">Izbegavajte zatvaranje plejera i čišćenje redosleda prevlačenjem nadole dok je minimiziran</string>
+    <string name="settings_player_queue_duration_visible_label">Prikaži ukupno vreme redosleda</string>
+    <string name="settings_player_queue_size_limit_label">Maksimalan broj pesama u redosledu</string>
+    <string name="settings_player_queue_style_label">Queue Type</string>
+    <string name="settings_player_queue_swipe_up_label">Swipe up to open the queue</string>
+    <string name="settings_player_queue_tap_to_open_label">Dodirnite da otvorite Redosled</string>
+    <string name="settings_player_remaining_duration_visible_label">Prikaži preostalo vreme pesme</string>
+    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
+    <string name="settings_player_start_minimized_description">Kada kliknete na pesmu, plejer počne minimiziran</string>
+    <string name="settings_player_tap_artwork_toggle_lyrics_description">Dodirom na sličicu</string>
+    <string name="settings_player_tap_artwork_toggle_lyrics_label">Prikaži stihove</string>
+    <string name="settings_player_text_outline_label">Habilitar esquema de texto</string>
+    <string name="settings_player_timeline_label">Vremenska linija</string>
+    <string name="settings_player_timeline_size_label">Tamaño de la línea de tiempo del jugador</string>
+    <string name="settings_player_timeline_transparent_label">Barra de línea de tiempo transparente</string>
+    <string name="settings_player_top_action_bar_visible_label">Prikaži gornju traku sa radnjama</string>
+    <string name="settings_proxy_enabled_label">Omogući proxy</string>
+    <string name="settings_reset">Reset</string>
+    <string name="settings_restart_required_message">Potrebno je ponovno pokretanje</string>
+    <string name="settings_restore_default_settings">Restore default settings</string>
+    <string name="settings_search_floating_button_visible_label">Prikaži lebdeću ikonu</string>
+    <string name="settings_swipe_actions_description">Aktivirajte meni radnji prevlačenjem pesme ulevo ili udesno</string>
+    <string name="settings_swipe_actions_title">Prevucite prstom do akcije</string>
+    <string name="settings_theme_dark_mode_label">Tamna</string>
+    <string name="settings_theme_mode_label">Mod teme</string>
+    <string name="settings_title">Podešavanja</string>
+    <string name="settings_transition_fade">Nestajanje</string>
+    <string name="settings_use_font_type">Koristite tip fonta</string>
+
+    <!-- Statistics -->
+    <string name="statistics_title">Statistika</string>
+    <string name="statistics_top_period_title">Pogledaj vrh %s od …</string>
+
+    <!-- Sync -->
+    <string name="sync_action_sync">Sinhronizuj</string>
+
+    <!-- Theme -->
+    <string name="theme_palette_dynamic">Dinamično</string>
+
+    <!-- Thumbnail -->
+    <string name="thumbnail_action_edit">Edit Thumbnail</string>
+    <string name="thumbnail_action_reset">Reset Thumbnail</string>
+
+    <!-- Updates -->
+    <string name="updates_action_check">Proveri ažuriranje</string>
+    <string name="updates_action_check_now">Check Now</string>
+    <string name="updates_automatic_check_title">Omogućite proveru ažuriranja</string>
+    <string name="updates_available">Ažuriranje je dostupno</string>
+    <string name="updates_available_download_size">The file size is %s</string>
+    <string name="updates_available_version_message">The new version %s can be downloaded!</string>
+    <string name="updates_build_beta_label"> Beta</string>
+    <string name="updates_check_mode_ask">Pitaj</string>
+    <string name="updates_check_permission_description">Kada ažuriranje bude dostupno, bićete upitani da li želite da ga instalirate. Neće biti automatizovanih instalacija iza vaših leđa.</string>
+    <string name="updates_check_permission_message">Proverite ažuriranja na Github-u?</string>
+    <string name="updates_check_permission_screening_note">Ali ova ažuriranja ne bi prošla kroz dodatni skrining koji se vrši na npr. IzzyOnDroid ili F-Droid.</string>
+    <string name="updates_check_permission_settings_note">I dalje možete da ga uključite ili isključite iz podešavanja.</string>
+    <string name="updates_no_update_available">No update available</string>
+
+    <!-- Visualizer -->
+    <string name="visualizer_animation_bubbles">Bubbles</string>
+    <string name="visualizer_microphone_permission_message">Za efekat vizuelizatora je potrebna dozvola mikrofona, molim vas odobrite.</string>
+    <string name="visualizer_title">Vizualizator</string>
+
+</resources>

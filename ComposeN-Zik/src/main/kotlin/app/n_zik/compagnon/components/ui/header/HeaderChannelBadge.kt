@@ -15,8 +15,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.colorPalette
@@ -85,10 +85,10 @@ fun HeaderChannelBadge(
     if (AppVersion.channel == "stable") return
 
     val badgeText = when (AppVersion.channel) {
-        "beta" -> stringResource(Res.string.beta_title)
-        "dev" -> stringResource(Res.string.dev_title)
+        "beta" -> stringResource(Res.string.updates_build_beta_label)
+        "dev" -> stringResource(Res.string.updates_build_dev_label)
         "git" -> stringResource(Res.string.git_title)
-        else -> stringResource(Res.string.debug_title)
+        else -> stringResource(Res.string.updates_build_debug_label)
     }
 
     val preferences = LocalPreferences.current

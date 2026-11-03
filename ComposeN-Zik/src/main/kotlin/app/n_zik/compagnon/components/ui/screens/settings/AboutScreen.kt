@@ -26,8 +26,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -50,15 +50,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.about.AboutLinks
 import app.n_zik.compagnon.about.Contributors
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.settings.ModernSettingsEntry
 import app.n_zik.compagnon.components.settings.SettingsDescription
 import app.n_zik.compagnon.components.settings.SettingsSectionCard
-import app.n_zik.compagnon.components.themed.HeaderWithIcon
 import app.n_zik.compagnon.components.theme.ModernBlackColorPalette
 import app.n_zik.compagnon.components.theme.PureBlackColorPalette
+import app.n_zik.compagnon.components.themed.HeaderWithIcon
 import app.n_zik.compagnon.generated.AppVersion
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
@@ -74,16 +74,16 @@ import app.n_zik.compagnon.updater.services.Updater
 import app.n_zik.compagnon.utils.Preferences
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.bold
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.openInBrowser
-import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.semiBold
-import kotlinx.coroutines.withContext
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * The About tab of the settings page (spec `spec-settings-navigation` NAV-3 — the phone's `About.kt`
@@ -156,7 +156,7 @@ fun AboutScreen(
     ) {
         // Header in tab style (the phone's `About.kt` 102-110: `enabled = false`, no back)
         HeaderWithIcon(
-            title = stringResource(Res.string.about),
+            title = stringResource(Res.string.about_title),
             iconId = Res.drawable.information,
             enabled = false,
             showIcon = true,
@@ -165,7 +165,7 @@ fun AboutScreen(
         )
 
         SettingsDescription(
-            text = stringResource(Res.string.about_description),
+            text = stringResource(Res.string.settings_about_page_description),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
@@ -280,8 +280,8 @@ fun AboutScreen(
                                                 .padding(horizontal = 6.dp, vertical = 2.dp),
                                         ) {
                                             val buildTypeRes = when (currentSuffix) {
-                                                UpdaterConstants.SUFFIX_CHAR_BETA -> Res.string.beta_title
-                                                UpdaterConstants.SUFFIX_CHAR_DEV -> Res.string.dev_title
+                                                UpdaterConstants.SUFFIX_CHAR_BETA -> Res.string.updates_build_beta_label
+                                                UpdaterConstants.SUFFIX_CHAR_DEV -> Res.string.updates_build_dev_label
                                                 UpdaterConstants.SUFFIX_CHAR_GIT -> Res.string.git_title
                                                 else -> Res.string.stable_title
                                             }
@@ -310,7 +310,7 @@ fun AboutScreen(
                                         .clickable { openInBrowser(AboutLinks.REPO_OWNER_URL) },
                                 ) {
                                     BasicText(
-                                        text = stringResource(Res.string.by_string),
+                                        text = stringResource(Res.string.about_authorship_preposition),
                                         style = typography().xs.copy(
                                             color = colorPalette().textSecondary,
                                             textAlign = TextAlign.Center,
@@ -395,7 +395,7 @@ fun AboutScreen(
 
                                     // Update Title (the phone's `l.bold`, its `About.kt` 357-358)
                                     BasicText(
-                                        text = stringResource(Res.string.update),
+                                        text = stringResource(Res.string.common_action_update),
                                         style = TextStyle(
                                             fontSize = typography().l.bold.fontSize,
                                             fontWeight = typography().l.bold.fontWeight,
@@ -410,7 +410,7 @@ fun AboutScreen(
                                     if (Updater.githubRelease != null) {
                                         BasicText(
                                             text = stringResource(
-                                                if (hasUpdate) Res.string.update_available else Res.string.up_to_date,
+                                                if (hasUpdate) Res.string.updates_available else Res.string.updates_up_to_date,
                                             ),
                                             style = typography().xs.copy(
                                                 textAlign = TextAlign.Center,
@@ -433,12 +433,12 @@ fun AboutScreen(
                                     val lastCheckStr =
                                         if (lastCheckTime > 0) SimpleDateFormat("dd MMM HH:mm", Locale.getDefault())
                                             .format(Date(lastCheckTime))
-                                        else stringResource(Res.string.never_checked)
+                                        else stringResource(Res.string.updates_never_checked)
                                     BasicText(
                                         text = if (lastCheckTime > 0) {
-                                            formatText(stringResource(Res.string.last_check), lastCheckStr)
+                                            formatText(stringResource(Res.string.updates_last_check_format), lastCheckStr)
                                         } else {
-                                            stringResource(Res.string.never_checked)
+                                            stringResource(Res.string.updates_never_checked)
                                         },
                                         style = typography().xxs.copy(
                                             textAlign = TextAlign.Center,
@@ -458,7 +458,7 @@ fun AboutScreen(
                                         .height(36.dp)
                                         .clip(uiRoundnessShape())
                                         .clickable {
-                                            Toaster.i(Res.string.checking_for_updates)
+                                            Toaster.i(Res.string.updates_checking_status)
                                             Updater.checkForUpdate(isForced = true, showDialog = false)
                                             onOpenUpdate()
                                         },
@@ -471,7 +471,7 @@ fun AboutScreen(
                                     // card; fillMaxWidth left it top-aligned.
                                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                         BasicText(
-                                            text = stringResource(Res.string.check_update),
+                                            text = stringResource(Res.string.updates_action_check),
                                             style = typography().xs.semiBold.copy(color = Color.White),
                                         )
                                     }
@@ -512,7 +512,7 @@ fun AboutScreen(
                                     }
                                     Spacer(modifier = Modifier.height(12.dp))
                                     BasicText(
-                                        text = stringResource(Res.string.update),
+                                        text = stringResource(Res.string.common_action_update),
                                         style = TextStyle(
                                             fontSize = typography().l.bold.fontSize,
                                             fontWeight = typography().l.bold.fontWeight,
@@ -560,22 +560,22 @@ fun AboutScreen(
                     // The phone's `ModernSettingsEntry` rows (xs title / xxs description, no
                     // press scale — `OtherSettingsEntry` is s/xs with the 0.95 press scale)
                     ModernSettingsEntry(
-                        title = stringResource(Res.string.view_the_source_code),
-                        text = stringResource(Res.string.you_will_be_redirected_to_github),
+                        title = stringResource(Res.string.about_action_view_source),
+                        text = stringResource(Res.string.about_github_link_description),
                         icon = Res.drawable.github_icon,
                         onClick = { openInBrowser(AboutLinks.DESKTOP_REPO_URL) },
                     )
 
                     ModernSettingsEntry(
-                        title = stringResource(Res.string.report_an_issue),
-                        text = stringResource(Res.string.you_will_be_redirected_to_github),
+                        title = stringResource(Res.string.about_action_report_issue),
+                        text = stringResource(Res.string.about_github_link_description),
                         icon = Res.drawable.trending,
                         onClick = { openInBrowser(AboutLinks.issueUrl("bug")) },
                     )
 
                     ModernSettingsEntry(
                         title = stringResource(Res.string.request_a_feature),
-                        text = stringResource(Res.string.you_will_be_redirected_to_github),
+                        text = stringResource(Res.string.about_github_link_description),
                         icon = Res.drawable.star_brilliant,
                         onClick = { openInBrowser(AboutLinks.issueUrl("feature")) },
                     )
@@ -621,7 +621,7 @@ fun AboutScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         BasicText(
-                            text = "${Contributors.countTranslators()} " + stringResource(Res.string.translators),
+                            text = "${Contributors.countTranslators()} " + stringResource(Res.string.about_translators_title),
                             style = typography().xs.semiBold.copy(color = colorPalette().textSecondary),
                         )
                     }
@@ -640,7 +640,7 @@ fun AboutScreen(
                         Column(
                             modifier = Modifier.padding(start = 24.dp, top = 8.dp),
                         ) {
-                            SettingsDescription(text = stringResource(Res.string.in_alphabetical_order))
+                            SettingsDescription(text = stringResource(Res.string.about_contributors_alphabetical_order_label))
                             Contributors.ShowTranslators()
                         }
                     }
@@ -690,7 +690,7 @@ fun AboutScreen(
                         Column(
                             modifier = Modifier.padding(start = 24.dp, top = 8.dp),
                         ) {
-                            SettingsDescription(text = stringResource(Res.string.in_alphabetical_order))
+                            SettingsDescription(text = stringResource(Res.string.about_contributors_alphabetical_order_label))
                             Contributors.ShowDevelopers()
                         }
                     }

@@ -1,24 +1,5 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.components.settings.CacheSettingsEntry
-import app.n_zik.compagnon.components.settings.OtherSettingsEntry
-import app.n_zik.compagnon.components.settings.SettingsDescription
-import app.n_zik.compagnon.components.settings.SettingsSectionCard
-import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
-import app.n_zik.compagnon.components.tab.Search
-import app.n_zik.compagnon.components.themed.CacheSpaceIndicator
-import app.n_zik.compagnon.components.themed.ConfirmationDialog
-import app.n_zik.compagnon.components.themed.HeaderWithIcon
-import app.n_zik.compagnon.components.themed.InputNumericDialog
-import app.n_zik.compagnon.components.themed.ValueSelectorDialog
-import app.n_zik.compagnon.enums.ExoPlayerDiskCacheMaxSize
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.playback.cache.AudioCache
-import app.n_zik.compagnon.utils.Preferences
-import app.n_zik.compagnon.utils.Toaster
-import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
-import app.n_zik.compagnon.utils.formatShortFileSize
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -41,6 +22,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.settings.CacheSettingsEntry
+import app.n_zik.compagnon.components.settings.OtherSettingsEntry
+import app.n_zik.compagnon.components.settings.SettingsDescription
+import app.n_zik.compagnon.components.settings.SettingsSectionCard
+import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
+import app.n_zik.compagnon.components.tab.Search
+import app.n_zik.compagnon.components.themed.CacheSpaceIndicator
+import app.n_zik.compagnon.components.themed.ConfirmationDialog
+import app.n_zik.compagnon.components.themed.HeaderWithIcon
+import app.n_zik.compagnon.components.themed.InputNumericDialog
+import app.n_zik.compagnon.components.themed.ValueSelectorDialog
+import app.n_zik.compagnon.enums.ExoPlayerDiskCacheMaxSize
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.playback.cache.AudioCache
+import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
+import app.n_zik.compagnon.utils.formatShortFileSize
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -73,33 +73,33 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
     // The card's search ctx (spec §A2): the card's title + its rendered entries' titles
     val cacheCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.cache),
-        stringResource(Res.string.image_cache_max_size),
-        stringResource(Res.string.song_cache_max_size),
-        stringResource(Res.string.song_download_max_size),
+        stringResource(Res.string.settings_cache_title),
+        stringResource(Res.string.settings_cache_image_size_limit_label),
+        stringResource(Res.string.settings_cache_song_size_limit_label),
+        stringResource(Res.string.settings_downloads_storage_limit_label),
     )
     val backupRestoreCtx = settingsSearchCtx(
         search.inputValue,
         stringResource(Res.string.title_backup_and_restore),
-        stringResource(Res.string.export_backup),
+        stringResource(Res.string.backup_action_export),
         stringResource(Res.string.import_backup),
-        stringResource(Res.string.title_import_settings_migration),
+        stringResource(Res.string.backup_action_import_legacy_migration),
     )
     val autoBackupCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.auto_backup_title),
-        stringResource(Res.string.auto_backup_location),
-        stringResource(Res.string.auto_backup_target),
-        stringResource(Res.string.auto_backup_max_backups),
-        stringResource(Res.string.auto_backup_interval),
+        stringResource(Res.string.backup_auto_title),
+        stringResource(Res.string.backup_auto_location),
+        stringResource(Res.string.backup_auto_target),
+        stringResource(Res.string.backup_auto_max_backups),
+        stringResource(Res.string.backup_auto_interval),
     )
     val historyCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.history),
-        stringResource(Res.string.pause_search_history),
+        stringResource(Res.string.library_history_title),
+        stringResource(Res.string.search_history_pause_label),
         stringResource(Res.string.player_pause_listen_history),
-        stringResource(Res.string.clear_search_history),
-        stringResource(Res.string.clear_listen_history),
+        stringResource(Res.string.search_history_action_clear),
+        stringResource(Res.string.settings_history_action_clear_listening),
     )
     val settingsResetCtx = settingsSearchCtx(search.inputValue, stringResource(Res.string.settings_reset))
 
@@ -120,7 +120,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
     if (cleanCacheOfflineSongs) {
         ConfirmationDialog(
-            text = stringResource(Res.string.do_you_really_want_to_delete_cache),
+            text = stringResource(Res.string.settings_cache_delete_confirmation),
             onDismiss = { cleanCacheOfflineSongs = false },
             onConfirm = {
                 cleanCacheOfflineSongs = false
@@ -140,7 +140,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
             .verticalScroll(rememberScrollState()),
     ) {
         HeaderWithIcon(
-            title = stringResource(Res.string.tab_data),
+            title = stringResource(Res.string.settings_data_title),
             iconId = Res.drawable.server,
             enabled = false,
             showIcon = true,
@@ -149,7 +149,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
         )
 
         SettingsDescription(
-            text = stringResource(Res.string.data_settings_description),
+            text = stringResource(Res.string.settings_data_page_description),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
@@ -164,9 +164,9 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
             enter = fadeIn(animationSpec = tween(600)) + scaleIn(animationSpec = tween(600), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.cache),
+                title = stringResource(Res.string.settings_cache_title),
                 icon = Res.drawable.server,
-                description = stringResource(Res.string.cache_cleared),
+                description = stringResource(Res.string.settings_cache_eviction_description),
                 content = {
                     // "Image cache max size" (DS:304-352, the phone's `coilDiskCacheMaxSizeKey`,
                     // `CoilDiskCacheMaxSize.128MB`) — INERT: the phone's default value shown (the
@@ -176,7 +176,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // "used" indicator are not ported (the PC's image cache is fixed, spec §A2)
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.image_cache_max_size),
+                        title = stringResource(Res.string.settings_cache_image_size_limit_label),
                         text = "128MB",
                         icon = Res.drawable.image,
                         onClick = {},
@@ -185,10 +185,10 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                     // "Song cache max size" (DS:366-413, `exoPlayerDiskCacheMaxSizeKey`): WIRED to the
                     // PC's local audio cache — unchanged
                     CacheSettingsEntry(
-                        title = stringResource(Res.string.song_cache_max_size),
+                        title = stringResource(Res.string.settings_cache_song_size_limit_label),
                         text = when (exoPlayerDiskCacheMaxSize) {
-                            ExoPlayerDiskCacheMaxSize.Custom -> "${stringResource(Res.string.custom)}: ${exoPlayerCustomCache}MB"
-                            ExoPlayerDiskCacheMaxSize.Disabled -> stringResource(Res.string.turn_off)
+                            ExoPlayerDiskCacheMaxSize.Custom -> "${stringResource(Res.string.common_option_custom)}: ${exoPlayerCustomCache}MB"
+                            ExoPlayerDiskCacheMaxSize.Disabled -> stringResource(Res.string.common_action_turn_off)
                             else -> exoPlayerDiskCacheMaxSize.text
                         },
                         icon = Res.drawable.music_file,
@@ -198,7 +198,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     if (showSongCacheDialog) {
                         ValueSelectorDialog(
-                            title = stringResource(Res.string.song_cache_max_size),
+                            title = stringResource(Res.string.settings_cache_song_size_limit_label),
                             selectedValue = exoPlayerDiskCacheMaxSize,
                             values = ExoPlayerDiskCacheMaxSize.entries.toList(),
                             onValueSelected = {
@@ -213,8 +213,8 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     if (showExoPlayerCustomCacheDialog) {
                         InputNumericDialog(
-                            title = stringResource(Res.string.set_custom_cache),
-                            placeholder = stringResource(Res.string.enter_value_in_mb),
+                            title = stringResource(Res.string.settings_cache_action_set_custom_size),
+                            placeholder = stringResource(Res.string.settings_cache_custom_size_input_hint),
                             value = exoPlayerCustomCache.toString(),
                             valueMin = "32",
                             valueMax = "10000",
@@ -237,10 +237,10 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                     )
 
                     SettingsDescription(
-                        text = "${formatShortFileSize(diskCacheSize)} ${stringResource(Res.string.used)} (${
+                        text = "${formatShortFileSize(diskCacheSize)} ${stringResource(Res.string.common_storage_used_suffix)} (${
                             // The phone's divisor (its `DataSettings.kt` 413): the setting's own `bytes` — the Custom entry's
                             // nominal value, not the custom size, as on the phone
-                            if (exoPlayerDiskCacheMaxSize.bytes > 0) "${diskCacheSize * 100 / exoPlayerDiskCacheMaxSize.bytes}%" else stringResource(Res.string.unlimited)
+                            if (exoPlayerDiskCacheMaxSize.bytes > 0) "${diskCacheSize * 100 / exoPlayerDiskCacheMaxSize.bytes}%" else stringResource(Res.string.common_limit_unlimited_label)
                         })",
                     )
 
@@ -253,7 +253,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                     // effect. The phone's row shows a value, not a description → no toast. The phone's trash
                     // and "used" indicator are not ported (the PC has no download cache, spec §A2)
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.song_download_max_size),
+                        title = stringResource(Res.string.settings_downloads_storage_limit_label),
                         text = "2GB",
                         icon = Res.drawable.download,
                         onClick = {},
@@ -283,11 +283,11 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // effect, a long click toasts the phone's description
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.export_backup),
-                        text = stringResource(Res.string.export_backup_description),
+                        title = stringResource(Res.string.backup_action_export),
+                        text = stringResource(Res.string.backup_export_description),
                         icon = Res.drawable.export_outline,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.export_backup_description) },
+                        onLongClick = { Toaster.i(Res.string.backup_export_description) },
                     )
 
                     /**
@@ -302,10 +302,10 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                     // "Import backup" (DS:519-528) — INERT: as "Export backup"
                     OtherSettingsEntry(
                         title = stringResource(Res.string.import_backup),
-                        text = stringResource(Res.string.import_backup_description),
+                        text = stringResource(Res.string.backup_import_description),
                         icon = Res.drawable.import_outline,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.import_backup_description) },
+                        onLongClick = { Toaster.i(Res.string.backup_import_description) },
                     )
 
                     // "Import settings migration" (DS:534) — INERT: the phone's `ImportMigration` is
@@ -313,11 +313,11 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // toasts the phone's description
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.title_import_settings_migration),
-                        text = stringResource(Res.string.description_import_settings_migration),
+                        title = stringResource(Res.string.backup_action_import_legacy_migration),
+                        text = stringResource(Res.string.backup_legacy_migration_description),
                         icon = Res.drawable.data_migration,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.description_import_settings_migration) },
+                        onLongClick = { Toaster.i(Res.string.backup_legacy_migration_description) },
                     )
                 },
             )
@@ -329,7 +329,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
             enter = fadeIn(animationSpec = tween(800)) + scaleIn(animationSpec = tween(800), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.auto_backup_title),
+                title = stringResource(Res.string.backup_auto_title),
                 icon = Res.drawable.history,
                 content = {
                     // "Auto backup location" (ABK:73, the phone's `autoBackupUri`, "") — INERT: the
@@ -338,8 +338,8 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                     // value, not a description → no toast. The phone's "location not set" warning
                     // (ABK:80) is not ported (nothing is ever set on the PC)
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.auto_backup_location),
-                        text = stringResource(Res.string.auto_backup_location_not_set),
+                        title = stringResource(Res.string.backup_auto_location),
+                        text = stringResource(Res.string.backup_auto_location_not_set),
                         icon = Res.drawable.folder,
                         onClick = {},
                     )
@@ -349,8 +349,8 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // row shows a value, not a description → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.auto_backup_target),
-                        text = stringResource(Res.string.database),
+                        title = stringResource(Res.string.backup_auto_target),
+                        text = stringResource(Res.string.backup_target_database_label),
                         icon = Res.drawable.server,
                         onClick = {},
                     )
@@ -371,7 +371,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // shows a value, not a description → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.auto_backup_max_backups),
+                        title = stringResource(Res.string.backup_auto_max_backups),
                         text = "5",
                         icon = Res.drawable.server,
                         onClick = {},
@@ -384,8 +384,8 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // row shows a value, not a description → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.auto_backup_interval),
-                        text = stringResource(Res.string.auto_backup_interval_none),
+                        title = stringResource(Res.string.backup_auto_interval),
+                        text = stringResource(Res.string.backup_auto_interval_none),
                         icon = Res.drawable.history,
                         onClick = {},
                     )
@@ -410,7 +410,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
             enter = fadeIn(animationSpec = tween(1000)) + scaleIn(animationSpec = tween(1000), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.history),
+                title = stringResource(Res.string.library_history_title),
                 icon = Res.drawable.history,
                 content = {
                     // "Pause search history" (DS:576, `pauseSearchHistoryKey`, off by default) — INERT:
@@ -418,13 +418,13 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
 
                     // description
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.pause_search_history),
-                        text = stringResource(Res.string.neither_save_new_searched_query),
+                        title = stringResource(Res.string.search_history_pause_label),
+                        text = stringResource(Res.string.search_history_pause_description),
                         icon = Res.drawable.pause,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.neither_save_new_searched_query) },
+                        onLongClick = { Toaster.i(Res.string.search_history_pause_description) },
                     )
 
                     // "Pause listen history" (DS:593, `pauseListenHistoryKey`, off by default) — INERT:
@@ -447,8 +447,8 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                     // shown), a click has no effect; the phone's row shows a count, not a description
                     // → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.clear_search_history),
-                        text = stringResource(Res.string.history_is_empty),
+                        title = stringResource(Res.string.search_history_action_clear),
+                        text = stringResource(Res.string.search_history_empty_message),
                         icon = Res.drawable.trash,
                         onClick = {},
                     )
@@ -459,8 +459,8 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                     // shown), a click has no effect; the phone's row shows a count, not a description
                     // → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.clear_listen_history),
-                        text = stringResource(Res.string.history_is_empty),
+                        title = stringResource(Res.string.settings_history_action_clear_listening),
+                        text = stringResource(Res.string.search_history_empty_message),
                         icon = Res.drawable.trash,
                         onClick = {},
                     )

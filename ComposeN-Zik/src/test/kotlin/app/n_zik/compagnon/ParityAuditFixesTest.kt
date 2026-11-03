@@ -86,9 +86,9 @@ class ParityAuditFixesTest {
 
     @Test
     fun `like toast messages follow the rotation or the toggle`() {
-        assertEquals(Res.string.added_to_dislikes, likeToastMessage(TrackLike.Disliked, rotationEnabled = true))
-        assertEquals(Res.string.removed_from_dislikes, likeToastMessage(TrackLike.Neutral, rotationEnabled = true))
-        assertEquals(Res.string.removed_from_favorites, likeToastMessage(TrackLike.Neutral, rotationEnabled = false))
+        assertEquals(Res.string.library_dislikes_added, likeToastMessage(TrackLike.Disliked, rotationEnabled = true))
+        assertEquals(Res.string.library_dislikes_removed, likeToastMessage(TrackLike.Neutral, rotationEnabled = true))
+        assertEquals(Res.string.library_favorites_removed, likeToastMessage(TrackLike.Neutral, rotationEnabled = false))
         assertEquals("\"Song - Artist\"", likeToastLabel("Song", "Artist"))
         assertEquals("\"Song\"", likeToastLabel("Song", " "))
         assertNull(likeToastLabel(" ", "Artist"))

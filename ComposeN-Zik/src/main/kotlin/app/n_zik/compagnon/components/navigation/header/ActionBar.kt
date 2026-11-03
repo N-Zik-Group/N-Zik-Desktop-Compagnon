@@ -47,13 +47,13 @@ private fun HamburgerMenu(
     // 78-163): shown in the phone's order, without action — no contract route
 
     // History (its 78-83)
-    menu.add(DropdownMenu.Item(Res.drawable.history, Res.string.history) {})
+    menu.add(DropdownMenu.Item(Res.drawable.history, Res.string.library_history_title) {})
     // Statistics (its 85-92)
-    menu.add(DropdownMenu.Item(Res.drawable.stats_chart, Res.string.statistics) {})
+    menu.add(DropdownMenu.Item(Res.drawable.stats_chart, Res.string.statistics_title) {})
     // Rewind (its 95-101): the phone shows it by default (its `rewindEnabled`, default true)
-    menu.add(DropdownMenu.Item(Res.drawable.ic_launcher_monochrome, Res.string.rewind) {})
+    menu.add(DropdownMenu.Item(Res.drawable.ic_launcher_monochrome, Res.string.rewind_title) {})
     // Listen Together (its 103-108)
-    menu.add(DropdownMenu.Item(Res.drawable.people, Res.string.listen_together) {})
+    menu.add(DropdownMenu.Item(Res.drawable.people, Res.string.listen_together_title) {})
     // PC server button
     menu.add(
         DropdownMenu.Item(
@@ -62,23 +62,23 @@ private fun HamburgerMenu(
         ) { onPhone() },
     )
     // Profiles (its 117-122)
-    menu.add(DropdownMenu.Item(Res.drawable.person, Res.string.profiles) {})
+    menu.add(DropdownMenu.Item(Res.drawable.person, Res.string.profile_title) {})
     // Picture in picture (its 124-129, default off on the phone): visible and inert
-    menu.add(DropdownMenu.Item(Res.drawable.images_sharp, Res.string.menu_go_to_picture_in_picture) {})
+    menu.add(DropdownMenu.Item(Res.drawable.images_sharp, Res.string.navigation_action_picture_in_picture) {})
     menu.add { HorizontalDivider() }
     // Settings button
     menu.add(
         DropdownMenu.Item(
             Res.drawable.settings,
-            Res.string.settings,
+            Res.string.settings_title,
         ) { onSettings() },
     )
     // Debug logs (its 141-149): the phone's default is off — the static "Enable debug logs" label
-    menu.add(DropdownMenu.Item(Res.drawable.bugs, Res.string.enable_log_debug) {})
+    menu.add(DropdownMenu.Item(Res.drawable.bugs, Res.string.maintenance_debug_logging_title) {})
     // Maintenance (its 152-158)
-    menu.add(DropdownMenu.Item(Res.drawable.shield_checkmark, Res.string.maintenance) {})
+    menu.add(DropdownMenu.Item(Res.drawable.shield_checkmark, Res.string.maintenance_title) {})
     // Rescue center (its 163-169)
-    menu.add(DropdownMenu.Item(Res.drawable.shortcut_rescue, Res.string.rescue_center) {})
+    menu.add(DropdownMenu.Item(Res.drawable.shortcut_rescue, Res.string.recovery_center) {})
     menu.Draw()
 }
 
@@ -97,7 +97,7 @@ fun ActionBar(
     var expanded by remember { mutableStateOf(false) }
 
     // Search Icon
-    HeaderIcon(Res.drawable.search, contentDescription = stringResource(Res.string.search)) {}
+    HeaderIcon(Res.drawable.search, contentDescription = stringResource(Res.string.search_title)) {}
 
     Box {
         ProfileFaceAvatar(

@@ -9,12 +9,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.MenuState
 import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.styling.HomeItemSize
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.uiRoundnessShape
 import org.jetbrains.compose.resources.DrawableResource
@@ -43,11 +43,11 @@ class ItemSize private constructor(
     override val iconId: DrawableResource = Res.drawable.resize
 
     /** The phone's `Descriptive` message (`ItemSize.kt` 43): shown on a right click (its long press). */
-    override val messageId: org.jetbrains.compose.resources.StringResource = Res.string.size
+    override val messageId: org.jetbrains.compose.resources.StringResource = Res.string.common_size_label
 
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.size)
+        get() = stringResource(Res.string.common_size_label)
 
     @Composable
     private fun SettingIcon() {
@@ -72,7 +72,7 @@ class ItemSize private constructor(
 
     override fun onShortClick() {
         menuState.display {
-            ListMenu.Menu(title = stringResource(Res.string.size)) {
+            ListMenu.Menu(title = stringResource(Res.string.common_size_label)) {
                 HomeItemSize.entries.forEach { entry ->
                     ListMenu.Entry(
                         text = stringResource(entry.labelId),

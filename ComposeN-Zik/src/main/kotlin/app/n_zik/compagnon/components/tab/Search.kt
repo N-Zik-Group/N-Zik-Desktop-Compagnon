@@ -38,13 +38,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.utils.semiBold
+import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
-import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.secondary
+import app.n_zik.compagnon.utils.semiBold
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -90,7 +90,7 @@ class Search private constructor(
         get() = inputText
     override val iconId: DrawableResource = Res.drawable.search_circle
     /** The phone's `Descriptive` message (`Search.kt` 107): shown on a right click (its long press). */
-    override val messageId: org.jetbrains.compose.resources.StringResource = Res.string.search
+    override val messageId: org.jetbrains.compose.resources.StringResource = Res.string.search_title
     override val menuIconTitle: String
         @Composable
         get() = stringResource(messageId)
@@ -194,7 +194,7 @@ class Search private constructor(
                             ) {
                                 Icon(
                                     painter = painterResource(Res.drawable.search),
-                                    contentDescription = stringResource(Res.string.search),
+                                    contentDescription = stringResource(Res.string.search_title),
                                     tint = colorPalette().accent,
                                     modifier = Modifier.size(18.dp),
                                 )
@@ -215,7 +215,7 @@ class Search private constructor(
                             ) {
                                 if (inputValue.isEmpty()) {
                                     BasicText(
-                                        text = stringResource(Res.string.search),
+                                        text = stringResource(Res.string.search_title),
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         style = typography().xs.semiBold.secondary,
@@ -250,7 +250,7 @@ class Search private constructor(
                                         ) {
                                             Icon(
                                                 painter = painterResource(Res.drawable.backspace_outline),
-                                                contentDescription = stringResource(Res.string.clear),
+                                                contentDescription = stringResource(Res.string.common_action_clear),
                                                 tint = colorPalette().accent,
                                                 modifier = Modifier.size(18.dp),
                                             )

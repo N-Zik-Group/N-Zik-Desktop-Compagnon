@@ -12,12 +12,12 @@ import org.jetbrains.compose.resources.StringResource
 enum class PlayerTimelineType(
     val textId: StringResource,
 ) {
-    Default(Res.string._default),
-    Wavy(Res.string.wavy_timeline),
-    PinBar(Res.string.pin_bar),
-    BodiedBar(Res.string.bodied_bar),
+    Default(Res.string.common_option_default),
+    Wavy(Res.string.player_timeline_wavy_label),
+    PinBar(Res.string.player_timeline_pin_bar_label),
+    BodiedBar(Res.string.player_timeline_fat_bar_label),
     AudioWaves(Res.string.fake_audio_bar),
-    ThinBar(Res.string.thin_bar),
-    ColoredBar(Res.string.colored_bar),
+    ThinBar(Res.string.player_timeline_thin_bar_label),
+    ColoredBar(Res.string.player_timeline_colored_bar_label),
     VisualizerBar(Res.string.visualizer_bar);
 }

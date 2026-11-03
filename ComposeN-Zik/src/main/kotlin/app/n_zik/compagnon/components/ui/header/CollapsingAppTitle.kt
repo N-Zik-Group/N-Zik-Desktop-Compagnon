@@ -1,12 +1,12 @@
 package app.n_zik.compagnon.components.ui.header
 
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.clickable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -149,7 +149,7 @@ private fun AppLogo(
 ) {
     Image(
         painter = painterResource(Res.drawable.ic_launcher),
-        contentDescription = stringResource(Res.string.cd_app_s_icon),
+        contentDescription = stringResource(Res.string.accessibility_app_icon),
         modifier = modifier
             .clip(uiRoundnessShape())
             .combinedClickable(onClick = {}, onLongClick = {})

@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- About -->
+    <string name="about_action_report_issue">Reportar um problema</string>
+    <string name="about_action_view_source">Veja o código-fonte</string>
+    <string name="about_contributors_alphabetical_order_label">Em ordem alfabética:</string>
+    <string name="about_github_link_description">Você vai ser redirecionado para o GitHub</string>
+    <string name="about_title">Sobre</string>
+    <string name="about_translators_title">Tradutores</string>
+
+    <!-- Album -->
+    <string name="album_action_bookmark">Álbum de Favoritos</string>
+    <string name="album_action_open">Ir para o álbum</string>
+    <string name="album_left_swipe">Álbum, Deslize para Esquerda</string>
+    <string name="album_right_swipe">Álbum, Deslize para Direita</string>
+
+    <!-- Artist -->
+    <string name="artist_action_follow">Seguir</string>
+    <string name="artist_following_status">Seguindo</string>
+    <string name="artist_more_from">Mais de</string>
+    <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
+    <string name="artist_songs_unavailable_message">Sem músicas ainda</string>
+
+    <!-- Audio -->
+    <string name="audio_quality_automatic">Automático</string>
+    <string name="audio_quality_format">Formato de qualidade de áudio</string>
+    <string name="audio_quality_format_high">Alto</string>
+    <string name="audio_quality_format_low">Baixa</string>
+
+    <!-- Backup -->
+    <string name="backup_action_import_legacy_migration">Import migration file.</string>
+    <string name="backup_legacy_migration_description">For old users before conversion.\nUse old app to make a backup for migration.</string>
+    <string name="backup_target_database_label">Base de dados</string>
+
+    <!-- Calendar -->
+    <string name="calendar_period_one_month">1 mês</string>
+    <string name="calendar_period_one_week">1 Semana</string>
+    <string name="calendar_period_one_year">1 Ano</string>
+    <string name="calendar_period_six_months">6 Mês</string>
+    <string name="calendar_period_three_months">3 mês</string>
+    <string name="calendar_today">Hoje</string>
+
+    <!-- Common -->
+    <string name="common_action_clear">Limpar</string>
+    <string name="common_action_confirm">Confirmar</string>
+    <string name="common_action_delete">Eliminar</string>
+    <string name="common_action_done">Terminar</string>
+    <string name="common_action_select">Selecionar</string>
+    <string name="common_action_translate">Traduzir</string>
+    <string name="common_action_turn_off">Desligar</string>
+    <string name="common_action_update">Atualização</string>
+    <string name="common_clipboard_copy_success">Copiado</string>
+    <string name="common_color_source_theme">Tema</string>
+    <string name="common_delete_success">Apagado</string>
+    <string name="common_error_no_internet">Sem conexão com a internet</string>
+    <string name="common_information_title">Informação</string>
+    <string name="common_limit_unlimited_label">Ilimitado</string>
+    <string name="common_option_all">Todos</string>
+    <string name="common_option_custom">Personalizado</string>
+    <string name="common_option_default">Predefinição</string>
+    <string name="common_option_disabled">Desativado</string>
+    <string name="common_option_none">Nenhum</string>
+    <string name="common_option_random">Aleatório</string>
+    <string name="common_size_big">Grande</string>
+    <string name="common_size_biggest">Maior</string>
+    <string name="common_size_label">Tamanho</string>
+    <string name="common_size_medium">Médio</string>
+    <string name="common_size_small">Pequeno</string>
+    <string name="common_translation_title">Tradução</string>
+    <string name="common_validation_empty_value">Valor não pode ser vazio</string>
+
+    <!-- Downloads -->
+    <string name="downloads_action_download_all">Baixar todas as músicas</string>
+    <string name="downloads_action_remove_all">Remover todas as músicas baixadas</string>
+    <string name="downloads_delete_all_confirmation">Você realmente quer excluir o download?</string>
+    <string name="downloads_download_all_confirmation">Você realmente quer baixar tudo?</string>
+    <string name="downloads_title">Baixar</string>
+
+    <!-- Export -->
+    <string name="export_cached_song_action">Export cached or downloaded song</string>
+    <string name="export_cached_songs_action">Export cached</string>
+
+    <!-- Home -->
+    <string name="home_title">Página Inicial</string>
+
+    <!-- Library -->
+    <string name="library_action_bookmark">Favoritar</string>
+    <string name="library_albums_title">Álbuns</string>
+    <string name="library_artists_title">Artistas</string>
+    <string name="library_cached_title">Armazenado</string>
+    <string name="library_dislikes_added">Disliked %s</string>
+    <string name="library_dislikes_removed">Removed %s from dislikes</string>
+    <string name="library_downloaded_title">Baixados</string>
+    <string name="library_favorites_action_add">Adicionar aos favoritos</string>
+    <string name="library_favorites_added">Adicionado aos favoritos</string>
+    <string name="library_favorites_removed">Removido dos favoritos</string>
+    <string name="library_favorites_title">Favoritos</string>
+    <string name="library_filter_by_title">Filter By</string>
+    <string name="library_history_title">Histórico</string>
+    <string name="library_layout_list_label">Lista</string>
+    <string name="library_playlists_title">Listas de reprodução</string>
+    <string name="library_songs_title">Músicas</string>
+    <string name="library_sort_album">Álbum</string>
+    <string name="library_sort_album_year">Ano do Álbum</string>
+    <string name="library_sort_artist">Artista</string>
+    <string name="library_sort_date_added">Data adicionada</string>
+    <string name="library_sort_date_liked">Data da Curtida</string>
+    <string name="library_sort_date_played">Data de reprodução</string>
+    <string name="library_sort_duration">Duração</string>
+    <string name="library_sort_listening_time">Tempo de reprodução</string>
+    <string name="library_sort_name">Nome</string>
+    <string name="library_sort_order_title">Ordem de classificação</string>
+    <string name="library_sort_relative_listening_time">Relative Listening Time</string>
+    <string name="library_sort_songs_number">Número de músicas</string>
+    <string name="library_sort_title">Título</string>
+    <string name="library_youtube_playlists_label">YT/YTM</string>
+
+    <!-- Lyrics -->
+    <string name="lyrics_alignment_left_label">Esquerda</string>
+    <string name="lyrics_alignment_right_label">Direita</string>
+    <string name="lyrics_color">Cor das letras</string>
+
+    <!-- Maintenance -->
+    <string name="maintenance_debug_logging_title">Ativar log de depuração</string>
+
+    <!-- Metadata -->
+    <string name="metadata_action_change_artists">Atualizar Autores</string>
+    <string name="metadata_action_change_cover">Atualizar a Capa</string>
+    <string name="metadata_action_change_title">Atualizar o Título</string>
+
+    <!-- Navigation -->
+    <string name="navigation_action_picture_in_picture">PIP</string>
+    <string name="navigation_position_bottom_label">Direction bottom</string>
+    <string name="navigation_position_top_label">Direction Top</string>
+    <string name="navigation_style_icon_and_text_label">Ícone e texto</string>
+    <string name="navigation_style_icon_only_label">Somente ícones</string>
+
+    <!-- Parental -->
+    <string name="parental_control">Controle dos pais</string>
+
+    <!-- Player -->
+    <string name="player_action_enqueue">Em fila</string>
+    <string name="player_action_enqueue_songs">Colocar músicas na fila</string>
+    <string name="player_action_listen_on_youtube">Escutar no YouTube</string>
+    <string name="player_action_locate_current_song">Encontre a música que está tocando</string>
+    <string name="player_action_play_next">Reproduzir a seguir</string>
+    <string name="player_action_repeat">Repetir</string>
+    <string name="player_action_shuffle">Aleatorizar</string>
+    <string name="player_action_shuffle_hint">Embaralhar</string>
+    <string name="player_appearance">Aparência do Player</string>
+    <string name="player_auto_load_songs_in_queue">Carregar músicas automaticamente na fila</string>
+    <string name="player_auto_load_songs_in_queue_description">Adicionar músicas quando a fila está prestes a terminar</string>
+    <string name="player_background_animated_gradient_label">Gradiente Animado</string>
+    <string name="player_background_artwork_label">Plano de fundo da capa</string>
+    <string name="player_background_black_cherry_cosmos">Cosmos de Cerejeira Preta</string>
+    <string name="player_background_glossy_gradient">Gradiente Brilhante</string>
+    <string name="player_background_golden_magma">Magma Dourado</string>
+    <string name="player_background_gradient_flow">Gradiente Fluxo</string>
+    <string name="player_background_ice_reflection">Reflexão de Gelo</string>
+    <string name="player_background_ink_flow">Fluxo de Tinta</string>
+    <string name="player_background_linear_gradient">Gradiente Linear</string>
+    <string name="player_background_mesh_gradient">Gradiente de Malha</string>
+    <string name="player_background_mesmerizing_lens">Lente Hipnotizante</string>
+    <string name="player_background_oil_flow">Fluxo de Óleo</string>
+    <string name="player_background_palette_label">Paleta de cor</string>
+    <string name="player_background_purple_liquid">Líquido Roxo</string>
+    <string name="player_background_stage">Estágio</string>
+    <string name="player_background_theme_label">Plano de fundo do tema</string>
+    <string name="player_collapsed_disable_swiping_down">Desativar deslize para baixo</string>
+    <string name="player_controls_action_customize">Personalizar</string>
+    <string name="player_controls_blur_effect_title">Efeito de desfoque</string>
+    <string name="player_controls_device_volume_title">Volume do dispositivo</string>
+    <string name="player_controls_medley_duration_title">Duração do medley</string>
+    <string name="player_controls_pitch_title">Tom de reprodução</string>
+    <string name="player_controls_playback_volume_title">Volume de reprodução</string>
+    <string name="player_controls_speed_title">Velocidade de reprodução</string>
+    <string name="player_controls_style_essential">Essencial</string>
+    <string name="player_controls_style_modern">Moderno</string>
+    <string name="player_cover_style_cd">CD</string>
+    <string name="player_cover_style_cd_with_cover">CD com Capa</string>
+    <string name="player_cover_style_vinyl">Vinil</string>
+    <string name="player_current_song_not_in_list">Could not find playing song on current list</string>
+    <string name="player_enable_lyrics_popup_message">Ativar mensagem pop-up de letras</string>
+    <string name="player_enable_rotation_buttons">Ativar rotação dos botões quando clicados</string>
+    <string name="player_keep_minimized">Manter minimizado</string>
+    <string name="player_listen_on_title">Escutar no</string>
+    <string name="player_no_current_song">No song is playing at the moment</string>
+    <string name="player_pause_listen_history">Pausar histórico de escuta</string>
+    <string name="player_pause_listen_history_info">Não salva eventos de reprodução usados para estatísticas, histórico e sugestões nas escolhas rápidas</string>
+    <string name="player_pause_on_volume_zero">Pausar no volume zero</string>
+    <string name="player_play_button_wavy_circle_label">Cama circular</string>
+    <string name="player_position">Posição do Reprodutor</string>
+    <string name="player_position_bottom_label">Em baixo</string>
+    <string name="player_progress_mini_player">Player minimizado</string>
+    <string name="player_queue_action_remove">Remover da fila</string>
+    <string name="player_rotating_buttons">Botões rotativos</string>
+    <string name="player_shuffle_empty_message">No song to shuffle</string>
+    <string name="player_sleep_timer_title">Temporizador para desligar</string>
+    <string name="player_swap_controls_with_timeline">Trocar controles pela linha do tempo</string>
+    <string name="player_thumbnail_size">Tamanhos de imagens miniaturas</string>
+    <string name="player_timeline_colored_bar_label">Barra colorida</string>
+    <string name="player_timeline_fat_bar_label">Baixo Grande</string>
+    <string name="player_timeline_pin_bar_label">Barra de Pinos</string>
+    <string name="player_timeline_thin_bar_label">Barra fina</string>
+    <string name="player_timeline_wavy_label">Linha do tempo ondulada</string>
+    <string name="player_type">Tipo de Player</string>
+
+    <!-- Playlist -->
+    <string name="playlist_action_add">Adicionar à lista de reprodução</string>
+    <string name="playlist_action_create">Nova lista de reprodução</string>
+    <string name="playlist_action_export">Exportar playlist</string>
+    <string name="playlist_action_import">Importar playlist</string>
+    <string name="playlist_action_shuffle_positions">Renumerar posições</string>
+    <string name="playlist_action_toggle_pinned">Fixar/Desafixar playlist</string>
+    <string name="playlist_create_dialog_title">Criar uma seleção musical</string>
+    <string name="playlist_left_swipe">Lista de reprodução, Deslize para Esquerda</string>
+    <string name="playlist_pinned_title">Playlists Fixadas</string>
+    <string name="playlist_rename_dialog_title">Rename playlist</string>
+    <string name="playlist_reorder_ascending_sort_required_message">Reorganizar é possível somente em ordem crescente</string>
+    <string name="playlist_reorder_lock_toggle_label">Bloquear/Desbloquear reorganização das músicas</string>
+    <string name="playlist_right_swipe">Lista de reprodução, Deslize para Direita</string>
+    <string name="playlist_selection_action_deselect">Desmarcar</string>
+    <string name="playlist_top">Topo da Playlist</string>
+
+    <!-- Queue -->
+    <string name="queue_discover_description">Remove músicas curtidas e da playlist da fila</string>
+    <string name="queue_discover_title">Descubra</string>
+
+    <!-- Radio -->
+    <string name="radio_action_start">Começar rádio</string>
+
+    <!-- Recommendations -->
+    <string name="recommendations_action_smart_shuffle">Recomendação inteligente</string>
+    <string name="recommendations_minimum_playback_duration_label">Tempo mínimo de escuta</string>
+    <string name="recommendations_title">Escolhas rápidas</string>
+
+    <!-- Search -->
+    <string name="search_display_order">Online search display order</string>
+    <string name="search_display_order_suggestions_first">Suggestions first</string>
+    <string name="search_history_action_clear">Limpar o histórico de pesquisa</string>
+    <string name="search_history_empty_message">O histórico está vazio</string>
+    <string name="search_history_pause_description">Não salvar novas consultas pesquisadas nem mostrar histórico</string>
+    <string name="search_history_pause_label">Pausar histórico de pesquisa</string>
+    <string name="search_title">Pesquisa</string>
+
+    <!-- Settings -->
+    <string name="settings_app_language_label">Idioma do aplicativo</string>
+    <string name="settings_audio_bass_boost">Audio bass boost</string>
+    <string name="settings_audio_equalizer_label">Equalizador</string>
+    <string name="settings_audio_loudness_normalization_description">Ajustar o volume para um nível fixo</string>
+    <string name="settings_audio_loudness_normalization_label">Normalização sonora</string>
+    <string name="settings_audio_reverb">Audio reverb</string>
+    <string name="settings_audio_skip_silence_description">Ignorar partes silenciosas durante a reprodução</string>
+    <string name="settings_audio_skip_silence_label">Ignorar silêncio</string>
+    <string name="settings_bass_boost_level">Bass boost level</string>
+    <string name="settings_cache_action_set_custom_size">Definir cache personalizado</string>
+    <string name="settings_cache_custom_size_input_hint">Insira o valor em MB</string>
+    <string name="settings_cache_delete_confirmation">Você realmente deseja limpar o cache?</string>
+    <string name="settings_cache_eviction_description">Quando o Armazenamento ficar sem espaço, os recursos que não foram acessados por mais tempo são limpos</string>
+    <string name="settings_cache_image_size_limit_label">Tamanho máximo do cache de imagens</string>
+    <string name="settings_cache_song_size_limit_label">Tamanho máximo do cache de músicas</string>
+    <string name="settings_cache_title">Armazenar</string>
+    <string name="settings_data_title">Data</string>
+    <string name="settings_downloads_storage_limit_label">Tamanho máximo do download de músicas</string>
+    <string name="settings_enable_autodownload_song">Habilitar o download automático de músicas</string>
+    <string name="settings_font_include_padding_description">Adicionar espaçamento em torno dos textos</string>
+    <string name="settings_font_include_padding_label">Aplicar preenchimento de fonte</string>
+    <string name="settings_font_use_system_description">Usar a fonte aplicada pelo sistema</string>
+    <string name="settings_font_use_system_label">Utilizar fontes do sistema</string>
+    <string name="settings_general_title">Geral</string>
+    <string name="settings_home_default_page_label">Página padrão</string>
+    <string name="settings_interface_page_title">IU</string>
+    <string name="settings_interface_title">‘Interface’ do usuário</string>
+    <string name="settings_languages_title">Idiomas</string>
+    <string name="settings_library_now_playing_indicator_label">Indicador de reprodução atual</string>
+    <string name="settings_library_playlist_indicator_description">Indica se a música já está adicionada a uma playlist</string>
+    <string name="settings_library_playlist_indicator_label">Indicador de playlist</string>
+    <string name="settings_library_queue_playlist_swipe_left_label">Fila e Listas de reprodução locais, Deslize para a Esquerda</string>
+    <string name="settings_library_queue_playlist_swipe_right_label">Fila e Listas de reprodução locais, Deslize para a Direita</string>
+    <string name="settings_logging_error_file_description">Se habilitado, crie um arquivo de log para destacar erros</string>
+    <string name="settings_loudness_base_gain">Estrutura de ganho</string>
+    <string name="settings_lyrics_artwork_visible_label">Exibir miniatura para letras</string>
+    <string name="settings_lyrics_match_player_background_label">Mostrar cor de fundo nas letras</string>
+    <string name="settings_lyrics_remember_state_description">Keep lyrics state between sessions</string>
+    <string name="settings_lyrics_remember_state_label">Save lyrics state</string>
+    <string name="settings_lyrics_seek_on_line_press_label">Clique nas letras</string>
+    <string name="settings_menu_style_label">Estilo do menu</string>
+    <string name="settings_miscellaneous_title">Outros</string>
+    <string name="settings_navigation_position_label">Posição da barra de navegação</string>
+    <string name="settings_navigation_style_label">Tipo de barra de navegação</string>
+    <string name="settings_navigation_transition_effect_label">Efeito de transição</string>
+    <string name="settings_network_quality_title">Qualidade</string>
+    <string name="settings_parental_age_restriction_description">Prevenir reprodução de músicas com limitação de idade</string>
+    <string name="settings_playback_duration_limit_label">Excluir músicas com duração limitada</string>
+    <string name="settings_playback_pause_at_zero_volume_description">Pausa o reprodutor quando o volume atingir 0 e retoma quando o volume é maior que 0</string>
+    <string name="settings_playback_pause_between_songs_label">Pausar entre músicas</string>
+    <string name="settings_playback_previous_restart_threshold_label">O botão de voltar a música irá reiniciar a música atual após os seguintes segundos terem passado</string>
+    <string name="settings_playback_skip_on_error_description">Se ocorrer um erro, a mídia será alterada</string>
+    <string name="settings_playback_skip_on_error_label">Pular imediatamente em caso de erro</string>
+    <string name="settings_player_action_bar_gradient_label">Show Bottom Gradient</string>
+    <string name="settings_player_action_bar_transparent_background_label">Fundo transparente</string>
+    <string name="settings_player_actions_spaced_evenly_label">Uniformemente Espaçado</string>
+    <string name="settings_player_appearance_presets_preview_description">Pré-visualizações estarão em baixa qualidade</string>
+    <string name="settings_player_appearance_presets_title">Predefinições de Aparência</string>
+    <string name="settings_player_artwork_animation_enabled_label">Mostrar animação de miniatura da capa</string>
+    <string name="settings_player_artwork_animation_style_label">Animação da capa</string>
+    <string name="settings_player_artwork_corner_radius_label">Arredondamento em miniaturas</string>
+    <string name="settings_player_artwork_shrink_when_paused_label">Diminuir miniatura quando pausado</string>
+    <string name="settings_player_artwork_style_label">Tipo de Thumbnail</string>
+    <string name="settings_player_artwork_visible_label">Mostrar miniatura</string>
+    <string name="settings_player_background_colors_label">Cores do plano de fundo</string>
+    <string name="settings_player_background_progress_label">Barra de progresso no fundo</string>
+    <string name="settings_player_bottom_black_gradient_label">Gradiente Preto na Parte Inferior</string>
+    <string name="settings_player_button_zoom_out_animation_label">Animação de diminuir zoom do botão</string>
+    <string name="settings_player_controls_style_label">Tipo de Controle</string>
+    <string name="settings_player_disable_horizontal_swipe_label">Desativar deslize horizontal</string>
+    <string name="settings_player_disable_song_swipe_label">Desativar troca de música através do deslize</string>
+    <string name="settings_player_disable_text_marquee_description">Rolagem de texto é usado para textos longos</string>
+    <string name="settings_player_disable_text_marquee_label">Desativar rolagem do texto</string>
+    <string name="settings_player_favorite_button_style_label">Botão \"curtir\"</string>
+    <string name="settings_player_gradient_style_label">Categoria de Gradiente</string>
+    <string name="settings_player_header_album_artist_description">Álbum e nome do artista</string>
+    <string name="settings_player_header_icons_visible_label">Mostrar informações com ícones</string>
+    <string name="settings_player_header_style_label">Tipo de informação</string>
+    <string name="settings_player_next_queue_visible_label">Exibir Mini Fila no Player</string>
+    <string name="settings_player_persistent_queue_description">Salvar e restaurar músicas reproduzindo</string>
+    <string name="settings_player_persistent_queue_label">Fila persistente</string>
+    <string name="settings_player_play_button_label">Botão \"Reproduzir\"</string>
+    <string name="settings_player_prevent_collapsed_dismissal_description">Evite fechar o player e limpar a fila deslizando para baixo enquanto ele estiver minimizado</string>
+    <string name="settings_player_queue_duration_visible_label">Mostrar tempo total da fila</string>
+    <string name="settings_player_queue_size_limit_label">Máximo de músicas na fila</string>
+    <string name="settings_player_queue_style_label">Tipo de fila</string>
+    <string name="settings_player_queue_swipe_up_label">Deslize para cima para abrir a fila</string>
+    <string name="settings_player_queue_tap_to_open_label">Toque para abrir a Fila</string>
+    <string name="settings_player_remaining_duration_visible_label">Mostrar o tempo restante da música</string>
+    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
+    <string name="settings_player_start_minimized_description">Quando clicar em uma música, o reprodutor começa minimizado</string>
+    <string name="settings_player_tap_artwork_toggle_lyrics_description">Ao tocar na miniatura</string>
+    <string name="settings_player_tap_artwork_toggle_lyrics_label">Ativar/desativar letra</string>
+    <string name="settings_player_text_outline_label">Habilitar contorno de texto</string>
+    <string name="settings_player_timeline_label">Barra de navegação</string>
+    <string name="settings_player_timeline_size_label">Tamanho do Reprodutor da Timeline</string>
+    <string name="settings_player_timeline_transparent_label">Barra da Timeline Transparente</string>
+    <string name="settings_player_top_action_bar_visible_label">Mostrar barra de ação superior</string>
+    <string name="settings_proxy_enabled_label">Habilitar Proxy</string>
+    <string name="settings_reset">Reiniciar</string>
+    <string name="settings_restart_required_message">É necessário reiniciar</string>
+    <string name="settings_restore_default_settings">Restaurar configuração padrão</string>
+    <string name="settings_search_floating_button_visible_label">Mostrar ícone flutuante</string>
+    <string name="settings_swipe_actions_description">Ativar o menu de ação deslizando a música para esquerda ou direita</string>
+    <string name="settings_swipe_actions_title">Deslizar para ação</string>
+    <string name="settings_theme_dark_mode_label">Escuro</string>
+    <string name="settings_theme_mode_label">Modo de tema</string>
+    <string name="settings_title">Configurações</string>
+    <string name="settings_transition_fade">Esmaecer</string>
+    <string name="settings_use_font_type">Usa font type</string>
+
+    <!-- Statistics -->
+    <string name="statistics_title">Estatísticas</string>
+    <string name="statistics_top_period_title">Ver principais %s de…</string>
+
+    <!-- Sync -->
+    <string name="sync_action_sync">Sincronização</string>
+
+    <!-- Theme -->
+    <string name="theme_palette_dynamic">Dinâmico</string>
+
+    <!-- Thumbnail -->
+    <string name="thumbnail_action_edit">Editar Miniatura</string>
+    <string name="thumbnail_action_reset">Resetar Miniatura</string>
+
+    <!-- Updates -->
+    <string name="updates_action_check">Verificar atualizações</string>
+    <string name="updates_action_check_now">Verificar agora</string>
+    <string name="updates_automatic_check_title">Habilitar verificação de atualizações</string>
+    <string name="updates_available">Atualização disponível!</string>
+    <string name="updates_available_download_size">The file size is %s</string>
+    <string name="updates_available_version_message">The new version %s can be downloaded!</string>
+    <string name="updates_build_beta_label"> Beta</string>
+    <string name="updates_check_mode_ask">Perguntar</string>
+    <string name="updates_check_permission_description">Quando uma atualização estiver disponível, será perguntado se você deseja instalá-la. Não haverá instalações automáticas em segundo plano.</string>
+    <string name="updates_check_permission_message">Verificar no Github por atualizações?</string>
+    <string name="updates_check_permission_screening_note">Mas essas atualizações não passariam por telas adicionais feito por exemplo no IzzyOnDroid ou F-Droid.</string>
+    <string name="updates_check_permission_settings_note">Você ainda pode ativar ou desativar nas configurações.</string>
+    <string name="updates_no_update_available">Nenhuma atualização disponível</string>
+
+    <!-- Visualizer -->
+    <string name="visualizer_animation_bubbles">Bolhas</string>
+    <string name="visualizer_microphone_permission_message">O efeito de visualizador requer permissão do microfone, por favor.</string>
+    <string name="visualizer_title">Visualizador</string>
+
+</resources>

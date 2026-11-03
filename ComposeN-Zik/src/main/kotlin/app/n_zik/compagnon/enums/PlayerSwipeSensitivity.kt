@@ -14,8 +14,8 @@ enum class PlayerSwipeSensitivity(
     val textId: StringResource,
     val threshold: Float,
 ) {
-    Low(Res.string.ps_low, 150f),
-    Medium(Res.string.ps_medium, 75f),
-    High(Res.string.ps_high, 40f),
-    VeryHigh(Res.string.ps_very_high, 15f);
+    Low(Res.string.player_swipe_sensitivity_low_label, 150f),
+    Medium(Res.string.player_swipe_sensitivity_medium_label, 75f),
+    High(Res.string.player_swipe_sensitivity_high_label, 40f),
+    VeryHigh(Res.string.player_swipe_sensitivity_very_high_label, 15f);
 }

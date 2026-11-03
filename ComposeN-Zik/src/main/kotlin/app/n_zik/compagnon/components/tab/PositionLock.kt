@@ -30,7 +30,7 @@ class PositionLock(
 
     override val secondIconId: DrawableResource = Res.drawable.unlocked
     override val iconId: DrawableResource = Res.drawable.locked
-    override val messageId: StringResource = Res.string.info_lock_unlock_reorder_songs
+    override val messageId: StringResource = Res.string.playlist_reorder_lock_toggle_label
     override val menuIconTitle: String
         @Composable
         get() = stringResource(messageId)
@@ -47,7 +47,7 @@ class PositionLock(
     override fun onShortClick() {
         if (!enabled()) return
         if (!isFirstColor) {
-            Toaster.e(Res.string.info_reorder_is_possible_only_in_ascending_sort)
+            Toaster.e(Res.string.playlist_reorder_ascending_sort_required_message)
         } else {
             isFirstIcon = !isFirstIcon
         }

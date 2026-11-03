@@ -82,13 +82,13 @@ enum class IconLikeType { Apple, Breaked, Brilliant, Essential, Gift, Shape, Str
 enum class PlayerBackgroundColors(
     val textId: StringResource,
 ) {
-    CoverColor(Res.string.bg_colors_background_from_cover),
-    ThemeColor(Res.string.bg_colors_background_from_theme),
-    CoverColorGradient(Res.string.bg_colors_gradient_background_from_cover),
-    ThemeColorGradient(Res.string.bg_colors_gradient_background_from_theme),
-    BlurredCoverColor(Res.string.bg_colors_blurred_cover_background),
-    ColorPalette(Res.string.colorpalette),
-    AnimatedGradient(Res.string.animatedgradient),
+    CoverColor(Res.string.player_background_artwork_label),
+    ThemeColor(Res.string.player_background_theme_label),
+    CoverColorGradient(Res.string.player_background_artwork_gradient_label),
+    ThemeColorGradient(Res.string.player_background_theme_gradient_label),
+    BlurredCoverColor(Res.string.player_background_artwork_blurred_label),
+    ColorPalette(Res.string.player_background_palette_label),
+    AnimatedGradient(Res.string.player_background_animated_gradient_label),
 }
 
 /** The PC's effective UI settings seen by every screen: its coded defaults, the phone's [UiSettings.topN] once read. */

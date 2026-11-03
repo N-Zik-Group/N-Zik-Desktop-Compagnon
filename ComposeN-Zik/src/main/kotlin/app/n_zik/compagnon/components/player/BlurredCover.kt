@@ -1,12 +1,10 @@
 package app.n_zik.compagnon.components.player
 
-import app.n_zik.compagnon.bridge.state.LocalUiSettings
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.runtime.getValue
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -14,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +22,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import app.n_zik.compagnon.bridge.state.LocalUiSettings
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.*
@@ -96,7 +96,7 @@ private fun BlurFilter(
         }
         ImageCacheFactory.Thumbnail(
             key = key,
-            contentDescription = stringResource(Res.string.cd_blurred_background),
+            contentDescription = stringResource(Res.string.accessibility_blurred_background),
             // The phone passes ContentScale.Fit here whatever the caller asks
             contentScale = ContentScale.Fit,
             modifier = modifier

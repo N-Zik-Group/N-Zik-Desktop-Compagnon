@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- About -->
+    <string name="about_action_report_issue">回報問題</string>
+    <string name="about_action_view_source">檢視原始程式</string>
+    <string name="about_contributors_alphabetical_order_label">依照字母排序:</string>
+    <string name="about_github_link_description">你將被重新導向至GitHub</string>
+    <string name="about_title">關於</string>
+    <string name="about_translators_title">翻譯人員</string>
+
+    <!-- Album -->
+    <string name="album_action_bookmark">將專輯加入書籤</string>
+    <string name="album_action_open">前往專輯</string>
+    <string name="album_left_swipe">Album Left Swipe</string>
+    <string name="album_right_swipe">Album Right Swipe</string>
+
+    <!-- Artist -->
+    <string name="artist_action_follow">追隨</string>
+    <string name="artist_following_status">已追隨</string>
+    <string name="artist_more_from">更多</string>
+    <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
+    <string name="artist_songs_unavailable_message">尚無歌曲</string>
+
+    <!-- Audio -->
+    <string name="audio_quality_automatic">自動</string>
+    <string name="audio_quality_format">音質格式</string>
+    <string name="audio_quality_format_high">高</string>
+    <string name="audio_quality_format_low">低</string>
+
+    <!-- Backup -->
+    <string name="backup_action_import_legacy_migration">Import migration file.</string>
+    <string name="backup_legacy_migration_description">For old users before conversion.\nUse old app to make a backup for migration.</string>
+    <string name="backup_target_database_label">資料</string>
+
+    <!-- Calendar -->
+    <string name="calendar_period_one_month">一個月</string>
+    <string name="calendar_period_one_week">一星期</string>
+    <string name="calendar_period_one_year">一年</string>
+    <string name="calendar_period_six_months">六個月</string>
+    <string name="calendar_period_three_months">三個月</string>
+    <string name="calendar_today">今日</string>
+
+    <!-- Common -->
+    <string name="common_action_clear">清除</string>
+    <string name="common_action_confirm">確認</string>
+    <string name="common_action_delete">移除</string>
+    <string name="common_action_done">完成</string>
+    <string name="common_action_select">選擇</string>
+    <string name="common_action_translate">翻譯</string>
+    <string name="common_action_turn_off">關閉</string>
+    <string name="common_action_update">更新</string>
+    <string name="common_clipboard_copy_success">已複製</string>
+    <string name="common_color_source_theme">主題</string>
+    <string name="common_delete_success">已刪除</string>
+    <string name="common_error_no_internet">無網路連線</string>
+    <string name="common_information_title">資訊</string>
+    <string name="common_limit_unlimited_label">無限制</string>
+    <string name="common_option_all">所有時間</string>
+    <string name="common_option_custom">自定義</string>
+    <string name="common_option_default">預設</string>
+    <string name="common_option_disabled">已停用</string>
+    <string name="common_option_none">無</string>
+    <string name="common_option_random">Random</string>
+    <string name="common_size_big">大</string>
+    <string name="common_size_biggest">最大</string>
+    <string name="common_size_label">大小</string>
+    <string name="common_size_medium">中</string>
+    <string name="common_size_small">小</string>
+    <string name="common_translation_title">翻譯</string>
+    <string name="common_validation_empty_value">值不能為空</string>
+
+    <!-- Downloads -->
+    <string name="downloads_action_download_all">下載所有歌曲</string>
+    <string name="downloads_action_remove_all">移除所有已下載的歌曲</string>
+    <string name="downloads_delete_all_confirmation">你真的要移除下載嗎?</string>
+    <string name="downloads_download_all_confirmation">你真的要全部下載嗎?</string>
+    <string name="downloads_title">下載</string>
+
+    <!-- Export -->
+    <string name="export_cached_song_action">Export cached or downloaded song</string>
+    <string name="export_cached_songs_action">Export cached</string>
+
+    <!-- Home -->
+    <string name="home_title">Home</string>
+
+    <!-- Library -->
+    <string name="library_action_bookmark">Bookmark</string>
+    <string name="library_albums_title">專輯</string>
+    <string name="library_artists_title">藝人</string>
+    <string name="library_cached_title">已暫存</string>
+    <string name="library_dislikes_added">Disliked %s</string>
+    <string name="library_dislikes_removed">Removed %s from dislikes</string>
+    <string name="library_downloaded_title">已下載</string>
+    <string name="library_favorites_action_add">新增到最愛</string>
+    <string name="library_favorites_added">已加到最愛</string>
+    <string name="library_favorites_removed">從最愛中移除</string>
+    <string name="library_favorites_title">已按讚</string>
+    <string name="library_filter_by_title">Filter By</string>
+    <string name="library_history_title">歷史</string>
+    <string name="library_layout_list_label">清單</string>
+    <string name="library_playlists_title">播放清單</string>
+    <string name="library_songs_title">歌曲</string>
+    <string name="library_sort_album">專輯</string>
+    <string name="library_sort_album_year">專輯年份</string>
+    <string name="library_sort_artist">藝人</string>
+    <string name="library_sort_date_added">新增日期</string>
+    <string name="library_sort_date_liked">按讚日期</string>
+    <string name="library_sort_date_played">播放日期</string>
+    <string name="library_sort_duration">時間長度</string>
+    <string name="library_sort_listening_time">聆聽時間</string>
+    <string name="library_sort_name">歌曲名稱</string>
+    <string name="library_sort_order_title">排列方式</string>
+    <string name="library_sort_relative_listening_time">Relative Listening Time</string>
+    <string name="library_sort_songs_number">歌曲編號</string>
+    <string name="library_sort_title">標題</string>
+    <string name="library_youtube_playlists_label">YT/YTM</string>
+
+    <!-- Lyrics -->
+    <string name="lyrics_alignment_left_label">左側</string>
+    <string name="lyrics_alignment_right_label">右側</string>
+    <string name="lyrics_color">歌詞顏色</string>
+
+    <!-- Maintenance -->
+    <string name="maintenance_debug_logging_title">啟用除錯記錄</string>
+
+    <!-- Metadata -->
+    <string name="metadata_action_change_artists">更新作者</string>
+    <string name="metadata_action_change_cover">更新封面</string>
+    <string name="metadata_action_change_title">更新標題</string>
+
+    <!-- Navigation -->
+    <string name="navigation_action_picture_in_picture">PIP</string>
+    <string name="navigation_position_bottom_label">下方</string>
+    <string name="navigation_position_top_label">上方</string>
+    <string name="navigation_style_icon_and_text_label">圖示與文字</string>
+    <string name="navigation_style_icon_only_label">只有圖示</string>
+
+    <!-- Parental -->
+    <string name="parental_control">家長或監護人設定</string>
+
+    <!-- Player -->
+    <string name="player_action_enqueue">加入至播放佇列</string>
+    <string name="player_action_enqueue_songs">待播歌曲</string>
+    <string name="player_action_listen_on_youtube">在YouTube上收聽</string>
+    <string name="player_action_locate_current_song">尋找正在播放的歌曲</string>
+    <string name="player_action_play_next">播放下一首</string>
+    <string name="player_action_repeat">重複</string>
+    <string name="player_action_shuffle">隨機播放</string>
+    <string name="player_action_shuffle_hint">隨機播放</string>
+    <string name="player_appearance">播放器外觀</string>
+    <string name="player_auto_load_songs_in_queue">自動加入歌曲到播放佇列中</string>
+    <string name="player_auto_load_songs_in_queue_description">當播放佇列即將結束時添加歌曲</string>
+    <string name="player_background_animated_gradient_label">Animated Gradient</string>
+    <string name="player_background_artwork_label">專輯底色</string>
+    <string name="player_background_black_cherry_cosmos">Black Cherry Cosmos</string>
+    <string name="player_background_glossy_gradient">Glossy Gradient</string>
+    <string name="player_background_golden_magma">Golden Magma</string>
+    <string name="player_background_gradient_flow">Gradient Flow</string>
+    <string name="player_background_ice_reflection">Ice Reflection</string>
+    <string name="player_background_ink_flow">Ink Flow</string>
+    <string name="player_background_linear_gradient">Linear Gradient</string>
+    <string name="player_background_mesh_gradient">Mesh Gradient</string>
+    <string name="player_background_mesmerizing_lens">Mesmerizing Lens</string>
+    <string name="player_background_oil_flow">Oil Flow</string>
+    <string name="player_background_palette_label">Color Palette</string>
+    <string name="player_background_purple_liquid">Purple Liquid</string>
+    <string name="player_background_stage">Stage</string>
+    <string name="player_background_theme_label">根據主題的背景</string>
+    <string name="player_collapsed_disable_swiping_down">關閉下滑操作</string>
+    <string name="player_controls_action_customize">自定義</string>
+    <string name="player_controls_blur_effect_title">模糊效果</string>
+    <string name="player_controls_device_volume_title">裝置音量</string>
+    <string name="player_controls_medley_duration_title">Medley duration</string>
+    <string name="player_controls_pitch_title">Playback pitch</string>
+    <string name="player_controls_playback_volume_title">播放音量</string>
+    <string name="player_controls_speed_title">播放速度</string>
+    <string name="player_controls_style_essential">基本</string>
+    <string name="player_controls_style_modern">現代</string>
+    <string name="player_cover_style_cd">CD</string>
+    <string name="player_cover_style_cd_with_cover">CD with Cover</string>
+    <string name="player_cover_style_vinyl">Vinyl</string>
+    <string name="player_current_song_not_in_list">Could not find playing song on current list</string>
+    <string name="player_enable_lyrics_popup_message">Enable lyrics popup message</string>
+    <string name="player_enable_rotation_buttons">啟用後，按鈕在點擊時旋轉</string>
+    <string name="player_keep_minimized">保持最小化</string>
+    <string name="player_listen_on_title">在其它平台上收聽</string>
+    <string name="player_no_current_song">No song is playing at the moment</string>
+    <string name="player_pause_listen_history">暫停收聽記錄</string>
+    <string name="player_pause_listen_history_info">不保存用於統計、記錄和縮圖建議的播放事件</string>
+    <string name="player_pause_on_volume_zero">靜音時暫停播放</string>
+    <string name="player_play_button_wavy_circle_label">圓形螺紋</string>
+    <string name="player_position">播放器位置</string>
+    <string name="player_position_bottom_label">底部</string>
+    <string name="player_progress_mini_player">最小化播放器</string>
+    <string name="player_queue_action_remove">從播放佇列中移除</string>
+    <string name="player_rotating_buttons">旋轉按鈕</string>
+    <string name="player_shuffle_empty_message">No song to shuffle</string>
+    <string name="player_sleep_timer_title">睡眠定時器</string>
+    <string name="player_swap_controls_with_timeline">Swap controls with timeline</string>
+    <string name="player_thumbnail_size">縮圖尺寸</string>
+    <string name="player_timeline_colored_bar_label">Colored bar</string>
+    <string name="player_timeline_fat_bar_label">圓弧樣式</string>
+    <string name="player_timeline_pin_bar_label">細條樣式</string>
+    <string name="player_timeline_thin_bar_label">Thin Bar</string>
+    <string name="player_timeline_wavy_label">波浪樣式</string>
+    <string name="player_type">Player Type</string>
+
+    <!-- Playlist -->
+    <string name="playlist_action_add">新增到播放清單</string>
+    <string name="playlist_action_create">新增播放清單</string>
+    <string name="playlist_action_export">匯出播放清單</string>
+    <string name="playlist_action_import">匯入播放清單</string>
+    <string name="playlist_action_shuffle_positions">重新排列</string>
+    <string name="playlist_action_toggle_pinned">釘選/取消釘選 播放清單</string>
+    <string name="playlist_create_dialog_title">建立新的播放清單</string>
+    <string name="playlist_left_swipe">Playlist Left Swipe</string>
+    <string name="playlist_pinned_title">已釘選的播放清單</string>
+    <string name="playlist_rename_dialog_title">Rename playlist</string>
+    <string name="playlist_reorder_ascending_sort_required_message">只能按升序重新排序</string>
+    <string name="playlist_reorder_lock_toggle_label">鎖定/解鎖 重新排序歌曲</string>
+    <string name="playlist_right_swipe">Playlist Right Swipe</string>
+    <string name="playlist_selection_action_deselect">取消選取</string>
+    <string name="playlist_top">播放清單</string>
+
+    <!-- Queue -->
+    <string name="queue_discover_description">從播放佇列中刪除喜歡和播放清單的歌曲</string>
+    <string name="queue_discover_title">探索</string>
+
+    <!-- Radio -->
+    <string name="radio_action_start">開啟電台</string>
+
+    <!-- Recommendations -->
+    <string name="recommendations_action_smart_shuffle">智慧建議</string>
+    <string name="recommendations_minimum_playback_duration_label">最短聆聽時間</string>
+    <string name="recommendations_title">精選</string>
+
+    <!-- Search -->
+    <string name="search_display_order">Online search display order</string>
+    <string name="search_display_order_suggestions_first">Suggestions first</string>
+    <string name="search_history_action_clear">移除搜尋紀錄</string>
+    <string name="search_history_empty_message">搜尋紀錄空空如也</string>
+    <string name="search_history_pause_description">不顯示和保存搜尋紀錄</string>
+    <string name="search_history_pause_label">停止搜尋紀錄</string>
+    <string name="search_title">搜尋</string>
+
+    <!-- Settings -->
+    <string name="settings_app_language_label">App 語言</string>
+    <string name="settings_audio_bass_boost">Audio bass boost</string>
+    <string name="settings_audio_equalizer_label">等化器</string>
+    <string name="settings_audio_loudness_normalization_description">將音量調整至固定值</string>
+    <string name="settings_audio_loudness_normalization_label">音量平衡</string>
+    <string name="settings_audio_reverb">Audio reverb</string>
+    <string name="settings_audio_skip_silence_description">播放過程中跳過無聲部分</string>
+    <string name="settings_audio_skip_silence_label">跳過無聲部分</string>
+    <string name="settings_bass_boost_level">Bass boost level</string>
+    <string name="settings_cache_action_set_custom_size">自定義暫存</string>
+    <string name="settings_cache_custom_size_input_hint">請輸入MB的大小</string>
+    <string name="settings_cache_delete_confirmation">你真的要移除快取嗎?</string>
+    <string name="settings_cache_eviction_description">當暫存空间不夠時. 最久未訪問的資料將被清除.</string>
+    <string name="settings_cache_image_size_limit_label">圖像暫存容量上限</string>
+    <string name="settings_cache_song_size_limit_label">歌曲暫存容量上限</string>
+    <string name="settings_cache_title">暫存</string>
+    <string name="settings_data_title">資料</string>
+    <string name="settings_downloads_storage_limit_label">歌曲下載容量上限</string>
+    <string name="settings_enable_autodownload_song">Enable auto download song</string>
+    <string name="settings_font_include_padding_description">在文本周圍增加間距</string>
+    <string name="settings_font_include_padding_label">應用字體間距</string>
+    <string name="settings_font_use_system_description">使用系統已應用的字型</string>
+    <string name="settings_font_use_system_label">使用系統字型</string>
+    <string name="settings_general_title">General</string>
+    <string name="settings_home_default_page_label">預設頁面</string>
+    <string name="settings_interface_page_title">介面</string>
+    <string name="settings_interface_title">使用者介面</string>
+    <string name="settings_languages_title">語言</string>
+    <string name="settings_library_now_playing_indicator_label">Now Playing Indicator</string>
+    <string name="settings_library_playlist_indicator_description">Indicates if the song is already added to a Playlist</string>
+    <string name="settings_library_playlist_indicator_label">Playlist Indicator</string>
+    <string name="settings_library_queue_playlist_swipe_left_label">Queue and Local Playlists Left Swipe</string>
+    <string name="settings_library_queue_playlist_swipe_right_label">Queue and Local Playlists Right Swipe</string>
+    <string name="settings_logging_error_file_description">啟用時會建立記錄檔突顯錯誤</string>
+    <string name="settings_loudness_base_gain">Loudness base gain</string>
+    <string name="settings_lyrics_artwork_visible_label">在歌詞中顯示縮圖</string>
+    <string name="settings_lyrics_match_player_background_label">Show background color in Lyrics</string>
+    <string name="settings_lyrics_remember_state_description">Keep lyrics state between sessions</string>
+    <string name="settings_lyrics_remember_state_label">Save lyrics state</string>
+    <string name="settings_lyrics_seek_on_line_press_label">可點擊歌詞文字</string>
+    <string name="settings_menu_style_label">功能表樣式</string>
+    <string name="settings_miscellaneous_title">其他設定</string>
+    <string name="settings_navigation_position_label">導覽列位置</string>
+    <string name="settings_navigation_style_label">導覽列樣式</string>
+    <string name="settings_navigation_transition_effect_label">轉場特效</string>
+    <string name="settings_network_quality_title">品質</string>
+    <string name="settings_parental_age_restriction_description">防止播放有年齡限制的歌曲</string>
+    <string name="settings_playback_duration_limit_label">排除超過限制時長的歌曲</string>
+    <string name="settings_playback_pause_at_zero_volume_description">當音量為 0 時暫停播放，並在音量大於 0 時恢復播放</string>
+    <string name="settings_playback_pause_between_songs_label">在歌曲之間暫停</string>
+    <string name="settings_playback_previous_restart_threshold_label">Previous Button Will Restart the Current Song After the Following Seconds Have Passed</string>
+    <string name="settings_playback_skip_on_error_description">如果發生錯誤，將跳至下一首歌</string>
+    <string name="settings_playback_skip_on_error_label">Autoskip on error</string>
+    <string name="settings_player_action_bar_gradient_label">Show Bottom Gradient</string>
+    <string name="settings_player_action_bar_transparent_background_label">透明背景</string>
+    <string name="settings_player_actions_spaced_evenly_label">平均間隔</string>
+    <string name="settings_player_appearance_presets_preview_description">Previews will be in low quality</string>
+    <string name="settings_player_appearance_presets_title">Appearance Presets</string>
+    <string name="settings_player_artwork_animation_enabled_label">Show cover thumbnail animation</string>
+    <string name="settings_player_artwork_animation_style_label">Cover animation type</string>
+    <string name="settings_player_artwork_corner_radius_label">縮圖圓角</string>
+    <string name="settings_player_artwork_shrink_when_paused_label">暫停時縮小縮圖</string>
+    <string name="settings_player_artwork_style_label">縮圖尺寸</string>
+    <string name="settings_player_artwork_visible_label">顯示縮圖</string>
+    <string name="settings_player_background_colors_label">背景顏色</string>
+    <string name="settings_player_background_progress_label">背景進度條</string>
+    <string name="settings_player_bottom_black_gradient_label">Black Gradient at Bottom</string>
+    <string name="settings_player_button_zoom_out_animation_label">Button Zoom Out Animation</string>
+    <string name="settings_player_controls_style_label">Controls type</string>
+    <string name="settings_player_disable_horizontal_swipe_label">停用水平滑動</string>
+    <string name="settings_player_disable_song_swipe_label">停用滑動切換歌曲</string>
+    <string name="settings_player_disable_text_marquee_description">捲動文字用於長文本當中</string>
+    <string name="settings_player_disable_text_marquee_label">停用捲動文字</string>
+    <string name="settings_player_favorite_button_style_label">喜歡按鈕</string>
+    <string name="settings_player_gradient_style_label">Gradient Type</string>
+    <string name="settings_player_header_album_artist_description">專輯及藝人名稱</string>
+    <string name="settings_player_header_icons_visible_label">Show info with icons</string>
+    <string name="settings_player_header_style_label">資訊類別</string>
+    <string name="settings_player_next_queue_visible_label">在播放器底下顯示下兩首歌曲</string>
+    <string name="settings_player_persistent_queue_description">儲存並回復播放的歌曲</string>
+    <string name="settings_player_persistent_queue_label">保留播放清單</string>
+    <string name="settings_player_play_button_label">播放按鈕</string>
+    <string name="settings_player_prevent_collapsed_dismissal_description">避免在最小化時下滑關閉播放器或清除佇列</string>
+    <string name="settings_player_queue_duration_visible_label">顯示佇列的總時間長度</string>
+    <string name="settings_player_queue_size_limit_label">佇列歌曲上限</string>
+    <string name="settings_player_queue_style_label">佇列類型</string>
+    <string name="settings_player_queue_swipe_up_label">Swipe up to open the queue</string>
+    <string name="settings_player_queue_tap_to_open_label">點擊打開播放佇列</string>
+    <string name="settings_player_remaining_duration_visible_label">顯示歌曲剩餘時間</string>
+    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
+    <string name="settings_player_start_minimized_description">當點擊歌曲時, 播放器最小化啟動</string>
+    <string name="settings_player_tap_artwork_toggle_lyrics_description">在縮圖上點擊</string>
+    <string name="settings_player_tap_artwork_toggle_lyrics_label">開關歌詞</string>
+    <string name="settings_player_text_outline_label">Enable Text Outline</string>
+    <string name="settings_player_timeline_label">進度條</string>
+    <string name="settings_player_timeline_size_label">播放器時間軸大小</string>
+    <string name="settings_player_timeline_transparent_label">透明的時間軸</string>
+    <string name="settings_player_top_action_bar_visible_label">顯示上方操作欄</string>
+    <string name="settings_proxy_enabled_label">啟用 Proxy</string>
+    <string name="settings_reset">重置</string>
+    <string name="settings_restart_required_message">需要重新啟動App</string>
+    <string name="settings_restore_default_settings">恢復預設設定</string>
+    <string name="settings_search_floating_button_visible_label">顯示浮動圖示</string>
+    <string name="settings_swipe_actions_description">透過左､右滑切換歌曲</string>
+    <string name="settings_swipe_actions_title">滑動操作</string>
+    <string name="settings_theme_dark_mode_label">深色主題</string>
+    <string name="settings_theme_mode_label">主題模式</string>
+    <string name="settings_title">設定</string>
+    <string name="settings_transition_fade">淡化</string>
+    <string name="settings_use_font_type">使用的字型類別</string>
+
+    <!-- Statistics -->
+    <string name="statistics_title">統計</string>
+    <string name="statistics_top_period_title">View top %s of …</string>
+
+    <!-- Sync -->
+    <string name="sync_action_sync">同步</string>
+
+    <!-- Theme -->
+    <string name="theme_palette_dynamic">動態</string>
+
+    <!-- Thumbnail -->
+    <string name="thumbnail_action_edit">Edit Thumbnail</string>
+    <string name="thumbnail_action_reset">Reset Thumbnail</string>
+
+    <!-- Updates -->
+    <string name="updates_action_check">檢查更新</string>
+    <string name="updates_action_check_now">立即檢查</string>
+    <string name="updates_automatic_check_title">啟用檢查更新</string>
+    <string name="updates_available">有可用的更新</string>
+    <string name="updates_available_download_size">The file size is %s</string>
+    <string name="updates_available_version_message">The new version %s can be downloaded!</string>
+    <string name="updates_build_beta_label"> Beta</string>
+    <string name="updates_check_mode_ask">詢問</string>
+    <string name="updates_check_permission_description">當更新可用時, 系統會通知是否要安裝. 不會在背景自動安裝.</string>
+    <string name="updates_check_permission_message">在GitHub檢視更新?</string>
+    <string name="updates_check_permission_screening_note">但是這些更新不會經過額外的過濾. 例如: IzzyOnDroid､F-Droid.</string>
+    <string name="updates_check_permission_settings_note">你依然可以從設定中開啟或關閉.</string>
+    <string name="updates_no_update_available">沒有可用的更新</string>
+
+    <!-- Visualizer -->
+    <string name="visualizer_animation_bubbles">Bubbles</string>
+    <string name="visualizer_microphone_permission_message">請授予麥克風權限以啟用視覺化效果.</string>
+    <string name="visualizer_title">視覺化效果</string>
+
+</resources>

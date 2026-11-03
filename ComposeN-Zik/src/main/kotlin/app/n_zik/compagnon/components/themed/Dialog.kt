@@ -84,7 +84,7 @@ fun ConfirmationDialog(
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
     cancelText: String = stringResource(Res.string.cancel),
-    confirmText: String = stringResource(Res.string.confirm),
+    confirmText: String = stringResource(Res.string.common_action_confirm),
     onCancel: () -> Unit = onDismiss,
 ) {
     DialogFrame(onDismiss = onDismiss, modifier = modifier) {
@@ -271,8 +271,8 @@ fun InputNumericDialog(
 ) {
     val txtFieldError = remember { mutableStateOf("") }
     val txtField = remember { mutableStateOf(value) }
-    val valueCannotEmpty = stringResource(Res.string.value_cannot_be_empty)
-    val valueMustBeGreater = stringResource(Res.string.value_must_be_greater_than)
+    val valueCannotEmpty = stringResource(Res.string.common_validation_empty_value)
+    val valueMustBeGreater = stringResource(Res.string.common_validation_minimum_value)
 
     DefaultDialog(onDismiss = onDismiss, modifier = modifier) {
         BasicText(
@@ -317,7 +317,7 @@ fun InputNumericDialog(
         ButtonRow(
             buttons = listOf(
                 DialogButton(
-                    text = stringResource(Res.string.confirm),
+                    text = stringResource(Res.string.common_action_confirm),
                     onClick = {
                         when (val checked = NumericInput.check(txtField.value, valueMin)) {
                             NumericInput.Empty -> txtFieldError.value = valueCannotEmpty
@@ -381,7 +381,7 @@ fun TextFieldDialog(
     onDone: (String) -> Unit,
     modifier: Modifier = Modifier,
     cancelText: String = stringResource(Res.string.cancel),
-    doneText: String = stringResource(Res.string.done),
+    doneText: String = stringResource(Res.string.common_action_done),
     initialTextInput: String = "",
     singleLine: Boolean = true,
     maxLines: Int = 1,
@@ -630,7 +630,7 @@ fun StringListDialog(
                         ) {
                             Icon(
                                 painter = painterResource(Res.drawable.trash),
-                                contentDescription = stringResource(Res.string.delete),
+                                contentDescription = stringResource(Res.string.common_action_delete),
                                 tint = colorPalette.red,
                                 modifier = Modifier.size(20.dp),
                             )
@@ -646,7 +646,7 @@ fun StringListDialog(
                 contentAlignment = Alignment.Center,
             ) {
                 BasicText(
-                    text = stringResource(Res.string.no_items),
+                    text = stringResource(Res.string.common_empty_items),
                     style = typography().s.copy(color = colorPalette.textSecondary),
                 )
             }
@@ -686,7 +686,7 @@ fun StringListDialog(
             text = conflictTitle,
             onDismiss = { errorDialog = false },
             onConfirm = { errorDialog = false },
-            confirmText = stringResource(Res.string.confirm),
+            confirmText = stringResource(Res.string.common_action_confirm),
         )
     }
 }

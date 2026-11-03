@@ -1,15 +1,5 @@
 package app.n_zik.compagnon.components.themed
 
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.components.dialog.common.ButtonRow
-import app.n_zik.compagnon.components.dialog.common.DialogButton
-import app.n_zik.compagnon.components.dialog.common.DialogFrame
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.typography
-import app.n_zik.compagnon.uiRoundnessShape
-import app.n_zik.compagnon.utils.Preferences
-import app.n_zik.compagnon.utils.Toaster
-import app.n_zik.compagnon.utils.semiBold
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -37,6 +27,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.dialog.common.ButtonRow
+import app.n_zik.compagnon.components.dialog.common.DialogButton
+import app.n_zik.compagnon.components.dialog.common.DialogFrame
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.uiRoundnessShape
+import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.semiBold
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -92,23 +92,23 @@ private data class MpbRow(
 )
 
 private val MPB_ROWS: List<MpbRow> = listOf(
-    MpbRow("skip_back", Res.string.miniplayer_button_skip_back, Res.drawable.play_skip_back, true, false),
-    MpbRow("play_pause", Res.string.miniplayer_button_play_pause, Res.drawable.play, true, false),
-    MpbRow("skip_forward", Res.string.miniplayer_button_skip_forward, Res.drawable.play_skip_forward, true, false),
-    MpbRow("shuffle", Res.string.miniplayer_button_shuffle, Res.drawable.shuffle, false, false),
-    MpbRow("repeat", Res.string.miniplayer_button_repeat, Res.drawable.repeat, false, false),
-    MpbRow("queue", Res.string.miniplayer_button_queue, Res.drawable.reorder, false, false),
-    MpbRow("audio_output", Res.string.miniplayer_button_audio_output, Res.drawable.devices, true, false),
-    MpbRow("sleep_timer", Res.string.miniplayer_button_sleep_timer, Res.drawable.sleep, false, false),
+    MpbRow("skip_back", Res.string.player_action_previous, Res.drawable.play_skip_back, true, false),
+    MpbRow("play_pause", Res.string.player_mini_button_play_pause, Res.drawable.play, true, false),
+    MpbRow("skip_forward", Res.string.player_action_next, Res.drawable.play_skip_forward, true, false),
+    MpbRow("shuffle", Res.string.player_mini_action_shuffle, Res.drawable.shuffle, false, false),
+    MpbRow("repeat", Res.string.player_mini_button_repeat, Res.drawable.repeat, false, false),
+    MpbRow("queue", Res.string.player_mini_button_queue, Res.drawable.reorder, false, false),
+    MpbRow("audio_output", Res.string.player_mini_button_audio_output, Res.drawable.devices, true, false),
+    MpbRow("sleep_timer", Res.string.player_mini_button_sleep_timer, Res.drawable.sleep, false, false),
     MpbRow("like", Res.string.miniplayer_button_like, Res.drawable.heart, false, false),
-    MpbRow("add_to_playlist", Res.string.miniplayer_button_add_to_playlist, Res.drawable.add_in_playlist, false, false),
-    MpbRow("download", Res.string.miniplayer_button_download, Res.drawable.download, false, false),
-    MpbRow("share", Res.string.miniplayer_button_share, Res.drawable.share_social, false, false),
-    MpbRow("radio", Res.string.miniplayer_button_radio, Res.drawable.radio, false, false),
-    MpbRow("discover", Res.string.miniplayer_button_discover, Res.drawable.discover, false, true),
-    MpbRow("lyrics", Res.string.miniplayer_button_lyrics, Res.drawable.song_lyrics, false, false),
-    MpbRow("visualizer", Res.string.miniplayer_button_visualizer, Res.drawable.sound_effect, false, true),
-    MpbRow("video", Res.string.miniplayer_button_video, Res.drawable.video, false, false),
+    MpbRow("add_to_playlist", Res.string.player_mini_action_add_to_playlist, Res.drawable.add_in_playlist, false, false),
+    MpbRow("download", Res.string.player_mini_button_download, Res.drawable.download, false, false),
+    MpbRow("share", Res.string.player_mini_button_share, Res.drawable.share_social, false, false),
+    MpbRow("radio", Res.string.player_mini_button_radio, Res.drawable.radio, false, false),
+    MpbRow("discover", Res.string.player_mini_button_discover, Res.drawable.discover, false, true),
+    MpbRow("lyrics", Res.string.player_mini_button_lyrics, Res.drawable.song_lyrics, false, false),
+    MpbRow("visualizer", Res.string.player_mini_button_visualizer, Res.drawable.sound_effect, false, true),
+    MpbRow("video", Res.string.player_mini_button_video, Res.drawable.video, false, false),
 )
 
 /**
@@ -206,12 +206,12 @@ fun MiniPlayerButtonsSettingsDialog(
 
     DialogFrame(
         onDismiss = onDismiss,
-        title = stringResource(Res.string.miniplayer_buttons_config),
+        title = stringResource(Res.string.player_mini_buttons_config),
     ) {
         val colorPalette = colorPalette()
         // The header's description (the frame carries the title)
         BasicText(
-            text = stringResource(Res.string.miniplayer_buttons_config_description),
+            text = stringResource(Res.string.player_mini_buttons_config_description),
             style = typography().s.copy(
                 color = colorPalette.textSecondary,
             ),
@@ -269,7 +269,7 @@ fun MiniPlayerButtonsSettingsDialog(
                 // Reset: the working state only (the phone's MPB:207-213 — no persist, no
                 // toast)
                 DialogButton(
-                    text = stringResource(Res.string.reset),
+                    text = stringResource(Res.string.common_action_reset),
                     onClick = { working = mpbResetState() },
                 ),
                 DialogButton(
@@ -280,7 +280,7 @@ fun MiniPlayerButtonsSettingsDialog(
                 // Confirm: persists the 2 functional keys (the phone's MPB:217-225, without
                 // the order / side effect) + toasts + closes
                 DialogButton(
-                    text = stringResource(Res.string.confirm),
+                    text = stringResource(Res.string.common_action_confirm),
                     onClick = {
                         preferences.update { s ->
                             s.copy(
@@ -288,7 +288,7 @@ fun MiniPlayerButtonsSettingsDialog(
                                 showMiniPlayerVisualizer = working.visualizer,
                             )
                         }
-                        Toaster.s(Res.string.toast_preference_saved)
+                        Toaster.s(Res.string.settings_preference_saved_message)
                         onDismiss()
                     },
                     primary = true,
