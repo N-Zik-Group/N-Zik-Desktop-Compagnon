@@ -1,0 +1,65 @@
+<svg width="750" height="350" viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+      <style>
+        .bg { fill: #ffffff; stroke: #e1e4e8; }
+        .text-title { fill: #2b3137; font-weight: 600; font-size: 15px; }
+        .axis-label { fill: #586069; font-size: 10px; }
+        .chart-line { stroke: #0366d6; fill: none; }
+        .chart-dot { fill: #ffffff; stroke: #0366d6; }
+        .grad-start { stop-color: #0366d6; stop-opacity: 0.4; }
+        .grad-end { stop-color: #0366d6; stop-opacity: 0.0; }
+
+        @media (prefers-color-scheme: dark) {
+          .bg { fill: #0d1117; stroke: #30363d; }
+          .text-title { fill: #c9d1d9; }
+          .axis-label { fill: #a5adba; }
+          .chart-line { stroke: #58a6ff; }
+          .chart-dot { fill: #0d1117; stroke: #58a6ff; }
+          .grad-start { stop-color: #58a6ff; stop-opacity: 0.3; }
+          .grad-end { stop-color: #58a6ff; stop-opacity: 0.0; }
+        }
+
+        @keyframes pulse {
+          0% { r: 4; stroke-width: 2.5; }
+          50% { r: 5.5; stroke-width: 4; stroke-opacity: 0.6; }
+          100% { r: 4; stroke-width: 2.5; }
+        }
+        .dot-pulse { animation: pulse 2s infinite; }
+        @keyframes draw {
+          from { stroke-dashoffset: 1000; }
+          to { stroke-dashoffset: 0; }
+        }
+        .animated-line {
+          stroke-dasharray: 1000;
+          stroke-dashoffset: 1000;
+          animation: draw 1.5s ease-out forwards;
+        }
+      </style>
+      <defs>
+        <filter id="shadow2" x="-5%" y="-5%" width="110%" height="110%">
+          <feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity="0.05" />
+        </filter>
+        <linearGradient id="fillGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" class="grad-start"/>
+          <stop offset="100%" class="grad-end"/>
+        </linearGradient>
+      </defs>
+      <rect class="bg" width="600" height="280" rx="10" filter="url(#shadow2)" stroke-width="1"/>
+      <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
+        <text x="25" y="30" class="text-title">⭐ Star Growth (Current: 8)</text>
+      </g>
+
+      <!-- Area under the line -->
+      <path fill="url(#fillGrad)" d="M 72.0,250.0 C 75.50299500731634,250.0 75.50299500731634,221.71428571428572 79.00599001463269,221.71428571428572 C 88.84301855397344,221.71428571428572 88.84301855397344,193.42857142857144 98.68004709331419,193.42857142857144 C 108.27027152723412,193.42857142857144 108.27027152723412,165.14285714285717 117.86049596115404,165.14285714285717 C 156.40871277987492,165.14285714285717 156.40871277987492,136.85714285714286 194.95692959859582,136.85714285714286 C 197.85215214206542,136.85714285714286 197.85215214206542,108.57142857142856 200.74737468553502,108.57142857142856 C 298.6582263872417,108.57142857142856 298.6582263872417,80.2857142857143 396.56907808894846,80.2857142857143 C 482.28453904447423,80.2857142857143 482.28453904447423,52.0 568.0,52.0 L 568.0,250 L 72.0,250 Z" />
+
+      <g class="axis-label" font-family="Arial,sans-serif">
+        <text transform="translate(19 151) rotate(-90)" text-anchor="middle">GitHub Stars</text>
+        <text x="64" y="253.0" text-anchor="end">1</text><text x="64" y="196.4" text-anchor="end">3</text><text x="64" y="168.1" text-anchor="end">4</text><text x="64" y="111.6" text-anchor="end">6</text><text x="64" y="55.0" text-anchor="end">8</text>
+        <text x="186.2" y="268" text-anchor="middle">12 Oct</text><text x="315.4" y="268" text-anchor="middle">19 Oct</text><text x="444.6" y="268" text-anchor="middle">26 Oct</text>
+      </g>
+
+      <!-- Main curve -->
+      <path d="M 72.0,250.0 C 75.50299500731634,250.0 75.50299500731634,221.71428571428572 79.00599001463269,221.71428571428572 C 88.84301855397344,221.71428571428572 88.84301855397344,193.42857142857144 98.68004709331419,193.42857142857144 C 108.27027152723412,193.42857142857144 108.27027152723412,165.14285714285717 117.86049596115404,165.14285714285717 C 156.40871277987492,165.14285714285717 156.40871277987492,136.85714285714286 194.95692959859582,136.85714285714286 C 197.85215214206542,136.85714285714286 197.85215214206542,108.57142857142856 200.74737468553502,108.57142857142856 C 298.6582263872417,108.57142857142856 298.6582263872417,80.2857142857143 396.56907808894846,80.2857142857143 C 482.28453904447423,80.2857142857143 482.28453904447423,52.0 568.0,52.0" class="chart-line animated-line" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+
+      <!-- Bright endpoint dot -->
+      <circle cx="568.0" cy="52.0" r="4" class="chart-dot dot-pulse" stroke-width="2.5" />
+    </svg>
