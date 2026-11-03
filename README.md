@@ -45,8 +45,8 @@
 
 [![Launched on DevGlobe](https://devglobe.app/badges/launched-on-devglobe-dark.svg)](https://devglobe.app/projects/n-zik-desktop-compagnon?utm_source=badge&utm_medium=embed)
 
-  [![License: GPL v3](https://img.shields.io/github/license/N-Zik-Group/n-zik-desktop-compagnon?color=blue)](https://www.gnu.org/licenses/gpl-3.0)
-  [![CodeFactor](https://www.codefactor.io/repository/github/n-zik-group/n-zik-desktop-compagnon/badge)](https://www.codefactor.io/repository/github/n-zik-group/n-zik-desktop-compagnon)
+  [![License: GPL v3](https://img.shields.io/github/license/N-Zik-Group/N-Zik-Desktop-Compagnon?style=flat&color=blue)](https://www.gnu.org/licenses/gpl-3.0)
+  [![CodeFactor](https://img.shields.io/codefactor/grade/github/N-Zik-Group/N-Zik-Desktop-Compagnon?style=flat&label=CodeFactor)](https://www.codefactor.io/repository/github/n-zik-group/n-zik-desktop-compagnon)
 </div>
 
 # 📲 Installation
