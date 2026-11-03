@@ -743,7 +743,7 @@
     <!-- Tray -->
     <string name="tray_open">Ouvrir</string>
     <string name="tray_quit">Quitter</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
+    <string name="tray_tooltip">N-Zik Desktop Companion</string>
     <!-- Troubleshooting -->
     <string name="troubleshooting">Dépannage</string>
     <!-- Unreachable -->
@@ -769,7 +769,7 @@
     <string name="updates_available">Mise à jour disponible</string>
     <string name="updates_available_download_size">La taille du fichier est de %s</string>
     <string name="updates_available_version_message">La nouvelle version %s est disponible au téléchargement !</string>
-    <string name="updates_build_beta_label">BETA</string>
+    <string name="updates_build_beta_label">BÊTA</string>
     <string name="updates_build_debug_label">DÉBOGAGE</string>
     <string name="updates_build_dev_label">DÉVELOPPEMENT</string>
     <string name="updates_cache_cleared">Cache effacé</string>
