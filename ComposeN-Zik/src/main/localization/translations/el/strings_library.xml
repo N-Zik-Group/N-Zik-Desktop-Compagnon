@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Σελιδοδείκτης άλμπουμ</string>
     <string name="album_action_open">Μετάβαση στο άλμπουμ</string>
     <string name="album_left_swipe">Άλμπουμ Αριστερά Σύρσιμο</string>
-    <string name="album_loading_song_count_format">Φόρτωση %1$d τραγουδιών…</string>
+    <string name="album_loading_song_count_format">Φόρτωση άλμπουμ (κομμάτια: %1$d)…</string>
     <string name="album_right_swipe">Σύρσιμο Δεξιά</string>
     <string name="artist_action_follow">Ακολουθήστε</string>
     <string name="artist_action_play_local_songs">Αναπαραγωγή όλων των τοπικών τραγουδιών</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Pin/Ξεκαρφίτσωμα λίστας αναπαραγωγής</string>
     <string name="playlist_bookmark_unsupported_message">Αδυναμία σελιδοδείκτη άρεσε τραγούδια ή Episodes playlist</string>
     <string name="playlist_create_dialog_title">Δημιουργία νέας λίστας αναπαραγωγής</string>
-    <string name="playlist_delete_all_confirmation_count_format">Είστε βέβαιοι ότι θέλετε να διαγράψετε ΟΛΕΣ τις λίστες αναπαραγωγής %d?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Διαγραφή όλων των λιστών αναπαραγωγής? (Σύνολο: %d)</string>
     <string name="playlist_left_swipe">Σύρσιμο Αριστερής Λίστας</string>
     <string name="playlist_pinned_title">Pinned Playlists</string>
     <string name="playlist_rename_dialog_title">Μετονομασία λίστας αναπαραγωγής</string>
@@ -108,4 +108,6 @@
         <item quantity="one">%1$d τραγούδι</item>
         <item quantity="other">%1$d τραγούδια</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Δεν ήταν δυνατή η αίτηση πρόσβασης στη μουσική σε αυτήν τη συσκευή.</string>
+    <string name="library_on_device_permission_settings_failed">Αδύνατο το άνοιγμα των ρυθμίσεων δικαιωμάτων.</string>
 </resources>
