@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Альбом обраного</string>
     <string name="album_action_open">Перейти до альбому</string>
     <string name="album_left_swipe">Альбом Свайп вліво</string>
-    <string name="album_loading_song_count_format">Завантаження %1$d пісень…</string>
+    <string name="album_loading_song_count_format">Завантаження альбому (треків: %1$d)…</string>
     <string name="album_right_swipe">Альбом Свайп праворуч</string>
     <string name="artist_action_follow">Підписатися</string>
     <string name="artist_action_play_local_songs">Грати всі локальні пісні</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Прикріпити/Відкріпити плейліст</string>
     <string name="playlist_bookmark_unsupported_message">Не можна додати в обрану закладку пісні або список відтворення епізодів</string>
     <string name="playlist_create_dialog_title">Створити новий плейлист</string>
-    <string name="playlist_delete_all_confirmation_count_format">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Видалити всі списки відтворення? (Загалом: %d)</string>
     <string name="playlist_left_swipe">Плейлист Свайп вліво</string>
     <string name="playlist_pinned_title">Закріплено</string>
     <string name="playlist_rename_dialog_title">Перейменувати список відтворення</string>
@@ -110,4 +110,6 @@
         <item quantity="many">%1$d пісень</item>
         <item quantity="other">%1$d пісень</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Не вдалося надіслати запит на доступ до музики на цьому пристрої.</string>
+    <string name="library_on_device_permission_settings_failed">Не вдалося відкрити налаштування дозволів.</string>
 </resources>
