@@ -22,49 +22,49 @@
     <string name="album_action_bookmark">Bogmærk album</string>
     <string name="album_action_open">Gå til album</string>
     <string name="album_left_swipe">Venstre stryg for album</string>
-    <string name="album_loading_song_count_format">Loading %1$d songs…</string>
+    <string name="album_loading_song_count_format">Indlæser %1$d sange…</string>
     <string name="album_right_swipe">Højre stryg for album</string>
     <!-- App -->
-    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="app_subtitle">Ledsagende for N-Zik</string>
     <!-- Artist -->
     <string name="artist_action_follow">Følg</string>
     <string name="artist_action_play_local_songs">Afspil alle lokale sange</string>
     <string name="artist_following_status">Følger</string>
     <string name="artist_more_from">Mere af</string>
-    <string name="artist_roundness">Artist roundness</string>
+    <string name="artist_roundness">Kunstner rundhed</string>
     <string name="artist_songs_count_duration">%1$d Sange • %2$s</string>
     <string name="artist_songs_unavailable_message">Ingen sange endnu</string>
     <!-- Audio -->
-    <string name="audio_devices">Audio devices</string>
+    <string name="audio_devices">Lyd enheder</string>
     <string name="audio_effects">Lyd Effekter</string>
     <string name="audio_loudness_boost_level">Højttaler boost niveau</string>
-    <string name="audio_output_title">Audio output</string>
+    <string name="audio_output_title">Lyd output</string>
     <string name="audio_quality_automatic">Automatisk</string>
     <string name="audio_quality_format">Lydkvalitet</string>
     <string name="audio_quality_format_high">Høj</string>
     <string name="audio_quality_format_low">Lav</string>
     <string name="audio_reverb_none">Ingen</string>
-    <string name="audio_waveform_action_refresh">Update waveform</string>
+    <string name="audio_waveform_action_refresh">Opdater bølgeform</string>
     <!-- Backup -->
-    <string name="backup_action_export">Export backup</string>
+    <string name="backup_action_export">Eksportér sikkerhedskopi</string>
     <string name="backup_action_import_legacy_migration">Importér migrationsfil.</string>
     <string name="backup_auto_interval">Auto Backup Interval</string>
     <string name="backup_auto_interval_none">Deaktiveret</string>
-    <string name="backup_auto_location">Auto Backup Location</string>
-    <string name="backup_auto_location_not_set">Not set</string>
-    <string name="backup_auto_max_backups">Max Backups to Keep</string>
-    <string name="backup_auto_target">Backup Target</string>
-    <string name="backup_auto_title">Automatic Backup</string>
-    <string name="backup_export_description">Export database or settings to a file</string>
-    <string name="backup_import_description">Import database or settings from a file</string>
+    <string name="backup_auto_location">Automatisk Backup Placering</string>
+    <string name="backup_auto_location_not_set">Ikke angivet</string>
+    <string name="backup_auto_max_backups">Maks. sikkerhedskopier at beholde</string>
+    <string name="backup_auto_target">Backup Mål</string>
+    <string name="backup_auto_title">Automatisk Sikkerhedskopi</string>
+    <string name="backup_export_description">Eksportér database eller indstillinger til en fil</string>
+    <string name="backup_import_description">Importer database eller indstillinger fra en fil</string>
     <string name="backup_legacy_migration_description">For gamle brugere før konvertering.\nBrug gammel app til at lave en sikkerhedskopi til migration.</string>
     <string name="backup_target_database_label">Database</string>
     <!-- Bridge -->
-    <string name="bridge_audio_output_pc_subtitle">Sound on the PC (N-Zik Desktop Compagnon)</string>
+    <string name="bridge_audio_output_pc_subtitle">Lyd på pc\'en (N-Zik Desktop Compagnon)</string>
     <string name="bridge_server">PC server</string>
-    <string name="bridge_server_description">Let N-Zik Desktop Compagnon control your library from a PC on the same Wi-Fi network</string>
+    <string name="bridge_server_description">Lad N-Zik Desktop Compagnon styre dit bibliotek fra en pc på det samme Wi-Fi-netværk</string>
     <!-- Cached -->
-    <string name="cached_pc">Cached PC</string>
+    <string name="cached_pc">Cachelagret PC</string>
     <!-- Calendar -->
     <string name="calendar_period_one_month">1 måned</string>
     <string name="calendar_period_one_week">1 uge</string>
@@ -75,27 +75,27 @@
     <!-- Cancel -->
     <string name="cancel">Annuller</string>
     <!-- Close -->
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
+    <string name="close_behavior">Luk opførsel</string>
+    <string name="close_behavior_minimize">Minimér til bakke</string>
+    <string name="close_behavior_quit">Afslut app\'en</string>
     <!-- Command -->
-    <string name="command_clear">Clear the queue</string>
-    <string name="command_copied">Command copied</string>
-    <string name="command_jump">Play from the queue</string>
-    <string name="command_move">Move in the queue</string>
-    <string name="command_next">Next</string>
-    <string name="command_output">Audio output</string>
+    <string name="command_clear">Ryd køen</string>
+    <string name="command_copied">Kommando kopieret</string>
+    <string name="command_jump">Afspil fra køen</string>
+    <string name="command_move">Flyt i køen</string>
+    <string name="command_next">Næste</string>
+    <string name="command_output">Lyd output</string>
     <string name="command_pause">Pause</string>
     <string name="command_play">Afspil</string>
-    <string name="command_previous">Previous</string>
-    <string name="command_queue_add">Add to queue</string>
+    <string name="command_previous">Forrige</string>
+    <string name="command_queue_add">Føj til kø</string>
     <string name="command_queue_play">Afspil</string>
-    <string name="command_remove">Remove from the queue</string>
+    <string name="command_remove">Fjern fra køen</string>
     <string name="command_repeat">Gentag</string>
-    <string name="command_seek">Seek</string>
+    <string name="command_seek">Søg</string>
     <string name="command_shuffle">Bland</string>
-    <string name="command_speed">Speed</string>
-    <string name="command_unknown">A command</string>
+    <string name="command_speed">Hastighed</string>
+    <string name="command_unknown">En kommando</string>
     <!-- Common -->
     <string name="common_action_clear">Ryd</string>
     <string name="common_action_confirm">Bekræft</string>
@@ -107,7 +107,7 @@
     <string name="common_action_translate">Oversæt</string>
     <string name="common_action_turn_off">Slå fra</string>
     <string name="common_action_update">Opdater</string>
-    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_artist_conjunction_and">og</string>
     <string name="common_brand_github">GitHub</string>
     <string name="common_clipboard_copy_success">Kopieret</string>
     <string name="common_color_source_theme">Tema</string>
@@ -134,79 +134,79 @@
     <string name="common_size_small">Lille</string>
     <string name="common_state_off">Fra</string>
     <string name="common_state_on">Til</string>
-    <string name="common_storage_used_suffix">used</string>
+    <string name="common_storage_used_suffix">brugt</string>
     <string name="common_translation_title">Oversættelse</string>
     <string name="common_validation_empty_value">Værdi må ikke være tom</string>
-    <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="common_validation_minimum_value">Værdien skal være større end</string>
     <!-- Connection -->
-    <string name="connection_connecting">Connecting…</string>
-    <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
-    <string name="connection_live">Connected</string>
-    <string name="connection_offline">Disconnected</string>
-    <string name="connection_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
-    <string name="connection_reconnecting">Reconnecting…</string>
-    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
-    <string name="connection_replaced">Another window of this PC took over the session.</string>
-    <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
+    <string name="connection_connecting">Forbinder…</string>
+    <string name="connection_kicked">Forbindelsen er afbrudt fra telefonen. Parringen holdes.</string>
+    <string name="connection_live">Forbundet</string>
+    <string name="connection_offline">Afbrudt</string>
+    <string name="connection_other_active">En anden pc (%1$s) er forbundet til telefonen. Afbryd forbindelsen til telefonen, og prøv derefter.</string>
+    <string name="connection_reconnecting">Genopretter…</string>
+    <string name="connection_reconnecting_in">Forbindelse til telefonen tabt. Genopret forbindelse i %1$d s…</string>
+    <string name="connection_replaced">Et andet vindue af denne PC overtog sessionen.</string>
+    <string name="connection_server_stopped">Serveren stoppede. Genstart den fra N-Zik-appen på din telefon, og tilslut derefter igen.</string>
     <!-- Contributors -->
     <string name="contributors">Bidragydere</string>
     <!-- Dismiss -->
-    <string name="dismiss">Dismiss</string>
+    <string name="dismiss">Afvis</string>
     <!-- Download -->
     <string name="download_pc">Download PC</string>
     <!-- Downloads -->
     <string name="downloads_action_download_all">Hent alle sange</string>
-    <string name="downloads_action_refresh_quality">Update downloads</string>
+    <string name="downloads_action_refresh_quality">Opdater downloads</string>
     <string name="downloads_action_remove_all">Fjern alle hentede sange</string>
     <string name="downloads_cancelled">Download annulleret</string>
     <string name="downloads_delete_all_confirmation">Vil du virkelig slette hentningen?</string>
     <string name="downloads_download_all_confirmation">Vil du virkelig hente alle?</string>
-    <string name="downloads_quality_format">Download Quality</string>
-    <string name="downloads_refresh_quality_description">Re-download the songs that were downloaded with a different quality</string>
+    <string name="downloads_quality_format">Hent Kvalitet</string>
+    <string name="downloads_refresh_quality_description">Gendownload de sange, der blev hentet med en anden kvalitet</string>
     <string name="downloads_title">Hent</string>
     <!-- Error -->
-    <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
-    <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
-    <string name="error_listener_failed">The pairing listener could not be opened. Pair manually below.</string>
-    <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
-    <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
+    <string name="error_code_rejected">Ugyldig eller udløbet kode. Tjek koden på din telefon, og prøv igen.</string>
+    <string name="error_incompatible_version">Telefon version inkompatibel (kontrakt %1$s). Opdater N-Zik Desktop Compagnon eller N-Zik.</string>
+    <string name="error_listener_failed">Parringen lytter kunne ikke åbnes. Par manuelt nedenfor.</string>
+    <string name="error_phone_unreachable">Telefonen kunne ikke nås. Kontroller, at dens server kører, og at begge enheder er på samme Wi-Fi.</string>
+    <string name="error_rate_limited">For mange forsøg. Prøv igen i %1$d s.</string>
     <string name="error_storage_failed">The pairing could not be saved in the Windows Credential Manager.</string>
-    <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
-    <string name="error_unknown_code">no code</string>
-    <string name="error_update_check_failed">The update check failed (%1$s)</string>
-    <string name="error_update_download_failed">The update download failed (%1$s)</string>
-    <string name="error_windows_install_helper">The Windows installer could not be started. Run the downloaded installer manually.</string>
+    <string name="error_unexpected">Uventet svar fra telefonen (HTTP %1$d, %2$s).</string>
+    <string name="error_unknown_code">ingen kode</string>
+    <string name="error_update_check_failed">Opdateringstjek mislykkedes (%1$s)</string>
+    <string name="error_update_download_failed">Opdatering af download mislykkedes (%1$s)</string>
+    <string name="error_windows_install_helper">Windows installationsprogrammet kunne ikke startes. Kør den downloadede installatør manuelt.</string>
     <!-- Export -->
     <string name="export_cached_song_action">Eksport cachelagret eller hentet sang</string>
     <string name="export_cached_songs_action">Eksport cachelagret</string>
     <!-- Fake -->
     <string name="fake_audio_bar">Falsk lydbølge</string>
     <!-- Forget -->
-    <string name="forget_phone">Forget this phone</string>
-    <string name="forget_phone_text">Removes the pairing from this PC</string>
+    <string name="forget_phone">Glem denne telefon</string>
+    <string name="forget_phone_text">Fjerner parringen fra denne PC</string>
     <!-- Git -->
     <string name="git_title">GIT</string>
     <!-- Home -->
-    <string name="home_tabs_settings">Home page</string>
-    <string name="home_tabs_settings_description">Reorder and show/hide tabs</string>
+    <string name="home_tabs_settings">Hjemmeside</string>
+    <string name="home_tabs_settings_description">Genbestil og vise/skjul faner</string>
     <string name="home_title">Hjem</string>
     <!-- Import -->
-    <string name="import_backup">Import backup</string>
+    <string name="import_backup">Importér sikkerhedskopi</string>
     <!-- Install -->
-    <string name="install_copy_command">Copy command</string>
-    <string name="install_copy_path">Copy path</string>
-    <string name="install_file_saved_at">The update file is saved at:</string>
-    <string name="install_flatpak_command">Update in place with:</string>
-    <string name="install_open_folder">Open folder</string>
-    <string name="install_pkg_command">Install the package with:</string>
-    <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_pkg_pacman_command">Upgrade the package with:</string>
+    <string name="install_copy_command">Kopiér kommando</string>
+    <string name="install_copy_path">Kopiér sti</string>
+    <string name="install_file_saved_at">Opdateringsfilen er gemt på:</string>
+    <string name="install_flatpak_command">Opdatering på plads med:</string>
+    <string name="install_open_folder">Åbn mappe</string>
+    <string name="install_pkg_command">Installér pakken med:</string>
+    <string name="install_pkg_manual">Der blev ikke fundet nogen pakkehåndtering. Installér den downloadede pakke manuelt.</string>
+    <string name="install_pkg_pacman_command">Opgradér pakken med:</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, extract the downloaded .tar.gz in its place (the tarball opens into a new app folder - never over the current one), and relaunch.</string>
+    <string name="install_replacement_portable_linux">Afslut app\'en først (dens filer er låst, mens den kører), og erstat derefter app-mappen: slette den aktuelle app-mappe, udtrække den downloadede . ar.gz på sin plads (tarball åbner ind i en ny app mappe - aldrig over den nuværende), og relancering.</string>
     <!-- Interface -->
     <string name="interface_in_use">Grænseflade i brug</string>
     <!-- Lastfm -->
-    <string name="lastfm_love">Love on Last.fm</string>
+    <string name="lastfm_love">Elsker på Last.fm</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
     <!-- Library -->
     <string name="library_action_bookmark">Bogmærk</string>
@@ -219,8 +219,8 @@
     <string name="library_dislikes_added">Kan ikke lide %s</string>
     <string name="library_dislikes_removed">Fjernede %s fra dislikes</string>
     <string name="library_downloaded_title">Hentet</string>
-    <string name="library_empty">Nothing here.</string>
-    <string name="library_error_unreachable">The phone could not be reached.</string>
+    <string name="library_empty">Intet her.</string>
+    <string name="library_error_unreachable">Telefonen kunne ikke nås.</string>
     <string name="library_favorites_action_add">Føj til favoritter</string>
     <string name="library_favorites_added">Føjet til favoritter</string>
     <string name="library_favorites_removed">Fjernet fra favoritter</string>
@@ -228,12 +228,12 @@
     <string name="library_filter_by_title">Filtrér efter</string>
     <string name="library_history_title">Historik</string>
     <string name="library_layout_list_label">Liste</string>
-    <string name="library_management_section_title">Management</string>
-    <string name="library_none">The phone shares no library with this PC.</string>
-    <string name="library_not_found">Not found on the phone. It may have been deleted.</string>
-    <string name="library_on_device_title">On device phone</string>
+    <string name="library_management_section_title">Behandling</string>
+    <string name="library_none">Telefonen deler intet bibliotek med denne pc.</string>
+    <string name="library_not_found">Ikke fundet på telefonen. Den kan være blevet slettet.</string>
+    <string name="library_on_device_title">På enhedens telefon</string>
     <string name="library_playlists_title">Playlister</string>
-    <string name="library_refresh">Refresh</string>
+    <string name="library_refresh">Opdater</string>
     <string name="library_songs_title">Sange</string>
     <string name="library_sort_album">Album</string>
     <string name="library_sort_album_year">Albumår</string>
@@ -245,97 +245,97 @@
     <string name="library_sort_downloaded">Hentet</string>
     <string name="library_sort_duration">Varighed</string>
     <string name="library_sort_listening_time">Lyttetid</string>
-    <string name="library_sort_menu">Sort Menu</string>
+    <string name="library_sort_menu">Sortér Menu</string>
     <string name="library_sort_name">Navn</string>
     <string name="library_sort_order_title">Sortér efter</string>
-    <string name="library_sort_play_count">Play Count</string>
+    <string name="library_sort_play_count">Antal Afspil</string>
     <string name="library_sort_relative_listening_time">Relativ lyttetid</string>
     <string name="library_sort_songs_number">Sangnummer</string>
     <string name="library_sort_title">Titel</string>
-    <string name="library_sync_current_item_format">Syncing: %1$s</string>
-    <string name="library_sync_failed_count_suffix">Sync failed</string>
+    <string name="library_sync_current_item_format">Synkroniserer: %1$s</string>
+    <string name="library_sync_failed_count_suffix">Synkronisering mislykkedes</string>
     <string name="library_sync_progress_format">%1$d / %2$d</string>
-    <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
+    <string name="library_tracks_failed">Numrene kunne ikke læses: %1$s</string>
     <string name="library_youtube_playlists_label">YT/YTM</string>
     <!-- Listen -->
-    <string name="listen_together_auto_approval_joins">Auto-approve join requests</string>
-    <string name="listen_together_auto_approval_joins_description">Automatically approve join requests without reviewing them manually</string>
-    <string name="listen_together_auto_approval_suggestions">Auto-approve song suggestions</string>
-    <string name="listen_together_auto_approval_suggestions_description">Automatically approve and queue song suggestions from guests</string>
-    <string name="listen_together_blocked_users">Blocked users</string>
-    <string name="listen_together_connect">Connect</string>
-    <string name="listen_together_connection">Connection</string>
-    <string name="listen_together_create_room">Create room</string>
-    <string name="listen_together_create_room_description">Create a room and share the code with your friends</string>
-    <string name="listen_together_disconnected">Disconnected</string>
-    <string name="listen_together_enter_room_code">Enter a room code</string>
-    <string name="listen_together_history">Local history</string>
-    <string name="listen_together_history_description">Record Listen Together tracks in your local history</string>
-    <string name="listen_together_join_room">Join room</string>
-    <string name="listen_together_no_blocked_users">No blocked users</string>
-    <string name="listen_together_not_set">Not set</string>
-    <string name="listen_together_room">Room</string>
+    <string name="listen_together_auto_approval_joins">Auto-godkend tilmeldingsanmodninger</string>
+    <string name="listen_together_auto_approval_joins_description">Godkend automatisk tilmeldingsanmodninger uden at gennemgå dem manuelt</string>
+    <string name="listen_together_auto_approval_suggestions">Auto-godkendelse af sangforslag</string>
+    <string name="listen_together_auto_approval_suggestions_description">Godkend og kø forslag fra gæster automatisk</string>
+    <string name="listen_together_blocked_users">Blokerede brugere</string>
+    <string name="listen_together_connect">Forbind</string>
+    <string name="listen_together_connection">Forbindelse</string>
+    <string name="listen_together_create_room">Opret rum</string>
+    <string name="listen_together_create_room_description">Opret et rum og del koden med dine venner</string>
+    <string name="listen_together_disconnected">Afbrudt</string>
+    <string name="listen_together_enter_room_code">Angiv en rutekode</string>
+    <string name="listen_together_history">Lokal historik</string>
+    <string name="listen_together_history_description">Optag Lyt Together spor i din lokale historie</string>
+    <string name="listen_together_join_room">Deltag i rum</string>
+    <string name="listen_together_no_blocked_users">Ingen blokerede brugere</string>
+    <string name="listen_together_not_set">Ikke angivet</string>
+    <string name="listen_together_room">Rum</string>
     <string name="listen_together_server_url">Server URL</string>
-    <string name="listen_together_suggest">Suggest to host</string>
-    <string name="listen_together_sync_volume">Sync host volume</string>
-    <string name="listen_together_sync_volume_description">Guests will match the host\'s volume level</string>
-    <string name="listen_together_title">Listen Together</string>
+    <string name="listen_together_suggest">Foreslå til vært</string>
+    <string name="listen_together_sync_volume">Synkroniser værtslydstyrke</string>
+    <string name="listen_together_sync_volume_description">Gæsterne vil matche værtens lydstyrkeniveau</string>
+    <string name="listen_together_title">Lyt Sammen</string>
     <string name="listen_together_username">Brugernavn</string>
-    <string name="listen_together_view_logs">View logs</string>
-    <string name="listen_together_view_logs_description">Debug connection events and messages</string>
+    <string name="listen_together_view_logs">Vis logs</string>
+    <string name="listen_together_view_logs_description">Fejlsøg forbindelsesbegivenheder og beskeder</string>
     <!-- Local -->
-    <string name="local_playback_failed">This song could not be played on this PC.</string>
-    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
-    <string name="local_playback_not_found">This song is no longer on your phone.</string>
-    <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
-    <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
-    <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
-    <string name="local_playback_unreachable">Your phone did not answer.</string>
-    <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
+    <string name="local_playback_failed">Denne sang kunne ikke afspilles på denne pc.</string>
+    <string name="local_playback_invalid_url">Denne sang kunne ikke afspilles på denne pc.</string>
+    <string name="local_playback_not_found">Denne sang er ikke længere på din telefon.</string>
+    <string name="local_playback_other_active">Lyd på denne pc: En anden pc (%1$s) er forbundet til telefonen.</string>
+    <string name="local_playback_unavailable">Lyd på denne PC er utilgængelig: den indlejrede VLC kunne ikke indlæses.</string>
+    <string name="local_playback_unavailable_linux">Lyd på denne pc er ikke tilgængelig. Installer VLC med %1$s og genstart appen.</string>
+    <string name="local_playback_unreachable">Din telefon svarede ikke.</string>
+    <string name="local_playback_upstream_failed">Din telefon kunne ikke hente denne sang.</string>
     <!-- Logs -->
-    <string name="logs_action_export">Export logs</string>
-    <string name="logs_export_debug_description">Export debug log to a file</string>
+    <string name="logs_action_export">Eksporter logs</string>
+    <string name="logs_export_debug_description">Eksporter fejlfindingslog til en fil</string>
     <!-- Lyrics -->
     <string name="lyrics_alignment_left_label">Venstre</string>
     <string name="lyrics_alignment_right_label">Højre</string>
     <string name="lyrics_color">Sangtekstfarve</string>
     <string name="lyrics_title">Sangtekster</string>
     <!-- Maintenance -->
-    <string name="maintenance_card_desc">App state at a glance: last boot passes and live subsystems</string>
-    <string name="maintenance_convergence">Name convergence</string>
-    <string name="maintenance_db_cleanup">Artist link cleanup</string>
+    <string name="maintenance_card_desc">App tilstand et overblik: sidste boot passerer og levende delsystemer</string>
+    <string name="maintenance_convergence">Konvergens af navn</string>
+    <string name="maintenance_db_cleanup">Kunstner link oprydning</string>
     <string name="maintenance_debug_logging_title">Aktivér logfejlfinding</string>
-    <string name="maintenance_dedup">Same-name artist dedup</string>
-    <string name="maintenance_live_subsystems">Live subsystems</string>
-    <string name="maintenance_no_data">No data</string>
-    <string name="maintenance_open">Open</string>
-    <string name="maintenance_open_desc">Open the full maintenance sheet</string>
-    <string name="maintenance_title">Maintenance</string>
+    <string name="maintenance_dedup">Samme navn kunstner dedup</string>
+    <string name="maintenance_live_subsystems">Delsystemer med levende</string>
+    <string name="maintenance_no_data">Ingen data</string>
+    <string name="maintenance_open">Åbn</string>
+    <string name="maintenance_open_desc">Åbn hele vedligeholdelsesarket</string>
+    <string name="maintenance_title">Vedligeholdelse</string>
     <!-- Manual -->
     <string name="manual_code">Pairing code</string>
-    <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
-    <string name="manual_description">On your phone, Manage server shows the IP address, the port and a 6-character code.</string>
-    <string name="manual_ip">Phone IP address</string>
-    <string name="manual_ip_invalid">Enter an IPv4 address, for example 192.168.1.14.</string>
+    <string name="manual_code_invalid">Koden har 6 tegn, for eksempel ABC-DEF.</string>
+    <string name="manual_description">På din telefon, Administrer server viser IP-adressen, porten og en 6-tegns kode.</string>
+    <string name="manual_ip">Telefonens IP-adresse</string>
+    <string name="manual_ip_invalid">Indtast en IPv4-adresse, for eksempel 192.168.1.14.</string>
     <string name="manual_port">Port</string>
-    <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
-    <string name="manual_submit">Pair</string>
-    <string name="manual_title">Manual pairing</string>
+    <string name="manual_port_invalid">Indtast en port mellem 1 og 65535.</string>
+    <string name="manual_submit">Par</string>
+    <string name="manual_title">Manuel parring</string>
     <!-- Message -->
     <string name="message_type">Beskedtype</string>
     <string name="message_type_modern">Moderne</string>
     <!-- Metadata -->
-    <string name="metadata_action_change_artists">Change Authors</string>
+    <string name="metadata_action_change_artists">Skift Forfattere</string>
     <string name="metadata_action_change_cover">Opdater cover</string>
     <string name="metadata_action_change_title">Opdater titel</string>
-    <string name="metadata_action_edit">Edit Metadata</string>
-    <string name="metadata_album_action_change_browse_id">Change Album Browse ID</string>
-    <string name="metadata_artist_action_change_browse_id">Change Artist Browse ID</string>
-    <string name="metadata_playlist_action_change_browse_id">Change Playlist Browse ID</string>
+    <string name="metadata_action_edit">Rediger Metadata</string>
+    <string name="metadata_album_action_change_browse_id">Skift Album Gennemse Id</string>
+    <string name="metadata_artist_action_change_browse_id">Ændre Kunstner Gennemse ID</string>
+    <string name="metadata_playlist_action_change_browse_id">Skift Spilleliste Gennemse ID</string>
     <string name="metadata_unknown_artist">Ukendt Kunstner</string>
     <string name="metadata_unknown_title">Ukendt Titel</string>
     <!-- Miniplayer -->
-    <string name="miniplayer_button_like">Like</string>
+    <string name="miniplayer_button_like">Ligesom</string>
     <!-- Navigation -->
     <string name="navigation_action_picture_in_picture">BiB</string>
     <string name="navigation_position_bottom_floating_label">Nederst Flydende</string>
@@ -349,61 +349,61 @@
     <!-- Not -->
     <string name="not_selectable">Kan ikke vælges</string>
     <!-- Notice -->
-    <string name="notice_failed">%1$s failed (HTTP %2$d, %3$s).</string>
-    <string name="notice_late_error">%1$s failed on the phone (%2$s, command %3$s).</string>
-    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
-    <string name="notice_not_found">%1$s: not found on the phone.</string>
-    <string name="notice_other_active">%1$s: another PC (%2$s) is connected to the phone.</string>
-    <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
-    <string name="notice_rejected">%1$s: refused by the phone.</string>
-    <string name="notice_server_stopping">%1$s: the phone’s server is stopping.</string>
-    <string name="notice_truncated">%1$s: only %2$d of %3$d tracks were sent.</string>
-    <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
-    <string name="notice_unreachable">%1$s: the phone did not answer.</string>
+    <string name="notice_failed">%1$s mislykkedes (HTTP %2$d, %3$s).</string>
+    <string name="notice_late_error">%1$s fejlede på telefonen (%2$s, kommando %3$s).</string>
+    <string name="notice_no_delta">%1$s: telefonen bekræftede ikke ændringen. Genopfrisker…</string>
+    <string name="notice_not_found">%1$s: ikke fundet på telefonen.</string>
+    <string name="notice_other_active">%1$s: en anden pc (%2$s) er forbundet til telefonen.</string>
+    <string name="notice_queue_mismatch">%1$s: køen blev ændret i mellemtiden. Den blev opdateret, prøv igen.</string>
+    <string name="notice_rejected">%1$s: nægtet af telefonen.</string>
+    <string name="notice_server_stopping">%1$s: telefonens server stopper.</string>
+    <string name="notice_truncated">%1$s: kun %2$d af %3$d spor blev sendt.</string>
+    <string name="notice_unavailable">%1$s: telefonens spiller er ikke tilgængelig. Prøv igen senere.</string>
+    <string name="notice_unreachable">%1$s: telefonen svarede ikke.</string>
     <!-- Old -->
-    <string name="old_install_path">Current install:</string>
+    <string name="old_install_path">Nuværende installation:</string>
     <!-- Pair -->
-    <string name="pair_device_name">Name of this PC</string>
-    <string name="pair_device_name_invalid">Enter a name of 1 to 64 characters.</string>
-    <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
-    <string name="pair_manual_entry">Manual entry</string>
-    <string name="pair_manual_entry_text">Type the address and code shown on your phone</string>
-    <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
-    <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_description">In N-Zik on your phone, open Manage server, start pairing, then tap Scan and point the camera at this code.</string>
-    <string name="pair_qr_preparing">Preparing the QR code…</string>
-    <string name="pair_qr_renew_hint">The code renews itself every 2 minutes.</string>
-    <string name="pair_qr_waiting">Waiting for your phone…</string>
-    <string name="pair_show_qr">Show the QR code</string>
-    <string name="pair_title">Pair with your phone</string>
+    <string name="pair_device_name">Navn på denne PC</string>
+    <string name="pair_device_name_invalid">Indtast et navn på 1 til 64 tegn.</string>
+    <string name="pair_listener_unreachable">Din telefon kunne ikke nå denne pc. Windows Firewall, eller et netværk indstillet til Public? Tillad N-Zik Desktop Compagnon på private netværk eller par manuelt nedenfor.</string>
+    <string name="pair_manual_entry">Manuel indtastning</string>
+    <string name="pair_manual_entry_text">Skriv adressen og den kode, der vises på din telefon</string>
+    <string name="pair_no_address">Der blev ikke fundet nogen lokal netværksadresse på denne pc, så der kan ikke vises nogen QR-kode. Par manuelt nedenfor.</string>
+    <string name="pair_qr_addresses">Denne PC: %1$s (port %2$d)</string>
+    <string name="pair_qr_description">I N-Zik på din telefon, åben Administrer server, start parring, og tryk derefter på Scan og peg kameraet på denne kode.</string>
+    <string name="pair_qr_preparing">Forbereder QR-koden…</string>
+    <string name="pair_qr_renew_hint">Koden fornyer sig hvert 2. minut.</string>
+    <string name="pair_qr_waiting">Venter på din telefon…</string>
+    <string name="pair_show_qr">Vis QR-koden</string>
+    <string name="pair_title">Parre med din telefon</string>
     <!-- Paired -->
-    <string name="paired_as">This PC appears as %1$s on the phone.</string>
-    <string name="paired_checking">Checking the connection…</string>
-    <string name="paired_error">The phone answered with an error (HTTP %1$d, %2$s).</string>
-    <string name="paired_incompatible">Phone version incompatible (contract %1$s).</string>
-    <string name="paired_ok">The phone is reachable.</string>
-    <string name="paired_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
-    <string name="paired_other_active_unknown">another device</string>
-    <string name="paired_session_only">No keyring is available on this PC, so the pairing is kept only in memory for this session: pair again after a restart.</string>
+    <string name="paired_as">Denne pc vises som %1$s på telefonen.</string>
+    <string name="paired_checking">Kontrollerer forbindelsen…</string>
+    <string name="paired_error">Telefonen svarede med en fejl (HTTP %1$d, %2$s).</string>
+    <string name="paired_incompatible">Telefon version inkompatibel (kontrakt %1$s).</string>
+    <string name="paired_ok">Telefonen er tilgængelig.</string>
+    <string name="paired_other_active">En anden pc (%1$s) er forbundet til telefonen. Afbryd forbindelsen til telefonen, og prøv derefter.</string>
+    <string name="paired_other_active_unknown">en anden enhed</string>
+    <string name="paired_session_only">Ingen nøglering er tilgængelig på denne pc, så parringen kun holdes i hukommelsen for denne session: parres igen efter en genstart.</string>
     <string name="paired_title">Paired</string>
-    <string name="paired_with">Paired with %1$s</string>
+    <string name="paired_with">Parret med %1$s</string>
     <!-- Parental -->
     <string name="parental_control">Forældrekontrol</string>
     <!-- Path -->
-    <string name="path_copied">Path copied</string>
+    <string name="path_copied">Sti kopieret</string>
     <!-- Phone -->
-    <string name="phone_panel_title">Phone</string>
+    <string name="phone_panel_title">Telefon</string>
     <!-- Player -->
     <string name="player_action_bar">Spiller handlingsbjælke</string>
-    <string name="player_action_bar_buttons">Button visibility</string>
-    <string name="player_action_bar_buttons_description">Configure which buttons appear in the player action bar</string>
+    <string name="player_action_bar_buttons">Knap synlighed</string>
+    <string name="player_action_bar_buttons_description">Indstil hvilke knapper der vises i afspillerens handlingsbjælke</string>
     <string name="player_action_enqueue">Sæt i kø</string>
     <string name="player_action_enqueue_songs">Sæt sange i kø</string>
     <string name="player_action_listen_on_youtube">Lyt på YouTube</string>
     <string name="player_action_locate_current_song">Find sangen, der bliver afspillet</string>
-    <string name="player_action_next">Next</string>
+    <string name="player_action_next">Næste</string>
     <string name="player_action_play_next">Afspil næste</string>
-    <string name="player_action_previous">Previous</string>
+    <string name="player_action_previous">Forrige</string>
     <string name="player_action_repeat">Gentag</string>
     <string name="player_action_seek_forward">Fremad</string>
     <string name="player_action_seek_forward_30_seconds">Videresend 30 sekunder</string>
@@ -418,7 +418,7 @@
     <string name="player_background_artwork_fluid_gradient_label">Flydende gradientbaggrund fra cover</string>
     <string name="player_background_artwork_gradient_label">Gradientbaggrund fra cover</string>
     <string name="player_background_artwork_label">Baggrund fra cover</string>
-    <string name="player_background_artwork_m3e_morphing_label">Morphing shapes from cover</string>
+    <string name="player_background_artwork_m3e_morphing_label">Morphing figurer fra dække</string>
     <string name="player_background_black_cherry_cosmos">Sort kirsebær-kosmos</string>
     <string name="player_background_glossy_gradient">Glansfuld gradient</string>
     <string name="player_background_golden_magma">Gylden magma</string>
@@ -435,7 +435,7 @@
     <string name="player_background_theme_fluid_gradient_label">Flydende gradientbaggrund fra tema</string>
     <string name="player_background_theme_gradient_label">Gradientbaggrund fra tema</string>
     <string name="player_background_theme_label">Baggrund fra tema</string>
-    <string name="player_background_theme_m3e_morphing_label">Morphing shapes from theme</string>
+    <string name="player_background_theme_m3e_morphing_label">Morphing figurer fra tema</string>
     <string name="player_behavior_and_visuals">Spiller Opførsel &amp; Visualer</string>
     <string name="player_collapsed_disable_swiping_down">Deaktivér stryge ned</string>
     <string name="player_controls">Afspiller Styring</string>
@@ -450,11 +450,11 @@
     <string name="player_controls_speed_title">Afspilningshastighed</string>
     <string name="player_controls_style_essential">Grundlæggende</string>
     <string name="player_controls_style_modern">Moderne</string>
-    <string name="player_cover_style_cd">CD</string>
+    <string name="player_cover_style_cd">Cd</string>
     <string name="player_cover_style_cd_with_cover">CD med cover</string>
     <string name="player_cover_style_vinyl">Vinyl</string>
     <string name="player_current_song_not_in_list">Kunne ikke finde afspillende sang på den aktuelle liste</string>
-    <string name="player_effects">Player Effects</string>
+    <string name="player_effects">Spiller Effekter</string>
     <string name="player_enable_lyrics_popup_message">Aktivér pop op-besked om sangtekst</string>
     <string name="player_enable_rotation_buttons">Aktivér rotation af knapper, når de trykkes</string>
     <string name="player_keep_minimized">Hold minimeret</string>
@@ -462,20 +462,20 @@
     <string name="player_matching_required_message">Afspilning blokeret, matcher først</string>
     <string name="player_mini_action_add_to_playlist">Føj til playliste</string>
     <string name="player_mini_action_shuffle">Bland</string>
-    <string name="player_mini_button_audio_output">Audio output</string>
+    <string name="player_mini_button_audio_output">Lyd output</string>
     <string name="player_mini_button_discover">Opdag</string>
     <string name="player_mini_button_download">Hent</string>
     <string name="player_mini_button_lyrics">Sangtekster</string>
-    <string name="player_mini_button_play_pause">Play/Pause</string>
-    <string name="player_mini_button_queue">Queue</string>
+    <string name="player_mini_button_play_pause">Afspil/Pause</string>
+    <string name="player_mini_button_queue">Kø</string>
     <string name="player_mini_button_radio">Radio</string>
     <string name="player_mini_button_repeat">Gentag</string>
-    <string name="player_mini_button_share">Share</string>
+    <string name="player_mini_button_share">Del</string>
     <string name="player_mini_button_sleep_timer">Søvntimer</string>
     <string name="player_mini_button_video">Video</string>
     <string name="player_mini_button_visualizer">Visualisering</string>
-    <string name="player_mini_buttons_config">MiniPlayer buttons</string>
-    <string name="player_mini_buttons_config_description">Configure the 4 buttons in the miniplayer</string>
+    <string name="player_mini_buttons_config">MiniPlayer knapper</string>
+    <string name="player_mini_buttons_config_description">Indstil de 4 knapper i miniafspilleren</string>
     <string name="player_no_current_song">Ingen sang spiller i øjeblikket</string>
     <string name="player_no_song_found">Ingen sang fundet</string>
     <string name="player_pause_listen_history">Sæt lyttehistorik på pause</string>
@@ -493,9 +493,9 @@
     <string name="player_seek_backward_five_seconds">Vend tilbage 5 sekunder</string>
     <string name="player_seek_backward_thirty_seconds">Vind 30 sekunder</string>
     <string name="player_shuffle_empty_message">Ingen sang at blande</string>
-    <string name="player_shuffled_song_count_format">%d songs shuffled</string>
+    <string name="player_shuffled_song_count_format">%d sange blandet</string>
     <string name="player_sleep_timer_title">Søvntimer</string>
-    <string name="player_statistics_volume_label">Volume</string>
+    <string name="player_statistics_volume_label">Lydstyrke</string>
     <string name="player_swap_controls_with_timeline">Byt kontrolelementer med tidslinje</string>
     <string name="player_swipe_sensitivity">Afspiller Stryg Følsomhed</string>
     <string name="player_swipe_sensitivity_high_label">Høj</string>
@@ -512,14 +512,14 @@
     <!-- Playlist -->
     <string name="playlist_action_add">Føj til playliste</string>
     <string name="playlist_action_create">Ny playliste</string>
-    <string name="playlist_action_delete_selected">Delete playlists</string>
+    <string name="playlist_action_delete_selected">Slet afspilningslister</string>
     <string name="playlist_action_export">Eksportér playliste</string>
     <string name="playlist_action_import">Importér playliste</string>
     <string name="playlist_action_shuffle_positions">Omnummerer positioner</string>
     <string name="playlist_action_toggle_pinned">Fastgør/frigør playliste</string>
-    <string name="playlist_bookmark_unsupported_message">Cannot bookmark Liked Songs or Episodes playlist</string>
+    <string name="playlist_bookmark_unsupported_message">Kan ikke bogmærke Liked Sange eller Episodes afspilningsliste</string>
     <string name="playlist_create_dialog_title">Opret ny playliste</string>
-    <string name="playlist_delete_all_confirmation_count_format">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Er du sikker på du vil slette alle %d afspilningslister?</string>
     <string name="playlist_left_swipe">Venstre stryg for playlister</string>
     <string name="playlist_pinned_title">Fastgjorte playlister</string>
     <string name="playlist_rename_dialog_title">Omdøb playliste</string>
@@ -529,7 +529,7 @@
     <string name="playlist_selection_action_deselect">Fravælg</string>
     <string name="playlist_top">Top playliste</string>
     <!-- Profile -->
-    <string name="profile_base_name">N-Zik Fan</string>
+    <string name="profile_base_name">N-Zik Ventilator</string>
     <string name="profile_title">Profiles</string>
     <!-- Proxy -->
     <string name="proxy">Proxy</string>
@@ -543,20 +543,20 @@
     <string name="recommendations_minimum_playback_duration_label">Min. lyttetid</string>
     <string name="recommendations_title">Hurtige valg</string>
     <!-- Reconnect -->
-    <string name="reconnect">Reconnect</string>
+    <string name="reconnect">Genopret</string>
     <!-- Recovery -->
-    <string name="recovery_center">Rescue Center</string>
+    <string name="recovery_center">Redningscenter</string>
     <!-- Request -->
     <string name="request_a_feature">Anmod om en funktion eller foreslå en idé</string>
     <!-- Revoked -->
-    <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
-    <string name="revoked_pair_again">Pair again</string>
+    <string name="revoked_description">Denne PC blev fjernet fra telefonens parrede enheder. Par det igen for at fortsætte med at bruge det.</string>
+    <string name="revoked_pair_again">Par igen</string>
     <string name="revoked_title">Pairing revoked</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_month">Måned</string>
     <string name="rewind_filter_year">År</string>
     <string name="rewind_title">Rewind</string>
-    <string name="rewind_top_sort">Rewind Top</string>
+    <string name="rewind_top_sort">Vend Vind Top</string>
     <!-- Search -->
     <string name="search_display_order">Online søgevisningsrækkefølge</string>
     <string name="search_display_order_suggestions_first">Forslag først</string>
@@ -606,19 +606,19 @@
     <string name="settings_interface_title">Brugergrænseflade</string>
     <string name="settings_languages_title">Sprog</string>
     <string name="settings_lastfm_title">Last.fm</string>
-    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
-    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
-    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
+    <string name="settings_launcher_shortcuts_description">Vælg og omarranger launcher genveje</string>
+    <string name="settings_launcher_shortcuts_recovery_required_message">Redning kan ikke deaktiveres</string>
+    <string name="settings_launcher_shortcuts_title">App genveje</string>
     <string name="settings_library_now_playing_indicator_label">\'Afspiller nu\'-indikator</string>
     <string name="settings_library_playlist_indicator_description">Indikerer, om sangen allerede er føjet til en playliste</string>
     <string name="settings_library_playlist_indicator_label">Playlisteindikator</string>
     <string name="settings_library_queue_playlist_swipe_left_label">Venstre stryg for kø og lokale playlister</string>
     <string name="settings_library_queue_playlist_swipe_right_label">Højre stryg for kø og lokale playlister</string>
-    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
-    <string name="settings_library_sort_options_description">Customize sort options</string>
-    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
-    <string name="settings_library_toolbar_title">Toolbar</string>
-    <string name="settings_local_playlist_title">Local Playlist</string>
+    <string name="settings_library_sections_visibility_description">Vælg hvilke sektioner der vises i biblioteket</string>
+    <string name="settings_library_sort_options_description">Tilpas sorteringsindstillinger</string>
+    <string name="settings_library_toolbar_customization_description">Tilpas værktøjslinjen</string>
+    <string name="settings_library_toolbar_title">Værktøjslinje</string>
+    <string name="settings_local_playlist_title">Lokal Spilleliste</string>
     <string name="settings_logging_error_file_description">Hvis aktiveret, oprettes en logfil for at fremhæve fejl</string>
     <string name="settings_loudness_base_gain">Basisforstærkning for lydstyrke</string>
     <string name="settings_lyrics_artwork_visible_label">Vis miniaturebillede for sangtekster</string>
@@ -639,9 +639,9 @@
     <string name="settings_network_title">Netværk</string>
     <string name="settings_parental_age_restriction_description">Undgå at afspille sange med aldersbegrænsning</string>
     <string name="settings_playback_duration_limit_label">Ekskluder sange med varighedsgrænse</string>
-    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
-    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
-    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
+    <string name="settings_playback_exclude_disliked_albums_label">Udeluk ukendte albummer</string>
+    <string name="settings_playback_exclude_disliked_artists_label">Udeluk ukendte kunstnere</string>
+    <string name="settings_playback_exclude_disliked_songs_label">Udelad ukendte sange</string>
     <string name="settings_playback_pause_at_zero_volume_description">Pauser afspilleren, når lydstyrken er på 0, og genoptager, når den er højere end 0</string>
     <string name="settings_playback_pause_between_songs_label">Pause mellem sange</string>
     <string name="settings_playback_previous_restart_threshold_label">Forrige-knap genstarter den aktuelle sang, når de følgende sekunder er gået</string>
@@ -666,7 +666,7 @@
     <string name="settings_player_bottom_black_gradient_label">Sort gradient i bunden</string>
     <string name="settings_player_button_zoom_out_animation_label">Zoom ud-animation af knap</string>
     <string name="settings_player_controls_style_label">Kontroltype</string>
-    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
+    <string name="settings_player_crop_video_artwork_label">Beskær videominiaturer</string>
     <string name="settings_player_disable_horizontal_swipe_label">Deaktivér vandret stryg</string>
     <string name="settings_player_disable_song_swipe_label">Deaktivér sangskift via stryg</string>
     <string name="settings_player_disable_text_marquee_description">Rullende tekst bruges til lang tekst</string>
@@ -676,7 +676,7 @@
     <string name="settings_player_header_album_artist_description">Album- og kunstnernavn</string>
     <string name="settings_player_header_icons_visible_label">Vis info med ikoner</string>
     <string name="settings_player_header_style_label">Infotype</string>
-    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
+    <string name="settings_player_m3e_motion_sensitivity_label">Tema Ryst Følsomhed</string>
     <string name="settings_player_next_queue_visible_label">Vis mini-kø i afspiller</string>
     <string name="settings_player_persistent_queue_description">Gem og gendan afspillende sange</string>
     <string name="settings_player_persistent_queue_label">Vedvarende spiller</string>
@@ -718,9 +718,9 @@
     <!-- Song -->
     <string name="song_matching_action_open">Match album/lyd version</string>
     <string name="song_matching_unmatched_label">Uovertruffen sang</string>
-    <string name="song_metadata_update_action_open">Open update dialog</string>
+    <string name="song_metadata_update_action_open">Åbn opdateringsdialog</string>
     <!-- Sort -->
-    <string name="sort_artist_and_album">Artist, Album</string>
+    <string name="sort_artist_and_album">Kunstner, Album</string>
     <!-- Stable -->
     <string name="stable_title">STABEL</string>
     <!-- Statistics -->
@@ -729,35 +729,35 @@
     <string name="statistics_top_period_title">Se top %s af …</string>
     <!-- Sync -->
     <string name="sync_action_sync">Synkroniser</string>
-    <string name="sync_likes">Auto Sync Liked Songs</string>
+    <string name="sync_likes">Auto-Synk Synkroniserede Sange</string>
     <!-- Theme -->
     <string name="theme_palette_dynamic">Dynamisk</string>
     <string name="theme_shake_sensitivity_disabled">Deaktiveret</string>
     <!-- This -->
-    <string name="this_pc">This PC</string>
+    <string name="this_pc">Denne PC</string>
     <!-- Thumbnail -->
     <string name="thumbnail_action_edit">Rediger miniaturebillede</string>
     <string name="thumbnail_action_reset">Nulstil miniaturebillede</string>
     <!-- Title -->
     <string name="title_backup_and_restore">Sikkerhedskopiér og gendan</string>
     <!-- Tray -->
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
+    <string name="tray_open">Åbn</string>
+    <string name="tray_quit">Afslut</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <!-- Troubleshooting -->
     <string name="troubleshooting">Fejlfinding</string>
     <!-- Unreachable -->
-    <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
-    <string name="unreachable_edit_ip">Edit IP</string>
-    <string name="unreachable_edit_ip_text">Keep the pairing, change the phone’s IP address only</string>
-    <string name="unreachable_port_kept">Port %1$d (kept)</string>
-    <string name="unreachable_save_ip">Save and retry</string>
-    <string name="unreachable_title">Phone unreachable</string>
+    <string name="unreachable_description">%1$s svarede ikke på %2$s. Dens server kan blive stoppet, eller dens IP-adresse kan være ændret. Parringen bibeholdes.</string>
+    <string name="unreachable_edit_ip">Rediger IP</string>
+    <string name="unreachable_edit_ip_text">Behold parringen, ændr kun telefonens IP-adresse</string>
+    <string name="unreachable_port_kept">Port %1$d (gemt)</string>
+    <string name="unreachable_save_ip">Gem og prøv igen</string>
+    <string name="unreachable_title">Telefonen kan ikke nås</string>
     <!-- Update -->
-    <string name="update_check_off_aur">This app was installed from the AUR: the in-app updater is disabled for this install. Update the AUR entry (n-zik-desktop-compagnon) with your AUR helper.</string>
+    <string name="update_check_off_aur">Denne app blev installeret fra AUR: In-app-opdateringen er deaktiveret for denne installation. Opdater AUR-indgangen (n-zik-desktop-compagnon) med din AUR-hjælper.</string>
     <string name="update_check_off_build">Hvis du ser denne besked, betyder det, at din build ikke har automatisk opdatering aktiveret, pls opdatere appen manuelt fra github</string>
-    <string name="update_download_indeterminate">Downloaded %1$s (unknown size)</string>
-    <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
+    <string name="update_download_indeterminate">Downloadet %1$s (ukendt størrelse)</string>
+    <string name="update_download_truncated">Opdateringsdownload blev afkortet. Den delvise fil blev holdt — prøv at downloade igen.</string>
     <string name="update_unknown">Ukendt</string>
     <!-- Updates -->
     <string name="updates_action_check">Søg efter opdatering</string>
@@ -795,12 +795,12 @@
     <string name="updates_starting_status">Starter…</string>
     <string name="updates_up_to_date">Op til dato</string>
     <!-- Validating -->
-    <string name="validating">Pairing with your phone…</string>
+    <string name="validating">Parring med din telefon…</string>
     <!-- Visualizer -->
     <string name="visualizer_animation_bubbles">Bobler</string>
     <string name="visualizer_bar">Visualizer bar</string>
     <string name="visualizer_microphone_permission_message">Visualiseringseffekten kræver mikrofonadgang. Tillad venligst.</string>
     <string name="visualizer_title">Visualisering</string>
     <!-- Window -->
-    <string name="window">Window</string>
+    <string name="window">Vindue</string>
 </resources>
