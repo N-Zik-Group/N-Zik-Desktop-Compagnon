@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="audio_devices">Audio devices</string>
+    <string name="audio_devices">Audio-Geräte</string>
     <string name="audio_effects">Audio-Effekte</string>
     <string name="audio_output_title">Audioausgabe</string>
     <string name="audio_quality_automatic">Automatisch</string>
@@ -9,17 +9,17 @@
     <string name="audio_quality_format_low">Niedrig</string>
     <string name="audio_reverb_none">Keine</string>
     <string name="audio_waveform_action_refresh">Wellenform aktualisieren</string>
-    <string name="listen_together_auto_approval_joins_description">Automatically approve join requests without reviewing them manually</string>
-    <string name="listen_together_auto_approval_suggestions_description">Automatically approve and queue song suggestions from guests</string>
-    <string name="listen_together_create_room_description">Create a room and share the code with your friends</string>
-    <string name="listen_together_history_description">Record Listen Together tracks in your local history</string>
-    <string name="listen_together_sync_volume_description">Guests will match the host\'s volume level</string>
-    <string name="listen_together_view_logs_description">Debug connection events and messages</string>
+    <string name="listen_together_auto_approval_joins_description">Anfragen ohne manuelle Überprüfung automatisch freigeben</string>
+    <string name="listen_together_auto_approval_suggestions_description">Songvorschläge von Gästen automatisch genehmigen und in die Warteschlange setzen</string>
+    <string name="listen_together_create_room_description">Erstelle einen Raum und teile den Code mit deinen Freunden</string>
+    <string name="listen_together_history_description">Hören Sie Tracks in Ihrem lokalen Verlauf auf</string>
+    <string name="listen_together_sync_volume_description">Gäste werden dem Volumenlevel des Gastgebers entsprechen</string>
+    <string name="listen_together_view_logs_description">Verbindungs-Ereignisse und -nachrichten debuggen</string>
     <string name="lyrics_alignment_left_label">Links</string>
     <string name="lyrics_alignment_right_label">Rechts</string>
     <string name="lyrics_color">Liedtext-Farbe</string>
     <string name="lyrics_title">Songtext</string>
-    <string name="miniplayer_button_like">Like</string>
+    <string name="miniplayer_button_like">Möge</string>
     <string name="player_action_bar">Player-Aktionsleiste</string>
     <string name="player_action_bar_buttons">Sichtbarkeit der Schaltflächen</string>
     <string name="player_action_bar_buttons_description">Konfiguriere die Schaltflächen in der Player-Aktionsleiste</string>
@@ -43,12 +43,12 @@
     <string name="player_background_artwork_fluid_gradient_label">Fluid Farbverlauf aus Cover</string>
     <string name="player_background_artwork_gradient_label">Farbverlauf aus Cover</string>
     <string name="player_background_artwork_label">Hintergrundfarbe aus Cover</string>
-    <string name="player_background_artwork_m3e_morphing_label">Morphing shapes from cover</string>
+    <string name="player_background_artwork_m3e_morphing_label">Morphing Formen vom Cover</string>
     <string name="player_background_palette_label">Farbpalette</string>
     <string name="player_background_theme_fluid_gradient_label">Fluid Farbverlauf vom Design</string>
     <string name="player_background_theme_gradient_label">Farbverlauf vom Design</string>
     <string name="player_background_theme_label">Hintergrundfarbe vom Design</string>
-    <string name="player_background_theme_m3e_morphing_label">Morphing shapes from theme</string>
+    <string name="player_background_theme_m3e_morphing_label">Morphing Formen vom Thema</string>
     <string name="player_behavior_and_visuals">Spielerverhalten &amp; Visuals</string>
     <string name="player_collapsed_disable_swiping_down">Wischen nach unten deaktivieren</string>
     <string name="player_controls">Spielersteuerung</string>
