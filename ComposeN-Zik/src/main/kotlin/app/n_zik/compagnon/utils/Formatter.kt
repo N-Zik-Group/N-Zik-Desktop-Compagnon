@@ -1,6 +1,6 @@
 package app.n_zik.compagnon.utils
 
-import java.util.Locale
+import java.text.NumberFormat
 
 /**
  * Android's `Formatter.formatShortFileSize` (the phone's `readableSize` de-Androided): decimal
@@ -8,7 +8,7 @@ import java.util.Locale
  * `GithubRelease.Build.readableSize` reuses it.
  */
 fun formatShortFileSize(bytes: Long): String {
-    if (bytes < 1_000) return "$bytes B"
+    if (bytes < 1_000) return "${NumberFormat.getIntegerInstance().format(bytes)} B"
     val units = listOf("kB", "MB", "GB", "TB")
     var value = bytes.toDouble() / 1_000
     var unit = 0
@@ -16,6 +16,10 @@ fun formatShortFileSize(bytes: Long): String {
         value /= 1_000
         unit++
     }
-    val text = if (value < 100) String.format(Locale.ROOT, "%.1f", value) else String.format(Locale.ROOT, "%.0f", value)
+    val decimals = if (value < 100) 1 else 0
+    val text = NumberFormat.getNumberInstance().apply {
+        minimumFractionDigits = decimals
+        maximumFractionDigits = decimals
+    }.format(value)
     return "$text ${units[unit]}"
 }

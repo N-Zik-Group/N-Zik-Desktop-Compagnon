@@ -119,4 +119,5 @@
     <string name="visualizer_bar">Visualizer bar</string>
     <string name="visualizer_microphone_permission_message">Visualizer effect require mic permission, grant please.</string>
     <string name="visualizer_title">Visualizer</string>
+    <string name="player_error_unknown">An unknown playback error has occurred</string>
 </resources>
