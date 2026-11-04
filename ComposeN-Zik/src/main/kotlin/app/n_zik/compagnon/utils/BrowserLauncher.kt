@@ -3,6 +3,7 @@ package app.n_zik.compagnon.utils
 import app.n_zik.compagnon.generated.resources.*
 import java.awt.Desktop
 import java.net.URI
+import java.util.logging.Logger
 
 /**
  * Opens [url] in the system's default browser (the desktop port of the phone's
@@ -17,6 +18,7 @@ fun openInBrowser(url: String) {
             desktop.browse(URI(url))
         }
     }.onFailure {
-        it.message?.let { message -> Toaster.e(message) } ?: Toaster.e(Res.string.error_open_browser)
+        Logger.getLogger("BrowserLauncher").warning("Could not open the browser: ${it.message}")
+        Toaster.e(Res.string.error_open_browser)
     }
 }

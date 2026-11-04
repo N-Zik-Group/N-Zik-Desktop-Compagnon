@@ -42,4 +42,5 @@
 
     <!-- Path -->
     <string name="path_copied">Path copied</string>
+    <string name="backup_import_failed">Import failed</string>
 </resources>

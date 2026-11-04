@@ -25,6 +25,7 @@ import app.n_zik.compagnon.updater.models.PackageManager
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.semiBold
 import java.awt.Desktop
+import java.util.logging.Logger
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.io.File
@@ -234,12 +235,18 @@ fun copyToClipboard(text: String, copiedResource: StringResource = Res.string.pa
     runCatching {
         Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(text), null)
         Toaster.s(copiedResource)
-    }.onFailure { it.message?.let { message -> Toaster.e(message) } ?: Toaster.e(Res.string.error_copy_failed) }
+    }.onFailure {
+        Logger.getLogger("InstallStep").warning("Copy failed: ${it.message}")
+        Toaster.e(Res.string.error_copy_failed)
+    }
 }
 
 /** Opens the folder containing [filePath] in the file manager. */
 fun openFileFolder(filePath: String) {
     runCatching {
         Desktop.getDesktop().open(File(filePath).parentFile ?: File("."))
-    }.onFailure { it.message?.let { message -> Toaster.e(message) } ?: Toaster.e(Res.string.install_error_open_folder) }
+    }.onFailure {
+        Logger.getLogger("InstallStep").warning("Could not open the folder: ${it.message}")
+        Toaster.e(Res.string.install_error_open_folder)
+    }
 }

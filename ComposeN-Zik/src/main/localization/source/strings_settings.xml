@@ -193,4 +193,5 @@
 
     <!-- Window -->
     <string name="window">Window</string>
+    <string name="sync_start_service_failed">Failed to start sync service</string>
 </resources>

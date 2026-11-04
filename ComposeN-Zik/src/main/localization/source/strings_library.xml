@@ -137,4 +137,6 @@
 
     <!-- Sort -->
     <string name="sort_artist_and_album">Artist, Album</string>
+    <string name="metadata_save_failed">Failed to save metadata</string>
+    <string name="metadata_file_path_unavailable">Cannot resolve file path</string>
 </resources>
