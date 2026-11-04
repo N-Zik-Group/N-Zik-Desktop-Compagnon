@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Vis logg</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">Koden har 6 tegn, for eksempel ABC-DEF.</string>
-    <string name="manual_description">På din telefon viser serveren IP-adressen, porten og en kode på 6 tegn.</string>
+    <string name="manual_description">På telefonen, åpne PC-serveren. Hvis serveren stoppes, trykk på Start. Velg Par en PC for å se IP-adressen, port og kode i 6 tegn.</string>
     <string name="manual_ip">IP adresse for nettbrettet</string>
     <string name="manual_ip_invalid">Angi en IPv4-adresse, for eksempel 192.168.1.14.</string>
     <string name="manual_port">Port</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Skriv inn adressen og koden som vises på telefonen din</string>
     <string name="pair_no_address">Ingen lokal nettverksadresse ble funnet på denne PC\'en, så ingen QR-kode kan vises. Parre manuelt nedenfor.</string>
     <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_description">I N-Zik på telefonen, åpne Administrere server, start å koble til, deretter trykk på Skann og pek kameraet på denne koden.</string>
+    <string name="pair_qr_description">I N-Zik på telefonen må du åpne PC-serveren. Dersom serveren stoppes, trykk på Start. Velg Koble til en PC og trykk skann QR-kode og pek kameraet på denne koden.</string>
     <string name="pair_qr_preparing">Forbereder QR-koden…</string>
     <string name="pair_qr_renew_hint">Denne koden fornyes hvert 2. minutt.</string>
     <string name="pair_qr_waiting">Waiting for your phone…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Port %1$d (kept)</string>
     <string name="unreachable_save_ip">Lagre og prøv på nytt</string>
     <string name="unreachable_title">Telefon utilgjengelig</string>
+    <string name="network_stream_retrying_playback">Prøver å gjenoppta avspillingen…</string>
 </resources>
