@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Επαναφορά 5 δευτερολέπτων</string>
     <string name="player_seek_backward_thirty_seconds">Επαναλάβετε τα 30 δευτερόλεπτα</string>
     <string name="player_shuffle_empty_message">Δεν υπάρχει τραγούδι για ανάμιξη</string>
-    <string name="player_shuffled_song_count_format">%d ανακατευμένα τραγούδια</string>
+    <string name="player_queue_shuffled_count_format">Ανακατέψτε την ουρά (κομμάτια: %d)</string>
+    <string name="player_shuffled_song_count_format">Ανακατέματα κομματιών: %d</string>
     <string name="player_sleep_timer_title">Χρονόμετρο ύπνου</string>
     <string name="player_statistics_volume_label">Όγκος</string>
     <string name="player_swap_controls_with_timeline">Swap controls with timeline</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Γραμμή απεικόνισης</string>
     <string name="visualizer_microphone_permission_message">Οι απεικονίσεις απαιτούν πρόσβασή στο μικρόφωνο.</string>
     <string name="visualizer_title">Απεικονίσεις</string>
+    <string name="player_error_unknown">Προέκυψε ένα άγνωστο σφάλμα αναπαραγωγής</string>
 </resources>
