@@ -31,7 +31,7 @@
     <string name="listen_together_suggest">Suggest to host</string>
     <string name="listen_together_sync_volume">Sync host volume</string>
     <string name="listen_together_title">Listen Together</string>
-    <string name="listen_together_username">Username</string>
+    <string name="listen_together_username">Felhasználónév</string>
     <string name="listen_together_view_logs">View logs</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
