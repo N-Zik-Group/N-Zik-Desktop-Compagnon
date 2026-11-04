@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Näytä lokit</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">Koodissa on 6 merkkiä, esimerkiksi ABC-DEF.</string>
-    <string name="manual_description">Puhelimessa Hallitse palvelinta näyttää IP-osoitteen, portin ja 6-merkkisen koodin.</string>
+    <string name="manual_description">Avaa PC-palvelin puhelimessasi. Jos palvelin on pysäytetty, napauta Käynnistä. Valitse pari tietokoneelle nähdäksesi IP-osoitteen, portin ja 6-merkkisen koodin.</string>
     <string name="manual_ip">Puhelimen IP-osoite</string>
     <string name="manual_ip_invalid">Anna IPv4-osoite, esimerkiksi 192.168.1.14.</string>
     <string name="manual_port">Portti</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Kirjoita puhelimeesi näytetty osoite ja koodi</string>
     <string name="pair_no_address">Tässä tietokoneessa ei löytynyt paikallista verkkoosoitetta, joten QR-koodia ei voi näyttää. Pair on alla manuaalisesti.</string>
     <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_description">Avaa Hallitse palvelin, aloita yhdistäminen puhelimessasi N-Zikissa ja napauta sitten Skannaa ja osoita kamera tällä koodilla.</string>
+    <string name="pair_qr_description">Avaa PC-palvelin N-Zik puhelimellasi. Jos palvelin on pysäytetty, napauta Käynnistä. Valitse Pari PC, napauta sitten Skannaa QR-koodi ja osoita kamera tällä koodilla.</string>
     <string name="pair_qr_preparing">Valmistellaan QR-koodia…</string>
     <string name="pair_qr_renew_hint">Koodi uusiutuu 2 minuutin välein.</string>
     <string name="pair_qr_waiting">Odotetaan puhelinta…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Portti %1$d (säilytetty)</string>
     <string name="unreachable_save_ip">Tallenna ja yritä uudelleen</string>
     <string name="unreachable_title">Puhelinta ei tavoitettavissa</string>
+    <string name="network_stream_retrying_playback">Yritetään jatkaa toistoa…</string>
 </resources>
