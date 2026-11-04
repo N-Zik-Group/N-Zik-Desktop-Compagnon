@@ -6,11 +6,11 @@
     <string name="command_move">Move in the queue</string>
     <string name="command_next">Next</string>
     <string name="command_pause">Pause</string>
-    <string name="command_play">Play</string>
+    <string name="command_play">Spela</string>
     <string name="command_previous">Previous</string>
     <string name="command_queue_add">Add to queue</string>
     <string name="command_queue_list">Queue from list</string>
-    <string name="command_queue_play">Play</string>
+    <string name="command_queue_play">Spela</string>
     <string name="command_remove">Remove from the queue</string>
     <string name="command_repeat">Repeat</string>
     <string name="command_seek">Seek</string>
@@ -21,7 +21,7 @@
     <string name="common_action_delete">Delete</string>
     <string name="common_action_done">Done</string>
     <string name="common_action_reset">Reset</string>
-    <string name="common_action_retry">Retry</string>
+    <string name="common_action_retry">Försök igen</string>
     <string name="common_action_select">Select</string>
     <string name="common_action_translate">Translate</string>
     <string name="common_action_turn_off">Turn off</string>
