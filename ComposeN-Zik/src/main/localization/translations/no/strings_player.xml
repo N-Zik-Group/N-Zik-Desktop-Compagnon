@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Spol tilbake 5 sekunder</string>
     <string name="player_seek_backward_thirty_seconds">Spol tilbake 30 sekunder</string>
     <string name="player_shuffle_empty_message">Ingen sang å stokke</string>
-    <string name="player_shuffled_song_count_format">%d sanger tilfeldig</string>
+    <string name="player_queue_shuffled_count_format">Kø sauffled (spor: %d)</string>
+    <string name="player_shuffled_song_count_format">Spor fragmenter: %d</string>
     <string name="player_sleep_timer_title">Innsovningstimer</string>
     <string name="player_statistics_volume_label">Volum</string>
     <string name="player_swap_controls_with_timeline">Bytt kontroller med tidslinjen</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Visualiserbar</string>
     <string name="visualizer_microphone_permission_message">Visualisereffekten krever mikrofon tillatelse, vennligst gi dette.</string>
     <string name="visualizer_title">Visualisering</string>
+    <string name="player_error_unknown">En ukjent avspillingsfeil har oppstått</string>
 </resources>
