@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="interface_in_use">사용 중인 인터페이스</string>
-    <string name="lastfm_love">Love on Last.fm</string>
-    <string name="lastfm_unlove">Unlove on Last.fm</string>
+    <string name="audio_loudness_boost_level">Loudness boost level</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
+    <string name="common_translation_title">번역</string>
+    <string name="library_sort_order_title">순서 정렬</string>
+    <string name="maintenance_debug_logging_title">Enable debug logs</string>
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Bottom Floating</string>
     <string name="navigation_position_bottom_label">하단</string>
@@ -10,8 +14,8 @@
     <string name="navigation_style_icon_and_text_label">아이콘&amp;텍스트</string>
     <string name="navigation_style_icon_only_label">아이콘만</string>
     <string name="parental_control">자녀 보호 기능</string>
-    <string name="profile_base_name">N-Zik Fan</string>
-    <string name="profile_title">Profiles</string>
+    <string name="player_action_enqueue_songs">대기열에 추가</string>
+    <string name="recommendations_action_smart_shuffle">Smart recommendations</string>
     <string name="settings_about_page_description">The about section shows information about the app, the developers, troubleshooting and update options</string>
     <string name="settings_app_behavior_title">App Behavior</string>
     <string name="settings_app_language_label">앱 언어</string>
@@ -53,6 +57,7 @@
     <string name="settings_languages_title">언어</string>
     <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
+    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
     <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
     <string name="settings_launcher_shortcuts_title">App shortcuts</string>
     <string name="settings_library_now_playing_indicator_label">현재 재생 중 표시</string>
@@ -161,14 +166,6 @@
     <string name="settings_title">설정</string>
     <string name="settings_transition_fade">희미해지기</string>
     <string name="settings_use_font_type">Font type</string>
-    <string name="sync_action_sync">동기화</string>
-    <string name="sync_likes">Auto Sync Liked Songs</string>
-    <string name="theme_palette_dynamic">다이나믹</string>
-    <string name="theme_shake_sensitivity_disabled">비활성화</string>
-    <string name="thumbnail_action_edit">썸네일 편집</string>
-    <string name="thumbnail_action_reset">썸네일 초기화</string>
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <string name="window">Window</string>
 </resources>
