@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Przewiń 5 sekund</string>
     <string name="player_seek_backward_thirty_seconds">Przewijanie 30 sekund</string>
     <string name="player_shuffle_empty_message">Brak utworu do przetasowania</string>
-    <string name="player_shuffled_song_count_format">%d utworów losowanych</string>
+    <string name="player_queue_shuffled_count_format">Kolejka losowa (utwory: %d)</string>
+    <string name="player_shuffled_song_count_format">Utwory losowe: %d</string>
     <string name="player_sleep_timer_title">Wyłącznik czasowy</string>
     <string name="player_statistics_volume_label">Objętość</string>
     <string name="player_swap_controls_with_timeline">Zamień urządzenia sterujące na oś czasu</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Pasek wizualizacji</string>
     <string name="visualizer_microphone_permission_message">Efekty wizualizatora wymagają uprawnienia do mikrofonu, włącz je w ustawieniach.</string>
     <string name="visualizer_title">Wizualizator</string>
+    <string name="player_error_unknown">Wystąpił nieznany błąd odtwarzania</string>
 </resources>
