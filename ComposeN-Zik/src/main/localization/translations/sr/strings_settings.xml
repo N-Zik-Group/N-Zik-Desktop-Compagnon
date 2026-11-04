@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="interface_in_use">Interfejs u ​​upotrebi</string>
-    <string name="lastfm_love">Love on Last.fm</string>
-    <string name="lastfm_unlove">Unlove on Last.fm</string>
+    <string name="audio_loudness_boost_level">Loudness boost level</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
+    <string name="common_translation_title">Prevod</string>
+    <string name="library_sort_order_title">Redosled sortiranja</string>
+    <string name="maintenance_debug_logging_title">Omogući zapis otklanjanja grešaka</string>
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Bottom Floating</string>
     <string name="navigation_position_bottom_label">Dno</string>
@@ -10,8 +14,8 @@
     <string name="navigation_style_icon_and_text_label">Ikona i tekst</string>
     <string name="navigation_style_icon_only_label">Samo ikona</string>
     <string name="parental_control">Roditeljska kontrola</string>
-    <string name="profile_base_name">N-Zik Fan</string>
-    <string name="profile_title">Profiles</string>
+    <string name="player_action_enqueue_songs">Pesme u redu</string>
+    <string name="recommendations_action_smart_shuffle">PAMETNE PREPORUKE</string>
     <string name="settings_about_page_description">The about section shows information about the app, the developers, troubleshooting and update options</string>
     <string name="settings_app_behavior_title">App Behavior</string>
     <string name="settings_app_language_label">Jezik aplikacije</string>
@@ -53,6 +57,7 @@
     <string name="settings_languages_title">Jezici</string>
     <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
+    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
     <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
     <string name="settings_launcher_shortcuts_title">App shortcuts</string>
     <string name="settings_library_now_playing_indicator_label">Now Playing Indicator</string>
@@ -161,14 +166,6 @@
     <string name="settings_title">Podešavanja</string>
     <string name="settings_transition_fade">Nestajanje</string>
     <string name="settings_use_font_type">Koristite tip fonta</string>
-    <string name="sync_action_sync">Sinhronizuj</string>
-    <string name="sync_likes">Auto Sync Liked Songs</string>
-    <string name="theme_palette_dynamic">Dinamično</string>
-    <string name="theme_shake_sensitivity_disabled">Onemogućeno</string>
-    <string name="thumbnail_action_edit">Edit Thumbnail</string>
-    <string name="thumbnail_action_reset">Reset Thumbnail</string>
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <string name="window">Window</string>
 </resources>
