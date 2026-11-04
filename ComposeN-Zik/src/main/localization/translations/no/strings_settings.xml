@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">Om delen viser informasjon om appen, utviklerne, feilsøking og oppdatering</string>
     <string name="settings_app_behavior_title">Appens oppførsel</string>
     <string name="settings_app_language_label">Appspråk</string>
+    <string name="settings_app_language_system">Systemadministrasjon</string>
     <string name="settings_audio_bass_boost">Forsterk lydbass</string>
     <string name="settings_audio_crossfade_description">Aktiver jevn overgang mellom sanger</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
