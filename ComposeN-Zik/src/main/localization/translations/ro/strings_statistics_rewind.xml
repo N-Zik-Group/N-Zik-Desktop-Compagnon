@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Calendar -->
     <string name="calendar_period_one_month">1 lună</string>
     <string name="calendar_period_one_week">1 săptămână</string>
     <string name="calendar_period_one_year">1 an</string>
     <string name="calendar_period_six_months">6 luni</string>
     <string name="calendar_period_three_months">3 luni</string>
     <string name="calendar_today">Astăzi</string>
+    <!-- Rewind -->
     <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">An</string>
     <string name="rewind_title">Rewind</string>
     <string name="rewind_top_sort">Rewind Top</string>
+    <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Nelimitat</string>
     <string name="statistics_title">Statistici</string>
     <string name="statistics_top_period_title">Top %s din …</string>
