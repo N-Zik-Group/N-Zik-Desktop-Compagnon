@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">Secțiunea despre despre aplicație arată opțiunile de depanare și actualizare</string>
     <string name="settings_app_behavior_title">Comportament aplicație</string>
     <string name="settings_app_language_label">Limba aplicației</string>
+    <string name="settings_app_language_system">Sistem</string>
     <string name="settings_audio_bass_boost">Amplificare bas audio</string>
     <string name="settings_audio_crossfade_description">Activează tranziţia lină între melodii</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
