@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_loudness_boost_level">Úroveň zvýšení hlasitosti</string>
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
+    <string name="close_behavior">Zavřít chování</string>
+    <string name="close_behavior_minimize">Minimalizovat do lišty</string>
+    <string name="close_behavior_quit">Ukončit aplikaci</string>
     <string name="common_translation_title">Překlad</string>
     <string name="library_sort_order_title">Pořadí řazení</string>
     <string name="maintenance_debug_logging_title">Vytvářet debugovací log</string>
@@ -19,16 +19,16 @@
     <string name="settings_about_page_description">O sekci zobrazuje informace o aplikaci, vývojáři, řešení problémů a možnosti aktualizace</string>
     <string name="settings_app_behavior_title">Chování aplikace</string>
     <string name="settings_app_language_label">Jazyk aplikace</string>
-    <string name="settings_audio_bass_boost">Audio bass boost</string>
+    <string name="settings_audio_bass_boost">Zesílení zvukových basů</string>
     <string name="settings_audio_crossfade_description">Povolit plynulý přechod mezi skladbami</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
     <string name="settings_audio_equalizer_label">Ekvalizér</string>
     <string name="settings_audio_loudness_normalization_description">Nastavení hlasitosti na pevnou úroveň</string>
     <string name="settings_audio_loudness_normalization_label">Normalizace hlasitosti</string>
-    <string name="settings_audio_reverb">Audio reverb</string>
+    <string name="settings_audio_reverb">Zpětná vazba zvuku</string>
     <string name="settings_audio_skip_silence_description">Přeskočení tichých částí během přehrávání</string>
     <string name="settings_audio_skip_silence_label">Přeskočit ticho</string>
-    <string name="settings_bass_boost_level">Bass boost level</string>
+    <string name="settings_bass_boost_level">Úroveň zrychlení basů</string>
     <string name="settings_cache_action_set_custom_size">Nastavit vlastní mezipaměť</string>
     <string name="settings_cache_custom_size_input_hint">Zadejte hodnotu v MB</string>
     <string name="settings_cache_delete_confirmation">Opravdu chcete odstranit mezipaměť?</string>
@@ -37,7 +37,7 @@
     <string name="settings_cache_song_size_limit_label">Maximální velikost mezipaměti skladeb</string>
     <string name="settings_cache_title">Mezipaměť</string>
     <string name="settings_data_page_description">Datová sekce obsahuje nastavení, která upravují, jak aplikace zpracovává místní a vzdálené údaje</string>
-    <string name="settings_data_title">Data</string>
+    <string name="settings_data_title">Údaje</string>
     <string name="settings_debug_title">Nastavení</string>
     <string name="settings_downloads_automatic_description">Automaticky stahovat skladby na základě vašich preferencí</string>
     <string name="settings_downloads_storage_limit_label">Maximální velikost stahování skladeb</string>
@@ -55,20 +55,20 @@
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">Uživatelské prostředí</string>
     <string name="settings_languages_title">Jazyky</string>
-    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
-    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
-    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
-    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
+    <string name="settings_launcher_shortcuts_description">Vybrat a změnit pořadí zástupců launcheru</string>
+    <string name="settings_launcher_shortcuts_limit_message">Dosažen maximální počet aktivních zkratek %1$d</string>
+    <string name="settings_launcher_shortcuts_recovery_required_message">Záchrana nemůže být zakázána</string>
+    <string name="settings_launcher_shortcuts_title">Zkratky aplikací</string>
     <string name="settings_library_now_playing_indicator_label">Indikátor právě přehrávaného</string>
     <string name="settings_library_playlist_indicator_description">Označení skladeb přidaných do playlistu</string>
     <string name="settings_library_playlist_indicator_label">Indikátor playlistu</string>
     <string name="settings_library_queue_playlist_swipe_left_label">Fronta a místní playlisty přejetím vlevo</string>
     <string name="settings_library_queue_playlist_swipe_right_label">Fronta a místní playlisty přejetím vpravo</string>
-    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
-    <string name="settings_library_sort_options_description">Customize sort options</string>
-    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
-    <string name="settings_library_toolbar_title">Toolbar</string>
-    <string name="settings_local_playlist_title">Local Playlist</string>
+    <string name="settings_library_sections_visibility_description">Vyberte, které sekce se objeví v knihovně</string>
+    <string name="settings_library_sort_options_description">Přizpůsobit možnosti řazení</string>
+    <string name="settings_library_toolbar_customization_description">Přizpůsobit lištu nástrojů</string>
+    <string name="settings_library_toolbar_title">Panel nástrojů</string>
+    <string name="settings_local_playlist_title">Místní seznam skladeb</string>
     <string name="settings_logging_error_file_description">Vytvořit log soubor pro zvýraznění chyb</string>
     <string name="settings_loudness_base_gain">Zesílení základní hlasitosti</string>
     <string name="settings_lyrics_artwork_visible_label">Zobrazit miniaturu pro písňový text</string>
@@ -89,9 +89,9 @@
     <string name="settings_network_title">Síť</string>
     <string name="settings_parental_age_restriction_description">Zabránit přehrávání skladeb s věkovým omezením</string>
     <string name="settings_playback_duration_limit_label">Vyloučit skladby s limitem délky trvání</string>
-    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
-    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
-    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
+    <string name="settings_playback_exclude_disliked_albums_label">Vyloučit neoblíbená alba</string>
+    <string name="settings_playback_exclude_disliked_artists_label">Vyloučit neoblíbené umělce</string>
+    <string name="settings_playback_exclude_disliked_songs_label">Vyloučit neoblíbené skladby</string>
     <string name="settings_playback_pause_at_zero_volume_description">Pozastaví přehrávač, když hlasitost dosáhne 0, a obnoví přehrávání, když je hlasitost vyšší než 0</string>
     <string name="settings_playback_pause_between_songs_label">Pauza mezi skladbami</string>
     <string name="settings_playback_previous_restart_threshold_label">Předchozí tlačítko po uplynutí následujících sekund znovu spustí aktuální skladbu</string>
@@ -116,7 +116,7 @@
     <string name="settings_player_bottom_black_gradient_label">Černý gradient dole</string>
     <string name="settings_player_button_zoom_out_animation_label">Animace oddálení tlačítka</string>
     <string name="settings_player_controls_style_label">Typ ovládání</string>
-    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
+    <string name="settings_player_crop_video_artwork_label">Oříznout náhledy videa</string>
     <string name="settings_player_disable_horizontal_swipe_label">Zakázat vodorovné přejetí</string>
     <string name="settings_player_disable_song_swipe_label">Zakázat přepínání skladeb přejetím</string>
     <string name="settings_player_disable_text_marquee_description">Posouvání textu se používá pro dlouhé texty</string>
@@ -126,7 +126,7 @@
     <string name="settings_player_header_album_artist_description">Název alba a interpreta</string>
     <string name="settings_player_header_icons_visible_label">Zobrazit informace s ikonami</string>
     <string name="settings_player_header_style_label">Typ informací</string>
-    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
+    <string name="settings_player_m3e_motion_sensitivity_label">Citlivost tématu zatřesení</string>
     <string name="settings_player_next_queue_visible_label">Zobrazení dalších skladeb v přehrávači</string>
     <string name="settings_player_persistent_queue_description">Uložit a obnovit přehrávané skladby</string>
     <string name="settings_player_persistent_queue_label">Trvalý přehrávač</string>
@@ -140,7 +140,7 @@
     <string name="settings_player_queue_swipe_up_label">Přejetím nahoru otevřete frontu</string>
     <string name="settings_player_queue_tap_to_open_label">Klepnutím otevřete frontu</string>
     <string name="settings_player_remaining_duration_visible_label">Zobrazit zbývající čas skladby</string>
-    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
+    <string name="settings_player_rotating_artwork_title">Otočení obalu alba</string>
     <string name="settings_player_seek_time_buttons_label">Přeskočit tlačítka času</string>
     <string name="settings_player_start_minimized_description">Po kliknutí na skladbu se přehrávač spustí minimalizovaný</string>
     <string name="settings_player_tap_artwork_toggle_lyrics_description">Klepnutím na miniaturu</string>
@@ -165,5 +165,5 @@
     <string name="settings_title">Nastavení</string>
     <string name="settings_transition_fade">Vyblednutí</string>
     <string name="settings_use_font_type">Použít typ písma</string>
-    <string name="window">Window</string>
+    <string name="window">Okno</string>
 </resources>
