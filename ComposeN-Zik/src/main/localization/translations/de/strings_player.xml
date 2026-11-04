@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">5 Sekunden zurückziehen</string>
     <string name="player_seek_backward_thirty_seconds">30 Sekunden zurück</string>
     <string name="player_shuffle_empty_message">Keine Titel für die Zufallswiedergabe</string>
-    <string name="player_shuffled_song_count_format">%d Songs gemischt</string>
+    <string name="player_queue_shuffled_count_format">Warteschlange gemischt (Tracks: %d)</string>
+    <string name="player_shuffled_song_count_format">Gemischte Titel: %d</string>
     <string name="player_sleep_timer_title">Schlaf-Timer</string>
     <string name="player_statistics_volume_label">Lautstärke</string>
     <string name="player_swap_controls_with_timeline">Steuerelemente mit Zeitleiste tauschen</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Visualisierungsleiste</string>
     <string name="visualizer_microphone_permission_message">Visualizer benötigt Mikrofonberechtigung, gewähre bitte die Berechtigung.</string>
     <string name="visualizer_title">Visualisierer</string>
+    <string name="player_error_unknown">Ein unbekannter Wiedergabefehler ist aufgetreten</string>
 </resources>
