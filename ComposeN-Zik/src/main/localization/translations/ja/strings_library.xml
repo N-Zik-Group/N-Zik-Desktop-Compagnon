@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">アルバムをブックマーク</string>
     <string name="album_action_open">アルバムを表示</string>
     <string name="album_left_swipe">アルバム 左スワイプ</string>
-    <string name="album_loading_song_count_format">Loading %1$d songs…</string>
+    <string name="album_loading_song_count_format">アルバムを読み込み中 (トラック: %1$d)…</string>
     <string name="album_right_swipe">アルバム 右スワイプ</string>
     <string name="artist_action_follow">フォロー</string>
     <string name="artist_action_play_local_songs">すべてのローカル曲を再生</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">プレイリストのピン留め/ピン留め解除</string>
     <string name="playlist_bookmark_unsupported_message">お気に入りの曲やエピソードのプレイリストをブックマークできません</string>
     <string name="playlist_create_dialog_title">新規プレイリストを作成</string>
-    <string name="playlist_delete_all_confirmation_count_format">すべての %d プレイリストを削除してもよろしいですか？</string>
+    <string name="playlist_delete_all_confirmation_count_format">すべてのプレイリストを削除しますか? (合計: %d)</string>
     <string name="playlist_left_swipe">プレイリスト 左スワイプ</string>
     <string name="playlist_pinned_title">ピン留めしました</string>
     <string name="playlist_rename_dialog_title">プレイリストの名前を変更</string>
@@ -107,4 +107,6 @@
     <plurals name="library_song_count">
         <item quantity="other">%1$d 曲</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">このデバイスで音楽へのアクセスをリクエストできませんでした。</string>
+    <string name="library_on_device_permission_settings_failed">権限設定を開けませんでした。</string>
 </resources>
