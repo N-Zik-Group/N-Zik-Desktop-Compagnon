@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Vend tilbage 5 sekunder</string>
     <string name="player_seek_backward_thirty_seconds">Vind 30 sekunder</string>
     <string name="player_shuffle_empty_message">Ingen sang at blande</string>
-    <string name="player_shuffled_song_count_format">%d sange blandet</string>
+    <string name="player_queue_shuffled_count_format">Kø blandet (spor: %d)</string>
+    <string name="player_shuffled_song_count_format">Spor blandet: %d</string>
     <string name="player_sleep_timer_title">Søvntimer</string>
     <string name="player_statistics_volume_label">Lydstyrke</string>
     <string name="player_swap_controls_with_timeline">Byt kontrolelementer med tidslinje</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Visualizer bar</string>
     <string name="visualizer_microphone_permission_message">Visualiseringseffekten kræver mikrofonadgang. Tillad venligst.</string>
     <string name="visualizer_title">Visualisering</string>
+    <string name="player_error_unknown">Der opstod en ukendt afspilningsfejl</string>
 </resources>
