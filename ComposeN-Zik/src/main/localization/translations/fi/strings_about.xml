@@ -9,4 +9,5 @@
     <string name="about_title">Tietoa</string>
     <string name="about_translators_title">Kääntäjät</string>
     <string name="contributors">Avustajat</string>
+    <string name="request_a_feature">Request a feature or suggest an idea</string>
 </resources>
