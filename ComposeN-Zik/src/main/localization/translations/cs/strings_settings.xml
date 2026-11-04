@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">O sekci zobrazuje informace o aplikaci, vývojáři, řešení problémů a možnosti aktualizace</string>
     <string name="settings_app_behavior_title">Chování aplikace</string>
     <string name="settings_app_language_label">Jazyk aplikace</string>
+    <string name="settings_app_language_system">Systémové</string>
     <string name="settings_audio_bass_boost">Zesílení zvukových basů</string>
     <string name="settings_audio_crossfade_description">Povolit plynulý přechod mezi skladbami</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
