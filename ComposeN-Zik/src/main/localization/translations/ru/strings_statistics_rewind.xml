@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="calendar_period_one_month">1 месяц</string>
-    <string name="calendar_period_one_week">1 неделя</string>
-    <string name="calendar_period_one_year">1 год</string>
-    <string name="calendar_period_six_months">6 месяцев</string>
-    <string name="calendar_period_three_months">3 месяца</string>
-    <string name="calendar_today">Сегодня</string>
-    <string name="rewind_filter_year">По году</string>
-    <string name="statistics_items_limit_unlimited">Неограниченный</string>
-    <string name="statistics_title">Статистика</string>
-    <string name="statistics_top_period_title">Топ %s из …</string>
+    <!-- Calendar -->
+    <string name="calendar_period_one_month">1 Month</string>
+    <string name="calendar_period_one_week">1 Week</string>
+    <string name="calendar_period_one_year">1 Year</string>
+    <string name="calendar_period_six_months">6 Month</string>
+    <string name="calendar_period_three_months">3 month</string>
+    <string name="calendar_today">Today</string>
+    <!-- Rewind -->
+    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_year">Year</string>
+    <!-- Statistics -->
+    <string name="statistics_items_limit_unlimited">Unlimited</string>
+    <string name="statistics_title">Statistics</string>
+    <string name="statistics_top_period_title">Top %s of …</string>
 </resources>
