@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Bokmärk album</string>
     <string name="album_action_open">Gå till album</string>
     <string name="album_left_swipe">Album vänster svep</string>
-    <string name="album_loading_song_count_format">Laddar %1$d låtar…</string>
+    <string name="album_loading_song_count_format">Laddar album (spår: %1$d)…</string>
     <string name="album_right_swipe">Album höger svep</string>
     <string name="artist_action_follow">Följ</string>
     <string name="artist_action_play_local_songs">Spela alla lokala låtar</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Pin/Lossa spellistan</string>
     <string name="playlist_bookmark_unsupported_message">Kan inte bokmärke gillade låtar eller episoder spellista</string>
     <string name="playlist_create_dialog_title">Skapa ny spellista</string>
-    <string name="playlist_delete_all_confirmation_count_format">Är du säker på att du vill ta bort ALLA %d spellistor?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Ta bort alla spellistor? (Totalt: %d)</string>
     <string name="playlist_left_swipe">Spellista Vänster svep</string>
     <string name="playlist_pinned_title">Klistrad</string>
     <string name="playlist_rename_dialog_title">Döp om spellista</string>
@@ -108,4 +108,6 @@
         <item quantity="one">%1$d låt</item>
         <item quantity="other">%1$d låtar</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Kunde inte begära åtkomst till musik på den här enheten.</string>
+    <string name="library_on_device_permission_settings_failed">Kunde inte öppna behörighetsinställningar.</string>
 </resources>
