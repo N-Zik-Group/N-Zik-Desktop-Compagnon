@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">A seção \"Sobre\" mostra informações sobre o aplicativo, os desenvolvedores, solução de problemas e opções de atualização</string>
     <string name="settings_app_behavior_title">Comportamento do App</string>
     <string name="settings_app_language_label">Idioma do aplicativo</string>
+    <string name="settings_app_language_system">Sistema</string>
     <string name="settings_audio_bass_boost">Impulsionar graves de áudio</string>
     <string name="settings_audio_crossfade_description">Permitir transição suave entre as músicas</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
