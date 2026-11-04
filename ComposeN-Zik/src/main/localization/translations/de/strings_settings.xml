@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">Die �ber-Sektion zeigt Informationen über die App, die Entwickler, Fehlerbehebung und Update-Optionen</string>
     <string name="settings_app_behavior_title">App-Verhalten</string>
     <string name="settings_app_language_label">App-Sprache</string>
+    <string name="settings_app_language_system">System</string>
     <string name="settings_audio_bass_boost">Bassverstärkung</string>
     <string name="settings_audio_crossfade_description">Glatten Übergang zwischen Liedern aktivieren</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
