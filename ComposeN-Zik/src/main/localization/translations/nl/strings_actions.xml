@@ -1,13 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="command_clear">Clear the queue</string>
+    <string name="command_copied">Command copied</string>
+    <string name="command_jump">Play from the queue</string>
+    <string name="command_move">Move in the queue</string>
+    <string name="command_next">Next</string>
     <string name="command_pause">Onderbreken</string>
     <string name="command_play">Afspelen</string>
+    <string name="command_previous">Previous</string>
+    <string name="command_queue_add">Add to queue</string>
+    <string name="command_queue_list">Queue from list</string>
     <string name="command_queue_play">Afspelen</string>
+    <string name="command_remove">Remove from the queue</string>
+    <string name="command_repeat">Repeat</string>
+    <string name="command_seek">Seek</string>
+    <string name="command_shuffle">Shuffle</string>
+    <string name="command_speed">Speed</string>
     <string name="common_action_clear">Wissen</string>
     <string name="common_action_confirm">Bevestigen</string>
     <string name="common_action_delete">Verwijder</string>
     <string name="common_action_done">Klaar</string>
+    <string name="common_action_reset">Reset</string>
     <string name="common_action_retry">Opnieuw</string>
     <string name="common_action_select">Selecteren</string>
+    <string name="common_action_translate">Translate</string>
     <string name="common_action_turn_off">Uitschakelen</string>
+    <string name="common_action_update">Update</string>
+    <string name="common_menu_label">Menu</string>
+    <string name="tray_open">Open</string>
+    <string name="tray_quit">Quit</string>
 </resources>

@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Calendar -->
     <string name="calendar_period_one_month">월간</string>
     <string name="calendar_period_one_week">주간</string>
     <string name="calendar_period_one_year">연간</string>
     <string name="calendar_period_six_months">6개월</string>
     <string name="calendar_period_three_months">3개월</string>
     <string name="calendar_today">오늘</string>
+    <!-- Rewind -->
+    <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">연도</string>
+    <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">무제한</string>
     <string name="statistics_title">통계</string>
+    <string name="statistics_top_period_title">Top %s of …</string>
 </resources>

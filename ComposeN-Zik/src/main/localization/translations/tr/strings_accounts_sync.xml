@@ -6,4 +6,5 @@
     <string name="profile_title">Profiller</string>
     <string name="sync_action_sync">Senkronize et</string>
     <string name="sync_likes">Beğenilen Şarkıları Otomatik Olarak Senkronize Et</string>
+    <string name="sync_start_service_failed">Failed to start sync service</string>
 </resources>

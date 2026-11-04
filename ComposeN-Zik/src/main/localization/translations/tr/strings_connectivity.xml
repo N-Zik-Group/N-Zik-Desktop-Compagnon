@@ -26,6 +26,7 @@
     <string name="listen_together_no_blocked_users">Engellenmiş kullanıcı yok</string>
     <string name="listen_together_not_set">Ayarlanmamış</string>
     <string name="listen_together_room">Oda</string>
+    <string name="listen_together_server_request_failed">The Listen Together server could not complete the request.</string>
     <string name="listen_together_server_url">Sunucu URL\'si</string>
     <string name="listen_together_suggest">Oda sahibine öner</string>
     <string name="listen_together_sync_volume">Oda sahibinin ses seviyesine eşitle</string>
@@ -67,6 +68,7 @@
     <string name="paired_title">Eşleştirildi</string>
     <string name="paired_with">%1$s ile eşleştirildi</string>
     <string name="phone_panel_title">Telefon</string>
+    <string name="proxy">Proxy</string>
     <string name="reconnect">Yeniden bağlan</string>
     <string name="revoked_description">Bu bilgisayar telefonun eşleştirilmiş cihazları listesinden kaldırıldı. Kullanmaya devam etmek için cihazı yeniden eşleştirin.</string>
     <string name="revoked_pair_again">Tekrar eşleştir</string>

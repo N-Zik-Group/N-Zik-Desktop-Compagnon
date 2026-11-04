@@ -17,6 +17,7 @@
     <string name="player_background_stage">Étape</string>
     <string name="player_controls_style_essential">Minimale</string>
     <string name="player_controls_style_modern">Moderne</string>
+    <string name="player_cover_style_cd">CD</string>
     <string name="player_cover_style_cd_with_cover">CD avec pochette</string>
     <string name="player_cover_style_vinyl">Vinyle</string>
     <string name="player_progress_mini_player">Lecteur minimisé</string>

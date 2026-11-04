@@ -67,7 +67,9 @@
     <string name="metadata_action_edit">Edit Metadata</string>
     <string name="metadata_album_action_change_browse_id">Change Album Browse ID</string>
     <string name="metadata_artist_action_change_browse_id">Change Artist Browse ID</string>
+    <string name="metadata_file_path_unavailable">Cannot resolve file path</string>
     <string name="metadata_playlist_action_change_browse_id">Change Playlist Browse ID</string>
+    <string name="metadata_save_failed">Failed to save metadata</string>
     <string name="metadata_unknown_artist">Unknown Artist</string>
     <string name="metadata_unknown_title">Unknown Title</string>
     <string name="playlist_action_add">Add to playlist</string>

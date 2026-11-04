@@ -9,6 +9,7 @@
     <string name="command_play">Play</string>
     <string name="command_previous">Previous</string>
     <string name="command_queue_add">Add to queue</string>
+    <string name="command_queue_list">Queue from list</string>
     <string name="command_queue_play">Play</string>
     <string name="command_remove">Remove from the queue</string>
     <string name="command_repeat">Repeat</string>

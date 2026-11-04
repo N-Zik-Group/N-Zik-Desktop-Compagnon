@@ -2,6 +2,7 @@
 <resources>
     <string name="about_action_report_issue">Reportar um problema</string>
     <string name="about_action_view_source">Veja o código-fonte</string>
+    <string name="about_authorship_preposition">by</string>
     <string name="about_contributors_alphabetical_order_label">Em ordem alfabética:</string>
     <string name="about_developers">Desenvolvedores / Designers</string>
     <string name="about_github_link_description">Você vai ser redirecionado para o GitHub</string>

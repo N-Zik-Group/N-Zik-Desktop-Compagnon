@@ -26,6 +26,7 @@
     <string name="listen_together_no_blocked_users">Aucun utilisateur bloqué</string>
     <string name="listen_together_not_set">Non défini</string>
     <string name="listen_together_room">Salle</string>
+    <string name="listen_together_server_request_failed">The Listen Together server could not complete the request.</string>
     <string name="listen_together_server_url">URL du serveur</string>
     <string name="listen_together_suggest">Proposer d\'accueillir</string>
     <string name="listen_together_sync_volume">Synchroniser le volume hôte</string>
@@ -37,6 +38,7 @@
     <string name="manual_description">Sur votre téléphone, la rubrique « Gérer le serveur » affiche l\'adresse IP, le port et un code à 6 caractères.</string>
     <string name="manual_ip">Adresse IP du téléphone</string>
     <string name="manual_ip_invalid">Saisissez une adresse IPv4, par exemple 192.168.1.14.</string>
+    <string name="manual_port">Port</string>
     <string name="manual_port_invalid">Entrez un numéro de port compris entre 1 et 65 535.</string>
     <string name="manual_submit">Appairer</string>
     <string name="manual_title">Appairage manuel</string>
@@ -66,6 +68,7 @@
     <string name="paired_title">Appairé</string>
     <string name="paired_with">Associé à %1$s</string>
     <string name="phone_panel_title">Téléphone</string>
+    <string name="proxy">Proxy</string>
     <string name="reconnect">Se reconnecter</string>
     <string name="revoked_description">Cet ordinateur a été supprimé de la liste des appareils appairés avec ce téléphone. Appairez-le à nouveau pour continuer à l\'utiliser.</string>
     <string name="revoked_pair_again">Re-appairer</string>

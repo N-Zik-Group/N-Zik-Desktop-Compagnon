@@ -3,6 +3,7 @@
     <string name="git_title">GIT</string>
     <string name="install_copy_command">Komutu kopyala</string>
     <string name="install_copy_path">Yolu kopyala</string>
+    <string name="install_error_open_folder">Could not open the folder</string>
     <string name="install_file_saved_at">Güncelleme dosyası şu konuma kaydedilir:</string>
     <string name="install_flatpak_command">Aşağıdakilerle güncelleme yapıldı:</string>
     <string name="install_open_folder">Klasörü aç</string>

@@ -17,6 +17,7 @@
     <string name="player_background_stage">Stav</string>
     <string name="player_controls_style_essential">Základní</string>
     <string name="player_controls_style_modern">Moderní</string>
+    <string name="player_cover_style_cd">CD</string>
     <string name="player_cover_style_cd_with_cover">CD s obalem</string>
     <string name="player_cover_style_vinyl">Gramodeska</string>
     <string name="player_progress_mini_player">Minimalizovaný přehrávač</string>

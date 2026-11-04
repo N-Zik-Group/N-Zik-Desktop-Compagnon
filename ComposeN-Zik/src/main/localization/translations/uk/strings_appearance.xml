@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="fake_audio_bar">Підроблена Waveform</string>
+    <string name="message_type">Popup message style</string>
     <string name="message_type_modern">Сучасний</string>
     <string name="player_background_black_cherry_cosmos">Чорна вишня Космос</string>
     <string name="player_background_glossy_gradient">Глянсовий градієнт</string>

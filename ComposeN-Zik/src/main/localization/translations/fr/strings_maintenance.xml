@@ -3,6 +3,7 @@
     <string name="git_title">GIT</string>
     <string name="install_copy_command">Copier la commande</string>
     <string name="install_copy_path">Copier le chemin d\'accès</string>
+    <string name="install_error_open_folder">Could not open the folder</string>
     <string name="install_file_saved_at">Le fichier de mise à jour est enregistré à l\'emplacement suivant :</string>
     <string name="install_flatpak_command">Mise à jour effectuée avec :</string>
     <string name="install_open_folder">Ouvrir le dossier</string>
@@ -21,6 +22,7 @@
     <string name="maintenance_no_data">Aucune donnée</string>
     <string name="maintenance_open">Ouvrir</string>
     <string name="maintenance_open_desc">Ouvrir la fiche d\'entretien complète</string>
+    <string name="maintenance_title">Maintenance</string>
     <string name="old_install_path">Installation actuelle :</string>
     <string name="recovery_center">Centre de Secours</string>
     <string name="stable_title">STABLE</string>

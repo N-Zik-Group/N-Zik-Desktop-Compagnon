@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="fake_audio_bar">Falso Waveform</string>
+    <string name="message_type">Popup message style</string>
     <string name="message_type_modern">Moderno</string>
     <string name="player_background_black_cherry_cosmos">Cosmo Di Ciliegia Nera</string>
     <string name="player_background_glossy_gradient">Gradiente lucido</string>
@@ -16,6 +17,7 @@
     <string name="player_background_stage">Fase</string>
     <string name="player_controls_style_essential">Essenziale</string>
     <string name="player_controls_style_modern">Moderno</string>
+    <string name="player_cover_style_cd">CD</string>
     <string name="player_cover_style_cd_with_cover">CD con copertina</string>
     <string name="player_cover_style_vinyl">Vinile</string>
     <string name="player_progress_mini_player">Lettore minimizzato</string>

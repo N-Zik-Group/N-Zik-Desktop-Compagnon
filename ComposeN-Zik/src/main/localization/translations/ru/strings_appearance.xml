@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="fake_audio_bar">Фальшивая волна</string>
+    <string name="message_type">Popup message style</string>
     <string name="message_type_modern">Современный</string>
     <string name="player_background_black_cherry_cosmos">Черная вишня Космос</string>
     <string name="player_background_glossy_gradient">Глянцевый градиент</string>

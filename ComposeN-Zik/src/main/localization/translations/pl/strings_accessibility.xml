@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Accessibility -->
     <string name="accessibility_app_icon">Ikona aplikacji</string>
     <string name="accessibility_app_icon_in_player">ikona aplikacji w odtwarzaczu</string>
     <string name="accessibility_background_image">Obraz tła</string>

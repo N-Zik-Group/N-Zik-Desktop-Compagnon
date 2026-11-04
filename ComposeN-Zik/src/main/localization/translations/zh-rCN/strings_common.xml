@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_subtitle">Companion for N-Zik</string>
     <string name="cancel">取消</string>
+    <string name="common_artist_conjunction_and">and</string>
     <string name="common_clipboard_copy_success">已复制</string>
     <string name="common_color_source_theme">主题</string>
+    <string name="common_color_white">White</string>
     <string name="common_delete_success">已删除</string>
+    <string name="common_empty_items">No items</string>
     <string name="common_option_all">所有</string>
     <string name="common_option_custom">自定义</string>
     <string name="common_option_default">默认</string>
@@ -14,5 +18,10 @@
     <string name="common_size_biggest">最大</string>
     <string name="common_size_medium">中</string>
     <string name="common_size_small">小</string>
+    <string name="common_state_off">Off</string>
+    <string name="common_state_on">On</string>
+    <string name="common_storage_used_suffix">used</string>
     <string name="common_validation_empty_value">值不能为空</string>
+    <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="dismiss">Dismiss</string>
 </resources>

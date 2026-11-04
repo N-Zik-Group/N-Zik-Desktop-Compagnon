@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="fake_audio_bar">偽の波形</string>
+    <string name="message_type">Popup message style</string>
     <string name="message_type_modern">多機能</string>
     <string name="player_background_black_cherry_cosmos">ブラックチェリーコスモス</string>
     <string name="player_background_glossy_gradient">光沢グラデーション</string>
@@ -16,6 +17,7 @@
     <string name="player_background_stage">ステージ</string>
     <string name="player_controls_style_essential">簡素</string>
     <string name="player_controls_style_modern">多機能</string>
+    <string name="player_cover_style_cd">CD</string>
     <string name="player_cover_style_cd_with_cover">カバー付きのCD</string>
     <string name="player_cover_style_vinyl">レコード</string>
     <string name="player_progress_mini_player">最小化したプレイヤー</string>

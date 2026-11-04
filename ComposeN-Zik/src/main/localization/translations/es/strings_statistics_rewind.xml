@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Calendar -->
     <string name="calendar_period_one_month">1 mes</string>
     <string name="calendar_period_one_week">1 semana</string>
     <string name="calendar_period_one_year">1 año</string>
     <string name="calendar_period_six_months">6 meses</string>
     <string name="calendar_period_three_months">3 meses</string>
     <string name="calendar_today">Hoy</string>
+    <!-- Rewind -->
+    <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">Año</string>
+    <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Ilimitado</string>
     <string name="statistics_title">Estadísticas</string>
     <string name="statistics_top_period_title">Ver top %s de …</string>

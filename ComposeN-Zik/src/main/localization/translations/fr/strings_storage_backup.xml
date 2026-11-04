@@ -11,6 +11,7 @@
     <string name="backup_auto_title">Sauvegarde automatique</string>
     <string name="backup_export_description">Exporter la base de données ou les paramètres vers un fichier</string>
     <string name="backup_import_description">Importer une base de données ou des paramètres à partir d\'un fichier</string>
+    <string name="backup_import_failed">Import failed</string>
     <string name="backup_legacy_migration_description">Pour les anciens utilisateurs avant la conversion.\nUtilisez l\'ancienne application pour effectuer une sauvegarde en vue de la migration.</string>
     <string name="backup_target_database_label">Base de données</string>
     <string name="cached_pc">Ordinateur en cache</string>

@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Calendar -->
     <string name="calendar_period_one_month">1 місяць</string>
     <string name="calendar_period_one_week">1 тиждень</string>
     <string name="calendar_period_one_year">1 рік</string>
     <string name="calendar_period_six_months">6 Місяць</string>
     <string name="calendar_period_three_months">3 місяць</string>
     <string name="calendar_today">Сьогодні</string>
+    <!-- Rewind -->
+    <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">Рік</string>
+    <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Необмежено</string>
     <string name="statistics_title">Статистика</string>
     <string name="statistics_top_period_title">Найпопулярніший %s з …</string>

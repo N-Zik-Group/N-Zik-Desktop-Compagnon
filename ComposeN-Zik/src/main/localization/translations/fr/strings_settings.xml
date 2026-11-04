@@ -35,6 +35,7 @@
     <string name="settings_cache_eviction_description">Lorsque l\'espace disponible dans le cache est épuisé, les ressources auxquelles on n\'a pas accédé depuis le plus longtemps sont supprimées</string>
     <string name="settings_cache_image_size_limit_label">Taille maximale du cache des images</string>
     <string name="settings_cache_song_size_limit_label">Taille maximale du cache des titres</string>
+    <string name="settings_cache_title">Cache</string>
     <string name="settings_data_page_description">La section « Données » contient des paramètres qui modifient la manière dont l\'application gère les données en local et à distance.</string>
     <string name="settings_data_title">Données</string>
     <string name="settings_debug_title">Paramètres</string>
@@ -55,6 +56,7 @@
     <string name="settings_interface_title">Interface Utilisateur</string>
     <string name="settings_languages_title">Langues</string>
     <string name="settings_launcher_shortcuts_description">Sélectionner et réorganiser les raccourcis du lanceur d\'applications</string>
+    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
     <string name="settings_launcher_shortcuts_recovery_required_message">La fonction « Sauvegarde » ne peut pas être désactivée</string>
     <string name="settings_launcher_shortcuts_title">Raccourcis vers l\'application</string>
     <string name="settings_library_now_playing_indicator_label">Indicateur de lecture en cours</string>

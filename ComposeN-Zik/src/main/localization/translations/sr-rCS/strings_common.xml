@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_subtitle">Companion for N-Zik</string>
     <string name="cancel">Otkaži</string>
+    <string name="common_artist_conjunction_and">and</string>
     <string name="common_clipboard_copy_success">Kopirano</string>
     <string name="common_color_source_theme">Tema</string>
+    <string name="common_color_white">White</string>
     <string name="common_delete_success">Obrisano</string>
+    <string name="common_empty_items">No items</string>
     <string name="common_option_all">Sve</string>
     <string name="common_option_custom">Prilagođeno</string>
     <string name="common_option_default">Podrazumevano</string>
     <string name="common_option_disabled">Onemogućeno</string>
     <string name="common_option_none">Nema</string>
+    <string name="common_option_random">Random</string>
     <string name="common_size_big">Velika</string>
     <string name="common_size_biggest">Najveća</string>
     <string name="common_size_medium">Srednja</string>
     <string name="common_size_small">Mala</string>
+    <string name="common_state_off">Off</string>
+    <string name="common_state_on">On</string>
+    <string name="common_storage_used_suffix">used</string>
     <string name="common_validation_empty_value">Vrednost nе možе biti prazna</string>
+    <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="dismiss">Dismiss</string>
 </resources>

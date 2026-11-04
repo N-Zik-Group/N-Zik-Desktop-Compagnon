@@ -6,4 +6,5 @@
     <string name="profile_title">Profils</string>
     <string name="sync_action_sync">Synchronisation</string>
     <string name="sync_likes">Synchronisation automatique des morceaux aimés</string>
+    <string name="sync_start_service_failed">Failed to start sync service</string>
 </resources>

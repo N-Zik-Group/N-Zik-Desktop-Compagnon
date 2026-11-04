@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="backup_action_export">Export backup</string>
+    <string name="backup_action_import_legacy_migration">Import migration file.</string>
+    <string name="backup_auto_interval">Auto Backup Interval</string>
+    <string name="backup_auto_interval_none">Disabled</string>
+    <string name="backup_auto_location">Auto Backup Location</string>
+    <string name="backup_auto_location_not_set">Not set</string>
+    <string name="backup_auto_max_backups">Max Backups to Keep</string>
+    <string name="backup_auto_target">Backup Target</string>
+    <string name="backup_auto_title">Automatic Backup</string>
+    <string name="backup_export_description">Export database or settings to a file</string>
+    <string name="backup_import_description">Import database or settings from a file</string>
+    <string name="backup_import_failed">Import failed</string>
+    <string name="backup_legacy_migration_description">For old users before conversion.\nUse old app to make a backup for migration.</string>
     <string name="backup_target_database_label">数据库</string>
+    <string name="cached_pc">Cached PC</string>
+    <string name="download_pc">Download PC</string>
     <string name="downloads_action_download_all">下载所有歌曲</string>
+    <string name="downloads_action_refresh_quality">Update downloads</string>
     <string name="downloads_action_remove_all">删除所有已下载的歌曲</string>
+    <string name="downloads_cancelled">Download cancelled</string>
     <string name="downloads_delete_all_confirmation">你真的想要删除下载吗？</string>
     <string name="downloads_download_all_confirmation">您真的要全部下载吗？</string>
+    <string name="downloads_quality_format">Download Quality</string>
+    <string name="downloads_refresh_quality_description">Re-download the songs that were downloaded with a different quality</string>
     <string name="downloads_title">下载</string>
+    <string name="export_cached_song_action">Export cached or downloaded song</string>
+    <string name="export_cached_songs_action">Export cached</string>
+    <string name="import_backup">Import backup</string>
+    <string name="library_cleanup_title">Smart trash</string>
     <string name="title_backup_and_restore">备份和恢复</string>
 </resources>

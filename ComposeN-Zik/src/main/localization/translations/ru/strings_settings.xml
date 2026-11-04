@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_loudness_boost_level">Уровень громкости</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
     <string name="common_translation_title">Перевод</string>
     <string name="library_sort_order_title">Сортировка</string>
     <string name="maintenance_debug_logging_title">Включить отладочные журналы</string>
@@ -18,6 +21,7 @@
     <string name="settings_app_language_label">Язык приложения</string>
     <string name="settings_audio_bass_boost">Усиление звука</string>
     <string name="settings_audio_crossfade_description">Включить плавный переход между песнями</string>
+    <string name="settings_audio_crossfade_label">Crossfade</string>
     <string name="settings_audio_equalizer_label">Эквалайзер</string>
     <string name="settings_audio_loudness_normalization_description">Установить фиксированный уровень громкости</string>
     <string name="settings_audio_loudness_normalization_label">Нормализация громкости</string>
@@ -51,11 +55,20 @@
     <string name="settings_interface_page_title">Интерфейс</string>
     <string name="settings_interface_title">Пользовательский интерфейс</string>
     <string name="settings_languages_title">Языки</string>
+    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
+    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
+    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
+    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
     <string name="settings_library_now_playing_indicator_label">Индикатор воспроизведения</string>
     <string name="settings_library_playlist_indicator_description">Отметить песни, которые были добавлены в ваш плейлист</string>
     <string name="settings_library_playlist_indicator_label">Индикатор плейлиста</string>
     <string name="settings_library_queue_playlist_swipe_left_label">Очередь и локальные плейлисты Свайп влево</string>
     <string name="settings_library_queue_playlist_swipe_right_label">Очередь и локальные плейлисты Свайп вправо</string>
+    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
+    <string name="settings_library_sort_options_description">Customize sort options</string>
+    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
+    <string name="settings_library_toolbar_title">Toolbar</string>
+    <string name="settings_local_playlist_title">Local Playlist</string>
     <string name="settings_logging_error_file_description">Если включено, создается файл логов для выявления ошибок</string>
     <string name="settings_loudness_base_gain">Повышение уровня громкости</string>
     <string name="settings_lyrics_artwork_visible_label">Показывать превью текстов песен</string>
@@ -76,6 +89,9 @@
     <string name="settings_network_title">Сеть</string>
     <string name="settings_parental_age_restriction_description">Запретить воспроизведение песен с ограничением возраста</string>
     <string name="settings_playback_duration_limit_label">Исключить песни с ограничением по длительности</string>
+    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
+    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
+    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
     <string name="settings_playback_pause_at_zero_volume_description">Приостановить песню, когда громкость достигнет 0 и возобновить ее, когда громкость больше 0</string>
     <string name="settings_playback_pause_between_songs_label">Пауза между треками</string>
     <string name="settings_playback_previous_restart_threshold_label">Максимальная предыдущая длительность песни</string>
@@ -92,6 +108,7 @@
     <string name="settings_player_artwork_corner_radius_label">Скругление</string>
     <string name="settings_player_artwork_section_title">Покрытие &amp; Миниатюра</string>
     <string name="settings_player_artwork_shrink_when_paused_label">Сжать миниатюру во время паузы</string>
+    <string name="settings_player_artwork_style_label">Thumbnail type</string>
     <string name="settings_player_artwork_visible_label">Показывать превью</string>
     <string name="settings_player_background_colors_label">Цвет фона</string>
     <string name="settings_player_background_progress_label">Фоновый прогресс бар</string>
@@ -99,6 +116,7 @@
     <string name="settings_player_bottom_black_gradient_label">Черный градиент снизу</string>
     <string name="settings_player_button_zoom_out_animation_label">Масштабирование кнопок</string>
     <string name="settings_player_controls_style_label">Стиль управления</string>
+    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
     <string name="settings_player_disable_horizontal_swipe_label">Отключить горизонтальный свайп</string>
     <string name="settings_player_disable_song_swipe_label">Отключить переключение треков свайпом</string>
     <string name="settings_player_disable_text_marquee_description">Прокрутка текста используется для длинных текстов</string>
@@ -108,6 +126,7 @@
     <string name="settings_player_header_album_artist_description">Альбом и заголовок исполнителя</string>
     <string name="settings_player_header_icons_visible_label">Показать информацию с иконками</string>
     <string name="settings_player_header_style_label">Стиль заголовка</string>
+    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
     <string name="settings_player_next_queue_visible_label">Показать следующую очередь треков</string>
     <string name="settings_player_persistent_queue_description">Сохранить и восстановить песни</string>
     <string name="settings_player_persistent_queue_label">Постоянный игрок</string>
@@ -121,6 +140,7 @@
     <string name="settings_player_queue_swipe_up_label">Свайп вверх, чтобы открыть очередь</string>
     <string name="settings_player_queue_tap_to_open_label">Нажмите, чтобы открыть очередь</string>
     <string name="settings_player_remaining_duration_visible_label">Показать оставшуюся длительность песни</string>
+    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
     <string name="settings_player_seek_time_buttons_label">Пропустить кнопки времени</string>
     <string name="settings_player_start_minimized_description">При нажатии на песню проигрыватель начинает свернут</string>
     <string name="settings_player_tap_artwork_toggle_lyrics_description">Нажав на миниатюру</string>
@@ -144,4 +164,6 @@
     <string name="settings_theme_mode_label">Режим темы</string>
     <string name="settings_title">Настройки</string>
     <string name="settings_transition_fade">Затухание</string>
+    <string name="settings_use_font_type">Font type</string>
+    <string name="window">Window</string>
 </resources>

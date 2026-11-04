@@ -4,8 +4,10 @@
     <string name="command_unknown">Bir komut</string>
     <string name="common_error_no_internet">Ağ bağlantısı yok</string>
     <string name="error_code_rejected">Kod geçersiz veya süresi dolmuş. Telefonunuzdaki kodu kontrol edin ve tekrar deneyin.</string>
+    <string name="error_copy_failed">Copy failed</string>
     <string name="error_incompatible_version">Telefon sürümü uyumsuz (sözleşme %1$s). N-Zik Masaüstü Yardımcısı veya N-Zik uygulamasını güncelleyin.</string>
     <string name="error_listener_failed">Eşleştirme dinleyicisi açılamadı. Aşağıdan manuel olarak eşleştirin.</string>
+    <string name="error_open_browser">Could not open the browser</string>
     <string name="error_phone_unreachable">Telefona ulaşılamadı. Sunucusunun çalışır durumda olup olmadığını ve her iki cihazın da aynı Wi-Fi ağına bağlı olup olmadığını kontrol edin.</string>
     <string name="error_rate_limited">Çok fazla deneme yapıldı. %1$d saniye sonra tekrar deneyin.</string>
     <string name="error_storage_failed">Eşleştirme bu bilgisayara kaydedilemedi.</string>

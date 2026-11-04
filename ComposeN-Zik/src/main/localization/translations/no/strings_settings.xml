@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_loudness_boost_level">Nivå for lydstyrke</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
     <string name="common_translation_title">Oversettelse</string>
     <string name="library_sort_order_title">Sorteringsrekkefølge</string>
     <string name="maintenance_debug_logging_title">Aktiver feilsøkingslogger</string>
@@ -16,12 +19,16 @@
     <string name="settings_about_page_description">Om delen viser informasjon om appen, utviklerne, feilsøking og oppdatering</string>
     <string name="settings_app_behavior_title">Appens oppførsel</string>
     <string name="settings_app_language_label">Appspråk</string>
+    <string name="settings_audio_bass_boost">Audio bass boost</string>
     <string name="settings_audio_crossfade_description">Aktiver jevn overgang mellom sanger</string>
+    <string name="settings_audio_crossfade_label">Crossfade</string>
     <string name="settings_audio_equalizer_label">Lydmikser</string>
     <string name="settings_audio_loudness_normalization_description">Juster volumet til et bestemt nivå</string>
     <string name="settings_audio_loudness_normalization_label">Normalisering av lydstyrke</string>
+    <string name="settings_audio_reverb">Audio reverb</string>
     <string name="settings_audio_skip_silence_description">Hopp over stille deler under avspilling</string>
     <string name="settings_audio_skip_silence_label">Hopp over stillhet</string>
+    <string name="settings_bass_boost_level">Bass boost level</string>
     <string name="settings_cache_action_set_custom_size">Angi egendefinert hurtigbuffer</string>
     <string name="settings_cache_custom_size_input_hint">Angi verdi i MB</string>
     <string name="settings_cache_delete_confirmation">Vil du virkelig slette buffer?</string>
@@ -30,6 +37,7 @@
     <string name="settings_cache_song_size_limit_label">Maks størrelse på sangbuffer</string>
     <string name="settings_cache_title">Mellomlager</string>
     <string name="settings_data_page_description">Dataseksjonen inneholder innstillinger som endrer hvordan appen håndterer data lokalt og eksternt</string>
+    <string name="settings_data_title">Data</string>
     <string name="settings_debug_title">Innstillinger</string>
     <string name="settings_downloads_automatic_description">Last ned sanger automatisk basert på dine innstillinger</string>
     <string name="settings_downloads_storage_limit_label">Sang maks nedlastingsstørrelse</string>
@@ -39,6 +47,7 @@
     <string name="settings_font_use_system_description">Bruk skrifttypen som er aktivert av systemet</string>
     <string name="settings_font_use_system_label">Bruk systemskrift</string>
     <string name="settings_general_page_description">Det generelle avsnittet inneholder innstillinger for den generelle funksjonaliteten til appen</string>
+    <string name="settings_general_title">General</string>
     <string name="settings_history_action_clear_listening">Slett littehistorie</string>
     <string name="settings_home_default_page_label">Standardside</string>
     <string name="settings_interface_corner_radius_label">UI Rundhet</string>
@@ -46,9 +55,20 @@
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">Brukergrensesnitt</string>
     <string name="settings_languages_title">Språk</string>
+    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
+    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
+    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
+    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
     <string name="settings_library_now_playing_indicator_label">Spilles nå indikator</string>
     <string name="settings_library_playlist_indicator_description">Merk sanger som ble lagt til i spillelisten</string>
     <string name="settings_library_playlist_indicator_label">Indikator for spilleliste</string>
+    <string name="settings_library_queue_playlist_swipe_left_label">Queue and Local Playlists Left Swipe</string>
+    <string name="settings_library_queue_playlist_swipe_right_label">Queue and Local Playlists Right Swipe</string>
+    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
+    <string name="settings_library_sort_options_description">Customize sort options</string>
+    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
+    <string name="settings_library_toolbar_title">Toolbar</string>
+    <string name="settings_local_playlist_title">Local Playlist</string>
     <string name="settings_logging_error_file_description">Hvis aktivert, opprett en loggfil for å utheve feil</string>
     <string name="settings_loudness_base_gain">Grunnforsterkning for lydstyrke</string>
     <string name="settings_lyrics_artwork_visible_label">Vis miniatyrbilde for sangtekst</string>
@@ -69,6 +89,9 @@
     <string name="settings_network_title">Nettverk</string>
     <string name="settings_parental_age_restriction_description">Hindre avspilling av sanger med aldersbegrensning</string>
     <string name="settings_playback_duration_limit_label">Ekskluder sanger med varighetsgrense</string>
+    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
+    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
+    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
     <string name="settings_playback_pause_at_zero_volume_description">Pause sangen når volumet når 0 og gjenoppta det når volumet er større enn 0</string>
     <string name="settings_playback_pause_between_songs_label">Pause mellom sanger</string>
     <string name="settings_playback_previous_restart_threshold_label">Forrige sang maks. forløpt varighet</string>
@@ -78,11 +101,14 @@
     <string name="settings_player_action_bar_transparent_background_label">Gjennomsiktig bakgrunn</string>
     <string name="settings_player_actions_spaced_evenly_label">Mellomrom jevnt</string>
     <string name="settings_player_appearance_page_description">Utseendet inneholder innstillinger for spillerens visuelle utseende</string>
+    <string name="settings_player_appearance_presets_preview_description">Previews will be in low quality</string>
+    <string name="settings_player_appearance_presets_title">Appearance Presets</string>
     <string name="settings_player_artwork_animation_enabled_label">Vis cover miniatyrbilde animasjon</string>
     <string name="settings_player_artwork_animation_style_label">Cover animasjonstype</string>
     <string name="settings_player_artwork_corner_radius_label">Miniatyrbilde rundhet</string>
     <string name="settings_player_artwork_section_title">Dekk til &amp; Miniatyrbilde</string>
     <string name="settings_player_artwork_shrink_when_paused_label">Forminsk miniatyrbilde ved pausering</string>
+    <string name="settings_player_artwork_style_label">Thumbnail type</string>
     <string name="settings_player_artwork_visible_label">Vis miniatyrbilder</string>
     <string name="settings_player_background_colors_label">Bakgrunnsfarger</string>
     <string name="settings_player_background_progress_label">Bakgrunns fremdriftslinje</string>
@@ -90,14 +116,17 @@
     <string name="settings_player_bottom_black_gradient_label">Svart gradient på Bunnen</string>
     <string name="settings_player_button_zoom_out_animation_label">Knappen zoom-out-animasjon</string>
     <string name="settings_player_controls_style_label">Styre stil</string>
+    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
     <string name="settings_player_disable_horizontal_swipe_label">Deaktiver vannrett swipe</string>
     <string name="settings_player_disable_song_swipe_label">Deaktiver sangbytte via sveip</string>
     <string name="settings_player_disable_text_marquee_description">Rullende tekst brukes for lange tekster</string>
     <string name="settings_player_disable_text_marquee_label">Deaktiver rullende tekst</string>
     <string name="settings_player_favorite_button_style_label">Favoritt knapp</string>
+    <string name="settings_player_gradient_style_label">Gradient Type</string>
     <string name="settings_player_header_album_artist_description">Album og Artistens overskrift</string>
     <string name="settings_player_header_icons_visible_label">Vis informasjon med ikoner</string>
     <string name="settings_player_header_style_label">Topptekst stil</string>
+    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
     <string name="settings_player_next_queue_visible_label">Vis neste sangkø</string>
     <string name="settings_player_persistent_queue_description">Lagre og gjenopprette spillende sanger</string>
     <string name="settings_player_persistent_queue_label">Vedvarende spiller</string>
@@ -111,6 +140,7 @@
     <string name="settings_player_queue_swipe_up_label">Dra opp for å åpne køen</string>
     <string name="settings_player_queue_tap_to_open_label">Trykk for å åpne køen</string>
     <string name="settings_player_remaining_duration_visible_label">Vis gjenstående sang varighet</string>
+    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
     <string name="settings_player_seek_time_buttons_label">Hopp over tidsknapper</string>
     <string name="settings_player_start_minimized_description">Når du klikker på en sang, starter spiller minimert</string>
     <string name="settings_player_tap_artwork_toggle_lyrics_description">Ved å trykke på miniatyrbildet</string>
@@ -134,4 +164,6 @@
     <string name="settings_theme_mode_label">Tema-modus</string>
     <string name="settings_title">Innstillinger</string>
     <string name="settings_transition_fade">Ton</string>
+    <string name="settings_use_font_type">Font type</string>
+    <string name="window">Window</string>
 </resources>

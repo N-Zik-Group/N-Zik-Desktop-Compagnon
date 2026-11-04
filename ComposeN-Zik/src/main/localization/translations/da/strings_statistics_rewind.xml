@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Calendar -->
     <string name="calendar_period_one_month">1 måned</string>
     <string name="calendar_period_one_week">1 uge</string>
     <string name="calendar_period_one_year">1 år</string>
     <string name="calendar_period_six_months">6 måneder</string>
     <string name="calendar_period_three_months">3 måneder</string>
     <string name="calendar_today">I dag</string>
+    <!-- Rewind -->
+    <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">År</string>
+    <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Ubegrænset</string>
     <string name="statistics_title">Statistikker</string>
     <string name="statistics_top_period_title">Se top %s af …</string>

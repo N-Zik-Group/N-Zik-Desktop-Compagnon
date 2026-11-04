@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Calendar -->
     <string name="calendar_period_one_month">1 mense</string>
     <string name="calendar_period_one_week">1 septimana</string>
     <string name="calendar_period_one_year">1 anno</string>
     <string name="calendar_period_six_months">6 menses</string>
     <string name="calendar_period_three_months">3 menses</string>
     <string name="calendar_today">Hodie</string>
+    <!-- Rewind -->
+    <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">Anno</string>
+    <!-- Statistics -->
+    <string name="statistics_items_limit_unlimited">Unlimited</string>
     <string name="statistics_title">Statisticas</string>
+    <string name="statistics_top_period_title">Top %s of …</string>
 </resources>
