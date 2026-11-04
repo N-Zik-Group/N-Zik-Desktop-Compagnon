@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calendar_period_one_month">شهر واحد</string>
+    <string name="calendar_period_one_week">أسبوع واحد</string>
+    <string name="calendar_period_one_year">سنة واحدة</string>
+    <string name="calendar_period_six_months">ستة أشهر</string>
+    <string name="calendar_period_three_months">ثلاثة أشهر</string>
+    <string name="calendar_today">اليوم</string>
+    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_year">Year</string>
+    <string name="rewind_title">Rewind</string>
+    <string name="rewind_top_sort">Rewind Top</string>
+    <string name="statistics_items_limit_unlimited">Unlimited</string>
+    <string name="statistics_title">الإحصاءات</string>
+    <string name="statistics_top_period_title">View top %s of …</string>
+</resources>

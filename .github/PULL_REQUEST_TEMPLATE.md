@@ -60,7 +60,7 @@
 - [ ] New code lives in `app.n_zik.compagnon.*` (single `:ComposeN-Zik` module — there is no legacy namespace in this repo)
 - [ ] No business logic or streaming stack added on the PC (the phone stays the source of truth)
 - [ ] New UI/actions are gated on their contract feature — buttons without a contract route are `InertButton`/`InertMenuItem` with the phone's own title (shown, never faked)
-- [ ] New strings go in `values/strings.xml` only (English) — I didn't touch any `values-*/` file (Crowdin-managed)
+- [ ] New strings go in the appropriate English `values/strings_*.xml` catalog — I didn't touch any `values-*/` file (Crowdin-managed)
 - [ ] This is a Crowdin sync PR — I said so in the description (exempt from BMAD + review)
 - [ ] Coroutines run on `NzikDispatchers` only (`fireAndForget()` for fire-and-forget) — no `GlobalScope`, no raw `Dispatchers.*`, no `runBlocking` without a "why" comment
 - [ ] Compose: `collectAsStateWithLifecycle()`, atomic `_state.update { }`, `key` + `contentType` on lazy lists

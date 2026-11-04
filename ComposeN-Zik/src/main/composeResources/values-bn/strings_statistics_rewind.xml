@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calendar_period_one_month">১ মাস</string>
+    <string name="calendar_period_one_week">১ সপ্তাহ</string>
+    <string name="calendar_period_one_year">১ বছর</string>
+    <string name="calendar_period_six_months">৬ মাস</string>
+    <string name="calendar_period_three_months">৩ মাস</string>
+    <string name="calendar_today">আজ</string>
+    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_year">বছর</string>
+    <string name="rewind_title">Rewind</string>
+    <string name="rewind_top_sort">Rewind Top</string>
+    <string name="statistics_items_limit_unlimited">আনলিমিটেড</string>
+    <string name="statistics_title">পরিসংখ্যান</string>
+    <string name="statistics_top_period_title">View top %s of …</string>
+</resources>

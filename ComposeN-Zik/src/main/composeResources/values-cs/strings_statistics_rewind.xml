@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calendar_period_one_month">1 měsíc</string>
+    <string name="calendar_period_one_week">1 týden</string>
+    <string name="calendar_period_one_year">1 rok</string>
+    <string name="calendar_period_six_months">6 měsíců</string>
+    <string name="calendar_period_three_months">3 měsíce</string>
+    <string name="calendar_today">Dnes</string>
+    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_year">Rok</string>
+    <string name="rewind_title">Rewind</string>
+    <string name="rewind_top_sort">Rewind Top</string>
+    <string name="statistics_items_limit_unlimited">Neomezený</string>
+    <string name="statistics_title">Statistiky</string>
+    <string name="statistics_top_period_title">Top %s z …</string>
+</resources>

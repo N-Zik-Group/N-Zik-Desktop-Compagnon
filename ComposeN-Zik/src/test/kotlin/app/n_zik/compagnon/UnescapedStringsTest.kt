@@ -55,16 +55,16 @@ class UnescapedStringsTest {
 
     @Test
     fun `the generated fr updates starting status is unescaped`() {
-        val fr = generatedRoot.resolve("values-fr/strings.xml")
-        assertTrue(fr.isFile, "the generated unescaped fr strings.xml is missing: ${fr.path} (run :ComposeN-Zik:test — it depends on unescapeStringsXml)")
+        val fr = generatedRoot.resolve("values-fr/strings_updates.xml")
+        assertTrue(fr.isFile, "the generated unescaped French string catalog is missing: ${fr.path} (run :ComposeN-Zik:test — it depends on unescapeStringsXml)")
         // Crowdin values retain Android escaping in source, so the build must unescape them.
         assertEquals("C'est parti…", stringName(fr.readText(), "updates_starting_status"))
     }
 
     @Test
     fun `the generated fr app subtitle is unescaped`() {
-        val fr = generatedRoot.resolve("values-fr/strings.xml")
-        assertTrue(fr.isFile, "the generated unescaped fr strings.xml is missing: ${fr.path}")
+        val fr = generatedRoot.resolve("values-fr/strings_common.xml")
+        assertTrue(fr.isFile, "the generated unescaped French string catalog is missing: ${fr.path}")
         assertEquals("Guide d'accompagnement pour N-Zik", stringName(fr.readText(), "app_subtitle"))
     }
 
@@ -79,21 +79,23 @@ class UnescapedStringsTest {
             .listFiles { _, name -> name.startsWith("values") })
             .filter { it.isDirectory }
         assertEquals(sources.size, generated.size, "expected one generated dir per source values* dir")
-        sources.forEach { source ->
-            val copy = generatedRoot.resolve(source.name).resolve("strings.xml")
-            assertTrue(copy.isFile, "missing generated copy: ${copy.path}")
-        }
         val offenders = mutableListOf<String>()
-        generated
-            .map { it.resolve("strings.xml") }
-            .forEach { file ->
-                stringValues(file.readText())
-                    .forEach { (name, value) ->
-                        if (value.contains("\\'") || value.contains("\\\"")) {
-                            offenders += "${file.parentFile.name}/$name = $value"
-                        }
+        sources.forEach { source ->
+            val catalogs = requireNotNull(source.listFiles { _, name ->
+                name.startsWith("strings_") && name.endsWith(".xml")
+            })
+            val generatedDir = generatedRoot.resolve(source.name)
+            assertEquals(catalogs.map { it.name }.toSet(), generatedDir.list()?.toSet())
+            catalogs.forEach { catalog ->
+                val copy = generatedDir.resolve(catalog.name)
+                assertTrue(copy.isFile, "missing generated copy: ${copy.path}")
+                stringValues(copy.readText()).forEach { (name, value) ->
+                    if (value.contains("\\'") || value.contains("\\\"")) {
+                        offenders += "${copy.parentFile.name}/${copy.name}/$name = $value"
                     }
+                }
             }
+        }
         assertTrue(offenders.isEmpty(), "generated values still carry Android escaping: ${offenders.take(10)}")
     }
 

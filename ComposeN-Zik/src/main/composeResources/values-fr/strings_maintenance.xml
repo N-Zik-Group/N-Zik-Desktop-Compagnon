@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="logs_action_export">Exporter les journaux</string>
+    <string name="logs_export_debug_description">Exporter le journal de débogage vers un fichier</string>
+    <string name="maintenance_card_desc">Aperçu de l\'état de l\'application : tests de démarrage réussis et sous-systèmes actifs</string>
+    <string name="maintenance_convergence">Convergence des noms</string>
+    <string name="maintenance_db_cleanup">Nettoyage des liens vers les artistes</string>
+    <string name="maintenance_debug_logging_title">Activer les journaux de débogage</string>
+    <string name="maintenance_dedup">Suppression des doublons d\'artistes portant le même nom</string>
+    <string name="maintenance_live_subsystems">Sous-systèmes en temps réel</string>
+    <string name="maintenance_no_data">Aucune donnée</string>
+    <string name="maintenance_open">Ouvrir</string>
+    <string name="maintenance_open_desc">Ouvrir la fiche d\'entretien complète</string>
+    <string name="maintenance_title">Maintenance</string>
+    <string name="recovery_center">Centre de Secours</string>
+    <string name="troubleshooting">Dépannage</string>
+</resources>

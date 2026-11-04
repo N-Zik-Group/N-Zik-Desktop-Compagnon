@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_app_icon">Ikona aplikace</string>
+    <string name="accessibility_app_icon_in_player">ikona aplikace v přehrávači</string>
+    <string name="accessibility_background_image">Obrázek na pozadí</string>
+    <string name="accessibility_blurred_background">rozmazané_pozadí</string>
+    <string name="accessibility_disc_background">pozadí disku</string>
+    <string name="accessibility_number_of_songs_in_queue">Počet skladeb ve frontě</string>
+    <string name="accessibility_origin_indicator">původní_indikátor</string>
+    <string name="accessibility_song_album_cover">Obal alba skladby</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_action_report_issue">問題を報告</string>
+    <string name="about_action_view_source">ソースコードを見る</string>
+    <string name="about_authorship_preposition">作成者:</string>
+    <string name="about_contributors_alphabetical_order_label">アルファベット順:</string>
+    <string name="about_developers">開発者/デザイナー</string>
+    <string name="about_github_link_description">GitHubを開きます</string>
+    <string name="about_title">アプリの情報</string>
+    <string name="about_translators_title">翻訳者</string>
+    <string name="contributors">貢献者</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_action_report_issue">Nahlásit problém</string>
+    <string name="about_action_view_source">Zobrazit zdrojový kód</string>
+    <string name="about_authorship_preposition">od</string>
+    <string name="about_contributors_alphabetical_order_label">V abecedním pořadí:</string>
+    <string name="about_developers">Vývojáři / Designéři</string>
+    <string name="about_github_link_description">Budete přesměrováni na GitHub.</string>
+    <string name="about_title">O aplikaci</string>
+    <string name="about_translators_title">Překladatelé</string>
+    <string name="contributors">Přispěvatelé</string>
+</resources>

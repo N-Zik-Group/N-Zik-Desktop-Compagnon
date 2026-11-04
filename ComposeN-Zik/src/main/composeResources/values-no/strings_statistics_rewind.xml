@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calendar_period_one_month">1 Måned</string>
+    <string name="calendar_period_one_week">1 Uke</string>
+    <string name="calendar_period_one_year">1 År</string>
+    <string name="calendar_period_six_months">6 Måneder</string>
+    <string name="calendar_period_three_months">3 Måneder</string>
+    <string name="calendar_today">I dag</string>
+    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_year">År</string>
+    <string name="rewind_title">Rewind</string>
+    <string name="rewind_top_sort">Rewind Top</string>
+    <string name="statistics_items_limit_unlimited">Ubegrenset</string>
+    <string name="statistics_title">Statistikk</string>
+    <string name="statistics_top_period_title">Topp %s av …</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="logs_action_export">Günlükleri dışa aktar</string>
+    <string name="logs_export_debug_description">Hata ayıklama günlüğünü bir dosyaya aktar</string>
+    <string name="maintenance_card_desc">Uygulama durumuna genel bakış: son önyükleme testleri ve çalışan alt sistemler</string>
+    <string name="maintenance_convergence">Adların birleştirilmesi</string>
+    <string name="maintenance_db_cleanup">Sanatçı bağlantılarının temizlenmesi</string>
+    <string name="maintenance_debug_logging_title">Hata ayıklama günlüklerini etkinleştir</string>
+    <string name="maintenance_dedup">Aynı isimli sanatçıların tekrarlanması</string>
+    <string name="maintenance_live_subsystems">Canlı alt sistemler</string>
+    <string name="maintenance_no_data">Veri yok</string>
+    <string name="maintenance_open">Açık</string>
+    <string name="maintenance_open_desc">Tam bakım sayfasını açın</string>
+    <string name="maintenance_title">Bakım</string>
+    <string name="recovery_center">Kurtarma Merkezi</string>
+    <string name="troubleshooting">Sorun giderme</string>
+</resources>

@@ -451,13 +451,13 @@ compose.resources {
 
 // ---- Unescaped strings (user report 2026-10-07: visible Android escaping in the UI) ---------------
 //
-// The Crowdin-managed `values*/strings.xml` files carry the phone's Android escaping convention
+// The Crowdin-managed `values*/strings_*.xml` files carry the phone's Android escaping convention
 // (`\'` for an apostrophe, `\"` for a quote, `\\` for a backslash — 116 occurrences across 31
 // locale files). aapt2 unescapes them at Android compile time, but the Compose desktop resource
 // pipeline does NOT — the backslash renders in the UI (« c\'est »). Fix at BUILD TIME, in two
 // tasks:
 //
-//  * `unescapeStringsXml` — generates unescaped COPIES of every `values*/strings.xml` into a
+//  * `unescapeStringsXml` — generates unescaped COPIES of every `values*/strings_*.xml` into a
 //    generated dir (asserted on by UnescapedStringsTest; the source files are NEVER modified —
 //    `values/` and `values-*` are Crowdin-managed and a future import would re-escape them);
 //  * `unescapeCompiledResources` — the actual FIX, applied AFTER the compose resource
@@ -507,16 +507,16 @@ fun unescapeAndroidStrings(xml: String): String {
 }
 
 val unescapeStringsXml = tasks.register("unescapeStringsXml") {
-    description = "Generates unescaped copies of composeResources/values*/strings.xml (the Android escaping convention the desktop pipeline does not unescape)."
+    description = "Generates unescaped copies of composeResources/values*/strings_*.xml (the Android escaping convention the desktop pipeline does not unescape)."
     val sourceRoot = project.file("src/main/composeResources")
-    inputs.files(project.fileTree(sourceRoot) { include("values*/strings.xml") })
+    inputs.files(project.fileTree(sourceRoot) { include("values*/strings_*.xml") })
     outputs.dir(unescapedResourcesDir)
     doLast {
         val outRoot = unescapedResourcesDir.get().asFile
         outRoot.deleteRecursively()
         var count = 0
         project.fileTree(sourceRoot)
-            .matching { include("values*/strings.xml") }
+            .matching { include("values*/strings_*.xml") }
             .files
             .forEach { source ->
                 val target = outRoot.resolve(source.relativeTo(sourceRoot).path)
@@ -524,7 +524,7 @@ val unescapeStringsXml = tasks.register("unescapeStringsXml") {
                 target.writeText(unescapeAndroidStrings(source.readText()))
                 count++
             }
-        logger.lifecycle("unescapeStringsXml: $count strings.xml files unescaped into ${outRoot.path}")
+        logger.lifecycle("unescapeStringsXml: $count string catalogs unescaped into ${outRoot.path}")
     }
 }
 

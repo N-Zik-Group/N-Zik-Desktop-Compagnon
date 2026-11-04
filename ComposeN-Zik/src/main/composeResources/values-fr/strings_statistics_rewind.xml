@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calendar_period_one_month">1 Mois</string>
+    <string name="calendar_period_one_week">1 Semaine</string>
+    <string name="calendar_period_one_year">1 An</string>
+    <string name="calendar_period_six_months">6 Mois</string>
+    <string name="calendar_period_three_months">3 Mois</string>
+    <string name="calendar_today">Aujourd\'hui</string>
+    <string name="rewind_filter_month">Mois</string>
+    <string name="rewind_filter_year">Année</string>
+    <string name="rewind_title">Rétrospective</string>
+    <string name="rewind_top_sort">Meilleures Rétrospectives</string>
+    <string name="statistics_items_limit_unlimited">Illimité</string>
+    <string name="statistics_title">Statistiques</string>
+    <string name="statistics_top_period_title">Les %s meilleurs de…</string>
+</resources>

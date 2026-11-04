@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_app_icon">Appens ikon</string>
+    <string name="accessibility_app_icon_in_player">app ikon i spelaren</string>
+    <string name="accessibility_background_image">Bakgrundsbild</string>
+    <string name="accessibility_blurred_background">Bakgrund</string>
+    <string name="accessibility_disc_background">skiva bakgrund</string>
+    <string name="accessibility_number_of_songs_in_queue">Antal låtar i kö</string>
+    <string name="accessibility_origin_indicator">Ursprungsindikator</string>
+    <string name="accessibility_song_album_cover">Låtens skivomslag</string>
+</resources>

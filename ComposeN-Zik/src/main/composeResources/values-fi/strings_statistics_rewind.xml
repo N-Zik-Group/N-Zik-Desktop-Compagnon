@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calendar_period_one_month">1 kuukausi</string>
+    <string name="calendar_period_one_week">1 viikko</string>
+    <string name="calendar_period_one_year">1 vuosi</string>
+    <string name="calendar_period_six_months">6 kuukautta</string>
+    <string name="calendar_period_three_months">3 kuukautta</string>
+    <string name="calendar_today">Tänään</string>
+    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_year">Julkaisuvuosi</string>
+    <string name="rewind_title">Rewind</string>
+    <string name="rewind_top_sort">Rewind Top</string>
+    <string name="statistics_items_limit_unlimited">Rajoittamaton</string>
+    <string name="statistics_title">Tilastoja</string>
+    <string name="statistics_top_period_title">Top %s …</string>
+</resources>
