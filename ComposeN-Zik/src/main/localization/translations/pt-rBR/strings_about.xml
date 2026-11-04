@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="about_action_report_issue">Reportar um problema</string>
-    <string name="about_action_view_source">Veja o código-fonte</string>
-    <string name="about_contributors_alphabetical_order_label">Em ordem alfabética:</string>
-    <string name="about_developers">Desenvolvedores / Designers</string>
-    <string name="about_github_link_description">Você vai ser redirecionado para o GitHub</string>
-    <string name="about_title">Sobre</string>
-    <string name="about_translators_title">Tradutores</string>
-    <string name="contributors">Contribuidores</string>
-    <string name="request_a_feature">Solicitar um recurso ou sugerir uma ideia</string>
+    <string name="about_action_report_issue">Report an issue</string>
+    <string name="about_action_view_source">View the source code</string>
+    <string name="about_authorship_preposition">by</string>
+    <string name="about_contributors_alphabetical_order_label">In alphabetical order:</string>
+    <string name="about_developers">Developers / Designers</string>
+    <string name="about_github_link_description">You will be redirected to GitHub</string>
+    <string name="about_title">About</string>
+    <string name="about_translators_title">Translators</string>
+    <string name="contributors">Contributors</string>
+    <string name="request_a_feature">Request a feature or suggest an idea</string>
 </resources>
