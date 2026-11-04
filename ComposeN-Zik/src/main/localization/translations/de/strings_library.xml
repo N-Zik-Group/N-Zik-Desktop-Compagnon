@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Album merken</string>
     <string name="album_action_open">Album anzeigen</string>
     <string name="album_left_swipe">Album links wischen</string>
-    <string name="album_loading_song_count_format">Lade %1$d Lieder…</string>
+    <string name="album_loading_song_count_format">Album wird geladen (Titelanzahl: %1$d)…</string>
     <string name="album_right_swipe">Album rechts wischen</string>
     <string name="artist_action_follow">Folgen</string>
     <string name="artist_action_play_local_songs">Alle lokalen Titel abspielen</string>

@@ -167,7 +167,15 @@ suspend fun phoneToastText(key: String, args: List<String>, message: String): St
     val localName = StringResourceIdentity.localName(key)
     val resource = Res.allStringResources[localName] ?: return message
     val raw = getString(resource)
-    // The legacy phone retry included an already-localized reason (or a raw diagnostic).
+    // Only these wire messages are safe to reuse. Older retry messages can include diagnostics.
+    val availability = when {
+        localName == "player_queue_shuffled_count_format" ->
+            Res.string.bridge_translation_available_player_queue_shuffled_count_format
+        key == "network_stream_retrying_playback" && args.isEmpty() ->
+            Res.string.bridge_translation_available_network_stream_retrying_playback
+        else -> null
+    }
+    if (availability != null && java.util.Locale.getDefault().language != "en" && message.isNotBlank() && getString(availability) == "0") return message
     if (localName == "network_stream_retrying_playback") return raw
     val formatted = formatText(raw, *args.map<String, Any> { it.toLongOrNull() ?: it }.toTypedArray())
     return if (args.isNotEmpty() && formatted == raw) message.ifEmpty { raw } else formatted

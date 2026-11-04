@@ -460,6 +460,40 @@ val combineComposeResources = tasks.register<Sync>("combineComposeResources") {
     }
     into(combinedComposeResources)
     duplicatesStrategy = DuplicatesStrategy.FAIL
+    doLast {
+        // Give the two safe Bridge toasts an availability marker with the same qualifiers
+        // as their translation, so Compose applies its own language and region fallback.
+        val toastKeys = setOf("player_queue_shuffled_count_format", "network_stream_retrying_playback")
+        val parser = javax.xml.parsers.DocumentBuilderFactory.newInstance().apply {
+            setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+        }.newDocumentBuilder()
+        fun toastEntries(directory: File): Map<String, String> = buildMap {
+            for (catalog in listOf("strings_connectivity.xml", "strings_player.xml")) {
+                val file = directory.resolve(catalog)
+                if (!file.isFile) continue
+                val entries = parser.parse(file).getElementsByTagName("string")
+                for (index in 0 until entries.length) {
+                    val entry = entries.item(index)
+                    val name = entry.attributes.getNamedItem("name")?.nodeValue ?: continue
+                    if (name in toastKeys) put(name, entry.textContent.trim())
+                }
+            }
+        }
+        val source = toastEntries(destinationDir.resolve("values"))
+        for (directory in destinationDir.listFiles().orEmpty().filter {
+            it.isDirectory && (it.name == "values" || it.name.startsWith("values-"))
+        }) {
+            val keys = if (directory.name == "values") toastKeys else toastEntries(directory)
+                .filter { (key, text) -> text.isNotEmpty() && text != source[key] }.keys
+            if (keys.isEmpty()) continue
+            val available = if (directory.name == "values") "0" else "1"
+            directory.resolve("bridge_toast_availability.xml").writeText(
+                keys.joinToString(separator = "\n", prefix = "<resources>\n", postfix = "\n</resources>\n") { key ->
+                    "    <string name=\"bridge_translation_available_$key\">$available</string>"
+                },
+            )
+        }
+    }
 }
 
 compose.resources {

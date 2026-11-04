@@ -65,7 +65,7 @@ class UnescapedStringsTest {
     fun `the generated fr app subtitle is unescaped`() {
         val fr = generatedRoot.resolve("values-fr/strings_common.xml")
         assertTrue(fr.isFile, "the generated unescaped French string catalog is missing: ${fr.path}")
-        assertEquals("Guide d'accompagnement pour N-Zik", stringName(fr.readText(), "app_subtitle"))
+        assertEquals("L'application compagnon de N-Zik", stringName(fr.readText(), "app_subtitle"))
     }
 
     @Test

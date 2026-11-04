@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.utils.formatText
 import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
@@ -54,7 +55,10 @@ class NoRouteConfirmButton(
         get() = stringResource(titleId)
     override val dialogTitle: String
         @Composable
-        get() = dialogTextArg?.let { stringResource(dialogTextId, it) } ?: stringResource(dialogTextId)
+        get() {
+            val text = stringResource(dialogTextId)
+            return dialogTextArg?.let { formatText(text, it) } ?: text
+        }
 
     override fun onShortClick() {
         isActive = true

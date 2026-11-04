@@ -153,8 +153,8 @@ class ParityPassThreeTest {
         }
         assertEquals(
             listOf(
-                "12 songs shuffled", "12 songs shuffled", "Texte du téléphone", "Texte du téléphone",
-                "%d songs shuffled", "Texte du téléphone", "Queue shuffled (12 songs)",
+                "Tracks shuffled: 12", "Tracks shuffled: 12", "Texte du téléphone", "Texte du téléphone",
+                "Tracks shuffled: %d", "Texte du téléphone", "Queue shuffled (tracks: 12)",
                 "Retrying playback…", "Retrying playback…",
             ),
             texts,
@@ -164,11 +164,31 @@ class ParityPassThreeTest {
     @Test
     fun `historical and local toast keys use the desktop language`() = runTest {
         AppLanguage.applyTag("fr")
-        assertEquals("12 titres en lecture aléatoire", phoneToastText("songs_shuffled", listOf("12"), "Phone fallback"))
+        assertEquals("Titres mélangés : 12", phoneToastText("songs_shuffled", listOf("12"), "Phone fallback"))
         assertEquals(
             phoneToastText("songs_shuffled", listOf("12"), "Phone fallback"),
             phoneToastText("player_shuffled_song_count_format", listOf("12"), "Phone fallback"),
         )
+    }
+
+    @Test
+    fun `translated desktop toasts win over the phone and handle a count of one`() = runTest {
+        AppLanguage.applyTag("fr-CA")
+        assertEquals("File mélangée (nombre de titres : 1)", phoneToastText("queue_shuffled", listOf("1"), "Queue shuffled"))
+        assertEquals("Titres mélangés : 1", phoneToastText("songs_shuffled", listOf("1"), "Tracks shuffled"))
+        assertEquals("Tentative de reprise de la lecture…", phoneToastText("network_stream_retrying_playback", emptyList(), "Retrying playback…"))
+        assertEquals("Tentative de reprise de la lecture…", phoneToastText("stream_error_retrying", listOf("diagnostic"), "Retrying: diagnostic"))
+    }
+
+    @Test
+    fun `untranslated desktop toasts preserve safe phone copy but never legacy retry diagnostics`() = runTest {
+        AppLanguage.applyTag("de")
+        assertEquals("File mélangée (12 titres)", phoneToastText("queue_shuffled", listOf("12"), "File mélangée (12 titres)"))
+        assertEquals("Reprise de la lecture…", phoneToastText("network_stream_retrying_playback", emptyList(), "Reprise de la lecture…"))
+        assertEquals("Retrying playback…", phoneToastText("stream_error_retrying", listOf("diagnostic"), "Retrying: diagnostic"))
+        assertEquals("Retrying playback…", phoneToastText("network_stream_retrying_playback", emptyList(), " "))
+        assertEquals("Retrying playback…", phoneToastText("network_stream_retrying_playback", listOf("diagnostic"), "Retrying: diagnostic"))
+        assertEquals("Queue shuffled (tracks: 12)", phoneToastText("queue_shuffled", listOf("12"), ""))
     }
 
     // Row 18: the palette from the phone's settings
