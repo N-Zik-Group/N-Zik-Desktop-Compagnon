@@ -8,7 +8,7 @@
     <string name="calendar_period_three_months">3 месяца</string>
     <string name="calendar_today">Сегодня</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_month">Месяц</string>
     <string name="rewind_filter_year">По году</string>
     <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Неограниченный</string>
