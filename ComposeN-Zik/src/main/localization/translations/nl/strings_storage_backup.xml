@@ -11,6 +11,7 @@
     <string name="backup_auto_title">Automatic Backup</string>
     <string name="backup_export_description">Export database or settings to a file</string>
     <string name="backup_import_description">Import database or settings from a file</string>
+    <string name="backup_import_failed">Import failed</string>
     <string name="backup_legacy_migration_description">Voor oude gebruikers vóór conversie.\nGebruik oude app om een back-up te maken voor migratie.</string>
     <string name="backup_target_database_label">Database</string>
     <string name="cached_pc">Cached PC</string>
@@ -27,5 +28,6 @@
     <string name="export_cached_song_action">Export cached or downloaded song</string>
     <string name="export_cached_songs_action">Export cached</string>
     <string name="import_backup">Import backup</string>
-    <string name="path_copied">Path copied</string>
+    <string name="library_cleanup_title">Slimme prullenbak</string>
+    <string name="title_backup_and_restore">Back-up maken en herstellen</string>
 </resources>
