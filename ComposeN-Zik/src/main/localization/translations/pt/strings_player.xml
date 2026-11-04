@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Retroceder 5 segundos</string>
     <string name="player_seek_backward_thirty_seconds">Retroceder 30 segundos</string>
     <string name="player_shuffle_empty_message">Nenhuma música para embaralhar</string>
-    <string name="player_shuffled_song_count_format">%d songs shuffled</string>
+    <string name="player_queue_shuffled_count_format">Fila misturada (faixas: %d)</string>
+    <string name="player_shuffled_song_count_format">Trilhos misturados: %d</string>
     <string name="player_sleep_timer_title">Temporizador para desligar</string>
     <string name="player_statistics_volume_label">Volume</string>
     <string name="player_swap_controls_with_timeline">Trocar controles pela linha do tempo</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Barra de visualizador</string>
     <string name="visualizer_microphone_permission_message">O efeito de visualizador requer permissão do microfone, por favor.</string>
     <string name="visualizer_title">Visualizador</string>
+    <string name="player_error_unknown">Um erro de reprodução desconhecido ocorreu</string>
 </resources>
