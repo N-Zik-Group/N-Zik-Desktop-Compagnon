@@ -20,7 +20,6 @@
     <string name="library_albums_title">Álbuns</string>
     <string name="library_artists_title">Artistas</string>
     <string name="library_cached_title">Armazenado</string>
-    <string name="library_cleanup_title">Smart trash</string>
     <string name="library_disliked_title">Disliked</string>
     <string name="library_dislikes_added">Disliked %s</string>
     <string name="library_dislikes_removed">Removed %s from dislikes</string>
@@ -53,7 +52,6 @@
     <string name="library_sort_listening_time">Tempo de reprodução</string>
     <string name="library_sort_menu">Sort Menu</string>
     <string name="library_sort_name">Nome</string>
-    <string name="library_sort_order_title">Ordem de classificação</string>
     <string name="library_sort_play_count">Play Count</string>
     <string name="library_sort_relative_listening_time">Relative Listening Time</string>
     <string name="library_sort_songs_number">Número de músicas</string>
@@ -63,21 +61,15 @@
     <string name="library_sync_progress_format">%1$d / %2$d</string>
     <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
     <string name="library_youtube_playlists_label">YT/YTM</string>
-    <string name="local_playback_failed">This song could not be played on this PC.</string>
-    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
-    <string name="local_playback_not_found">This song is no longer on your phone.</string>
-    <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
-    <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
-    <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
-    <string name="local_playback_unreachable">Your phone did not answer.</string>
-    <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
     <string name="metadata_action_change_artists">Atualizar Autores</string>
     <string name="metadata_action_change_cover">Atualizar a Capa</string>
     <string name="metadata_action_change_title">Atualizar o Título</string>
     <string name="metadata_action_edit">Edit Metadata</string>
     <string name="metadata_album_action_change_browse_id">Change Album Browse ID</string>
     <string name="metadata_artist_action_change_browse_id">Change Artist Browse ID</string>
+    <string name="metadata_file_path_unavailable">Cannot resolve file path</string>
     <string name="metadata_playlist_action_change_browse_id">Change Playlist Browse ID</string>
+    <string name="metadata_save_failed">Failed to save metadata</string>
     <string name="metadata_unknown_artist">Unknown Artist</string>
     <string name="metadata_unknown_title">Unknown Title</string>
     <string name="playlist_action_add">Adicionar à lista de reprodução</string>
@@ -99,7 +91,6 @@
     <string name="playlist_selection_action_deselect">Desmarcar</string>
     <string name="playlist_top">Topo da Playlist</string>
     <string name="radio_action_start">Começar rádio</string>
-    <string name="recommendations_action_smart_shuffle">Recomendação inteligente</string>
     <string name="recommendations_minimum_playback_duration_label">Tempo mínimo de escuta</string>
     <string name="recommendations_title">Escolhas rápidas</string>
     <string name="search_display_order">Online search display order</string>
