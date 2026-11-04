@@ -20,7 +20,6 @@
     <string name="library_albums_title">Albums</string>
     <string name="library_artists_title">Artistes</string>
     <string name="library_cached_title">En cache</string>
-    <string name="library_cleanup_title">Corbeille intelligente</string>
     <string name="library_disliked_title">Pas aimé</string>
     <string name="library_dislikes_added">Je n\'ai pas aimé %s</string>
     <string name="library_dislikes_removed">%s a été supprimé de la liste des « Je n\'aime pas »</string>
@@ -53,7 +52,6 @@
     <string name="library_sort_listening_time">Durée d’écoute</string>
     <string name="library_sort_menu">Menu « Trier »</string>
     <string name="library_sort_name">Nom</string>
-    <string name="library_sort_order_title">Ordre de tri</string>
     <string name="library_sort_play_count">Nombre de lectures</string>
     <string name="library_sort_relative_listening_time">Temps d\'écoute relatif</string>
     <string name="library_sort_songs_number">Nombre de titres</string>
@@ -63,14 +61,6 @@
     <string name="library_sync_progress_format">%1$d / %2$d</string>
     <string name="library_tracks_failed">Les pistes n\'ont pas pu être lues : %1$s</string>
     <string name="library_youtube_playlists_label">YouTube / YouTube Music</string>
-    <string name="local_playback_failed">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
-    <string name="local_playback_invalid_url">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
-    <string name="local_playback_not_found">Ce titre ne se trouve plus sur votre téléphone.</string>
-    <string name="local_playback_other_active">Son sur cet ordinateur : un autre ordinateur (%1$s) est connecté au téléphone.</string>
-    <string name="local_playback_unavailable">Le son n\'est pas disponible sur cet ordinateur : le lecteur VLC intégré n\'a pas pu être chargé.</string>
-    <string name="local_playback_unavailable_linux">Le son ne fonctionne pas sur cet ordinateur. Installez VLC à l\'aide de %1$s, puis redémarrez l\'application.</string>
-    <string name="local_playback_unreachable">Votre téléphone n\'a pas répondu.</string>
-    <string name="local_playback_upstream_failed">Votre téléphone n\'a pas pu télécharger ce morceau.</string>
     <string name="metadata_action_change_artists">Mettre à jour les auteurs</string>
     <string name="metadata_action_change_cover">Mettre à jour la pochette</string>
     <string name="metadata_action_change_title">Mettre à jour le titre</string>
@@ -99,7 +89,6 @@
     <string name="playlist_selection_action_deselect">Désélectionner</string>
     <string name="playlist_top">Playlist la plus écoutée</string>
     <string name="radio_action_start">Lancer la radio</string>
-    <string name="recommendations_action_smart_shuffle">Recommandations Intelligentes</string>
     <string name="recommendations_minimum_playback_duration_label">Durée d\'écoute minimale</string>
     <string name="recommendations_title">Sélection Rapide</string>
     <string name="search_display_order">Ordre d\'affichage des résultats de recherche en ligne</string>

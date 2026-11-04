@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="interface_in_use">Schnittstelle in Verwendung</string>
-    <string name="lastfm_love">Love on Last.fm</string>
-    <string name="lastfm_unlove">Unlove on Last.fm</string>
+    <string name="audio_loudness_boost_level">Lautstärke-Bootlevel</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
+    <string name="common_translation_title">Übersetzung</string>
+    <string name="library_sort_order_title">Sortierreihenfolge</string>
+    <string name="maintenance_debug_logging_title">Fehlerprotokoll aktivieren</string>
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Untere Schwebende</string>
     <string name="navigation_position_bottom_label">Unten</string>
@@ -10,8 +14,8 @@
     <string name="navigation_style_icon_and_text_label">Symbole und Text</string>
     <string name="navigation_style_icon_only_label">Nur Symbole</string>
     <string name="parental_control">Jugendschutz</string>
-    <string name="profile_base_name">N-Zik Fan</string>
-    <string name="profile_title">Profiles</string>
+    <string name="player_action_enqueue_songs">Song einreihen</string>
+    <string name="recommendations_action_smart_shuffle">Intelligente Empfehlung</string>
     <string name="settings_about_page_description">Die �ber-Sektion zeigt Informationen über die App, die Entwickler, Fehlerbehebung und Update-Optionen</string>
     <string name="settings_app_behavior_title">App-Verhalten</string>
     <string name="settings_app_language_label">App-Sprache</string>
@@ -161,14 +165,6 @@
     <string name="settings_title">Einstellungen</string>
     <string name="settings_transition_fade">Einblenden</string>
     <string name="settings_use_font_type">Schriftart</string>
-    <string name="sync_action_sync">Synchronisieren</string>
-    <string name="sync_likes">Favoriten-Songs automatisch synchronisieren</string>
-    <string name="theme_palette_dynamic">Dynamisch</string>
-    <string name="theme_shake_sensitivity_disabled">Aus</string>
-    <string name="thumbnail_action_edit">Thumbnail bearbeiten</string>
-    <string name="thumbnail_action_reset">Thumbnail zurücksetzen</string>
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <string name="window">Window</string>
 </resources>

@@ -9,4 +9,5 @@
     <string name="about_title">Инфо</string>
     <string name="about_translators_title">Переводчики</string>
     <string name="contributors">Авторы</string>
+    <string name="request_a_feature">Запросить функцию или предложить идею</string>
 </resources>

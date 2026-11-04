@@ -27,5 +27,6 @@
     <string name="export_cached_song_action">Önbelleğe alınmış veya indirilmiş şarkıyı dışa aktar</string>
     <string name="export_cached_songs_action">Önbelleğe alınanı dışa aktar</string>
     <string name="import_backup">Yedeklemeyi içe aktar</string>
-    <string name="path_copied">Yol kopyalandı</string>
+    <string name="library_cleanup_title">Akıllı çöp</string>
+    <string name="title_backup_and_restore">Yedekle ve geri yükle</string>
 </resources>

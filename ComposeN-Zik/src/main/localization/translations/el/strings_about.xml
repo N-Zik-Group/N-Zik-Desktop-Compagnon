@@ -9,4 +9,5 @@
     <string name="about_title">Σχετικά</string>
     <string name="about_translators_title">Translators</string>
     <string name="contributors">Συντελεστές</string>
+    <string name="request_a_feature">Προτείνετε μια ιδέα ή ένα χαρακτηριστικό</string>
 </resources>

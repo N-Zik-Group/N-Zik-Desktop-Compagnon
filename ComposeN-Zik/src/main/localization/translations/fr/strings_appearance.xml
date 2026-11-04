@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fake_audio_bar">Ondes sonores</string>
+    <string name="message_type">Style du message contextuel</string>
+    <string name="message_type_modern">Moderne</string>
+    <string name="player_background_black_cherry_cosmos">Cosmos à la cerise noire</string>
+    <string name="player_background_glossy_gradient">Dégradé brillant</string>
+    <string name="player_background_golden_magma">Magma doré</string>
+    <string name="player_background_gradient_flow">Flux dégradé</string>
+    <string name="player_background_ice_reflection">Reflet de glace</string>
+    <string name="player_background_ink_flow">Débit d\'encre</string>
+    <string name="player_background_linear_gradient">Dégradé linéaire</string>
+    <string name="player_background_mesh_gradient">Dégradé de maillage</string>
+    <string name="player_background_mesmerizing_lens">Objectif hypnotisant</string>
+    <string name="player_background_oil_flow">Débit d\'huile</string>
+    <string name="player_background_purple_liquid">Liquide violet</string>
+    <string name="player_background_stage">Étape</string>
+    <string name="player_controls_style_essential">Minimale</string>
+    <string name="player_controls_style_modern">Moderne</string>
+    <string name="player_cover_style_cd">CD</string>
+    <string name="player_cover_style_cd_with_cover">CD avec pochette</string>
+    <string name="player_cover_style_vinyl">Vinyle</string>
+    <string name="player_progress_mini_player">Lecteur minimisé</string>
+    <string name="theme_palette_dynamic">Dynamique</string>
+    <string name="theme_shake_sensitivity_disabled">Désactivé</string>
+    <string name="thumbnail_action_edit">Éditer la miniature</string>
+    <string name="thumbnail_action_reset">Réinitialiser la miniature</string>
+</resources>

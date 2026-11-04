@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lastfm_love">Last.fm\'de beğen</string>
+    <string name="lastfm_unlove">Last.fm\'de beğenme</string>
+    <string name="profile_base_name">N-Zik Hayranı</string>
+    <string name="profile_title">Profiller</string>
+    <string name="sync_action_sync">Senkronize et</string>
+    <string name="sync_likes">Beğenilen Şarkıları Otomatik Olarak Senkronize Et</string>
+</resources>

@@ -9,4 +9,5 @@
     <string name="about_title">Om</string>
     <string name="about_translators_title">Oversættere</string>
     <string name="contributors">Bidragydere</string>
+    <string name="request_a_feature">Anmod om en funktion eller foreslå en idé</string>
 </resources>

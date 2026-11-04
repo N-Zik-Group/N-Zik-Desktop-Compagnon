@@ -27,5 +27,6 @@
     <string name="export_cached_song_action">Export cached or downloaded song</string>
     <string name="export_cached_songs_action">Export cached</string>
     <string name="import_backup">Import backup</string>
-    <string name="path_copied">Path copied</string>
+    <string name="library_cleanup_title">Chytrý koš</string>
+    <string name="title_backup_and_restore">Zálohování a obnovení</string>
 </resources>

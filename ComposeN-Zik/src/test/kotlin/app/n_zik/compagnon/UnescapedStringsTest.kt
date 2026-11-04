@@ -55,7 +55,7 @@ class UnescapedStringsTest {
 
     @Test
     fun `the generated fr updates starting status is unescaped`() {
-        val fr = generatedRoot.resolve("values-fr/strings_updates.xml")
+        val fr = generatedRoot.resolve("values-fr/strings_maintenance.xml")
         assertTrue(fr.isFile, "the generated unescaped French string catalog is missing: ${fr.path} (run :ComposeN-Zik:test — it depends on unescapeStringsXml)")
         // Crowdin values retain Android escaping in source, so the build must unescape them.
         assertEquals("C'est parti…", stringName(fr.readText(), "updates_starting_status"))

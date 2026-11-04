@@ -27,5 +27,6 @@
     <string name="export_cached_song_action">Zwischengespeicherte oder Heruntergeladene Titel exportieren</string>
     <string name="export_cached_songs_action">Zwischenspeicher exportieren</string>
     <string name="import_backup">Backup importieren</string>
-    <string name="path_copied">Path copied</string>
+    <string name="library_cleanup_title">Intelligenter Papierkorb</string>
+    <string name="title_backup_and_restore">Backup und Wiederherstellen</string>
 </resources>

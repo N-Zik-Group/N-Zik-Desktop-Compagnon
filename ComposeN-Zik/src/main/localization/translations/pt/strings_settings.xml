@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="interface_in_use">‘Interface’ em utilização</string>
-    <string name="lastfm_love">Love on Last.fm</string>
-    <string name="lastfm_unlove">Unlove on Last.fm</string>
+    <string name="audio_loudness_boost_level">Nível de aumento de loucura</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
+    <string name="common_translation_title">Tradução</string>
+    <string name="library_sort_order_title">Ordem de classificação</string>
+    <string name="maintenance_debug_logging_title">Ativar log de depuração</string>
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Flutuante Inferior</string>
     <string name="navigation_position_bottom_label">Direction bottom</string>
@@ -10,8 +14,8 @@
     <string name="navigation_style_icon_and_text_label">Ícone e texto</string>
     <string name="navigation_style_icon_only_label">Somente ícones</string>
     <string name="parental_control">Controle dos pais</string>
-    <string name="profile_base_name">N-Zik Fan</string>
-    <string name="profile_title">Profiles</string>
+    <string name="player_action_enqueue_songs">Colocar músicas na fila</string>
+    <string name="recommendations_action_smart_shuffle">RECOMENDAÇÕES INTELIGENTES</string>
     <string name="settings_about_page_description">A seção \"Sobre\" mostra informações sobre o aplicativo, os desenvolvedores, solução de problemas e opções de atualização</string>
     <string name="settings_app_behavior_title">Comportamento do App</string>
     <string name="settings_app_language_label">Idioma do aplicativo</string>
@@ -161,14 +165,6 @@
     <string name="settings_title">Configurações</string>
     <string name="settings_transition_fade">Esmaecer</string>
     <string name="settings_use_font_type">Usa font type</string>
-    <string name="sync_action_sync">Sincronização</string>
-    <string name="sync_likes">Auto Sync Liked Songs</string>
-    <string name="theme_palette_dynamic">Dinâmico</string>
-    <string name="theme_shake_sensitivity_disabled">Desativado</string>
-    <string name="thumbnail_action_edit">Editar Miniatura</string>
-    <string name="thumbnail_action_reset">Resetar Miniatura</string>
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <string name="window">Window</string>
 </resources>

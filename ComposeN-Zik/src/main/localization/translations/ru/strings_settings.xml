@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="interface_in_use">Используемый интерфейс</string>
-    <string name="lastfm_love">Love on Last.fm</string>
-    <string name="lastfm_unlove">Unlove on Last.fm</string>
+    <string name="audio_loudness_boost_level">Уровень громкости</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
+    <string name="common_translation_title">Перевод</string>
+    <string name="library_sort_order_title">Сортировка</string>
+    <string name="maintenance_debug_logging_title">Включить отладочные журналы</string>
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Нижний плавающий</string>
     <string name="navigation_position_bottom_label">Снизу</string>
@@ -10,8 +14,8 @@
     <string name="navigation_style_icon_and_text_label">Иконки и текст</string>
     <string name="navigation_style_icon_only_label">Только иконки</string>
     <string name="parental_control">Родительский контроль</string>
-    <string name="profile_base_name">N-Zik Fan</string>
-    <string name="profile_title">Profiles</string>
+    <string name="player_action_enqueue_songs">Добавить песни в очередь</string>
+    <string name="recommendations_action_smart_shuffle">Умные рекомендации</string>
     <string name="settings_about_page_description">Раздел содержит информацию о приложении, разработчиках, диагностике и обновлении</string>
     <string name="settings_app_behavior_title">Поведение приложения</string>
     <string name="settings_app_language_label">Язык приложения</string>
@@ -161,14 +165,6 @@
     <string name="settings_title">Настройки</string>
     <string name="settings_transition_fade">Затухание</string>
     <string name="settings_use_font_type">Font type</string>
-    <string name="sync_action_sync">Синхронизация</string>
-    <string name="sync_likes">Auto Sync Liked Songs</string>
-    <string name="theme_palette_dynamic">Динамически</string>
-    <string name="theme_shake_sensitivity_disabled">Отключено</string>
-    <string name="thumbnail_action_edit">Редактировать миниатюру</string>
-    <string name="thumbnail_action_reset">Сброс миниатюры</string>
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <string name="window">Window</string>
 </resources>

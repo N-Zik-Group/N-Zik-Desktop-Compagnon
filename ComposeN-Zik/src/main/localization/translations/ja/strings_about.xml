@@ -9,4 +9,5 @@
     <string name="about_title">アプリの情報</string>
     <string name="about_translators_title">翻訳者</string>
     <string name="contributors">貢献者</string>
+    <string name="request_a_feature">機能要望またはアイデアを提案</string>
 </resources>

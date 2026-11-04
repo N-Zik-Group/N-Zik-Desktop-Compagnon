@@ -9,4 +9,5 @@
     <string name="about_title">정보</string>
     <string name="about_translators_title">번역가들</string>
     <string name="contributors">Contributors</string>
+    <string name="request_a_feature">기능 요청이나 아이디어 제안</string>
 </resources>

@@ -690,3 +690,6 @@ Fixed:
 - fix(localization): finish the Desktop catalog and Bridge audit
   - Share the active-device message, preserve Bridge aliases, and display the failed sync count in the local language.
   - Refresh the wiki and formatting rules for the current localization layout.
+
+- refactor(localization): align Desktop catalogs with the Mobile categories
+  - Move the English resources and all 48 locales together while preserving every key and translation value.

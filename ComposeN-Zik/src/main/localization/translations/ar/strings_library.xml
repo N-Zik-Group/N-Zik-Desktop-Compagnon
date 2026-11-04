@@ -20,7 +20,6 @@
     <string name="library_albums_title">ألبومات</string>
     <string name="library_artists_title">المغنيين</string>
     <string name="library_cached_title">نسخة مخبأة</string>
-    <string name="library_cleanup_title">سلة المهملات الذكية</string>
     <string name="library_disliked_title">Disliked</string>
     <string name="library_dislikes_added">Disliked %s</string>
     <string name="library_dislikes_removed">Removed %s from dislikes</string>
@@ -53,7 +52,6 @@
     <string name="library_sort_listening_time">Listening Time</string>
     <string name="library_sort_menu">Sort Menu</string>
     <string name="library_sort_name">Name</string>
-    <string name="library_sort_order_title">Sorting order</string>
     <string name="library_sort_play_count">Play Count</string>
     <string name="library_sort_relative_listening_time">Relative Listening Time</string>
     <string name="library_sort_songs_number">Songs Number</string>
@@ -63,14 +61,6 @@
     <string name="library_sync_progress_format">%1$d / %2$d</string>
     <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
     <string name="library_youtube_playlists_label">YT/YTM</string>
-    <string name="local_playback_failed">This song could not be played on this PC.</string>
-    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
-    <string name="local_playback_not_found">This song is no longer on your phone.</string>
-    <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
-    <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
-    <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
-    <string name="local_playback_unreachable">Your phone did not answer.</string>
-    <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
     <string name="metadata_action_change_artists">Change Authors</string>
     <string name="metadata_action_change_cover">Update Cover</string>
     <string name="metadata_action_change_title">Update Title</string>
@@ -99,7 +89,6 @@
     <string name="playlist_selection_action_deselect">Deselect</string>
     <string name="playlist_top">Playlist Top</string>
     <string name="radio_action_start">بدء تشغيل الراديو</string>
-    <string name="recommendations_action_smart_shuffle">Smart recommendation</string>
     <string name="recommendations_minimum_playback_duration_label">الحد الأدنى لوقت الاستماع</string>
     <string name="recommendations_title">اختيار سريع</string>
     <string name="search_display_order">طلب عرض البحث عبر الإنترنت</string>

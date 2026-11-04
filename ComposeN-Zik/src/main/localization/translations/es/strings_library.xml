@@ -20,7 +20,6 @@
     <string name="library_albums_title">Álbumes</string>
     <string name="library_artists_title">Artistas</string>
     <string name="library_cached_title">En caché</string>
-    <string name="library_cleanup_title">Papelera inteligente</string>
     <string name="library_disliked_title">Disliked</string>
     <string name="library_dislikes_added">%s con no me gusta</string>
     <string name="library_dislikes_removed">%s eliminado de no me gusta</string>
@@ -53,7 +52,6 @@
     <string name="library_sort_listening_time">Tiempo de reproducción</string>
     <string name="library_sort_menu">Sort Menu</string>
     <string name="library_sort_name">Nombre</string>
-    <string name="library_sort_order_title">Ordenar por</string>
     <string name="library_sort_play_count">Play Count</string>
     <string name="library_sort_relative_listening_time">Tiempo de reproducción relativo</string>
     <string name="library_sort_songs_number">Número de canciones</string>
@@ -63,14 +61,6 @@
     <string name="library_sync_progress_format">%1$d / %2$d</string>
     <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
     <string name="library_youtube_playlists_label">YT/YTM</string>
-    <string name="local_playback_failed">This song could not be played on this PC.</string>
-    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
-    <string name="local_playback_not_found">This song is no longer on your phone.</string>
-    <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
-    <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
-    <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
-    <string name="local_playback_unreachable">Your phone did not answer.</string>
-    <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
     <string name="metadata_action_change_artists">Change Authors</string>
     <string name="metadata_action_change_cover">Modificar portada</string>
     <string name="metadata_action_change_title">Modificar título</string>
@@ -99,7 +89,6 @@
     <string name="playlist_selection_action_deselect">Deseleccionar</string>
     <string name="playlist_top">Lista de reproducción top</string>
     <string name="radio_action_start">Iniciar radio</string>
-    <string name="recommendations_action_smart_shuffle">Recomendación inteligente</string>
     <string name="recommendations_minimum_playback_duration_label">Tiempo de reproducción mínimo</string>
     <string name="recommendations_title">Selecciones rápidas</string>
     <string name="search_display_order">Orden de visualización de búsqueda en línea</string>

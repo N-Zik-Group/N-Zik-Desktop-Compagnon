@@ -9,4 +9,5 @@
     <string name="about_title">O aplikaci</string>
     <string name="about_translators_title">Překladatelé</string>
     <string name="contributors">Přispěvatelé</string>
+    <string name="request_a_feature">Žádost o funkci nebo návrh nápadu</string>
 </resources>

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="interface_in_use">Grensesnitt i bruk</string>
-    <string name="lastfm_love">Love on Last.fm</string>
-    <string name="lastfm_unlove">Unlove on Last.fm</string>
+    <string name="audio_loudness_boost_level">Nivå for lydstyrke</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
+    <string name="common_translation_title">Oversettelse</string>
+    <string name="library_sort_order_title">Sorteringsrekkefølge</string>
+    <string name="maintenance_debug_logging_title">Aktiver feilsøkingslogger</string>
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Bunn flytende</string>
     <string name="navigation_position_bottom_label">Bunn</string>
@@ -10,8 +14,8 @@
     <string name="navigation_style_icon_and_text_label">Ikon og tekst</string>
     <string name="navigation_style_icon_only_label">Kun ikon</string>
     <string name="parental_control">Foreldrekontroll</string>
-    <string name="profile_base_name">N-Zik Fan</string>
-    <string name="profile_title">Profiles</string>
+    <string name="player_action_enqueue_songs">Legg sanger i kø</string>
+    <string name="recommendations_action_smart_shuffle">Smarte anbefalinger</string>
     <string name="settings_about_page_description">Om delen viser informasjon om appen, utviklerne, feilsøking og oppdatering</string>
     <string name="settings_app_behavior_title">Appens oppførsel</string>
     <string name="settings_app_language_label">Appspråk</string>
@@ -161,14 +165,6 @@
     <string name="settings_title">Innstillinger</string>
     <string name="settings_transition_fade">Ton</string>
     <string name="settings_use_font_type">Font type</string>
-    <string name="sync_action_sync">Synkroniser</string>
-    <string name="sync_likes">Auto Sync Liked Songs</string>
-    <string name="theme_palette_dynamic">Dynamisk</string>
-    <string name="theme_shake_sensitivity_disabled">Deaktivert</string>
-    <string name="thumbnail_action_edit">Rediger miniatyrbilde</string>
-    <string name="thumbnail_action_reset">Nullstill miniatyrbilde</string>
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <string name="window">Window</string>
 </resources>

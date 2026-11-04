@@ -27,5 +27,6 @@
     <string name="export_cached_song_action">Exportar canción en caché o descargada</string>
     <string name="export_cached_songs_action">Exportar en caché</string>
     <string name="import_backup">Import backup</string>
-    <string name="path_copied">Path copied</string>
+    <string name="library_cleanup_title">Papelera inteligente</string>
+    <string name="title_backup_and_restore">Copia de seguridad y restauración</string>
 </resources>

@@ -9,4 +9,5 @@
     <string name="about_title">Про нас</string>
     <string name="about_translators_title">Перекладачі</string>
     <string name="contributors">Учасники проекту</string>
+    <string name="request_a_feature">Попросіть функцію або запропонуйте ідею</string>
 </resources>

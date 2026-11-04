@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="interface_in_use">Kullanılan arayüz</string>
-    <string name="lastfm_love">Last.fm\'de beğen</string>
-    <string name="lastfm_unlove">Last.fm\'de beğenme</string>
+    <string name="audio_loudness_boost_level">Bas güçlendirme seviyesi</string>
+    <string name="close_behavior">Davranışı kapat</string>
+    <string name="close_behavior_minimize">Simge durumuna küçült</string>
+    <string name="close_behavior_quit">Uygulamadan çık</string>
+    <string name="common_translation_title">Çeviri</string>
+    <string name="library_sort_order_title">Sıralama düzeni</string>
+    <string name="maintenance_debug_logging_title">Hata ayıklama günlüklerini etkinleştir</string>
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Alt Yüzer</string>
     <string name="navigation_position_bottom_label">Alt</string>
@@ -10,8 +14,8 @@
     <string name="navigation_style_icon_and_text_label">Simge ve metin</string>
     <string name="navigation_style_icon_only_label">Sadece simge</string>
     <string name="parental_control">Ebeveyn kontrolü</string>
-    <string name="profile_base_name">N-Zik Hayranı</string>
-    <string name="profile_title">Profiller</string>
+    <string name="player_action_enqueue_songs">Şarkıları sıraya ekle</string>
+    <string name="recommendations_action_smart_shuffle">Akıllı öneriler</string>
     <string name="settings_about_page_description">Hakkında bölümünde uygulama, geliştiriciler, sorun giderme ve güncelleme seçenekleri hakkında bilgiler yer almaktadır</string>
     <string name="settings_app_behavior_title">Uygulama Davranışı</string>
     <string name="settings_app_language_label">Uygulama dili</string>
@@ -161,14 +165,6 @@
     <string name="settings_title">Ayarlar</string>
     <string name="settings_transition_fade">Soldur</string>
     <string name="settings_use_font_type">Yazı tipi</string>
-    <string name="sync_action_sync">Senkronize et</string>
-    <string name="sync_likes">Beğenilen Şarkıları Otomatik Olarak Senkronize Et</string>
-    <string name="theme_palette_dynamic">Dinamik</string>
-    <string name="theme_shake_sensitivity_disabled">Devre dışı</string>
-    <string name="thumbnail_action_edit">Küçük Resmi Düzenle</string>
-    <string name="thumbnail_action_reset">Küçük Resmi Sıfırla</string>
-    <string name="tray_open">Açık</string>
-    <string name="tray_quit">Çık</string>
     <string name="tray_tooltip">N-Zik Masaüstü Yardımcısı</string>
     <string name="window">Pencere</string>
 </resources>

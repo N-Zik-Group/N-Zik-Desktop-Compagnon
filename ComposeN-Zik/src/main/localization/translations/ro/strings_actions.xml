@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_clear">Clear the queue</string>
+    <string name="command_copied">Command copied</string>
+    <string name="command_jump">Play from the queue</string>
+    <string name="command_move">Move in the queue</string>
+    <string name="command_next">Next</string>
+    <string name="command_pause">Întrerupeți</string>
+    <string name="command_play">Redare</string>
+    <string name="command_previous">Previous</string>
+    <string name="command_queue_add">Add to queue</string>
+    <string name="command_queue_play">Redare</string>
+    <string name="command_remove">Remove from the queue</string>
+    <string name="command_repeat">Repetă</string>
+    <string name="command_seek">Seek</string>
+    <string name="command_shuffle">Amestecă</string>
+    <string name="command_speed">Speed</string>
+    <string name="common_action_clear">Golește</string>
+    <string name="common_action_confirm">Confirmă</string>
+    <string name="common_action_delete">Șterge</string>
+    <string name="common_action_done">Finalizat</string>
+    <string name="common_action_reset">Resetează</string>
+    <string name="common_action_retry">Reîncercați</string>
+    <string name="common_action_select">Selectează</string>
+    <string name="common_action_translate">Tradu</string>
+    <string name="common_action_turn_off">Oprește</string>
+    <string name="common_action_update">Actualizează</string>
+    <string name="common_menu_label">Meniu</string>
+    <string name="tray_open">Open</string>
+    <string name="tray_quit">Quit</string>
+</resources>

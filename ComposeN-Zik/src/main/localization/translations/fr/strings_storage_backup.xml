@@ -27,5 +27,6 @@
     <string name="export_cached_song_action">Exporter le titre mis en cache ou téléchargé</string>
     <string name="export_cached_songs_action">Exporter la mémoire cache</string>
     <string name="import_backup">Importer une sauvegarde</string>
-    <string name="path_copied">Chemin d\'accès copié</string>
+    <string name="library_cleanup_title">Corbeille intelligente</string>
+    <string name="title_backup_and_restore">Sauvegarde et Restauration</string>
 </resources>
