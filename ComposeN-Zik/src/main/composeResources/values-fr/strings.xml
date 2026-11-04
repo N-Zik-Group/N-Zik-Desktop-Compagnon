@@ -232,7 +232,7 @@
     <string name="library_none">Le téléphone ne partage aucune bibliothèque avec cet ordinateur.</string>
     <string name="library_not_found">Introuvable sur le téléphone. Il a peut-être été supprimé.</string>
     <string name="library_on_device_title">Sur le téléphone</string>
-    <string name="library_playlists_title">Playlists</string>
+    <string name="library_playlists_title">Listes de lecture</string>
     <string name="library_refresh">Actualiser</string>
     <string name="library_songs_title">Titres</string>
     <string name="library_sort_album">Album</string>
@@ -310,7 +310,7 @@
     <string name="maintenance_no_data">Aucune donnée</string>
     <string name="maintenance_open">Ouvrir</string>
     <string name="maintenance_open_desc">Ouvrir la fiche d\'entretien complète</string>
-    <string name="maintenance_title">Maintenance</string>
+    <string name="maintenance_title">Entretien</string>
     <!-- Manual -->
     <string name="manual_code">Code d\'appariement</string>
     <string name="manual_code_invalid">Le code comporte 6 caractères, par exemple ABC-DEF.</string>
