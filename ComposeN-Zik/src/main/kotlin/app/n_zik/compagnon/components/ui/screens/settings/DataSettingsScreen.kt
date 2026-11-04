@@ -44,6 +44,7 @@ import app.n_zik.compagnon.utils.formatShortFileSize
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import app.n_zik.compagnon.utils.formatText
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -177,7 +178,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                     // "used" indicator are not ported (the PC's image cache is fixed, spec §A2)
                     OtherSettingsEntry(
                         title = stringResource(Res.string.settings_cache_image_size_limit_label),
-                        text = "128MB",
+                        text = formatText(stringResource(Res.string.common_size_megabytes_format), 128),
                         icon = Res.drawable.image,
                         onClick = {},
                     )
@@ -254,7 +255,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                     // and "used" indicator are not ported (the PC has no download cache, spec §A2)
                     OtherSettingsEntry(
                         title = stringResource(Res.string.settings_downloads_storage_limit_label),
-                        text = "2GB",
+                        text = formatText(stringResource(Res.string.common_size_gigabytes_format), 2),
                         icon = Res.drawable.download,
                         onClick = {},
                     )

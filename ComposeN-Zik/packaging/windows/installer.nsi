@@ -930,6 +930,7 @@ FunctionEnd
 ; ============================================================================
 
 !define MUI_PAGE_CUSTOMFUNCTION_PRE "InstallWelcomePre"
+!define MUI_WELCOMEPAGE_TITLE_3LINES
 !insertmacro MUI_PAGE_WELCOME
 
 Page custom RRUShow RRULeave
@@ -989,15 +990,12 @@ Function RRUShow
   ${If} $R0 == error
     Abort
   ${EndIf}
-  ${NSD_CreateLabel} 5 5 250 16 "$(InstallerPreviousFound)"
+  ${NSD_CreateLabel} 5 5 95% 16 "$(InstallerPreviousFound)"
   Pop $R1
-  ; The version + product name are long: two single-line labels (multiline
-  ; EDIT/MLText controls render empty in this NSIS distro - proven)
-  ${NSD_CreateLabel} 5 23 260 14 "$(InstallerPreviousVersion)"
+  ; A wrapping static label gives each language control of sentence order.
+  ${NSD_CreateLabel} 5 23 95% 32 "$(InstallerPreviousVersion)"
   Pop $R2
-  ${NSD_CreateLabel} 5 39 260 14 "$(InstallerPreviousProduct)"
-  Pop $R6
-  ${NSD_CreateLabel} 5 61 260 16 "$(InstallerChooseAction)"
+  ${NSD_CreateLabel} 5 61 95% 16 "$(InstallerChooseAction)"
   Pop $R6
   ${NSD_CreateFirstRadioButton} 15 79 240 16 "$(InstallerUpgrade)"
   Pop $R3
@@ -1047,30 +1045,27 @@ Function ScopeShow
   ${EndIf}
   ${If} $ELEVATED == "1"
     ; Elevated child: scope is global, already elevated - informational only
-    ; (single-line labels: multiline EDIT controls render empty here)
-    ${NSD_CreateLabel} 5 5 250 16 "$(InstallerGlobalTitle)"
+    ${NSD_CreateLabel} 5 5 95% 16 "$(InstallerGlobalTitle)"
     Pop $R1
-    ${NSD_CreateLabel} 5 23 260 14 "$(InstallerGlobalDetail)"
+    ${NSD_CreateLabel} 5 23 95% 32 "$(InstallerGlobalDetail)"
     Pop $R2
-    ${NSD_CreateLabel} 5 39 260 14 "$(InstallerGlobalAdmin)"
-    Pop $R6
     StrCpy $CHOSEN_SCOPE "global"
   ${Else}
-    ${NSD_CreateLabel} 5 5 250 16 "$(InstallerChooseScope)"
+    ${NSD_CreateLabel} 5 5 95% 16 "$(InstallerChooseScope)"
     Pop $R1
-    ${NSD_CreateFirstRadioButton} 15 25 240 16 "$(InstallerOnlyMe)"
+    ${NSD_CreateFirstRadioButton} 15 25 90% 22 "$(InstallerOnlyMe)"
     Pop $R2
     ; The long descriptions as two single-line labels each (auto-wrap, never
     ; clip - the multiline boxes rendered empty with stray scrollbars)
-    ${NSD_CreateLabel} 27 43 235 14 "$(InstallerUserFolder)"
+    ${NSD_CreateLabel} 27 48 86% 15 "$(InstallerUserFolder)"
     Pop $R6
-    ${NSD_CreateLabel} 27 59 235 14 "$(InstallerUserNoAdmin)"
+    ${NSD_CreateLabel} 27 65 86% 22 "$(InstallerUserNoAdmin)"
     Pop $R6
-    ${NSD_CreateAdditionalRadioButton} 15 77 240 16 "$(InstallerAllUsers)"
+    ${NSD_CreateAdditionalRadioButton} 15 89 90% 22 "$(InstallerAllUsers)"
     Pop $R4
-    ${NSD_CreateLabel} 27 95 235 14 "$(InstallerProgramFiles)"
+    ${NSD_CreateLabel} 27 112 86% 15 "$(InstallerProgramFiles)"
     Pop $R5
-    ${NSD_CreateLabel} 27 111 235 14 "$(InstallerUacPrompt)"
+    ${NSD_CreateLabel} 27 129 86% 22 "$(InstallerUacPrompt)"
     Pop $R6
     ; Preselect the existing scope when present, else per-user (the default)
     ${If} $INST_SCOPE_OLD == "global"
@@ -1134,17 +1129,14 @@ Function ShortcutsShow
   ${If} $R0 == error
     Abort
   ${EndIf}
-  ${NSD_CreateLabel} 5 5 250 16 "$(InstallerShortcutsTitle)"
+  ${NSD_CreateLabel} 5 5 95% 16 "$(InstallerShortcutsTitle)"
   Pop $R1
-  ; The explanation as two single-line labels (multiline EDIT/MLText
-  ; controls render empty in this NSIS distro - proven)
-  ${NSD_CreateLabel} 5 23 260 14 "$(InstallerShortcutsDetail)"
+  ; Keep the explanation in one wrapping static label.
+  ${NSD_CreateLabel} 5 23 95% 30 "$(InstallerShortcutsDetail)"
   Pop $R2
-  ${NSD_CreateLabel} 5 39 260 14 "$(InstallerShortcutsGroup)"
-  Pop $R6
   ; ONE checkbox controls both shortcuts (the request is binary) -
   ; CHECKED BY DEFAULT (today's behavior)
-  ${NSD_CreateCheckBox} 5 57 260 16 "$(InstallerShortcutsCheck)"
+  ${NSD_CreateCheckBox} 5 57 95% 16 "$(InstallerShortcutsCheck)"
   Pop $R4
   ${NSD_SetState} $R4 ${BST_CHECKED}
   nsDialogs::Show
@@ -1183,22 +1175,20 @@ Function FinishShow
     ; (its own running-guard); a visible checkbox would add a redundant
     ; relaunch race. The page still shows (it is the finish - the wizard
     ; frame shows the Finish button on the last page automatically)
-    ${NSD_CreateLabel} 5 5 250 16 "$(InstallerComplete)"
+    ${NSD_CreateLabel} 5 5 95% 16 "$(InstallerComplete)"
     Pop $R1
-    ${NSD_CreateLabel} 5 23 260 14 "$(InstallerUpdated)"
+    ${NSD_CreateLabel} 5 23 95% 14 "$(InstallerUpdated)"
     Pop $R2
-    ${NSD_CreateLabel} 5 39 260 14 "$(InstallerRestartDetail)"
+    ${NSD_CreateLabel} 5 39 95% 30 "$(InstallerRestartDetail)"
     Pop $R6
-    ${NSD_CreateLabel} 5 55 260 14 "$(InstallerRestartFinish)"
-    Pop $R7
     StrCpy $LAUNCH_APP "0"
   ${Else}
-    ${NSD_CreateLabel} 5 5 250 16 "$(InstallerComplete)"
+    ${NSD_CreateLabel} 5 5 95% 16 "$(InstallerComplete)"
     Pop $R1
-    ${NSD_CreateLabel} 5 23 260 14 "$(InstallerInstalled)"
+    ${NSD_CreateLabel} 5 23 95% 27 "$(InstallerInstalled)"
     Pop $R2
     ; CHECKED BY DEFAULT - read in the leave callback (distro quirk)
-    ${NSD_CreateCheckBox} 5 41 260 16 "$(InstallerLaunch)"
+    ${NSD_CreateCheckBox} 5 53 95% 24 "$(InstallerLaunch)"
     Pop $R4
     ${NSD_SetState} $R4 ${BST_CHECKED}
   ${EndIf}
@@ -1427,6 +1417,7 @@ SectionEnd
 ; welcome page PRE hook (System::Call is unsafe in the un.onInit context in
 ; this distro).
 !define MUI_PAGE_CUSTOMFUNCTION_PRE "un.UnWelcomePre"
+!define MUI_WELCOMEPAGE_TITLE_3LINES
 !insertmacro MUI_UNPAGE_WELCOME
 
 PageEx un.custom
@@ -1458,26 +1449,21 @@ Function un.UnWipeShow
     Abort
   ${EndIf}
   StrCpy $WipeData "0"
-  ${NSD_CreateLabel} 5 5 250 16 "$(InstallerUninstallTitle)"
+  ${NSD_CreateLabel} 5 5 95% 16 "$(InstallerUninstallTitle)"
   Pop $R1
-  ; The long description as two single-line labels (multiline EDIT/MLText
-  ; controls render empty in this NSIS distro - proven)
-  ${NSD_CreateLabel} 5 23 260 14 "$(InstallerKeepData)"
+  ; Keep the long description in one wrapping static label.
+  ${NSD_CreateLabel} 5 23 95% 32 "$(InstallerKeepData)"
   Pop $R2
-  ${NSD_CreateLabel} 5 39 260 14 "$(InstallerKeepDefault)"
-  Pop $R6
-  ${NSD_CreateLabel} 5 57 260 14 "$(InstallerDataFolder)"
+  ${NSD_CreateLabel} 5 57 95% 14 "$(InstallerDataFolder)"
   Pop $R6
   ; The full data path as a single-line EDIT (auto-hscrolls, renders fine)
   ${NSD_CreateText} 5 73 260 16 "$APPDATA\${DATA_DIR_NAME}"
   Pop $R3
   ; UNCHECKED by default (the NSD default state)
-  ${NSD_CreateCheckBox} 5 95 260 16 "$(InstallerDeleteData)"
+  ${NSD_CreateCheckBox} 5 95 95% 16 "$(InstallerDeleteData)"
   Pop $R4
-  ${NSD_CreateLabel} 5 113 260 14 "$(InstallerDeleteDataDetail)"
+  ${NSD_CreateLabel} 5 113 95% 35 "$(InstallerDeleteDataDetail)"
   Pop $R5
-  ${NSD_CreateLabel} 5 129 260 14 "$(InstallerDeleteDataNormal)"
-  Pop $R6
   nsDialogs::Show
   Pop $R0
 FunctionEnd

@@ -33,6 +33,7 @@ import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.Preferences
 import app.n_zik.compagnon.utils.Toaster
 import java.util.Locale
+import app.n_zik.compagnon.utils.formatText
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -189,7 +190,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                     // no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.recommendations_minimum_playback_duration_label),
-                        text = "20s",
+                        text = formatText(stringResource(Res.string.common_duration_seconds_format), 20),
                         icon = Res.drawable.time,
                         onClick = {},
                     )
@@ -233,7 +234,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                     // shown, no dialog, a click has no effect; no description → no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.settings_playback_pause_between_songs_label),
-                        text = "0s",
+                        text = formatText(stringResource(Res.string.common_duration_seconds_format), 0),
                         icon = Res.drawable.pause,
                         onClick = {},
                     )
