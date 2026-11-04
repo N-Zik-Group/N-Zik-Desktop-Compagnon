@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Álbum de Favoritos</string>
     <string name="album_action_open">Ir para o álbum</string>
     <string name="album_left_swipe">Álbum, Deslize para Esquerda</string>
-    <string name="album_loading_song_count_format">Carregando músicas %1$d…</string>
+    <string name="album_loading_song_count_format">Carregando álbum (faixas: %1$d)…</string>
     <string name="album_right_swipe">Álbum, Deslize para Direita</string>
     <string name="artist_action_follow">Seguir</string>
     <string name="artist_action_play_local_songs">Reproduzir todas as músicas locais</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Fixar/Desafixar playlist</string>
     <string name="playlist_bookmark_unsupported_message">Não é possível favoritar músicas curtidas ou playlist de episódios</string>
     <string name="playlist_create_dialog_title">Criar uma seleção musical</string>
-    <string name="playlist_delete_all_confirmation_count_format">Tem certeza que deseja excluir TODAS AS playlists de %d?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Excluir todas as playlists? (Total: %d)</string>
     <string name="playlist_left_swipe">Lista de reprodução, Deslize para Esquerda</string>
     <string name="playlist_pinned_title">Playlists Fixadas</string>
     <string name="playlist_rename_dialog_title">Renomear playlist</string>
@@ -108,4 +108,6 @@
         <item quantity="one">%1$d song</item>
         <item quantity="other">%1$d músicas</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Não foi possível solicitar o acesso à música neste dispositivo.</string>
+    <string name="library_on_device_permission_settings_failed">Não foi possível abrir as configurações de permissão.</string>
 </resources>
