@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_clear">Clear the queue</string>
+    <string name="command_copied">Command copied</string>
+    <string name="command_jump">Play from the queue</string>
+    <string name="command_move">Move in the queue</string>
+    <string name="command_next">Weiter</string>
+    <string name="command_pause">Pause</string>
+    <string name="command_play">Abspielen</string>
+    <string name="command_previous">Zurück</string>
+    <string name="command_queue_add">Add to queue</string>
+    <string name="command_queue_list">Queue from list</string>
+    <string name="command_queue_play">Abspielen</string>
+    <string name="command_remove">Remove from the queue</string>
+    <string name="command_repeat">Wiederholen</string>
+    <string name="command_seek">Seek</string>
+    <string name="command_shuffle">Zufallswiedergabe</string>
+    <string name="command_speed">Speed</string>
+    <string name="common_action_clear">Leeren</string>
+    <string name="common_action_confirm">Bestätigen</string>
+    <string name="common_action_delete">Löschen</string>
+    <string name="common_action_done">Fertig</string>
+    <string name="common_action_reset">Reset</string>
+    <string name="common_action_retry">Wiederholen</string>
+    <string name="common_action_select">Auswählen</string>
+    <string name="common_action_translate">Übersetzen</string>
+    <string name="common_action_turn_off">Ausschalten</string>
+    <string name="common_action_update">Aktualisieren</string>
+    <string name="common_menu_label">Menü</string>
+    <string name="tray_open">Open</string>
+    <string name="tray_quit">Quit</string>
+</resources>
