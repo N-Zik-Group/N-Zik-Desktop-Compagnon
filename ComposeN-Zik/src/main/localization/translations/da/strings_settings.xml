@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">Afsnittet viser oplysninger om app\'en, udviklerne, fejlfinding og opdateringsmuligheder</string>
     <string name="settings_app_behavior_title">App Opførsel</string>
     <string name="settings_app_language_label">Appsprog</string>
+    <string name="settings_app_language_system">System</string>
     <string name="settings_audio_bass_boost">Forstærkning af lydbas</string>
     <string name="settings_audio_crossfade_description">Aktiver jævn overgang mellem sange</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
