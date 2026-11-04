@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Calendar -->
     <string name="calendar_period_one_month">חודש 1</string>
     <string name="calendar_period_one_week">שבוע 1</string>
     <string name="calendar_period_one_year">1 שנה</string>
     <string name="calendar_period_six_months">6 חודשים</string>
     <string name="calendar_period_three_months">3 חודשים</string>
     <string name="calendar_today">היום</string>
+    <!-- Rewind -->
     <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">שנה</string>
     <string name="rewind_title">Rewind</string>
     <string name="rewind_top_sort">Rewind Top</string>
+    <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">ללא הגבלה</string>
     <string name="statistics_title">סטָטִיסטִיקָה</string>
     <string name="statistics_top_period_title">Top %s of …</string>
