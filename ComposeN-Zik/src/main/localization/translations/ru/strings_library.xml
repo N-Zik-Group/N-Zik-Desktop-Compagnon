@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Добавить альбом в закладки</string>
     <string name="album_action_open">Перейти в альбом</string>
     <string name="album_left_swipe">Альбом Свайп влево</string>
-    <string name="album_loading_song_count_format">Загрузка %1$d песен…</string>
+    <string name="album_loading_song_count_format">Загрузка альбома (треки: %1$d)…</string>
     <string name="album_right_swipe">Альбом Свайп вправо</string>
     <string name="artist_action_follow">Подписаться</string>
     <string name="artist_action_play_local_songs">Воспроизвести все локальные песни</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Закрепить/Открепить плейлист</string>
     <string name="playlist_bookmark_unsupported_message">Не удается добавить любимые песни или эпизоды плейлиста</string>
     <string name="playlist_create_dialog_title">Создать новый плейлист</string>
-    <string name="playlist_delete_all_confirmation_count_format">Вы уверены, что хотите удалить ВСЕ плейлисты %d?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Удалить все плейлисты? (Всего: %d)</string>
     <string name="playlist_left_swipe">Плейлист Свайп влево</string>
     <string name="playlist_pinned_title">Прикреплено</string>
     <string name="playlist_rename_dialog_title">Переименовать плейлист</string>
@@ -110,4 +110,6 @@
         <item quantity="many">%1$d songs</item>
         <item quantity="other">%1$d songs</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Не удалось запросить доступ к музыке на этом устройстве.</string>
+    <string name="library_on_device_permission_settings_failed">Не удалось открыть настройки разрешений.</string>
 </resources>
