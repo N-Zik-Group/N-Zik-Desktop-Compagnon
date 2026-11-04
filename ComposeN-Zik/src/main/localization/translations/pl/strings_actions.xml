@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="command_clear">Clear the queue</string>
-    <string name="command_copied">Command copied</string>
-    <string name="command_jump">Play from the queue</string>
-    <string name="command_move">Move in the queue</string>
-    <string name="command_next">Next</string>
+    <string name="command_clear">Wyczyść kolejkę</string>
+    <string name="command_copied">Polecenie skopiowane</string>
+    <string name="command_jump">Odtwarzaj z kolejki</string>
+    <string name="command_move">Przesuń w kolejce</string>
+    <string name="command_next">Następny</string>
     <string name="command_pause">Wstrzymaj</string>
     <string name="command_play">Odtwórz</string>
-    <string name="command_previous">Previous</string>
-    <string name="command_queue_add">Add to queue</string>
-    <string name="command_queue_list">Queue from list</string>
+    <string name="command_previous">Poprzedni</string>
+    <string name="command_queue_add">Dodaj do kolejki</string>
+    <string name="command_queue_list">Kolejka z listy</string>
     <string name="command_queue_play">Odtwórz</string>
-    <string name="command_remove">Remove from the queue</string>
+    <string name="command_remove">Usuń z kolejki</string>
     <string name="command_repeat">Powtórz</string>
-    <string name="command_seek">Seek</string>
+    <string name="command_seek">Szukaj</string>
     <string name="command_shuffle">Losowo</string>
-    <string name="command_speed">Speed</string>
+    <string name="command_speed">Prędkość</string>
     <string name="common_action_clear">Wyczyść</string>
     <string name="common_action_confirm">Potwierdź</string>
     <string name="common_action_delete">Usuń</string>
@@ -27,6 +27,6 @@
     <string name="common_action_turn_off">Wyłącz</string>
     <string name="common_action_update">Aktualizacja</string>
     <string name="common_menu_label">Menu</string>
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
+    <string name="tray_open">Otwórz</string>
+    <string name="tray_quit">Wyjdź</string>
 </resources>
