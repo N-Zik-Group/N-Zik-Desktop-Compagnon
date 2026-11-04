@@ -49,7 +49,7 @@
     <string name="backup_action_export">Export backup</string>
     <string name="backup_action_import_legacy_migration">Import migration file.</string>
     <string name="backup_auto_interval">Auto Backup Interval</string>
-    <string name="backup_auto_interval_none">Onemogućeno</string>
+    <string name="backup_auto_interval_none">Онемогућено</string>
     <string name="backup_auto_location">Auto Backup Location</string>
     <string name="backup_auto_location_not_set">Not set</string>
     <string name="backup_auto_max_backups">Max Backups to Keep</string>
@@ -124,7 +124,7 @@
     <string name="common_option_default">Podrazumevano</string>
     <string name="common_option_disabled">Onemogućeno</string>
     <string name="common_option_none">Nema</string>
-    <string name="common_option_random">Po Povremeno puštanoj pesmi</string>
+    <string name="common_option_random">Random</string>
     <string name="common_other_section_title">Others</string>
     <string name="common_playback_section_title">Playback</string>
     <string name="common_size_big">Velika</string>
@@ -149,7 +149,7 @@
     <string name="connection_replaced">Another window of this PC took over the session.</string>
     <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
     <!-- Contributors -->
-    <string name="contributors">SARADNICI</string>
+    <string name="contributors">Saradnici</string>
     <!-- Dismiss -->
     <string name="dismiss">Dismiss</string>
     <!-- Download -->
@@ -170,7 +170,7 @@
     <string name="error_listener_failed">The pairing listener could not be opened. Pair manually below.</string>
     <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
     <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
-    <string name="error_storage_failed">The pairing could not be saved in the Windows Credential Manager.</string>
+    <string name="error_storage_failed">The pairing could not be saved on this PC.</string>
     <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
     <string name="error_unknown_code">no code</string>
     <string name="error_update_check_failed">The update check failed (%1$s)</string>
@@ -180,7 +180,7 @@
     <string name="export_cached_song_action">Export cached or downloaded song</string>
     <string name="export_cached_songs_action">Export cached</string>
     <!-- Fake -->
-    <string name="fake_audio_bar">Lažni Audio Bar</string>
+    <string name="fake_audio_bar">Audio Waves</string>
     <!-- Forget -->
     <string name="forget_phone">Forget this phone</string>
     <string name="forget_phone_text">Removes the pairing from this PC</string>
@@ -201,10 +201,10 @@
     <string name="install_pkg_command">Install the package with:</string>
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
     <string name="install_pkg_pacman_command">Upgrade the package with:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
+    <string name="install_replacement_portable">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, unzip the downloaded file in its place (the zip opens into a new app folder - never over the current one), and relaunch.</string>
     <string name="install_replacement_portable_linux">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, extract the downloaded .tar.gz in its place (the tarball opens into a new app folder - never over the current one), and relaunch.</string>
     <!-- Interface -->
-    <string name="interface_in_use">Interfejs u ​​upotrebi</string>
+    <string name="interface_in_use">Interface in use</string>
     <!-- Lastfm -->
     <string name="lastfm_love">Love on Last.fm</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
@@ -322,10 +322,10 @@
     <string name="manual_submit">Pair</string>
     <string name="manual_title">Manual pairing</string>
     <!-- Message -->
-    <string name="message_type">Message type</string>
+    <string name="message_type">Popup message style</string>
     <string name="message_type_modern">Moderne</string>
     <!-- Metadata -->
-    <string name="metadata_action_change_artists">Change Authors</string>
+    <string name="metadata_action_change_artists">Ažuriraj Autore</string>
     <string name="metadata_action_change_cover">Ažuriraj Omot</string>
     <string name="metadata_action_change_title">Ažuriraj Naslov</string>
     <string name="metadata_action_edit">Edit Metadata</string>
@@ -394,7 +394,7 @@
     <!-- Phone -->
     <string name="phone_panel_title">Phone</string>
     <!-- Player -->
-    <string name="player_action_bar">AKCIONA TRAKA PLEJERA</string>
+    <string name="player_action_bar">Akciona traka plejera</string>
     <string name="player_action_bar_buttons">Button visibility</string>
     <string name="player_action_bar_buttons_description">Configure which buttons appear in the player action bar</string>
     <string name="player_action_enqueue">Dodaj u red</string>
@@ -414,9 +414,9 @@
     <string name="player_auto_load_songs_in_queue">Auto load songs in queue</string>
     <string name="player_auto_load_songs_in_queue_description">Adds songs when the queue is about to end</string>
     <string name="player_background_animated_gradient_label">Animated Gradient</string>
-    <string name="player_background_artwork_blurred_label">Zamućena pozadina omota</string>
-    <string name="player_background_artwork_fluid_gradient_label">Fluid prelazna boja pozadine od omota</string>
-    <string name="player_background_artwork_gradient_label">Prelazna boja pozadine od omota</string>
+    <string name="player_background_artwork_blurred_label">Blurred song cover</string>
+    <string name="player_background_artwork_fluid_gradient_label">Fluid gradient from song cover</string>
+    <string name="player_background_artwork_gradient_label">Gradient from song cover</string>
     <string name="player_background_artwork_label">Pozadine sa omota</string>
     <string name="player_background_artwork_m3e_morphing_label">Morphing shapes from cover</string>
     <string name="player_background_black_cherry_cosmos">Black Cherry Cosmos</string>
@@ -432,8 +432,8 @@
     <string name="player_background_palette_label">Color Palette</string>
     <string name="player_background_purple_liquid">Purple Liquid</string>
     <string name="player_background_stage">Stage</string>
-    <string name="player_background_theme_fluid_gradient_label">Fluid prelazna boja pozadine od teme</string>
-    <string name="player_background_theme_gradient_label">Prelazna boja pozadine od teme</string>
+    <string name="player_background_theme_fluid_gradient_label">Fluid gradient from theme</string>
+    <string name="player_background_theme_gradient_label">Gradient from theme</string>
     <string name="player_background_theme_label">Pozadine od teme</string>
     <string name="player_background_theme_m3e_morphing_label">Morphing shapes from theme</string>
     <string name="player_behavior_and_visuals">Player Behavior &amp; Visuals</string>
@@ -460,10 +460,10 @@
     <string name="player_keep_minimized">Drži minimiziranog</string>
     <string name="player_listen_on_title">Slušaj na</string>
     <string name="player_matching_required_message">Playback blocked, please match first</string>
-    <string name="player_mini_action_add_to_playlist">Dodaj na plejlistu</string>
+    <string name="player_mini_action_add_to_playlist">Додај у плејлисту</string>
     <string name="player_mini_action_shuffle">Nasumično</string>
     <string name="player_mini_button_audio_output">Audio output</string>
-    <string name="player_mini_button_discover">Otkrij</string>
+    <string name="player_mini_button_discover">Откријте</string>
     <string name="player_mini_button_download">Prеuzimanjе</string>
     <string name="player_mini_button_lyrics">Lyrics</string>
     <string name="player_mini_button_play_pause">Play/Pause</string>
@@ -471,9 +471,9 @@
     <string name="player_mini_button_radio">Radio</string>
     <string name="player_mini_button_repeat">Repeat</string>
     <string name="player_mini_button_share">Share</string>
-    <string name="player_mini_button_sleep_timer">Tajmer za spavanje</string>
+    <string name="player_mini_button_sleep_timer">Тајмер за спавање</string>
     <string name="player_mini_button_video">Video</string>
-    <string name="player_mini_button_visualizer">Vizualizator</string>
+    <string name="player_mini_button_visualizer">Визуализатор</string>
     <string name="player_mini_buttons_config">MiniPlayer buttons</string>
     <string name="player_mini_buttons_config_description">Configure the 4 buttons in the miniplayer</string>
     <string name="player_no_current_song">No song is playing at the moment</string>
@@ -500,7 +500,7 @@
     <string name="player_swipe_sensitivity">Player Swipe Sensitivity</string>
     <string name="player_swipe_sensitivity_high_label">Visok</string>
     <string name="player_swipe_sensitivity_low_label">Nizak</string>
-    <string name="player_swipe_sensitivity_medium_label">Srednja</string>
+    <string name="player_swipe_sensitivity_medium_label">Srednji</string>
     <string name="player_swipe_sensitivity_very_high_label">Very High</string>
     <string name="player_thumbnail_size">Veličina Sličica</string>
     <string name="player_timeline_colored_bar_label">Colored bar</string>
@@ -539,7 +539,7 @@
     <!-- Radio -->
     <string name="radio_action_start">Pokreni radio</string>
     <!-- Recommendations -->
-    <string name="recommendations_action_smart_shuffle">PAMETNE PREPORUKE</string>
+    <string name="recommendations_action_smart_shuffle">Pametna preporuka</string>
     <string name="recommendations_minimum_playback_duration_label">Min. vreme slušanja</string>
     <string name="recommendations_title">Brzi odabiri</string>
     <!-- Reconnect -->
@@ -732,20 +732,20 @@
     <string name="sync_likes">Auto Sync Liked Songs</string>
     <!-- Theme -->
     <string name="theme_palette_dynamic">Dinamično</string>
-    <string name="theme_shake_sensitivity_disabled">Onemogućeno</string>
+    <string name="theme_shake_sensitivity_disabled">Онемогућено</string>
     <!-- This -->
     <string name="this_pc">This PC</string>
     <!-- Thumbnail -->
     <string name="thumbnail_action_edit">Edit Thumbnail</string>
     <string name="thumbnail_action_reset">Reset Thumbnail</string>
     <!-- Title -->
-    <string name="title_backup_and_restore">COPIA DE SEGURIDAD Y RESTAURAR</string>
+    <string name="title_backup_and_restore">Copia de seguridad y restaurar</string>
     <!-- Tray -->
     <string name="tray_open">Open</string>
     <string name="tray_quit">Quit</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <!-- Troubleshooting -->
-    <string name="troubleshooting">REŠAVANJE PROBLEMA</string>
+    <string name="troubleshooting">Rešavanje problema</string>
     <!-- Unreachable -->
     <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
     <string name="unreachable_edit_ip">Edit IP</string>
