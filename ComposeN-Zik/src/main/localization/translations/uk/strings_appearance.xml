@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fake_audio_bar">Підроблена Waveform</string>
+    <string name="message_type">Popup message style</string>
+    <string name="message_type_modern">Сучасний</string>
+    <string name="player_background_black_cherry_cosmos">Чорна вишня Космос</string>
+    <string name="player_background_glossy_gradient">Глянсовий градієнт</string>
+    <string name="player_background_golden_magma">Золота Магма</string>
+    <string name="player_background_gradient_flow">Градієнтний потік</string>
+    <string name="player_background_ice_reflection">Відображення льоду</string>
+    <string name="player_background_ink_flow">Поток чорнила</string>
+    <string name="player_background_linear_gradient">Лінійний градієнт</string>
+    <string name="player_background_mesh_gradient">Сітчастий градієнт</string>
+    <string name="player_background_mesmerizing_lens">Чарівна лінза</string>
+    <string name="player_background_oil_flow">Поток нефти</string>
+    <string name="player_background_purple_liquid">Фіолетова рідина</string>
+    <string name="player_background_stage">Стан</string>
+    <string name="player_controls_style_essential">Основні</string>
+    <string name="player_controls_style_modern">Сучасний</string>
+    <string name="player_cover_style_cd">Компакт-диск</string>
+    <string name="player_cover_style_cd_with_cover">Компакт-диск із обкладинкою</string>
+    <string name="player_cover_style_vinyl">Вініл</string>
+    <string name="player_progress_mini_player">Зменшити плеєр</string>
+    <string name="theme_palette_dynamic">Динамічна</string>
+    <string name="theme_shake_sensitivity_disabled">Відключено</string>
+    <string name="thumbnail_action_edit">Редагувати мініатюру</string>
+    <string name="thumbnail_action_reset">Скидання мініатюри</string>
+</resources>
