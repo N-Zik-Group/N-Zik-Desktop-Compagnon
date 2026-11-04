@@ -100,8 +100,8 @@
     <string name="search_history_pause_description">Neither save new searched queries nor show history</string>
     <string name="search_history_pause_label">Pause search history</string>
     <string name="search_title">Search</string>
-    <string name="song_matching_action_open">Match Album/Audio version</string>
-    <string name="song_matching_unmatched_label">Unmatched song</string>
+    <string name="song_matching_action_open">Matcha Album/Ljudversion</string>
+    <string name="song_matching_unmatched_label">Oöverträffad låt</string>
     <string name="song_metadata_update_action_open">Open update dialog</string>
     <string name="sort_artist_and_album">Artist, Album</string>
 </resources>
