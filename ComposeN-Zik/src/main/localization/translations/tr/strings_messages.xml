@@ -38,4 +38,8 @@
     <string name="notice_unavailable">%1$s: telefonun oynatıcısı kullanılamıyor. Daha sonra tekrar deneyin.</string>
     <string name="notice_unreachable">%1$s: telefon cevap vermedi.</string>
     <string name="path_copied">Yol kopyalandı</string>
+    <string name="updates_check_failed">Could not check for updates.</string>
+    <string name="updates_check_invalid_response">The update server returned an invalid response.</string>
+    <string name="updates_download_generic_error">Could not download the update.</string>
+    <string name="updates_download_invalid_filename">The update file name is invalid.</string>
 </resources>
