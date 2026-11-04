@@ -22,49 +22,49 @@
     <string name="album_action_bookmark">Merkitse albumi</string>
     <string name="album_action_open">Siirry albumiin</string>
     <string name="album_left_swipe">Albumi pyyhkäisemällä vasemmalle</string>
-    <string name="album_loading_song_count_format">Loading %1$d songs…</string>
+    <string name="album_loading_song_count_format">Ladataan %1$d kappaletta…</string>
     <string name="album_right_swipe">Albumi pyyhkäisemällä oikealle</string>
     <!-- App -->
-    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="app_subtitle">N-Zik:n kumppani</string>
     <!-- Artist -->
     <string name="artist_action_follow">Seuraa</string>
     <string name="artist_action_play_local_songs">Soita kaikki paikalliset kappaleet</string>
     <string name="artist_following_status">Seuraan tätä</string>
     <string name="artist_more_from">Lisää artistilta</string>
-    <string name="artist_roundness">Artist roundness</string>
+    <string name="artist_roundness">Taiteilijan pyöreys</string>
     <string name="artist_songs_count_duration">%1$d Kappaletta • %2$s</string>
     <string name="artist_songs_unavailable_message">Kappaleita ei ole saatavilla</string>
     <!-- Audio -->
-    <string name="audio_devices">Audio devices</string>
+    <string name="audio_devices">Ääni laitteet</string>
     <string name="audio_effects">Äänitehosteet</string>
     <string name="audio_loudness_boost_level">Äänenvoimakkuuden korostuksen taso</string>
-    <string name="audio_output_title">Audio output</string>
+    <string name="audio_output_title">Äänen ulostulo</string>
     <string name="audio_quality_automatic">Automaattinen</string>
     <string name="audio_quality_format">Äänen Laatu</string>
     <string name="audio_quality_format_high">Korkea</string>
     <string name="audio_quality_format_low">Matala</string>
     <string name="audio_reverb_none">Ei yhtään</string>
-    <string name="audio_waveform_action_refresh">Update waveform</string>
+    <string name="audio_waveform_action_refresh">Päivitä aaltomuoto</string>
     <!-- Backup -->
-    <string name="backup_action_export">Export backup</string>
+    <string name="backup_action_export">Vie varmuuskopio</string>
     <string name="backup_action_import_legacy_migration">Tuo siirtotiedosto.</string>
-    <string name="backup_auto_interval">Auto Backup Interval</string>
+    <string name="backup_auto_interval">Automaattinen Varmuuskopioinnin Aikaväli</string>
     <string name="backup_auto_interval_none">Pois</string>
-    <string name="backup_auto_location">Auto Backup Location</string>
-    <string name="backup_auto_location_not_set">Not set</string>
-    <string name="backup_auto_max_backups">Max Backups to Keep</string>
-    <string name="backup_auto_target">Backup Target</string>
-    <string name="backup_auto_title">Automatic Backup</string>
-    <string name="backup_export_description">Export database or settings to a file</string>
-    <string name="backup_import_description">Import database or settings from a file</string>
+    <string name="backup_auto_location">Automaattinen Varmuuskopioinnin Sijainti</string>
+    <string name="backup_auto_location_not_set">Ei asetettu</string>
+    <string name="backup_auto_max_backups">Max varmuuskopiot säilytettäväksi</string>
+    <string name="backup_auto_target">Varmuuskopioi Kohde</string>
+    <string name="backup_auto_title">Automaattinen Varmuuskopiointi</string>
+    <string name="backup_export_description">Vie tietokanta tai asetukset tiedostoon</string>
+    <string name="backup_import_description">Tuo tietokanta tai asetukset tiedostosta</string>
     <string name="backup_legacy_migration_description">Vanhoille käyttäjille ennen muuntamista.\nKäytä vanhaa sovellusta varmuuskopion tekemiseen muuttoa varten.</string>
     <string name="backup_target_database_label">Tietokanta</string>
     <!-- Bridge -->
-    <string name="bridge_audio_output_pc_subtitle">Sound on the PC (N-Zik Desktop Compagnon)</string>
-    <string name="bridge_server">PC server</string>
-    <string name="bridge_server_description">Let N-Zik Desktop Compagnon control your library from a PC on the same Wi-Fi network</string>
+    <string name="bridge_audio_output_pc_subtitle">Ääni PC:llä (N-Zik Desktop Compagnon)</string>
+    <string name="bridge_server">PC palvelin</string>
+    <string name="bridge_server_description">Anna N-Zik Desktop Compagnon ohjata kirjastoa tietokoneelta samassa Wi-Fi-verkossa</string>
     <!-- Cached -->
-    <string name="cached_pc">Cached PC</string>
+    <string name="cached_pc">Välimuisti PC</string>
     <!-- Calendar -->
     <string name="calendar_period_one_month">1 kuukausi</string>
     <string name="calendar_period_one_week">1 viikko</string>
@@ -75,27 +75,27 @@
     <!-- Cancel -->
     <string name="cancel">Peruuta</string>
     <!-- Close -->
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
+    <string name="close_behavior">Sulje käyttäytyminen</string>
+    <string name="close_behavior_minimize">Pienennä ilmoitusalueelle</string>
+    <string name="close_behavior_quit">Lopeta sovellus</string>
     <!-- Command -->
-    <string name="command_clear">Clear the queue</string>
-    <string name="command_copied">Command copied</string>
-    <string name="command_jump">Play from the queue</string>
-    <string name="command_move">Move in the queue</string>
-    <string name="command_next">Next</string>
-    <string name="command_output">Audio output</string>
+    <string name="command_clear">Tyhjennä jono</string>
+    <string name="command_copied">Komento kopioitu</string>
+    <string name="command_jump">Toista jonosta</string>
+    <string name="command_move">Siirrä jonossa</string>
+    <string name="command_next">Seuraava</string>
+    <string name="command_output">Äänen ulostulo</string>
     <string name="command_pause">Tauko</string>
     <string name="command_play">Toista</string>
-    <string name="command_previous">Previous</string>
-    <string name="command_queue_add">Add to queue</string>
+    <string name="command_previous">Edellinen</string>
+    <string name="command_queue_add">Lisää jonoon</string>
     <string name="command_queue_play">Toista</string>
-    <string name="command_remove">Remove from the queue</string>
+    <string name="command_remove">Poista jonosta</string>
     <string name="command_repeat">Uudelleentoisto</string>
-    <string name="command_seek">Seek</string>
+    <string name="command_seek">Siirry</string>
     <string name="command_shuffle">Sekoita</string>
-    <string name="command_speed">Speed</string>
-    <string name="command_unknown">A command</string>
+    <string name="command_speed">Nopeus</string>
+    <string name="command_unknown">Komento</string>
     <!-- Common -->
     <string name="common_action_clear">Tyhjennä</string>
     <string name="common_action_confirm">Vahvista</string>
@@ -107,7 +107,7 @@
     <string name="common_action_translate">Käännä</string>
     <string name="common_action_turn_off">Sammuta</string>
     <string name="common_action_update">Päivitä</string>
-    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_artist_conjunction_and">ja</string>
     <string name="common_brand_github">GitHub</string>
     <string name="common_clipboard_copy_success">Kopioitu</string>
     <string name="common_color_source_theme">Teema</string>
@@ -134,93 +134,93 @@
     <string name="common_size_small">Pieni</string>
     <string name="common_state_off">Pois</string>
     <string name="common_state_on">Päällä</string>
-    <string name="common_storage_used_suffix">used</string>
+    <string name="common_storage_used_suffix">käytetty</string>
     <string name="common_translation_title">Käännös</string>
     <string name="common_validation_empty_value">Arvo ei voi olla tyhjä</string>
-    <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="common_validation_minimum_value">Arvon on oltava suurempi kuin</string>
     <!-- Connection -->
-    <string name="connection_connecting">Connecting…</string>
-    <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
-    <string name="connection_live">Connected</string>
-    <string name="connection_offline">Disconnected</string>
-    <string name="connection_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
+    <string name="connection_connecting">Yhdistetään…</string>
+    <string name="connection_kicked">Puhelimesta katkaistu yhteys. Pariliitos on säilytetty.</string>
+    <string name="connection_live">Yhdistetty</string>
+    <string name="connection_offline">Yhteys Katkaistu</string>
+    <string name="connection_other_active">Toinen PC (%1$s) on yhdistetty puhelimeen. Irrota se puhelimesta ja yritä uudelleen.</string>
     <string name="connection_reconnecting">Reconnecting…</string>
-    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
-    <string name="connection_replaced">Another window of this PC took over the session.</string>
-    <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
+    <string name="connection_reconnecting_in">Yhteys puhelimeen katosi. Yhdistetään uudelleen %1$d s…</string>
+    <string name="connection_replaced">Toinen ikkuna tämän tietokoneen otti istunnon.</string>
+    <string name="connection_server_stopped">Palvelin pysähtyi. Käynnistä se uudelleen puhelimessasi olevasta N-Zik-sovelluksesta ja yhdistä uudelleen.</string>
     <!-- Contributors -->
     <string name="contributors">Avustajat</string>
     <!-- Dismiss -->
-    <string name="dismiss">Dismiss</string>
+    <string name="dismiss">Hylkää</string>
     <!-- Download -->
-    <string name="download_pc">Download PC</string>
+    <string name="download_pc">Lataa PC</string>
     <!-- Downloads -->
     <string name="downloads_action_download_all">Lataa kaikki kappaleet</string>
-    <string name="downloads_action_refresh_quality">Update downloads</string>
+    <string name="downloads_action_refresh_quality">Päivitä lataukset</string>
     <string name="downloads_action_remove_all">Poista kaikki ladatut kappaleet</string>
     <string name="downloads_cancelled">Lataus peruttu</string>
     <string name="downloads_delete_all_confirmation">Haluatko varmasti poistaa latauksen?</string>
     <string name="downloads_download_all_confirmation">Haluatko varmasti ladata kaikki?</string>
-    <string name="downloads_quality_format">Download Quality</string>
-    <string name="downloads_refresh_quality_description">Re-download the songs that were downloaded with a different quality</string>
+    <string name="downloads_quality_format">Latausten Laatu</string>
+    <string name="downloads_refresh_quality_description">Lataa uudelleen kappaleet, jotka on ladattu eri laatuisia</string>
     <string name="downloads_title">Lataa</string>
     <!-- Error -->
-    <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
-    <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
-    <string name="error_listener_failed">The pairing listener could not be opened. Pair manually below.</string>
-    <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
-    <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
+    <string name="error_code_rejected">Virheellinen tai vanhentunut koodi. Tarkista puhelimen koodi ja yritä uudelleen.</string>
+    <string name="error_incompatible_version">Puhelimen versio ei ole yhteensopiva (sopimus %1$s). Päivitä N-Zik Desktop Compagnon tai N-Zik.</string>
+    <string name="error_listener_failed">Parittaista kuuntelijaa ei voitu avata. Pair manuaalisesti alla.</string>
+    <string name="error_phone_unreachable">Puhelinta ei voitu saavuttaa. Tarkista, että sen palvelin on käynnissä ja että molemmat laitteet ovat samassa Wi-Fi:ssä.</string>
+    <string name="error_rate_limited">Liian monta yritystä. Yritä uudelleen %1$d s.</string>
     <string name="error_storage_failed">The pairing could not be saved in the Windows Credential Manager.</string>
-    <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
-    <string name="error_unknown_code">no code</string>
-    <string name="error_update_check_failed">The update check failed (%1$s)</string>
-    <string name="error_update_download_failed">The update download failed (%1$s)</string>
-    <string name="error_windows_install_helper">The Windows installer could not be started. Run the downloaded installer manually.</string>
+    <string name="error_unexpected">Odottamaton vastaus puhelimesta (HTTP %1$d, %2$s).</string>
+    <string name="error_unknown_code">ei koodia</string>
+    <string name="error_update_check_failed">Päivityksen tarkistus epäonnistui (%1$s)</string>
+    <string name="error_update_download_failed">Päivityksen lataus epäonnistui (%1$s)</string>
+    <string name="error_windows_install_helper">Windows-asentajaa ei voitu käynnistää. Suorita ladattu asentaja manuaalisesti.</string>
     <!-- Export -->
-    <string name="export_cached_song_action">Export cached or downloaded song</string>
-    <string name="export_cached_songs_action">Export cached</string>
+    <string name="export_cached_song_action">Vie välimuisti tai ladattu kappale</string>
+    <string name="export_cached_songs_action">Vie välimuistissa</string>
     <!-- Fake -->
     <string name="fake_audio_bar">Fake Waveform</string>
     <!-- Forget -->
-    <string name="forget_phone">Forget this phone</string>
-    <string name="forget_phone_text">Removes the pairing from this PC</string>
+    <string name="forget_phone">Unohda tämä puhelin</string>
+    <string name="forget_phone_text">Poistaa parin tältä PC:ltä</string>
     <!-- Git -->
     <string name="git_title">GIT</string>
     <!-- Home -->
-    <string name="home_tabs_settings">Home page</string>
-    <string name="home_tabs_settings_description">Reorder and show/hide tabs</string>
+    <string name="home_tabs_settings">Kotisivu</string>
+    <string name="home_tabs_settings_description">Järjestä ja näytä/piilota välilehdet</string>
     <string name="home_title">Koti</string>
     <!-- Import -->
-    <string name="import_backup">Import backup</string>
+    <string name="import_backup">Tuo varmuuskopio</string>
     <!-- Install -->
-    <string name="install_copy_command">Copy command</string>
-    <string name="install_copy_path">Copy path</string>
-    <string name="install_file_saved_at">The update file is saved at:</string>
-    <string name="install_flatpak_command">Update in place with:</string>
-    <string name="install_open_folder">Open folder</string>
-    <string name="install_pkg_command">Install the package with:</string>
-    <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_pkg_pacman_command">Upgrade the package with:</string>
+    <string name="install_copy_command">Kopioi komento</string>
+    <string name="install_copy_path">Kopioi polku</string>
+    <string name="install_file_saved_at">Päivitystiedosto on tallennettu osoitteeseen:</string>
+    <string name="install_flatpak_command">Päivitä paikallaan:</string>
+    <string name="install_open_folder">Avaa kansio</string>
+    <string name="install_pkg_command">Asenna paketti, jossa on:</string>
+    <string name="install_pkg_manual">Paketin hallintaa ei havaittu. Asenna ladattu paketti manuaalisesti.</string>
+    <string name="install_pkg_pacman_command">Päivitä paketti seuraavalla tavalla:</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, extract the downloaded .tar.gz in its place (the tarball opens into a new app folder - never over the current one), and relaunch.</string>
+    <string name="install_replacement_portable_linux">Lopeta sovellus ensin (sen tiedostot ovat lukittuja, kun se suoritetaan) ja korvaa sitten sovelluskansio: poista nykyinen sovelluskansio, pura ladattu. ar.gz paikallaan (tar-pallo avautuu uuteen sovelluskansioon - ei koskaan nykyisen sovelluksen), ja uudelleenkäynnistämiseen.</string>
     <!-- Interface -->
     <string name="interface_in_use">Käyttöliittymä käytössä</string>
     <!-- Lastfm -->
-    <string name="lastfm_love">Love on Last.fm</string>
+    <string name="lastfm_love">Rakkaus Last.fm:ssä</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
     <!-- Library -->
     <string name="library_action_bookmark">Kirjanmerkki</string>
-    <string name="library_action_randomize">Randomizer</string>
+    <string name="library_action_randomize">Satunnaistin</string>
     <string name="library_albums_title">Albumit</string>
     <string name="library_artists_title">Artistit</string>
     <string name="library_cached_title">Välimuistissa</string>
     <string name="library_cleanup_title">Älykäs roskakori</string>
-    <string name="library_disliked_title">Disliked</string>
-    <string name="library_dislikes_added">Disliked %s</string>
-    <string name="library_dislikes_removed">Removed %s from dislikes</string>
+    <string name="library_disliked_title">Ei Pidetty</string>
+    <string name="library_dislikes_added">Pidetty %s</string>
+    <string name="library_dislikes_removed">Poistettu %s distyreistä</string>
     <string name="library_downloaded_title">Ladatut</string>
-    <string name="library_empty">Nothing here.</string>
-    <string name="library_error_unreachable">The phone could not be reached.</string>
+    <string name="library_empty">Ei mitään täällä.</string>
+    <string name="library_error_unreachable">Puhelinta ei voitu saavuttaa.</string>
     <string name="library_favorites_action_add">Lisää suosikkeihin</string>
     <string name="library_favorites_added">Lisätty suosikkeihin</string>
     <string name="library_favorites_removed">Poistettu suosikeista</string>
@@ -228,12 +228,12 @@
     <string name="library_filter_by_title">Suodatusperuste</string>
     <string name="library_history_title">Historia</string>
     <string name="library_layout_list_label">Lista</string>
-    <string name="library_management_section_title">Management</string>
-    <string name="library_none">The phone shares no library with this PC.</string>
-    <string name="library_not_found">Not found on the phone. It may have been deleted.</string>
-    <string name="library_on_device_title">On device phone</string>
+    <string name="library_management_section_title">Hallinta</string>
+    <string name="library_none">Puhelin ei jaa kirjastoa tämän tietokoneen kanssa.</string>
+    <string name="library_not_found">Puhelimesta ei löydy. Se on ehkä poistettu.</string>
+    <string name="library_on_device_title">Laitteen puhelimessa</string>
     <string name="library_playlists_title">Soittolistat</string>
-    <string name="library_refresh">Refresh</string>
+    <string name="library_refresh">Päivitä</string>
     <string name="library_songs_title">Kappaleet</string>
     <string name="library_sort_album">Albumi</string>
     <string name="library_sort_album_year">Albumin julkaisuvuosi</string>
@@ -245,97 +245,97 @@
     <string name="library_sort_downloaded">Ladatut</string>
     <string name="library_sort_duration">Kesto</string>
     <string name="library_sort_listening_time">Kuunteluaika</string>
-    <string name="library_sort_menu">Sort Menu</string>
+    <string name="library_sort_menu">Lajittele Valikko</string>
     <string name="library_sort_name">Nimi</string>
     <string name="library_sort_order_title">Lajittelujärjestys</string>
-    <string name="library_sort_play_count">Play Count</string>
+    <string name="library_sort_play_count">Toiston Määrä</string>
     <string name="library_sort_relative_listening_time">Suhteellinen kuunteluaika</string>
     <string name="library_sort_songs_number">Kappaleiden määrä</string>
     <string name="library_sort_title">Nimi</string>
-    <string name="library_sync_current_item_format">Syncing: %1$s</string>
-    <string name="library_sync_failed_count_suffix">Sync failed</string>
+    <string name="library_sync_current_item_format">Synkronointi: %1$s</string>
+    <string name="library_sync_failed_count_suffix">Synkronointi epäonnistui</string>
     <string name="library_sync_progress_format">%1$d / %2$d</string>
-    <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
+    <string name="library_tracks_failed">Kappaleita ei voitu lukea: %1$s</string>
     <string name="library_youtube_playlists_label">YouTube / YouTube Music</string>
     <!-- Listen -->
-    <string name="listen_together_auto_approval_joins">Auto-approve join requests</string>
-    <string name="listen_together_auto_approval_joins_description">Automatically approve join requests without reviewing them manually</string>
-    <string name="listen_together_auto_approval_suggestions">Auto-approve song suggestions</string>
-    <string name="listen_together_auto_approval_suggestions_description">Automatically approve and queue song suggestions from guests</string>
-    <string name="listen_together_blocked_users">Blocked users</string>
-    <string name="listen_together_connect">Connect</string>
-    <string name="listen_together_connection">Connection</string>
-    <string name="listen_together_create_room">Create room</string>
-    <string name="listen_together_create_room_description">Create a room and share the code with your friends</string>
-    <string name="listen_together_disconnected">Disconnected</string>
-    <string name="listen_together_enter_room_code">Enter a room code</string>
-    <string name="listen_together_history">Local history</string>
-    <string name="listen_together_history_description">Record Listen Together tracks in your local history</string>
-    <string name="listen_together_join_room">Join room</string>
-    <string name="listen_together_no_blocked_users">No blocked users</string>
-    <string name="listen_together_not_set">Not set</string>
-    <string name="listen_together_room">Room</string>
-    <string name="listen_together_server_url">Server URL</string>
-    <string name="listen_together_suggest">Suggest to host</string>
-    <string name="listen_together_sync_volume">Sync host volume</string>
-    <string name="listen_together_sync_volume_description">Guests will match the host\'s volume level</string>
-    <string name="listen_together_title">Listen Together</string>
+    <string name="listen_together_auto_approval_joins">Hyväksy liittymispyynnöt automaattisesti</string>
+    <string name="listen_together_auto_approval_joins_description">Hyväksy liittymispyynnöt automaattisesti tarkistamatta niitä manuaalisesti</string>
+    <string name="listen_together_auto_approval_suggestions">Hyväksy kappaleen ehdotukset automaattisesti</string>
+    <string name="listen_together_auto_approval_suggestions_description">Hyväksy ja laita kappaleiden ehdotukset automaattisesti vierailta</string>
+    <string name="listen_together_blocked_users">Estetyt käyttäjät</string>
+    <string name="listen_together_connect">Yhdistä</string>
+    <string name="listen_together_connection">Yhteys</string>
+    <string name="listen_together_create_room">Luo huone</string>
+    <string name="listen_together_create_room_description">Luo huone ja jaa koodi ystäviesi kanssa</string>
+    <string name="listen_together_disconnected">Yhteys Katkaistu</string>
+    <string name="listen_together_enter_room_code">Anna huone-koodi</string>
+    <string name="listen_together_history">Paikallinen historia</string>
+    <string name="listen_together_history_description">Tallenna Kuuntele yhdessä kappaleita paikallisessa historiassasi</string>
+    <string name="listen_together_join_room">Liity huoneeseen</string>
+    <string name="listen_together_no_blocked_users">Ei estettyjä käyttäjiä</string>
+    <string name="listen_together_not_set">Ei asetettu</string>
+    <string name="listen_together_room">Huone</string>
+    <string name="listen_together_server_url">Palvelimen URL</string>
+    <string name="listen_together_suggest">Ehdota isännöintiä</string>
+    <string name="listen_together_sync_volume">Synkronoi isäntävoimakkuus</string>
+    <string name="listen_together_sync_volume_description">Vieraat vastaavat isännän äänenvoimakkuutta</string>
+    <string name="listen_together_title">Kuuntele Yhdessä</string>
     <string name="listen_together_username">Käyttäjätunnus</string>
-    <string name="listen_together_view_logs">View logs</string>
-    <string name="listen_together_view_logs_description">Debug connection events and messages</string>
+    <string name="listen_together_view_logs">Näytä lokit</string>
+    <string name="listen_together_view_logs_description">Vianjäljitys yhteystapahtumista ja viesteistä</string>
     <!-- Local -->
-    <string name="local_playback_failed">This song could not be played on this PC.</string>
-    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
-    <string name="local_playback_not_found">This song is no longer on your phone.</string>
-    <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
-    <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
-    <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
-    <string name="local_playback_unreachable">Your phone did not answer.</string>
-    <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
+    <string name="local_playback_failed">Tätä kappaletta ei voitu toistaa tällä tietokoneella.</string>
+    <string name="local_playback_invalid_url">Tätä kappaletta ei voitu toistaa tällä tietokoneella.</string>
+    <string name="local_playback_not_found">Tämä kappale ei ole enää puhelimessasi.</string>
+    <string name="local_playback_other_active">Ääni tässä PC:ssä: toinen PC (%1$s) on yhdistetty puhelimeen.</string>
+    <string name="local_playback_unavailable">Ääni tällä tietokoneella ei ole käytettävissä: upotettua VLC:tä ei voitu ladata.</string>
+    <string name="local_playback_unavailable_linux">Ääni tällä tietokoneella ei ole käytettävissä. Asenna VLC %1$s ja käynnistä sovellus uudelleen.</string>
+    <string name="local_playback_unreachable">Puhelimesi ei vastannut.</string>
+    <string name="local_playback_upstream_failed">Puhelimesi ei saanut tätä kappaletta.</string>
     <!-- Logs -->
-    <string name="logs_action_export">Export logs</string>
-    <string name="logs_export_debug_description">Export debug log to a file</string>
+    <string name="logs_action_export">Vie lokit</string>
+    <string name="logs_export_debug_description">Vie virheenkorjausloki tiedostoon</string>
     <!-- Lyrics -->
     <string name="lyrics_alignment_left_label">Vasen</string>
     <string name="lyrics_alignment_right_label">Oikea</string>
     <string name="lyrics_color">Sanoitusten Väri</string>
     <string name="lyrics_title">Sanoitukset</string>
     <!-- Maintenance -->
-    <string name="maintenance_card_desc">App state at a glance: last boot passes and live subsystems</string>
-    <string name="maintenance_convergence">Name convergence</string>
-    <string name="maintenance_db_cleanup">Artist link cleanup</string>
+    <string name="maintenance_card_desc">Sovelluksen tila yhdellä silmäyksellä: viimeinen käynnistys läpäisee ja live-alijärjestelmät</string>
+    <string name="maintenance_convergence">Nimen lähentyminen</string>
+    <string name="maintenance_db_cleanup">Taiteilijan linkki siivous</string>
     <string name="maintenance_debug_logging_title">Ota virheenkorjauslokit käyttöön</string>
-    <string name="maintenance_dedup">Same-name artist dedup</string>
-    <string name="maintenance_live_subsystems">Live subsystems</string>
-    <string name="maintenance_no_data">No data</string>
-    <string name="maintenance_open">Open</string>
-    <string name="maintenance_open_desc">Open the full maintenance sheet</string>
-    <string name="maintenance_title">Maintenance</string>
+    <string name="maintenance_dedup">Same-name artistin dedup</string>
+    <string name="maintenance_live_subsystems">Elävät osajärjestelmät</string>
+    <string name="maintenance_no_data">Ei tietoja</string>
+    <string name="maintenance_open">Avaa</string>
+    <string name="maintenance_open_desc">Avaa koko huoltoarkki</string>
+    <string name="maintenance_title">Huolto</string>
     <!-- Manual -->
     <string name="manual_code">Pairing code</string>
-    <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
-    <string name="manual_description">On your phone, Manage server shows the IP address, the port and a 6-character code.</string>
-    <string name="manual_ip">Phone IP address</string>
-    <string name="manual_ip_invalid">Enter an IPv4 address, for example 192.168.1.14.</string>
-    <string name="manual_port">Port</string>
-    <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
-    <string name="manual_submit">Pair</string>
-    <string name="manual_title">Manual pairing</string>
+    <string name="manual_code_invalid">Koodissa on 6 merkkiä, esimerkiksi ABC-DEF.</string>
+    <string name="manual_description">Puhelimessa Hallitse palvelinta näyttää IP-osoitteen, portin ja 6-merkkisen koodin.</string>
+    <string name="manual_ip">Puhelimen IP-osoite</string>
+    <string name="manual_ip_invalid">Anna IPv4-osoite, esimerkiksi 192.168.1.14.</string>
+    <string name="manual_port">Portti</string>
+    <string name="manual_port_invalid">Anna satama välillä 1 ja 65535.</string>
+    <string name="manual_submit">Pari</string>
+    <string name="manual_title">Manuaalinen paritus</string>
     <!-- Message -->
     <string name="message_type">Popup message style</string>
     <string name="message_type_modern">Moderni</string>
     <!-- Metadata -->
-    <string name="metadata_action_change_artists">Change Authors</string>
+    <string name="metadata_action_change_artists">Vaihda Kirjoittajia</string>
     <string name="metadata_action_change_cover">Vaihda Kansi</string>
     <string name="metadata_action_change_title">Vaihda Otsikko</string>
-    <string name="metadata_action_edit">Edit Metadata</string>
-    <string name="metadata_album_action_change_browse_id">Change Album Browse ID</string>
-    <string name="metadata_artist_action_change_browse_id">Change Artist Browse ID</string>
-    <string name="metadata_playlist_action_change_browse_id">Change Playlist Browse ID</string>
+    <string name="metadata_action_edit">Muokkaa Metatietoja</string>
+    <string name="metadata_album_action_change_browse_id">Vaihda Albumin Selaa Id</string>
+    <string name="metadata_artist_action_change_browse_id">Vaihda Esittäjän Selaa Id</string>
+    <string name="metadata_playlist_action_change_browse_id">Vaihda Soittolistaa Selaa Id</string>
     <string name="metadata_unknown_artist">Tuntematon Esittäjä</string>
     <string name="metadata_unknown_title">Tuntematon Otsikko</string>
     <!-- Miniplayer -->
-    <string name="miniplayer_button_like">Like</string>
+    <string name="miniplayer_button_like">Tykkää</string>
     <!-- Navigation -->
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Alhaalla Kelluva</string>
@@ -350,60 +350,60 @@
     <string name="not_selectable">Ei valittavissa</string>
     <!-- Notice -->
     <string name="notice_failed">%1$s failed (HTTP %2$d, %3$s).</string>
-    <string name="notice_late_error">%1$s failed on the phone (%2$s, command %3$s).</string>
-    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
-    <string name="notice_not_found">%1$s: not found on the phone.</string>
-    <string name="notice_other_active">%1$s: another PC (%2$s) is connected to the phone.</string>
-    <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
-    <string name="notice_rejected">%1$s: refused by the phone.</string>
-    <string name="notice_server_stopping">%1$s: the phone’s server is stopping.</string>
+    <string name="notice_late_error">%1$s epäonnistui puhelimessa (%2$s, komento %3$s).</string>
+    <string name="notice_no_delta">%1$s: puhelin ei vahvistanut muutosta. Päivitetään…</string>
+    <string name="notice_not_found">%1$s: ei löydy puhelimesta.</string>
+    <string name="notice_other_active">%1$s: toinen PC (%2$s) on yhdistetty puhelimeen.</string>
+    <string name="notice_queue_mismatch">%1$s: jono muuttui sillä välin. Se päivitettiin, yritä uudelleen.</string>
+    <string name="notice_rejected">%1$s: puhelin hylkäsi sen.</string>
+    <string name="notice_server_stopping">%1$s: puhelimen palvelin pysähtyy.</string>
     <string name="notice_truncated">%1$s: only %2$d of %3$d tracks were sent.</string>
-    <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
-    <string name="notice_unreachable">%1$s: the phone did not answer.</string>
+    <string name="notice_unavailable">%1$s: puhelimen pelaaja ei ole käytettävissä. Yritä myöhemmin uudelleen.</string>
+    <string name="notice_unreachable">%1$s: puhelin ei vastannut.</string>
     <!-- Old -->
-    <string name="old_install_path">Current install:</string>
+    <string name="old_install_path">Nykyinen asennus:</string>
     <!-- Pair -->
-    <string name="pair_device_name">Name of this PC</string>
-    <string name="pair_device_name_invalid">Enter a name of 1 to 64 characters.</string>
-    <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
-    <string name="pair_manual_entry">Manual entry</string>
-    <string name="pair_manual_entry_text">Type the address and code shown on your phone</string>
-    <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
+    <string name="pair_device_name">Tämän PC:n nimi</string>
+    <string name="pair_device_name_invalid">Anna 1-64 merkin pituinen nimi.</string>
+    <string name="pair_listener_unreachable">Puhelimesi ei päässyt tähän tietokoneeseen. Windows Firewall, tai verkko asetettu julkiseksi? Salli N-Zik Desktop Compagnon yksityisissä verkoissa tai pari manuaalisesti alla.</string>
+    <string name="pair_manual_entry">Manuaalinen syöttö</string>
+    <string name="pair_manual_entry_text">Kirjoita puhelimeesi näytetty osoite ja koodi</string>
+    <string name="pair_no_address">Tässä tietokoneessa ei löytynyt paikallista verkkoosoitetta, joten QR-koodia ei voi näyttää. Pair on alla manuaalisesti.</string>
     <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_description">In N-Zik on your phone, open Manage server, start pairing, then tap Scan and point the camera at this code.</string>
-    <string name="pair_qr_preparing">Preparing the QR code…</string>
-    <string name="pair_qr_renew_hint">The code renews itself every 2 minutes.</string>
-    <string name="pair_qr_waiting">Waiting for your phone…</string>
-    <string name="pair_show_qr">Show the QR code</string>
-    <string name="pair_title">Pair with your phone</string>
+    <string name="pair_qr_description">Avaa Hallitse palvelin, aloita yhdistäminen puhelimessasi N-Zikissa ja napauta sitten Skannaa ja osoita kamera tällä koodilla.</string>
+    <string name="pair_qr_preparing">Valmistellaan QR-koodia…</string>
+    <string name="pair_qr_renew_hint">Koodi uusiutuu 2 minuutin välein.</string>
+    <string name="pair_qr_waiting">Odotetaan puhelinta…</string>
+    <string name="pair_show_qr">Näytä QR-koodi</string>
+    <string name="pair_title">Parita puhelimellasi</string>
     <!-- Paired -->
     <string name="paired_as">This PC appears as %1$s on the phone.</string>
-    <string name="paired_checking">Checking the connection…</string>
-    <string name="paired_error">The phone answered with an error (HTTP %1$d, %2$s).</string>
-    <string name="paired_incompatible">Phone version incompatible (contract %1$s).</string>
-    <string name="paired_ok">The phone is reachable.</string>
-    <string name="paired_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
-    <string name="paired_other_active_unknown">another device</string>
-    <string name="paired_session_only">No keyring is available on this PC, so the pairing is kept only in memory for this session: pair again after a restart.</string>
+    <string name="paired_checking">Tarkistetaan yhteyttä…</string>
+    <string name="paired_error">Puhelin vastasi virheellisesti (HTTP %1$d, %2$s).</string>
+    <string name="paired_incompatible">Puhelinnumero ei ole yhteensopiva (sopimus %1$s).</string>
+    <string name="paired_ok">Puhelin on tavoitettavissa.</string>
+    <string name="paired_other_active">Toinen PC (%1$s) on yhdistetty puhelimeen. Irrota se puhelimesta ja yritä uudelleen.</string>
+    <string name="paired_other_active_unknown">toinen laite</string>
+    <string name="paired_session_only">Avaimenreikää ei ole saatavilla tällä tietokoneella, joten paritus pidetään vain muistissa tätä istuntoa varten: pari uudelleen uudelleenkäynnistyksen jälkeen.</string>
     <string name="paired_title">Paired</string>
-    <string name="paired_with">Paired with %1$s</string>
+    <string name="paired_with">Maustettu %1$s kanssa</string>
     <!-- Parental -->
     <string name="parental_control">Lapsilukko</string>
     <!-- Path -->
-    <string name="path_copied">Path copied</string>
+    <string name="path_copied">Polku kopioitu</string>
     <!-- Phone -->
-    <string name="phone_panel_title">Phone</string>
+    <string name="phone_panel_title">Puhelin</string>
     <!-- Player -->
     <string name="player_action_bar">Soittimen toimintopalkki</string>
-    <string name="player_action_bar_buttons">Button visibility</string>
-    <string name="player_action_bar_buttons_description">Configure which buttons appear in the player action bar</string>
+    <string name="player_action_bar_buttons">Painikkeen näkyvyys</string>
+    <string name="player_action_bar_buttons_description">Määritä mitkä painikkeet näkyvät soittimen toimintapalkissa</string>
     <string name="player_action_enqueue">Lisää jonoon</string>
     <string name="player_action_enqueue_songs">Lisää kappaleet jonoon</string>
     <string name="player_action_listen_on_youtube">Kuuntele YouTubessa</string>
     <string name="player_action_locate_current_song">Näytä tällä hetkellä soitettava kappale</string>
-    <string name="player_action_next">Next</string>
+    <string name="player_action_next">Seuraava</string>
     <string name="player_action_play_next">Soita seuraavaksi</string>
-    <string name="player_action_previous">Previous</string>
+    <string name="player_action_previous">Edellinen</string>
     <string name="player_action_repeat">Uudelleentoisto</string>
     <string name="player_action_seek_forward">Eteenpäin</string>
     <string name="player_action_seek_forward_30_seconds">Eteenpäin 30 sekuntia</string>
@@ -418,7 +418,7 @@
     <string name="player_background_artwork_fluid_gradient_label">Nesteen kaltevuus kappaleen kannesta</string>
     <string name="player_background_artwork_gradient_label">Gradientti kappaleen kannesta</string>
     <string name="player_background_artwork_label">Sovita kappaleen kansi</string>
-    <string name="player_background_artwork_m3e_morphing_label">Morphing shapes from cover</string>
+    <string name="player_background_artwork_m3e_morphing_label">Kuormitusmuodot kannesta</string>
     <string name="player_background_black_cherry_cosmos">Mustakirsikkakosmos</string>
     <string name="player_background_glossy_gradient">Kiiltävä liukuväri</string>
     <string name="player_background_golden_magma">Kultainen magma</string>
@@ -431,11 +431,11 @@
     <string name="player_background_oil_flow">Öljyvirta</string>
     <string name="player_background_palette_label">Väripaletti</string>
     <string name="player_background_purple_liquid">Violetti neste</string>
-    <string name="player_background_stage">Stage</string>
+    <string name="player_background_stage">Vaihe</string>
     <string name="player_background_theme_fluid_gradient_label">Nesteen kaltevuus teemasta</string>
     <string name="player_background_theme_gradient_label">Gradientti teemasta</string>
     <string name="player_background_theme_label">Täsmää teema</string>
-    <string name="player_background_theme_m3e_morphing_label">Morphing shapes from theme</string>
+    <string name="player_background_theme_m3e_morphing_label">Morphing muotoja teemasta</string>
     <string name="player_behavior_and_visuals">Player Behavior &amp; Visuals</string>
     <string name="player_collapsed_disable_swiping_down">Poista pyyhkäisy alas -toiminto</string>
     <string name="player_controls">Pelaajien Ohjaukset</string>
@@ -453,8 +453,8 @@
     <string name="player_cover_style_cd">CD</string>
     <string name="player_cover_style_cd_with_cover">CD kansikuvalla</string>
     <string name="player_cover_style_vinyl">Vinyyli</string>
-    <string name="player_current_song_not_in_list">Could not find playing song on current list</string>
-    <string name="player_effects">Player Effects</string>
+    <string name="player_current_song_not_in_list">Kappaletta ei löytynyt nykyisestä luettelosta</string>
+    <string name="player_effects">Pelaajan Tehosteet</string>
     <string name="player_enable_lyrics_popup_message">Ota sanoitusten ponnahdusikkuna käyttöön</string>
     <string name="player_enable_rotation_buttons">Ota painikkeen kierto käyttöön napsauttamalla</string>
     <string name="player_keep_minimized">Pidä pienennettynä</string>
@@ -462,21 +462,21 @@
     <string name="player_matching_required_message">Toisto estetty, ole hyvä ja vastaa ensin</string>
     <string name="player_mini_action_add_to_playlist">Lisää soittolistaan</string>
     <string name="player_mini_action_shuffle">Sekoita</string>
-    <string name="player_mini_button_audio_output">Audio output</string>
+    <string name="player_mini_button_audio_output">Äänen ulostulo</string>
     <string name="player_mini_button_discover">Löydä uutta</string>
     <string name="player_mini_button_download">Lataa</string>
     <string name="player_mini_button_lyrics">Sanoitukset</string>
-    <string name="player_mini_button_play_pause">Play/Pause</string>
-    <string name="player_mini_button_queue">Queue</string>
+    <string name="player_mini_button_play_pause">Toista/Tauko</string>
+    <string name="player_mini_button_queue">Jono</string>
     <string name="player_mini_button_radio">Radio</string>
     <string name="player_mini_button_repeat">Uudelleentoisto</string>
-    <string name="player_mini_button_share">Share</string>
+    <string name="player_mini_button_share">Jaa</string>
     <string name="player_mini_button_sleep_timer">Uniajastin</string>
     <string name="player_mini_button_video">Video</string>
     <string name="player_mini_button_visualizer">Visualisointi</string>
-    <string name="player_mini_buttons_config">MiniPlayer buttons</string>
-    <string name="player_mini_buttons_config_description">Configure the 4 buttons in the miniplayer</string>
-    <string name="player_no_current_song">No song is playing at the moment</string>
+    <string name="player_mini_buttons_config">MiniPlayerin painikkeet</string>
+    <string name="player_mini_buttons_config_description">Määritä pienoissoittimen 4 painikkeet</string>
+    <string name="player_no_current_song">Ei kappaletta soi tällä hetkellä</string>
     <string name="player_no_song_found">Kappaletta ei löytynyt</string>
     <string name="player_pause_listen_history">Keskeytä kuunteluhistoria</string>
     <string name="player_pause_listen_history_info">Ei tallenna toiston tapahtumia, joita käytetään tilastoissa, historiassa ja pikavalinnan ehdotuksissa</string>
@@ -492,10 +492,10 @@
     <string name="player_rotating_buttons">Pyörivät painikkeet</string>
     <string name="player_seek_backward_five_seconds">Rewind 5 sekuntia</string>
     <string name="player_seek_backward_thirty_seconds">Käännä 30 sekuntia</string>
-    <string name="player_shuffle_empty_message">No song to shuffle</string>
-    <string name="player_shuffled_song_count_format">%d songs shuffled</string>
+    <string name="player_shuffle_empty_message">Ei kappaletta sekoittaaksesi</string>
+    <string name="player_shuffled_song_count_format">%d kappaletta sekoitettu</string>
     <string name="player_sleep_timer_title">Uniajastin</string>
-    <string name="player_statistics_volume_label">Volume</string>
+    <string name="player_statistics_volume_label">Tilavuus</string>
     <string name="player_swap_controls_with_timeline">Vaihda hallintalaitteet aikajanalla</string>
     <string name="player_swipe_sensitivity">Pelaajan Pyyhkäisyn Herkkyys</string>
     <string name="player_swipe_sensitivity_high_label">Korkea</string>
@@ -512,24 +512,24 @@
     <!-- Playlist -->
     <string name="playlist_action_add">Lisää soittolistaan</string>
     <string name="playlist_action_create">Uusi soittolista</string>
-    <string name="playlist_action_delete_selected">Delete playlists</string>
+    <string name="playlist_action_delete_selected">Poista soittolistat</string>
     <string name="playlist_action_export">Vie soittolista</string>
     <string name="playlist_action_import">Tuo soittolista</string>
     <string name="playlist_action_shuffle_positions">Sekoita kappaleen asennot</string>
     <string name="playlist_action_toggle_pinned">Kiinnitä/poista soittolistan kiinnitys</string>
-    <string name="playlist_bookmark_unsupported_message">Cannot bookmark Liked Songs or Episodes playlist</string>
+    <string name="playlist_bookmark_unsupported_message">Ei voi kirjanmerkitä Pidettyjä kappaleita tai jaksoja soittolistaa</string>
     <string name="playlist_create_dialog_title">Luo uusi soittolista</string>
-    <string name="playlist_delete_all_confirmation_count_format">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Oletko varma, että haluat poistaa KAIKKI %d soittolistat?</string>
     <string name="playlist_left_swipe">Soittolista pyyhkäisemällä vasemmalle</string>
     <string name="playlist_pinned_title">Kiinnitetty</string>
-    <string name="playlist_rename_dialog_title">Rename playlist</string>
+    <string name="playlist_rename_dialog_title">Nimeä soittolista uudelleen</string>
     <string name="playlist_reorder_ascending_sort_required_message">Reorder is possible only in ascending sorting</string>
     <string name="playlist_reorder_lock_toggle_label">Lukitse/avaa kappaleiden järjestäminen</string>
     <string name="playlist_right_swipe">Soittolista pyyhkäisemällä oikealle</string>
     <string name="playlist_selection_action_deselect">Poista valinnat</string>
     <string name="playlist_top">Ylin Soittolista</string>
     <!-- Profile -->
-    <string name="profile_base_name">N-Zik Fan</string>
+    <string name="profile_base_name">N-Zik Tuuletin</string>
     <string name="profile_title">Profiles</string>
     <!-- Proxy -->
     <string name="proxy">Välityspalvelin</string>
@@ -543,20 +543,20 @@
     <string name="recommendations_minimum_playback_duration_label">Soiton vähimmäiskesto</string>
     <string name="recommendations_title">Nopeat Valinnat</string>
     <!-- Reconnect -->
-    <string name="reconnect">Reconnect</string>
+    <string name="reconnect">Yhdistä Uudelleen</string>
     <!-- Recovery -->
-    <string name="recovery_center">Rescue Center</string>
+    <string name="recovery_center">Pelastuksen Keskipiste</string>
     <!-- Request -->
     <string name="request_a_feature">Pyydä ominaisuutta tai ehdota ideaa</string>
     <!-- Revoked -->
-    <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
-    <string name="revoked_pair_again">Pair again</string>
+    <string name="revoked_description">Tämä tietokone poistettiin puhelimen lisälaitteista. Parita se uudelleen jatkaaksesi sen käyttöä.</string>
+    <string name="revoked_pair_again">Pari uudelleen</string>
     <string name="revoked_title">Pairing revoked</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_month">Kuukausi</string>
     <string name="rewind_filter_year">Julkaisuvuosi</string>
     <string name="rewind_title">Rewind</string>
-    <string name="rewind_top_sort">Rewind Top</string>
+    <string name="rewind_top_sort">Rewind Ylhäällä</string>
     <!-- Search -->
     <string name="search_display_order">Online-hakujen esitysjärjestys</string>
     <string name="search_display_order_suggestions_first">Ehdotukset ensin</string>
@@ -606,19 +606,19 @@
     <string name="settings_interface_title">Käyttöliittymä</string>
     <string name="settings_languages_title">Kielet</string>
     <string name="settings_lastfm_title">Last.fm</string>
-    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
-    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
-    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
+    <string name="settings_launcher_shortcuts_description">Valitse ja järjestä käynnistin pikakuvakkeet</string>
+    <string name="settings_launcher_shortcuts_recovery_required_message">Pelastusta ei voi poistaa käytöstä</string>
+    <string name="settings_launcher_shortcuts_title">Sovelluksen pikakuvakkeet</string>
     <string name="settings_library_now_playing_indicator_label">Toiston ilmaisin</string>
     <string name="settings_library_playlist_indicator_description">Merkitse kappaleet jotka on lisätty soittolistaan</string>
     <string name="settings_library_playlist_indicator_label">Soittolistan osoitin</string>
     <string name="settings_library_queue_playlist_swipe_left_label">Jono ja paikalliset soittolistat pyyhkäisemällä vasemmalle</string>
     <string name="settings_library_queue_playlist_swipe_right_label">Jono ja paikalliset soittolistat pyyhkäisemällä oikealle</string>
-    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
-    <string name="settings_library_sort_options_description">Customize sort options</string>
-    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
-    <string name="settings_library_toolbar_title">Toolbar</string>
-    <string name="settings_local_playlist_title">Local Playlist</string>
+    <string name="settings_library_sections_visibility_description">Valitse mitkä osat näkyvät kirjastossa</string>
+    <string name="settings_library_sort_options_description">Mukauta lajitteluasetuksia</string>
+    <string name="settings_library_toolbar_customization_description">Muokkaa työkalupalkkia</string>
+    <string name="settings_library_toolbar_title">Työkalupalkki</string>
+    <string name="settings_local_playlist_title">Paikallinen Soittolista</string>
     <string name="settings_logging_error_file_description">Jos käytössä, luo lokitiedoston virheiden löytämiseksi</string>
     <string name="settings_loudness_base_gain">Äänenvoimakkuuden vahvistus</string>
     <string name="settings_lyrics_artwork_visible_label">Näytä pienoiskuva sanoituksille</string>
@@ -639,9 +639,9 @@
     <string name="settings_network_title">Verkko</string>
     <string name="settings_parental_age_restriction_description">Estää soittamasta kappaleita, joissa on ikärajoitus</string>
     <string name="settings_playback_duration_limit_label">Jätä pois kappaleet, joiden kesto on rajoitettu</string>
-    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
-    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
-    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
+    <string name="settings_playback_exclude_disliked_albums_label">Jätä pois disliked albumit</string>
+    <string name="settings_playback_exclude_disliked_artists_label">Poissulje ei-toivotut artistit</string>
+    <string name="settings_playback_exclude_disliked_songs_label">Jätä pois hylätyt kappaleet</string>
     <string name="settings_playback_pause_at_zero_volume_description">Keskeytä kappale, kun äänenvoimakkuus saavuttaa 0 ja jatka sitä kun äänenvoimakkuus on suurempi kuin 0</string>
     <string name="settings_playback_pause_between_songs_label">Tauko kappaleiden välissä</string>
     <string name="settings_playback_previous_restart_threshold_label">Aikaisemman kappaleen maksimi kesto on kulunut</string>
@@ -666,7 +666,7 @@
     <string name="settings_player_bottom_black_gradient_label">Musta Gradientti alhaalla</string>
     <string name="settings_player_button_zoom_out_animation_label">Painikkeen zoom-out -animaatio</string>
     <string name="settings_player_controls_style_label">Ohjauksen tyyli</string>
-    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
+    <string name="settings_player_crop_video_artwork_label">Rajaa videon pikkukuvia</string>
     <string name="settings_player_disable_horizontal_swipe_label">Poista vaakapyyhkäisy käytöstä</string>
     <string name="settings_player_disable_song_swipe_label">Poista kappaleen vaihtaminen pyyhkäisemällä</string>
     <string name="settings_player_disable_text_marquee_description">Vieritystekstiä käytetään pitkiin teksteihin</string>
@@ -676,7 +676,7 @@
     <string name="settings_player_header_album_artist_description">Levyn ja artistin otsikko</string>
     <string name="settings_player_header_icons_visible_label">Näytä tiedot kuvakkeilla</string>
     <string name="settings_player_header_style_label">Otsikon tyyli</string>
-    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
+    <string name="settings_player_m3e_motion_sensitivity_label">Teeman Ravistus Herkkyys</string>
     <string name="settings_player_next_queue_visible_label">Näytä seuraavan kappaleen jono</string>
     <string name="settings_player_persistent_queue_description">Tallenna ja palauta viimeksi toistettu jono</string>
     <string name="settings_player_persistent_queue_label">Pysyvä pelaaja</string>
@@ -690,7 +690,7 @@
     <string name="settings_player_queue_swipe_up_label">Avaa jono pyyhkäisemällä ylös</string>
     <string name="settings_player_queue_tap_to_open_label">Avaa jono napauttamalla</string>
     <string name="settings_player_remaining_duration_visible_label">Näytä jäljellä oleva kappaleen kesto</string>
-    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
+    <string name="settings_player_rotating_artwork_title">Pyörivä albumin kansi</string>
     <string name="settings_player_seek_time_buttons_label">Ohita aikapainikkeet</string>
     <string name="settings_player_start_minimized_description">Kun napsautetaan kappaletta, pelaaja alkaa minimoida</string>
     <string name="settings_player_tap_artwork_toggle_lyrics_description">Pienoiskuvaa napauttamalla</string>
@@ -718,9 +718,9 @@
     <!-- Song -->
     <string name="song_matching_action_open">Sovita albumi/Audio versio</string>
     <string name="song_matching_unmatched_label">Vastaamaton kappale</string>
-    <string name="song_metadata_update_action_open">Open update dialog</string>
+    <string name="song_metadata_update_action_open">Avaa päivitysikkuna</string>
     <!-- Sort -->
-    <string name="sort_artist_and_album">Artist, Album</string>
+    <string name="sort_artist_and_album">Esittäjä, Albumi</string>
     <!-- Stable -->
     <string name="stable_title">VAKUUTUS</string>
     <!-- Statistics -->
@@ -729,35 +729,35 @@
     <string name="statistics_top_period_title">Top %s …</string>
     <!-- Sync -->
     <string name="sync_action_sync">Synkronoi</string>
-    <string name="sync_likes">Auto Sync Liked Songs</string>
+    <string name="sync_likes">Automaattinen Synkronointi Tykkätyt Kappaleet</string>
     <!-- Theme -->
     <string name="theme_palette_dynamic">Dynaaminen</string>
     <string name="theme_shake_sensitivity_disabled">Pois</string>
     <!-- This -->
-    <string name="this_pc">This PC</string>
+    <string name="this_pc">Tämä PC</string>
     <!-- Thumbnail -->
     <string name="thumbnail_action_edit">Muokkaa pienoiskuvaa</string>
     <string name="thumbnail_action_reset">Palauta pienoiskuva</string>
     <!-- Title -->
     <string name="title_backup_and_restore">Varmuuskopioi ja palauta</string>
     <!-- Tray -->
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
+    <string name="tray_open">Avaa</string>
+    <string name="tray_quit">Lopeta</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <!-- Troubleshooting -->
     <string name="troubleshooting">Vianmääritys</string>
     <!-- Unreachable -->
-    <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
-    <string name="unreachable_edit_ip">Edit IP</string>
-    <string name="unreachable_edit_ip_text">Keep the pairing, change the phone’s IP address only</string>
-    <string name="unreachable_port_kept">Port %1$d (kept)</string>
-    <string name="unreachable_save_ip">Save and retry</string>
-    <string name="unreachable_title">Phone unreachable</string>
+    <string name="unreachable_description">%1$s ei vastannut %2$s. Sen palvelin voidaan pysäyttää tai sen IP-osoite on ehkä muuttunut. Paritus säilytetään.</string>
+    <string name="unreachable_edit_ip">Muokkaa IP-osoitetta</string>
+    <string name="unreachable_edit_ip_text">Pidä pari, vaihda puhelimen IP-osoite vain</string>
+    <string name="unreachable_port_kept">Portti %1$d (säilytetty)</string>
+    <string name="unreachable_save_ip">Tallenna ja yritä uudelleen</string>
+    <string name="unreachable_title">Puhelinta ei tavoitettavissa</string>
     <!-- Update -->
-    <string name="update_check_off_aur">This app was installed from the AUR: the in-app updater is disabled for this install. Update the AUR entry (n-zik-desktop-compagnon) with your AUR helper.</string>
+    <string name="update_check_off_aur">Tämä sovellus on asennettu AUR: sovelluksen sisäinen päivitys on poistettu käytöstä tässä asennuksessa. Päivitä AUR merkintä (n-zik-desktop-compagnon) AUR auttajallasi.</string>
     <string name="update_check_off_build">Jos näet tämän viestin, se tarkoittaa, että versio ei ole automaattinen päivitys käytössä, pls päivittää sovelluksen manuaalisesti GitHub</string>
-    <string name="update_download_indeterminate">Downloaded %1$s (unknown size)</string>
-    <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
+    <string name="update_download_indeterminate">Ladattu %1$s (tuntematon koko)</string>
+    <string name="update_download_truncated">Päivityksen lataus katkesi. Osittainen tiedosto säilytettiin — yritä ladata uudelleen.</string>
     <string name="update_unknown">Tuntematon</string>
     <!-- Updates -->
     <string name="updates_action_check">Tarkista päivitykset</string>
@@ -795,12 +795,12 @@
     <string name="updates_starting_status">Aloitetaan…</string>
     <string name="updates_up_to_date">Ajan tasalla</string>
     <!-- Validating -->
-    <string name="validating">Pairing with your phone…</string>
+    <string name="validating">Yhdistäminen puhelimellasi…</string>
     <!-- Visualizer -->
     <string name="visualizer_animation_bubbles">Kuplat</string>
     <string name="visualizer_bar">Visualisoijan palkki</string>
     <string name="visualizer_microphone_permission_message">Visualisointiefekti vaatii mikrofonin käyttöoikeuden, myönnä lupa.</string>
     <string name="visualizer_title">Visualisointi</string>
     <!-- Window -->
-    <string name="window">Window</string>
+    <string name="window">Ikkuna</string>
 </resources>
