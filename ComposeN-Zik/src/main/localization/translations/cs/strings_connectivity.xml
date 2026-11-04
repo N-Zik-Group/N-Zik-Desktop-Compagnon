@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Zobrazit logy</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">Kód má 6 znaků, například ABC-DEF.</string>
-    <string name="manual_description">Spravovat server ve vašem telefonu zobrazuje IP adresu, port a 6 znakový kód.</string>
+    <string name="manual_description">Na svém telefonu otevřete PC server. Pokud je server zastaven, klepněte na tlačítko Start. Vyberte PC pro zobrazení IP adresy, portu a 6-znakového kódu.</string>
     <string name="manual_ip">Telefonní IP adresa</string>
     <string name="manual_ip_invalid">Zadejte adresu IPv4, například 192.168.1.14.</string>
     <string name="manual_port">Přístav</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Zadejte adresu a kód zobrazený na vašem telefonu</string>
     <string name="pair_no_address">Na tomto PC nebyla nalezena žádná lokální síťová adresa, takže nelze zobrazit žádný QR kód.</string>
     <string name="pair_qr_addresses">Tento PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_description">V aplikaci N-Zik v telefonu, otevřete Spravovat server, začněte párovat, klepněte na Scan a ukažte kameru na tento kód.</string>
+    <string name="pair_qr_description">V N-Zik na vašem telefonu, otevřete PC server. Pokud je server zastaven, klepněte na tlačítko Start. Vyberte párovat PC a pak klepněte na naskenovat QR kód a ukažte kameru na tomto kódu.</string>
     <string name="pair_qr_preparing">Příprava QR kódu…</string>
     <string name="pair_qr_renew_hint">Kód se obnovuje každé 2 minuty.</string>
     <string name="pair_qr_waiting">Čekání na váš telefon…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Port %1$d (uložený)</string>
     <string name="unreachable_save_ip">Uložit a zkusit znovu</string>
     <string name="unreachable_title">Telefon je nedostupný</string>
+    <string name="network_stream_retrying_playback">Probíhá pokus o obnovení přehrávání…</string>
 </resources>
