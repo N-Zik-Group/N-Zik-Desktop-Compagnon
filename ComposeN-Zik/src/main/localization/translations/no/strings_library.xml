@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Bokmerke album</string>
     <string name="album_action_open">Gå til album</string>
     <string name="album_left_swipe">Album venstre-sveip</string>
-    <string name="album_loading_song_count_format">Loading %1$d songs…</string>
+    <string name="album_loading_song_count_format">Laster inn album (spor: %1$d)…</string>
     <string name="album_right_swipe">Album høyre Sveip</string>
     <string name="artist_action_follow">Følg</string>
     <string name="artist_action_play_local_songs">Spill alle lokale sanger</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Fest/Løsne spilleliste</string>
     <string name="playlist_bookmark_unsupported_message">Kan ikke bokmerke Likte Sanger eller Episoder Spilleliste</string>
     <string name="playlist_create_dialog_title">Lag ny spilleliste</string>
-    <string name="playlist_delete_all_confirmation_count_format">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Slett alle spillelister? (Totalt: %d)</string>
     <string name="playlist_left_swipe">Spilleliste venstre-sveip</string>
     <string name="playlist_pinned_title">Festet</string>
     <string name="playlist_rename_dialog_title">Endre spilleliste</string>
@@ -108,4 +108,6 @@
         <item quantity="one">%1$d sang</item>
         <item quantity="other">%1$d sanger</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Kunne ikke be om tilgang til musikk på denne enheten.</string>
+    <string name="library_on_device_permission_settings_failed">Kunne ikke åpne tillatelsesinnstillinger.</string>
 </resources>
