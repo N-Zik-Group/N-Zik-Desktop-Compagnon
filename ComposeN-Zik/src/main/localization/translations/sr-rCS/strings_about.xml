@@ -10,4 +10,14 @@
     <string name="about_translators_title">Translators</string>
     <string name="contributors">Saradnici</string>
     <string name="request_a_feature">Zatražite funkciju ili predložite ideju</string>
+    <plurals name="about_translator_count">
+        <item quantity="one">%1$d translator</item>
+        <item quantity="few">%1$d translators</item>
+        <item quantity="other">%1$d translators</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="one">%1$d developer / designer</item>
+        <item quantity="few">%1$d developers / designers</item>
+        <item quantity="other">%1$d developers / designers</item>
+    </plurals>
 </resources>
