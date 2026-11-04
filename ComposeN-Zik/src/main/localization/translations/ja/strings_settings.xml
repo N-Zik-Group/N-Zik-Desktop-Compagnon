@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_loudness_boost_level">ラウドネスブースト</string>
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
+    <string name="close_behavior">動作を閉じる</string>
+    <string name="close_behavior_minimize">トレイに最小化</string>
+    <string name="close_behavior_quit">アプリを終了する</string>
     <string name="common_translation_title">翻訳</string>
     <string name="library_sort_order_title">並べ替えの順序</string>
     <string name="maintenance_debug_logging_title">デバッグログを有効にする</string>
@@ -19,16 +19,16 @@
     <string name="settings_about_page_description">概要セクションには、アプリ、開発者、トラブルシューティング、更新オプションに関する情報が表示されます。</string>
     <string name="settings_app_behavior_title">アプリの動作</string>
     <string name="settings_app_language_label">アプリ言語</string>
-    <string name="settings_audio_bass_boost">Audio bass boost</string>
+    <string name="settings_audio_bass_boost">オーディオベースブースト</string>
     <string name="settings_audio_crossfade_description">曲間のスムーズな切り替えを有効にする</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
     <string name="settings_audio_equalizer_label">イコライザ</string>
     <string name="settings_audio_loudness_normalization_description">音量を均一化します</string>
     <string name="settings_audio_loudness_normalization_label">ラウドネスの正規化</string>
-    <string name="settings_audio_reverb">Audio reverb</string>
+    <string name="settings_audio_reverb">オーディオのリバーブ</string>
     <string name="settings_audio_skip_silence_description">再生中に無音部分をスキップ</string>
     <string name="settings_audio_skip_silence_label">無音をスキップ</string>
-    <string name="settings_bass_boost_level">Bass boost level</string>
+    <string name="settings_bass_boost_level">バスブーストレベル</string>
     <string name="settings_cache_action_set_custom_size">カスタムキャッシュを設定</string>
     <string name="settings_cache_custom_size_input_hint">MB単位で値を入力</string>
     <string name="settings_cache_delete_confirmation">本当にキャッシュを削除しますか？</string>
@@ -55,20 +55,20 @@
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">ユーザーインターフェイス</string>
     <string name="settings_languages_title">言語</string>
-    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
-    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
-    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
-    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
+    <string name="settings_launcher_shortcuts_description">ランチャーショートカットを選択して並べ替えます</string>
+    <string name="settings_launcher_shortcuts_limit_message">%1$d アクティブなショートカットの最大値に達しました</string>
+    <string name="settings_launcher_shortcuts_recovery_required_message">救助を無効にすることはできません</string>
+    <string name="settings_launcher_shortcuts_title">アプリのショートカット</string>
     <string name="settings_library_now_playing_indicator_label">再生中のインジケーター</string>
     <string name="settings_library_playlist_indicator_description">プレイリストに追加された曲をマークする</string>
     <string name="settings_library_playlist_indicator_label">プレイリスト表示</string>
     <string name="settings_library_queue_playlist_swipe_left_label">キューとローカルプレイリスト 左スワイプ</string>
     <string name="settings_library_queue_playlist_swipe_right_label">キューとローカルプレイリスト 右スワイプ</string>
-    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
-    <string name="settings_library_sort_options_description">Customize sort options</string>
-    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
-    <string name="settings_library_toolbar_title">Toolbar</string>
-    <string name="settings_local_playlist_title">Local Playlist</string>
+    <string name="settings_library_sections_visibility_description">ライブラリに表示するセクションを選択します</string>
+    <string name="settings_library_sort_options_description">並べ替えオプションのカスタマイズ</string>
+    <string name="settings_library_toolbar_customization_description">ツールバーをカスタマイズ</string>
+    <string name="settings_library_toolbar_title">ツールバー</string>
+    <string name="settings_local_playlist_title">ローカルプレイリスト</string>
     <string name="settings_logging_error_file_description">有効なら、エラーに焦点を当てたログファイルを作成します</string>
     <string name="settings_loudness_base_gain">ラウドネスのゲイン</string>
     <string name="settings_lyrics_artwork_visible_label">歌詞のサムネイルを表示</string>
@@ -89,9 +89,9 @@
     <string name="settings_network_title">ネットワーク</string>
     <string name="settings_parental_age_restriction_description">年齢制限のある曲を再生しない</string>
     <string name="settings_playback_duration_limit_label">時間制限のある曲を除外</string>
-    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
-    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
-    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
+    <string name="settings_playback_exclude_disliked_albums_label">嫌われたアルバムを除外</string>
+    <string name="settings_playback_exclude_disliked_artists_label">嫌われたアーティストを除外</string>
+    <string name="settings_playback_exclude_disliked_songs_label">嫌われた曲を除外</string>
     <string name="settings_playback_pause_at_zero_volume_description">ボリュームが0に達したときに曲を一時停止し、ボリュームが0より大きいときに再開します</string>
     <string name="settings_playback_pause_between_songs_label">曲間で一時停止</string>
     <string name="settings_playback_previous_restart_threshold_label">前の曲の最大経過時間</string>
@@ -116,7 +116,7 @@
     <string name="settings_player_bottom_black_gradient_label">下部に黒いグラデーションを表示</string>
     <string name="settings_player_button_zoom_out_animation_label">ボタンズームアウト時のアニメーション</string>
     <string name="settings_player_controls_style_label">コントロールスタイル</string>
-    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
+    <string name="settings_player_crop_video_artwork_label">サムネイルをトリミングする</string>
     <string name="settings_player_disable_horizontal_swipe_label">水平スワイプを無効化</string>
     <string name="settings_player_disable_song_swipe_label">スワイプでの曲の切り替えを無効にする</string>
     <string name="settings_player_disable_text_marquee_description">長いテキストがスクロールされます</string>
@@ -126,7 +126,7 @@
     <string name="settings_player_header_album_artist_description">アルバムとアーティストのヘッダー</string>
     <string name="settings_player_header_icons_visible_label">アイコン付きの情報を表示</string>
     <string name="settings_player_header_style_label">ヘッダーのスタイル</string>
-    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
+    <string name="settings_player_m3e_motion_sensitivity_label">テーマの振動感度</string>
     <string name="settings_player_next_queue_visible_label">次の曲のキューを表示</string>
     <string name="settings_player_persistent_queue_description">再生中の曲を保存・復元</string>
     <string name="settings_player_persistent_queue_label">永続的なプレイヤー</string>
@@ -140,7 +140,7 @@
     <string name="settings_player_queue_swipe_up_label">上にスワイプしてキューを開く</string>
     <string name="settings_player_queue_tap_to_open_label">タップしてキューを開く</string>
     <string name="settings_player_remaining_duration_visible_label">曲の残り時間を表示</string>
-    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
+    <string name="settings_player_rotating_artwork_title">アルバムカバーを回転中</string>
     <string name="settings_player_seek_time_buttons_label">時間ボタンをスキップ</string>
     <string name="settings_player_start_minimized_description">曲をクリックすると、プレイヤーが最小化されます</string>
     <string name="settings_player_tap_artwork_toggle_lyrics_description">サムネイルをタップすると</string>
@@ -165,5 +165,5 @@
     <string name="settings_title">設定</string>
     <string name="settings_transition_fade">フェード</string>
     <string name="settings_use_font_type">Font type</string>
-    <string name="window">Window</string>
+    <string name="window">ウィンドウ</string>
 </resources>
