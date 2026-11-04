@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">Раздел содержит информацию о приложении, разработчиках, диагностике и обновлении</string>
     <string name="settings_app_behavior_title">Поведение приложения</string>
     <string name="settings_app_language_label">Язык приложения</string>
+    <string name="settings_app_language_system">Стандартное (внутри системы)</string>
     <string name="settings_audio_bass_boost">Усиление звука</string>
     <string name="settings_audio_crossfade_description">Включить плавный переход между песнями</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
