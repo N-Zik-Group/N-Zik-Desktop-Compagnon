@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">إرجاع 5 ثوان</string>
     <string name="player_seek_backward_thirty_seconds">إعادة الرياح 30 ثانية</string>
     <string name="player_shuffle_empty_message">لا توجد أغنية للخلط</string>
-    <string name="player_shuffled_song_count_format">أغاني %d محيطة</string>
+    <string name="player_queue_shuffled_count_format">قائمة الانتظار (المسارات: %d)</string>
+    <string name="player_shuffled_song_count_format">المسارات الملغطة: %d</string>
     <string name="player_sleep_timer_title">مؤقت النوم</string>
     <string name="player_statistics_volume_label">حجم</string>
     <string name="player_swap_controls_with_timeline">Swap controls with timeline</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">شريط المرئيات</string>
     <string name="visualizer_microphone_permission_message">التأثير المرئي يتطلب إذنًا من الميكروفون، امنح من فضلك.</string>
     <string name="visualizer_title">المؤثرات المرئية</string>
+    <string name="player_error_unknown">حدث خطأ غير معروف في التشغيل</string>
 </resources>
