@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">Osio näyttää tietoa sovelluksesta, kehittäjistä, vianmäärityksestä ja päivityksestä</string>
     <string name="settings_app_behavior_title">Sovelluksen Käyttäytyminen</string>
     <string name="settings_app_language_label">Sovelluksen kieli</string>
+    <string name="settings_app_language_system">Järjestelmä</string>
     <string name="settings_audio_bass_boost">Basson korostus</string>
     <string name="settings_audio_crossfade_description">Salli tasainen siirtyminen kappaleiden välillä</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
