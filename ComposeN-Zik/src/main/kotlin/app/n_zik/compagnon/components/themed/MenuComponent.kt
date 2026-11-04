@@ -1,13 +1,13 @@
 package app.n_zik.compagnon.components.themed
 
-import app.n_zik.compagnon.components.tab.toolbar.Descriptive
-import org.jetbrains.compose.resources.StringResource
 import androidx.compose.runtime.Composable
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.MenuState
+import app.n_zik.compagnon.components.tab.toolbar.Descriptive
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 /*
@@ -24,16 +24,16 @@ fun PlayNext(
 ): MenuIcon = object : MenuIcon, Descriptive {
 
     val menuState: MenuState = LocalMenuState.current
-    override val messageId: StringResource = Res.string.play_next
+    override val messageId: StringResource = Res.string.player_action_play_next
     override val iconId: DrawableResource = Res.drawable.play_skip_forward
     override val isEnabled: Boolean = enabled
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.play_next)
+        get() = stringResource(Res.string.player_action_play_next)
 
     override fun onShortClick() {
         if (isEmpty) {
-            app.n_zik.compagnon.utils.Toaster.e(Res.string.no_song_found)
+            app.n_zik.compagnon.utils.Toaster.e(Res.string.player_no_song_found)
             return
         }
         onClick()
@@ -50,16 +50,16 @@ fun Enqueue(
 ): MenuIcon = object : MenuIcon, Descriptive {
 
     val menuState: MenuState = LocalMenuState.current
-    override val messageId: StringResource = Res.string.enqueue
+    override val messageId: StringResource = Res.string.player_action_enqueue
     override val iconId: DrawableResource = Res.drawable.enqueue
     override val isEnabled: Boolean = enabled
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.enqueue)
+        get() = stringResource(Res.string.player_action_enqueue)
 
     override fun onShortClick() {
         if (isEmpty) {
-            app.n_zik.compagnon.utils.Toaster.e(Res.string.no_song_found)
+            app.n_zik.compagnon.utils.Toaster.e(Res.string.player_no_song_found)
             return
         }
         onClick()
@@ -74,14 +74,14 @@ fun AddToFavorites(
     onClick: () -> Unit,
 ): MenuIcon = object : MenuIcon, Descriptive {
     // The phone's button is `Descriptive`: a right click shows its description
-    override val messageId: StringResource = Res.string.add_to_favorites
+    override val messageId: StringResource = Res.string.library_favorites_action_add
 
     val menuState: MenuState = LocalMenuState.current
     override val iconId: DrawableResource = Res.drawable.heart
     override val isEnabled: Boolean = enabled
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.add_to_favorites)
+        get() = stringResource(Res.string.library_favorites_action_add)
 
     override fun onShortClick() {
         onClick()
@@ -100,13 +100,13 @@ fun Bookmark(
     onClick: () -> Unit,
 ): MenuIcon = object : MenuIcon, Descriptive {
     // The phone's button is `Descriptive` but its long press is empty (`onLongClick() {}`): no help
-    override val messageId: StringResource = Res.string.bookmark
+    override val messageId: StringResource = Res.string.library_action_bookmark
 
     val menuState: MenuState = LocalMenuState.current
     override val iconId: DrawableResource = if (isBookmarked) Res.drawable.bookmark else Res.drawable.bookmark_outline
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.bookmark)
+        get() = stringResource(Res.string.library_action_bookmark)
 
     override fun onShortClick() {
         onClick()
@@ -129,7 +129,7 @@ fun PinPlaylist(
     onClick: () -> Unit,
 ): MenuIcon = object : MenuIcon, app.n_zik.compagnon.components.tab.toolbar.DynamicColor, app.n_zik.compagnon.components.tab.toolbar.Descriptive {
     override val iconId: DrawableResource = Res.drawable.pin_filled
-    override val messageId: StringResource = Res.string.info_pin_unpin_playlist
+    override val messageId: StringResource = Res.string.playlist_action_toggle_pinned
     override val isEnabled: Boolean = enabled
     override var isFirstColor: Boolean
         get() = isPinned
@@ -157,7 +157,7 @@ fun RemoveFromQueue(
     override val isEnabled: Boolean = enabled
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.remove_from_queue)
+        get() = stringResource(Res.string.player_queue_action_remove)
 
     override fun onShortClick() {
         onClick()

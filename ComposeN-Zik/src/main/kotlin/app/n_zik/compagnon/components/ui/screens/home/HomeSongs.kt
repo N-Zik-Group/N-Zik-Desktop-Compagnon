@@ -1,9 +1,7 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.lazy.itemsIndexed
-import app.n_zik.compagnon.bridge.state.ListRef
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,11 +26,13 @@ import app.n_zik.compagnon.bridge.library.PagedState
 import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongSort
 import app.n_zik.compagnon.bridge.library.SongsQuery
+import app.n_zik.compagnon.bridge.state.ListRef
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SongRecommendations
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.formattedTotalPlayTime
 import app.n_zik.compagnon.bridge.state.unmatched
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.SongItem
 import app.n_zik.compagnon.components.menu.song.SongItemMenu
@@ -41,7 +42,6 @@ import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.ItemSelector
 import app.n_zik.compagnon.components.tab.Search
 import app.n_zik.compagnon.components.themed.SwipeablePlaylistRow
-import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.enums.PlaylistSwipeAction
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.utils.Toaster
@@ -186,7 +186,7 @@ fun HomeSongs(
                                 if (song.unmatched()) {
                                     Icon(
                                         painter = painterResource(Res.drawable.alert),
-                                        contentDescription = stringResource(Res.string.unmatched_song),
+                                        contentDescription = stringResource(Res.string.song_matching_unmatched_label),
                                         tint = Color(0xFFFF9800),
                                         modifier = Modifier
                                             .padding(start = 8.dp)
@@ -200,7 +200,7 @@ fun HomeSongs(
                             onClick = {
                                 search.hideIfEmpty()
                                 if (song.unmatched()) {
-                                    Toaster.w(Res.string.playback_blocked_match_first)
+                                    Toaster.w(Res.string.player_matching_required_message)
                                 } else if (live && actions.available) {
                                     if (index == null) {
                                         actions.playSingle(song)
@@ -224,7 +224,7 @@ fun HomeSongs(
                                     detectDragGesturesAfterLongPress(
                                         onDrag = { change, _ -> change.consume() },
                                         // One toast per inert drag gesture: the order is the phone's, never written here
-                                        onDragEnd = { Toaster.i(Res.string.info_lock_unlock_reorder_songs) },
+                                        onDragEnd = { Toaster.i(Res.string.playlist_reorder_lock_toggle_label) },
                                     )
                                 }
                                 .padding(end = 12.dp)
@@ -239,7 +239,7 @@ fun HomeSongs(
         }
 
         if (showNoItems) {
-            NoItems(stringResource(Res.string.no_items))
+            NoItems(stringResource(Res.string.common_empty_items))
         }
     }
 }

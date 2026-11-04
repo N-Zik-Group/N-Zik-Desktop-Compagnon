@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Accessibility -->
+    <string name="accessibility_app_icon">Appens ikon</string>
+    <string name="accessibility_app_icon_in_player">app ikon i spiller</string>
+    <string name="accessibility_background_image">Bakgrunns bilde</string>
+    <string name="accessibility_blurred_background">uklar_bakgrunn</string>
+    <string name="accessibility_disc_background">dyppen bakgrunn</string>
+    <string name="accessibility_number_of_songs_in_queue">Antall sanger i kø</string>
+    <string name="accessibility_origin_indicator">origin_indikator</string>
+    <string name="accessibility_song_album_cover">sang albumomslag</string>
+</resources>

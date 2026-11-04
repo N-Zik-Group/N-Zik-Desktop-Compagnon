@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_action_report_issue">Zgłoś problem</string>
+    <string name="about_action_view_source">Pokaż kod źródłowy</string>
+    <string name="about_authorship_preposition">przez</string>
+    <string name="about_contributors_alphabetical_order_label">W kolejności alfabetycznej:</string>
+    <string name="about_developers">Deweloperzy / Projektanci</string>
+    <string name="about_github_link_description">Zostaniesz przekierowany do GitHub</string>
+    <string name="about_title">O aplikacji</string>
+    <string name="about_translators_title">Tłumacze</string>
+    <string name="contributors">Współtwórcy</string>
+    <string name="request_a_feature">Zaproponuj funkcję lub zasugeruj pomysł</string>
+</resources>

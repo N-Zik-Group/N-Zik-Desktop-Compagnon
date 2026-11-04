@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_action_report_issue">Rapporter en feil</string>
+    <string name="about_action_view_source">Vis kildekoden</string>
+    <string name="about_authorship_preposition">av</string>
+    <string name="about_contributors_alphabetical_order_label">I alfabetisk rekkefølge:</string>
+    <string name="about_developers">Utviklere / Designere</string>
+    <string name="about_github_link_description">Du vil bli omdirigert til GitHub</string>
+    <string name="about_title">Om</string>
+    <string name="about_translators_title">Oversettere</string>
+    <string name="contributors">Bidragsytere</string>
+    <string name="request_a_feature">Be om en funksjon eller foreslå en idé</string>
+</resources>

@@ -19,11 +19,11 @@ enum class OnDeviceSongSortBy(
     val iconId: DrawableResource,
     val songSort: SongSort,
 ) {
-    Title(Res.string.sort_title, Res.drawable.text, SongSort.Title),
-    DateAdded(Res.string.sort_date_added, Res.drawable.calendar, SongSort.DateAdded),
-    Artist(Res.string.sort_artist, Res.drawable.artist, SongSort.Artist),
-    Duration(Res.string.sort_duration, Res.drawable.time, SongSort.Duration),
-    Album(Res.string.sort_album, Res.drawable.album, SongSort.Album),
+    Title(Res.string.library_sort_title, Res.drawable.text, SongSort.Title),
+    DateAdded(Res.string.library_sort_date_added, Res.drawable.calendar, SongSort.DateAdded),
+    Artist(Res.string.library_sort_artist, Res.drawable.artist, SongSort.Artist),
+    Duration(Res.string.library_sort_duration, Res.drawable.time, SongSort.Duration),
+    Album(Res.string.library_sort_album, Res.drawable.album, SongSort.Album),
 }
 
 /** The five [SortOption]s of the phone's "On device" tab, in the phone's order (écart 1). */

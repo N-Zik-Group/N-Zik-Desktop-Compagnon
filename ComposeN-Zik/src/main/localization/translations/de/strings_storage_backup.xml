@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_action_export">Backup exportieren</string>
+    <string name="backup_action_import_legacy_migration">Migrationsdatei importieren.</string>
+    <string name="backup_auto_interval">Auto-Backup-Intervall</string>
+    <string name="backup_auto_interval_none">Aus</string>
+    <string name="backup_auto_location">Auto-Backup-Ordner</string>
+    <string name="backup_auto_location_not_set">Nicht festgelegt</string>
+    <string name="backup_auto_max_backups">Maximale Backups zum Behalten</string>
+    <string name="backup_auto_target">Backup-Ziel</string>
+    <string name="backup_auto_title">Automatisches Backup</string>
+    <string name="backup_export_description">Datenbank oder Einstellungen in eine Datei exportieren</string>
+    <string name="backup_import_description">Datenbank oder Einstellungen aus einer Datei importieren</string>
+    <string name="backup_import_failed">Import failed</string>
+    <string name="backup_legacy_migration_description">Für alte Benutzer vor der Konvertierung.\nalte App verwenden, um eine Sicherung für die Migration zu erstellen.</string>
+    <string name="backup_target_database_label">Datenbank</string>
+    <string name="cached_pc">Cached PC</string>
+    <string name="download_pc">Download PC</string>
+    <string name="downloads_action_download_all">Alle Titel herunterladen</string>
+    <string name="downloads_action_refresh_quality">Update downloads</string>
+    <string name="downloads_action_remove_all">Alle heruntergeladenen Titel entfernen</string>
+    <string name="downloads_cancelled">Download abgebrochen</string>
+    <string name="downloads_delete_all_confirmation">Möchtest Du den Download wirklich löschen?</string>
+    <string name="downloads_download_all_confirmation">Willst du wirklich alle herunterladen?</string>
+    <string name="downloads_quality_format">Download Quality</string>
+    <string name="downloads_refresh_quality_description">Re-download the songs that were downloaded with a different quality</string>
+    <string name="downloads_title">Herunterladen</string>
+    <string name="export_cached_song_action">Zwischengespeicherte oder Heruntergeladene Titel exportieren</string>
+    <string name="export_cached_songs_action">Zwischenspeicher exportieren</string>
+    <string name="import_backup">Backup importieren</string>
+    <string name="library_cleanup_title">Intelligenter Papierkorb</string>
+    <string name="title_backup_and_restore">Backup und Wiederherstellen</string>
+</resources>

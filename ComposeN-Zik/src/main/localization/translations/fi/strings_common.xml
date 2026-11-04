@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="cancel">Peruuta</string>
+    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_clipboard_copy_success">Kopioitu</string>
+    <string name="common_color_source_theme">Teema</string>
+    <string name="common_color_white">Valkoinen</string>
+    <string name="common_delete_success">Poistettu</string>
+    <string name="common_empty_items">Ei kohteita</string>
+    <string name="common_option_all">Kaikki</string>
+    <string name="common_option_custom">Mukautettu</string>
+    <string name="common_option_default">Oletus</string>
+    <string name="common_option_disabled">Pois</string>
+    <string name="common_option_none">Ei yhtään</string>
+    <string name="common_option_random">Satunnainen</string>
+    <string name="common_size_big">Suuri</string>
+    <string name="common_size_biggest">Suurin</string>
+    <string name="common_size_medium">Keskikokoinen</string>
+    <string name="common_size_small">Pieni</string>
+    <string name="common_state_off">Pois</string>
+    <string name="common_state_on">Päällä</string>
+    <string name="common_storage_used_suffix">used</string>
+    <string name="common_validation_empty_value">Arvo ei voi olla tyhjä</string>
+    <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="dismiss">Dismiss</string>
+</resources>

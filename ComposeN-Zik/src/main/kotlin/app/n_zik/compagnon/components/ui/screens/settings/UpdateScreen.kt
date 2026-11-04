@@ -1,12 +1,13 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,20 +40,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-// 1.13.0-alpha01: `BorderStroke` moved from `androidx.compose.ui.graphics` to `androidx.compose.foundation`
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.theme.ModernBlackColorPalette
+import app.n_zik.compagnon.components.theme.PureBlackColorPalette
 import app.n_zik.compagnon.components.themed.DropdownMenu
 import app.n_zik.compagnon.components.themed.ValueSelectorDialog
 import app.n_zik.compagnon.generated.AppVersion
 import app.n_zik.compagnon.generated.resources.*
-// `update_download_progress` stays in strings.xml for the startup dialog; the page shows the
-// raw percentage instead (the phone's two-line progression)
-import app.n_zik.compagnon.components.theme.ModernBlackColorPalette
-import app.n_zik.compagnon.components.theme.PureBlackColorPalette
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.updater.models.ArtifactNames
@@ -64,10 +61,10 @@ import app.n_zik.compagnon.updater.models.UpdaterConstants
 import app.n_zik.compagnon.updater.models.currentDistributionMarker
 import app.n_zik.compagnon.updater.models.currentInstallMode
 import app.n_zik.compagnon.updater.models.livePackageManager
+import app.n_zik.compagnon.updater.services.ChangelogTranslator
 import app.n_zik.compagnon.updater.services.UpdateDownloadManager
 import app.n_zik.compagnon.updater.services.Updater
 import app.n_zik.compagnon.updater.services.updaterHttpClient
-import app.n_zik.compagnon.updater.services.ChangelogTranslator
 import app.n_zik.compagnon.updater.ui.ChangelogCard
 import app.n_zik.compagnon.updater.ui.InstallStep
 import app.n_zik.compagnon.updater.ui.UpdateLanguage
@@ -75,8 +72,8 @@ import app.n_zik.compagnon.updater.ui.channelLabel
 import app.n_zik.compagnon.updater.ui.copyToClipboard
 import app.n_zik.compagnon.updater.ui.installCommand
 import app.n_zik.compagnon.updater.ui.openFileFolder
-import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.bold
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.formatShortFileSize
@@ -258,7 +255,7 @@ fun UpdateScreen(
                                 ) {
                                     Icon(
                                         painter = painterResource(Res.drawable.ellipsis_vertical),
-                                        contentDescription = stringResource(Res.string.menu),
+                                        contentDescription = stringResource(Res.string.common_menu_label),
                                         tint = colorPalette().text,
                                         modifier = Modifier.size(24.dp),
                                     )
@@ -272,14 +269,14 @@ fun UpdateScreen(
 
                                 val checkState = settings.checkUpdateStateValue
                                 val stateStr = when (checkState) {
-                                    CheckUpdateState.On -> stringResource(Res.string.on)
-                                    CheckUpdateState.Ask -> stringResource(Res.string.ask)
-                                    CheckUpdateState.Off -> stringResource(Res.string.off)
+                                    CheckUpdateState.On -> stringResource(Res.string.common_state_on)
+                                    CheckUpdateState.Ask -> stringResource(Res.string.updates_check_mode_ask)
+                                    CheckUpdateState.Off -> stringResource(Res.string.common_state_off)
                                 }
                                 menu.add(
                                     DropdownMenu.Item(
                                         icon = Res.drawable.update,
-                                        customText = "${stringResource(Res.string.enable_check_for_update)}: $stateStr",
+                                        customText = "${stringResource(Res.string.updates_automatic_check_title)}: $stateStr",
                                     ) {
                                         preferences.update { s ->
                                             s.copy(
@@ -297,7 +294,7 @@ fun UpdateScreen(
                                 menu.add(
                                     DropdownMenu.Item(
                                         icon = Res.drawable.translate,
-                                        customText = "${stringResource(Res.string.info_translation)}: \n${otherLanguageApp.label}",
+                                        customText = "${stringResource(Res.string.common_translation_title)}: \n${otherLanguageApp.label}",
                                     ) {
                                         showMenu = false
                                         showLanguageDialog = true
@@ -307,7 +304,7 @@ fun UpdateScreen(
                                 menu.add(
                                     DropdownMenu.Item(
                                         icon = Res.drawable.download,
-                                        customText = "${stringResource(Res.string.redownload_update)} ($currentVersion)",
+                                        customText = "${stringResource(Res.string.updates_action_download_current_version)} ($currentVersion)",
                                     ) {
                                         showMenu = false
                                         // The package-manager probe (when still pending) is a blocking
@@ -323,12 +320,12 @@ fun UpdateScreen(
                                 menu.add(
                                     DropdownMenu.Item(
                                         icon = Res.drawable.trash,
-                                        customText = stringResource(Res.string.update_cache_cleared),
+                                        customText = stringResource(Res.string.updates_cache_cleared),
                                     ) {
                                         showMenu = false
                                         NzikDispatchers.fireAndForget(NzikDispatchers.DATA).launch {
                                             UpdateDownloadManager.clearUpdateCache()
-                                            Toaster.s(Res.string.update_cache_cleared)
+                                            Toaster.s(Res.string.updates_cache_cleared)
                                         }
                                     }
                                 )
@@ -337,7 +334,7 @@ fun UpdateScreen(
 
                             if (showLanguageDialog) {
                                 ValueSelectorDialog(
-                                    title = stringResource(Res.string.info_translation),
+                                    title = stringResource(Res.string.common_translation_title),
                                     selectedValue = otherLanguageApp,
                                     onValueSelected = {
                                         otherLanguageApp = it
@@ -384,9 +381,9 @@ fun UpdateScreen(
                                     Spacer(modifier = Modifier.height(16.dp))
                                     BasicText(
                                         text = if (isReinstalling) {
-                                            stringResource(Res.string.reinstalling_update)
+                                            stringResource(Res.string.updates_reinstalling_status)
                                         } else {
-                                            "${channelLabel(channel)}${stringResource(Res.string.update_available)}"
+                                            "${channelLabel(channel)}${stringResource(Res.string.updates_available)}"
                                         },
                                         modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                                         maxLines = 1,
@@ -402,7 +399,7 @@ fun UpdateScreen(
                                     if (fileSize.isNotEmpty()) {
                                         Spacer(modifier = Modifier.height(2.dp))
                                         BasicText(
-                                            text = formatText(stringResource(Res.string.update_file_size), fileSize),
+                                            text = formatText(stringResource(Res.string.updates_file_size), fileSize),
                                             style = typography().xs.copy(color = colorPalette().textSecondary),
                                         )
                                     }
@@ -423,7 +420,7 @@ fun UpdateScreen(
                                     }
                                     Spacer(modifier = Modifier.height(16.dp))
                                     BasicText(
-                                        text = stringResource(Res.string.up_to_date),
+                                        text = stringResource(Res.string.updates_up_to_date),
                                         modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                                         maxLines = 1,
                                         style = typography().l.bold.copy(color = colorPalette().text, textAlign = TextAlign.Center),
@@ -459,9 +456,9 @@ fun UpdateScreen(
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     val stateStr = when (settings.checkUpdateStateValue) {
-                                        CheckUpdateState.On -> stringResource(Res.string.auto_update_enabled)
-                                        CheckUpdateState.Ask -> stringResource(Res.string.auto_update_ask)
-                                        CheckUpdateState.Off -> stringResource(Res.string.auto_update_disabled)
+                                        CheckUpdateState.On -> stringResource(Res.string.updates_check_mode_enabled_status)
+                                        CheckUpdateState.Ask -> stringResource(Res.string.updates_check_mode_ask_status)
+                                        CheckUpdateState.Off -> stringResource(Res.string.updates_check_mode_disabled_status)
                                     }
                                     BasicText(
                                         text = "${UpdaterConstants.PREFIX_VERSION}$currentVersion • $stateStr",
@@ -475,14 +472,14 @@ fun UpdateScreen(
                                     SimpleDateFormat("dd MMM HH:mm", Locale.getDefault())
                                         .format(Date(lastCheckTime))
                                 } else {
-                                    stringResource(Res.string.never_checked)
+                                    stringResource(Res.string.updates_never_checked)
                                 }
                                 Spacer(modifier = Modifier.height(8.dp))
                                 BasicText(
                                     text = if (lastCheckTime > 0) {
-                                        formatText(stringResource(Res.string.last_check), lastCheckStr)
+                                        formatText(stringResource(Res.string.updates_last_check_format), lastCheckStr)
                                     } else {
-                                        stringResource(Res.string.never_checked)
+                                        stringResource(Res.string.updates_never_checked)
                                     },
                                     style = typography().xxs.copy(color = colorPalette().textSecondary.copy(alpha = 0.7f)),
                                 )
@@ -561,7 +558,7 @@ fun UpdateScreen(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 BasicText(
                                     text = formatText(
-                                        stringResource(Res.string.whats_new_in),
+                                        stringResource(Res.string.updates_changelog_title),
                                         if (hasUpdate && !isReinstalling) newVersion else
                                             "${UpdaterConstants.PREFIX_VERSION}$currentVersion",
                                     ),
@@ -586,7 +583,7 @@ fun UpdateScreen(
                                 ) {
                                     Icon(
                                         painter = painterResource(Res.drawable.translate),
-                                        contentDescription = stringResource(Res.string.translate),
+                                        contentDescription = stringResource(Res.string.common_action_translate),
                                         tint = if (isTranslationActive) colorPalette().accent else colorPalette().textSecondary,
                                         modifier = Modifier.size(20.dp),
                                     )
@@ -643,12 +640,12 @@ fun UpdateScreen(
                             when (state) {
                                 is UpdateDownloadManager.DownloadState.Downloading -> {
                                     val downloadStr = if (hasUpdate) {
-                                        stringResource(Res.string.downloading_update)
+                                        stringResource(Res.string.updates_downloading_status)
                                     } else {
                                         val extraInfo =
                                             if (fileSize.isNotEmpty()) "${channelLabel(channel).trim()} - $fileSize" else channelLabel(channel).trim()
                                         formatText(
-                                            stringResource(Res.string.downloading_actual_version),
+                                            stringResource(Res.string.updates_reinstalling_version_progress),
                                             currentVersion,
                                             extraInfo,
                                         )
@@ -693,7 +690,7 @@ fun UpdateScreen(
                                             modifier = Modifier
                                                 .clip(uiRoundnessShape())
                                                 .clickable {
-                                                    Toaster.i(Res.string.download_cancelled)
+                                                    Toaster.i(Res.string.downloads_cancelled)
                                                     UpdateDownloadManager.cancelDownload()
                                                 }
                                                 .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -748,7 +745,7 @@ fun UpdateScreen(
                                             modifier = Modifier
                                                 .clip(uiRoundnessShape())
                                                 .clickable {
-                                                    Toaster.i(Res.string.download_cancelled)
+                                                    Toaster.i(Res.string.downloads_cancelled)
                                                     UpdateDownloadManager.cancelDownload()
                                                 }
                                                 .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -771,7 +768,7 @@ fun UpdateScreen(
                                     ) {
                                         Box(modifier = Modifier.weight(1f)) {
                                             BasicText(
-                                                text = stringResource(Res.string.starting),
+                                                text = stringResource(Res.string.updates_starting_status),
                                                 modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                                                 maxLines = 1,
                                                 style = typography().s.bold.copy(color = colorPalette().text),
@@ -850,7 +847,7 @@ fun UpdateScreen(
                                             Spacer(modifier = Modifier.width(8.dp))
                                             BasicText(
                                                 text = when {
-                                                    installMode == InstallMode.WINDOWS -> stringResource(Res.string.install)
+                                                    installMode == InstallMode.WINDOWS -> stringResource(Res.string.updates_action_install)
                                                     command != null -> stringResource(Res.string.install_copy_command)
                                                     else -> stringResource(Res.string.install_open_folder)
                                                 },
@@ -893,7 +890,7 @@ fun UpdateScreen(
                                         .weight(1f)
                                         .clip(uiRoundnessShape())
                                         .clickable {
-                                            Toaster.i(Res.string.checking_for_updates)
+                                            Toaster.i(Res.string.updates_checking_status)
                                             // The same forced check as the no-update card: the page re-renders
                                             // its state from the result
                                             Updater.checkForUpdate(isForced = true, showDialog = false)
@@ -917,7 +914,7 @@ fun UpdateScreen(
                                             )
                                             Spacer(modifier = Modifier.width(8.dp))
                                             BasicText(
-                                                text = stringResource(Res.string.update_not_available_yet),
+                                                text = stringResource(Res.string.updates_not_available_yet),
                                                 modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                                                 maxLines = 1,
                                                 style = typography().s.semiBold.copy(color = colorPalette().accent),
@@ -935,7 +932,7 @@ fun UpdateScreen(
                                             if (build == null) {
                                                 // The asset disappeared in the meantime (a recheck replaced the
                                                 // release) — re-check instead of doing nothing
-                                                Toaster.i(Res.string.checking_for_updates)
+                                                Toaster.i(Res.string.updates_checking_status)
                                                 Updater.checkForUpdate(isForced = true, showDialog = false)
                                             } else {
                                                 UpdateDownloadManager.startDownload(
@@ -964,9 +961,9 @@ fun UpdateScreen(
                                             Spacer(modifier = Modifier.width(8.dp))
                                             BasicText(
                                                 text = if (state is UpdateDownloadManager.DownloadState.Failed) {
-                                                    stringResource(Res.string.retry)
+                                                    stringResource(Res.string.common_action_retry)
                                                 } else {
-                                                    stringResource(Res.string.download)
+                                                    stringResource(Res.string.downloads_title)
                                                 },
                                                 modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                                                 maxLines = 1,
@@ -982,7 +979,7 @@ fun UpdateScreen(
                                     .weight(1f)
                                     .clip(uiRoundnessShape())
                                     .clickable {
-                                        Toaster.i(Res.string.checking_for_updates)
+                                        Toaster.i(Res.string.updates_checking_status)
                                         // The phone's call (L402): the forced check WITHOUT
                                         // the startup dialog — the page re-renders its
 
@@ -1008,7 +1005,7 @@ fun UpdateScreen(
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         BasicText(
-                                            text = stringResource(Res.string.check_update),
+                                            text = stringResource(Res.string.updates_action_check),
                                             modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                                             maxLines = 1,
                                             style = typography().s.semiBold.copy(color = colorPalette().accent),
@@ -1047,7 +1044,7 @@ fun UpdateScreen(
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     BasicText(
-                                        text = stringResource(Res.string.github),
+                                        text = stringResource(Res.string.common_brand_github),
                                         modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                                         maxLines = 1,
                                         style = typography().s.semiBold.copy(color = colorPalette().text),
@@ -1088,7 +1085,7 @@ internal fun cancelDownloadOnBack() {
         state is UpdateDownloadManager.DownloadState.Downloading ||
         state is UpdateDownloadManager.DownloadState.DownloadingIndeterminate
     ) {
-        Toaster.i(Res.string.download_cancelled)
+        Toaster.i(Res.string.downloads_cancelled)
         UpdateDownloadManager.cancelDownload()
     }
 }
@@ -1132,7 +1129,7 @@ internal suspend fun redownloadCurrentVersion(
         )
         if (response.status != HttpStatusCode.OK) {
             // The phone's toast (L586-598): a warning that the artifact is not there yet
-            Toaster.w(Res.string.update_not_available_yet)
+            Toaster.w(Res.string.updates_not_available_yet)
             return
         }
         val release = releaseJson.decodeFromString<GithubRelease>(response.bodyAsText())
@@ -1142,7 +1139,7 @@ internal suspend fun redownloadCurrentVersion(
         UpdateDownloadManager.startDownload(build.downloadUrl, version, build.name)
     } catch (e: Exception) {
         // The phone's toast (L586-598): a warning that the artifact is not there yet
-        Toaster.w(Res.string.update_not_available_yet)
+        Toaster.w(Res.string.updates_not_available_yet)
     } finally {
         client.close()
     }

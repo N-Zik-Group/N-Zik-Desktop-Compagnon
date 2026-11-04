@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="cancel">Anulează</string>
+    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_clipboard_copy_success">Copiat</string>
+    <string name="common_color_source_theme">Tematică</string>
+    <string name="common_color_white">Alb</string>
+    <string name="common_delete_success">Șters</string>
+    <string name="common_empty_items">Niciun articol</string>
+    <string name="common_option_all">Total</string>
+    <string name="common_option_custom">Personalizat</string>
+    <string name="common_option_default">Implicit</string>
+    <string name="common_option_disabled">Dezactivat</string>
+    <string name="common_option_none">Niciunul</string>
+    <string name="common_option_random">Aleatoriu</string>
+    <string name="common_size_big">Mare</string>
+    <string name="common_size_biggest">Gigantic</string>
+    <string name="common_size_medium">Mediu</string>
+    <string name="common_size_small">Mic</string>
+    <string name="common_state_off">Dezactivat</string>
+    <string name="common_state_on">Activat</string>
+    <string name="common_storage_used_suffix">used</string>
+    <string name="common_validation_empty_value">Valoarea nu poate fi goală</string>
+    <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="dismiss">Dismiss</string>
+</resources>

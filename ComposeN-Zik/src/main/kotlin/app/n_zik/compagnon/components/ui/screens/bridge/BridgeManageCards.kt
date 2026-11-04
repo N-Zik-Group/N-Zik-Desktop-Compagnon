@@ -1,8 +1,5 @@
 package app.n_zik.compagnon.components.ui.screens.bridge
 
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.rememberScrollState
-import app.n_zik.compagnon.components.themed.ConfirmationDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Text
@@ -29,13 +28,14 @@ import app.n_zik.compagnon.bridge.pairing.PairedStatus
 import app.n_zik.compagnon.bridge.pairing.PairingRecord
 import app.n_zik.compagnon.bridge.pairing.PairingRules
 import app.n_zik.compagnon.bridge.pairing.PairingState
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.settings.OtherSettingsEntry
 import app.n_zik.compagnon.components.settings.SettingsSectionCard
-import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.themed.ConfirmationDialog
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.typography
-import app.n_zik.compagnon.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 /** Paired: phone name, connection status, "Retry" when it makes sense, "Forget this phone". */
@@ -101,7 +101,7 @@ fun PairedScreen(state: PairingState.Paired, onRetry: () -> Unit, onForget: () -
 private fun StatusWithRetry(text: String, onRetry: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         MessageBanner(text, isError = true)
-        PairingButton(text = stringResource(Res.string.retry), onClick = onRetry, containerColor = colorPalette().background2, contentColor = colorPalette().text)
+        PairingButton(text = stringResource(Res.string.common_action_retry), onClick = onRetry, containerColor = colorPalette().background2, contentColor = colorPalette().text)
     }
 }
 
@@ -155,7 +155,7 @@ fun UnreachableScreen(state: PairingState.Paired, onRetry: () -> Unit, onEditIp:
             ),
             content = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                PairingButton(text = stringResource(Res.string.retry), onClick = onRetry)
+                PairingButton(text = stringResource(Res.string.common_action_retry), onClick = onRetry)
                 if (!editing) {
                     OtherSettingsEntry(
                         title = stringResource(Res.string.unreachable_edit_ip),
@@ -225,9 +225,9 @@ fun ConnectionBanner(connection: ConnectionState, onReconnect: () -> Unit) {
         ConnectionState.Kicked -> stringResource(Res.string.connection_kicked) to Res.string.reconnect
         ConnectionState.Replaced -> stringResource(Res.string.connection_replaced) to Res.string.reconnect
         is ConnectionState.OtherActive -> formatText(
-            stringResource(Res.string.connection_other_active),
+            stringResource(Res.string.paired_other_active),
             connection.deviceName ?: stringResource(Res.string.paired_other_active_unknown),
-        ) to Res.string.retry
+        ) to Res.string.common_action_retry
     }
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 4.dp),

@@ -63,7 +63,7 @@ fun AppShortcutsDialog(preferences: Preferences, onDismiss: () -> Unit) {
 
     DialogFrame(
         onDismiss = onDismiss,
-        title = stringResource(Res.string.app_shortcuts_settings),
+        title = stringResource(Res.string.settings_launcher_shortcuts_title),
     ) {
         Spacer(Modifier.height(16.dp))
         Column(modifier = Modifier.verticalScroll(rememberScrollState()).weight(1f, false)) {
@@ -77,7 +77,7 @@ fun AppShortcutsDialog(preferences: Preferences, onDismiss: () -> Unit) {
                     onChecked = { value ->
                         when (val result = rows.toggle(index, value)) {
                             is ShortcutToggle.Applied -> rows = result.rows
-                            ShortcutToggle.Locked -> Toaster.s(Res.string.app_shortcuts_rescue_locked)
+                            ShortcutToggle.Locked -> Toaster.s(Res.string.settings_launcher_shortcuts_recovery_required_message)
                         }
                     },
                     onMoveUp = { rows = rows.move(index, index - 1) },
@@ -89,7 +89,7 @@ fun AppShortcutsDialog(preferences: Preferences, onDismiss: () -> Unit) {
         ButtonRow(
             buttons = listOf(
                 DialogButton(
-                    text = stringResource(Res.string.reset),
+                    text = stringResource(Res.string.common_action_reset),
                     onClick = {
                         rows = ShortcutRows.defaults()
                     },
@@ -100,13 +100,13 @@ fun AppShortcutsDialog(preferences: Preferences, onDismiss: () -> Unit) {
                     danger = true,
                 ),
                 DialogButton(
-                    text = stringResource(Res.string.confirm),
+                    text = stringResource(Res.string.common_action_confirm),
                     onClick = {
                         val confirmed = rows
                         preferences.update {
                             it.copy(appShortcutsOrder = confirmed.orderCsv(), appShortcutsEnabled = confirmed.enabledCsv())
                         }
-                        Toaster.s(Res.string.toast_preference_saved)
+                        Toaster.s(Res.string.settings_preference_saved_message)
                         onDismiss()
                     },
                     primary = true,

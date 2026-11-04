@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Accessibility -->
+    <string name="accessibility_app_icon">Pictograma aplicaţiei</string>
+    <string name="accessibility_app_icon_in_player">pictograma aplicatiei in player</string>
+    <string name="accessibility_background_image">Imagine de fundal</string>
+    <string name="accessibility_blurred_background">fundal</string>
+    <string name="accessibility_disc_background">fundal disc</string>
+    <string name="accessibility_number_of_songs_in_queue">Numărul de melodii în coadă</string>
+    <string name="accessibility_origin_indicator">indicativ_origin_indicator</string>
+    <string name="accessibility_song_album_cover">copertă de album cântec</string>
+</resources>

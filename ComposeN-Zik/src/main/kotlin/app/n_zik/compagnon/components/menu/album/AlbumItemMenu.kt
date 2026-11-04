@@ -1,10 +1,5 @@
 package app.n_zik.compagnon.components.menu.album
 
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.components.menu.splitArtistNames
-import app.n_zik.compagnon.components.menu.InertMenuItem
-import app.n_zik.compagnon.components.themed.IconButton
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -32,32 +28,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalLibraryActions
-import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.bridge.library.Album
 import app.n_zik.compagnon.bridge.library.AlbumLike
 import app.n_zik.compagnon.bridge.library.DislikeMode
 import app.n_zik.compagnon.bridge.library.PagedState
 import app.n_zik.compagnon.bridge.library.nextRotation
 import app.n_zik.compagnon.bridge.library.nextToggle
+import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.LocalMenuState
+import app.n_zik.compagnon.components.menu.InertMenuItem
 import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.menu.playlist.PlaylistsMenu
+import app.n_zik.compagnon.components.menu.splitArtistNames
 import app.n_zik.compagnon.components.styling.Dimensions
-import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.tab.SongShuffler
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.utils.LocalPreferences
-import app.n_zik.compagnon.utils.UserSettings
-import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.themed.Enqueue
 import app.n_zik.compagnon.components.themed.HeaderIconButton
+import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.components.themed.PlayNext
 import app.n_zik.compagnon.components.ui.screens.home.ItemActions
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.thumbnailShape
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.secondary
+import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.stringResource
 
@@ -93,33 +93,33 @@ class AlbumItemMenu(
     @Composable
     fun ListMenu() = ListMenu.Menu(title = null, showDragHandle = false) {
         val menuState = LocalMenuState.current
-        ListMenu.SectionTitle(stringResource(Res.string.playback))
+        ListMenu.SectionTitle(stringResource(Res.string.common_playback_section_title))
         actions.onShuffle?.let { SongShuffler(enabled = actions.enabled, onShuffle = it).ListMenuItem() }
         PlayNext(enabled = actions.enabled, onClick = actions.onPlayNext).ListMenuItem()
         Enqueue(enabled = actions.enabled, onClick = actions.onEnqueue).ListMenuItem()
 
         // Section: Management
-        ListMenu.SectionTitle(stringResource(Res.string.management))
+        ListMenu.SectionTitle(stringResource(Res.string.library_management_section_title))
         // Spec #47: opens the phone's "Add to playlist" sheet, ported as [PlaylistsMenu] (inert in turn)
-        InertMenuItem(Res.drawable.add_in_playlist, Res.string.add_to_playlist) {
+        InertMenuItem(Res.drawable.add_in_playlist, Res.string.playlist_action_add) {
             menuState.display { PlaylistsMenu() }
         }.ListMenuItem()
-        InertMenuItem(Res.drawable.downloaded, Res.string.download, descriptionId = Res.string.info_download_all_songs).ListMenuItem()
-        InertMenuItem(Res.drawable.download, Res.string.info_remove_all_downloaded_songs).ListMenuItem()
-        InertMenuItem(Res.drawable.artists_edit, Res.string.update_authors).ListMenuItem()
-        InertMenuItem(Res.drawable.cover_edit, Res.string.update_cover).ListMenuItem()
-        InertMenuItem(Res.drawable.title_edit, Res.string.update_album_browse_id).ListMenuItem()
-        InertMenuItem(Res.drawable.title_edit, Res.string.update_artist_browse_id).ListMenuItem()
+        InertMenuItem(Res.drawable.downloaded, Res.string.downloads_title, descriptionId = Res.string.downloads_action_download_all).ListMenuItem()
+        InertMenuItem(Res.drawable.download, Res.string.downloads_action_remove_all).ListMenuItem()
+        InertMenuItem(Res.drawable.artists_edit, Res.string.metadata_action_change_artists).ListMenuItem()
+        InertMenuItem(Res.drawable.cover_edit, Res.string.metadata_action_change_cover).ListMenuItem()
+        InertMenuItem(Res.drawable.title_edit, Res.string.metadata_album_action_change_browse_id).ListMenuItem()
+        InertMenuItem(Res.drawable.title_edit, Res.string.metadata_artist_action_change_browse_id).ListMenuItem()
 
         // Section: Navigation
-        ListMenu.SectionTitle(stringResource(Res.string.navigation))
-        val artistNames = splitArtistNames(album.artists, listOf(stringResource(Res.string.and)))
+        ListMenu.SectionTitle(stringResource(Res.string.common_navigation_section_title))
+        val artistNames = splitArtistNames(album.artists, listOf(stringResource(Res.string.common_artist_conjunction_and)))
         if (artistNames.size <= 1) {
-            InertMenuItem(Res.drawable.people, Res.string.more_of, " ${album.artists.orEmpty()}", descriptionId = Res.string.artists).ListMenuItem()
+            InertMenuItem(Res.drawable.people, Res.string.artist_more_from, " ${album.artists.orEmpty()}", descriptionId = Res.string.library_artists_title).ListMenuItem()
         } else {
-            artistNames.forEach { InertMenuItem(Res.drawable.people, Res.string.more_of, " $it", descriptionId = Res.string.artists).ListMenuItem() }
+            artistNames.forEach { InertMenuItem(Res.drawable.people, Res.string.artist_more_from, " $it", descriptionId = Res.string.library_artists_title).ListMenuItem() }
         }
-        InertMenuItem(Res.drawable.title_edit, Res.string.update_title).ListMenuItem()
+        InertMenuItem(Res.drawable.title_edit, Res.string.metadata_action_change_title).ListMenuItem()
     }
 
     @Composable
@@ -295,9 +295,9 @@ class AlbumItemMenu(
                                 }
                                 // The phone's toast (its `AlbumItemMenu.kt` 380-398)
                                 val messageId = when (target) {
-                                    AlbumLike.Bookmarked -> Res.string.added_to_favorites
-                                    AlbumLike.Disliked -> Res.string.added_to_dislikes
-                                    AlbumLike.Neutral -> Res.string.removed_from_favorites
+                                    AlbumLike.Bookmarked -> Res.string.library_favorites_added
+                                    AlbumLike.Disliked -> Res.string.library_dislikes_added
+                                    AlbumLike.Neutral -> Res.string.library_favorites_removed
                                 }
                                 if (album.title.isNotBlank()) Toaster.s(messageId, "\"${album.title}\"") else Toaster.s(messageId)
                             }

@@ -15,17 +15,17 @@ enum class HomeScreenTabs(
     val index: Int,
     val textId: StringResource,
 ) {
-    Default(0, Res.string.default_page),
+    Default(0, Res.string.settings_home_default_page_label),
 
-    QuickPics(0, Res.string.quick_picks),
+    QuickPics(0, Res.string.recommendations_title),
 
-    Songs(1, Res.string.songs),
+    Songs(1, Res.string.library_songs_title),
 
-    Artists(2, Res.string.artists),
+    Artists(2, Res.string.library_artists_title),
 
-    Albums(3, Res.string.albums),
+    Albums(3, Res.string.library_albums_title),
 
-    Playlists(4, Res.string.playlists),
+    Playlists(4, Res.string.library_playlists_title),
 
-    Search(5, Res.string.search),
+    Search(5, Res.string.search_title),
 }

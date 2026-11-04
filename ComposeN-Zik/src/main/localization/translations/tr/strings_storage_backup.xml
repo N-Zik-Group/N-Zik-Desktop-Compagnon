@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_action_export">Yedeklemeyi dışa aktar</string>
+    <string name="backup_action_import_legacy_migration">Taşıma dosyasını içe aktar</string>
+    <string name="backup_auto_interval">Otomatik Yedekleme Aralığı</string>
+    <string name="backup_auto_interval_none">Devre dışı</string>
+    <string name="backup_auto_location">Otomatik Yedekleme Konumu</string>
+    <string name="backup_auto_location_not_set">Ayarlanmamış</string>
+    <string name="backup_auto_max_backups">Saklanacak Maksimum Yedekleme Sayısı</string>
+    <string name="backup_auto_target">Yedekleme Hedefi</string>
+    <string name="backup_auto_title">Otomatik Yedekleme</string>
+    <string name="backup_export_description">Veritabanını veya ayarları bir dosyaya aktarın</string>
+    <string name="backup_import_description">Veritabanını veya ayarları bir dosyadan içe aktar</string>
+    <string name="backup_import_failed">Import failed</string>
+    <string name="backup_legacy_migration_description">Dönüşümden önceki eski kullanıcılar için.\nTaşıma için yedekleme yapmak üzere eski uygulamayı kullanın.</string>
+    <string name="backup_target_database_label">Veritabanı</string>
+    <string name="cached_pc">Önbelleğe alınmış bilgisayar</string>
+    <string name="download_pc">Bilgisayara indir</string>
+    <string name="downloads_action_download_all">Tüm şarkıları indir</string>
+    <string name="downloads_action_refresh_quality">İndirilenleri güncelle</string>
+    <string name="downloads_action_remove_all">Tüm indirilen şarkıları kaldır</string>
+    <string name="downloads_cancelled">İndirme iptal edildi</string>
+    <string name="downloads_delete_all_confirmation">İndirmeyi gerçekten silmek istiyor musunuz?</string>
+    <string name="downloads_download_all_confirmation">Tümünü gerçekten indirmek istiyor musunuz?</string>
+    <string name="downloads_quality_format">İndirme Kalitesi</string>
+    <string name="downloads_refresh_quality_description">Farklı bir kalitede indirilmiş şarkıları yeniden indirin</string>
+    <string name="downloads_title">İndir</string>
+    <string name="export_cached_song_action">Önbelleğe alınmış veya indirilmiş şarkıyı dışa aktar</string>
+    <string name="export_cached_songs_action">Önbelleğe alınanı dışa aktar</string>
+    <string name="import_backup">Yedeklemeyi içe aktar</string>
+    <string name="library_cleanup_title">Akıllı çöp</string>
+    <string name="title_backup_and_restore">Yedekle ve geri yükle</string>
+</resources>

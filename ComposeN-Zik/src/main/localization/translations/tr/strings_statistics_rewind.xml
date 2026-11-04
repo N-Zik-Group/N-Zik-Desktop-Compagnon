@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Calendar -->
+    <string name="calendar_period_one_month">1 Ay</string>
+    <string name="calendar_period_one_week">1 Hafta</string>
+    <string name="calendar_period_one_year">1 Yıl</string>
+    <string name="calendar_period_six_months">6 Ay</string>
+    <string name="calendar_period_three_months">3 Ay</string>
+    <string name="calendar_today">Bugün</string>
+    <!-- Rewind -->
+    <string name="rewind_filter_month">Ay</string>
+    <string name="rewind_filter_year">Yıl</string>
+    <!-- Statistics -->
+    <string name="statistics_items_limit_unlimited">Sınırsız</string>
+    <string name="statistics_title">İstatistikler</string>
+    <string name="statistics_top_period_title">… içindeki en iyi %s</string>
+</resources>

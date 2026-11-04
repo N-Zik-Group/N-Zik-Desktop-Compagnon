@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="cancel">বাতিল</string>
+    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_clipboard_copy_success">কপি হয়েছে</string>
+    <string name="common_color_source_theme">থিম</string>
+    <string name="common_color_white">White</string>
+    <string name="common_delete_success">Deleted</string>
+    <string name="common_empty_items">No items</string>
+    <string name="common_option_all">সব</string>
+    <string name="common_option_custom">কাস্টম</string>
+    <string name="common_option_default">পূর্ব-নির্ধারিত</string>
+    <string name="common_option_disabled">নিষ্ক্রিয়</string>
+    <string name="common_option_none">কোনটি নয়</string>
+    <string name="common_option_random">ক্যাজুয়ালি বাজানো গান দিয়ে</string>
+    <string name="common_size_big">বড়</string>
+    <string name="common_size_biggest">বৃহত্তম</string>
+    <string name="common_size_medium">মাঝারি</string>
+    <string name="common_size_small">ছোট</string>
+    <string name="common_state_off">Off</string>
+    <string name="common_state_on">On</string>
+    <string name="common_storage_used_suffix">used</string>
+    <string name="common_validation_empty_value">ভ্যালু খালি রাখা যাবে না</string>
+    <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="dismiss">Dismiss</string>
+</resources>

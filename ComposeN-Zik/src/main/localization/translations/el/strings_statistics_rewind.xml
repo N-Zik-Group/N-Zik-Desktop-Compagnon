@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Calendar -->
+    <string name="calendar_period_one_month">1 Μήνας</string>
+    <string name="calendar_period_one_week">1 Εβδομάδα</string>
+    <string name="calendar_period_one_year">1 Χρόνος</string>
+    <string name="calendar_period_six_months">6 Μήνες</string>
+    <string name="calendar_period_three_months">3 Μήνες</string>
+    <string name="calendar_today">Σήμερα</string>
+    <!-- Rewind -->
+    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_year">Year</string>
+    <!-- Statistics -->
+    <string name="statistics_items_limit_unlimited">Απεριόριστο</string>
+    <string name="statistics_title">Στατιστικά</string>
+    <string name="statistics_top_period_title">View top %s of …</string>
+</resources>

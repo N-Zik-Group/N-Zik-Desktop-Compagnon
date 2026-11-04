@@ -1,9 +1,8 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
-import app.n_zik.compagnon.components.tab.toolbar.Randomizer
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
@@ -46,6 +45,7 @@ import app.n_zik.compagnon.bridge.library.DislikeMode
 import app.n_zik.compagnon.bridge.library.nextRotation
 import app.n_zik.compagnon.bridge.library.nextToggle
 import app.n_zik.compagnon.bridge.state.SessionContract
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.ButtonsRow
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.Sort
@@ -64,26 +64,26 @@ import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
 import app.n_zik.compagnon.components.tab.toolbar.InertSort
-import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.tab.toolbar.Randomizer
 import app.n_zik.compagnon.components.theme.onOverlay
 import app.n_zik.compagnon.components.theme.overlay
-import app.n_zik.compagnon.thumbnailShape
-import app.n_zik.compagnon.typography
-import app.n_zik.compagnon.uiRoundnessShape
-import app.n_zik.compagnon.utils.center
-import app.n_zik.compagnon.utils.color
-import app.n_zik.compagnon.utils.formatAsTime
-import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
 import app.n_zik.compagnon.components.themed.HeaderInfo
 import app.n_zik.compagnon.components.themed.MultiFloatingActionsContainer
 import app.n_zik.compagnon.components.themed.SwipeableAlbumRow
 import app.n_zik.compagnon.enums.AlbumSwipeAction
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.thumbnailShape
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.ChipSort
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.center
+import app.n_zik.compagnon.utils.color
+import app.n_zik.compagnon.utils.formatAsTime
 import app.n_zik.compagnon.utils.onSecondaryClick
+import app.n_zik.compagnon.utils.semiBold
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -256,7 +256,7 @@ fun HomeAlbums(
                     add(positionLock)
                 }
                 // No contract search on `/library/albums` (no `text` parameter): inert, the phone's title
-                "search" -> add(InertButton(Res.drawable.search_circle, Res.string.search))
+                "search" -> add(InertButton(Res.drawable.search_circle, Res.string.search_title))
                 // The phone's "Auto Sync Saved Albums" (its `HomeAlbum.kt` 466, icon `sync`): the
                 // phone shows it only while its YouTube sync is enabled — never on the PC (no
 
@@ -265,12 +265,12 @@ fun HomeAlbums(
                 "sync" -> {
                 }
                 "randomizer" -> add(Randomizer({ activeList.state.value.items }, onAlbumClick))
-                "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
+                "shuffle" -> add(InertButton(Res.drawable.shuffle, Res.string.player_action_shuffle, descriptionId = Res.string.player_action_shuffle_hint))
                 "item_selector" -> add(itemSelector)
-                "play_next" -> add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
-                "enqueue" -> add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
-                "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
-                "export_dialog" -> add(InertButton(Res.drawable.export_outline, Res.string.export_playlist))
+                "play_next" -> add(InertButton(Res.drawable.play_skip_forward, Res.string.player_action_play_next))
+                "enqueue" -> add(InertButton(Res.drawable.enqueue, Res.string.player_action_enqueue))
+                "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.playlist_action_add))
+                "export_dialog" -> add(InertButton(Res.drawable.export_outline, Res.string.playlist_action_export))
                 "item_size" -> add(
                     ItemSize.init(itemSize) { size ->
                         preferences?.update { s -> s.copy(itemSizes = s.itemSizes + ("albums" to size.wire)) }
@@ -306,7 +306,7 @@ fun HomeAlbums(
                     Column {
                         Column {
                             CollapsibleTitleRow(titleOffsetState, titleHeightState) {
-                                TabHeader(stringResource(Res.string.albums)) {
+                                TabHeader(stringResource(Res.string.library_albums_title)) {
                                     HeaderInfo((state.total ?: state.items.size).toString(), Res.drawable.album)
                                 }
                             }
@@ -423,7 +423,7 @@ fun HomeAlbums(
                                                 detectDragGesturesAfterLongPress(
                                                     onDrag = { change, _ -> change.consume() },
                                                     // One toast per inert drag gesture: the order is the phone's, never written here
-                                                    onDragEnd = { Toaster.i(Res.string.info_lock_unlock_reorder_songs) },
+                                                    onDragEnd = { Toaster.i(Res.string.playlist_reorder_lock_toggle_label) },
                                                 )
                                             },
                                         contentAlignment = Alignment.Center,
@@ -444,7 +444,7 @@ fun HomeAlbums(
                 }
 
                 if (!state.loading && state.error == null && state.items.isEmpty() && state.total != null) {
-                    NoItems(stringResource(Res.string.no_items))
+                    NoItems(stringResource(Res.string.common_empty_items))
                 }
             }
         }
@@ -526,9 +526,9 @@ internal fun albumSwipeDecision(
 
 /** The phone's `AlbumsType` label of the [chip]. */
 private fun chipLabel(chip: AlbumsChip): StringResource = when (chip) {
-    AlbumsChip.All -> Res.string.all
-    AlbumsChip.Liked -> Res.string.favorites
-    AlbumsChip.Disliked -> Res.string.disliked
+    AlbumsChip.All -> Res.string.common_option_all
+    AlbumsChip.Liked -> Res.string.library_favorites_title
+    AlbumsChip.Disliked -> Res.string.library_disliked_title
 }
 
 /** The phone's default order of its Albums toolbar (`HomeAlbumsToolbarSettingsDialog.allButtonIds`). */

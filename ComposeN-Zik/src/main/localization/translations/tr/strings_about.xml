@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_action_report_issue">Sorun bildir</string>
+    <string name="about_action_view_source">Kaynak kodunu görüntüle</string>
+    <string name="about_authorship_preposition">tarafından</string>
+    <string name="about_contributors_alphabetical_order_label">Alfabetik sırada:</string>
+    <string name="about_developers">Geliştiriciler / Tasarımcılar</string>
+    <string name="about_github_link_description">GitHub\'a yönlendirileceksiniz</string>
+    <string name="about_title">Hakkında</string>
+    <string name="about_translators_title">Çevirmenler</string>
+    <string name="contributors">Katkıda bulunanlar</string>
+    <string name="request_a_feature">Bir özellik isteyin veya bir fikir önerin</string>
+</resources>

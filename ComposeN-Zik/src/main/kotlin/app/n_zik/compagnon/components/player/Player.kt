@@ -1,9 +1,5 @@
 package app.n_zik.compagnon.components.player
 
-import app.n_zik.compagnon.LocalLibraryActions
-import app.n_zik.compagnon.bridge.state.LocalUiSettings
-import androidx.compose.ui.unit.Dp
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -20,6 +16,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,10 +50,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalCommandLauncher
+import app.n_zik.compagnon.LocalLibraryActions
 import app.n_zik.compagnon.LocalPlayerRepository
 import app.n_zik.compagnon.bridge.ConnectionState
+import app.n_zik.compagnon.bridge.state.LocalUiSettings
 import app.n_zik.compagnon.bridge.state.PlayerBackgroundColors
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SessionContract
@@ -85,22 +85,22 @@ import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.core.palette.toPaletteBitmap
 import app.n_zik.compagnon.enums.AnimatedGradient
 import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.utils.LocalPreferences
-import app.n_zik.compagnon.utils.hasExplicitPrefix
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
+import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.UserSettings
+import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.formatAsTime
+import app.n_zik.compagnon.utils.hasExplicitPrefix
 import app.n_zik.compagnon.utils.positionAndDurationState
 import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
+import kotlin.random.Random
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import kotlin.random.Random
 
 /** The phone's default violet, the accent of the dynamic palette when there is no cover (`MainActivity.kt` 1090). */
 internal val VIOLET_ACCENT = Color(0.54509807f, 0.36078432f, 0.9647059f)
@@ -235,10 +235,10 @@ fun Player(
     val onCoverDoubleTap: () -> Unit = {
         if (live) state.currentTrack?.let { rotateTrackLike(it, likeWritesForCover, likeRotationForCover) }
     }
-    val title = mediaItem.title.ifBlank { stringResource(Res.string.unknown_title) }
+    val title = mediaItem.title.ifBlank { stringResource(Res.string.metadata_unknown_title) }
     // The phone's `cleanPrefix(artistTextWithFallback())` (its `Controls.kt` 120)
     val artist = mediaItem.artists?.let { app.n_zik.compagnon.utils.cleanPrefix(it) }?.takeIf { it.isNotBlank() }
-        ?: stringResource(Res.string.unknown_artist)
+        ?: stringResource(Res.string.metadata_unknown_artist)
 
     BoxWithConstraints(
         modifier = Modifier
@@ -636,7 +636,7 @@ fun Player(
                         Image(
                             painter = painterResource(Res.drawable.ic_launcher_monochrome),
                             colorFilter = ColorFilter.tint(colorPalette().collapsedPlayerProgressBar),
-                            contentDescription = stringResource(Res.string.cd_app_icon_in_player),
+                            contentDescription = stringResource(Res.string.accessibility_app_icon_in_player),
                             modifier = Modifier.size(24.dp)
                                 .clip(uiRoundnessShape()).clickable {
                                     // The phone's logo: closes the player and goes home
@@ -735,7 +735,7 @@ fun Player(
                                 modifier = Modifier
                                     .size(20.dp)
                                     .padding(horizontal = 5.dp),
-                                contentDescription = stringResource(Res.string.cd_background_image),
+                                contentDescription = stringResource(Res.string.accessibility_background_image),
                                 contentScale = ContentScale.Fit,
                             )
 

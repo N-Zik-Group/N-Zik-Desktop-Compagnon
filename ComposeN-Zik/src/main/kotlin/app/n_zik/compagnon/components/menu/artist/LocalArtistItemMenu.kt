@@ -1,9 +1,5 @@
 package app.n_zik.compagnon.components.menu.artist
 
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.components.menu.InertMenuItem
-import app.n_zik.compagnon.components.themed.IconButton
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -38,24 +35,27 @@ import app.n_zik.compagnon.bridge.library.DislikeMode
 import app.n_zik.compagnon.bridge.library.PagedState
 import app.n_zik.compagnon.bridge.library.nextRotation
 import app.n_zik.compagnon.bridge.library.nextToggle
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
+import app.n_zik.compagnon.components.menu.InertMenuItem
 import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.menu.album.MENU_THUMBNAIL_SIZE_PX
 import app.n_zik.compagnon.components.styling.Dimensions
-import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.tab.SongShuffler
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.utils.LocalPreferences
-import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.utils.UserSettings
-import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.themed.HeaderIconButton
+import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.components.ui.screens.artist.followToast
 import app.n_zik.compagnon.components.ui.screens.home.ItemActions
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.secondary
+import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
@@ -87,7 +87,7 @@ class LocalArtistItemMenu(
         val menuState = LocalMenuState.current
         val playAll = object : MenuIcon, app.n_zik.compagnon.components.tab.toolbar.Descriptive {
             override val iconId: DrawableResource = Res.drawable.play
-            override val messageId: org.jetbrains.compose.resources.StringResource = Res.string.play_all_local_songs
+            override val messageId: org.jetbrains.compose.resources.StringResource = Res.string.artist_action_play_local_songs
             override val isEnabled: Boolean = actions.enabled
             override val menuIconTitle: String
                 @Composable get() = stringResource(messageId)
@@ -101,24 +101,24 @@ class LocalArtistItemMenu(
                     actions.onPlay()
                     menuState.hide()
                 } else {
-                    app.n_zik.compagnon.utils.Toaster.e(Res.string.no_song_found)
+                    app.n_zik.compagnon.utils.Toaster.e(Res.string.player_no_song_found)
                 }
             }
         }
-        ListMenu.SectionTitle(stringResource(Res.string.playback))
+        ListMenu.SectionTitle(stringResource(Res.string.common_playback_section_title))
         // Spec #13: the phone's online artist "Start radio" (`OnlineArtistItemMenu.kt` 385-417,
         // `start_radio`, empty long press), ported at the head of Playback: inert — the radio is a
 
         // phone-side playback feature, no contract route
-        InertMenuItem(Res.drawable.radio, Res.string.start_radio).ListMenuItem()
+        InertMenuItem(Res.drawable.radio, Res.string.radio_action_start).ListMenuItem()
         playAll.ListMenuItem()
         actions.onShuffle?.let { SongShuffler(enabled = actions.enabled, onShuffle = it).ListMenuItem() }
 
         // Section: Management
-        ListMenu.SectionTitle(stringResource(Res.string.management))
-        InertMenuItem(Res.drawable.title_edit, Res.string.update_title).ListMenuItem()
-        InertMenuItem(Res.drawable.cover_edit, Res.string.update_cover).ListMenuItem()
-        InertMenuItem(Res.drawable.title_edit, Res.string.update_artist_browse_id).ListMenuItem()
+        ListMenu.SectionTitle(stringResource(Res.string.library_management_section_title))
+        InertMenuItem(Res.drawable.title_edit, Res.string.metadata_action_change_title).ListMenuItem()
+        InertMenuItem(Res.drawable.cover_edit, Res.string.metadata_action_change_cover).ListMenuItem()
+        InertMenuItem(Res.drawable.title_edit, Res.string.metadata_artist_action_change_browse_id).ListMenuItem()
     }
 
     @Composable
@@ -309,7 +309,7 @@ class LocalArtistItemMenu(
         ) {
             ArtistItemDisplay(
                 title = artist.name,
-                subscribersCount = "${artist.trackCount} ${stringResource(Res.string.songs)}",
+                subscribersCount = "${artist.trackCount} ${stringResource(Res.string.library_songs_title)}",
             )
             ListMenu()
         }

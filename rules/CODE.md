@@ -321,9 +321,9 @@ class PagedListTest {
 
 ## Translations
 
-- UI strings live ONLY in `ComposeN-Zik/src/main/composeResources/values/strings.xml` (English — the source of truth). The `values-*` locale dirs are **Crowdin-managed** (repo-root `crowdin.yml`): NEVER edit a translation VALUE by hand — manual value edits get overwritten and cause merge conflicts. (Removing an entire dead key element across all locales is a structural cleanup, not a value edit — see the "Removing a string key" rule below.)
-- **Removing a string key:** check for usages in code first (a stale key breaks translator context, not just compilation), then remove the element from `values/strings.xml` AND from every `values-*/strings.xml` so no stale copy lingers in a locale
-- Ported screens **reuse the phone's keys and English texts** — copy the phone's `strings.xml` entries when porting a screen, don't invent new keys for the same concept
+- English UI strings live in thematic `strings_*.xml` catalogs under `ComposeN-Zik/src/main/localization/source/`. The `localization/translations/` locale dirs are **Crowdin-managed** (repo-root `crowdin.yml`): NEVER edit a translation VALUE by hand — manual value edits get overwritten and cause merge conflicts. (Removing an entire dead key element across all locales is a structural cleanup, not a value edit — see the "Removing a string key" rule below.)
+- **Removing a string key:** check for usages in code first (a stale key breaks translator context, not just compilation), then remove the element from its source catalog and the corresponding localized catalogs so no stale copy lingers in a locale
+- Ported screens **reuse the phone's keys and English texts** — copy the phone's entries from its thematic source catalogs when porting a screen, don't invent new keys for the same concept
 - **Format arguments:** this Compose version's `getString`/`stringResource` apply NO format arguments — any string with `%s` is formatted at the call site with `formatMessage` (suspend) / `formatText` (`utils/Toaster.kt`); the raw message is kept on a mismatch. Never add format args to a string expecting the resource loader to apply them
 
 ## Dependency Injection

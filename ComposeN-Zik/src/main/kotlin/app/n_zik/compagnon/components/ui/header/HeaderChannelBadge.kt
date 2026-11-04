@@ -15,8 +15,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.colorPalette
@@ -85,10 +85,10 @@ fun HeaderChannelBadge(
     if (AppVersion.channel == "stable") return
 
     val badgeText = when (AppVersion.channel) {
-        "beta" -> stringResource(Res.string.beta_title)
-        "dev" -> stringResource(Res.string.dev_title)
+        "beta" -> stringResource(Res.string.updates_build_beta_label)
+        "dev" -> stringResource(Res.string.updates_build_dev_label)
         "git" -> stringResource(Res.string.git_title)
-        else -> stringResource(Res.string.debug_title)
+        else -> stringResource(Res.string.updates_build_debug_label)
     }
 
     val preferences = LocalPreferences.current
@@ -112,7 +112,7 @@ fun HeaderChannelBadge(
         // Uppercase per the phone's build-type badges ("BETA" / "DEV" / "MINIFIED" — the phone's
         // build-type strings are uppercase; the desktop's *_title strings are uppercase in
 
-        // values/strings.xml, but the values-* locale copies stay mixed-case until the next
+        // the English localization catalogs, but the localized catalogs stay mixed-case until the next
         // Crowdin resync, so the case is applied at render — round-4 audit MINOR-1, consistent
 
         // with the About card badge and the update flow)

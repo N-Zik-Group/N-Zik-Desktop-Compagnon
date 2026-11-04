@@ -94,7 +94,7 @@ fun QueueToolBar(
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.musical_notes),
-                    contentDescription = stringResource(Res.string.cd_number_of_songs_in_queue),
+                    contentDescription = stringResource(Res.string.accessibility_number_of_songs_in_queue),
                     tint = colorPalette().text,
                     modifier = Modifier.padding(end = 2.dp),
                 )

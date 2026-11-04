@@ -1,10 +1,5 @@
 package app.n_zik.compagnon.components.player.controls
 
-import app.n_zik.compagnon.components.player.getLikedIcon
-import app.n_zik.compagnon.components.player.getUnlikedIcon
-import app.n_zik.compagnon.components.player.rotateTrackLike
-import app.n_zik.compagnon.components.theme.favoritesIcon
-import app.n_zik.compagnon.generated.resources.*
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloatAsState
@@ -52,11 +47,16 @@ import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.bridge.state.displayedLike
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.player.bounceClick
+import app.n_zik.compagnon.components.player.getLikedIcon
+import app.n_zik.compagnon.components.player.getUnlikedIcon
 import app.n_zik.compagnon.components.player.monochromeControlsColor
+import app.n_zik.compagnon.components.player.rotateTrackLike
 import app.n_zik.compagnon.components.theme.ColorPalette
+import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.enums.PlayerPlayButtonType
 import app.n_zik.compagnon.enums.QueueLoopType
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.onSecondaryClick
@@ -217,7 +217,7 @@ fun ControlsEssential(
                     .fillMaxSize()
                     .rotate(rotationAngle)
                     .bounceClick(),
-                contentDescription = stringResource(Res.string.cd_background_image),
+                contentDescription = stringResource(Res.string.accessibility_background_image),
                 contentScale = ContentScale.Fit,
             )
         }

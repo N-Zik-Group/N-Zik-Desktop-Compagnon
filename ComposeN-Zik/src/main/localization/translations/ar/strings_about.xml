@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_action_report_issue">الإبلاغ عن مشكلة</string>
+    <string name="about_action_view_source">عرض كود المصدر</string>
+    <string name="about_authorship_preposition">بواسطة</string>
+    <string name="about_contributors_alphabetical_order_label">حسب الترتيب الأبجدي:</string>
+    <string name="about_developers">Developers / Designers</string>
+    <string name="about_github_link_description">سيتم إعادة توجيهك إلى GitHub</string>
+    <string name="about_title">حول</string>
+    <string name="about_translators_title">Translators</string>
+    <string name="contributors">المساهمون</string>
+    <string name="request_a_feature">اطلب ميزة أو اقترح فكرة</string>
+</resources>

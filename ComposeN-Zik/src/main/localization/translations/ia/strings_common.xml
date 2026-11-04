@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="cancel">Cancellar</string>
+    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_clipboard_copy_success">Copiate</string>
+    <string name="common_color_source_theme">Thema</string>
+    <string name="common_color_white">Blanc</string>
+    <string name="common_delete_success">Delite</string>
+    <string name="common_empty_items">No items</string>
+    <string name="common_option_all">Toto</string>
+    <string name="common_option_custom">Personalisate</string>
+    <string name="common_option_default">Predefinite</string>
+    <string name="common_option_disabled">Disactivate</string>
+    <string name="common_option_none">Necuno</string>
+    <string name="common_option_random">Random</string>
+    <string name="common_size_big">Grande</string>
+    <string name="common_size_biggest">Plus grande</string>
+    <string name="common_size_medium">Medie</string>
+    <string name="common_size_small">Parve</string>
+    <string name="common_state_off">Off</string>
+    <string name="common_state_on">On</string>
+    <string name="common_storage_used_suffix">used</string>
+    <string name="common_validation_empty_value">Le valor non pote esser vacue</string>
+    <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="dismiss">Dismiss</string>
+</resources>

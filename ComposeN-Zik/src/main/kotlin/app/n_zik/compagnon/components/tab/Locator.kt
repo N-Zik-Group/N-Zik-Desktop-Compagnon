@@ -14,10 +14,10 @@ import app.n_zik.compagnon.bridge.library.PagedList
 import app.n_zik.compagnon.bridge.state.ListRef
 import app.n_zik.compagnon.bridge.state.PlayerRepository
 import app.n_zik.compagnon.bridge.state.Track
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.tab.toolbar.Descriptive
 import app.n_zik.compagnon.components.tab.toolbar.DynamicColor
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.generated.resources.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -85,7 +85,7 @@ class Locator private constructor(
 
     override val iconId: DrawableResource = Res.drawable.locate
 
-    override val messageId: StringResource = Res.string.info_find_the_song_that_is_playing
+    override val messageId: StringResource = Res.string.player_action_locate_current_song
 
     /** The phone's `DynamicColor` state: a track is current (its menu icon turns `textDisabled` otherwise). */
     override var isFirstColor: Boolean
@@ -101,13 +101,13 @@ class Locator private constructor(
         }
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.info_find_the_song_that_is_playing)
+        get() = stringResource(Res.string.player_action_locate_current_song)
 
     /** The running search (a whole-list locate may load pages): a click while it runs is ignored. */
     private var job: Job? = null
 
     override fun onShortClick() {
-        val trackId = currentTrackId ?: return onMessage(Res.string.no_songs_playing)
+        val trackId = currentTrackId ?: return onMessage(Res.string.player_no_current_song)
         if (job?.isActive == true) return
         val ref = listRef()
         val list = pagedList
@@ -130,7 +130,7 @@ class Locator private constructor(
                 else -> getSongs().map(Track::id).let { ids -> locatorRow(ids, ids.indexOf(trackId)) }
             }
             if (target == -1) {
-                onMessage(Res.string.playing_song_not_found_on_current_list)
+                onMessage(Res.string.player_current_song_not_in_list)
             } else {
                 when (scrollableState) {
                     is LazyListState -> scrollableState.scrollToItem(target + indexOffset)

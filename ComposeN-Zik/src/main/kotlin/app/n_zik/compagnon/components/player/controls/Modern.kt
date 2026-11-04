@@ -1,7 +1,5 @@
 package app.n_zik.compagnon.components.player.controls
 
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
@@ -22,12 +20,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.themed.IconButton
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
@@ -66,12 +66,12 @@ fun InfoAlbumAndArtistModern(
         app.n_zik.compagnon.bridge.state.LocalUiSettings.current.textOutline,
         colorPalette(),
     )
-    val unknownTitle = stringResource(Res.string.unknown_title)
-    val unknownArtist = stringResource(Res.string.unknown_artist)
+    val unknownTitle = stringResource(Res.string.metadata_unknown_title)
+    val unknownArtist = stringResource(Res.string.metadata_unknown_artist)
     val clipboard = LocalClipboardManager.current
     fun copy(text: String) {
         clipboard.setText(AnnotatedString(text))
-        Toaster.s(Res.string.value_copied)
+        Toaster.s(Res.string.common_clipboard_copy_success)
     }
 
     Row(

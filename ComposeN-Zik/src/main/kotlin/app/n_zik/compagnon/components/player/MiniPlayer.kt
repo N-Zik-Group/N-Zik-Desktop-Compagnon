@@ -58,7 +58,6 @@ import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalCommandLauncher
 import app.n_zik.compagnon.LocalLibraryActions
 import app.n_zik.compagnon.LocalPlayerRepository
-import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.bridge.ConnectionState
 import app.n_zik.compagnon.bridge.library.DislikeMode
 import app.n_zik.compagnon.bridge.state.AudioOutput
@@ -66,9 +65,10 @@ import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.Track
 import app.n_zik.compagnon.bridge.state.TrackLike
 import app.n_zik.compagnon.bridge.state.displayedLike
-import app.n_zik.compagnon.components.menu.player.AudioDeviceMenu
 import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.SONG_THUMBNAIL_SIZE_PX
+import app.n_zik.compagnon.components.menu.player.AudioDeviceMenu
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.theme.favoritesOverlay
@@ -84,18 +84,18 @@ import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.TIME_UNSET
 import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.cleanPrefix
 import app.n_zik.compagnon.utils.onSecondaryClick
 import app.n_zik.compagnon.utils.positionAndDurationState
 import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.utils.UserSettings
+import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import kotlin.math.absoluteValue
-import kotlin.math.roundToInt
 
 /** Duration of the animated pop that brings the mini-player back from dismissed to rest (the phone's `MiniPlayerAutoExpand.kt` constant, copied). */
 const val MINIPLAYER_POP_ANIMATION_MS = 250L
@@ -505,7 +505,7 @@ fun MiniPlayer(
                             )
                         }
                         BasicText(
-                            text = cleanPrefix(mediaItem.title.ifBlank { stringResource(Res.string.unknown_title) }),
+                            text = cleanPrefix(mediaItem.title.ifBlank { stringResource(Res.string.metadata_unknown_title) }),
                             style = typography().xxs.semiBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -514,7 +514,7 @@ fun MiniPlayer(
                     }
 
                     BasicText(
-                        text = cleanPrefix(mediaItem.artists?.takeIf { it.isNotBlank() } ?: stringResource(Res.string.unknown_artist)),
+                        text = cleanPrefix(mediaItem.artists?.takeIf { it.isNotBlank() } ?: stringResource(Res.string.metadata_unknown_artist)),
                         style = typography().xxs.semiBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -624,7 +624,7 @@ fun MiniPlayer(
                                 icon = Res.drawable.discover,
                                 color = controlsColorText,
                                 onClick = {},
-                                onLongClick = { Toaster.i(Res.string.discoverinfo) },
+                                onLongClick = { Toaster.i(Res.string.queue_discover_description) },
                                 modifier = buttonModifier,
                             )
                         }

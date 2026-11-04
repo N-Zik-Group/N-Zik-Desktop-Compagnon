@@ -79,7 +79,7 @@ fun ListenTogetherMenu() {
         }
     }
 
-    ListMenu.Menu(title = stringResource(Res.string.listen_together)) {
+    ListMenu.Menu(title = stringResource(Res.string.listen_together_title)) {
         // ── Connection (the phone's 478-487) ───────────────────────────────
         ListMenu.SectionTitle(stringResource(Res.string.listen_together_connection))
         // The phone's `ConnectionStatusRow` (its 1014-1054), disconnected: the 10 dp dot and the
@@ -115,7 +115,7 @@ fun ListenTogetherMenu() {
         // The phone's Create entry (its 618-623): inert
         ListMenu.Entry(
             text = stringResource(Res.string.listen_together_create_room),
-            subtitle = stringResource(Res.string.listen_together_create_room_desc),
+            subtitle = stringResource(Res.string.listen_together_create_room_description),
             icon = { SettingIcon(Res.drawable.people) },
             onClick = {},
         )
@@ -129,7 +129,7 @@ fun ListenTogetherMenu() {
 
         // ── Settings (the phone's 635-689): the phone's eight entries, its
         // default-state static subtitles ───────────────────────────────────
-        ListMenu.SectionTitle(stringResource(Res.string.settings))
+        ListMenu.SectionTitle(stringResource(Res.string.settings_title))
         ListMenu.Entry(
             text = stringResource(Res.string.listen_together_server_url),
             // The phone's `serverLabel` (its 252): the default server, its default state
@@ -146,31 +146,31 @@ fun ListenTogetherMenu() {
         )
         ListMenu.Entry(
             text = stringResource(Res.string.listen_together_auto_approval_joins),
-            subtitle = stringResource(Res.string.listen_together_auto_approval_joins_desc),
+            subtitle = stringResource(Res.string.listen_together_auto_approval_joins_description),
             icon = { SettingIcon(Res.drawable.checkmark) },
             onClick = {},
         )
         ListMenu.Entry(
             text = stringResource(Res.string.listen_together_auto_approval_suggestions),
-            subtitle = stringResource(Res.string.listen_together_auto_approval_suggestions_desc),
+            subtitle = stringResource(Res.string.listen_together_auto_approval_suggestions_description),
             icon = { SettingIcon(Res.drawable.musical_notes) },
             onClick = {},
         )
         ListMenu.Entry(
             text = stringResource(Res.string.listen_together_sync_volume),
-            subtitle = stringResource(Res.string.listen_together_sync_volume_desc),
+            subtitle = stringResource(Res.string.listen_together_sync_volume_description),
             icon = { SettingIcon(Res.drawable.volume_up) },
             onClick = {},
         )
         ListMenu.Entry(
             text = stringResource(Res.string.listen_together_history),
-            subtitle = stringResource(Res.string.listen_together_history_desc),
+            subtitle = stringResource(Res.string.listen_together_history_description),
             icon = { SettingIcon(Res.drawable.history) },
             onClick = {},
         )
         ListMenu.Entry(
             text = stringResource(Res.string.listen_together_view_logs),
-            subtitle = stringResource(Res.string.listen_together_view_logs_desc),
+            subtitle = stringResource(Res.string.listen_together_view_logs_description),
             icon = { SettingIcon(Res.drawable.bugs) },
             onClick = {},
         )

@@ -47,8 +47,8 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Density
@@ -57,8 +57,8 @@ import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.state.PlayerState
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
-import app.n_zik.compagnon.enums.ThumbnailCoverType
 import app.n_zik.compagnon.enums.SwipeAnimationNoThumbnail
+import app.n_zik.compagnon.enums.ThumbnailCoverType
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.thumbnailShape
 import app.n_zik.compagnon.utils.doubleShadowDrop
@@ -347,7 +347,7 @@ fun Thumbnail(
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(shape),
-                    contentDescription = stringResource(Res.string.cd_background_image),
+                    contentDescription = stringResource(Res.string.accessibility_background_image),
                     contentScale = ContentScale.Crop,
                 )
             }
@@ -418,7 +418,7 @@ private fun RotateThumbnailCover(
                     ThumbnailCoverType.CD, ThumbnailCoverType.CDwithCover -> Res.drawable.cd
                 },
             ),
-            contentDescription = stringResource(Res.string.cd_disc_background),
+            contentDescription = stringResource(Res.string.accessibility_disc_background),
         )
 
         if (type in listOf(ThumbnailCoverType.Vinyl, ThumbnailCoverType.CDwithCover)) {
@@ -436,7 +436,7 @@ private fun RotateThumbnailCover(
                     .align(Alignment.Center)
                     .clip(roundedShape),
                 painter = painter,
-                contentDescription = stringResource(Res.string.cd_song_album_cover),
+                contentDescription = stringResource(Res.string.accessibility_song_album_cover),
             )
         }
 

@@ -15,13 +15,13 @@ enum class AlbumSwipeAction(
     val iconId: DrawableResource,
     val textId: StringResource,
 ) {
-    NoAction(Res.drawable.close, Res.string.none),
+    NoAction(Res.drawable.close, Res.string.common_option_none),
 
-    PlayNext(Res.drawable.play_skip_forward, Res.string.play_next),
+    PlayNext(Res.drawable.play_skip_forward, Res.string.player_action_play_next),
 
-    Bookmark(Res.drawable.bookmark_outline, Res.string.bookmark),
+    Bookmark(Res.drawable.bookmark_outline, Res.string.library_action_bookmark),
 
-    Enqueue(Res.drawable.enqueue, Res.string.enqueue);
+    Enqueue(Res.drawable.enqueue, Res.string.player_action_enqueue);
 
     /** The phone's `getStateIcon(bookmarkedState)`, adapted to the PC's boolean state. */
     fun getStateIcon(bookmarkedState: Boolean): DrawableResource? = when (this) {

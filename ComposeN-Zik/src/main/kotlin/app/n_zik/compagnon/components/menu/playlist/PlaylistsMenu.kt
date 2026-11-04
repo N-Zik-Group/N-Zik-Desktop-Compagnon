@@ -20,9 +20,9 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalLibraryActions
+import app.n_zik.compagnon.bridge.library.PagedState
 import app.n_zik.compagnon.bridge.library.Playlist
 import app.n_zik.compagnon.bridge.library.PlaylistOrigin
-import app.n_zik.compagnon.bridge.library.PagedState
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.menu.ListMenu
@@ -97,7 +97,7 @@ fun PlaylistsMenu() {
                     .size(24.dp),
             )
             BasicText(
-                text = stringResource(Res.string.playlists),
+                text = stringResource(Res.string.library_playlists_title),
                 style = typography().m.semiBold,
                 modifier = Modifier.weight(1f).padding(start = 8.dp),
             )
@@ -114,12 +114,12 @@ fun PlaylistsMenu() {
         }
         if (pinnedPlaylists.isNotEmpty()) {
             // The phone's pinned section (its 230-242): its `pinned_playlists` title
-            ListMenu.SectionTitle(stringResource(Res.string.pinned_playlists))
+            ListMenu.SectionTitle(stringResource(Res.string.playlist_pinned_title))
             pinnedPlaylists.forEach { PlaylistCard(it) }
         }
         if (unpinnedPlaylists.isNotEmpty()) {
             // The phone's playlists section (its 244-256)
-            ListMenu.SectionTitle(stringResource(Res.string.playlists))
+            ListMenu.SectionTitle(stringResource(Res.string.library_playlists_title))
             unpinnedPlaylists.forEach { PlaylistCard(it) }
         }
     }
@@ -151,7 +151,7 @@ private fun PlaylistCard(playlist: Playlist) {
     ListMenu.Entry(
         text = playlist.name.substringAfter(PINNED_PREFIX, playlist.name),
         icon = { PlaylistSettingIcon() },
-        subtitle = "${playlist.trackCount} ${stringResource(Res.string.songs)}",
+        subtitle = "${playlist.trackCount} ${stringResource(Res.string.library_songs_title)}",
         // Spec #47: inert — the phone adds the song in its own database (its `onAdd`, 98-107), no
         // contract route
         onClick = {},

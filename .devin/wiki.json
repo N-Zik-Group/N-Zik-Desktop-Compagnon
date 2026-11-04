@@ -106,7 +106,7 @@
     },
     {
       "title": "Localization & Changelog Convention",
-      "purpose": "Crowdin (values/strings.xml English source, Crowdin-managed values-*/ translation files, the l10n sync flow) and the Done.txt changelog convention (assets/notes/Changelog_Template.txt: entry format, sections, commit types)"
+      "purpose": "Crowdin (localization/source/ English catalogs aligned with the Mobile themes, Crowdin-managed localization/translations/<locale>/ catalogs, Gradle's generated combinedComposeResources, and stable resource keys shared with the phone through Bridge) and the Done.txt changelog convention (assets/notes/Changelog_Template.txt: entry format, sections, commit types)"
     }
   ]
 }

@@ -1,10 +1,9 @@
 package app.n_zik.compagnon.components.ui.screens.bridge
 
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
@@ -14,16 +13,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.pairing.PairingError
 import app.n_zik.compagnon.bridge.state.CommandKind
 import app.n_zik.compagnon.bridge.state.PlayerNotice
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.utils.StringResourceIdentity
+import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.formatMessage
 import app.n_zik.compagnon.utils.formatText
-import app.n_zik.compagnon.utils.Toaster
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
@@ -43,11 +44,7 @@ fun pairingErrorText(error: PairingError): String = when (error) {
     )
 }
 
-/**
- * An inline message, as the phone's pairing card shows its result line (`BridgePairingCards.kt` 203-212): `xs`
- * text, centred, in the palette's red for an error ([isError]) or in the text colour otherwise. [onDismiss]
- * adds a "Dismiss" [PairingButton] under it (`background2` / text, the phone's secondary buttons).
- */
+/** Phone pairing-card result line (`BridgePairingCards.kt`), with an optional desktop dismiss action. */
 @Composable
 fun MessageBanner(text: String, isError: Boolean, modifier: Modifier = Modifier, onDismiss: (() -> Unit)? = null) {
     val palette = colorPalette()
@@ -78,11 +75,7 @@ fun ErrorBanner(error: PairingError?, onDismiss: (() -> Unit)? = null, modifier:
     if (error != null) MessageBanner(pairingErrorText(error), isError = true, modifier = modifier, onDismiss = onDismiss)
 }
 
-/**
- * Outlined text field aligned on the phone's (`AccountsSettings.kt` 1989-2002): single line, full width, the
- * hint as a placeholder in `s` `textSecondary`, text in `text`, cursor and focused border in `accent`,
- * unfocused border in `textSecondary`. PC only: the error line under it (`xxs` red) and the red error border.
- */
+/** Phone `AccountsSettings.kt` field styling, with desktop validation text below the field. */
 @Composable
 fun NZikTextField(
     value: String,
@@ -124,10 +117,7 @@ fun NZikTextField(
     }
 }
 
-/**
- * Name of a command in a notice (Compagnon only: the phone runs its commands itself and has no such text).
- * Next to [pairingErrorText], the other bridge texts decided from a contract `code`.
- */
+/** Desktop command label for notices decided from the phone's contract code. */
 suspend fun commandName(command: CommandKind?): String = getString(
     when (command) {
         CommandKind.Play -> Res.string.command_play
@@ -145,7 +135,7 @@ suspend fun commandName(command: CommandKind?): String = getString(
         CommandKind.QueuePlay -> Res.string.command_queue_play
         CommandKind.QueueAdd -> Res.string.command_queue_add
         CommandKind.Output -> Res.string.command_output
-        CommandKind.QueueList -> Res.string.command_queue_play
+        CommandKind.QueueList -> Res.string.command_queue_list
         null -> Res.string.command_unknown
     },
 )
@@ -172,17 +162,9 @@ suspend fun noticeText(notice: PlayerNotice): String {
     }
 }
 
-/**
- * Contract limit (NOT LINKED): §7.9 carries no duration nor custom icon, so a relayed toast is always shown
- * short with its type's icon (the phone's `LENGTH_LONG` / custom-icon toasts lose those).
- *
- * Text of a relayed phone toast (contract §7.9, since 1.10.0): the PC's own string of the phone's
- * [key] (same resource names), formatted with [args] — numeric ones as numbers, the phone's `%d` —
- * else the [message] the phone showed (its language). A format that does not apply falls back to
- * [message] too.
- */
+/** Localizes historical or current phone toast keys, keeping the phone text as the format fallback. */
 suspend fun phoneToastText(key: String, args: List<String>, message: String): String {
-    val resource = Res.allStringResources[key] ?: return message
+    val resource = Res.allStringResources[StringResourceIdentity.localName(key)] ?: return message
     val raw = getString(resource)
     val formatted = formatText(raw, *args.map<String, Any> { it.toLongOrNull() ?: it }.toTypedArray())
     return if (args.isNotEmpty() && formatted == raw) message.ifEmpty { raw } else formatted

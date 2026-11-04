@@ -1,11 +1,5 @@
 package app.n_zik.compagnon.components.items
 
-import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.painterResource
-import app.n_zik.compagnon.generated.resources.*
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.material3.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -20,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,29 +22,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.library.PlaylistOrigin
 import app.n_zik.compagnon.bridge.state.Track
-import app.n_zik.compagnon.components.themed.HeaderIconButton
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.theme.onOverlay
 import app.n_zik.compagnon.components.theme.overlay
-import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.themed.HeaderIconButton
+import app.n_zik.compagnon.core.coil.ImageCacheFactory
+import app.n_zik.compagnon.core.network.ArtworkKey
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.thumbnailShape
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.UserSettings
+import app.n_zik.compagnon.utils.color
 import app.n_zik.compagnon.utils.medium
 import app.n_zik.compagnon.utils.secondary
 import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.typography
-import app.n_zik.compagnon.uiRoundnessShape
-import app.n_zik.compagnon.core.coil.ImageCacheFactory
-import app.n_zik.compagnon.core.network.ArtworkKey
-import app.n_zik.compagnon.thumbnailShape
-import app.n_zik.compagnon.utils.color
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 /*
  * Port of the phone's `app/it/fast4x/rimusic/ui/items/PlaylistItem.kt`.
@@ -200,7 +200,7 @@ fun PlaylistItem(
                         }
                         Icon(
                             painter = painterResource(painter),
-                            contentDescription = stringResource(Res.string.cd_origin_indicator),
+                            contentDescription = stringResource(Res.string.accessibility_origin_indicator),
                             tint = tint,
                             modifier = Modifier.size(40.dp).padding(all = 5.dp),
                         )
@@ -232,7 +232,7 @@ fun PlaylistItem(
                         Image(
                             painter = painterResource(Res.drawable.locked),
                             colorFilter = ColorFilter.tint(Color.Red),
-                            contentDescription = stringResource(Res.string.cd_background_image),
+                            contentDescription = stringResource(Res.string.accessibility_background_image),
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .padding(all = 5.dp)

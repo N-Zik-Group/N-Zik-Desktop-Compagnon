@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Accessibility -->
+    <string name="accessibility_app_icon">Ikona aplikacji</string>
+    <string name="accessibility_app_icon_in_player">ikona aplikacji w odtwarzaczu</string>
+    <string name="accessibility_background_image">Obraz tła</string>
+    <string name="accessibility_blurred_background">niewyraźne tło</string>
+    <string name="accessibility_disc_background">tło dysku</string>
+    <string name="accessibility_number_of_songs_in_queue">Liczba utworów w kolejce</string>
+    <string name="accessibility_origin_indicator">wskaźnik pochodzenia</string>
+    <string name="accessibility_song_album_cover">okładka albumu piosenki</string>
+</resources>

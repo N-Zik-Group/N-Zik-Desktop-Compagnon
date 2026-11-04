@@ -39,7 +39,7 @@ fun HomeSyncBanner(
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             BasicText(
-                text = formatText(stringResource(Res.string.syncing_item), currentName),
+                text = formatText(stringResource(Res.string.library_sync_current_item_format), currentName),
                 style = typography().xxs.semiBold.copy(color = colorPalette().textSecondary),
                 maxLines = 1,
                 modifier = Modifier
@@ -49,12 +49,12 @@ fun HomeSyncBanner(
             )
             Row {
                 BasicText(
-                    text = formatText(stringResource(Res.string.syncing_progress), currentIndex, total),
+                    text = formatText(stringResource(Res.string.library_sync_progress_format), currentIndex, total),
                     style = typography().xxs.semiBold.copy(color = colorPalette().textSecondary),
                 )
                 if (failed > 0) {
                     BasicText(
-                        text = " " + stringResource(Res.string.syncing_failed),
+                        text = " " + formatText(stringResource(Res.string.library_sync_failed_count_suffix), failed),
                         style = typography().xxs.semiBold.copy(color = colorPalette().red),
                     )
                 }

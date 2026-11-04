@@ -1,6 +1,5 @@
 package app.n_zik.compagnon.components.player.timeline
 
-import app.n_zik.compagnon.bridge.state.LocalUiSettings
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -30,6 +29,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.LocalCommandLauncher
+import app.n_zik.compagnon.bridge.state.LocalUiSettings
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.player.durationOutlineColorOf
 import app.n_zik.compagnon.components.theme.favoritesIcon
@@ -163,8 +163,8 @@ fun DurationIndicator(
         val showSkipTimeButtons = LocalUiSettings.current.showSkipTimeButtons
         if (showSkipTimeButtons) {
             SkipTimeButton(
-                seekBasePosition, Long::minus, ::maxOf, 0, stringResource(Res.string.rewind), stringResource(Res.string.rewind_5_seconds),
-                stringResource(Res.string.rewind_30_seconds), live, Modifier.rotate(180f), onSeekIssued = onSeekIssued,
+                seekBasePosition, Long::minus, ::maxOf, 0, stringResource(Res.string.rewind_title), stringResource(Res.string.player_seek_backward_five_seconds),
+                stringResource(Res.string.player_seek_backward_thirty_seconds), live, Modifier.rotate(180f), onSeekIssued = onSeekIssued,
             )
 
             Spacer(Modifier.width(5.dp))
@@ -209,8 +209,8 @@ fun DurationIndicator(
 
             SkipTimeButton(
                 // An unknown duration (`TIME_UNSET`, negative): the forward target is negative and nothing is sent (skipTarget)
-                seekBasePosition, Long::plus, ::minOf, duration, stringResource(Res.string.forward), stringResource(Res.string.forward_5_seconds),
-                stringResource(Res.string.forward_30_seconds), live, onSeekIssued = onSeekIssued,
+                seekBasePosition, Long::plus, ::minOf, duration, stringResource(Res.string.player_action_seek_forward), stringResource(Res.string.player_action_seek_forward_5_seconds),
+                stringResource(Res.string.player_action_seek_forward_30_seconds), live, onSeekIssued = onSeekIssued,
             )
         }
     }

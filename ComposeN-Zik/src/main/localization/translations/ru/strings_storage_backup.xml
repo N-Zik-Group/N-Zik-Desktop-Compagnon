@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_action_export">Export backup</string>
+    <string name="backup_action_import_legacy_migration">Импортировать файл миграции.</string>
+    <string name="backup_auto_interval">Auto Backup Interval</string>
+    <string name="backup_auto_interval_none">Отключено</string>
+    <string name="backup_auto_location">Auto Backup Location</string>
+    <string name="backup_auto_location_not_set">Not set</string>
+    <string name="backup_auto_max_backups">Max Backups to Keep</string>
+    <string name="backup_auto_target">Backup Target</string>
+    <string name="backup_auto_title">Automatic Backup</string>
+    <string name="backup_export_description">Export database or settings to a file</string>
+    <string name="backup_import_description">Import database or settings from a file</string>
+    <string name="backup_import_failed">Import failed</string>
+    <string name="backup_legacy_migration_description">For old users before conversion.\nUse old app to make a backup for migration.</string>
+    <string name="backup_target_database_label">Данные</string>
+    <string name="cached_pc">Cached PC</string>
+    <string name="download_pc">Download PC</string>
+    <string name="downloads_action_download_all">Скачать все песни</string>
+    <string name="downloads_action_refresh_quality">Update downloads</string>
+    <string name="downloads_action_remove_all">Удалить все скачанные песни</string>
+    <string name="downloads_cancelled">Загрузка отменена</string>
+    <string name="downloads_delete_all_confirmation">Вы действительно хотите удалить загрузку?</string>
+    <string name="downloads_download_all_confirmation">Вы действительно хотите загрузить все?</string>
+    <string name="downloads_quality_format">Download Quality</string>
+    <string name="downloads_refresh_quality_description">Re-download the songs that were downloaded with a different quality</string>
+    <string name="downloads_title">Загрузить</string>
+    <string name="export_cached_song_action">Export cached or downloaded song</string>
+    <string name="export_cached_songs_action">Export cached</string>
+    <string name="import_backup">Import backup</string>
+    <string name="library_cleanup_title">Умная корзина</string>
+    <string name="title_backup_and_restore">Резервное копирование и восстановление</string>
+</resources>

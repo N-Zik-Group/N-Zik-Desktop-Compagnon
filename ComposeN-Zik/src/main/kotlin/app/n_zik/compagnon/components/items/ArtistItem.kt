@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,16 +27,16 @@ import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.artistThumbnailShape
 import app.n_zik.compagnon.bridge.library.Artist
 import app.n_zik.compagnon.bridge.library.PlaylistOrigin
-import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.utils.LocalPreferences
-import app.n_zik.compagnon.utils.UserSettings
-import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.themed.HeaderIconButton
 import app.n_zik.compagnon.core.coil.ImageCacheFactory
 import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.UserSettings
+import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -93,7 +93,7 @@ fun ArtistItem(
                     Image(
                         painter = painterResource(Res.drawable.ytmusic),
                         colorFilter = ColorFilter.tint(Color.Red.copy(alpha = 0.75f).compositeOver(Color.White)),
-                        contentDescription = stringResource(Res.string.cd_background_image),
+                        contentDescription = stringResource(Res.string.accessibility_background_image),
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
                             .size(40.dp)

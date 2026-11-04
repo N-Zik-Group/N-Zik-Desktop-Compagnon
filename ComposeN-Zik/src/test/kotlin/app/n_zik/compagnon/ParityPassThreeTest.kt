@@ -134,20 +134,34 @@ class ParityPassThreeTest {
 
     @Test
     fun `a relayed toast uses the PC string of its key, numbers formatted, else the phone's text`() = runTest {
-        // `getString` resolves through the JVM locale, and Crowdin now ships locale copies (the French
-        // `songs_shuffled` reads "12 titres en lecture aléatoire" on a French host): pin English for the
-
-        // exact-text assertion, whatever the host's language.
+        // Pin the host locale because generated Crowdin catalogs are available at runtime.
         AppLanguage.applyTag("en")
         val texts = withContext(Dispatchers.Default) {
             withTimeoutOrNull(5_000) {
                 listOf(
                     phoneToastText("songs_shuffled", listOf("12"), "12 morceaux mélangés"),
+                    phoneToastText("player_shuffled_song_count_format", listOf("12"), "12 morceaux mélangés"),
+                    phoneToastText("songs_shuffled", listOf("invalid"), "Texte du téléphone"),
+                    phoneToastText("player_shuffled_song_count_format", listOf("invalid"), "Texte du téléphone"),
+                    phoneToastText("songs_shuffled", listOf("invalid"), ""),
                     phoneToastText("unknown_key_xyz", emptyList(), "Texte du téléphone"),
                 )
             }
         }
-        assertEquals(listOf("12 songs shuffled", "Texte du téléphone"), texts)
+        assertEquals(
+            listOf("12 songs shuffled", "12 songs shuffled", "Texte du téléphone", "Texte du téléphone", "%d songs shuffled", "Texte du téléphone"),
+            texts,
+        )
+    }
+
+    @Test
+    fun `historical and local toast keys use the desktop language`() = runTest {
+        AppLanguage.applyTag("fr")
+        assertEquals("12 titres en lecture aléatoire", phoneToastText("songs_shuffled", listOf("12"), "Phone fallback"))
+        assertEquals(
+            phoneToastText("songs_shuffled", listOf("12"), "Phone fallback"),
+            phoneToastText("player_shuffled_song_count_format", listOf("12"), "Phone fallback"),
+        )
     }
 
     // Row 18: the palette from the phone's settings

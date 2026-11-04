@@ -11,10 +11,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Text
@@ -26,6 +26,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.AppInfo
 import app.n_zik.compagnon.AppearanceState
@@ -36,22 +37,21 @@ import app.n_zik.compagnon.bridge.pairing.PairedStatus
 import app.n_zik.compagnon.bridge.pairing.PairingController
 import app.n_zik.compagnon.bridge.pairing.PairingState
 import app.n_zik.compagnon.bridge.state.PlayerRepository
+import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.settings.SettingsDescription
+import app.n_zik.compagnon.components.themed.HeaderWithIcon
+import app.n_zik.compagnon.enums.PairingMode
+import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.playback.cache.AudioCache
 import app.n_zik.compagnon.playback.services.LocalPlayback
 import app.n_zik.compagnon.playback.vlc.AudioEngine
 import app.n_zik.compagnon.playback.vlc.VlcAudioEngine
 import app.n_zik.compagnon.playback.vlc.VlcRuntime
+import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import java.util.logging.Logger
 import kotlinx.coroutines.CoroutineScope
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.typography
-import app.n_zik.compagnon.enums.PairingMode
-import app.n_zik.compagnon.components.settings.SettingsDescription
-import app.n_zik.compagnon.components.themed.HeaderWithIcon
-import app.n_zik.compagnon.generated.resources.*
-import androidx.compose.ui.text.style.TextAlign
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -164,7 +164,7 @@ private fun screenKey(state: PairingState): String = when (state) {
 @Composable
 private fun Screen(state: PairingState, controller: PairingController) {
     when (state) {
-        PairingState.Starting -> Progress(stringResource(Res.string.starting))
+        PairingState.Starting -> Progress(stringResource(Res.string.updates_starting_status))
         is PairingState.Validating -> Progress(stringResource(Res.string.validating))
         is PairingState.Unpaired -> when (state.mode) {
             PairingMode.Qr -> PairPcCard(

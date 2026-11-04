@@ -7,6 +7,6 @@ import org.jetbrains.compose.resources.StringResource
 enum class NavigationBarType(
     val textId: StringResource,
 ) {
-    IconAndText(Res.string.icon_and_text),
-    IconOnly(Res.string.only_icon),
+    IconAndText(Res.string.navigation_style_icon_and_text_label),
+    IconOnly(Res.string.navigation_style_icon_only_label),
 }

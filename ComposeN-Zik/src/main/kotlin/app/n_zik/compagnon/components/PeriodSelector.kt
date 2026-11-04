@@ -9,13 +9,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.library.TopPeriod
-import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.bridge.state.LocalUiSettings
+import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.tab.toolbar.Descriptive
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.formatText
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
@@ -37,13 +37,13 @@ val TopPeriod.iconId: DrawableResource
 /** The label of one `TopPeriod` (the phone's `StatisticsType` texts). */
 val TopPeriod.labelId: StringResource
     get() = when (this) {
-        TopPeriod.Today -> Res.string.today
-        TopPeriod.Week -> Res.string._1_week
-        TopPeriod.Month -> Res.string._1_month
-        TopPeriod.ThreeMonths -> Res.string._3_month
-        TopPeriod.SixMonths -> Res.string._6_month
-        TopPeriod.Year -> Res.string._1_year
-        TopPeriod.AllTime -> Res.string.all
+        TopPeriod.Today -> Res.string.calendar_today
+        TopPeriod.Week -> Res.string.calendar_period_one_week
+        TopPeriod.Month -> Res.string.calendar_period_one_month
+        TopPeriod.ThreeMonths -> Res.string.calendar_period_three_months
+        TopPeriod.SixMonths -> Res.string.calendar_period_six_months
+        TopPeriod.Year -> Res.string.calendar_period_one_year
+        TopPeriod.AllTime -> Res.string.common_option_all
     }
 
 /**
@@ -68,7 +68,7 @@ class PeriodSelector(
     override val iconId: DrawableResource = period?.iconId ?: Res.drawable.calendar_clear
 
     /** The phone's button title and `Descriptive` message (`PeriodSelector.kt` 72): `statistics`. */
-    override val messageId: StringResource = Res.string.statistics
+    override val messageId: StringResource = Res.string.statistics_title
     override val menuIconTitle: String
         @Composable
         get() = stringResource(messageId)
@@ -81,8 +81,8 @@ class PeriodSelector(
     @Composable
     private fun menuTitle(): String {
         val topN = LocalUiSettings.current.topN
-        val label = topN?.toString() ?: stringResource(Res.string.max_items_unlimited)
-        return formatText(stringResource(Res.string.header_view_top_of), label)
+        val label = topN?.toString() ?: stringResource(Res.string.statistics_items_limit_unlimited)
+        return formatText(stringResource(Res.string.statistics_top_period_title), label)
     }
 
     override fun onShortClick() = openMenu()

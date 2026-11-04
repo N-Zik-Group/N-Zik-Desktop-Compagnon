@@ -41,7 +41,7 @@ class InertMenuItem(
 /**
  * Port of `String?.splitArtistNames` (phone's `app/it/fast4x/rimusic/utils/Utils.kt` 195-211): split on
  * `&`, `,` and the localized [conjunctions] — the phone's `ArtistConjunctions`, its `R.string.and`
- * (`MainApplication.kt` 214), read by the caller from `Res.string.and` — matched as whole words,
+ * (`MainApplication.kt` 214), read by the caller from `Res.string.common_artist_conjunction_and` — matched as whole words,
  * case-insensitively ("and" inside "Grand" never splits).
  */
 internal fun splitArtistNames(artists: String?, conjunctions: List<String> = emptyList()): List<String> {

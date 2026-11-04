@@ -1,7 +1,5 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
-import app.n_zik.compagnon.bridge.library.toListRef
-import app.n_zik.compagnon.bridge.state.ListRef
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
@@ -13,17 +11,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,15 +30,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.library.LibraryCache
 import app.n_zik.compagnon.bridge.library.SongFilter
 import app.n_zik.compagnon.bridge.library.SongSort
 import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.library.TopPeriod
+import app.n_zik.compagnon.bridge.library.toListRef
+import app.n_zik.compagnon.bridge.state.ListRef
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.unmatched
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.ButtonsRow
 import app.n_zik.compagnon.components.LocalMenuState
 import app.n_zik.compagnon.components.PeriodSelector
@@ -49,10 +50,8 @@ import app.n_zik.compagnon.components.Sort
 import app.n_zik.compagnon.components.SortOption
 import app.n_zik.compagnon.components.baseRotation
 import app.n_zik.compagnon.components.legacySongSortOptions
-import app.n_zik.compagnon.components.songSortOptions
-import app.n_zik.compagnon.enums.PlaylistSwipeAction
-import app.n_zik.compagnon.enums.onDeviceSongSortOptions
 import app.n_zik.compagnon.components.navigation.header.TabToolBar
+import app.n_zik.compagnon.components.songSortOptions
 import app.n_zik.compagnon.components.tab.Locator
 import app.n_zik.compagnon.components.tab.PositionLock
 import app.n_zik.compagnon.components.tab.Refresh
@@ -62,25 +61,26 @@ import app.n_zik.compagnon.components.tab.TabHeader
 import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
-import app.n_zik.compagnon.utils.formatShortFileSize
-import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.themed.CacheSpaceIndicator
 import app.n_zik.compagnon.components.themed.Enqueue
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
 import app.n_zik.compagnon.components.themed.HeaderInfo
 import app.n_zik.compagnon.components.themed.MultiFloatingActionsContainer
 import app.n_zik.compagnon.components.themed.PlayNext
+import app.n_zik.compagnon.enums.PlaylistSwipeAction
+import app.n_zik.compagnon.enums.onDeviceSongSortOptions
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.utils.ChipSort
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.color
+import app.n_zik.compagnon.utils.formatShortFileSize
 import app.n_zik.compagnon.utils.semiBold
-import app.n_zik.compagnon.typography
-import org.jetbrains.compose.resources.painterResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -324,7 +324,7 @@ fun HomeSongsScreen(
                 "position_lock" -> if (chipSort.songSort == SongSort.Custom) {
                     add(positionLock)
                 }
-                "match" -> if (hasUnmatched) add(InertButton(Res.drawable.alert, Res.string.match_album_audio_version))
+                "match" -> if (hasUnmatched) add(InertButton(Res.drawable.alert, Res.string.song_matching_action_open))
                 // The phone's "Auto Sync Liked Songs" (its `HomeSongsScreen.kt` 553, icon `sync`):
                 // the phone shows it on its Liked chip only while its YouTube sync is enabled —
 
@@ -334,36 +334,36 @@ fun HomeSongsScreen(
                 }
                 "search" -> add(search)
                 "locator" -> add(locator)
-                "download_all" -> add(InertButton(Res.drawable.downloaded, Res.string.download, descriptionId = Res.string.info_download_all_songs))
-                "delete_downloads" -> add(InertButton(Res.drawable.download, Res.string.info_remove_all_downloaded_songs))
+                "download_all" -> add(InertButton(Res.drawable.downloaded, Res.string.downloads_title, descriptionId = Res.string.downloads_action_download_all))
+                "delete_downloads" -> add(InertButton(Res.drawable.download, Res.string.downloads_action_remove_all))
                 "shuffle" -> if (actions.available) {
                     add(SongShuffler(enabled = playbackEnabled) { activeList.state.value.let { items -> actions.playShuffled(items.items, items.total ?: items.items.size, activeListRef()) } })
                 } else {
-                    add(InertButton(Res.drawable.shuffle, Res.string.shuffle, descriptionId = Res.string.info_shuffle))
+                    add(InertButton(Res.drawable.shuffle, Res.string.player_action_shuffle, descriptionId = Res.string.player_action_shuffle_hint))
                 }
-                "smart_shuffle" -> add(InertButton(Res.drawable.smart_shuffle, Res.string.info_smart_recommendation))
+                "smart_shuffle" -> add(InertButton(Res.drawable.smart_shuffle, Res.string.recommendations_action_smart_shuffle))
                 "item_selector" -> add(itemSelector)
                 "play_next" -> if (actions.available) {
                     add(PlayNext(enabled = playbackEnabled) { activeList.state.value.let { items -> actions.addAll(items.items, QueuePosition.Next, items.total ?: items.items.size, activeListRef()) } })
                 } else {
-                    add(InertButton(Res.drawable.play_skip_forward, Res.string.play_next))
+                    add(InertButton(Res.drawable.play_skip_forward, Res.string.player_action_play_next))
                 }
                 "enqueue" -> if (actions.available) {
                     add(Enqueue(enabled = playbackEnabled) { activeList.state.value.let { items -> actions.addAll(items.items, QueuePosition.End, items.total ?: items.items.size, activeListRef()) } })
                 } else {
-                    add(InertButton(Res.drawable.enqueue, Res.string.enqueue))
+                    add(InertButton(Res.drawable.enqueue, Res.string.player_action_enqueue))
                 }
-                "add_to_favorite" -> add(InertButton(Res.drawable.heart, Res.string.add_to_favorites))
-                "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.add_to_playlist))
-                "import_menu" -> add(InertButton(Res.drawable.import_outline, Res.string.import_playlist))
-                "export_dialog" -> add(InertButton(Res.drawable.export_outline, Res.string.export_playlist))
+                "add_to_favorite" -> add(InertButton(Res.drawable.heart, Res.string.library_favorites_action_add))
+                "add_to_playlist" -> add(InertButton(Res.drawable.add_in_playlist, Res.string.playlist_action_add))
+                "import_menu" -> add(InertButton(Res.drawable.import_outline, Res.string.playlist_action_import))
+                "export_dialog" -> add(InertButton(Res.drawable.export_outline, Res.string.playlist_action_export))
                 // Since 1.7.2 (feature `library.ffmpeg`): shown only when the phone's build ships FFmpeg,
                 // as on the phone (its `HomeSongsScreen.kt` 555)
                 "export_cache" -> if (SessionContract.FEATURE_LIBRARY_FFMPEG in lists.features) {
-                    add(InertButton(Res.drawable.export_outline, Res.string.export_cached))
+                    add(InertButton(Res.drawable.export_outline, Res.string.export_cached_songs_action))
                 }
-                "update" -> add(InertButton(Res.drawable.refresh, Res.string.update))
-                "smart_trash" -> add(InertButton(Res.drawable.trash, Res.string.smart_trash))
+                "update" -> add(InertButton(Res.drawable.refresh, Res.string.common_action_update))
+                "smart_trash" -> add(InertButton(Res.drawable.trash, Res.string.library_cleanup_title))
             }
         }
         add(Refresh(lists::reloadActiveSongs))
@@ -386,7 +386,7 @@ fun HomeSongsScreen(
             header = { titleOffsetState, titleHeightState ->
                 Column {
                     CollapsibleTitleRow(titleOffsetState, titleHeightState) {
-                        TabHeader(stringResource(Res.string.songs)) {
+                        TabHeader(stringResource(Res.string.library_songs_title)) {
                             // The phone's live count (its `itemsOnDisplayState.size`): the wire's `total` is
                             // the post-search count while a search is active, as on the phone
                             Column {
@@ -540,15 +540,15 @@ private fun RecommendationCounter(count: Int) {
 
 /** The phone's `BuiltInPlaylist` label of the [chip]. */
 private fun chipLabel(chip: SongsChip): StringResource = when (chip) {
-    SongsChip.All -> Res.string.all
-    SongsChip.Liked -> Res.string.favorites
-    SongsChip.Disliked -> Res.string.disliked
+    SongsChip.All -> Res.string.common_option_all
+    SongsChip.Liked -> Res.string.library_favorites_title
+    SongsChip.Disliked -> Res.string.library_disliked_title
     SongsChip.Top -> Res.string.playlist_top
-    SongsChip.DownloadTel -> Res.string.downloaded
+    SongsChip.DownloadTel -> Res.string.library_downloaded_title
     SongsChip.DownloadPc -> Res.string.download_pc
-    SongsChip.CachedTel -> Res.string.cached
+    SongsChip.CachedTel -> Res.string.library_cached_title
     SongsChip.CachedPc -> Res.string.cached_pc
-    SongsChip.OnDevice -> Res.string.on_device
+    SongsChip.OnDevice -> Res.string.library_on_device_title
 }
 
 /** The phone's default order of its Songs toolbar (`HomeSongsToolbarSettingsDialog.allButtonIds`). */
@@ -616,9 +616,9 @@ internal fun isPhoneCacheDisabled(maxBytes: Long?): Boolean = maxBytes == PHONE_
 
 /**
  * The label of the phone's cache cap from its `maxBytes` (spec `spec-remove-ui-sync`):
- * [Res.string.turn_off] — the string resource behind the phone's `ExoPlayerDiskCacheMaxSize.Disabled.text`
+ * [Res.string.common_action_turn_off] — the string resource behind the phone's `ExoPlayerDiskCacheMaxSize.Disabled.text`
  * — while the cap is the [PHONE_CACHE_DISABLED_MAX_BYTES] sentinel, `null` otherwise (the caller
  * formats the bytes). `null` (the phone's `Unlimited`) hides the bar before the label.
  */
 internal fun phoneCacheCapLabelId(maxBytes: Long?): StringResource? =
-    if (isPhoneCacheDisabled(maxBytes)) Res.string.turn_off else null
+    if (isPhoneCacheDisabled(maxBytes)) Res.string.common_action_turn_off else null

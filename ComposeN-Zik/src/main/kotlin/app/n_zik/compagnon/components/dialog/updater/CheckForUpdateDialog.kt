@@ -1,9 +1,9 @@
 package app.n_zik.compagnon.components.dialog.updater
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -99,20 +99,20 @@ object CheckForUpdateDialog {
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         BasicText(
-                            text = stringResource(Res.string.check_at_github_for_updates),
+                            text = stringResource(Res.string.updates_check_permission_message),
                             style = typography().l.bold.copy(color = colorPalette.text),
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         BasicText(
-                            text = stringResource(Res.string.when_an_update_is_available_you_will_be_asked_if_you_want_to_install_info),
+                            text = stringResource(Res.string.updates_check_permission_description),
                             style = typography().xs.copy(color = colorPalette.textSecondary),
                         )
                         BasicText(
-                            text = stringResource(Res.string.but_these_updates_would_not_go_through),
+                            text = stringResource(Res.string.updates_check_permission_screening_note),
                             style = typography().xs.copy(color = colorPalette.textSecondary),
                         )
                         BasicText(
-                            text = stringResource(Res.string.you_can_still_turn_it_on_or_off_from_the_settings),
+                            text = stringResource(Res.string.updates_check_permission_settings_note),
                             style = typography().xs.copy(color = colorPalette.textSecondary),
                         )
                     }
@@ -132,7 +132,7 @@ object CheckForUpdateDialog {
                     ButtonRow(
                         buttons = listOf(
                             DialogButton(
-                                text = stringResource(Res.string.check_update),
+                                text = stringResource(Res.string.updates_action_check),
                                 icon = Res.drawable.update,
                                 onClick = {
                                     onDismiss()
@@ -180,7 +180,7 @@ object CheckForUpdateDialog {
                     ButtonRow(
                         buttons = listOf(
                             DialogButton(
-                                text = stringResource(Res.string.turn_off),
+                                text = stringResource(Res.string.common_action_turn_off),
                                 icon = Res.drawable.close,
                                 onClick = {
                                     Updater.setCheckUpdateState(CheckUpdateState.Off)

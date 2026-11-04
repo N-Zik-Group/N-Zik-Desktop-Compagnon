@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Calendar -->
+    <string name="calendar_period_one_month">1 maand</string>
+    <string name="calendar_period_one_week">1 week</string>
+    <string name="calendar_period_one_year">1 jaar</string>
+    <string name="calendar_period_six_months">6 maanden</string>
+    <string name="calendar_period_three_months">3 maanden</string>
+    <string name="calendar_today">Vandaag</string>
+    <!-- Rewind -->
+    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_year">Jaar</string>
+    <!-- Statistics -->
+    <string name="statistics_items_limit_unlimited">Onbeperkt</string>
+    <string name="statistics_title">Statistieken</string>
+    <string name="statistics_top_period_title">Top %s van …</string>
+</resources>

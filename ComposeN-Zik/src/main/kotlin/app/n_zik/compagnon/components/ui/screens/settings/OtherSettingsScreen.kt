@@ -1,16 +1,5 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.components.settings.OtherSettingsEntry
-import app.n_zik.compagnon.components.settings.SettingsDescription
-import app.n_zik.compagnon.components.settings.SettingsInfoEntry
-import app.n_zik.compagnon.components.settings.SettingsSectionCard
-import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
-import app.n_zik.compagnon.components.tab.Search
-import app.n_zik.compagnon.components.themed.HeaderWithIcon
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.utils.Preferences
-import app.n_zik.compagnon.utils.Toaster
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -24,6 +13,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.settings.OtherSettingsEntry
+import app.n_zik.compagnon.components.settings.SettingsDescription
+import app.n_zik.compagnon.components.settings.SettingsInfoEntry
+import app.n_zik.compagnon.components.settings.SettingsSectionCard
+import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
+import app.n_zik.compagnon.components.tab.Search
+import app.n_zik.compagnon.components.themed.HeaderWithIcon
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.utils.Toaster
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -53,7 +53,7 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
     val proxyCtx = settingsSearchCtx(
         search.inputValue,
         stringResource(Res.string.proxy),
-        stringResource(Res.string.enable_proxy),
+        stringResource(Res.string.settings_proxy_enabled_label),
     )
     val parentalControlCtx = settingsSearchCtx(
         search.inputValue,
@@ -61,14 +61,14 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
     )
     val maintenanceCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.maintenance),
+        stringResource(Res.string.maintenance_title),
         stringResource(Res.string.maintenance_dedup),
         stringResource(Res.string.maintenance_convergence),
         stringResource(Res.string.maintenance_db_cleanup),
         stringResource(Res.string.maintenance_live_subsystems),
         stringResource(Res.string.maintenance_open),
-        stringResource(Res.string.enable_log_debug),
-        stringResource(Res.string.export_logs),
+        stringResource(Res.string.maintenance_debug_logging_title),
+        stringResource(Res.string.logs_action_export),
     )
     val settingsResetCtx = settingsSearchCtx(search.inputValue, stringResource(Res.string.settings_reset))
 
@@ -80,7 +80,7 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
             .verticalScroll(rememberScrollState()),
     ) {
         HeaderWithIcon(
-            title = stringResource(Res.string.tab_miscellaneous),
+            title = stringResource(Res.string.settings_miscellaneous_title),
             iconId = Res.drawable.equalizer,
             enabled = false,
             showIcon = true,
@@ -89,7 +89,7 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
         )
 
         SettingsDescription(
-            text = stringResource(Res.string.other_settings_description),
+            text = stringResource(Res.string.settings_miscellaneous_page_description),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
@@ -146,14 +146,14 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
                 icon = Res.drawable.network,
                 content = {
                     // The phone's "restart required" note (OS:451), at its phone's place
-                    SettingsDescription(text = stringResource(Res.string.restarting_rimusic_is_required))
+                    SettingsDescription(text = stringResource(Res.string.settings_restart_required_message))
 
                     // "Enable proxy" (OS:455, the phone's `isProxyEnabledKey`, off by default) —
                     // INERT: the default switch state, a click has no effect. The phone's row
 
                     // shows no description → no toast
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.enable_proxy),
+                        title = stringResource(Res.string.settings_proxy_enabled_label),
                         text = "",
                         icon = Res.drawable.server,
                         isChecked = false,
@@ -190,12 +190,12 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
                     // click toasts the phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.parental_control),
-                        text = stringResource(Res.string.info_prevent_play_songs_with_age_limitation),
+                        text = stringResource(Res.string.settings_parental_age_restriction_description),
                         icon = Res.drawable.parental_control,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.info_prevent_play_songs_with_age_limitation) },
+                        onLongClick = { Toaster.i(Res.string.settings_parental_age_restriction_description) },
                     )
                 },
             )
@@ -207,7 +207,7 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
             enter = fadeIn(animationSpec = tween(800)) + scaleIn(animationSpec = tween(800), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.maintenance),
+                title = stringResource(Res.string.maintenance_title),
                 icon = Res.drawable.shield_checkmark,
                 description = stringResource(Res.string.maintenance_card_desc),
                 content = {
@@ -254,19 +254,19 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
 
                     // click toasts the phone's description
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.enable_log_debug),
-                        text = stringResource(Res.string.if_enabled_create_a_log_file_to_highlight_errors),
+                        title = stringResource(Res.string.maintenance_debug_logging_title),
+                        text = stringResource(Res.string.settings_logging_error_file_description),
                         icon = Res.drawable.information,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.if_enabled_create_a_log_file_to_highlight_errors) },
+                        onLongClick = { Toaster.i(Res.string.settings_logging_error_file_description) },
                     )
 
                     // The phone's restart note (MSC:200, its `ImportantSettingsDescription`), at
                     // its phone's place
                     SettingsDescription(
-                        text = stringResource(Res.string.restarting_rimusic_is_required),
+                        text = stringResource(Res.string.settings_restart_required_message),
                         important = true,
                     )
 
@@ -275,11 +275,11 @@ fun OtherSettingsScreen(preferences: Preferences, query: String, onQuery: (Strin
 
                     // has no effect, a long click toasts the phone's description
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.export_logs),
-                        text = stringResource(Res.string.export_debug_log_description),
+                        title = stringResource(Res.string.logs_action_export),
+                        text = stringResource(Res.string.logs_export_debug_description),
                         icon = Res.drawable.copy,
                         onClick = {},
-                        onLongClick = { Toaster.i(Res.string.export_debug_log_description) },
+                        onLongClick = { Toaster.i(Res.string.logs_export_debug_description) },
                     )
                 },
             )

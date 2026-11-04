@@ -92,7 +92,7 @@ object NewUpdateAvailableDialog {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 BasicText(
-                    text = channelLabel() + stringResource(Res.string.update_available),
+                    text = channelLabel() + stringResource(Res.string.updates_available),
                     style = typography().l.bold.copy(color = colorPalette.text),
                 )
                 Spacer(modifier = Modifier.height(4.dp))
@@ -100,7 +100,7 @@ object NewUpdateAvailableDialog {
                 // the tag's "v", appends the channel suffix when absent)
                 BasicText(
                     text = formatText(
-                        stringResource(Res.string.app_update_dialog_version),
+                        stringResource(Res.string.updates_available_version_message),
                         Updater.getDisplayVersion(),
                     ),
                     style = typography().xs.copy(color = colorPalette.textSecondary),
@@ -109,7 +109,7 @@ object NewUpdateAvailableDialog {
                 // when no asset is selected (the desktop's no-asset phase)
                 BasicText(
                     text = formatText(
-                        stringResource(Res.string.app_update_dialog_size),
+                        stringResource(Res.string.updates_available_download_size),
                         Updater.build?.readableSize?.ifEmpty { "?" } ?: "?",
                     ),
                     style = typography().xs.copy(color = colorPalette.textSecondary),
@@ -131,7 +131,7 @@ object NewUpdateAvailableDialog {
                             danger = true,
                         ),
                         DialogButton(
-                            text = stringResource(Res.string.go_to_download),
+                            text = stringResource(Res.string.updates_action_open_download),
                             icon = Res.drawable.chevron_forward,
                             onClick = {
                                 onDismiss()

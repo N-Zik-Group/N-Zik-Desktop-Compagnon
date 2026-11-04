@@ -13,11 +13,11 @@ import org.jetbrains.compose.resources.StringResource
 enum class NavigationBarPosition(
     val textId: StringResource,
 ) {
-    Left(Res.string.direction_left),
-    Right(Res.string.direction_right),
-    Top(Res.string.direction_top),
-    Bottom(Res.string.direction_bottom),
-    BottomFloating(Res.string.direction_bottom_floating);
+    Left(Res.string.lyrics_alignment_left_label),
+    Right(Res.string.lyrics_alignment_right_label),
+    Top(Res.string.navigation_position_top_label),
+    Bottom(Res.string.navigation_position_bottom_label),
+    BottomFloating(Res.string.navigation_position_bottom_floating_label);
 
     val isHorizontal: Boolean
         get() = this == Top || this == Bottom || this == BottomFloating

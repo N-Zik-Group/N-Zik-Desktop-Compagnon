@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_clear">Kuyruğu temizle</string>
+    <string name="command_copied">Komut kopyalandı</string>
+    <string name="command_jump">Kuyruktan çal</string>
+    <string name="command_move">Kuyrukta ilerle</string>
+    <string name="command_next">Sonraki</string>
+    <string name="command_pause">Duraklat</string>
+    <string name="command_play">Oynat</string>
+    <string name="command_previous">Önceki</string>
+    <string name="command_queue_add">Kuyruğa ekle</string>
+    <string name="command_queue_list">Queue from list</string>
+    <string name="command_queue_play">Oynat</string>
+    <string name="command_remove">Kuyruktan çıkar</string>
+    <string name="command_repeat">Tekrarla</string>
+    <string name="command_seek">Ara</string>
+    <string name="command_shuffle">Karıştır</string>
+    <string name="command_speed">Hız</string>
+    <string name="common_action_clear">Temizle</string>
+    <string name="common_action_confirm">Onayla</string>
+    <string name="common_action_delete">Sil</string>
+    <string name="common_action_done">Tamam</string>
+    <string name="common_action_reset">Sıfırla</string>
+    <string name="common_action_retry">Tekrar dene</string>
+    <string name="common_action_select">Seç</string>
+    <string name="common_action_translate">Çevir</string>
+    <string name="common_action_turn_off">Kapat</string>
+    <string name="common_action_update">Güncelle</string>
+    <string name="common_menu_label">Menü</string>
+    <string name="tray_open">Açık</string>
+    <string name="tray_quit">Çık</string>
+</resources>

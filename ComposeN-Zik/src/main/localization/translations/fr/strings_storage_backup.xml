@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_action_export">Exporter la sauvegarde</string>
+    <string name="backup_action_import_legacy_migration">Importer un fichier de migration.</string>
+    <string name="backup_auto_interval">Intervalle de sauvegarde automatique</string>
+    <string name="backup_auto_interval_none">Désactivé</string>
+    <string name="backup_auto_location">Emplacement de sauvegarde automatique</string>
+    <string name="backup_auto_location_not_set">Non défini</string>
+    <string name="backup_auto_max_backups">Nombre maximal de sauvegardes à conserver</string>
+    <string name="backup_auto_target">Destination de la sauvegarde</string>
+    <string name="backup_auto_title">Sauvegarde automatique</string>
+    <string name="backup_export_description">Exporter la base de données ou les paramètres vers un fichier</string>
+    <string name="backup_import_description">Importer une base de données ou des paramètres à partir d\'un fichier</string>
+    <string name="backup_import_failed">Import failed</string>
+    <string name="backup_legacy_migration_description">Pour les anciens utilisateurs avant la conversion.\nUtilisez l\'ancienne application pour effectuer une sauvegarde en vue de la migration.</string>
+    <string name="backup_target_database_label">Base de données</string>
+    <string name="cached_pc">Ordinateur en cache</string>
+    <string name="download_pc">Télécharger pour PC</string>
+    <string name="downloads_action_download_all">Télécharger tous les titres</string>
+    <string name="downloads_action_refresh_quality">Mise à jour des téléchargements</string>
+    <string name="downloads_action_remove_all">Supprimer tous les titres téléchargés</string>
+    <string name="downloads_cancelled">Téléchargement annulé</string>
+    <string name="downloads_delete_all_confirmation">Voulez-vous vraiment supprimer le téléchargement ?</string>
+    <string name="downloads_download_all_confirmation">Voulez-vous vraiment tout télécharger ?</string>
+    <string name="downloads_quality_format">Qualité du Téléchargement</string>
+    <string name="downloads_refresh_quality_description">Téléchargez à nouveau les morceaux qui avaient été téléchargés dans une qualité différente</string>
+    <string name="downloads_title">Télécharger</string>
+    <string name="export_cached_song_action">Exporter le titre mis en cache ou téléchargé</string>
+    <string name="export_cached_songs_action">Exporter la mémoire cache</string>
+    <string name="import_backup">Importer une sauvegarde</string>
+    <string name="library_cleanup_title">Corbeille intelligente</string>
+    <string name="title_backup_and_restore">Sauvegarde et Restauration</string>
+</resources>

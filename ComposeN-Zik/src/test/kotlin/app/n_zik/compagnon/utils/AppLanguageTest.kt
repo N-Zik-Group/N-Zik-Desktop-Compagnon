@@ -1,10 +1,12 @@
 package app.n_zik.compagnon.utils
 
+import app.n_zik.compagnon.generated.resources.*
 import java.util.Locale
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.jetbrains.compose.resources.getString
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -12,11 +14,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/**
- * The PC's "App language" setting (spec `spec-remove-ui-sync`): the resolver and the runtime
- * application. [AppLanguage.applyTag] mutates the JVM default locale, so `applyTag(null)` (which
- * restores the OS locale and resets the recomposition key) runs after every test.
- */
+/** Verifies language selection and restores the OS locale after each JVM locale override. */
 class AppLanguageTest {
 
     @AfterEach
@@ -109,6 +107,24 @@ class AppLanguageTest {
             assertTrue(code.isNotBlank(), "blank picker code")
             assertTrue(endonym.isNotBlank(), "blank endonym for $code")
         }
+    }
+
+    @Test
+    fun `regional languages load mobile translations and fall back for desktop text`() = runTest {
+        val expectedTitles = mapOf(
+            "pt-BR" to "Sobre",
+            "sr-CS" to "O aplikaciji",
+            "zh-CN" to "\u5173\u4e8e",
+            "zh-TW" to "\u95dc\u65bc",
+        )
+        expectedTitles.forEach { (code, title) ->
+            assertTrue(code in AppLanguage.dialogValues(), "Language unavailable in picker: $code")
+            AppLanguage.applyTag(code)
+            assertEquals(title, getString(Res.string.about_title), code)
+            assertEquals("Pair with your phone", getString(Res.string.pair_title), code)
+        }
+        AppLanguage.applyTag("pt-BR")
+        assertEquals("Embaralhar", getString(Res.string.player_action_shuffle_hint))
     }
 
     @Test

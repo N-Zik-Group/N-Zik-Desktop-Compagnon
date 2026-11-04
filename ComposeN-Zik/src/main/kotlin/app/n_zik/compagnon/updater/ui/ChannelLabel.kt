@@ -15,7 +15,7 @@ import org.jetbrains.compose.resources.stringResource
  * dialog renders only under [AppVersion.updaterEnabled], false for debug / -git, so the
  * 5-branch superset changes nothing visible).
  *
- * The `*_title` strings are uppercase in values/strings.xml, but the values-* locale copies
+ * The `*_title` strings are uppercase in the English localization catalogs, but the localized catalogs
  * stay mixed-case until the next Crowdin resync — the .uppercase() is plain
  * rendering/normalization, not a safeguard (round-4 audit MINOR-1).
  *
@@ -42,10 +42,10 @@ internal fun channelLabelOf(title: String): String = title.uppercase(Locale.ROOT
  * (the page renders no prefix, the dialog never renders one for a non-updater channel).
  */
 internal fun channelTitleRes(channel: String): StringResource? = when (channel) {
-    "beta" -> Res.string.beta_title
+    "beta" -> Res.string.updates_build_beta_label
     "stable" -> Res.string.stable_title
-    "dev" -> Res.string.dev_title
+    "dev" -> Res.string.updates_build_dev_label
     "git" -> Res.string.git_title
-    "debug" -> Res.string.debug_title
+    "debug" -> Res.string.updates_build_debug_label
     else -> null
 }

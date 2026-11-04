@@ -24,15 +24,15 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import app.n_zik.compagnon.bridge.library.AlbumSort
 import app.n_zik.compagnon.bridge.library.ArtistSort
-import app.n_zik.compagnon.bridge.library.PlaylistSort
 import app.n_zik.compagnon.bridge.library.PlaylistSongSort
+import app.n_zik.compagnon.bridge.library.PlaylistSort
 import app.n_zik.compagnon.bridge.library.SongSort
+import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.menu.ListMenu
 import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.uiRoundnessShape
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -47,18 +47,18 @@ data class SortOption<T>(
 
 /** All 12 options of the phone's `SongSortBy`, all wired (a phone with `library.sort`, since 1.6). */
 val songSortOptions = listOf(
-    SortOption(Res.string.sort_title, Res.drawable.text, SongSort.Title),
-    SortOption(Res.string.sort_artist, Res.drawable.artist, SongSort.Artist),
-    SortOption(Res.string.sort_album, Res.drawable.album, SongSort.Album),
-    SortOption(Res.string.sort_duration, Res.drawable.time, SongSort.Duration),
-    SortOption(Res.string.sort_play_count, Res.drawable.play, SongSort.PlayCount),
-    SortOption(Res.string.sort_listening_time, Res.drawable.trending, SongSort.PlayTime),
-    SortOption(Res.string.relative_listening_time, Res.drawable.stats_chart, SongSort.RelativePlayTime),
-    SortOption(Res.string.sort_date_added, Res.drawable.time, SongSort.DateAdded),
-    SortOption(Res.string.sort_date_played, Res.drawable.calendar, SongSort.DatePlayed),
-    SortOption(Res.string.sort_date_liked, Res.drawable.heart, SongSort.DateLiked),
-    SortOption(Res.string.sort_downloaded, Res.drawable.downloaded, SongSort.Downloaded),
-    SortOption(Res.string.sort_custom_order, Res.drawable.position, SongSort.Custom),
+    SortOption(Res.string.library_sort_title, Res.drawable.text, SongSort.Title),
+    SortOption(Res.string.library_sort_artist, Res.drawable.artist, SongSort.Artist),
+    SortOption(Res.string.library_sort_album, Res.drawable.album, SongSort.Album),
+    SortOption(Res.string.library_sort_duration, Res.drawable.time, SongSort.Duration),
+    SortOption(Res.string.library_sort_play_count, Res.drawable.play, SongSort.PlayCount),
+    SortOption(Res.string.library_sort_listening_time, Res.drawable.trending, SongSort.PlayTime),
+    SortOption(Res.string.library_sort_relative_listening_time, Res.drawable.stats_chart, SongSort.RelativePlayTime),
+    SortOption(Res.string.library_sort_date_added, Res.drawable.time, SongSort.DateAdded),
+    SortOption(Res.string.library_sort_date_played, Res.drawable.calendar, SongSort.DatePlayed),
+    SortOption(Res.string.library_sort_date_liked, Res.drawable.heart, SongSort.DateLiked),
+    SortOption(Res.string.library_sort_downloaded, Res.drawable.downloaded, SongSort.Downloaded),
+    SortOption(Res.string.library_sort_custom_order, Res.drawable.position, SongSort.Custom),
 )
 
 /**
@@ -66,68 +66,68 @@ val songSortOptions = listOf(
  * Title, Artist and PlayTime have a contract route — the rest are shown like on the phone, without effect.
  */
 val legacySongSortOptions: List<SortOption<SongSort>> = listOf(
-    SortOption(Res.string.sort_title, Res.drawable.text, SongSort.Title),
-    SortOption(Res.string.sort_artist, Res.drawable.artist, SongSort.Artist),
-    SortOption(Res.string.sort_album, Res.drawable.album, null),
-    SortOption(Res.string.sort_duration, Res.drawable.time, null),
-    SortOption(Res.string.sort_play_count, Res.drawable.play, null),
-    SortOption(Res.string.sort_listening_time, Res.drawable.trending, SongSort.PlayTime),
-    SortOption(Res.string.relative_listening_time, Res.drawable.stats_chart, null),
-    SortOption(Res.string.sort_date_added, Res.drawable.time, null),
-    SortOption(Res.string.sort_date_played, Res.drawable.calendar, null),
-    SortOption(Res.string.sort_date_liked, Res.drawable.heart, null),
-    SortOption(Res.string.sort_downloaded, Res.drawable.downloaded, null),
-    SortOption(Res.string.sort_custom_order, Res.drawable.position, null),
+    SortOption(Res.string.library_sort_title, Res.drawable.text, SongSort.Title),
+    SortOption(Res.string.library_sort_artist, Res.drawable.artist, SongSort.Artist),
+    SortOption(Res.string.library_sort_album, Res.drawable.album, null),
+    SortOption(Res.string.library_sort_duration, Res.drawable.time, null),
+    SortOption(Res.string.library_sort_play_count, Res.drawable.play, null),
+    SortOption(Res.string.library_sort_listening_time, Res.drawable.trending, SongSort.PlayTime),
+    SortOption(Res.string.library_sort_relative_listening_time, Res.drawable.stats_chart, null),
+    SortOption(Res.string.library_sort_date_added, Res.drawable.time, null),
+    SortOption(Res.string.library_sort_date_played, Res.drawable.calendar, null),
+    SortOption(Res.string.library_sort_date_liked, Res.drawable.heart, null),
+    SortOption(Res.string.library_sort_downloaded, Res.drawable.downloaded, null),
+    SortOption(Res.string.library_sort_custom_order, Res.drawable.position, null),
 )
 
 /** The phone's `PlaylistSongSortBy` (phone's `app/it/fast4x/rimusic/enums/PlaylistSongSortBy.kt`), in the phone's order. */
 val playlistSongSortOptions = listOf(
-    SortOption(Res.string.sort_title, Res.drawable.text, PlaylistSongSort.Title),
-    SortOption(Res.string.sort_artist, Res.drawable.artist, PlaylistSongSort.Artist),
-    SortOption(Res.string.sort_album, Res.drawable.album, PlaylistSongSort.Album),
+    SortOption(Res.string.library_sort_title, Res.drawable.text, PlaylistSongSort.Title),
+    SortOption(Res.string.library_sort_artist, Res.drawable.artist, PlaylistSongSort.Artist),
+    SortOption(Res.string.library_sort_album, Res.drawable.album, PlaylistSongSort.Album),
     SortOption(Res.string.sort_artist_and_album, Res.drawable.artist, PlaylistSongSort.ArtistAndAlbum),
-    SortOption(Res.string.sort_duration, Res.drawable.time, PlaylistSongSort.Duration),
-    SortOption(Res.string.sort_play_count, Res.drawable.play, PlaylistSongSort.PlayCount),
-    SortOption(Res.string.sort_listening_time, Res.drawable.trending, PlaylistSongSort.PlayTime),
-    SortOption(Res.string.relative_listening_time, Res.drawable.stats_chart, PlaylistSongSort.RelativePlayTime),
-    SortOption(Res.string.sort_date_added, Res.drawable.time, PlaylistSongSort.DateAdded),
-    SortOption(Res.string.sort_date_played, Res.drawable.up_right_arrow, PlaylistSongSort.DatePlayed),
-    SortOption(Res.string.sort_date_liked, Res.drawable.heart, PlaylistSongSort.DateLiked),
-    SortOption(Res.string.sort_album_year, Res.drawable.calendar, PlaylistSongSort.AlbumYear),
-    SortOption(Res.string.sort_downloaded, Res.drawable.downloaded, PlaylistSongSort.Downloaded),
-    SortOption(Res.string.sort_custom_order, Res.drawable.position, PlaylistSongSort.Custom),
+    SortOption(Res.string.library_sort_duration, Res.drawable.time, PlaylistSongSort.Duration),
+    SortOption(Res.string.library_sort_play_count, Res.drawable.play, PlaylistSongSort.PlayCount),
+    SortOption(Res.string.library_sort_listening_time, Res.drawable.trending, PlaylistSongSort.PlayTime),
+    SortOption(Res.string.library_sort_relative_listening_time, Res.drawable.stats_chart, PlaylistSongSort.RelativePlayTime),
+    SortOption(Res.string.library_sort_date_added, Res.drawable.time, PlaylistSongSort.DateAdded),
+    SortOption(Res.string.library_sort_date_played, Res.drawable.up_right_arrow, PlaylistSongSort.DatePlayed),
+    SortOption(Res.string.library_sort_date_liked, Res.drawable.heart, PlaylistSongSort.DateLiked),
+    SortOption(Res.string.library_sort_album_year, Res.drawable.calendar, PlaylistSongSort.AlbumYear),
+    SortOption(Res.string.library_sort_downloaded, Res.drawable.downloaded, PlaylistSongSort.Downloaded),
+    SortOption(Res.string.library_sort_custom_order, Res.drawable.position, PlaylistSongSort.Custom),
 )
 
 /** The phone's `AlbumSortBy` (phone's `app/it/fast4x/rimusic/enums/AlbumSortBy.kt`), in the phone's order. */
 val albumSortOptions = listOf(
-    SortOption(Res.string.sort_name, Res.drawable.text, AlbumSort.Title),
-    SortOption(Res.string.sort_artist, Res.drawable.artist, AlbumSort.Artist),
-    SortOption(Res.string.sort_songs_number, Res.drawable.medical, AlbumSort.Songs),
-    SortOption(Res.string.sort_duration, Res.drawable.time, AlbumSort.Duration),
-    SortOption(Res.string.sort_play_count, Res.drawable.play, AlbumSort.PlayCount),
-    SortOption(Res.string.sort_listening_time, Res.drawable.trending, AlbumSort.ListeningTime),
-    SortOption(Res.string.sort_date_added, Res.drawable.time, AlbumSort.DateAdded),
-    SortOption(Res.string.sort_album_year, Res.drawable.calendar, AlbumSort.Year),
-    SortOption(Res.string.sort_custom_order, Res.drawable.position, AlbumSort.Custom),
+    SortOption(Res.string.library_sort_name, Res.drawable.text, AlbumSort.Title),
+    SortOption(Res.string.library_sort_artist, Res.drawable.artist, AlbumSort.Artist),
+    SortOption(Res.string.library_sort_songs_number, Res.drawable.medical, AlbumSort.Songs),
+    SortOption(Res.string.library_sort_duration, Res.drawable.time, AlbumSort.Duration),
+    SortOption(Res.string.library_sort_play_count, Res.drawable.play, AlbumSort.PlayCount),
+    SortOption(Res.string.library_sort_listening_time, Res.drawable.trending, AlbumSort.ListeningTime),
+    SortOption(Res.string.library_sort_date_added, Res.drawable.time, AlbumSort.DateAdded),
+    SortOption(Res.string.library_sort_album_year, Res.drawable.calendar, AlbumSort.Year),
+    SortOption(Res.string.library_sort_custom_order, Res.drawable.position, AlbumSort.Custom),
 )
 
 /** The phone's `ArtistSortBy` (phone's `app/it/fast4x/rimusic/enums/ArtistSortBy.kt`), in the phone's order. */
 val artistSortOptions = listOf(
-    SortOption(Res.string.sort_name, Res.drawable.text, ArtistSort.Name),
-    SortOption(Res.string.sort_play_count, Res.drawable.play, ArtistSort.PlayCount),
-    SortOption(Res.string.sort_listening_time, Res.drawable.trending, ArtistSort.ListeningTime),
-    SortOption(Res.string.sort_date_added, Res.drawable.time, ArtistSort.DateAdded),
-    SortOption(Res.string.sort_custom_order, Res.drawable.position, ArtistSort.Custom),
+    SortOption(Res.string.library_sort_name, Res.drawable.text, ArtistSort.Name),
+    SortOption(Res.string.library_sort_play_count, Res.drawable.play, ArtistSort.PlayCount),
+    SortOption(Res.string.library_sort_listening_time, Res.drawable.trending, ArtistSort.ListeningTime),
+    SortOption(Res.string.library_sort_date_added, Res.drawable.time, ArtistSort.DateAdded),
+    SortOption(Res.string.library_sort_custom_order, Res.drawable.position, ArtistSort.Custom),
 )
 
 /** The phone's `PlaylistSortBy` (phone's `app/it/fast4x/rimusic/enums/PlaylistSortBy.kt`), in the phone's order. */
 val playlistSortOptions = listOf(
-    SortOption(Res.string.sort_name, Res.drawable.text, PlaylistSort.Name),
-    SortOption(Res.string.sort_songs_number, Res.drawable.medical, PlaylistSort.SongCount),
-    SortOption(Res.string.sort_listening_time, Res.drawable.trending, PlaylistSort.ListeningTime),
-    SortOption(Res.string.sort_play_count, Res.drawable.play, PlaylistSort.PlayCount),
-    SortOption(Res.string.sort_date_added, Res.drawable.calendar, PlaylistSort.DateAdded),
-    SortOption(Res.string.sort_custom_order, Res.drawable.position, PlaylistSort.Custom),
+    SortOption(Res.string.library_sort_name, Res.drawable.text, PlaylistSort.Name),
+    SortOption(Res.string.library_sort_songs_number, Res.drawable.medical, PlaylistSort.SongCount),
+    SortOption(Res.string.library_sort_listening_time, Res.drawable.trending, PlaylistSort.ListeningTime),
+    SortOption(Res.string.library_sort_play_count, Res.drawable.play, PlaylistSort.PlayCount),
+    SortOption(Res.string.library_sort_date_added, Res.drawable.calendar, PlaylistSort.DateAdded),
+    SortOption(Res.string.library_sort_custom_order, Res.drawable.position, PlaylistSort.Custom),
 )
 
 /**
@@ -168,7 +168,7 @@ class Sort<T>(
     override val iconId: DrawableResource = Res.drawable.arrow_up
     override val menuIconTitle: String
         @Composable
-        get() = stringResource(Res.string.sorting_order)
+        get() = stringResource(Res.string.library_sort_order_title)
 
     override fun onShortClick() = onSortDirection(!reverse)
     override fun onLongClick() = openMenu()

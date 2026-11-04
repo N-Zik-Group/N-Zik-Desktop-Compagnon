@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="cancel">Άκυρο</string>
+    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_clipboard_copy_success">Copied</string>
+    <string name="common_color_source_theme">Θέμα</string>
+    <string name="common_color_white">White</string>
+    <string name="common_delete_success">Deleted</string>
+    <string name="common_empty_items">Δεν υπάρχουν στοιχεία</string>
+    <string name="common_option_all">Όλα</string>
+    <string name="common_option_custom">Προσαρμοσμένο</string>
+    <string name="common_option_default">Προεπιλογή</string>
+    <string name="common_option_disabled">Ανενεργό</string>
+    <string name="common_option_none">Καμία</string>
+    <string name="common_option_random">By Casual played song</string>
+    <string name="common_size_big">Μεγάλο</string>
+    <string name="common_size_biggest">Μεγαλύτερο</string>
+    <string name="common_size_medium">Μεσαίο</string>
+    <string name="common_size_small">Μικρό</string>
+    <string name="common_state_off">Ανενεργό</string>
+    <string name="common_state_on">Ενεργό</string>
+    <string name="common_storage_used_suffix">used</string>
+    <string name="common_validation_empty_value">Η τιμή δεν μπορεί να είναι κενή</string>
+    <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="dismiss">Dismiss</string>
+</resources>

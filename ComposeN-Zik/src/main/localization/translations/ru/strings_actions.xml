@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="command_clear">Clear the queue</string>
+    <string name="command_copied">Command copied</string>
+    <string name="command_jump">Play from the queue</string>
+    <string name="command_move">Move in the queue</string>
+    <string name="command_next">Next</string>
+    <string name="command_pause">Пауза</string>
+    <string name="command_play">Играть</string>
+    <string name="command_previous">Previous</string>
+    <string name="command_queue_add">Add to queue</string>
+    <string name="command_queue_list">Queue from list</string>
+    <string name="command_queue_play">Играть</string>
+    <string name="command_remove">Remove from the queue</string>
+    <string name="command_repeat">Повторить</string>
+    <string name="command_seek">Seek</string>
+    <string name="command_shuffle">Перемешать</string>
+    <string name="command_speed">Speed</string>
+    <string name="common_action_clear">Удалить</string>
+    <string name="common_action_confirm">Подтвердить</string>
+    <string name="common_action_delete">Удалить</string>
+    <string name="common_action_done">Готово</string>
+    <string name="common_action_reset">Сбросить</string>
+    <string name="common_action_retry">Повторить</string>
+    <string name="common_action_select">Выбрать</string>
+    <string name="common_action_translate">Перевести</string>
+    <string name="common_action_turn_off">Выключить</string>
+    <string name="common_action_update">Обновить</string>
+    <string name="common_menu_label">Меню</string>
+    <string name="tray_open">Open</string>
+    <string name="tray_quit">Quit</string>
+</resources>

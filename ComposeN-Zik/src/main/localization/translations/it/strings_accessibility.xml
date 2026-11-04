@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Accessibility -->
+    <string name="accessibility_app_icon">Icona dell\'app</string>
+    <string name="accessibility_app_icon_in_player">icona app nel giocatore</string>
+    <string name="accessibility_background_image">Immagine Di Sfondo</string>
+    <string name="accessibility_blurred_background">sfocato_sfondo</string>
+    <string name="accessibility_disc_background">sfondo disco</string>
+    <string name="accessibility_number_of_songs_in_queue">Numero di brani in coda</string>
+    <string name="accessibility_origin_indicator">indicatore</string>
+    <string name="accessibility_song_album_cover">copertina album brani</string>
+</resources>

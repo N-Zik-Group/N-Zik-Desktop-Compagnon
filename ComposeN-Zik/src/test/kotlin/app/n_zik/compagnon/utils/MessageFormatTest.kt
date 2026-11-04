@@ -37,7 +37,7 @@ class MessageFormatTest {
         // resolved language depends on the JVM locale — locale-agnostic: the argument must be
 
         // applied (no raw `%s` left) whatever the resolved language is.
-        val result = formatMessage(Res.string.added_to_dislikes, "«X»")
+        val result = formatMessage(Res.string.library_dislikes_added, "«X»")
         assertTrue(result.endsWith("«X»"))
         assertFalse("%s" in result)
     }

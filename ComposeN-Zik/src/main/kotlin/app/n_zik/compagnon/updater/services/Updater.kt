@@ -298,7 +298,7 @@ object Updater {
         val resBody = response.bodyAsText()
         if (resBody.isBlank()) {
             if (isForced) {
-                Toaster.i(Res.string.info_no_update_available)
+                Toaster.i(Res.string.updates_no_update_available)
             }
             return@withContext
         }
@@ -536,14 +536,14 @@ object Updater {
 
             if (hasUpdate) {
                 if (isForced) {
-                    Toaster.i(Res.string.update_available)
+                    Toaster.i(Res.string.updates_available)
                 }
                 // If there's an update available, the in-memory cancel flag is cleared (the
                 // persisted one stays — only a forced check may re-arm it).
                 NewUpdateAvailableDialog.isCancelled = false
             } else {
                 if (isForced) {
-                    Toaster.i(Res.string.info_no_update_available)
+                    Toaster.i(Res.string.updates_no_update_available)
                 }
                 NewUpdateAvailableDialog.isCancelled = true
                 // Only a forced check may reset the persisted cancelled flag (finding #22): the
@@ -556,8 +556,8 @@ object Updater {
             }
         } catch (e: Exception) {
             val message = when (e) {
-                is UnknownHostException -> getString(Res.string.error_no_internet)
-                is NoSuchFileException -> getString(Res.string.info_no_update_available)
+                is UnknownHostException -> getString(Res.string.common_error_no_internet)
+                is NoSuchFileException -> getString(Res.string.updates_no_update_available)
                 // Loop 2: a 200 with a non-JSON body (GitHub rate-limit HTML, a proxy error
                 // page) must map to the clean check-failed error, not a raw decode dump.
                 is SerializationException -> getString(Res.string.error_update_check_failed, "invalid response")

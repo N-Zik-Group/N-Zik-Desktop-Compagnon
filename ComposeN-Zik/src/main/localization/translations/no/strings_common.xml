@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="cancel">Avbryt</string>
+    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_clipboard_copy_success">Kopiert</string>
+    <string name="common_color_source_theme">Tema</string>
+    <string name="common_color_white">Hvit</string>
+    <string name="common_delete_success">Slettet</string>
+    <string name="common_empty_items">Ingen elementer</string>
+    <string name="common_option_all">All tid</string>
+    <string name="common_option_custom">Egendefinert</string>
+    <string name="common_option_default">Standard</string>
+    <string name="common_option_disabled">Deaktivert</string>
+    <string name="common_option_none">Ingen</string>
+    <string name="common_option_random">Random</string>
+    <string name="common_size_big">Stor</string>
+    <string name="common_size_biggest">Størst</string>
+    <string name="common_size_medium">Medium</string>
+    <string name="common_size_small">Liten</string>
+    <string name="common_state_off">Av</string>
+    <string name="common_state_on">På</string>
+    <string name="common_storage_used_suffix">used</string>
+    <string name="common_validation_empty_value">Verdien kan ikke være tom</string>
+    <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="dismiss">Dismiss</string>
+</resources>

@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,14 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.shape.RoundedCornerShape
 import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.uiRoundnessShape
-import app.n_zik.compagnon.typography
-import app.n_zik.compagnon.utils.semiBold
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.typography
+import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.updater.models.UpdaterConstants
-import androidx.compose.material3.Icon
+import app.n_zik.compagnon.utils.semiBold
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -91,7 +91,7 @@ fun parseChangelogText(text: String, otherTitle: String): List<Pair<String, List
  */
 @Composable
 fun ChangelogCard(rawText: String, translatedText: String?) {
-    val otherTitle = stringResource(Res.string.other)
+    val otherTitle = stringResource(Res.string.common_other_section_title)
     val rawSections = remember(rawText) { parseChangelogText(rawText, otherTitle) }
 
     val displaySections = remember(rawText, translatedText) {

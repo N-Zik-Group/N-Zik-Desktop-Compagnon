@@ -1,19 +1,5 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
-import app.n_zik.compagnon.colorPalette
-import app.n_zik.compagnon.components.settings.OtherSettingsEntry
-import app.n_zik.compagnon.components.settings.SettingsDescription
-import app.n_zik.compagnon.components.settings.SettingsSectionCard
-import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
-import app.n_zik.compagnon.components.tab.Search
-import app.n_zik.compagnon.components.themed.HeaderWithIcon
-import app.n_zik.compagnon.components.themed.ValueSelectorDialog
-import app.n_zik.compagnon.enums.CloseBehavior
-import app.n_zik.compagnon.generated.resources.*
-import app.n_zik.compagnon.tray.isSystemTraySupported
-import app.n_zik.compagnon.utils.AppLanguage
-import app.n_zik.compagnon.utils.Preferences
-import app.n_zik.compagnon.utils.Toaster
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -32,6 +18,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import app.n_zik.compagnon.colorPalette
+import app.n_zik.compagnon.components.settings.OtherSettingsEntry
+import app.n_zik.compagnon.components.settings.SettingsDescription
+import app.n_zik.compagnon.components.settings.SettingsSectionCard
+import app.n_zik.compagnon.components.settings.ToggleSettingsEntry
+import app.n_zik.compagnon.components.tab.Search
+import app.n_zik.compagnon.components.themed.HeaderWithIcon
+import app.n_zik.compagnon.components.themed.ValueSelectorDialog
+import app.n_zik.compagnon.enums.CloseBehavior
+import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.tray.isSystemTraySupported
+import app.n_zik.compagnon.utils.AppLanguage
+import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.utils.Toaster
 import java.util.Locale
 import org.jetbrains.compose.resources.stringResource
 
@@ -60,21 +60,21 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
     val search = Search(query, onQuery, lazyListState = null)
     val languagesCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.languages),
-        stringResource(Res.string.app_language),
+        stringResource(Res.string.settings_languages_title),
+        stringResource(Res.string.settings_app_language_label),
     )
     // The phone cards' search ctx (spec §A1): the card's title + its rendered entries' titles
     val playbackCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.playback),
-        stringResource(Res.string.jump_previous),
-        stringResource(Res.string.min_listening_time),
-        stringResource(Res.string.exclude_songs_with_duration_limit),
-        stringResource(Res.string.exclude_disliked_songs),
-        stringResource(Res.string.exclude_disliked_artists),
-        stringResource(Res.string.exclude_disliked_albums),
-        stringResource(Res.string.pause_between_songs),
-        stringResource(Res.string.crossfade),
+        stringResource(Res.string.common_playback_section_title),
+        stringResource(Res.string.settings_playback_previous_restart_threshold_label),
+        stringResource(Res.string.recommendations_minimum_playback_duration_label),
+        stringResource(Res.string.settings_playback_duration_limit_label),
+        stringResource(Res.string.settings_playback_exclude_disliked_songs_label),
+        stringResource(Res.string.settings_playback_exclude_disliked_artists_label),
+        stringResource(Res.string.settings_playback_exclude_disliked_albums_label),
+        stringResource(Res.string.settings_playback_pause_between_songs_label),
+        stringResource(Res.string.settings_audio_crossfade_label),
     )
     val playerControlsCtx = settingsSearchCtx(
         search.inputValue,
@@ -86,23 +86,23 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
     )
     val queueManagementCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.queue_management),
-        stringResource(Res.string.max_songs_in_queue),
-        stringResource(Res.string.discover),
-        stringResource(Res.string.playlistindicator),
-        stringResource(Res.string.now_playing_indicator),
+        stringResource(Res.string.settings_queue_management_title),
+        stringResource(Res.string.settings_player_queue_size_limit_label),
+        stringResource(Res.string.queue_discover_title),
+        stringResource(Res.string.settings_library_playlist_indicator_label),
+        stringResource(Res.string.settings_library_now_playing_indicator_label),
     )
     val appBehaviorCtx = settingsSearchCtx(
         search.inputValue,
-        stringResource(Res.string.app_behavior),
-        stringResource(Res.string.persistent_queue),
-        stringResource(Res.string.skip_media_on_error),
+        stringResource(Res.string.settings_app_behavior_title),
+        stringResource(Res.string.settings_player_persistent_queue_label),
+        stringResource(Res.string.settings_playback_skip_on_error_label),
     )
     val audioEffectsCtx = settingsSearchCtx(
         search.inputValue,
         stringResource(Res.string.audio_effects),
-        stringResource(Res.string.skip_silence),
-        stringResource(Res.string.loudness_normalization),
+        stringResource(Res.string.settings_audio_skip_silence_label),
+        stringResource(Res.string.settings_audio_loudness_normalization_label),
         stringResource(Res.string.settings_audio_bass_boost),
         stringResource(Res.string.settings_audio_reverb),
     )
@@ -124,7 +124,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
             .verticalScroll(rememberScrollState()),
     ) {
         HeaderWithIcon(
-            title = stringResource(Res.string.tab_general),
+            title = stringResource(Res.string.settings_general_title),
             iconId = Res.drawable.ic_launcher_monochrome,
             enabled = false,
             showIcon = true,
@@ -133,7 +133,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
         )
 
         SettingsDescription(
-            text = stringResource(Res.string.general_settings_description),
+            text = stringResource(Res.string.settings_general_page_description),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
@@ -148,11 +148,11 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
             enter = fadeIn(animationSpec = tween(600)) + scaleIn(animationSpec = tween(600), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.languages),
+                title = stringResource(Res.string.settings_languages_title),
                 icon = Res.drawable.discover,
                 content = {
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.app_language),
+                        title = stringResource(Res.string.settings_app_language_label),
                         text = AppLanguage.labelOf(settings.language),
                         icon = Res.drawable.translate,
                         onClick = { showLanguageDialog = true },
@@ -169,7 +169,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
             enter = fadeIn(animationSpec = tween(800)) + scaleIn(animationSpec = tween(800), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.playback),
+                title = stringResource(Res.string.common_playback_section_title),
                 icon = Res.drawable.play_forward,
                 content = {
                     // "Jump previous" (GS:369, `jumpPreviousKey`, "3"): the phone's numeric input — INERT
@@ -177,7 +177,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // the phone's row shows a value, not a description → no long-press toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.jump_previous),
+                        title = stringResource(Res.string.settings_playback_previous_restart_threshold_label),
                         text = "3",
                         icon = Res.drawable.play_skip_back,
                         onClick = {},
@@ -188,7 +188,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.min_listening_time),
+                        title = stringResource(Res.string.recommendations_minimum_playback_duration_label),
                         text = "20s",
                         icon = Res.drawable.time,
                         onClick = {},
@@ -199,8 +199,8 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.exclude_songs_with_duration_limit),
-                        text = stringResource(Res.string.vt_disabled),
+                        title = stringResource(Res.string.settings_playback_duration_limit_label),
+                        text = stringResource(Res.string.common_option_disabled),
                         icon = Res.drawable.playbackduration,
                         onClick = {},
                     )
@@ -211,20 +211,20 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                     // phone's live `dislikeMode` display is not ported (contract read-only, spec
                     // decision); the phone's row shows a value, not a description → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.exclude_disliked_songs),
-                        text = stringResource(Res.string.on),
+                        title = stringResource(Res.string.settings_playback_exclude_disliked_songs_label),
+                        text = stringResource(Res.string.common_state_on),
                         icon = Res.drawable.heart_dislike,
                         onClick = {},
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.exclude_disliked_artists),
-                        text = stringResource(Res.string.on),
+                        title = stringResource(Res.string.settings_playback_exclude_disliked_artists_label),
+                        text = stringResource(Res.string.common_state_on),
                         icon = Res.drawable.person,
                         onClick = {},
                     )
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.exclude_disliked_albums),
-                        text = stringResource(Res.string.on),
+                        title = stringResource(Res.string.settings_playback_exclude_disliked_albums_label),
+                        text = stringResource(Res.string.common_state_on),
                         icon = Res.drawable.album,
                         onClick = {},
                     )
@@ -232,7 +232,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                     // "Pause between songs" (GS:557, `PauseBetweenSongs.0`) — INERT: the default (0s)
                     // shown, no dialog, a click has no effect; no description → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.pause_between_songs),
+                        title = stringResource(Res.string.settings_playback_pause_between_songs_label),
                         text = "0s",
                         icon = Res.drawable.pause,
                         onClick = {},
@@ -241,13 +241,13 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                     // "Crossfade" (GS:599, `crossfadeEnabled`, off by default) — INERT: the default
                     // switch state, a click has no effect, a long click toasts the phone's description
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.crossfade),
-                        text = stringResource(Res.string.crossfade_description),
+                        title = stringResource(Res.string.settings_audio_crossfade_label),
+                        text = stringResource(Res.string.settings_audio_crossfade_description),
                         icon = Res.drawable.shuffle,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.crossfade_description) },
+                        onLongClick = { Toaster.i(Res.string.settings_audio_crossfade_description) },
                     )
 
                     /**
@@ -275,12 +275,12 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                     // phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.player_pause_on_volume_zero),
-                        text = stringResource(Res.string.info_pauses_player_when_volume_zero),
+                        text = stringResource(Res.string.settings_playback_pause_at_zero_volume_description),
                         icon = Res.drawable.volume_up,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.info_pauses_player_when_volume_zero) },
+                        onLongClick = { Toaster.i(Res.string.settings_playback_pause_at_zero_volume_description) },
                     )
 
                     /** NOT RENDERED ⛔ (spec §A1): the phone's "Pause on headphone disconnect" (GS:675, `pauseOnHeadphoneDisconnect`, on by default) — an Android BroadcastReceiver (the headphone-unplug event); there is no equivalent on the PC. */
@@ -291,12 +291,12 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                     // phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.player_keep_minimized),
-                        text = stringResource(Res.string.when_click_on_a_song_player_start_minimized),
+                        text = stringResource(Res.string.settings_player_start_minimized_description),
                         icon = Res.drawable.maximize,
                         isChecked = true,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.when_click_on_a_song_player_start_minimized) },
+                        onLongClick = { Toaster.i(Res.string.settings_player_start_minimized_description) },
                     )
 
                     // "Disable closing player by swiping down" (GS:697, `disableClosingPlayerSwipingDown`,
@@ -305,12 +305,12 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                     // click toasts the phone's description
                     ToggleSettingsEntry(
                         title = stringResource(Res.string.player_collapsed_disable_swiping_down),
-                        text = stringResource(Res.string.avoid_closing_the_player_cleaning_queue_by_swiping_down),
+                        text = stringResource(Res.string.settings_player_prevent_collapsed_dismissal_description),
                         icon = Res.drawable.reorder,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.avoid_closing_the_player_cleaning_queue_by_swiping_down) },
+                        onLongClick = { Toaster.i(Res.string.settings_player_prevent_collapsed_dismissal_description) },
                     )
 
                     // "Auto load songs in queue" (GS:708, `autoLoadSongsInQueue`, on by default) —
@@ -336,7 +336,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
             enter = fadeIn(animationSpec = tween(1000)) + scaleIn(animationSpec = tween(1000), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.queue_management),
+                title = stringResource(Res.string.settings_queue_management_title),
                 icon = Res.drawable.playlist,
                 content = {
                     // "Max songs in queue" (GS:742, `MaxSongs.Unlimited`) — INERT: the default (Unlimited)
@@ -344,8 +344,8 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // contract §9); no description → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.max_songs_in_queue),
-                        text = stringResource(Res.string.unlimited),
+                        title = stringResource(Res.string.settings_player_queue_size_limit_label),
+                        text = stringResource(Res.string.common_limit_unlimited_label),
                         icon = Res.drawable.music_file,
                         onClick = {},
                     )
@@ -357,13 +357,13 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // description (the same toast the inert Discover button of the mini-player uses)
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.discover),
-                        text = stringResource(Res.string.discoverinfo),
+                        title = stringResource(Res.string.queue_discover_title),
+                        text = stringResource(Res.string.queue_discover_description),
                         icon = Res.drawable.search,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.discoverinfo) },
+                        onLongClick = { Toaster.i(Res.string.queue_discover_description) },
                     )
 
                     // "Playlist indicator" (GS:834, the phone's `playlistindicator`, off by default) —
@@ -371,8 +371,8 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // phone's off): persisted, the song rows' "in a playlist" badge follows
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.playlistindicator),
-                        text = stringResource(Res.string.playlistindicatorinfo),
+                        title = stringResource(Res.string.settings_library_playlist_indicator_label),
+                        text = stringResource(Res.string.settings_library_playlist_indicator_description),
                         icon = Res.drawable.playlist,
                         isChecked = settings.playlistIndicator,
                         onCheckedChange = {
@@ -385,8 +385,8 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // effect; no description → no toast
                     OtherSettingsEntry(
-                        title = stringResource(Res.string.now_playing_indicator),
-                        text = stringResource(Res.string.music_animations_bubbles),
+                        title = stringResource(Res.string.settings_library_now_playing_indicator_label),
+                        text = stringResource(Res.string.visualizer_animation_bubbles),
                         icon = Res.drawable.playing_indicator,
                         onClick = {},
                     )
@@ -400,7 +400,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
             enter = fadeIn(animationSpec = tween(1100)) + scaleIn(animationSpec = tween(1100), initialScale = 0.9f),
         ) {
             SettingsSectionCard(
-                title = stringResource(Res.string.app_behavior),
+                title = stringResource(Res.string.settings_app_behavior_title),
                 icon = Res.drawable.settings,
                 content = {
                     /**
@@ -415,13 +415,13 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // description
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.persistent_queue),
-                        text = stringResource(Res.string.save_and_restore_playing_songs),
+                        title = stringResource(Res.string.settings_player_persistent_queue_label),
+                        text = stringResource(Res.string.settings_player_persistent_queue_description),
                         icon = Res.drawable.download,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.save_and_restore_playing_songs) },
+                        onLongClick = { Toaster.i(Res.string.settings_player_persistent_queue_description) },
                     )
 
                     /**
@@ -440,13 +440,13 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // description
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.skip_media_on_error),
-                        text = stringResource(Res.string.skip_media_on_error_description),
+                        title = stringResource(Res.string.settings_playback_skip_on_error_label),
+                        text = stringResource(Res.string.settings_playback_skip_on_error_description),
                         icon = Res.drawable.alert_circle,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.skip_media_on_error_description) },
+                        onLongClick = { Toaster.i(Res.string.settings_playback_skip_on_error_description) },
                     )
                 },
             )
@@ -464,13 +464,13 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                     // "Skip silence" (GS:1000, `skipSilence`, off by default) — INERT: the default switch
                     // state, a click has no effect, a long click toasts the phone's description
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.skip_silence),
-                        text = stringResource(Res.string.skip_silent_parts_during_playback),
+                        title = stringResource(Res.string.settings_audio_skip_silence_label),
+                        text = stringResource(Res.string.settings_audio_skip_silence_description),
                         icon = Res.drawable.pause,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.skip_silent_parts_during_playback) },
+                        onLongClick = { Toaster.i(Res.string.settings_audio_skip_silence_description) },
                     )
 
                     /**
@@ -485,13 +485,13 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
                     // phone's description
                     ToggleSettingsEntry(
-                        title = stringResource(Res.string.loudness_normalization),
-                        text = stringResource(Res.string.autoadjust_the_volume),
+                        title = stringResource(Res.string.settings_audio_loudness_normalization_label),
+                        text = stringResource(Res.string.settings_audio_loudness_normalization_description),
                         icon = Res.drawable.volume_up,
                         isChecked = false,
                         enabled = false,
                         onCheckedChange = {},
-                        onLongClick = { Toaster.i(Res.string.autoadjust_the_volume) },
+                        onLongClick = { Toaster.i(Res.string.settings_audio_loudness_normalization_description) },
                     )
 
                     /**
@@ -526,7 +526,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                     // no toast
                     OtherSettingsEntry(
                         title = stringResource(Res.string.settings_audio_reverb),
-                        text = stringResource(Res.string.reverb_none),
+                        text = stringResource(Res.string.audio_reverb_none),
                         icon = Res.drawable.reverb,
                         onClick = {},
                     )
@@ -599,19 +599,19 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
 
         // The app shortcuts (the phone's General « App shortcuts » card): the tray menu's shortcuts —
         // hidden where no tray exists
-        val shortcutsCtx = settingsSearchCtx(search.inputValue, stringResource(Res.string.app_shortcuts_settings))
+        val shortcutsCtx = settingsSearchCtx(search.inputValue, stringResource(Res.string.settings_launcher_shortcuts_title))
         if (traySupported) {
             AnimatedVisibility(
                 visible = shortcutsCtx,
                 enter = fadeIn(animationSpec = tween(1050)) + scaleIn(animationSpec = tween(1050), initialScale = 0.9f),
             ) {
                 SettingsSectionCard(
-                    title = stringResource(Res.string.app_shortcuts_settings),
+                    title = stringResource(Res.string.settings_launcher_shortcuts_title),
                     icon = Res.drawable.shortcut_rescue,
                     content = {
                         OtherSettingsEntry(
-                            title = stringResource(Res.string.app_shortcuts_settings),
-                            text = stringResource(Res.string.app_shortcuts_settings_description),
+                            title = stringResource(Res.string.settings_launcher_shortcuts_title),
+                            text = stringResource(Res.string.settings_launcher_shortcuts_description),
                             icon = Res.drawable.shortcut_rescue,
                             onClick = { showShortcutsDialog = true },
                         )
@@ -628,7 +628,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
             // The phone's title (its `GeneralSettings.kt` 218/336): the label + the current
             // locale (the desktop's equivalent of the phone's system locale)
             ValueSelectorDialog(
-                title = stringResource(Res.string.app_language) + ": " + Locale.getDefault(),
+                title = stringResource(Res.string.settings_app_language_label) + ": " + Locale.getDefault(),
                 values = remember { AppLanguage.dialogValues() },
                 selectedValue = settings.language,
                 onValueSelected = {
