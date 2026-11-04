@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">Sekcja o wyświetla informacje o aplikacji, programistach, rozwiązaniach problemów i opcjach aktualizacji</string>
     <string name="settings_app_behavior_title">Zachowanie aplikacji</string>
     <string name="settings_app_language_label">Język aplikacji</string>
+    <string name="settings_app_language_system">Systemu</string>
     <string name="settings_audio_bass_boost">Podbicie audio basu</string>
     <string name="settings_audio_crossfade_description">Włącz płynne przejście między utworami</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
