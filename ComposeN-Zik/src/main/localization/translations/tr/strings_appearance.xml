@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fake_audio_bar">Sahte Ses Dalgası (Waveform)</string>
+    <string name="message_type">Açılır pencere mesajı stili</string>
+    <string name="message_type_modern">Modern</string>
+    <string name="player_background_black_cherry_cosmos">Siyah Kiraz Kozmosu</string>
+    <string name="player_background_glossy_gradient">Parlak Gradyan</string>
+    <string name="player_background_golden_magma">Altın Magma</string>
+    <string name="player_background_gradient_flow">Gradyan Akışı</string>
+    <string name="player_background_ice_reflection">Buz Yansıması</string>
+    <string name="player_background_ink_flow">Mürekkep Akışı</string>
+    <string name="player_background_linear_gradient">Doğrusal Gradyan</string>
+    <string name="player_background_mesh_gradient">Ağ Gradyan</string>
+    <string name="player_background_mesmerizing_lens">Büyüleyici Lens</string>
+    <string name="player_background_oil_flow">Yağ Akışı</string>
+    <string name="player_background_purple_liquid">Mor Sıvı</string>
+    <string name="player_background_stage">Sahne</string>
+    <string name="player_controls_style_essential">Temel</string>
+    <string name="player_controls_style_modern">Modern</string>
+    <string name="player_cover_style_cd">CD</string>
+    <string name="player_cover_style_cd_with_cover">Kapaklı CD</string>
+    <string name="player_cover_style_vinyl">Vinil</string>
+    <string name="player_progress_mini_player">Küçültülmüş oynatıcı</string>
+    <string name="theme_palette_dynamic">Dinamik</string>
+    <string name="theme_shake_sensitivity_disabled">Devre dışı</string>
+    <string name="thumbnail_action_edit">Küçük Resmi Düzenle</string>
+    <string name="thumbnail_action_reset">Küçük Resmi Sıfırla</string>
+</resources>
