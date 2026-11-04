@@ -20,7 +20,6 @@
     <string name="library_albums_title">Albümler</string>
     <string name="library_artists_title">Sanatçılar</string>
     <string name="library_cached_title">Önbelleğe alındı</string>
-    <string name="library_cleanup_title">Akıllı çöp</string>
     <string name="library_disliked_title">Beğenilmedi</string>
     <string name="library_dislikes_added">%s Beğenilmeyenlere eklendi</string>
     <string name="library_dislikes_removed">%s Beğenilmeyenlerden çıkarıldı</string>
@@ -53,7 +52,6 @@
     <string name="library_sort_listening_time">Dinleme Süresi</string>
     <string name="library_sort_menu">Sıralama Menüsü</string>
     <string name="library_sort_name">İsim</string>
-    <string name="library_sort_order_title">Sıralama düzeni</string>
     <string name="library_sort_play_count">Oynatma Sayısı</string>
     <string name="library_sort_relative_listening_time">Göreceli Dinleme Süresi</string>
     <string name="library_sort_songs_number">Şarkı sayısı</string>
@@ -63,21 +61,15 @@
     <string name="library_sync_progress_format">%1$d / %2$d</string>
     <string name="library_tracks_failed">Parçalar okunamadı: %1$s</string>
     <string name="library_youtube_playlists_label">YT/YTM</string>
-    <string name="local_playback_failed">Bu şarkı bu bilgisayarda çalınamadı.</string>
-    <string name="local_playback_invalid_url">Bu şarkı bu bilgisayarda çalınamadı.</string>
-    <string name="local_playback_not_found">Bu şarkı artık telefonunuzda yok.</string>
-    <string name="local_playback_other_active">Bu bilgisayardaki ses: telefona başka bir bilgisayar (%1$s) bağlı.</string>
-    <string name="local_playback_unavailable">Bu bilgisayarda ses özelliği kullanılamıyor: Yerleşik VLC yüklenemedi.</string>
-    <string name="local_playback_unavailable_linux">Bu bilgisayarda ses özelliği kullanılamıyor. %1$s ile VLC\'yi yükleyin ve uygulamayı yeniden başlatın.</string>
-    <string name="local_playback_unreachable">Telefonunuza cevap verilmedi.</string>
-    <string name="local_playback_upstream_failed">Telefonunuz bu şarkıyı indiremedi.</string>
     <string name="metadata_action_change_artists">Yazarları Değiştir</string>
     <string name="metadata_action_change_cover">Kapağı Değiştir</string>
     <string name="metadata_action_change_title">Başlığı Değiştir</string>
     <string name="metadata_action_edit">Meta Verilerini Düzenle</string>
     <string name="metadata_album_action_change_browse_id">Albüm Gözatma Kimliğini Değiştir</string>
     <string name="metadata_artist_action_change_browse_id">Sanatçı Gözatma Kimliğini Değiştir</string>
+    <string name="metadata_file_path_unavailable">Cannot resolve file path</string>
     <string name="metadata_playlist_action_change_browse_id">Çalma Listesi Gözatma Kimliğini Değiştir</string>
+    <string name="metadata_save_failed">Failed to save metadata</string>
     <string name="metadata_unknown_artist">Bilinmeyen Sanatçı</string>
     <string name="metadata_unknown_title">Bilinmeyen Başlık</string>
     <string name="playlist_action_add">Çalma listesine ekle</string>
@@ -99,7 +91,6 @@
     <string name="playlist_selection_action_deselect">Seçimi kaldır</string>
     <string name="playlist_top">En Popüler Çalma Listesi</string>
     <string name="radio_action_start">Radyo başlat</string>
-    <string name="recommendations_action_smart_shuffle">Akıllı öneriler</string>
     <string name="recommendations_minimum_playback_duration_label">Minimum oynatma süresi</string>
     <string name="recommendations_title">Hızlı Seçimler</string>
     <string name="search_display_order">Çevrimiçi arama sonuçlarının görüntülenme sırası</string>
