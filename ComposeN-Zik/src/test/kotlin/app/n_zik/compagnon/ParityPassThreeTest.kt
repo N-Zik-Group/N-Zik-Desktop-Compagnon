@@ -145,11 +145,18 @@ class ParityPassThreeTest {
                     phoneToastText("player_shuffled_song_count_format", listOf("invalid"), "Texte du téléphone"),
                     phoneToastText("songs_shuffled", listOf("invalid"), ""),
                     phoneToastText("unknown_key_xyz", emptyList(), "Texte du téléphone"),
+                    phoneToastText("queue_shuffled", listOf("12"), "Texte du téléphone"),
+                    phoneToastText("stream_error_retrying", listOf("diagnostic interne"), "Texte du téléphone"),
+                    phoneToastText("network_stream_retrying_playback", emptyList(), "Texte du téléphone"),
                 )
             }
         }
         assertEquals(
-            listOf("12 songs shuffled", "12 songs shuffled", "Texte du téléphone", "Texte du téléphone", "%d songs shuffled", "Texte du téléphone"),
+            listOf(
+                "12 songs shuffled", "12 songs shuffled", "Texte du téléphone", "Texte du téléphone",
+                "%d songs shuffled", "Texte du téléphone", "Queue shuffled (12 songs)",
+                "Retrying playback…", "Retrying playback…",
+            ),
             texts,
         )
     }

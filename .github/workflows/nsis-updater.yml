@@ -163,7 +163,7 @@ jobs:
           $appimage = Join-Path $stub 'appimage'
           New-Item -ItemType Directory -Force -Path $appimage | Out-Null
           Set-Content -Path (Join-Path $appimage 'smoke-placeholder.txt') -Value 'nsis-updater smoke compile stub'
-          & $makensis `
+          & $makensis /WX `
             "/DPRODUCT_NAME=N-Zik Desktop Compagnon DEV" `
             "/DCHANNEL=dev" `
             "/DAPP_VERSION=0.0.1-dev-20260101" `

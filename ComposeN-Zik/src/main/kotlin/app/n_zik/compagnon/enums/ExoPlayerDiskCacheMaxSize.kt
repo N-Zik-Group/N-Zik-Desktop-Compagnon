@@ -2,6 +2,7 @@ package app.n_zik.compagnon.enums
 
 import androidx.compose.runtime.Composable
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.utils.formatText
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -31,7 +32,8 @@ enum class ExoPlayerDiskCacheMaxSize(
             Disabled -> stringResource(Res.string.common_action_turn_off)
             Unlimited -> stringResource(Res.string.common_limit_unlimited_label)
             Custom -> stringResource(Res.string.common_option_custom)
-            else -> this.name
+            `32MB`, `512MB` -> formatText(stringResource(Res.string.common_size_megabytes_format), megabytes)
+            else -> formatText(stringResource(Res.string.common_size_gigabytes_format), megabytes / 1024)
         }
 
     /** Ceiling of the audio cache in bytes: `0` = nothing is downloaded ([Disabled]), `null` = no ceiling ([Unlimited]); [Custom] is [customMegabytes] MB. */

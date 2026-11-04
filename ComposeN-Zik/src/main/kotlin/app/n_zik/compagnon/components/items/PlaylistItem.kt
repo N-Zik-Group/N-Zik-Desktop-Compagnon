@@ -6,7 +6,7 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
-import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -255,7 +255,7 @@ fun PlaylistItem(
                     iconSize = 12.dp,
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .absoluteOffset(x = (-8).dp),
+                        .offset(x = (-8).dp),
                 )
             }
         }

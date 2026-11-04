@@ -164,8 +164,11 @@ suspend fun noticeText(notice: PlayerNotice): String {
 
 /** Localizes historical or current phone toast keys, keeping the phone text as the format fallback. */
 suspend fun phoneToastText(key: String, args: List<String>, message: String): String {
-    val resource = Res.allStringResources[StringResourceIdentity.localName(key)] ?: return message
+    val localName = StringResourceIdentity.localName(key)
+    val resource = Res.allStringResources[localName] ?: return message
     val raw = getString(resource)
+    // The legacy phone retry included an already-localized reason (or a raw diagnostic).
+    if (localName == "network_stream_retrying_playback") return raw
     val formatted = formatText(raw, *args.map<String, Any> { it.toLongOrNull() ?: it }.toTypedArray())
     return if (args.isNotEmpty() && formatted == raw) message.ifEmpty { raw } else formatted
 }

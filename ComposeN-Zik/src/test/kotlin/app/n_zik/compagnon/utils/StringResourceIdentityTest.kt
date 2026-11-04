@@ -15,7 +15,9 @@ class StringResourceIdentityTest {
             "info_check_update_now" to "updates_action_check_now",
             "new_playlist" to "playlist_action_create",
             "randomizer" to "library_action_randomize",
+            "queue_shuffled" to "player_queue_shuffled_count_format",
             "songs_shuffled" to "player_shuffled_song_count_format",
+            "stream_error_retrying" to "network_stream_retrying_playback",
             "update_download_completed" to "updates_download_completed",
         )
         dynamicNames.forEach { (historical, local) ->

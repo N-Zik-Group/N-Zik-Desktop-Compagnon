@@ -72,12 +72,16 @@ enum class UpdateLanguage(
         fun fromLocale(locale: java.util.Locale): UpdateLanguage = when (locale.language) {
             "he", "iw" -> Hebrew
             "id", "in" -> Indonesian
-            "zh" -> if (locale.script == "Hant" || locale.country in setOf("TW", "HK", "MO")) {
-                ChineseTraditional
-            } else {
-                ChineseSimplified
+            "zh" -> when (locale.script) {
+                "Hans" -> ChineseSimplified
+                "Hant" -> ChineseTraditional
+                else -> if (locale.country in setOf("TW", "HK", "MO")) ChineseTraditional else ChineseSimplified
             }
-            "sr" -> if (locale.script == "Latn" || locale.country == "CS") SerbianLatin else SerbianCyrillic
+            "sr" -> when (locale.script) {
+                "Cyrl" -> SerbianCyrillic
+                "Latn" -> SerbianLatin
+                else -> if (locale.country == "CS") SerbianLatin else SerbianCyrillic
+            }
             else -> entries.firstOrNull { it.code == locale.toLanguageTag() }
                 ?: entries.firstOrNull { it.code == locale.language }
                 ?: English

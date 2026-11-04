@@ -154,7 +154,7 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                 content = {
                     OtherSettingsEntry(
                         title = stringResource(Res.string.settings_app_language_label),
-                        text = AppLanguage.labelOf(settings.language),
+                        text = if (settings.language == AppLanguage.SYSTEM) stringResource(Res.string.settings_app_language_system) else AppLanguage.labelOf(settings.language),
                         icon = Res.drawable.translate,
                         onClick = { showLanguageDialog = true },
                     )
@@ -637,7 +637,9 @@ fun GeneralSettingsScreen(preferences: Preferences, query: String, onQuery: (Str
                     preferences.update { s -> s.copy(language = it) }
                 },
                 onDismiss = { showLanguageDialog = false },
-                valueText = { value -> AppLanguage.labelOf(value) },
+                valueText = { value ->
+                    if (value == AppLanguage.SYSTEM) stringResource(Res.string.settings_app_language_system) else AppLanguage.labelOf(value)
+                },
             )
         }
 

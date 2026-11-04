@@ -24,6 +24,7 @@ import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.updater.services.Updater
 import app.n_zik.compagnon.updater.ui.channelLabel
 import app.n_zik.compagnon.utils.bold
+import app.n_zik.compagnon.utils.formatShortFileSize
 import app.n_zik.compagnon.utils.formatText
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -110,7 +111,7 @@ object NewUpdateAvailableDialog {
                 BasicText(
                     text = formatText(
                         stringResource(Res.string.updates_available_download_size),
-                        Updater.build?.readableSize?.ifEmpty { "?" } ?: "?",
+                        Updater.build?.let { formatShortFileSize(it.size.toLong()) } ?: "?",
                     ),
                     style = typography().xs.copy(color = colorPalette.textSecondary),
                 )

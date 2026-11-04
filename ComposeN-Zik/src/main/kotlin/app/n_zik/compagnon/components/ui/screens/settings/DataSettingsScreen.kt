@@ -188,7 +188,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                     CacheSettingsEntry(
                         title = stringResource(Res.string.settings_cache_song_size_limit_label),
                         text = when (exoPlayerDiskCacheMaxSize) {
-                            ExoPlayerDiskCacheMaxSize.Custom -> "${stringResource(Res.string.common_option_custom)}: ${exoPlayerCustomCache}MB"
+                            ExoPlayerDiskCacheMaxSize.Custom -> "${stringResource(Res.string.common_option_custom)}: ${formatText(stringResource(Res.string.common_size_megabytes_format), exoPlayerCustomCache)}"
                             ExoPlayerDiskCacheMaxSize.Disabled -> stringResource(Res.string.common_action_turn_off)
                             else -> exoPlayerDiskCacheMaxSize.text
                         },

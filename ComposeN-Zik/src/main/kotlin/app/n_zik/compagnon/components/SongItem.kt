@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -243,7 +243,7 @@ fun SongItem(
                     iconSize = 12.dp,
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .absoluteOffset(x = (-8).dp),
+                        .offset(x = (-8).dp),
                 )
             }
         }

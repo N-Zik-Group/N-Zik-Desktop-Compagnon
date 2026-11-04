@@ -3,7 +3,7 @@ LangString InstallerElevateUninstall ${LANG_FRENCH} "Impossible de démarrer la 
 LangString InstallerAppRunning ${LANG_FRENCH} "N-Zik Desktop Compagnon est ouvert. Fermez-le, puis cliquez sur OK pour réessayer."
 LangString InstallerReinstall ${LANG_FRENCH} "La version $INST_VER_OLD de ${PRODUCT_NAME} est déjà installée. Réinstaller la version ${APP_VERSION} ?"
 LangString InstallerPreviousFound ${LANG_FRENCH} "Une installation précédente a été détectée"
-LangString InstallerPreviousVersion ${LANG_FRENCH} "Version $INST_VER_OLD de ${PRODUCT_NAME} est installé."
+LangString InstallerPreviousVersion ${LANG_FRENCH} "La version $INST_VER_OLD de ${PRODUCT_NAME} est installée."
 LangString InstallerChooseAction ${LANG_FRENCH} "Choisissez une action :"
 LangString InstallerUpgrade ${LANG_FRENCH} "Mettre à niveau"
 LangString InstallerRepair ${LANG_FRENCH} "Réparer (réinstaller la même version)"

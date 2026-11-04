@@ -138,6 +138,7 @@ fun UpdateScreen(
     // `remember`); an unknown persisted code reads as `System`, and the toggle's never-set
     // default is the phone's: active when the app language is not English
     val appLocale = Locale.getDefault()
+    val systemLanguageLabel = stringResource(Res.string.settings_app_language_system)
     val appLang = appLocale.language
     var otherLanguageApp by remember {
         mutableStateOf(UpdateLanguage.entries.firstOrNull { it.code == settings.otherLanguageAppUpdate } ?: UpdateLanguage.System)
@@ -171,7 +172,7 @@ fun UpdateScreen(
         Updater.isVersionNewer(Updater.githubRelease?.tagName ?: "", currentVersion)
     val channel = AppVersion.channel
     val currentSuffix = Updater.extractVersionSuffix(currentVersion)
-    val fileSize = try { Updater.build?.readableSize.orEmpty() } catch (_: Exception) { "" }
+    val fileSize = Updater.build?.let { formatShortFileSize(it.size.toLong()) }.orEmpty()
     // downloadingVersion carries the display version's "v" tag prefix (what startDownload was
     // passed); currentVersion does not — strip it, or the comparison never matches
     val isReinstalling = downloadState !is UpdateDownloadManager.DownloadState.Idle &&
@@ -294,7 +295,7 @@ fun UpdateScreen(
                                 menu.add(
                                     DropdownMenu.Item(
                                         icon = Res.drawable.translate,
-                                        customText = "${stringResource(Res.string.common_translation_title)}: \n${otherLanguageApp.label}",
+                                        customText = "${stringResource(Res.string.common_translation_title)}: \n${if (otherLanguageApp == UpdateLanguage.System) systemLanguageLabel else otherLanguageApp.label}",
                                     ) {
                                         showMenu = false
                                         showLanguageDialog = true
@@ -348,7 +349,7 @@ fun UpdateScreen(
                                             )
                                         }
                                     },
-                                    valueText = { it.label },
+                                    valueText = { if (it == UpdateLanguage.System) systemLanguageLabel else it.label },
                                     values = UpdateLanguage.entries.toList(),
                                     onDismiss = { showLanguageDialog = false },
                                 )
