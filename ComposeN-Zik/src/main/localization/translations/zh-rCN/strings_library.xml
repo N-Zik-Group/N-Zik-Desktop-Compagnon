@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">收藏专辑</string>
     <string name="album_action_open">转到专辑</string>
     <string name="album_left_swipe">专辑 左滑动</string>
-    <string name="album_loading_song_count_format">Loading %1$d songs…</string>
+    <string name="album_loading_song_count_format">正在加载相册 (轨迹： %1$d)…</string>
     <string name="album_right_swipe">专辑 右滑动</string>
     <string name="artist_action_follow">关注</string>
     <string name="artist_action_play_local_songs">播放所有本地歌曲</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">固定/取消固定播放列表</string>
     <string name="playlist_bookmark_unsupported_message">无法将喜欢的歌曲或剧集播放列表加入书签</string>
     <string name="playlist_create_dialog_title">创建播放列表</string>
-    <string name="playlist_delete_all_confirmation_count_format">您确定要删除所有 %d 播放列表吗？</string>
+    <string name="playlist_delete_all_confirmation_count_format">删除所有播放列表? (总计: %d)</string>
     <string name="playlist_left_swipe">播放列表 左滑动</string>
     <string name="playlist_pinned_title">固定播放列表</string>
     <string name="playlist_rename_dialog_title">重命名播放列表</string>
@@ -107,4 +107,6 @@
     <plurals name="library_song_count">
         <item quantity="other">%1$d 歌曲</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">无法请求访问此设备上的音乐。</string>
+    <string name="library_on_device_permission_settings_failed">无法打开权限设置。</string>
 </resources>
