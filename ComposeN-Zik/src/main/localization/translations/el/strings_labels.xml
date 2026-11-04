@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="common_information_title">Information</string>
+    <string name="common_information_title">Πληροφορίες</string>
     <string name="common_limit_unlimited_label">Απεριόριστο</string>
     <string name="common_navigation_section_title">Navigation</string>
     <string name="common_other_section_title">Άλλα</string>
