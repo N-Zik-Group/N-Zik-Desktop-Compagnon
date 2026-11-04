@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="fake_audio_bar">Audio Waves</string>
-    <string name="message_type">Popup message style</string>
+    <string name="fake_audio_bar">Fake Audio Bar</string>
+    <string name="message_type">Message type</string>
     <string name="message_type_modern">Modern</string>
     <string name="player_background_black_cherry_cosmos">Black Cherry Cosmos</string>
     <string name="player_background_glossy_gradient">Glossy Gradient</string>
