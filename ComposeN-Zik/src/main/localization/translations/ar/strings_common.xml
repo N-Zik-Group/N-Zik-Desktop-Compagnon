@@ -24,4 +24,12 @@
     <string name="common_validation_empty_value">القيمة لا يمكن أن تكون فارغة</string>
     <string name="common_validation_minimum_value">القيمة يجب أن تكون أكبر من</string>
     <string name="dismiss">تجاهل</string>
+    <string name="common_duration_seconds_format">%1$d ثانية</string>
+    <string name="common_file_size_bytes_format">%1$s B</string>
+    <string name="common_file_size_gigabytes_format">%1$s جيجابايت</string>
+    <string name="common_file_size_kilobytes_format">%1$s كيلوبايت</string>
+    <string name="common_file_size_megabytes_format">%1$s ميغابايت</string>
+    <string name="common_file_size_terabytes_format">%1$s TB</string>
+    <string name="common_size_megabytes_format">%1$d ميغابايت</string>
+    <string name="common_size_gigabytes_format">%1$d جيجابايت</string>
 </resources>
