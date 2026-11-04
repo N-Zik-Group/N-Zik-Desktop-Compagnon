@@ -11,11 +11,11 @@
     <string name="contributors">Katkıda bulunanlar</string>
     <string name="request_a_feature">Bir özellik isteyin veya bir fikir önerin</string>
     <plurals name="about_translator_count">
-        <item quantity="one">%1$d translator</item>
-        <item quantity="other">%1$d translators</item>
+        <item quantity="one">%1$d çevirmen</item>
+        <item quantity="other">%1$d çevirmenler</item>
     </plurals>
     <plurals name="about_developer_designer_count">
-        <item quantity="one">%1$d developer / designer</item>
-        <item quantity="other">%1$d developers / designers</item>
+        <item quantity="one">%1$d geliştirici / tasarımcı</item>
+        <item quantity="other">%1$d geliştiriciler / tasarımcılar</item>
     </plurals>
 </resources>
