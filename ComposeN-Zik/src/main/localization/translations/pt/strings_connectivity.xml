@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Ver registros</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">O código tem 6 caracteres, por exemplo, o ABC-DEF.</string>
-    <string name="manual_description">No seu telefone, Gerencie o servidor mostra o endereço IP, a porta e um código de 6 caracteres.</string>
+    <string name="manual_description">Em seu telefone, abra o servidor de PC. Se o servidor for interrompido, toque em Iniciar. Selecione emparelhar um PC para ver o endereço IP, porta e código de 6 caracteres.</string>
     <string name="manual_ip">Endereço IP do telefone</string>
     <string name="manual_ip_invalid">Digite um endereço IPv4, por exemplo 192.168.1.14.</string>
     <string name="manual_port">Porta</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Digite o endereço e o código mostrado no seu telefone</string>
     <string name="pair_no_address">Nenhum endereço de rede local foi encontrado neste PC, então nenhum código QR pode ser mostrado. Parear manualmente abaixo.</string>
     <string name="pair_qr_addresses">Este PC: %1$s (porta %2$d)</string>
-    <string name="pair_qr_description">Em N-Zik no seu telefone, abra o servidor Gerenciar, comece a parear, depois toque em Digitalizar e apontar a câmera para este código.</string>
+    <string name="pair_qr_description">Em N-Zik no seu telefone, abra o servidor de PC. Se o servidor for interrompido, toque em Iniciar. Selecione parear um PC e, em seguida, toque em Digitalizar código QR e aponte a câmera para esse código.</string>
     <string name="pair_qr_preparing">Preparando o código QR…</string>
     <string name="pair_qr_renew_hint">O código se renova a cada 2 minutos.</string>
     <string name="pair_qr_waiting">Aguardando seu telefone…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Porta %1$d (kept)</string>
     <string name="unreachable_save_ip">Salvar e tentar novamente</string>
     <string name="unreachable_title">Telefone inacessível</string>
+    <string name="network_stream_retrying_playback">A tentar retomar a reprodução…</string>
 </resources>
