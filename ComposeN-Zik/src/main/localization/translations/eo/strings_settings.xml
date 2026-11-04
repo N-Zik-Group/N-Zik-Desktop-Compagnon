@@ -52,7 +52,7 @@
     <string name="settings_home_default_page_label">Default page</string>
     <string name="settings_interface_corner_radius_label">UI Roundness</string>
     <string name="settings_interface_page_description">The user interface section contains settings to modify the global interface and navigation</string>
-    <string name="settings_interface_page_title">User Interface</string>
+    <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">User interface</string>
     <string name="settings_languages_title">Languages</string>
     <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
