@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">后退 5 秒</string>
     <string name="player_seek_backward_thirty_seconds">返回 30 秒</string>
     <string name="player_shuffle_empty_message">没有要随机播放的歌曲</string>
-    <string name="player_shuffled_song_count_format">%d 首歌曲已打乱。</string>
+    <string name="player_queue_shuffled_count_format">队列已排序(轨迹： %d)</string>
+    <string name="player_shuffled_song_count_format">已排序的曲目: %d</string>
     <string name="player_sleep_timer_title">睡眠计时器</string>
     <string name="player_statistics_volume_label">音量</string>
     <string name="player_swap_controls_with_timeline">交换播放控制和时间线</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">可视化器栏</string>
     <string name="visualizer_microphone_permission_message">请授予麦克风权限以启用可视化效果。</string>
     <string name="visualizer_title">音乐可视化</string>
+    <string name="player_error_unknown">出现未知播放错误</string>
 </resources>
