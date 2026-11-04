@@ -52,7 +52,7 @@
     <string name="settings_home_default_page_label">Default page</string>
     <string name="settings_interface_corner_radius_label">UI Roundness</string>
     <string name="settings_interface_page_description">The user interface section contains settings to modify the global interface and navigation</string>
-    <string name="settings_interface_page_title">User Interface</string>
+    <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">User interface</string>
     <string name="settings_languages_title">Languages</string>
     <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
@@ -151,7 +151,7 @@
     <string name="settings_player_timeline_size_label">Player Timeline Size</string>
     <string name="settings_player_timeline_transparent_label">Transparent Timeline Bar</string>
     <string name="settings_player_top_action_bar_visible_label">Show top actions bar</string>
-    <string name="settings_preference_saved_message">Preference Saved</string>
+    <string name="settings_preference_saved_message">Preferens sparad</string>
     <string name="settings_proxy_enabled_label">Enable Proxy</string>
     <string name="settings_queue_management_title">Queue Management</string>
     <string name="settings_reset">Reset</string>
