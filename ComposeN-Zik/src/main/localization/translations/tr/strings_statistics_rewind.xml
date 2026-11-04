@@ -8,8 +8,6 @@
     <string name="calendar_today">Bugün</string>
     <string name="rewind_filter_month">Ay</string>
     <string name="rewind_filter_year">Yıl</string>
-    <string name="rewind_title">Geri Sarma</string>
-    <string name="rewind_top_sort">Geri Sarma Üst</string>
     <string name="statistics_items_limit_unlimited">Sınırsız</string>
     <string name="statistics_title">İstatistikler</string>
     <string name="statistics_top_period_title">… içindeki en iyi %s</string>

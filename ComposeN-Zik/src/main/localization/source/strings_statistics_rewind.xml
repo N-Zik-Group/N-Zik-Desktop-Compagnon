@@ -12,8 +12,8 @@
     <!-- Rewind -->
     <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">Year</string>
-    <string name="rewind_title">Rewind</string>
-    <string name="rewind_top_sort">Rewind Top</string>
+    <string name="rewind_title" translatable="false">Rewind</string>
+    <string name="rewind_top_sort" translatable="false">Top Rewind</string>
 
     <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Unlimited</string>

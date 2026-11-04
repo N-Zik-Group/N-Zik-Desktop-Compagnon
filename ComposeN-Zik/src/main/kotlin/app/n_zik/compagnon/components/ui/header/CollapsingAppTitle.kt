@@ -51,7 +51,7 @@ internal fun shouldCollapseTitle(availablePx: Int, idealPx: Int, tolerancePx: In
 
 /**
  * Port of `CollapsingAppTitle` (phone's `app/n_zik/android/components/ui/header/CollapsingAppTitle.kt`): the
- * 36 dp app logo then "N-ZIK" in xl.semiBold, which slides behind the logo when the header runs out of width.
+ * 36 dp app logo then "N-Zik" in xl.semiBold, which slides behind the logo when the header runs out of width.
  * The title goes home ([onHome], phone's `AppLogoText` 245-266); the logo stays clickable without action
  * (its easter eggs are phone games). Dropped: the phone's version badge (none for a release build) —
  * the desktop shows the [HeaderChannelBadge] instead (spec `spec-updater` AD-6) — and the
@@ -160,7 +160,7 @@ private fun AppLogo(
 @Composable
 private fun AppLogoText(onHome: () -> Unit) {
     BasicText(
-        text = "N-ZIK",
+        text = stringResource(Res.string.common_brand_nzik),
         style = TextStyle(
             fontSize = typography().xl.semiBold.fontSize,
             fontWeight = typography().xl.semiBold.fontWeight,
