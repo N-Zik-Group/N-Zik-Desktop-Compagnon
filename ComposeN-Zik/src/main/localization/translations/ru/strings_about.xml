@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="about_action_report_issue">Сообщить о проблеме</string>
-    <string name="about_action_view_source">Посмотреть исходный код</string>
-    <string name="about_authorship_preposition">от</string>
-    <string name="about_contributors_alphabetical_order_label">В алфавитном порядке:</string>
-    <string name="about_developers">Разработчики / Дизайнеры</string>
-    <string name="about_github_link_description">Вы будете перенаправлены на сайт GitHub</string>
-    <string name="about_title">Инфо</string>
-    <string name="about_translators_title">Переводчики</string>
-    <string name="contributors">Авторы</string>
-    <string name="request_a_feature">Запросить функцию или предложить идею</string>
+    <string name="about_action_report_issue">Report an issue</string>
+    <string name="about_action_view_source">View the source code</string>
+    <string name="about_authorship_preposition">by</string>
+    <string name="about_contributors_alphabetical_order_label">In alphabetical order:</string>
+    <string name="about_developers">Developers / Designers</string>
+    <string name="about_github_link_description">You will be redirected to GitHub</string>
+    <string name="about_title">About</string>
+    <string name="about_translators_title">Translators</string>
+    <string name="contributors">Contributors</string>
+    <string name="request_a_feature">Request a feature or suggest an idea</string>
 </resources>
