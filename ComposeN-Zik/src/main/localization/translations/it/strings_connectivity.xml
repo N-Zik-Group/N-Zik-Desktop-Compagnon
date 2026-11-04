@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Visualizza log</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">Il codice ha 6 caratteri, ad esempio ABC-DEF.</string>
-    <string name="manual_description">Sul telefono, Gestisci server mostra l\'indirizzo IP, la porta e un codice a 6 caratteri.</string>
+    <string name="manual_description">Sul telefono, apri il server PC. Se il server è fermato, tocca Avvia. Selezionare Coppia un PC per vedere l\'indirizzo IP, la porta e il codice a 6 caratteri.</string>
     <string name="manual_ip">Indirizzo IP del telefono</string>
     <string name="manual_ip_invalid">Inserisci un indirizzo IPv4, ad esempio 192.168.1.14.</string>
     <string name="manual_port">Porta</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Digita l\'indirizzo e il codice visualizzati sul tuo telefono</string>
     <string name="pair_no_address">Nessun indirizzo di rete locale è stato trovato su questo PC, quindi non è possibile visualizzare alcun codice QR. Coppia manualmente sotto.</string>
     <string name="pair_qr_addresses">Questo PC: %1$s (porta %2$d)</string>
-    <string name="pair_qr_description">In N-Zik sul telefono, apri Gestisci server, inizia ad abbinare, quindi tocca Scansione e punta la fotocamera a questo codice.</string>
+    <string name="pair_qr_description">In N-Zik sul telefono, apri il server PC. Se il server è fermato, tocca Avvia. Selezionare Coppia un PC, quindi toccare Scansiona il codice QR e puntare la fotocamera a questo codice.</string>
     <string name="pair_qr_preparing">Preparazione del codice QR…</string>
     <string name="pair_qr_renew_hint">Il codice si rinnova ogni 2 minuti.</string>
     <string name="pair_qr_waiting">In attesa del tuo telefono…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Port %1$d (mantenuto)</string>
     <string name="unreachable_save_ip">Salva e riprova</string>
     <string name="unreachable_title">Telefono irraggiungibile</string>
+    <string name="network_stream_retrying_playback">Tentativo di riprendere la riproduzione…</string>
 </resources>
