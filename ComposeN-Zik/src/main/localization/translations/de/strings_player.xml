@@ -108,14 +108,11 @@
     <string name="player_matching_required_message">Wiedergabe blockiert, bitte zuerst übereinstimmen</string>
     <string name="player_mini_action_add_to_playlist">Zu Playlist hinzufügen</string>
     <string name="player_mini_action_shuffle">Zufallswiedergabe</string>
-    <string name="player_mini_button_audio_output">Audioausgabe</string>
     <string name="player_mini_button_discover">Entdecken</string>
     <string name="player_mini_button_download">Herunterladen</string>
-    <string name="player_mini_button_lyrics">Songtext</string>
     <string name="player_mini_button_play_pause">Start/Pause</string>
     <string name="player_mini_button_queue">Warteschlange</string>
     <string name="player_mini_button_radio">Radio</string>
-    <string name="player_mini_button_repeat">Wiederholen</string>
     <string name="player_mini_button_share">Teilen</string>
     <string name="player_mini_button_sleep_timer">Schlaf-Timer</string>
     <string name="player_mini_button_video">Video</string>

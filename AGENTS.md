@@ -30,6 +30,9 @@
 - Match user's language for communication
 - Code comments & commits in English
 - Removing a source key requires removing it from the corresponding localized catalogs too (a dead key left in a locale degrades translator context; Crowdin then drops it from its side) — see rules/CODE.md "Translations"
+- Put screen-specific copy in its feature catalog. Reuse a key across screens only when it represents the same concept or action and a wording change should apply everywhere. Identical English is insufficient when the context differs. A permission name can be shared between onboarding and settings, while a permission request and a usage event keep separate keys.
+- Keep shared domain labels in their owning catalog. Use common catalogs for truly cross-feature copy such as Cancel or Close. Before merging keys, check the existing translations and any published Bridge identity or runtime lookup. Preserve protocol keys and alias compatibility.
+- Edit the English thematic XML under `ComposeN-Zik/src/main/localization/source/`. Crowdin exports matching filenames to `src/main/localization/translations/<locale>/`. Gradle combines these catalogs with the standard Compose assets under `ComposeN-Zik/build/generated/combinedComposeResources/`, using `values/` and `values-*/` for Compose. Treat the generated catalogs as build outputs.
 
 ## ⚠️ Ask First
 

@@ -108,14 +108,11 @@
     <string name="player_matching_required_message">Oynatma engellendi, lütfen önce eşleştirin</string>
     <string name="player_mini_action_add_to_playlist">Çalma listesine ekle</string>
     <string name="player_mini_action_shuffle">Karıştır</string>
-    <string name="player_mini_button_audio_output">Ses çıkışı</string>
     <string name="player_mini_button_discover">Keşfet</string>
     <string name="player_mini_button_download">İndir</string>
-    <string name="player_mini_button_lyrics">Şarkı sözleri</string>
     <string name="player_mini_button_play_pause">Oynat/Duraklat</string>
     <string name="player_mini_button_queue">Kuyruk</string>
     <string name="player_mini_button_radio">Radyo</string>
-    <string name="player_mini_button_repeat">Tekrarla</string>
     <string name="player_mini_button_share">Paylaş</string>
     <string name="player_mini_button_sleep_timer">Uyku zamanlayıcısı</string>
     <string name="player_mini_button_video">Video</string>

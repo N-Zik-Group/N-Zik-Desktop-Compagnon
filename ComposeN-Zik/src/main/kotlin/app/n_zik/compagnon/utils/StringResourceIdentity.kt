@@ -5,6 +5,9 @@ internal object StringResourceIdentity {
     fun localName(resourceName: String): String = aliases[resourceName] ?: resourceName
 
     private val aliases = mapOf(
+        "player_mini_button_audio_output" to "audio_output_title",
+        "player_mini_button_lyrics" to "lyrics_title",
+        "player_mini_button_repeat" to "player_action_repeat",
         "_1_month" to "calendar_period_one_month",
         "_1_week" to "calendar_period_one_week",
         "_1_year" to "calendar_period_one_year",
@@ -259,14 +262,14 @@ internal object StringResourceIdentity {
         "min_listening_time" to "recommendations_minimum_playback_duration_label",
         "minimized_player" to "player_progress_mini_player",
         "miniplayer_button_add_to_playlist" to "player_mini_action_add_to_playlist",
-        "miniplayer_button_audio_output" to "player_mini_button_audio_output",
+        "miniplayer_button_audio_output" to "audio_output_title",
         "miniplayer_button_discover" to "player_mini_button_discover",
         "miniplayer_button_download" to "player_mini_button_download",
-        "miniplayer_button_lyrics" to "player_mini_button_lyrics",
+        "miniplayer_button_lyrics" to "lyrics_title",
         "miniplayer_button_play_pause" to "player_mini_button_play_pause",
         "miniplayer_button_queue" to "player_mini_button_queue",
         "miniplayer_button_radio" to "player_mini_button_radio",
-        "miniplayer_button_repeat" to "player_mini_button_repeat",
+        "miniplayer_button_repeat" to "player_action_repeat",
         "miniplayer_button_share" to "player_mini_button_share",
         "miniplayer_button_shuffle" to "player_mini_action_shuffle",
         "miniplayer_button_skip_back" to "player_action_previous",

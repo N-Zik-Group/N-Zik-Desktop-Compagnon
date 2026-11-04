@@ -108,14 +108,11 @@
     <string name="player_matching_required_message">Toisto estetty, ole hyvä ja vastaa ensin</string>
     <string name="player_mini_action_add_to_playlist">Lisää soittolistaan</string>
     <string name="player_mini_action_shuffle">Sekoita</string>
-    <string name="player_mini_button_audio_output">Audio output</string>
     <string name="player_mini_button_discover">Löydä uutta</string>
     <string name="player_mini_button_download">Lataa</string>
-    <string name="player_mini_button_lyrics">Sanoitukset</string>
     <string name="player_mini_button_play_pause">Play/Pause</string>
     <string name="player_mini_button_queue">Queue</string>
     <string name="player_mini_button_radio">Radio</string>
-    <string name="player_mini_button_repeat">Uudelleentoisto</string>
     <string name="player_mini_button_share">Share</string>
     <string name="player_mini_button_sleep_timer">Uniajastin</string>
     <string name="player_mini_button_video">Video</string>

@@ -78,4 +78,5 @@
 
     <!-- Validating -->
     <string name="validating">Pairing with your phone…</string>
+    <string name="install_error_open_folder">Could not open the folder</string>
 </resources>

@@ -108,14 +108,11 @@
     <string name="player_matching_required_message">Reprodução bloqueada, faça o jogo primeiro</string>
     <string name="player_mini_action_add_to_playlist">Adicionar à lista de reprodução</string>
     <string name="player_mini_action_shuffle">Aleatorizar</string>
-    <string name="player_mini_button_audio_output">Audio output</string>
     <string name="player_mini_button_discover">Descubra</string>
     <string name="player_mini_button_download">Baixar</string>
-    <string name="player_mini_button_lyrics">Letras</string>
     <string name="player_mini_button_play_pause">Play/Pause</string>
     <string name="player_mini_button_queue">Queue</string>
     <string name="player_mini_button_radio">Radio</string>
-    <string name="player_mini_button_repeat">Repetir</string>
     <string name="player_mini_button_share">Share</string>
     <string name="player_mini_button_sleep_timer">Temporizador para desligar</string>
     <string name="player_mini_button_video">Video</string>

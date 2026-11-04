@@ -108,14 +108,11 @@
     <string name="player_matching_required_message">Lecture bloquée, veuillez d\'abord faire correspondre</string>
     <string name="player_mini_action_add_to_playlist">Ajouter à la playlist</string>
     <string name="player_mini_action_shuffle">Lecture aléatoire</string>
-    <string name="player_mini_button_audio_output">Sortie audio</string>
     <string name="player_mini_button_discover">Découvrir</string>
     <string name="player_mini_button_download">Télécharger</string>
-    <string name="player_mini_button_lyrics">Paroles</string>
     <string name="player_mini_button_play_pause">Lecture/Pause</string>
     <string name="player_mini_button_queue">File d\'attente</string>
     <string name="player_mini_button_radio">Radio</string>
-    <string name="player_mini_button_repeat">Répéter</string>
     <string name="player_mini_button_share">Partager</string>
     <string name="player_mini_button_sleep_timer">Minuteur de veille</string>
     <string name="player_mini_button_video">Vidéo</string>

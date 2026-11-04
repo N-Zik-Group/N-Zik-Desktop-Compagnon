@@ -108,14 +108,11 @@
     <string name="player_matching_required_message">Playback blocked, please match first</string>
     <string name="player_mini_action_add_to_playlist">Add to playlist</string>
     <string name="player_mini_action_shuffle">随机播放</string>
-    <string name="player_mini_button_audio_output">Audio output</string>
     <string name="player_mini_button_discover">Discover</string>
     <string name="player_mini_button_download">下载</string>
-    <string name="player_mini_button_lyrics">Lyrics</string>
     <string name="player_mini_button_play_pause">Play/Pause</string>
     <string name="player_mini_button_queue">Queue</string>
     <string name="player_mini_button_radio">Radio</string>
-    <string name="player_mini_button_repeat">重复</string>
     <string name="player_mini_button_share">Share</string>
     <string name="player_mini_button_sleep_timer">Sleep timer</string>
     <string name="player_mini_button_video">Video</string>

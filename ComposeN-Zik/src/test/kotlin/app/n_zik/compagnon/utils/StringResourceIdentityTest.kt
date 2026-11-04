@@ -25,6 +25,20 @@ class StringResourceIdentityTest {
     }
 
     @Test
+    fun `shared mini player labels still resolve both published names`() {
+        val names = mapOf(
+            "audio_output" to "audio_output_title",
+            "lyrics" to "lyrics_title",
+            "repeat" to "player_action_repeat",
+        )
+        names.forEach { (label, canonical) ->
+            assertEquals(canonical, StringResourceIdentity.localName("miniplayer_button_$label"))
+            assertEquals(canonical, StringResourceIdentity.localName("player_mini_button_$label"))
+            assertTrue(Res.allStringResources.containsKey(canonical))
+        }
+    }
+
+    @Test
     fun `unknown and unchanged desktop names pass through`() {
         listOf("unknown_key_xyz", "pair_title", "command_play", "notice_no_delta", "").forEach { name ->
             assertEquals(name, StringResourceIdentity.localName(name))

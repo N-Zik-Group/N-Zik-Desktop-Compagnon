@@ -135,7 +135,7 @@ suspend fun commandName(command: CommandKind?): String = getString(
         CommandKind.QueuePlay -> Res.string.command_queue_play
         CommandKind.QueueAdd -> Res.string.command_queue_add
         CommandKind.Output -> Res.string.command_output
-        CommandKind.QueueList -> Res.string.command_queue_play
+        CommandKind.QueueList -> Res.string.command_queue_list
         null -> Res.string.command_unknown
     },
 )

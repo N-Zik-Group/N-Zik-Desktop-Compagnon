@@ -108,14 +108,11 @@
     <string name="player_matching_required_message">Riproduzione bloccata, per favore corrisponde prima</string>
     <string name="player_mini_action_add_to_playlist">Aggiungi alla playlist</string>
     <string name="player_mini_action_shuffle">Casuale</string>
-    <string name="player_mini_button_audio_output">Audio output</string>
     <string name="player_mini_button_discover">Esplora</string>
     <string name="player_mini_button_download">Scarica</string>
-    <string name="player_mini_button_lyrics">Testi</string>
     <string name="player_mini_button_play_pause">Play/Pause</string>
     <string name="player_mini_button_queue">Queue</string>
     <string name="player_mini_button_radio">Radio</string>
-    <string name="player_mini_button_repeat">Ripeti</string>
     <string name="player_mini_button_share">Share</string>
     <string name="player_mini_button_sleep_timer">Timer spegnimento</string>
     <string name="player_mini_button_video">Video</string>

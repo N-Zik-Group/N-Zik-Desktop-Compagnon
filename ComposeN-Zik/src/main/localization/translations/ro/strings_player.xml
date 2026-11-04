@@ -108,14 +108,11 @@
     <string name="player_matching_required_message">Redare blocată, vă rugăm să potriviți mai întâi</string>
     <string name="player_mini_action_add_to_playlist">Adaugă la playlist</string>
     <string name="player_mini_action_shuffle">Amestecă</string>
-    <string name="player_mini_button_audio_output">Audio output</string>
     <string name="player_mini_button_discover">Descoperă</string>
     <string name="player_mini_button_download">Descarcă</string>
-    <string name="player_mini_button_lyrics">Versuri</string>
     <string name="player_mini_button_play_pause">Play/Pause</string>
     <string name="player_mini_button_queue">Queue</string>
     <string name="player_mini_button_radio">Radio</string>
-    <string name="player_mini_button_repeat">Repetă</string>
     <string name="player_mini_button_share">Share</string>
     <string name="player_mini_button_sleep_timer">Temporizator de somn</string>
     <string name="player_mini_button_video">Video</string>

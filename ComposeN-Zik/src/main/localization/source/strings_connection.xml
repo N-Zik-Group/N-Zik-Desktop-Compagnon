@@ -88,4 +88,5 @@
     <string name="unreachable_port_kept">Port %1$d (kept)</string>
     <string name="unreachable_save_ip">Save and retry</string>
     <string name="unreachable_title">Phone unreachable</string>
+    <string name="command_queue_list">Queue from list</string>
 </resources>

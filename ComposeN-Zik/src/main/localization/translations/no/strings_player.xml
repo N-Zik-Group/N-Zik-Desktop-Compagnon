@@ -108,14 +108,11 @@
     <string name="player_matching_required_message">Avspilling blokkert, vennligst match først</string>
     <string name="player_mini_action_add_to_playlist">Legg til spilleliste</string>
     <string name="player_mini_action_shuffle">Tilfeldig rekkefølge</string>
-    <string name="player_mini_button_audio_output">Audio output</string>
     <string name="player_mini_button_discover">Oppdag</string>
     <string name="player_mini_button_download">Last ned</string>
-    <string name="player_mini_button_lyrics">Tekster</string>
     <string name="player_mini_button_play_pause">Play/Pause</string>
     <string name="player_mini_button_queue">Queue</string>
     <string name="player_mini_button_radio">Radio</string>
-    <string name="player_mini_button_repeat">Gjenta</string>
     <string name="player_mini_button_share">Share</string>
     <string name="player_mini_button_sleep_timer">Innsovningstimer</string>
     <string name="player_mini_button_video">Video</string>

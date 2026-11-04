@@ -234,12 +234,12 @@ fun copyToClipboard(text: String, copiedResource: StringResource = Res.string.pa
     runCatching {
         Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(text), null)
         Toaster.s(copiedResource)
-    }.onFailure { Toaster.e(it.message ?: "Copy failed") }
+    }.onFailure { it.message?.let { message -> Toaster.e(message) } ?: Toaster.e(Res.string.error_copy_failed) }
 }
 
 /** Opens the folder containing [filePath] in the file manager. */
 fun openFileFolder(filePath: String) {
     runCatching {
         Desktop.getDesktop().open(File(filePath).parentFile ?: File("."))
-    }.onFailure { Toaster.e(it.message ?: "Could not open the folder") }
+    }.onFailure { it.message?.let { message -> Toaster.e(message) } ?: Toaster.e(Res.string.install_error_open_folder) }
 }

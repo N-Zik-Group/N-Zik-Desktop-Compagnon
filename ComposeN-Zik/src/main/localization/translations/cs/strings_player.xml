@@ -108,14 +108,11 @@
     <string name="player_matching_required_message">Přehrávání zablokováno, nejprve se prosím shodujte.</string>
     <string name="player_mini_action_add_to_playlist">Přidat do playlistu</string>
     <string name="player_mini_action_shuffle">Náhodně</string>
-    <string name="player_mini_button_audio_output">Audio output</string>
     <string name="player_mini_button_discover">Objevit</string>
     <string name="player_mini_button_download">Stáhnout</string>
-    <string name="player_mini_button_lyrics">Texty</string>
     <string name="player_mini_button_play_pause">Play/Pause</string>
     <string name="player_mini_button_queue">Queue</string>
     <string name="player_mini_button_radio">Radio</string>
-    <string name="player_mini_button_repeat">Opakovat</string>
     <string name="player_mini_button_share">Share</string>
     <string name="player_mini_button_sleep_timer">Časovač spánku</string>
     <string name="player_mini_button_video">Video</string>

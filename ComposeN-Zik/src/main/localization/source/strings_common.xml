@@ -106,4 +106,6 @@
 
     <!-- Title -->
     <string name="title_backup_and_restore">Backup and restore</string>
+    <string name="error_open_browser">Could not open the browser</string>
+    <string name="error_copy_failed">Copy failed</string>
 </resources>
