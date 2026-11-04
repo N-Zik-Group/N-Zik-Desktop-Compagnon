@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fake_audio_bar">Fake Waveform</string>
+    <string name="message_type">Popup message style</string>
+    <string name="message_type_modern">깔끔하게</string>
+    <string name="player_background_black_cherry_cosmos">검은 체리 코스모스</string>
+    <string name="player_background_glossy_gradient">광택 그라데이션</string>
+    <string name="player_background_golden_magma">금빛 마그마</string>
+    <string name="player_background_gradient_flow">그라데이션 흐름</string>
+    <string name="player_background_ice_reflection">얼음 반사</string>
+    <string name="player_background_ink_flow">잉크 흐름</string>
+    <string name="player_background_linear_gradient">선형 그라데이션</string>
+    <string name="player_background_mesh_gradient">메쉬 그라데이션</string>
+    <string name="player_background_mesmerizing_lens">매혹적인 렌즈</string>
+    <string name="player_background_oil_flow">기름 흐름</string>
+    <string name="player_background_purple_liquid">보라색 액체</string>
+    <string name="player_background_stage">단계</string>
+    <string name="player_controls_style_essential">다양하게</string>
+    <string name="player_controls_style_modern">깔끔하게</string>
+    <string name="player_cover_style_cd">CD</string>
+    <string name="player_cover_style_cd_with_cover">커버가 있는 CD</string>
+    <string name="player_cover_style_vinyl">레코드판</string>
+    <string name="player_progress_mini_player">플레이어 최소화</string>
+    <string name="theme_palette_dynamic">다이나믹</string>
+    <string name="theme_shake_sensitivity_disabled">비활성화</string>
+    <string name="thumbnail_action_edit">썸네일 편집</string>
+    <string name="thumbnail_action_reset">썸네일 초기화</string>
+</resources>
