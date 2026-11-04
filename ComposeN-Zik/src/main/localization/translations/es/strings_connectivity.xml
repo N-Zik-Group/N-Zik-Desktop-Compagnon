@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Ver registros</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">El código tiene 6 caracteres, por ejemplo ABC-DEF.</string>
-    <string name="manual_description">En el teléfono, Administrar servidor muestra la dirección IP, el puerto y un código de 6 caracteres.</string>
+    <string name="manual_description">En el teléfono, abra el servidor de PC. Si el servidor se detiene, pulse Iniciar. Seleccione Emparejar un PC para ver la dirección IP, el puerto y el código de 6 caracteres.</string>
     <string name="manual_ip">Dirección IP del teléfono</string>
     <string name="manual_ip_invalid">Introduzca una dirección IPv4, por ejemplo 192.168.1.14.</string>
     <string name="manual_port">Puerto</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Escriba la dirección y el código que aparece en su teléfono</string>
     <string name="pair_no_address">No se ha encontrado ninguna dirección de red local en este PC, por lo que no se puede mostrar ningún código QR. Empareja manualmente abajo.</string>
     <string name="pair_qr_addresses">Este PC: %1$s (puerto %2$d)</string>
-    <string name="pair_qr_description">En N-Zik en su teléfono, abra Administrar servidor, comience a emparejar, luego pulse Escanear y apunte la cámara a este código.</string>
+    <string name="pair_qr_description">En N-Zik en tu teléfono, abre el servidor de PC. Si el servidor se detiene, pulsa Iniciar. Seleccione Emparejar un PC, luego pulse Escanear código QR y apunte la cámara a este código.</string>
     <string name="pair_qr_preparing">Preparando el código QR…</string>
     <string name="pair_qr_renew_hint">El código se renueva cada 2 minutos.</string>
     <string name="pair_qr_waiting">Esperando por tu teléfono…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Puerto %1$d (mañana)</string>
     <string name="unreachable_save_ip">Guardar y reintentar</string>
     <string name="unreachable_title">Teléfono inaccesible</string>
+    <string name="network_stream_retrying_playback">Intentando reanudar la reproducción…</string>
 </resources>
