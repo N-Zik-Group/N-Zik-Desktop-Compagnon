@@ -56,7 +56,7 @@
     <string name="settings_interface_title">Interface Utilisateur</string>
     <string name="settings_languages_title">Langues</string>
     <string name="settings_launcher_shortcuts_description">Sélectionner et réorganiser les raccourcis du lanceur d\'applications</string>
-    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
+    <string name="settings_launcher_shortcuts_limit_message">Maximum de raccourcis %1$d actifs atteints</string>
     <string name="settings_launcher_shortcuts_recovery_required_message">La fonction « Sauvegarde » ne peut pas être désactivée</string>
     <string name="settings_launcher_shortcuts_title">Raccourcis vers l\'application</string>
     <string name="settings_library_now_playing_indicator_label">Indicateur de lecture en cours</string>
