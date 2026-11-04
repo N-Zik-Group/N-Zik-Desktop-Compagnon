@@ -9,4 +9,5 @@
     <string name="about_title">Info</string>
     <string name="about_translators_title">Übersetzer</string>
     <string name="contributors">Mitwirkende</string>
+    <string name="request_a_feature">Request a feature or suggest an idea</string>
 </resources>
