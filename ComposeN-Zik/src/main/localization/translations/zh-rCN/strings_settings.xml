@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">有关部分显示有关应用、开发者、故障排除和更新选项的信息</string>
     <string name="settings_app_behavior_title">应用行为</string>
     <string name="settings_app_language_label">界面语言</string>
+    <string name="settings_app_language_system">系统</string>
     <string name="settings_audio_bass_boost">音频低点加速</string>
     <string name="settings_audio_crossfade_description">启用歌曲之间的平稳过渡</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
