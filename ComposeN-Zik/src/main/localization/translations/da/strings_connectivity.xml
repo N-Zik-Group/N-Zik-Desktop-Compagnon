@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Vis logs</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">Koden har 6 tegn, for eksempel ABC-DEF.</string>
-    <string name="manual_description">På din telefon, Administrer server viser IP-adressen, porten og en 6-tegns kode.</string>
+    <string name="manual_description">På din telefon, åben PC server. Hvis serveren stoppes, skal du trykke på Start. Vælg Par en pc for at se IP-adressen, porten og 6-tegns koden.</string>
     <string name="manual_ip">Telefonens IP-adresse</string>
     <string name="manual_ip_invalid">Indtast en IPv4-adresse, for eksempel 192.168.1.14.</string>
     <string name="manual_port">Port</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Skriv adressen og den kode, der vises på din telefon</string>
     <string name="pair_no_address">Der blev ikke fundet nogen lokal netværksadresse på denne pc, så der kan ikke vises nogen QR-kode. Par manuelt nedenfor.</string>
     <string name="pair_qr_addresses">Denne PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_description">I N-Zik på din telefon, åben Administrer server, start parring, og tryk derefter på Scan og peg kameraet på denne kode.</string>
+    <string name="pair_qr_description">I N-Zik på din telefon, åben pc-server. Hvis serveren stoppes, skal du trykke på Start. Vælg Par en pc, og tryk derefter på Scan QR-kode og peg kameraet med denne kode.</string>
     <string name="pair_qr_preparing">Forbereder QR-koden…</string>
     <string name="pair_qr_renew_hint">Koden fornyer sig hvert 2. minut.</string>
     <string name="pair_qr_waiting">Venter på din telefon…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Port %1$d (gemt)</string>
     <string name="unreachable_save_ip">Gem og prøv igen</string>
     <string name="unreachable_title">Telefonen kan ikke nås</string>
+    <string name="network_stream_retrying_playback">Forsøger at genoptage afspilningen…</string>
 </resources>
