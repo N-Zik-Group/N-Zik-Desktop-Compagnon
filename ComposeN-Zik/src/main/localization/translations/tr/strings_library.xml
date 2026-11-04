@@ -104,4 +104,8 @@
     <string name="song_matching_unmatched_label">Eşleşmeyen şarkılar</string>
     <string name="song_metadata_update_action_open">Güncelleme iletişim kutusunu aç</string>
     <string name="sort_artist_and_album">Sanatçı, Albüm</string>
+    <plurals name="library_song_count">
+        <item quantity="one">%1$d song</item>
+        <item quantity="other">%1$d songs</item>
+    </plurals>
 </resources>
