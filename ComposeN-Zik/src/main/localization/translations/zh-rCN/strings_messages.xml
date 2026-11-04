@@ -2,7 +2,7 @@
 <resources>
     <string name="command_output">Audio output</string>
     <string name="command_unknown">A command</string>
-    <string name="common_error_no_internet">No network connection</string>
+    <string name="common_error_no_internet">无网络连接</string>
     <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
     <string name="error_copy_failed">Copy failed</string>
     <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
