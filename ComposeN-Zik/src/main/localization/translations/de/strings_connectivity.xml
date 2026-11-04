@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Logs anzeigen</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">Der Code hat 6 Zeichen, zum Beispiel ABC-DEF.</string>
-    <string name="manual_description">Auf Ihrem Telefon zeigt Verwalten Server die IP-Adresse, den Port und einen 6-Zeichen-Code.</string>
+    <string name="manual_description">Öffnen Sie auf Ihrem Telefon den PC-Server. Wenn der Server gestoppt ist, tippen Sie auf Start. Wählen Sie einen PC aus, um die IP-Adresse, den Port und den 6-Zeichen-Code zu sehen.</string>
     <string name="manual_ip">Telefon-IP-Adresse</string>
     <string name="manual_ip_invalid">Geben Sie eine IPv4-Adresse ein, zum Beispiel 192.168.1.14.</string>
     <string name="manual_port">Port</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Geben Sie die Adresse und den Code ein, der auf Ihrem Telefon angezeigt wird</string>
     <string name="pair_no_address">Es wurde keine lokale Netzwerkadresse auf diesem PC gefunden, so dass kein QR-Code angezeigt werden kann. Manuell unten koppeln.</string>
     <string name="pair_qr_addresses">Dieser PC: %1$s (Port %2$d)</string>
-    <string name="pair_qr_description">In N-Zik auf Ihrem Telefon öffnen Sie Server verwalten, starten Sie das Paaren, dann tippen Sie auf Scan und zeigen Sie die Kamera auf diesen Code.</string>
+    <string name="pair_qr_description">In N-Zik auf Ihrem Telefon öffnen Sie den PC-Server. Wenn der Server gestoppt ist, tippen Sie auf Start. Wählen Sie einen PC aus, tippen Sie dann auf QR-Code scannen und zeigen Sie die Kamera auf diesen Code.</string>
     <string name="pair_qr_preparing">Vorbereitung des QR-Codes…</string>
     <string name="pair_qr_renew_hint">Der Code erneuert sich alle 2 Minuten.</string>
     <string name="pair_qr_waiting">Warten auf Ihr Telefon…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Port %1$d (gehalten)</string>
     <string name="unreachable_save_ip">Speichern und wiederholen</string>
     <string name="unreachable_title">Telefon nicht erreichbar</string>
+    <string name="network_stream_retrying_playback">Versuche, die Wiedergabe fortzusetzen…</string>
 </resources>
