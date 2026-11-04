@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="fake_audio_bar">Audio Waves</string>
+    <string name="fake_audio_bar">Nep ontwaken</string>
     <string name="message_type">Popup message style</string>
     <string name="message_type_modern">Modern</string>
     <string name="player_background_black_cherry_cosmos">Black Cherry Cosmos</string>
@@ -20,9 +20,9 @@
     <string name="player_cover_style_cd">CD</string>
     <string name="player_cover_style_cd_with_cover">CD with Cover</string>
     <string name="player_cover_style_vinyl">Vinyl</string>
-    <string name="player_progress_mini_player">Minimized player</string>
-    <string name="theme_palette_dynamic">Dynamic</string>
-    <string name="theme_shake_sensitivity_disabled">Disabled</string>
+    <string name="player_progress_mini_player">Geminimaliseerde speler</string>
+    <string name="theme_palette_dynamic">Dynamisch</string>
+    <string name="theme_shake_sensitivity_disabled">Uitgeschakeld</string>
     <string name="thumbnail_action_edit">Edit Thumbnail</string>
     <string name="thumbnail_action_reset">Reset Thumbnail</string>
 </resources>
