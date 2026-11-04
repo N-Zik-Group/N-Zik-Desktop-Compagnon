@@ -4,10 +4,18 @@
     <string name="about_action_view_source">Προβολή Πηγαίου Κώδικα</string>
     <string name="about_authorship_preposition">από</string>
     <string name="about_contributors_alphabetical_order_label">Με αλφαβητική σειρά:</string>
-    <string name="about_developers">Developers / Designers</string>
+    <string name="about_developers">Προγραμματιστές / Σχεδιαστές</string>
     <string name="about_github_link_description">Θα μεταφερθείτε στο GitHub</string>
     <string name="about_title">Σχετικά</string>
-    <string name="about_translators_title">Translators</string>
+    <string name="about_translators_title">Μεταφραστές</string>
     <string name="contributors">Συντελεστές</string>
     <string name="request_a_feature">Προτείνετε μια ιδέα ή ένα χαρακτηριστικό</string>
+    <plurals name="about_translator_count">
+        <item quantity="one">%1$d μεταφραστής</item>
+        <item quantity="other">%1$d μεταφραστές</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="one">%1$d developer / designer</item>
+        <item quantity="other">%1$d προγραμματιστές / σχεδιαστές</item>
+    </plurals>
 </resources>
