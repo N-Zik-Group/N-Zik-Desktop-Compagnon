@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">ألبوم الإشارة المرجعية</string>
     <string name="album_action_open">الذهاب إلى الألبوم</string>
     <string name="album_left_swipe">مرر الألبوم لليسار</string>
-    <string name="album_loading_song_count_format">تحميل %1$d أغنية…</string>
+    <string name="album_loading_song_count_format">تحميل الألبوم (المسارات: %1$d)…</string>
     <string name="album_right_swipe">مرر الألبوم الأيمن</string>
     <string name="artist_action_follow">اتبع</string>
     <string name="artist_action_play_local_songs">تشغيل جميع الأغاني المحلية</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">تثبيت / إلغاء تثبيت قائمة التشغيل</string>
     <string name="playlist_bookmark_unsupported_message">لا يمكن الإشارة المرجعية إلى الأغاني المعجبة أو قائمة الحلقات</string>
     <string name="playlist_create_dialog_title">إنشاء قائمة تشغيل جديدة</string>
-    <string name="playlist_delete_all_confirmation_count_format">هل أنت متأكد من أنك تريد حذف جميع قوائم التشغيل %d؟</string>
+    <string name="playlist_delete_all_confirmation_count_format">حذف جميع قوائم التشغيل؟ (المجموع: %d)</string>
     <string name="playlist_left_swipe">قائمة التشغيل مرر لليسار</string>
     <string name="playlist_pinned_title">Pinned Playlists</string>
     <string name="playlist_rename_dialog_title">إعادة تسمية قائمة التشغيل</string>
@@ -112,4 +112,6 @@
         <item quantity="many">%1$d songs</item>
         <item quantity="other">%1$d songs</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">تعذر طلب الوصول إلى الموسيقى على هذا الجهاز.</string>
+    <string name="library_on_device_permission_settings_failed">تعذر فتح إعدادات الإذن.</string>
 </resources>
