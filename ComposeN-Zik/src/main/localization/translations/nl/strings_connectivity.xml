@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Bekijk logs</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">De code heeft 6 tekens, bijvoorbeeld ABC-DEF.</string>
-    <string name="manual_description">Op uw telefoon beheer de server toont het IP-adres, de poort en een 6-tekencode.</string>
+    <string name="manual_description">Open op je telefoon de PC server. Als de server is gestopt, tik dan op Start. Selecteer een pc om het IP-adres en de poort en de 6-tekens code te zien.</string>
     <string name="manual_ip">Telefoon IP-adres</string>
     <string name="manual_ip_invalid">Voer een IPv4-adres in, bijvoorbeeld 192.168.1.14.</string>
     <string name="manual_port">Poort</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Typ het adres en de code die getoond wordt op uw telefoon</string>
     <string name="pair_no_address">Er is geen lokaal netwerkadres gevonden op deze PC, dus kan er geen QR-code worden getoond. Koppel hieronder handmatig.</string>
     <string name="pair_qr_addresses">Deze PC: %1$s (poort %2$d)</string>
-    <string name="pair_qr_description">In N-Zik op je telefoon, open de beheerserver, start met koppelen, tik op Scan en richt de camera op deze code.</string>
+    <string name="pair_qr_description">In N-Zik op je telefoon, open de PC server. Als de server is gestopt, tik dan op Start. Selecteer een PC, klik vervolgens op Scan QR-code en richt de camera op deze code.</string>
     <string name="pair_qr_preparing">Voorbereiden van de QR-code…</string>
     <string name="pair_qr_renew_hint">De code verlengt zichzelf elke 2 minuten.</string>
     <string name="pair_qr_waiting">Wachten op uw telefoon…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Poort %1$d (kept)</string>
     <string name="unreachable_save_ip">Opslaan en opnieuw proberen</string>
     <string name="unreachable_title">Telefoon niet bereikbaar</string>
+    <string name="network_stream_retrying_playback">Afspelen wordt opnieuw geprobeerd…</string>
 </resources>
