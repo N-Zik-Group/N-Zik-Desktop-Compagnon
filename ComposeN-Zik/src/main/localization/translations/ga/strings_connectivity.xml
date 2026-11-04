@@ -68,7 +68,7 @@
     <string name="paired_title">Paired</string>
     <string name="paired_with">Paired with %1$s</string>
     <string name="phone_panel_title">Phone</string>
-    <string name="proxy">Proxy</string>
+    <string name="proxy">PROXY</string>
     <string name="reconnect">Reconnect</string>
     <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
     <string name="revoked_pair_again">Pair again</string>
