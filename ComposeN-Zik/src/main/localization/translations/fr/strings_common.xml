@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_subtitle">Guide d\'accompagnement pour N-Zik</string>
+    <string name="app_subtitle">L\'application compagnon de N-Zik</string>
     <string name="cancel">Annuler</string>
     <string name="common_artist_conjunction_and">et</string>
     <string name="common_clipboard_copy_success">Copié</string>
@@ -24,4 +24,12 @@
     <string name="common_validation_empty_value">La valeur ne peut pas être vide</string>
     <string name="common_validation_minimum_value">La valeur doit être supérieure à</string>
     <string name="dismiss">Ignorer</string>
+    <string name="common_duration_seconds_format">%1$d s</string>
+    <string name="common_file_size_bytes_format">%1$s o</string>
+    <string name="common_file_size_gigabytes_format">%1$s Go</string>
+    <string name="common_file_size_kilobytes_format">%1$s ko</string>
+    <string name="common_file_size_megabytes_format">%1$s Mo</string>
+    <string name="common_file_size_terabytes_format">%1$s To</string>
+    <string name="common_size_megabytes_format">%1$d Mo</string>
+    <string name="common_size_gigabytes_format">%1$d Go</string>
 </resources>
