@@ -10,4 +10,12 @@
     <string name="about_translators_title">Traductores</string>
     <string name="contributors">Colaboradores</string>
     <string name="request_a_feature">Solicitar una función o sugerir una idea</string>
+    <plurals name="about_translator_count">
+        <item quantity="one">Traductor %1$d</item>
+        <item quantity="other">%1$d translators</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="one">Desarrollador / diseñador %1$d</item>
+        <item quantity="other">Desarrolladores y diseñadores de %1$d</item>
+    </plurals>
 </resources>
