@@ -24,7 +24,6 @@
     <string name="connection_kicked">Telefon bağlantısı kesildi. Eşleştirme korunur.</string>
     <string name="connection_live">Bağlanıldı</string>
     <string name="connection_offline">Bağlantı kesildi</string>
-    <string name="connection_other_active">Telefona başka bir bilgisayar (%1$s) bağlı. Bunu telefondan ayırın, ardından tekrar deneyin.</string>
     <string name="connection_reconnecting">Yeniden bağlanıyor…</string>
     <string name="connection_reconnecting_in">Telefonla bağlantı kesildi. %1$d saniye içinde yeniden bağlanılıyor…</string>
     <string name="connection_replaced">Bu bilgisayarın başka bir penceresi oturumu devraldı.</string>

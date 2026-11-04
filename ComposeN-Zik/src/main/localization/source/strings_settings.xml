@@ -194,4 +194,5 @@
     <!-- Window -->
     <string name="window">Window</string>
     <string name="sync_start_service_failed">Failed to start sync service</string>
+    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
 </resources>

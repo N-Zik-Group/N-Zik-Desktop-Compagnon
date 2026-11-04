@@ -54,7 +54,7 @@ fun HomeSyncBanner(
                 )
                 if (failed > 0) {
                     BasicText(
-                        text = " " + stringResource(Res.string.library_sync_failed_count_suffix),
+                        text = " " + formatText(stringResource(Res.string.library_sync_failed_count_suffix), failed),
                         style = typography().xxs.semiBold.copy(color = colorPalette().red),
                     )
                 }

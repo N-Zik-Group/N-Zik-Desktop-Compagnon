@@ -686,3 +686,7 @@ Fixed:
   - Validé en live par l'user sur GNOME 51 / Flatpak (2026-10-13) : tray + menu natif avec le padding des icônes « comme Discord », tint correct (session sombre → blanc), MPRIS, single instance (relance = pas de nouvelle fenêtre, confirmé par l'user), build dev installé in-place
   - `./gradlew build` vert (la suite complète, dont les 9 pins récapitulatifs ci-dessus)
   - Commité sur le feu vert de l'user (2026-10-13, mode Done + commit + push)
+
+- fix(localization): finish the Desktop catalog and Bridge audit
+  - Share the active-device message, preserve Bridge aliases, and display the failed sync count in the local language.
+  - Refresh the wiki and formatting rules for the current localization layout.

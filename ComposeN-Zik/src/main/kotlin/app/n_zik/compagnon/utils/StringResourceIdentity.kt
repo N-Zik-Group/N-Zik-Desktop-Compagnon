@@ -5,6 +5,7 @@ internal object StringResourceIdentity {
     fun localName(resourceName: String): String = aliases[resourceName] ?: resourceName
 
     private val aliases = mapOf(
+        "app_shortcuts_max_reached" to "settings_launcher_shortcuts_limit_message",
         "player_mini_button_audio_output" to "audio_output_title",
         "player_mini_button_lyrics" to "lyrics_title",
         "player_mini_button_repeat" to "player_action_repeat",

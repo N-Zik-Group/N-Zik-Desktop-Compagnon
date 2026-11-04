@@ -24,7 +24,6 @@
     <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
     <string name="connection_live">Connected</string>
     <string name="connection_offline">Disconnected</string>
-    <string name="connection_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
     <string name="connection_reconnecting">Reconnecting…</string>
     <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
     <string name="connection_replaced">Another window of this PC took over the session.</string>

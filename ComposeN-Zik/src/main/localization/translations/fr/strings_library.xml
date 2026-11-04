@@ -59,7 +59,7 @@
     <string name="library_sort_songs_number">Nombre de titres</string>
     <string name="library_sort_title">Titre</string>
     <string name="library_sync_current_item_format">Synchronisation : %1$s</string>
-    <string name="library_sync_failed_count_suffix">Échec de la synchronisation</string>
+    <string name="library_sync_failed_count_suffix">Échec de la synchronisation (%1$d)</string>
     <string name="library_sync_progress_format">%1$d / %2$d</string>
     <string name="library_tracks_failed">Les pistes n\'ont pas pu être lues : %1$s</string>
     <string name="library_youtube_playlists_label">YouTube / YouTube Music</string>

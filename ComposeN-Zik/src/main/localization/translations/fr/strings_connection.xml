@@ -24,7 +24,6 @@
     <string name="connection_kicked">Déconnecté du téléphone. L\'appairage est conservé.</string>
     <string name="connection_live">Connecté</string>
     <string name="connection_offline">Déconnecté</string>
-    <string name="connection_other_active">Un autre ordinateur (%1$s) est connecté au téléphone. Déconnectez-le du téléphone, puis réessayez.</string>
     <string name="connection_reconnecting">Rétablissement de la connexion…</string>
     <string name="connection_reconnecting_in">Connexion au téléphone perdue. Reconnexion dans %1$d s…</string>
     <string name="connection_replaced">Une autre fenêtre de cet ordinateur a pris le contrôle de la session.</string>

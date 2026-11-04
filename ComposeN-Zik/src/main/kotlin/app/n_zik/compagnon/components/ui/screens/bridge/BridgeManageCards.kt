@@ -225,7 +225,7 @@ fun ConnectionBanner(connection: ConnectionState, onReconnect: () -> Unit) {
         ConnectionState.Kicked -> stringResource(Res.string.connection_kicked) to Res.string.reconnect
         ConnectionState.Replaced -> stringResource(Res.string.connection_replaced) to Res.string.reconnect
         is ConnectionState.OtherActive -> formatText(
-            stringResource(Res.string.connection_other_active),
+            stringResource(Res.string.paired_other_active),
             connection.deviceName ?: stringResource(Res.string.paired_other_active_unknown),
         ) to Res.string.common_action_retry
     }
