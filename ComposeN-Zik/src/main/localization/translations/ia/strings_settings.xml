@@ -29,7 +29,6 @@
     <string name="settings_interface_page_title">IU</string>
     <string name="settings_interface_title">Interfacie de usator</string>
     <string name="settings_languages_title">Linguas</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_logging_error_file_description">Si es activate, crea un file de registro pro evidentiar le errores</string>
     <string name="settings_lyrics_artwork_visible_label">Monstrar le miniatura del parolas de canto</string>
     <string name="settings_menu_style_label">Stilo del menu</string>
@@ -55,5 +54,4 @@
     <string name="settings_theme_dark_mode_label">Obscur</string>
     <string name="settings_theme_mode_label">Modo de thema</string>
     <string name="settings_title">Parametros</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

@@ -48,7 +48,6 @@
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">ユーザーインターフェイス</string>
     <string name="settings_languages_title">言語</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_now_playing_indicator_label">再生中のインジケーター</string>
     <string name="settings_library_playlist_indicator_description">プレイリストに追加された曲をマークする</string>
     <string name="settings_library_playlist_indicator_label">プレイリスト表示</string>
@@ -141,5 +140,4 @@
     <string name="settings_theme_mode_label">テーマの種類</string>
     <string name="settings_title">設定</string>
     <string name="settings_transition_fade">フェード</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

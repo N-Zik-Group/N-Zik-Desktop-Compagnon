@@ -51,7 +51,6 @@
     <string name="settings_interface_page_title">Интерфейс</string>
     <string name="settings_interface_title">Пользовательский интерфейс</string>
     <string name="settings_languages_title">Языки</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_now_playing_indicator_label">Индикатор воспроизведения</string>
     <string name="settings_library_playlist_indicator_description">Отметить песни, которые были добавлены в ваш плейлист</string>
     <string name="settings_library_playlist_indicator_label">Индикатор плейлиста</string>
@@ -145,5 +144,4 @@
     <string name="settings_theme_mode_label">Режим темы</string>
     <string name="settings_title">Настройки</string>
     <string name="settings_transition_fade">Затухание</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

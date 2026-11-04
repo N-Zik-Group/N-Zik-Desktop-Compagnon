@@ -39,7 +39,6 @@
     <string name="settings_interface_page_title">IU</string>
     <string name="settings_interface_title">Interfície d\'usuari</string>
     <string name="settings_languages_title">Idiomes</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_now_playing_indicator_label">Indicador de reproducció ara</string>
     <string name="settings_library_playlist_indicator_description">Indica si la cançó ja s\'ha afegit a una llista de reproducció</string>
     <string name="settings_library_playlist_indicator_label">Indicador de llista de reproducció</string>
@@ -118,5 +117,4 @@
     <string name="settings_title">Paràmetres</string>
     <string name="settings_transition_fade">Esvaeix</string>
     <string name="settings_use_font_type">Utilitzeu el tipus de lletra</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

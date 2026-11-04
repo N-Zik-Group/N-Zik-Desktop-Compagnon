@@ -47,7 +47,6 @@
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">Uživatelské prostředí</string>
     <string name="settings_languages_title">Jazyky</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_now_playing_indicator_label">Indikátor právě přehrávaného</string>
     <string name="settings_library_playlist_indicator_description">Označení skladeb přidaných do playlistu</string>
     <string name="settings_library_playlist_indicator_label">Indikátor playlistu</string>
@@ -143,5 +142,4 @@
     <string name="settings_title">Nastavení</string>
     <string name="settings_transition_fade">Vyblednutí</string>
     <string name="settings_use_font_type">Použít typ písma</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

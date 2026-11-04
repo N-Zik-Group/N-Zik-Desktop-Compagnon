@@ -36,7 +36,6 @@
     <string name="settings_interface_page_title">ইউ-আই</string>
     <string name="settings_interface_title">ব্যাবহারকারীর ইন্টারফেস</string>
     <string name="settings_languages_title">ভাষা গুলো</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_playlist_indicator_description">Indicates if the song is already added to a Playlist</string>
     <string name="settings_library_playlist_indicator_label">Playlist Indicator</string>
     <string name="settings_logging_error_file_description">চালু করলে, ত্রুটি হাইলাইট করে লগ ফাইল বানানো হবে</string>
@@ -102,5 +101,4 @@
     <string name="settings_title">সেটিংস</string>
     <string name="settings_transition_fade">বিবর্ণ</string>
     <string name="settings_use_font_type">ফন্ট টাইপ ব্যাবহার করুন</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

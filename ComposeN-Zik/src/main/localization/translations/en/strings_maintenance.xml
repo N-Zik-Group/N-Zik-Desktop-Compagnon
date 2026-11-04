@@ -29,7 +29,7 @@
     <string name="update_check_off_aur">This app was installed from the AUR: the in-app updater is disabled for this install. Update the AUR entry (n-zik-desktop-compagnon) with your AUR helper.</string>
     <string name="update_check_off_build">If you see this message it means that your build doesnt have auto update enabled, pls update the app manually from github</string>
     <string name="update_download_indeterminate">Downloaded %1$s (unknown size)</string>
-    <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
+    <string name="update_download_truncated">The update download was truncated. The partial file was kept - try downloading again.</string>
     <string name="update_unknown">Unknown</string>
     <string name="updates_action_check">Check Update</string>
     <string name="updates_action_check_now">Check now</string>

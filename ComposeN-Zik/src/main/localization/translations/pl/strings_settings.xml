@@ -48,7 +48,6 @@
     <string name="settings_interface_page_title">Interfejs</string>
     <string name="settings_interface_title">Interfejs</string>
     <string name="settings_languages_title">Języki</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_now_playing_indicator_label">Wskaźnik odtwarzania</string>
     <string name="settings_library_playlist_indicator_description">Oznacz utwory, które zostały dodane do twojej playlisty</string>
     <string name="settings_library_playlist_indicator_label">Wskaźnik listy odtwarzania</string>
@@ -134,5 +133,4 @@
     <string name="settings_theme_mode_label">Wariant motywu</string>
     <string name="settings_title">Ustawienia</string>
     <string name="settings_transition_fade">Zanikanie</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

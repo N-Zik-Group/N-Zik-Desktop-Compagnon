@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cancel">إلغاء</string>
-    <string name="common_brand_github">GitHub</string>
     <string name="common_color_source_theme">الثيم</string>
     <string name="common_empty_items">لا توجد عناصر</string>
     <string name="common_option_none">بدون</string>

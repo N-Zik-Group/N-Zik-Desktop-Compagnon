@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cancel">Kanselleer</string>
-    <string name="common_brand_github">GitHub</string>
     <string name="common_color_source_theme">Tema</string>
     <string name="common_option_all">Alles</string>
     <string name="common_option_disabled">Gedeaktiveer</string>

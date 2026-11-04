@@ -35,7 +35,6 @@
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">Korisnički interfejs</string>
     <string name="settings_languages_title">Jezici</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_playlist_indicator_description">Označava da li je pesma već dodata na Plejlistu</string>
     <string name="settings_library_playlist_indicator_label">Indikator Plejliste</string>
     <string name="settings_logging_error_file_description">Ako je omogućeno, kreirajte datoteku zapisa da biste istakli greške</string>
@@ -102,5 +101,4 @@
     <string name="settings_title">Podešavanja</string>
     <string name="settings_transition_fade">Nestajanje</string>
     <string name="settings_use_font_type">Koristite tip fonta</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

@@ -23,7 +23,6 @@
     <string name="settings_font_use_system_label">Gebruik sisteem se lettertipe</string>
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_languages_title">Tale</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_playlist_indicator_description">Indicates if the song is already added to a Playlist</string>
     <string name="settings_library_playlist_indicator_label">Playlist Indicator</string>
     <string name="settings_lyrics_match_player_background_label">Show background color in Lyrics</string>
@@ -60,5 +59,4 @@
     <string name="settings_theme_dark_mode_label">Donker</string>
     <string name="settings_theme_mode_label">Tema-modus</string>
     <string name="settings_use_font_type">Gebruik font tipe</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

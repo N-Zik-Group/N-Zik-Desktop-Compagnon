@@ -10,7 +10,7 @@
     <string name="install_pkg_manual">Herhangi bir paket yöneticisi algılanmadı. İndirdiğiniz paketi manuel olarak yükleyin.</string>
     <string name="install_pkg_pacman_command">Paketi şu komutla güncelleyin:</string>
     <string name="install_replacement_portable">Uygulama klasörünü değiştirin: indirdiğiniz dosyayı mevcut uygulama klasörünün üzerine açın, ardından uygulamayı yeniden başlatın.</string>
-    <string name="install_replacement_portable_linux">Önce uygulamayı kapatın (uygulama çalışırken dosyaları kilitlidir), ardından uygulama klasörünü değiştirin: mevcut uygulama klasörünü silin, indirilen .tar.gz dosyasını onun yerine açın (tar dosyası yeni bir uygulama klasörü olarak açılır — asla mevcut klasörün üzerine yazmaz) ve uygulamayı yeniden başlatın.</string>
+    <string name="install_replacement_portable_linux">Önce uygulamayı kapatın (uygulama çalışırken dosyaları kilitlidir), ardından uygulama klasörünü değiştirin: mevcut uygulama klasörünü silin, indirilen .tar.gz dosyasını onun yerine açın (tar dosyası yeni bir uygulama klasörü olarak açılır - asla mevcut klasörün üzerine yazmaz) ve uygulamayı yeniden başlatın.</string>
     <string name="logs_action_export">Günlükleri dışa aktar</string>
     <string name="logs_export_debug_description">Hata ayıklama günlüğünü bir dosyaya aktar</string>
     <string name="maintenance_card_desc">Uygulama durumuna genel bakış: son önyükleme testleri ve çalışan alt sistemler</string>
@@ -29,7 +29,7 @@
     <string name="update_check_off_aur">Bu uygulama AUR\'dan yüklendi: Bu yükleme için uygulama içi güncelleyici devre dışı bırakılmıştır. AUR yardımcı programınızı kullanarak AUR girdisini (n-zik-desktop-compagnon) güncelleyin.</string>
     <string name="update_check_off_build">Bu mesajı görüyorsanız, derlemenizde otomatik güncelleme özelliği etkin değil demektir, lütfen uygulamayı GitHub\'dan manuel olarak güncelleyin.</string>
     <string name="update_download_indeterminate">%1$s indirildi (boyutu bilinmiyor)</string>
-    <string name="update_download_truncated">Güncelleme indirme işlemi yarıda kesildi. Kısmi dosya saklandı — lütfen indirmeyi tekrar deneyin.</string>
+    <string name="update_download_truncated">Güncelleme indirme işlemi yarıda kesildi. Kısmi dosya saklandı - lütfen indirmeyi tekrar deneyin.</string>
     <string name="update_unknown">Bilinmeyen</string>
     <string name="updates_action_check">Güncellemeyi kontrol et</string>
     <string name="updates_action_check_now">Şimdi kontrol et</string>

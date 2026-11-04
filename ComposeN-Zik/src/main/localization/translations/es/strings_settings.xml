@@ -50,7 +50,6 @@
     <string name="settings_interface_page_title">Interfaz</string>
     <string name="settings_interface_title">Interfaz</string>
     <string name="settings_languages_title">Idiomas</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_now_playing_indicator_label">Indicador de reproduciendo ahora</string>
     <string name="settings_library_playlist_indicator_description">Indica si la canción ya está añadida a una lista de reproducción</string>
     <string name="settings_library_playlist_indicator_label">Indicador de lista de reproducción</string>
@@ -147,5 +146,4 @@
     <string name="settings_title">Ajustes</string>
     <string name="settings_transition_fade">Atenuar</string>
     <string name="settings_use_font_type">Utilizar tipo de fuente</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

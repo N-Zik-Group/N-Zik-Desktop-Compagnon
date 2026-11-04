@@ -36,7 +36,6 @@
     <string name="settings_interface_page_title">界面</string>
     <string name="settings_interface_title">用户界面</string>
     <string name="settings_languages_title">语言</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_now_playing_indicator_label">现在播放指示器</string>
     <string name="settings_library_playlist_indicator_description">提示歌曲是否已添加到播放列表</string>
     <string name="settings_library_playlist_indicator_label">播放列表指示器</string>
@@ -116,5 +115,4 @@
     <string name="settings_title">设置</string>
     <string name="settings_transition_fade">淡出</string>
     <string name="settings_use_font_type">使用字体类型</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

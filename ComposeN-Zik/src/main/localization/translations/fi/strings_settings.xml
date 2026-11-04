@@ -51,7 +51,6 @@
     <string name="settings_interface_page_title">Käyttöliittymä</string>
     <string name="settings_interface_title">Käyttöliittymä</string>
     <string name="settings_languages_title">Kielet</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_now_playing_indicator_label">Toiston ilmaisin</string>
     <string name="settings_library_playlist_indicator_description">Merkitse kappaleet jotka on lisätty soittolistaan</string>
     <string name="settings_library_playlist_indicator_label">Soittolistan osoitin</string>
@@ -145,5 +144,4 @@
     <string name="settings_theme_mode_label">Teematila</string>
     <string name="settings_title">Asetukset</string>
     <string name="settings_transition_fade">Häivettyminen</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

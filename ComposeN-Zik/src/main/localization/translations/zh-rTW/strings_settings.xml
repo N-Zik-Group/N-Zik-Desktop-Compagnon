@@ -35,7 +35,6 @@
     <string name="settings_interface_page_title">介面</string>
     <string name="settings_interface_title">使用者介面</string>
     <string name="settings_languages_title">語言</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_playlist_indicator_description">Indicates if the song is already added to a Playlist</string>
     <string name="settings_library_playlist_indicator_label">Playlist Indicator</string>
     <string name="settings_logging_error_file_description">啟用時會建立記錄檔突顯錯誤</string>
@@ -103,5 +102,4 @@
     <string name="settings_title">設定</string>
     <string name="settings_transition_fade">淡化</string>
     <string name="settings_use_font_type">使用的字型類別</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

@@ -32,7 +32,6 @@
     <string name="settings_interface_page_title">מצב ממשק</string>
     <string name="settings_interface_title">ממשק משתמש</string>
     <string name="settings_languages_title">שפה</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_logging_error_file_description">אם מופעל, צור קובץ יומן כדי להדגיש שגיאות</string>
     <string name="settings_lyrics_artwork_visible_label">הצג תמונה ממוזערת למילים</string>
     <string name="settings_menu_style_label">עיצוב תפריט</string>
@@ -65,5 +64,4 @@
     <string name="settings_theme_mode_label">מצב ערכת נושא</string>
     <string name="settings_title">הגדרות</string>
     <string name="settings_transition_fade">עמעום</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

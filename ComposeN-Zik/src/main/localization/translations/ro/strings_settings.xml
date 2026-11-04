@@ -46,7 +46,6 @@
     <string name="settings_interface_page_title">Interfață</string>
     <string name="settings_interface_title">Interfața utilizatorului</string>
     <string name="settings_languages_title">Limbi</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_now_playing_indicator_label">Indicator de „Se redă acum”</string>
     <string name="settings_library_playlist_indicator_description">Marchează melodiile care au fost adăugate în un playlist</string>
     <string name="settings_library_playlist_indicator_label">Indicator de „În playlist”</string>
@@ -141,5 +140,4 @@
     <string name="settings_title">Setări</string>
     <string name="settings_transition_fade">Estompare</string>
     <string name="settings_use_font_type">Tip font</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

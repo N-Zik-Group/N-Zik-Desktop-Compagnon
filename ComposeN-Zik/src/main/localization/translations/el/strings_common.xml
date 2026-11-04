@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cancel">Άκυρο</string>
-    <string name="common_brand_github">GitHub</string>
     <string name="common_color_source_theme">Θέμα</string>
     <string name="common_empty_items">Δεν υπάρχουν στοιχεία</string>
     <string name="common_option_all">Όλα</string>

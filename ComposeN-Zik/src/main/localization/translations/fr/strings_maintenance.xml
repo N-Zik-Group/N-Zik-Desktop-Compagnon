@@ -9,8 +9,8 @@
     <string name="install_pkg_command">Installez le pack à l\'aide de la commande suivante :</string>
     <string name="install_pkg_manual">Aucun gestionnaire de packs n\'a été détecté. Installez manuellement le pack téléchargé.</string>
     <string name="install_pkg_pacman_command">Mettez à jour le pack à l\'aide de la commande suivante :</string>
-    <string name="install_replacement_portable">Quittez d\'abord l\'application (ses fichiers sont verrouillés tant qu\'elle est en cours d\'exécution), puis remplacez le dossier de l\'application : supprimez le dossier actuel de l\'application, décompressez le fichier téléchargé à la place (le fichier zip s\'ouvre dans un nouveau dossier d\'application — ne le placez jamais par-dessus le dossier actuel), puis relancez l\'application.</string>
-    <string name="install_replacement_portable_linux">Quittez d\'abord l\'application (ses fichiers sont verrouillés tant qu\'elle est en cours d\'exécution), puis remplacez le dossier de l\'application : supprimez le dossier actuel de l\'application, décompressez le fichier .tar.gz téléchargé à la place (l\'archive se décompresse dans un nouveau dossier d\'application — elle ne remplace jamais le dossier actuel), puis relancez l\'application.</string>
+    <string name="install_replacement_portable">Quittez d\'abord l\'application (ses fichiers sont verrouillés tant qu\'elle est en cours d\'exécution), puis remplacez le dossier de l\'application : supprimez le dossier actuel de l\'application, décompressez le fichier téléchargé à la place (le fichier zip s\'ouvre dans un nouveau dossier d\'application - ne le placez jamais par-dessus le dossier actuel), puis relancez l\'application.</string>
+    <string name="install_replacement_portable_linux">Quittez d\'abord l\'application (ses fichiers sont verrouillés tant qu\'elle est en cours d\'exécution), puis remplacez le dossier de l\'application : supprimez le dossier actuel de l\'application, décompressez le fichier .tar.gz téléchargé à la place (l\'archive se décompresse dans un nouveau dossier d\'application - elle ne remplace jamais le dossier actuel), puis relancez l\'application.</string>
     <string name="logs_action_export">Exporter les journaux</string>
     <string name="logs_export_debug_description">Exporter le journal de débogage vers un fichier</string>
     <string name="maintenance_card_desc">Aperçu de l\'état de l\'application : tests de démarrage réussis et sous-systèmes actifs</string>
@@ -28,7 +28,7 @@
     <string name="update_check_off_aur">Cette application a été installée à partir de l\'AUR : le système de mise à jour intégré est désactivé pour cette installation. Mettez à jour l\'entrée AUR (n-zik-desktop-compagnon) à l\'aide de votre outil de gestion de l\'AUR.</string>
     <string name="update_check_off_build">Si ce message s\'affiche, cela signifie que la mise à jour automatique n\'est pas activée pour votre version. Veuillez mettre à jour l\'application manuellement depuis GitHub.</string>
     <string name="update_download_indeterminate">%1$s téléchargé (taille inconnue)</string>
-    <string name="update_download_truncated">Le téléchargement de la mise à jour a été interrompu. Le fichier partiel a été conservé — essayez de le télécharger à nouveau.</string>
+    <string name="update_download_truncated">Le téléchargement de la mise à jour a été interrompu. Le fichier partiel a été conservé - essayez de le télécharger à nouveau.</string>
     <string name="update_unknown">Inconnu</string>
     <string name="updates_action_check">Vérifier les mises à jour</string>
     <string name="updates_action_check_now">Vérifiez dès maintenant</string>

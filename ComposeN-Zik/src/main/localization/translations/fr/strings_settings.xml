@@ -54,7 +54,6 @@
     <string name="settings_interface_page_title">Interface Utilisateur</string>
     <string name="settings_interface_title">Interface Utilisateur</string>
     <string name="settings_languages_title">Langues</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_launcher_shortcuts_description">Sélectionner et réorganiser les raccourcis du lanceur d\'applications</string>
     <string name="settings_launcher_shortcuts_recovery_required_message">La fonction « Sauvegarde » ne peut pas être désactivée</string>
     <string name="settings_launcher_shortcuts_title">Raccourcis vers l\'application</string>
@@ -164,6 +163,5 @@
     <string name="settings_title">Paramètres</string>
     <string name="settings_transition_fade">Fondu</string>
     <string name="settings_use_font_type">Utiliser la police</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <string name="window">Fenêtre</string>
 </resources>

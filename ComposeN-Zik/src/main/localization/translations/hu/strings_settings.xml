@@ -33,7 +33,6 @@
     <string name="settings_interface_page_title">Felület</string>
     <string name="settings_interface_title">Felhasználói felület</string>
     <string name="settings_languages_title">Nyelvek</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_logging_error_file_description">Ha engedélyezve van, létrehoz egy naplófájlt a hibák kiemeléséhez</string>
     <string name="settings_lyrics_artwork_visible_label">A dalszöveg indexképének megjelenítése</string>
     <string name="settings_menu_style_label">Menü stílus</string>
@@ -72,5 +71,4 @@
     <string name="settings_theme_mode_label">Téma mód</string>
     <string name="settings_title">Beállítások</string>
     <string name="settings_transition_fade">Halványulás</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

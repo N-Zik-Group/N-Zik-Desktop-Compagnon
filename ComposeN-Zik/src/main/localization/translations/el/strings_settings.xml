@@ -34,7 +34,6 @@
     <string name="settings_interface_page_title">Διεπαφή</string>
     <string name="settings_interface_title">Διεπαφή</string>
     <string name="settings_languages_title">Γλώσσες</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_playlist_indicator_description">Indicates if the song is already added to a Playlist</string>
     <string name="settings_library_playlist_indicator_label">Playlist Indicator</string>
     <string name="settings_lyrics_match_player_background_label">Show background color in Lyrics</string>
@@ -93,5 +92,4 @@
     <string name="settings_theme_dark_mode_label">Σκούρο</string>
     <string name="settings_theme_mode_label">Λειτουργία θέματος</string>
     <string name="settings_use_font_type">Use font type</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

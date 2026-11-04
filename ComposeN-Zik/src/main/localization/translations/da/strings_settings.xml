@@ -47,7 +47,6 @@
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">Brugergrænseflade</string>
     <string name="settings_languages_title">Sprog</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_now_playing_indicator_label">\'Afspiller nu\'-indikator</string>
     <string name="settings_library_playlist_indicator_description">Indikerer, om sangen allerede er føjet til en playliste</string>
     <string name="settings_library_playlist_indicator_label">Playlisteindikator</string>
@@ -144,5 +143,4 @@
     <string name="settings_title">Indstillinger</string>
     <string name="settings_transition_fade">Udton</string>
     <string name="settings_use_font_type">Brug skrifttype</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

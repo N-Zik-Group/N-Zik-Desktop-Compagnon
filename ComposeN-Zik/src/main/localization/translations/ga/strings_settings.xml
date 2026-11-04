@@ -12,7 +12,6 @@
     <string name="settings_font_use_system_description">Úsáid chló na córais</string>
     <string name="settings_font_use_system_label">Úsáid chló na córais</string>
     <string name="settings_interface_page_title">UI</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_playlist_indicator_description">Indicates if the song is already added to a Playlist</string>
     <string name="settings_library_playlist_indicator_label">Playlist Indicator</string>
     <string name="settings_lyrics_artwork_visible_label">Show Thumbnail for Lyrics</string>
@@ -47,5 +46,4 @@
     <string name="settings_swipe_actions_title">Swipe to action</string>
     <string name="settings_theme_mode_label">Modh an téama</string>
     <string name="settings_use_font_type">Use font type</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

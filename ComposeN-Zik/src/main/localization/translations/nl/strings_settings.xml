@@ -41,7 +41,6 @@
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">Gebruikersinterface</string>
     <string name="settings_languages_title">Talen</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_playlist_indicator_description">Markeer nummers die zijn toegevoegd aan je afspeellijst</string>
     <string name="settings_library_playlist_indicator_label">Afspeellijst indicator</string>
     <string name="settings_lyrics_match_player_background_label">Combineer songtekst achtergrondkleur met speler</string>
@@ -105,5 +104,4 @@
     <string name="settings_swipe_actions_title">Veeg voor actie</string>
     <string name="settings_theme_dark_mode_label">Donker</string>
     <string name="settings_theme_mode_label">Thema modus</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

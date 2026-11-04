@@ -34,7 +34,6 @@
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">사용자 인터페이스</string>
     <string name="settings_languages_title">언어</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_library_now_playing_indicator_label">현재 재생 중 표시</string>
     <string name="settings_library_queue_playlist_swipe_left_label">대기열 및 기기 재생목록 왼쪽으로 스와이프</string>
     <string name="settings_library_queue_playlist_swipe_right_label">대기열 및 기기 재생목록 오른쪽으로 스와이프</string>
@@ -84,5 +83,4 @@
     <string name="settings_theme_mode_label">테마 모드</string>
     <string name="settings_title">설정</string>
     <string name="settings_transition_fade">희미해지기</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

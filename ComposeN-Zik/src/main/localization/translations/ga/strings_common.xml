@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cancel">Cuir ar Ceal</string>
-    <string name="common_brand_github">GitHub</string>
     <string name="common_color_source_theme">Téama</string>
     <string name="common_option_random">By Casual played song</string>
 </resources>

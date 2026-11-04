@@ -2,7 +2,5 @@
 <resources>
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="settings_interface_page_title">UI</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_preference_saved_message">Preferens sparad</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>

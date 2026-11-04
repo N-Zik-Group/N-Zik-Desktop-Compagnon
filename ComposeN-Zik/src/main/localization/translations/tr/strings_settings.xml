@@ -55,7 +55,6 @@
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">Kullanıcı arayüzü</string>
     <string name="settings_languages_title">Diller</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_launcher_shortcuts_description">Başlatıcı kısayollarını seçin ve sırasını değiştirin</string>
     <string name="settings_launcher_shortcuts_recovery_required_message">Kurtarma işlevi devre dışı bırakılamaz</string>
     <string name="settings_launcher_shortcuts_title">Uygulama kısayolları</string>
@@ -165,6 +164,5 @@
     <string name="settings_title">Ayarlar</string>
     <string name="settings_transition_fade">Soldur</string>
     <string name="settings_use_font_type">Yazı tipi</string>
-    <string name="tray_tooltip">N-Zik Masaüstü Yardımcısı</string>
     <string name="window">Pencere</string>
 </resources>

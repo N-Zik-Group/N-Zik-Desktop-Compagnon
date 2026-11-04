@@ -14,10 +14,8 @@
     <string name="settings_font_use_system_label">Sử dụng phông chữ hệ thống</string>
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_languages_title">Ngôn ngữ</string>
-    <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_player_artwork_corner_radius_label">Bo tròn góc hình thu nhỏ</string>
     <string name="settings_restart_required_message">Cần khởi động lại</string>
     <string name="settings_theme_dark_mode_label">Tối</string>
     <string name="settings_theme_mode_label">Kiểu giao diện</string>
-    <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
 </resources>
