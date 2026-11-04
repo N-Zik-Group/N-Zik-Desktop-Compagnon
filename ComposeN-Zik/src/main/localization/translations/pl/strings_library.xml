@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Dodaj album do zakładek</string>
     <string name="album_action_open">Przejdź do albumu</string>
     <string name="album_left_swipe">Przesunięcie palcem w lewo</string>
-    <string name="album_loading_song_count_format">Ładowanie %1$d utworów…</string>
+    <string name="album_loading_song_count_format">Ładowanie albumu (utwory: %1$d)…</string>
     <string name="album_right_swipe">Przesunięcie palcem w prawo</string>
     <string name="artist_action_follow">Subskrybuj</string>
     <string name="artist_action_play_local_songs">Odtwarzaj wszystkie lokalne utwory</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Przypnij/Odepnij playlistę</string>
     <string name="playlist_bookmark_unsupported_message">Nie można dodać zakładek do listy odtwarzania polubień lub odcinków</string>
     <string name="playlist_create_dialog_title">Utwórz nową playlistę</string>
-    <string name="playlist_delete_all_confirmation_count_format">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Usunąć wszystkie playlisty? (Razem: %d)</string>
     <string name="playlist_left_swipe">Przesunięcie w lewo listy odtwarzania</string>
     <string name="playlist_pinned_title">Przypięte</string>
     <string name="playlist_rename_dialog_title">Zmień nazwę playlisty</string>
@@ -110,4 +110,6 @@
         <item quantity="many">%1$d utworów</item>
         <item quantity="other">%1$d utworów</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Nie można poprosić o dostęp do muzyki na tym urządzeniu.</string>
+    <string name="library_on_device_permission_settings_failed">Nie można otworzyć ustawień uprawnień.</string>
 </resources>
