@@ -179,7 +179,7 @@ jobs:
             "/DDESCRIPTION=smoke compile (nsis-updater)" `
             "/DDATA_DIR_NAME=N-Zik Desktop Compagnon" `
             "/DCRED_TARGET=N-Zik Desktop Compagnon" `
-            'ComposeN-Zik\packaging\windows\installer.nsi'
+            (Resolve-Path 'ComposeN-Zik\packaging\windows\installer.nsi').Path
           if ($LASTEXITCODE -ne 0) {
             Write-Error "ERROR: the committed installer.nsi failed to compile with NSIS $latest (exit $LASTEXITCODE) — the makensis log above is the diagnosis; no bot PR is opened on a failing toolchain."
             exit 1

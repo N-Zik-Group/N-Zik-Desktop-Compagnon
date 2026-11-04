@@ -66,5 +66,21 @@ enum class UpdateLanguage(
     Telugu("తెలుగు", "te", Language.TELUGU),
     Turkish("Türkçe", "tr", Language.TURKISH),
     Ukrainian("Українська", "uk", Language.UKRAINIAN),
-    Vietnamese("Tiếng Việt", "vi", Language.VIETNAMESE),
+    Vietnamese("Tiếng Việt", "vi", Language.VIETNAMESE);
+
+    companion object {
+        fun fromLocale(locale: java.util.Locale): UpdateLanguage = when (locale.language) {
+            "he", "iw" -> Hebrew
+            "id", "in" -> Indonesian
+            "zh" -> if (locale.script == "Hant" || locale.country in setOf("TW", "HK", "MO")) {
+                ChineseTraditional
+            } else {
+                ChineseSimplified
+            }
+            "sr" -> if (locale.script == "Latn" || locale.country == "CS") SerbianLatin else SerbianCyrillic
+            else -> entries.firstOrNull { it.code == locale.toLanguageTag() }
+                ?: entries.firstOrNull { it.code == locale.language }
+                ?: English
+        }
+    }
 }

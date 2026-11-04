@@ -5,6 +5,7 @@ internal object StringResourceIdentity {
     fun localName(resourceName: String): String = aliases[resourceName] ?: resourceName
 
     private val aliases = mapOf(
+        "error_an_unknown_playback_error_has_occurred" to "player_error_unknown",
         "app_shortcuts_max_reached" to "settings_launcher_shortcuts_limit_message",
         "player_mini_button_audio_output" to "audio_output_title",
         "player_mini_button_lyrics" to "lyrics_title",

@@ -142,6 +142,10 @@ private fun runApplication() = application {
     ) {
         // The AWT window the tray / MPRIS Raise / close decision act on, attached once the window exists
         remember(window) { windowController.attach(window) }
+        val appliedLanguage by AppLanguage.appliedTag.collectAsState()
+        LaunchedEffect(window, appliedLanguage) {
+            window.locale = java.util.Locale.getDefault()
+        }
         // The desktop layout's floor (Spotify's), capped to the screen the window opens on
         remember(window) { applyWindowMinimumSize(window) }
         // The window's first frame registers the Compose graphics implementation the tray's icon

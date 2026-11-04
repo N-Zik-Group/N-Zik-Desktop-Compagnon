@@ -137,17 +137,17 @@ fun UpdateScreen(
 
     // `remember`); an unknown persisted code reads as `System`, and the toggle's never-set
     // default is the phone's: active when the app language is not English
-    val appLang = Locale.getDefault().language
+    val appLocale = Locale.getDefault()
+    val appLang = appLocale.language
     var otherLanguageApp by remember {
         mutableStateOf(UpdateLanguage.entries.firstOrNull { it.code == settings.otherLanguageAppUpdate } ?: UpdateLanguage.System)
     }
     var isTranslationActive by remember { mutableStateOf(settings.updateTranslationActive ?: appLang != "en") }
     var showLanguageDialog by remember { mutableStateOf(false) }
-    // "System" resolves to the OS default language (the phone's rule, L127-131: the first
-    // entry matching `Locale.getDefault().language`, falling back to English)
-    val activeTranslateLang = remember(otherLanguageApp, appLang) {
+    // Resolve System against the active app locale, including the script or region.
+    val activeTranslateLang = remember(otherLanguageApp, appLocale) {
         if (otherLanguageApp != UpdateLanguage.System) otherLanguageApp
-        else UpdateLanguage.entries.firstOrNull { it.code == appLang } ?: UpdateLanguage.English
+        else UpdateLanguage.fromLocale(appLocale)
     }
 
     // The install gesture of this instance (detected once — the mode does not change at runtime)

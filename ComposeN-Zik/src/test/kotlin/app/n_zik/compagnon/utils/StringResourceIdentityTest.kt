@@ -7,10 +7,11 @@ import org.junit.jupiter.api.Test
 
 class StringResourceIdentityTest {
     @Test
-    fun `the seven dynamic phone names resolve to retained generated resources`() {
+    fun `dynamic phone names resolve to retained generated resources`() {
         val dynamicNames = mapOf(
             "autosync_likes" to "sync_likes",
             "create_new_playlist" to "playlist_create_dialog_title",
+            "error_an_unknown_playback_error_has_occurred" to "player_error_unknown",
             "info_check_update_now" to "updates_action_check_now",
             "new_playlist" to "playlist_action_create",
             "randomizer" to "library_action_randomize",

@@ -174,6 +174,8 @@ Want to:
 
 Join us on Crowdin!
 
+Compose UI sources are in [the thematic catalogs](ComposeN-Zik/src/main/localization/source/). Windows installer sources are in [the NSIS catalog](ComposeN-Zik/packaging/windows/localization/source/). Submit translations through Crowdin.
+
 > ❓ Don't see your language?
 
 [![Translated with Crowdin](https://badges.crowdin.net/badge/light/crowdin-on-dark.png)](https://crowdin.com/project/N-Zik)
