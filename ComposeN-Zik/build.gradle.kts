@@ -443,13 +443,20 @@ tasks.register<Exec>("packageInstaller") {
     }
 }
 
-val sourceStringResources = layout.projectDirectory.dir("src/main/localization/composeResources")
+val localizationResources = layout.projectDirectory.dir("src/main/localization")
 val standardComposeResources = layout.projectDirectory.dir("src/main/composeResources")
 val combinedComposeResources = layout.buildDirectory.dir("generated/combinedComposeResources")
 
 // A custom directory replaces the default Compose resource root for this source set.
 val combineComposeResources = tasks.register<Sync>("combineComposeResources") {
-    from(standardComposeResources, sourceStringResources)
+    from(standardComposeResources)
+    from(localizationResources.dir("source")) {
+        into("values")
+    }
+    from(localizationResources.dir("translations")) {
+        includeEmptyDirs = false
+        eachFile { path = "values-$path" }
+    }
     into(combinedComposeResources)
     duplicatesStrategy = DuplicatesStrategy.FAIL
 }
@@ -520,23 +527,20 @@ fun unescapeAndroidStrings(xml: String): String {
 
 val unescapeStringsXml = tasks.register("unescapeStringsXml") {
     description = "Generates unescaped copies of composeResources/values*/strings_*.xml (the Android escaping convention the desktop pipeline does not unescape)."
-    val resourceRoots = listOf(sourceStringResources.asFile, standardComposeResources.asFile)
-    val catalogs = resourceRoots.associateWith { root ->
-        fileTree(root) { include("values*/strings_*.xml") }
-    }
-    inputs.files(catalogs.values)
+    dependsOn(combineComposeResources)
+    val catalogs = fileTree(combinedComposeResources) { include("values*/strings_*.xml") }
+    inputs.files(catalogs)
     outputs.dir(unescapedResourcesDir)
     doLast {
         val outRoot = unescapedResourcesDir.get().asFile
         outRoot.deleteRecursively()
         var count = 0
-        catalogs.forEach { (root, files) ->
-            files.forEach { source ->
-                val target = outRoot.resolve(source.relativeTo(root).path)
-                target.parentFile.mkdirs()
-                target.writeText(unescapeAndroidStrings(source.readText()))
-                count++
-            }
+        val root = combinedComposeResources.get().asFile
+        catalogs.forEach { source ->
+            val target = outRoot.resolve(source.relativeTo(root).path)
+            target.parentFile.mkdirs()
+            target.writeText(unescapeAndroidStrings(source.readText()))
+            count++
         }
         logger.lifecycle("unescapeStringsXml: $count string catalogs unescaped into ${outRoot.path}")
     }

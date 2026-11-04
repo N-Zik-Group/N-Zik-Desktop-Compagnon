@@ -72,19 +72,21 @@ class UnescapedStringsTest {
     fun `every values directory is generated and no value still carries an escaped apostrophe`() {
         assertTrue(generatedRoot.isDirectory, "the generated unescaped res dir is missing: ${generatedRoot.path}")
         // `listFiles` takes a two-argument FilenameFilter (dir, name)
-        val sources = requireNotNull(File("src/main/composeResources")
-            .listFiles { _, name -> name.startsWith("values-") })
-            .filter { it.isDirectory } + File("src/main/localization/composeResources/values")
+        val localization = File("src/main/localization")
+        val translations = requireNotNull(localization.resolve("translations").listFiles())
+            .filter { it.isDirectory }
+        val sources = translations.associateBy { "values-${it.name}" } +
+            ("values" to localization.resolve("source"))
         val generated = requireNotNull(generatedRoot
             .listFiles { _, name -> name.startsWith("values") })
             .filter { it.isDirectory }
         assertEquals(sources.size, generated.size, "expected one generated dir per source values* dir")
         val offenders = mutableListOf<String>()
-        sources.forEach { source ->
+        sources.forEach { (qualifier, source) ->
             val catalogs = requireNotNull(source.listFiles { _, name ->
                 name.startsWith("strings_") && name.endsWith(".xml")
             })
-            val generatedDir = generatedRoot.resolve(source.name)
+            val generatedDir = generatedRoot.resolve(qualifier)
             assertEquals(catalogs.map { it.name }.toSet(), generatedDir.list()?.toSet())
             catalogs.forEach { catalog ->
                 val copy = generatedDir.resolve(catalog.name)

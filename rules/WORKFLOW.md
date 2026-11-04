@@ -39,7 +39,7 @@ Use this format every session — keep it SHORT:
 8. Ask IDE ONE at a time (path depends on IDE)
 9. The phone is the single source of truth — no business logic / streaming on the PC; no contract route → inert button with the phone's title
 10. Device token → platform secret store ONLY (Windows Credential Manager / Linux keyring / in-memory session store — never pairing.json, logs, Done.txt, code)
-11. UI strings → the matching English catalog under src/main/localization/composeResources/values/ — `values-*` is Crowdin-managed, never by hand; %s strings are formatted at the call site (formatMessage/formatText)
+11. UI strings → the matching English catalog under src/main/localization/source/ — `localization/translations/` is Crowdin-managed, never by hand; %s strings are formatted at the call site (formatMessage/formatText)
 12. NEVER skip ahead to later steps — follow Step 1→2→3... in order
 13. After any interruption, re-announce current step before continuing
 14. If you lost context, re-read the current step file
@@ -294,7 +294,7 @@ Some skills use micro-file design where each step is in its own file.
   - no file under `build/` or any VLC binary appears as tracked/untracked (the VLC runtime is downloaded at build time, never committed)
   - no diff touches the pinned VLC config in `ComposeN-Zik/build.gradle.kts` (`vlcVersion`/`vlcZipUrl`/`vlcZipSha256`/`vlcRuntimeFiles`) without the user's prior approval (AGENTS.md "Ask First")
   - no token material appears anywhere in the diff (scan changed files for the device token / Credential Manager strings)
-  - no diff touches `ComposeN-Zik/src/main/composeResources/values-*/` — the Crowdin-managed locale files (only the English thematic catalogs may normally change; AGENTS.md Never Do / rules/CODE.md Translations) — EXCEPTION: removal of a deleted source key or an explicitly scoped structural migration (no translation-value edits; AGENTS.md "Always Do")
+  - no diff touches `ComposeN-Zik/src/main/localization/translations/<locale>/` — the Crowdin-managed locale files (only the English thematic catalogs may normally change; AGENTS.md Never Do / rules/CODE.md Translations) — EXCEPTION: removal of a deleted source key or an explicitly scoped structural migration (no translation-value edits; AGENTS.md "Always Do")
   - all new `.kt` files live under `app.n_zik.compagnon.*`
   — if any of these appears, HALT, revert it and report to the user
 - Show evidence: paste the build output tail + test results — never just claim "done"
@@ -386,7 +386,7 @@ This repo is a **single Gradle module** (`:ComposeN-Zik`) — there are no submo
 
 1. `ComposeN-Zik/src/main/kotlin/` — code
 2. `ComposeN-Zik/src/test/kotlin/` — tests (mirror the package)
-3. `ComposeN-Zik/src/main/composeResources/` for drawables and fonts, and `src/main/localization/composeResources/values/strings_*.xml` for English strings (a new string key or a changed one belongs in the same commit as the code that uses it)
+3. `ComposeN-Zik/src/main/composeResources/` for drawables and fonts, and `src/main/localization/source/strings_*.xml` for English strings (a new string key or a changed one belongs in the same commit as the code that uses it)
 4. `ComposeN-Zik/build.gradle.kts` / `gradle/libs.versions.toml` — build/config (Ask First applies)
 
 When a change also requires the **phone side** to evolve (a new contract route or feature), HALT before Step 6 and say so explicitly: the phone work happens in the `N-Zik/` repo (its own AGENTS.md + rules), and the contract spec in `{project-root}/_bmad-output/` must be updated before either side is finished.

@@ -15,7 +15,7 @@ import org.jetbrains.compose.resources.stringResource
  * dialog renders only under [AppVersion.updaterEnabled], false for debug / -git, so the
  * 5-branch superset changes nothing visible).
  *
- * The `*_title` strings are uppercase in values/strings.xml, but the values-* locale copies
+ * The `*_title` strings are uppercase in the English localization catalogs, but the localized catalogs
  * stay mixed-case until the next Crowdin resync — the .uppercase() is plain
  * rendering/normalization, not a safeguard (round-4 audit MINOR-1).
  *

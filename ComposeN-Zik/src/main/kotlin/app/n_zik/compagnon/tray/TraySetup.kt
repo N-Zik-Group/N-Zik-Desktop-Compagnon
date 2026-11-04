@@ -73,7 +73,7 @@ internal fun isSystemTraySupported(): Boolean = trayBackend != TrayBackend.None
  * middle section; [TrayActions] stays the extension point for contract actions.
  */
 interface TrayAction {
-    /** The menu entry's title (a `values/strings.xml` id — the house strings rule). */
+    /** The menu entry's title (a `the English localization catalogs` id — the house strings rule). */
     val titleId: org.jetbrains.compose.resources.StringResource
 
     fun onClick()

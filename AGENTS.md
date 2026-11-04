@@ -43,7 +43,7 @@
 
 - Put business logic or a streaming stack on the PC (the phone stays the source of truth — see the project identity above)
 - Write the device token anywhere except the platform secret store — the Windows Credential Manager, the Linux keyring, or the in-memory session store on a keyring-less Linux machine (never in `pairing.json`, logs, `Done.txt`, README, or code — see rules/SECURITY.md)
-- Edit the `values-*` locale strings files translation values — Crowdin takes care of them: edit the matching English catalog under `ComposeN-Zik/src/main/localization/composeResources/values/strings_*.xml`. The localized catalogs are Crowdin-managed. A scoped structural migration may move values intact, and removing a source key also requires removing it from the corresponding localized catalogs (a dead key in a locale degrades translator context) — see rules/CODE.md "Translations"
+- Edit the `localization/translations/` locale strings files translation values — Crowdin takes care of them: edit the matching English catalog under `ComposeN-Zik/src/main/localization/source/strings_*.xml`. The localized catalogs are Crowdin-managed. A scoped structural migration may move values intact, and removing a source key also requires removing it from the corresponding localized catalogs (a dead key in a locale degrades translator context) — see rules/CODE.md "Translations"
 - Write code before completing full BMAD workflow
 - Skip BMAD workflow steps
 - Skip the Step 8b code-review gate, or edit `assets/notes/Done.txt` before the user chose a commit mode (Step 8d) — exception: doc-only edits (rules/WORKFLOW.md "Doc-Only Exception") follow their own commit-approval flow and are NOT subject to the Step 8d mode question
@@ -122,8 +122,8 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 │   │   ├── enums/ + utils/  AudioQualityFormat, PairingMode, QueueLoopType…; Preferences, Toaster (formatMessage/formatText),
 │   │   │                    PhoneDensity…, PlayerState.kt (utils-level — NOT the canonical `bridge/state/PlayerState.kt`)…; coroutines/ (NzikDispatchers)
 │   │   └── Main.kt, MainActivity.kt, AppInfo.kt, GlobalVars.kt, WindowBackground.kt, WindowMinimumSize.kt
-│   ├── src/main/composeResources/   drawable/, font/ and Crowdin-managed values-*/
-│   ├── src/main/localization/      English thematic catalogs under composeResources/values/
+│   ├── src/main/composeResources/   drawable/ and font/
+│   ├── src/main/localization/      English sources in source/ and Crowdin exports in translations/<locale>/
 │   └── src/test/kotlin/             Tests mirroring the main package structure
 ├── settings.gradle.kts              Single-module Gradle build (`:ComposeN-Zik` only — unlike the phone repo, there are no `extensions/` subprojects here)
 ├── gradle/libs.versions.toml        Version catalog
@@ -142,7 +142,7 @@ N-Zik-Desktop-Compagnon/   ← git repo root (run gradlew.bat/git from here)
 | Contract (bridge)   | `bridge/` (pairing, state, library, command) + `core/network/` (BridgeClient) |
 | Playback            | `playback/` (VLC engine, audio cache, local playback)                     |
 | UI                  | `components/` (screens in `components/ui/screens/`, player in `components/player/`) |
-| Strings (English)   | `ComposeN-Zik/src/main/localization/composeResources/values/strings_*.xml` — English thematic sources; the `values-*` locale dirs are Crowdin-managed (repo-root `crowdin.yml`), never by hand |
+| Strings (English)   | `ComposeN-Zik/src/main/localization/source/strings_*.xml` — English thematic sources; the `localization/translations/` locale dirs are Crowdin-managed (repo-root `crowdin.yml`), never by hand |
 | Pairing persistence | token → the platform secret store (Windows Credential Manager "N-Zik Desktop Compagnon"; Linux keyring via libsecret, in-memory session store without a keyring); non-secret fields → `%APPDATA%\<storage name>\pairing.json` (Windows) / `~/.config/<storage name>/pairing.json` (Linux — the XDG config dir, `$XDG_CONFIG_HOME` override honoured; the legacy `~/N-Zik Desktop Compagnon/` is migrated once on first launch, `CredentialStore`); the storage name is per-channel (`AppInfo.dataName` — the base name, shared by stable AND beta, `… DEV` / `… DEBUG` / `… GIT` for dev / debug / -git; the legacy beta `… BETA` dir is merged back into the base once — base wins, `… BETA` survives); a self-contained portable (the `portable.txt` marker at the app root, written only by the two portable archive tasks) instead stores its data in `<portable root>/data/` — the token STILL lives in the OS secret store; PC-local settings → `settings.json`; audio cache → `%APPDATA%\<storage name>\cache\audio\` |
 | Database            | none on the PC — the phone's local DB is the only database; schema work belongs to the N-Zik (phone) repo |
 | Tests               | `ComposeN-Zik/src/test/kotlin/`                                                   |
