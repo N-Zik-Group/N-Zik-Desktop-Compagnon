@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="interface_in_use">Interface en cours d\'utilisation</string>
-    <string name="lastfm_love">Aimer sur Last.fm</string>
-    <string name="lastfm_unlove">Retirer des favoris sur Last.fm</string>
+    <string name="audio_loudness_boost_level">Niveau d\'amplification de la sonorité</string>
+    <string name="close_behavior">Close behavior</string>
+    <string name="close_behavior_minimize">Minimize to tray</string>
+    <string name="close_behavior_quit">Quit the app</string>
+    <string name="common_translation_title">Traduction</string>
+    <string name="library_sort_order_title">Ordre de tri</string>
+    <string name="maintenance_debug_logging_title">Activer les journaux de débogage</string>
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Bas flottant</string>
     <string name="navigation_position_bottom_label">En bas</string>
@@ -10,8 +14,8 @@
     <string name="navigation_style_icon_and_text_label">Texte et icône</string>
     <string name="navigation_style_icon_only_label">Icône uniquement</string>
     <string name="parental_control">Contrôle parental</string>
-    <string name="profile_base_name">Fan de N-Zik</string>
-    <string name="profile_title">Profils</string>
+    <string name="player_action_enqueue_songs">Mettre les titres en file d\'attente</string>
+    <string name="recommendations_action_smart_shuffle">Recommandations Intelligentes</string>
     <string name="settings_about_page_description">La section « À propos » contient des informations sur l\'application, ses développeurs, le dépannage et les options de mise à jour.</string>
     <string name="settings_app_behavior_title">Comportement de l\'application</string>
     <string name="settings_app_language_label">Langue de l\'application</string>
@@ -53,6 +57,7 @@
     <string name="settings_languages_title">Langues</string>
     <string name="settings_lastfm_title">Last.fm</string>
     <string name="settings_launcher_shortcuts_description">Sélectionner et réorganiser les raccourcis du lanceur d\'applications</string>
+    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
     <string name="settings_launcher_shortcuts_recovery_required_message">La fonction « Sauvegarde » ne peut pas être désactivée</string>
     <string name="settings_launcher_shortcuts_title">Raccourcis vers l\'application</string>
     <string name="settings_library_now_playing_indicator_label">Indicateur de lecture en cours</string>
@@ -161,14 +166,6 @@
     <string name="settings_title">Paramètres</string>
     <string name="settings_transition_fade">Fondu</string>
     <string name="settings_use_font_type">Utiliser la police</string>
-    <string name="sync_action_sync">Synchronisation</string>
-    <string name="sync_likes">Synchronisation automatique des morceaux aimés</string>
-    <string name="theme_palette_dynamic">Dynamique</string>
-    <string name="theme_shake_sensitivity_disabled">Désactivé</string>
-    <string name="thumbnail_action_edit">Éditer la miniature</string>
-    <string name="thumbnail_action_reset">Réinitialiser la miniature</string>
-    <string name="tray_open">Ouvrir</string>
-    <string name="tray_quit">Quitter</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <string name="window">Fenêtre</string>
 </resources>
