@@ -1,5 +1,5 @@
 files:
-  - source: /ComposeN-Zik/src/main/composeResources/values/strings_*.xml
+  - source: /ComposeN-Zik/src/main/localization/composeResources/values/strings_*.xml
     translation: /ComposeN-Zik/src/main/composeResources/values-%two_letters_code%/%original_file_name%
     languages_mapping:
       two_letters_code:

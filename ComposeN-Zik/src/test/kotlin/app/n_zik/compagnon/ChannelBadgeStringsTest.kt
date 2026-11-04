@@ -9,7 +9,7 @@ class ChannelBadgeStringsTest {
 
     private fun string(name: String): String =
         Regex("""<string name="$name">(.*?)</string>""")
-            .find(File("src/main/composeResources/values/strings_updates.xml").readText())?.groupValues?.get(1)
+            .find(File("src/main/localization/composeResources/values/strings_updates.xml").readText())?.groupValues?.get(1)
             ?: error("$name is not defined in values/strings_updates.xml")
 
     @Test

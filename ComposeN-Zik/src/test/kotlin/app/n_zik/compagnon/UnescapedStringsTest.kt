@@ -73,8 +73,8 @@ class UnescapedStringsTest {
         assertTrue(generatedRoot.isDirectory, "the generated unescaped res dir is missing: ${generatedRoot.path}")
         // `listFiles` takes a two-argument FilenameFilter (dir, name)
         val sources = requireNotNull(File("src/main/composeResources")
-            .listFiles { _, name -> name.startsWith("values") })
-            .filter { it.isDirectory }
+            .listFiles { _, name -> name.startsWith("values-") })
+            .filter { it.isDirectory } + File("src/main/localization/composeResources/values")
         val generated = requireNotNull(generatedRoot
             .listFiles { _, name -> name.startsWith("values") })
             .filter { it.isDirectory }
