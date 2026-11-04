@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Zobacz logi</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">Kod ma 6 znaków, na przykład ABC-DEF.</string>
-    <string name="manual_description">Na telefonie, zarządzanie serwerem pokazuje adres IP, port i 6-znakowy kod.</string>
+    <string name="manual_description">Na telefonie otwórz serwer PC. Jeśli serwer zostanie zatrzymany, naciśnij Start. Wybierz Pparuj PC, aby zobaczyć adres IP, port i 6-znakowy kod.</string>
     <string name="manual_ip">Adres IP telefonu</string>
     <string name="manual_ip_invalid">Wprowadź adres IPv4, na przykład 192.168.1.14.</string>
     <string name="manual_port">Port</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Wpisz adres i kod wyświetlany na telefonie</string>
     <string name="pair_no_address">Nie znaleziono adresu sieci lokalnej na tym komputerze, więc kod QR nie może być wyświetlony. Paruj ręcznie poniżej.</string>
     <string name="pair_qr_addresses">Ten PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_description">W N-Zik na telefonie, otwórz Zarządzanie serwerem, rozpocznij parowanie, a następnie naciśnij Skanuj i ustaw kamerę na ten kod.</string>
+    <string name="pair_qr_description">W N-Zik na telefonie, otwórz serwer PC. Jeśli serwer zostanie zatrzymany, naciśnij Start. Wybierz Pparę PC, a następnie naciśnij Skanuj kod QR i ustaw kamerę na ten kod.</string>
     <string name="pair_qr_preparing">Przygotowywanie kodu QR…</string>
     <string name="pair_qr_renew_hint">Kod odnawia się co 2 minuty.</string>
     <string name="pair_qr_waiting">Oczekiwanie na Twój telefon…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Port %1$d (zachowany)</string>
     <string name="unreachable_save_ip">Zapisz i spróbuj ponownie</string>
     <string name="unreachable_title">Telefon nieosiągalny</string>
+    <string name="network_stream_retrying_playback">Próba wznowienia odtwarzania…</string>
 </resources>
