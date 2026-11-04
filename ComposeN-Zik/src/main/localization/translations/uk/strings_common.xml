@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="app_subtitle">Компаніон N-Цзик</string>
     <string name="cancel">Скасовувати</string>
-    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_artist_conjunction_and">та</string>
     <string name="common_clipboard_copy_success">Скопійовано</string>
     <string name="common_color_source_theme">Тема</string>
     <string name="common_color_white">Білий</string>
@@ -20,8 +20,8 @@
     <string name="common_size_small">Малий</string>
     <string name="common_state_off">Вимкнено</string>
     <string name="common_state_on">Увімк</string>
-    <string name="common_storage_used_suffix">used</string>
+    <string name="common_storage_used_suffix">вживана</string>
     <string name="common_validation_empty_value">Значення не може бути порожнім</string>
-    <string name="common_validation_minimum_value">Value must be greater than</string>
-    <string name="dismiss">Dismiss</string>
+    <string name="common_validation_minimum_value">Значення має бути більше</string>
+    <string name="dismiss">Відхилити</string>
 </resources>
