@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="command_clear">Clear the queue</string>
-    <string name="command_copied">Command copied</string>
-    <string name="command_jump">Play from the queue</string>
-    <string name="command_move">Move in the queue</string>
-    <string name="command_next">Next</string>
+    <string name="command_clear">Cancella la coda</string>
+    <string name="command_copied">Comando copiato</string>
+    <string name="command_jump">Riproduci dalla coda</string>
+    <string name="command_move">Sposta nella coda</string>
+    <string name="command_next">Successivo</string>
     <string name="command_pause">Pausa</string>
     <string name="command_play">Gioca</string>
-    <string name="command_previous">Previous</string>
-    <string name="command_queue_add">Add to queue</string>
-    <string name="command_queue_list">Queue from list</string>
+    <string name="command_previous">Precedente</string>
+    <string name="command_queue_add">Aggiungi alla coda</string>
+    <string name="command_queue_list">Coda dalla lista</string>
     <string name="command_queue_play">Gioca</string>
-    <string name="command_remove">Remove from the queue</string>
+    <string name="command_remove">Rimuovi dalla coda</string>
     <string name="command_repeat">Ripeti</string>
-    <string name="command_seek">Seek</string>
+    <string name="command_seek">Cerca</string>
     <string name="command_shuffle">Casuale</string>
-    <string name="command_speed">Speed</string>
+    <string name="command_speed">Velocità</string>
     <string name="common_action_clear">Pulisci</string>
     <string name="common_action_confirm">Conferma</string>
     <string name="common_action_delete">Elimina</string>
@@ -27,6 +27,6 @@
     <string name="common_action_turn_off">Disattiva</string>
     <string name="common_action_update">Aggiornamento</string>
     <string name="common_menu_label">Menu</string>
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
+    <string name="tray_open">Apri</string>
+    <string name="tray_quit">Esci</string>
 </resources>
