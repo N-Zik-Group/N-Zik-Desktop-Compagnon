@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">ログを表示</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">コードには6文字、例えばABC-DEFがあります。</string>
-    <string name="manual_description">お使いの携帯電話では、管理サーバーは、IPアドレス、ポート、および6文字コードを表示します。</string>
+    <string name="manual_description">お使いの携帯電話でPCサーバーを開きます。サーバーが停止している場合は、format@@0をタップします。 format@@0を選択して、IPアドレス、ポート、および6文字コードを表示します。</string>
     <string name="manual_ip">電話番号 IP アドレス</string>
     <string name="manual_ip_invalid">IPv4アドレスを入力します。 例えば192.168.1.14。</string>
     <string name="manual_port">ポート</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">電話番号と住所を入力してください</string>
     <string name="pair_no_address">このPCにはローカルネットワークアドレスが見つからないため、QRコードは表示されません。以下を手動でペアリングしてください。</string>
     <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_description">携帯電話のN-Zikで、サーバーの管理を開き、ペアリングを開始し、スキャンをタップしてカメラをこのコードに向けます。</string>
+    <string name="pair_qr_description">携帯電話の N-Zik で、PC サーバーを開きます。サーバーが停止している場合は、format@@0 をタップします。 PCをペアリングを選択し、QRコードをスキャンをタップしてカメラをこのコードにポイントします。</string>
     <string name="pair_qr_preparing">Preparing the QR code…</string>
     <string name="pair_qr_renew_hint">コードは2分ごとに更新されます。</string>
     <string name="pair_qr_waiting">Waiting for your phone…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">ポート番号 %1$d (保持)</string>
     <string name="unreachable_save_ip">保存して再試行する</string>
     <string name="unreachable_title">電話に接続できません</string>
+    <string name="network_stream_retrying_playback">再生を再試行しています…</string>
 </resources>
