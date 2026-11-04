@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Bogmærk album</string>
     <string name="album_action_open">Gå til album</string>
     <string name="album_left_swipe">Venstre stryg for album</string>
-    <string name="album_loading_song_count_format">Indlæser %1$d sange…</string>
+    <string name="album_loading_song_count_format">Indlæser album (spor: %1$d)…</string>
     <string name="album_right_swipe">Højre stryg for album</string>
     <string name="artist_action_follow">Følg</string>
     <string name="artist_action_play_local_songs">Afspil alle lokale sange</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Fastgør/frigør playliste</string>
     <string name="playlist_bookmark_unsupported_message">Kan ikke bogmærke Liked Sange eller Episodes afspilningsliste</string>
     <string name="playlist_create_dialog_title">Opret ny playliste</string>
-    <string name="playlist_delete_all_confirmation_count_format">Er du sikker på du vil slette alle %d afspilningslister?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Slet alle afspilningslister? (I alt: %d)</string>
     <string name="playlist_left_swipe">Venstre stryg for playlister</string>
     <string name="playlist_pinned_title">Fastgjorte playlister</string>
     <string name="playlist_rename_dialog_title">Omdøb playliste</string>
@@ -108,4 +108,6 @@
         <item quantity="one">%1$d sang</item>
         <item quantity="other">%1$d sange</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Kunne ikke anmode om adgang til musik på denne enhed.</string>
+    <string name="library_on_device_permission_settings_failed">Kunne ikke åbne tilladelsesindstillinger.</string>
 </resources>
