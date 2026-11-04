@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">5秒巻き戻す</string>
     <string name="player_seek_backward_thirty_seconds">30秒巻き戻し</string>
     <string name="player_shuffle_empty_message">シャッフルする曲がありません</string>
-    <string name="player_shuffled_song_count_format">%d 曲がシャッフルされました</string>
+    <string name="player_queue_shuffled_count_format">キューをシャッフルしました (トラック: %d)</string>
+    <string name="player_shuffled_song_count_format">トラックがシャッフルされました: %d</string>
     <string name="player_sleep_timer_title">スリープタイマー</string>
     <string name="player_statistics_volume_label">音量</string>
     <string name="player_swap_controls_with_timeline">タイムラインにコントロールを入れ替えます</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">ビジュアライザーバー</string>
     <string name="visualizer_microphone_permission_message">ビジュアライザーの効果にはマイクの許可が必要です。許可してください。</string>
     <string name="visualizer_title">ビジュアライザー</string>
+    <string name="player_error_unknown">不明な再生エラーが発生しました</string>
 </resources>
