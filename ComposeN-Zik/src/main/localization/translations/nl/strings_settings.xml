@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">De Over sectie toont informatie over de app, de ontwikkelaars, probleemoplossing en update opties</string>
     <string name="settings_app_behavior_title">App gedrag</string>
     <string name="settings_app_language_label">App-taal</string>
+    <string name="settings_app_language_system">Systeem</string>
     <string name="settings_audio_bass_boost">Audio bass boost</string>
     <string name="settings_audio_crossfade_description">Een soepele overgang tussen nummers inschakelen</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
