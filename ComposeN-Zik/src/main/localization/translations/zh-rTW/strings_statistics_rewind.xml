@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="calendar_period_one_month">一個月</string>
-    <string name="calendar_period_one_week">一星期</string>
-    <string name="calendar_period_one_year">一年</string>
-    <string name="calendar_period_six_months">六個月</string>
-    <string name="calendar_period_three_months">三個月</string>
-    <string name="calendar_today">今日</string>
-    <string name="statistics_items_limit_unlimited">無限制</string>
-    <string name="statistics_title">統計</string>
-    <string name="statistics_top_period_title">View top %s of …</string>
+    <!-- Calendar -->
+    <string name="calendar_period_one_month">1 Month</string>
+    <string name="calendar_period_one_week">1 Week</string>
+    <string name="calendar_period_one_year">1 Year</string>
+    <string name="calendar_period_six_months">6 Month</string>
+    <string name="calendar_period_three_months">3 month</string>
+    <string name="calendar_today">Today</string>
+    <!-- Rewind -->
+    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_year">Year</string>
+    <!-- Statistics -->
+    <string name="statistics_items_limit_unlimited">Unlimited</string>
+    <string name="statistics_title">Statistics</string>
+    <string name="statistics_top_period_title">Top %s of …</string>
 </resources>
