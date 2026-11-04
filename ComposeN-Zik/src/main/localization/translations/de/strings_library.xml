@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Album merken</string>
     <string name="album_action_open">Album anzeigen</string>
     <string name="album_left_swipe">Album links wischen</string>
-    <string name="album_loading_song_count_format">Lade %1$d Lieder…</string>
+    <string name="album_loading_song_count_format">Album wird geladen (Titelanzahl: %1$d)…</string>
     <string name="album_right_swipe">Album rechts wischen</string>
     <string name="artist_action_follow">Folgen</string>
     <string name="artist_action_play_local_songs">Alle lokalen Titel abspielen</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Wiedergabeliste anpinnen/lösen</string>
     <string name="playlist_bookmark_unsupported_message">Kann Liked Songs oder Episoden Wiedergabeliste nicht speichern</string>
     <string name="playlist_create_dialog_title">Neue Wiedergabeliste erstellen</string>
-    <string name="playlist_delete_all_confirmation_count_format">Bist du sicher, dass du ALLE %d Wiedergabelisten löschen möchtest?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Are you sure you want to delete ALL %d playlists?</string>
     <string name="playlist_left_swipe">Wiedergabeliste links wischen</string>
     <string name="playlist_pinned_title">Angeheftete Playlisten</string>
     <string name="playlist_rename_dialog_title">Wiedergabeliste umbenennen</string>
@@ -108,4 +108,6 @@
         <item quantity="one">%1$d Titel</item>
         <item quantity="other">%1$d Lieder</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Zugriff auf Musik auf diesem Gerät konnte nicht angefordert werden.</string>
+    <string name="library_on_device_permission_settings_failed">Konnte die Berechtigungseinstellungen nicht öffnen.</string>
 </resources>
