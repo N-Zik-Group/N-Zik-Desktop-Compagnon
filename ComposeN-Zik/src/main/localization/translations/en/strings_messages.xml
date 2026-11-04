@@ -4,8 +4,10 @@
     <string name="command_unknown">A command</string>
     <string name="common_error_no_internet">No network connection</string>
     <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
+    <string name="error_copy_failed">Copy failed</string>
     <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
     <string name="error_listener_failed">The pairing listener could not be opened. Pair manually below.</string>
+    <string name="error_open_browser">Could not open the browser</string>
     <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
     <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
     <string name="error_storage_failed">The pairing could not be saved on this PC.</string>
