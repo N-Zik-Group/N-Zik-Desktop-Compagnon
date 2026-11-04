@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Záložka album</string>
     <string name="album_action_open">Přejít do alba</string>
     <string name="album_left_swipe">Album přejetím vlevo</string>
-    <string name="album_loading_song_count_format">Načítání %1$d skladeb…</string>
+    <string name="album_loading_song_count_format">Načítání alba (skladby: %1$d)…</string>
     <string name="album_right_swipe">Album přejetím vpravo</string>
     <string name="artist_action_follow">Sledovat</string>
     <string name="artist_action_play_local_songs">Přehrát všechny lokální skladby</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Připnout/Odepnout playlist</string>
     <string name="playlist_bookmark_unsupported_message">Nelze přidat oblíbené skladby nebo epizody playlistu</string>
     <string name="playlist_create_dialog_title">Vytvořit nový playlist</string>
-    <string name="playlist_delete_all_confirmation_count_format">Opravdu chcete odstranit VŠECHNY %d seznamů skladeb?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Smazat všechny playlisty? (Celkem: %d)</string>
     <string name="playlist_left_swipe">Playlist přejetím vlevo</string>
     <string name="playlist_pinned_title">Připnuté playlisty</string>
     <string name="playlist_rename_dialog_title">Přejmenovat seznam skladeb</string>
@@ -110,4 +110,6 @@
         <item quantity="many">%1$d skladeb</item>
         <item quantity="other">%1$d skladeb</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Nelze požádat o přístup k hudbě na tomto zařízení.</string>
+    <string name="library_on_device_permission_settings_failed">Nelze otevřít nastavení oprávnění.</string>
 </resources>
