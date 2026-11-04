@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="calendar_period_one_month">1 Mesec</string>
-    <string name="calendar_period_one_week">1 Nedelja</string>
-    <string name="calendar_period_one_year">1 Godina</string>
-    <string name="calendar_period_six_months">6 Meseca</string>
-    <string name="calendar_period_three_months">3 meseca</string>
-    <string name="calendar_today">Danas</string>
-    <string name="statistics_items_limit_unlimited">Neograničeno</string>
-    <string name="statistics_title">Statistika</string>
-    <string name="statistics_top_period_title">Pogledaj vrh %s od …</string>
+    <!-- Calendar -->
+    <string name="calendar_period_one_month">1 Month</string>
+    <string name="calendar_period_one_week">1 Week</string>
+    <string name="calendar_period_one_year">1 Year</string>
+    <string name="calendar_period_six_months">6 Month</string>
+    <string name="calendar_period_three_months">3 month</string>
+    <string name="calendar_today">Today</string>
+    <!-- Rewind -->
+    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_year">Year</string>
+    <!-- Statistics -->
+    <string name="statistics_items_limit_unlimited">Unlimited</string>
+    <string name="statistics_title">Statistics</string>
+    <string name="statistics_top_period_title">Top %s of …</string>
 </resources>
