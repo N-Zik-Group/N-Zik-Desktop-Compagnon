@@ -2,7 +2,7 @@
 <resources>
     <string name="command_output">Audio output</string>
     <string name="command_unknown">A command</string>
-    <string name="common_error_no_internet">No network connection</string>
+    <string name="common_error_no_internet">Nulle connexion de rete</string>
     <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
     <string name="error_copy_failed">Copy failed</string>
     <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
@@ -10,13 +10,13 @@
     <string name="error_open_browser">Could not open the browser</string>
     <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
     <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
-    <string name="error_storage_failed">The pairing could not be saved on this PC.</string>
+    <string name="error_storage_failed">The pairing could not be saved in the Windows Credential Manager.</string>
     <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
     <string name="error_unknown_code">no code</string>
     <string name="error_update_check_failed">The update check failed (%1$s)</string>
     <string name="error_update_download_failed">The update download failed (%1$s)</string>
     <string name="error_windows_install_helper">The Windows installer could not be started. Run the downloaded installer manually.</string>
-    <string name="interface_in_use">Interface in use</string>
+    <string name="interface_in_use">Interfacie in uso</string>
     <string name="local_playback_failed">This song could not be played on this PC.</string>
     <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
     <string name="local_playback_not_found">This song is no longer on your phone.</string>
