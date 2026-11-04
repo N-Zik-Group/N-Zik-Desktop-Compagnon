@@ -20,7 +20,6 @@
     <string name="library_albums_title">アルバム</string>
     <string name="library_artists_title">アーティスト</string>
     <string name="library_cached_title">キャッシュ済み</string>
-    <string name="library_cleanup_title">スマートなゴミ箱の数</string>
     <string name="library_disliked_title">Disliked</string>
     <string name="library_dislikes_added">Disliked %s</string>
     <string name="library_dislikes_removed">Removed %s from dislikes</string>
@@ -53,7 +52,6 @@
     <string name="library_sort_listening_time">視聴時間</string>
     <string name="library_sort_menu">Sort Menu</string>
     <string name="library_sort_name">名前</string>
-    <string name="library_sort_order_title">並べ替えの順序</string>
     <string name="library_sort_play_count">Play Count</string>
     <string name="library_sort_relative_listening_time">聴取時間</string>
     <string name="library_sort_songs_number">曲数</string>
@@ -63,21 +61,15 @@
     <string name="library_sync_progress_format">%1$d / %2$d</string>
     <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
     <string name="library_youtube_playlists_label">YT/YTM</string>
-    <string name="local_playback_failed">This song could not be played on this PC.</string>
-    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
-    <string name="local_playback_not_found">This song is no longer on your phone.</string>
-    <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
-    <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
-    <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
-    <string name="local_playback_unreachable">Your phone did not answer.</string>
-    <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
     <string name="metadata_action_change_artists">Change Authors</string>
     <string name="metadata_action_change_cover">カバーを変更</string>
     <string name="metadata_action_change_title">タイトルを変更</string>
     <string name="metadata_action_edit">Edit Metadata</string>
     <string name="metadata_album_action_change_browse_id">Change Album Browse ID</string>
     <string name="metadata_artist_action_change_browse_id">Change Artist Browse ID</string>
+    <string name="metadata_file_path_unavailable">Cannot resolve file path</string>
     <string name="metadata_playlist_action_change_browse_id">Change Playlist Browse ID</string>
+    <string name="metadata_save_failed">Failed to save metadata</string>
     <string name="metadata_unknown_artist">不明なアーティスト</string>
     <string name="metadata_unknown_title">不明なタイトル</string>
     <string name="playlist_action_add">プレイリストに追加</string>
@@ -99,7 +91,6 @@
     <string name="playlist_selection_action_deselect">選択を解除</string>
     <string name="playlist_top">トッププレイリスト</string>
     <string name="radio_action_start">ラジオを開始</string>
-    <string name="recommendations_action_smart_shuffle">スマートレコメンデーション</string>
     <string name="recommendations_minimum_playback_duration_label">再生時間の最小値</string>
     <string name="recommendations_title">クイックピック</string>
     <string name="search_display_order">オンライン検索表示順</string>
