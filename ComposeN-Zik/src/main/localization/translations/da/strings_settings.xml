@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_loudness_boost_level">Højttaler boost niveau</string>
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
+    <string name="close_behavior">Luk opførsel</string>
+    <string name="close_behavior_minimize">Minimér til bakke</string>
+    <string name="close_behavior_quit">Afslut app\'en</string>
     <string name="common_translation_title">Oversættelse</string>
     <string name="library_sort_order_title">Sortér efter</string>
     <string name="maintenance_debug_logging_title">Aktivér logfejlfinding</string>
@@ -55,20 +55,20 @@
     <string name="settings_interface_page_title">UI</string>
     <string name="settings_interface_title">Brugergrænseflade</string>
     <string name="settings_languages_title">Sprog</string>
-    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
-    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
-    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
-    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
+    <string name="settings_launcher_shortcuts_description">Vælg og omarranger launcher genveje</string>
+    <string name="settings_launcher_shortcuts_limit_message">Maksimum af %1$d aktive genveje nået</string>
+    <string name="settings_launcher_shortcuts_recovery_required_message">Redning kan ikke deaktiveres</string>
+    <string name="settings_launcher_shortcuts_title">App genveje</string>
     <string name="settings_library_now_playing_indicator_label">\'Afspiller nu\'-indikator</string>
     <string name="settings_library_playlist_indicator_description">Indikerer, om sangen allerede er føjet til en playliste</string>
     <string name="settings_library_playlist_indicator_label">Playlisteindikator</string>
     <string name="settings_library_queue_playlist_swipe_left_label">Venstre stryg for kø og lokale playlister</string>
     <string name="settings_library_queue_playlist_swipe_right_label">Højre stryg for kø og lokale playlister</string>
-    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
-    <string name="settings_library_sort_options_description">Customize sort options</string>
-    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
-    <string name="settings_library_toolbar_title">Toolbar</string>
-    <string name="settings_local_playlist_title">Local Playlist</string>
+    <string name="settings_library_sections_visibility_description">Vælg hvilke sektioner der vises i biblioteket</string>
+    <string name="settings_library_sort_options_description">Tilpas sorteringsindstillinger</string>
+    <string name="settings_library_toolbar_customization_description">Tilpas værktøjslinjen</string>
+    <string name="settings_library_toolbar_title">Værktøjslinje</string>
+    <string name="settings_local_playlist_title">Lokal Spilleliste</string>
     <string name="settings_logging_error_file_description">Hvis aktiveret, oprettes en logfil for at fremhæve fejl</string>
     <string name="settings_loudness_base_gain">Basisforstærkning for lydstyrke</string>
     <string name="settings_lyrics_artwork_visible_label">Vis miniaturebillede for sangtekster</string>
@@ -89,9 +89,9 @@
     <string name="settings_network_title">Netværk</string>
     <string name="settings_parental_age_restriction_description">Undgå at afspille sange med aldersbegrænsning</string>
     <string name="settings_playback_duration_limit_label">Ekskluder sange med varighedsgrænse</string>
-    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
-    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
-    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
+    <string name="settings_playback_exclude_disliked_albums_label">Udeluk ukendte albummer</string>
+    <string name="settings_playback_exclude_disliked_artists_label">Udeluk ukendte kunstnere</string>
+    <string name="settings_playback_exclude_disliked_songs_label">Udelad ukendte sange</string>
     <string name="settings_playback_pause_at_zero_volume_description">Pauser afspilleren, når lydstyrken er på 0, og genoptager, når den er højere end 0</string>
     <string name="settings_playback_pause_between_songs_label">Pause mellem sange</string>
     <string name="settings_playback_previous_restart_threshold_label">Forrige-knap genstarter den aktuelle sang, når de følgende sekunder er gået</string>
@@ -116,7 +116,7 @@
     <string name="settings_player_bottom_black_gradient_label">Sort gradient i bunden</string>
     <string name="settings_player_button_zoom_out_animation_label">Zoom ud-animation af knap</string>
     <string name="settings_player_controls_style_label">Kontroltype</string>
-    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
+    <string name="settings_player_crop_video_artwork_label">Beskær videominiaturer</string>
     <string name="settings_player_disable_horizontal_swipe_label">Deaktivér vandret stryg</string>
     <string name="settings_player_disable_song_swipe_label">Deaktivér sangskift via stryg</string>
     <string name="settings_player_disable_text_marquee_description">Rullende tekst bruges til lang tekst</string>
@@ -126,7 +126,7 @@
     <string name="settings_player_header_album_artist_description">Album- og kunstnernavn</string>
     <string name="settings_player_header_icons_visible_label">Vis info med ikoner</string>
     <string name="settings_player_header_style_label">Infotype</string>
-    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
+    <string name="settings_player_m3e_motion_sensitivity_label">Tema Ryst Følsomhed</string>
     <string name="settings_player_next_queue_visible_label">Vis mini-kø i afspiller</string>
     <string name="settings_player_persistent_queue_description">Gem og gendan afspillende sange</string>
     <string name="settings_player_persistent_queue_label">Vedvarende spiller</string>
@@ -165,5 +165,5 @@
     <string name="settings_title">Indstillinger</string>
     <string name="settings_transition_fade">Udton</string>
     <string name="settings_use_font_type">Brug skrifttype</string>
-    <string name="window">Window</string>
+    <string name="window">Vindue</string>
 </resources>
