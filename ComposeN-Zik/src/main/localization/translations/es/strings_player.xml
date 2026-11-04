@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Rebobinar 5 segundos</string>
     <string name="player_seek_backward_thirty_seconds">Revincula 30 segundos</string>
     <string name="player_shuffle_empty_message">No hay canción aleatoria</string>
-    <string name="player_shuffled_song_count_format">%d canciones barajadas</string>
+    <string name="player_queue_shuffled_count_format">Cola encolada (pistas: %d)</string>
+    <string name="player_shuffled_song_count_format">Pistas mezcladas: %d</string>
     <string name="player_sleep_timer_title">Temporizador de apagado</string>
     <string name="player_statistics_volume_label">Volumen</string>
     <string name="player_swap_controls_with_timeline">Intercambiar controles con la línea de tiempo</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Barra de visualizador</string>
     <string name="visualizer_microphone_permission_message">Es necesario el permiso del micrófono para el efecto del visualizador, debes concederlo.</string>
     <string name="visualizer_title">Visualizador</string>
+    <string name="player_error_unknown">Ha ocurrido un error de reproducción desconocido</string>
 </resources>
