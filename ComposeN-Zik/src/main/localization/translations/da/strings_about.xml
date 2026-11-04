@@ -10,4 +10,12 @@
     <string name="about_translators_title">Oversættere</string>
     <string name="contributors">Bidragydere</string>
     <string name="request_a_feature">Anmod om en funktion eller foreslå en idé</string>
+    <plurals name="about_translator_count">
+        <item quantity="one">%1$d oversætter</item>
+        <item quantity="other">%1$d oversættere</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="one">%1$d udvikler / designer</item>
+        <item quantity="other">%1$d udviklere / designere</item>
+    </plurals>
 </resources>
