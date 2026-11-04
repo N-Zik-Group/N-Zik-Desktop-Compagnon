@@ -10,4 +10,16 @@
     <string name="about_translators_title">Перекладачі</string>
     <string name="contributors">Учасники проекту</string>
     <string name="request_a_feature">Попросіть функцію або запропонуйте ідею</string>
+    <plurals name="about_translator_count">
+        <item quantity="one">%1$d translator</item>
+        <item quantity="few">%1$d перекладачі</item>
+        <item quantity="many">%1$d перекладачі</item>
+        <item quantity="other">%1$d перекладачі</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="one">%1$d розробник / дизайнер</item>
+        <item quantity="few">%1$d developers / designers</item>
+        <item quantity="many">%1$d developers / designers</item>
+        <item quantity="other">%1$d developers / designers</item>
+    </plurals>
 </resources>
