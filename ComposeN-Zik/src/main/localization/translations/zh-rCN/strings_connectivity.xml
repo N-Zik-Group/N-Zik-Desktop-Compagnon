@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">查看日志</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">代码有6个字符，例如ABC-DEF。</string>
-    <string name="manual_description">在您的手机上，管理服务器会显示 IP 地址、端口和 6 个字符代码。</string>
+    <string name="manual_description">在您的手机上打开PC 服务器。如果服务器停止，请点击Start。 选择配对 PC 以查看 IP 地址、端口和 6 个字符代码。</string>
     <string name="manual_ip">电话IP地址</string>
     <string name="manual_ip_invalid">输入IPv4地址，例如192.168.1.14。</string>
     <string name="manual_port">端口</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">输入您手机上显示的地址和代码</string>
     <string name="pair_no_address">此 PC 上没有找到本地网络地址，所以无法显示二维码。请手动配对。</string>
     <string name="pair_qr_addresses">此 PC: %1$s (端口 %2$d)</string>
-    <string name="pair_qr_description">在手机上的 N-Zik 中，打开管理服务器，开始配对，然后点击扫描并将相机指向此代码。</string>
+    <string name="pair_qr_description">在手机上的 N-Zikk 中，打开 PC 服务器。如果服务器停止，请点击Start。 选择配对 PC，然后点击扫描二维码并将相机指向此代码。</string>
     <string name="pair_qr_preparing">正在准备二维码…</string>
     <string name="pair_qr_renew_hint">代码每隔2分钟更新一次。</string>
     <string name="pair_qr_waiting">Waiting for your phone…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">端口 %1$d (保留)</string>
     <string name="unreachable_save_ip">保存并重试</string>
     <string name="unreachable_title">无法访问电话</string>
+    <string name="network_stream_retrying_playback">Retrying playback…</string>
 </resources>
