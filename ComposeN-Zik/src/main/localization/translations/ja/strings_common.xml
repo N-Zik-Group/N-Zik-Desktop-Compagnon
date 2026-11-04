@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_subtitle">Companion for N-Zik</string>
     <string name="cancel">キャンセル</string>
-    <string name="common_artist_conjunction_and">and</string>
     <string name="common_brand_github">GitHub</string>
     <string name="common_clipboard_copy_success">コピーしました</string>
     <string name="common_color_source_theme">テーマ</string>
@@ -21,8 +19,5 @@
     <string name="common_size_small">小</string>
     <string name="common_state_off">オフ</string>
     <string name="common_state_on">オン</string>
-    <string name="common_storage_used_suffix">used</string>
     <string name="common_validation_empty_value">値を空にすることはできません。</string>
-    <string name="common_validation_minimum_value">Value must be greater than</string>
-    <string name="dismiss">Dismiss</string>
 </resources>

@@ -3,9 +3,7 @@
     <string name="accessibility_app_icon">アプリのアイコン</string>
     <string name="accessibility_app_icon_in_player">プレーヤーのアプリアイコン</string>
     <string name="accessibility_background_image">背景画像</string>
-    <string name="accessibility_blurred_background">blurred_background</string>
     <string name="accessibility_disc_background">ディスクの背景</string>
     <string name="accessibility_number_of_songs_in_queue">キュー内の曲数</string>
-    <string name="accessibility_origin_indicator">origin_indicator</string>
     <string name="accessibility_song_album_cover">ソングアルバムカバー</string>
 </resources>

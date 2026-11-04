@@ -1,28 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_subtitle">Companion for N-Zik</string>
     <string name="cancel">ביטול</string>
-    <string name="common_artist_conjunction_and">and</string>
     <string name="common_brand_github">GitHub</string>
     <string name="common_clipboard_copy_success">הועתק</string>
     <string name="common_color_source_theme">ערכת נושא</string>
-    <string name="common_color_white">White</string>
     <string name="common_delete_success">נמחק</string>
-    <string name="common_empty_items">No items</string>
     <string name="common_option_all">הכל</string>
     <string name="common_option_custom">התאמה אישית</string>
     <string name="common_option_default">ברירת מחדל</string>
     <string name="common_option_disabled">מושבת</string>
     <string name="common_option_none">כלום</string>
-    <string name="common_option_random">Random</string>
     <string name="common_size_big">גדול</string>
     <string name="common_size_biggest">הכי גדול</string>
     <string name="common_size_medium">בינוני</string>
     <string name="common_size_small">קטן</string>
-    <string name="common_state_off">Off</string>
-    <string name="common_state_on">On</string>
-    <string name="common_storage_used_suffix">used</string>
     <string name="common_validation_empty_value">הערך אינו יכול להיות ריק</string>
-    <string name="common_validation_minimum_value">Value must be greater than</string>
-    <string name="dismiss">Dismiss</string>
 </resources>

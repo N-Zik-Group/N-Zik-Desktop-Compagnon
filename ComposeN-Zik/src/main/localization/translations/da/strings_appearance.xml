@@ -17,9 +17,7 @@
     <string name="player_background_stage">Scene</string>
     <string name="player_controls_style_essential">Grundlæggende</string>
     <string name="player_controls_style_modern">Moderne</string>
-    <string name="player_cover_style_cd">CD</string>
     <string name="player_cover_style_cd_with_cover">CD med cover</string>
-    <string name="player_cover_style_vinyl">Vinyl</string>
     <string name="player_progress_mini_player">Minimeret afspiller</string>
     <string name="theme_palette_dynamic">Dynamisk</string>
     <string name="theme_shake_sensitivity_disabled">Deaktiveret</string>

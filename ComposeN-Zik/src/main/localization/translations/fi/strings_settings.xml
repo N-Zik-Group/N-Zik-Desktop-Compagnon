@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_loudness_boost_level">Äänenvoimakkuuden korostuksen taso</string>
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
     <string name="common_translation_title">Käännös</string>
     <string name="library_sort_order_title">Lajittelujärjestys</string>
     <string name="maintenance_debug_logging_title">Ota virheenkorjauslokit käyttöön</string>
@@ -21,7 +18,6 @@
     <string name="settings_app_language_label">Sovelluksen kieli</string>
     <string name="settings_audio_bass_boost">Basson korostus</string>
     <string name="settings_audio_crossfade_description">Salli tasainen siirtyminen kappaleiden välillä</string>
-    <string name="settings_audio_crossfade_label">Crossfade</string>
     <string name="settings_audio_equalizer_label">Taajuuskorjain</string>
     <string name="settings_audio_loudness_normalization_description">Säädä äänenvoimakkuus kiinteään tasoon</string>
     <string name="settings_audio_loudness_normalization_label">Normalisoi äänenvoimakkuus</string>
@@ -56,19 +52,11 @@
     <string name="settings_interface_title">Käyttöliittymä</string>
     <string name="settings_languages_title">Kielet</string>
     <string name="settings_lastfm_title">Last.fm</string>
-    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
-    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
-    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
     <string name="settings_library_now_playing_indicator_label">Toiston ilmaisin</string>
     <string name="settings_library_playlist_indicator_description">Merkitse kappaleet jotka on lisätty soittolistaan</string>
     <string name="settings_library_playlist_indicator_label">Soittolistan osoitin</string>
     <string name="settings_library_queue_playlist_swipe_left_label">Jono ja paikalliset soittolistat pyyhkäisemällä vasemmalle</string>
     <string name="settings_library_queue_playlist_swipe_right_label">Jono ja paikalliset soittolistat pyyhkäisemällä oikealle</string>
-    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
-    <string name="settings_library_sort_options_description">Customize sort options</string>
-    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
-    <string name="settings_library_toolbar_title">Toolbar</string>
-    <string name="settings_local_playlist_title">Local Playlist</string>
     <string name="settings_logging_error_file_description">Jos käytössä, luo lokitiedoston virheiden löytämiseksi</string>
     <string name="settings_loudness_base_gain">Äänenvoimakkuuden vahvistus</string>
     <string name="settings_lyrics_artwork_visible_label">Näytä pienoiskuva sanoituksille</string>
@@ -89,9 +77,6 @@
     <string name="settings_network_title">Verkko</string>
     <string name="settings_parental_age_restriction_description">Estää soittamasta kappaleita, joissa on ikärajoitus</string>
     <string name="settings_playback_duration_limit_label">Jätä pois kappaleet, joiden kesto on rajoitettu</string>
-    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
-    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
-    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
     <string name="settings_playback_pause_at_zero_volume_description">Keskeytä kappale, kun äänenvoimakkuus saavuttaa 0 ja jatka sitä kun äänenvoimakkuus on suurempi kuin 0</string>
     <string name="settings_playback_pause_between_songs_label">Tauko kappaleiden välissä</string>
     <string name="settings_playback_previous_restart_threshold_label">Aikaisemman kappaleen maksimi kesto on kulunut</string>
@@ -108,7 +93,6 @@
     <string name="settings_player_artwork_corner_radius_label">Pienoiskuvan pyöreys</string>
     <string name="settings_player_artwork_section_title">Kansikuva &amp; Pikkukuva</string>
     <string name="settings_player_artwork_shrink_when_paused_label">Pienennä pienoiskuva pysäytettynä</string>
-    <string name="settings_player_artwork_style_label">Thumbnail type</string>
     <string name="settings_player_artwork_visible_label">Näytä pienoiskuva</string>
     <string name="settings_player_background_colors_label">Taustavärit</string>
     <string name="settings_player_background_progress_label">Taustan etenemispalkki</string>
@@ -116,7 +100,6 @@
     <string name="settings_player_bottom_black_gradient_label">Musta Gradientti alhaalla</string>
     <string name="settings_player_button_zoom_out_animation_label">Painikkeen zoom-out -animaatio</string>
     <string name="settings_player_controls_style_label">Ohjauksen tyyli</string>
-    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
     <string name="settings_player_disable_horizontal_swipe_label">Poista vaakapyyhkäisy käytöstä</string>
     <string name="settings_player_disable_song_swipe_label">Poista kappaleen vaihtaminen pyyhkäisemällä</string>
     <string name="settings_player_disable_text_marquee_description">Vieritystekstiä käytetään pitkiin teksteihin</string>
@@ -126,7 +109,6 @@
     <string name="settings_player_header_album_artist_description">Levyn ja artistin otsikko</string>
     <string name="settings_player_header_icons_visible_label">Näytä tiedot kuvakkeilla</string>
     <string name="settings_player_header_style_label">Otsikon tyyli</string>
-    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
     <string name="settings_player_next_queue_visible_label">Näytä seuraavan kappaleen jono</string>
     <string name="settings_player_persistent_queue_description">Tallenna ja palauta viimeksi toistettu jono</string>
     <string name="settings_player_persistent_queue_label">Pysyvä pelaaja</string>
@@ -140,7 +122,6 @@
     <string name="settings_player_queue_swipe_up_label">Avaa jono pyyhkäisemällä ylös</string>
     <string name="settings_player_queue_tap_to_open_label">Avaa jono napauttamalla</string>
     <string name="settings_player_remaining_duration_visible_label">Näytä jäljellä oleva kappaleen kesto</string>
-    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
     <string name="settings_player_seek_time_buttons_label">Ohita aikapainikkeet</string>
     <string name="settings_player_start_minimized_description">Kun napsautetaan kappaletta, pelaaja alkaa minimoida</string>
     <string name="settings_player_tap_artwork_toggle_lyrics_description">Pienoiskuvaa napauttamalla</string>
@@ -164,7 +145,5 @@
     <string name="settings_theme_mode_label">Teematila</string>
     <string name="settings_title">Asetukset</string>
     <string name="settings_transition_fade">Häivettyminen</string>
-    <string name="settings_use_font_type">Font type</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
-    <string name="window">Window</string>
 </resources>

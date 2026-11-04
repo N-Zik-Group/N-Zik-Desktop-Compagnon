@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="calendar_period_one_month">1 Maand</string>
-    <string name="calendar_period_one_week">1 Week</string>
     <string name="calendar_period_one_year">1 Jaar</string>
     <string name="calendar_period_six_months">6 Maand</string>
     <string name="calendar_period_three_months">3 maand</string>
     <string name="calendar_today">Vandag</string>
-    <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">Jaar</string>
-    <string name="rewind_title">Rewind</string>
-    <string name="rewind_top_sort">Rewind Top</string>
     <string name="statistics_items_limit_unlimited">Onbeperk</string>
     <string name="statistics_title">Statistieke</string>
     <string name="statistics_top_period_title">View top %s of …</string>

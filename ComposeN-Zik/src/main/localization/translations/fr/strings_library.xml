@@ -17,7 +17,6 @@
     <string name="home_title">Accueil</string>
     <string name="library_action_bookmark">Ajouter aux favoris</string>
     <string name="library_action_randomize">Générateur aléatoire</string>
-    <string name="library_albums_title">Albums</string>
     <string name="library_artists_title">Artistes</string>
     <string name="library_cached_title">En cache</string>
     <string name="library_disliked_title">Pas aimé</string>
@@ -37,10 +36,8 @@
     <string name="library_none">Le téléphone ne partage aucune bibliothèque avec cet ordinateur.</string>
     <string name="library_not_found">Introuvable sur le téléphone. Il a peut-être été supprimé.</string>
     <string name="library_on_device_title">Sur le téléphone</string>
-    <string name="library_playlists_title">Playlists</string>
     <string name="library_refresh">Actualiser</string>
     <string name="library_songs_title">Titres</string>
-    <string name="library_sort_album">Album</string>
     <string name="library_sort_album_year">Année de l\'album</string>
     <string name="library_sort_artist">Artiste</string>
     <string name="library_sort_custom_order">Ordre personnalisé</string>

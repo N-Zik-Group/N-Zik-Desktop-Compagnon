@@ -1,34 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="audio_devices">Audio devices</string>
     <string name="audio_effects">Lyd Effekter</string>
-    <string name="audio_output_title">Audio output</string>
     <string name="audio_quality_automatic">Automatisk</string>
     <string name="audio_quality_format">Lydkvalitet</string>
     <string name="audio_quality_format_high">Høj</string>
     <string name="audio_quality_format_low">Lav</string>
     <string name="audio_reverb_none">Ingen</string>
-    <string name="audio_waveform_action_refresh">Update waveform</string>
-    <string name="listen_together_auto_approval_joins_description">Automatically approve join requests without reviewing them manually</string>
-    <string name="listen_together_auto_approval_suggestions_description">Automatically approve and queue song suggestions from guests</string>
-    <string name="listen_together_create_room_description">Create a room and share the code with your friends</string>
-    <string name="listen_together_history_description">Record Listen Together tracks in your local history</string>
-    <string name="listen_together_sync_volume_description">Guests will match the host\'s volume level</string>
-    <string name="listen_together_view_logs_description">Debug connection events and messages</string>
     <string name="lyrics_alignment_left_label">Venstre</string>
     <string name="lyrics_alignment_right_label">Højre</string>
     <string name="lyrics_color">Sangtekstfarve</string>
     <string name="lyrics_title">Sangtekster</string>
-    <string name="miniplayer_button_like">Like</string>
     <string name="player_action_bar">Spiller handlingsbjælke</string>
-    <string name="player_action_bar_buttons">Button visibility</string>
-    <string name="player_action_bar_buttons_description">Configure which buttons appear in the player action bar</string>
     <string name="player_action_enqueue">Sæt i kø</string>
     <string name="player_action_listen_on_youtube">Lyt på YouTube</string>
     <string name="player_action_locate_current_song">Find sangen, der bliver afspillet</string>
-    <string name="player_action_next">Next</string>
     <string name="player_action_play_next">Afspil næste</string>
-    <string name="player_action_previous">Previous</string>
     <string name="player_action_repeat">Gentag</string>
     <string name="player_action_seek_forward">Fremad</string>
     <string name="player_action_seek_forward_30_seconds">Videresend 30 sekunder</string>
@@ -43,12 +29,10 @@
     <string name="player_background_artwork_fluid_gradient_label">Flydende gradientbaggrund fra cover</string>
     <string name="player_background_artwork_gradient_label">Gradientbaggrund fra cover</string>
     <string name="player_background_artwork_label">Baggrund fra cover</string>
-    <string name="player_background_artwork_m3e_morphing_label">Morphing shapes from cover</string>
     <string name="player_background_palette_label">Farvepalet</string>
     <string name="player_background_theme_fluid_gradient_label">Flydende gradientbaggrund fra tema</string>
     <string name="player_background_theme_gradient_label">Gradientbaggrund fra tema</string>
     <string name="player_background_theme_label">Baggrund fra tema</string>
-    <string name="player_background_theme_m3e_morphing_label">Morphing shapes from theme</string>
     <string name="player_behavior_and_visuals">Spiller Opførsel &amp; Visualer</string>
     <string name="player_collapsed_disable_swiping_down">Deaktivér stryge ned</string>
     <string name="player_controls">Afspiller Styring</string>
@@ -62,7 +46,6 @@
     <string name="player_controls_playback_volume_title">Afspilningslydstyrke</string>
     <string name="player_controls_speed_title">Afspilningshastighed</string>
     <string name="player_current_song_not_in_list">Kunne ikke finde afspillende sang på den aktuelle liste</string>
-    <string name="player_effects">Player Effects</string>
     <string name="player_enable_lyrics_popup_message">Aktivér pop op-besked om sangtekst</string>
     <string name="player_enable_rotation_buttons">Aktivér rotation af knapper, når de trykkes</string>
     <string name="player_keep_minimized">Hold minimeret</string>
@@ -72,15 +55,8 @@
     <string name="player_mini_action_shuffle">Bland</string>
     <string name="player_mini_button_discover">Opdag</string>
     <string name="player_mini_button_download">Hent</string>
-    <string name="player_mini_button_play_pause">Play/Pause</string>
-    <string name="player_mini_button_queue">Queue</string>
-    <string name="player_mini_button_radio">Radio</string>
-    <string name="player_mini_button_share">Share</string>
     <string name="player_mini_button_sleep_timer">Søvntimer</string>
-    <string name="player_mini_button_video">Video</string>
     <string name="player_mini_button_visualizer">Visualisering</string>
-    <string name="player_mini_buttons_config">MiniPlayer buttons</string>
-    <string name="player_mini_buttons_config_description">Configure the 4 buttons in the miniplayer</string>
     <string name="player_no_current_song">Ingen sang spiller i øjeblikket</string>
     <string name="player_no_song_found">Ingen sang fundet</string>
     <string name="player_pause_listen_history">Sæt lyttehistorik på pause</string>
@@ -97,9 +73,7 @@
     <string name="player_seek_backward_five_seconds">Vend tilbage 5 sekunder</string>
     <string name="player_seek_backward_thirty_seconds">Vind 30 sekunder</string>
     <string name="player_shuffle_empty_message">Ingen sang at blande</string>
-    <string name="player_shuffled_song_count_format">%d songs shuffled</string>
     <string name="player_sleep_timer_title">Søvntimer</string>
-    <string name="player_statistics_volume_label">Volume</string>
     <string name="player_swap_controls_with_timeline">Byt kontrolelementer med tidslinje</string>
     <string name="player_swipe_sensitivity">Afspiller Stryg Følsomhed</string>
     <string name="player_swipe_sensitivity_high_label">Høj</string>
@@ -116,7 +90,6 @@
     <string name="queue_discover_description">Fjerner Kan lide- og Playliste-sange fra kø</string>
     <string name="queue_discover_title">Opdag</string>
     <string name="visualizer_animation_bubbles">Bobler</string>
-    <string name="visualizer_bar">Visualizer bar</string>
     <string name="visualizer_microphone_permission_message">Visualiseringseffekten kræver mikrofonadgang. Tillad venligst.</string>
     <string name="visualizer_title">Visualisering</string>
 </resources>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="fake_audio_bar">Fake Waveform</string>
-    <string name="message_type">Popup message style</string>
     <string name="message_type_modern">깔끔하게</string>
     <string name="player_background_black_cherry_cosmos">검은 체리 코스모스</string>
     <string name="player_background_glossy_gradient">광택 그라데이션</string>
@@ -17,7 +16,6 @@
     <string name="player_background_stage">단계</string>
     <string name="player_controls_style_essential">다양하게</string>
     <string name="player_controls_style_modern">깔끔하게</string>
-    <string name="player_cover_style_cd">CD</string>
     <string name="player_cover_style_cd_with_cover">커버가 있는 CD</string>
     <string name="player_cover_style_vinyl">레코드판</string>
     <string name="player_progress_mini_player">플레이어 최소화</string>

@@ -6,10 +6,6 @@
     <string name="calendar_period_six_months">6 Μήνες</string>
     <string name="calendar_period_three_months">3 Μήνες</string>
     <string name="calendar_today">Σήμερα</string>
-    <string name="rewind_filter_month">Month</string>
-    <string name="rewind_filter_year">Year</string>
-    <string name="rewind_title">Rewind</string>
-    <string name="rewind_top_sort">Rewind Top</string>
     <string name="statistics_items_limit_unlimited">Απεριόριστο</string>
     <string name="statistics_title">Στατιστικά</string>
     <string name="statistics_top_period_title">View top %s of …</string>

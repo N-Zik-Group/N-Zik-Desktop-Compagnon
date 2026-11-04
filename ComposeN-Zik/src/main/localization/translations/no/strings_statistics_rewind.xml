@@ -6,10 +6,7 @@
     <string name="calendar_period_six_months">6 Måneder</string>
     <string name="calendar_period_three_months">3 Måneder</string>
     <string name="calendar_today">I dag</string>
-    <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">År</string>
-    <string name="rewind_title">Rewind</string>
-    <string name="rewind_top_sort">Rewind Top</string>
     <string name="statistics_items_limit_unlimited">Ubegrenset</string>
     <string name="statistics_title">Statistikk</string>
     <string name="statistics_top_period_title">Topp %s av …</string>

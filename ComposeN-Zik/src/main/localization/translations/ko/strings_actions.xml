@@ -1,31 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="command_clear">Clear the queue</string>
-    <string name="command_copied">Command copied</string>
-    <string name="command_jump">Play from the queue</string>
-    <string name="command_move">Move in the queue</string>
-    <string name="command_next">Next</string>
-    <string name="command_pause">Pause</string>
-    <string name="command_play">Play</string>
-    <string name="command_previous">Previous</string>
-    <string name="command_queue_add">Add to queue</string>
-    <string name="command_queue_play">Play</string>
-    <string name="command_remove">Remove from the queue</string>
     <string name="command_repeat">반복</string>
-    <string name="command_seek">Seek</string>
     <string name="command_shuffle">셔플</string>
-    <string name="command_speed">Speed</string>
     <string name="common_action_clear">삭제</string>
     <string name="common_action_confirm">확인</string>
     <string name="common_action_delete">삭제</string>
     <string name="common_action_done">완료</string>
     <string name="common_action_reset">초기화</string>
-    <string name="common_action_retry">Retry</string>
     <string name="common_action_select">선택</string>
     <string name="common_action_translate">번역</string>
     <string name="common_action_turn_off">사용 중지</string>
     <string name="common_action_update">업데이트</string>
-    <string name="common_menu_label">Menu</string>
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
 </resources>

@@ -1,32 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="backup_action_export">Export backup</string>
     <string name="backup_action_import_legacy_migration">Importar archivo de migración.</string>
-    <string name="backup_auto_interval">Auto Backup Interval</string>
     <string name="backup_auto_interval_none">Deshabilitado</string>
-    <string name="backup_auto_location">Auto Backup Location</string>
-    <string name="backup_auto_location_not_set">Not set</string>
-    <string name="backup_auto_max_backups">Max Backups to Keep</string>
-    <string name="backup_auto_target">Backup Target</string>
-    <string name="backup_auto_title">Automatic Backup</string>
-    <string name="backup_export_description">Export database or settings to a file</string>
-    <string name="backup_import_description">Import database or settings from a file</string>
     <string name="backup_legacy_migration_description">Para usuarios antiguos antes de la conversión.\nUtilice la aplicación antigua para hacer una copia de seguridad para la migración.</string>
     <string name="backup_target_database_label">Base de datos</string>
-    <string name="cached_pc">Cached PC</string>
-    <string name="download_pc">Download PC</string>
     <string name="downloads_action_download_all">Descargar todas las canciones</string>
-    <string name="downloads_action_refresh_quality">Update downloads</string>
     <string name="downloads_action_remove_all">Eliminar todas las canciones descargadas</string>
     <string name="downloads_cancelled">Descarga cancelada</string>
     <string name="downloads_delete_all_confirmation">¿Seguro que quieres eliminar esta descarga?</string>
     <string name="downloads_download_all_confirmation">¿Seguro que quieres descargarlo todo?</string>
-    <string name="downloads_quality_format">Download Quality</string>
-    <string name="downloads_refresh_quality_description">Re-download the songs that were downloaded with a different quality</string>
     <string name="downloads_title">Descargar</string>
     <string name="export_cached_song_action">Exportar canción en caché o descargada</string>
     <string name="export_cached_songs_action">Exportar en caché</string>
-    <string name="import_backup">Import backup</string>
     <string name="library_cleanup_title">Papelera inteligente</string>
     <string name="title_backup_and_restore">Copia de seguridad y restauración</string>
 </resources>

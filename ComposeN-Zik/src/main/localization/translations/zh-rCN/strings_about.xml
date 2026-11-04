@@ -2,7 +2,6 @@
 <resources>
     <string name="about_action_report_issue">报告问题</string>
     <string name="about_action_view_source">查看源代码</string>
-    <string name="about_authorship_preposition">by</string>
     <string name="about_contributors_alphabetical_order_label">按字母顺序：</string>
     <string name="about_developers">开发者 / 设计师</string>
     <string name="about_github_link_description">您将被重定向到GitHub</string>

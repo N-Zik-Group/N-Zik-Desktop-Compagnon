@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_subtitle">Companion for N-Zik</string>
     <string name="cancel">Cancelar</string>
-    <string name="common_artist_conjunction_and">and</string>
     <string name="common_brand_github">GitHub</string>
     <string name="common_clipboard_copy_success">Copiado</string>
     <string name="common_color_source_theme">Tema</string>
-    <string name="common_color_white">White</string>
     <string name="common_delete_success">Apagado</string>
-    <string name="common_empty_items">No items</string>
     <string name="common_option_all">Todos</string>
     <string name="common_option_custom">Personalizado</string>
     <string name="common_option_default">Predefinição</string>
@@ -19,10 +15,5 @@
     <string name="common_size_biggest">Maior</string>
     <string name="common_size_medium">Médio</string>
     <string name="common_size_small">Pequeno</string>
-    <string name="common_state_off">Off</string>
-    <string name="common_state_on">On</string>
-    <string name="common_storage_used_suffix">used</string>
     <string name="common_validation_empty_value">Valor não pode ser vazio</string>
-    <string name="common_validation_minimum_value">Value must be greater than</string>
-    <string name="dismiss">Dismiss</string>
 </resources>

@@ -2,7 +2,6 @@
 <resources>
     <string name="fake_audio_bar">Barra d\'àudio falsa</string>
     <string name="message_type">Tipus de missatge</string>
-    <string name="message_type_modern">Modern</string>
     <string name="player_background_black_cherry_cosmos">Cosmos de cirera negra</string>
     <string name="player_background_glossy_gradient">Degradat brillant</string>
     <string name="player_background_golden_magma">Magma daurat</string>
@@ -16,8 +15,6 @@
     <string name="player_background_purple_liquid">Líquid morat</string>
     <string name="player_background_stage">Etapa</string>
     <string name="player_controls_style_essential">Essencial</string>
-    <string name="player_controls_style_modern">Modern</string>
-    <string name="player_cover_style_cd">CD</string>
     <string name="player_cover_style_cd_with_cover">CD amb portada</string>
     <string name="player_cover_style_vinyl">Vinil</string>
     <string name="player_progress_mini_player">Reproductor minimitzat</string>

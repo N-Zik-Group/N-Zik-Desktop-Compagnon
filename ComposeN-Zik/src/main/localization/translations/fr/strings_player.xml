@@ -57,7 +57,6 @@
     <string name="player_controls_colors">Le lecteur choisit les couleurs</string>
     <string name="player_controls_device_volume_title">Volume de l\'appareil</string>
     <string name="player_controls_medley_duration_title">Durée du medley</string>
-    <string name="player_controls_monochrome_label">Monochrome</string>
     <string name="player_controls_pitch_title">Hauteur de lecture</string>
     <string name="player_controls_playback_volume_title">Volume de lecture</string>
     <string name="player_controls_speed_title">Vitesse de lecture</string>
@@ -74,7 +73,6 @@
     <string name="player_mini_button_download">Télécharger</string>
     <string name="player_mini_button_play_pause">Lecture/Pause</string>
     <string name="player_mini_button_queue">File d\'attente</string>
-    <string name="player_mini_button_radio">Radio</string>
     <string name="player_mini_button_share">Partager</string>
     <string name="player_mini_button_sleep_timer">Minuteur de veille</string>
     <string name="player_mini_button_video">Vidéo</string>
@@ -99,7 +97,6 @@
     <string name="player_shuffle_empty_message">Aucun titre en lecture aléatoire</string>
     <string name="player_shuffled_song_count_format">%d titres en lecture aléatoire</string>
     <string name="player_sleep_timer_title">Minuteur de veille</string>
-    <string name="player_statistics_volume_label">Volume</string>
     <string name="player_swap_controls_with_timeline">Inverser les commandes avec la chronologie</string>
     <string name="player_swipe_sensitivity">Sensibilité du balayage du lecteur</string>
     <string name="player_swipe_sensitivity_high_label">Élevé</string>

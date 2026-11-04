@@ -13,16 +13,11 @@
     <string name="backup_import_description">Datenbank oder Einstellungen aus einer Datei importieren</string>
     <string name="backup_legacy_migration_description">Für alte Benutzer vor der Konvertierung.\nalte App verwenden, um eine Sicherung für die Migration zu erstellen.</string>
     <string name="backup_target_database_label">Datenbank</string>
-    <string name="cached_pc">Cached PC</string>
-    <string name="download_pc">Download PC</string>
     <string name="downloads_action_download_all">Alle Titel herunterladen</string>
-    <string name="downloads_action_refresh_quality">Update downloads</string>
     <string name="downloads_action_remove_all">Alle heruntergeladenen Titel entfernen</string>
     <string name="downloads_cancelled">Download abgebrochen</string>
     <string name="downloads_delete_all_confirmation">Möchtest Du den Download wirklich löschen?</string>
     <string name="downloads_download_all_confirmation">Willst du wirklich alle herunterladen?</string>
-    <string name="downloads_quality_format">Download Quality</string>
-    <string name="downloads_refresh_quality_description">Re-download the songs that were downloaded with a different quality</string>
     <string name="downloads_title">Herunterladen</string>
     <string name="export_cached_song_action">Zwischengespeicherte oder Heruntergeladene Titel exportieren</string>
     <string name="export_cached_songs_action">Zwischenspeicher exportieren</string>

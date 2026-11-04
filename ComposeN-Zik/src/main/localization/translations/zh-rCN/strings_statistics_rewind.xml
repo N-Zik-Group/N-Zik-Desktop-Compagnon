@@ -6,10 +6,6 @@
     <string name="calendar_period_six_months">6个月</string>
     <string name="calendar_period_three_months">3个月</string>
     <string name="calendar_today">今日</string>
-    <string name="rewind_filter_month">Month</string>
-    <string name="rewind_filter_year">Year</string>
-    <string name="rewind_title">Rewind</string>
-    <string name="rewind_top_sort">Rewind Top</string>
     <string name="statistics_items_limit_unlimited">无限制</string>
     <string name="statistics_title">统计</string>
     <string name="statistics_top_period_title">查看 … 的排行榜的前 %s</string>

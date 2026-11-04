@@ -77,7 +77,6 @@
     <string name="player_mini_button_radio">Radyo</string>
     <string name="player_mini_button_share">Paylaş</string>
     <string name="player_mini_button_sleep_timer">Uyku zamanlayıcısı</string>
-    <string name="player_mini_button_video">Video</string>
     <string name="player_mini_button_visualizer">Görselleştirme</string>
     <string name="player_mini_buttons_config">Mini Oynatıcı düğmeleri</string>
     <string name="player_mini_buttons_config_description">Mini oynatıcıdaki 4 düğmeyi yapılandırın</string>

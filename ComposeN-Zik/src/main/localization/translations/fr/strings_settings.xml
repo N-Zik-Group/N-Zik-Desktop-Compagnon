@@ -35,7 +35,6 @@
     <string name="settings_cache_eviction_description">Lorsque l\'espace disponible dans le cache est épuisé, les ressources auxquelles on n\'a pas accédé depuis le plus longtemps sont supprimées</string>
     <string name="settings_cache_image_size_limit_label">Taille maximale du cache des images</string>
     <string name="settings_cache_song_size_limit_label">Taille maximale du cache des titres</string>
-    <string name="settings_cache_title">Cache</string>
     <string name="settings_data_page_description">La section « Données » contient des paramètres qui modifient la manière dont l\'application gère les données en local et à distance.</string>
     <string name="settings_data_title">Données</string>
     <string name="settings_debug_title">Paramètres</string>

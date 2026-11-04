@@ -1,28 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_subtitle">Companion for N-Zik</string>
     <string name="cancel">Hủy</string>
-    <string name="common_artist_conjunction_and">and</string>
     <string name="common_brand_github">GitHub</string>
-    <string name="common_clipboard_copy_success">Copied</string>
     <string name="common_color_source_theme">Giao diện</string>
-    <string name="common_color_white">White</string>
-    <string name="common_delete_success">Deleted</string>
-    <string name="common_empty_items">No items</string>
     <string name="common_option_all">Tất cả</string>
-    <string name="common_option_custom">Custom</string>
     <string name="common_option_default">Mặc định</string>
-    <string name="common_option_disabled">Disabled</string>
     <string name="common_option_none">Không</string>
-    <string name="common_option_random">Random</string>
     <string name="common_size_big">Lớn</string>
-    <string name="common_size_biggest">Biggest</string>
     <string name="common_size_medium">Vừa</string>
     <string name="common_size_small">Nhỏ</string>
-    <string name="common_state_off">Off</string>
-    <string name="common_state_on">On</string>
-    <string name="common_storage_used_suffix">used</string>
-    <string name="common_validation_empty_value">Value cannot be empty</string>
-    <string name="common_validation_minimum_value">Value must be greater than</string>
-    <string name="dismiss">Dismiss</string>
 </resources>

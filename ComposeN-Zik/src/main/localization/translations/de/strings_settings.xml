@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_loudness_boost_level">Lautstärke-Bootlevel</string>
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
     <string name="common_translation_title">Übersetzung</string>
     <string name="library_sort_order_title">Sortierreihenfolge</string>
     <string name="maintenance_debug_logging_title">Fehlerprotokoll aktivieren</string>
@@ -21,8 +18,6 @@
     <string name="settings_app_language_label">App-Sprache</string>
     <string name="settings_audio_bass_boost">Bassverstärkung</string>
     <string name="settings_audio_crossfade_description">Glatten Übergang zwischen Liedern aktivieren</string>
-    <string name="settings_audio_crossfade_label">Crossfade</string>
-    <string name="settings_audio_equalizer_label">Equalizer</string>
     <string name="settings_audio_loudness_normalization_description">Stellt die Lautstärke auf ein ähnliches Level ein</string>
     <string name="settings_audio_loudness_normalization_label">Lautstärke normalisieren</string>
     <string name="settings_audio_reverb">Audio Hall</string>
@@ -56,9 +51,6 @@
     <string name="settings_interface_title">Benutzeroberfläche</string>
     <string name="settings_languages_title">Sprachen</string>
     <string name="settings_lastfm_title">Last.fm</string>
-    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
-    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
-    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
     <string name="settings_library_now_playing_indicator_label">Aktuell-Gespielt-Indikator</string>
     <string name="settings_library_playlist_indicator_description">Zeigt an, ob der Titel bereits zur Playliste hinzugefügt wurde</string>
     <string name="settings_library_playlist_indicator_label">Playlisten-Indikator</string>
@@ -89,9 +81,6 @@
     <string name="settings_network_title">Netzwerk</string>
     <string name="settings_parental_age_restriction_description">Verhindere die Wiedergabe von Songs mit Altersbegrenzung</string>
     <string name="settings_playback_duration_limit_label">Schließe Songs mit Zeitlimit aus</string>
-    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
-    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
-    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
     <string name="settings_playback_pause_at_zero_volume_description">Die Wiedergabe wird angehalten, wenn die Lautstärke 0 erreicht und bei einem Wert über 0 wieder gestartet</string>
     <string name="settings_playback_pause_between_songs_label">Pause zwischen Songs</string>
     <string name="settings_playback_previous_restart_threshold_label">Rückwärts-Button wird den aktuellen Song zurücksetzen, nach dem die folgende Anzahl Sekunden verstrichen ist</string>
@@ -126,7 +115,6 @@
     <string name="settings_player_header_album_artist_description">Album und Interpreten Header</string>
     <string name="settings_player_header_icons_visible_label">Zeige Information mit Symbolen</string>
     <string name="settings_player_header_style_label">Kopfzeilen-Stil</string>
-    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
     <string name="settings_player_next_queue_visible_label">Nächsten Song im Player anzeigen</string>
     <string name="settings_player_persistent_queue_description">Speichern und Wiederherstellen der wiederzugebenden Songs</string>
     <string name="settings_player_persistent_queue_label">Dauerhafter Spieler</string>
@@ -166,5 +154,4 @@
     <string name="settings_transition_fade">Einblenden</string>
     <string name="settings_use_font_type">Schriftart</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
-    <string name="window">Window</string>
 </resources>

@@ -2,12 +2,10 @@
 <resources>
     <string name="about_action_report_issue">Informa d\'un problema</string>
     <string name="about_action_view_source">Veure el codi font</string>
-    <string name="about_authorship_preposition">by</string>
     <string name="about_contributors_alphabetical_order_label">Per ordre alfabètic:</string>
     <string name="about_developers">Desenvolupadors / Dissenyadors</string>
     <string name="about_github_link_description">Se us redirigirà a GitHub</string>
     <string name="about_title">Quant a</string>
     <string name="about_translators_title">Traductors</string>
-    <string name="contributors">Contributors</string>
     <string name="request_a_feature">Sol·liciteu una funció o suggeriu una idea</string>
 </resources>

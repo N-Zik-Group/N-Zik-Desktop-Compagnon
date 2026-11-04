@@ -6,10 +6,7 @@
     <string name="calendar_period_six_months">6 Mesi</string>
     <string name="calendar_period_three_months">3 Mesi</string>
     <string name="calendar_today">Oggi</string>
-    <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">Anno</string>
-    <string name="rewind_title">Rewind</string>
-    <string name="rewind_top_sort">Rewind Top</string>
     <string name="statistics_items_limit_unlimited">Illimitato</string>
     <string name="statistics_title">Statistiche</string>
     <string name="statistics_top_period_title">Top %s di …</string>

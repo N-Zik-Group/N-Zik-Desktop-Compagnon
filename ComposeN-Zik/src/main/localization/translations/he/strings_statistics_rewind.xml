@@ -6,11 +6,7 @@
     <string name="calendar_period_six_months">6 חודשים</string>
     <string name="calendar_period_three_months">3 חודשים</string>
     <string name="calendar_today">היום</string>
-    <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">שנה</string>
-    <string name="rewind_title">Rewind</string>
-    <string name="rewind_top_sort">Rewind Top</string>
     <string name="statistics_items_limit_unlimited">ללא הגבלה</string>
     <string name="statistics_title">סטָטִיסטִיקָה</string>
-    <string name="statistics_top_period_title">Top %s of …</string>
 </resources>

@@ -1,23 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="fake_audio_bar">Fałszywy Formę</string>
-    <string name="message_type">Popup message style</string>
     <string name="message_type_modern">Nowoczesne</string>
-    <string name="player_background_black_cherry_cosmos">Black Cherry Cosmos</string>
-    <string name="player_background_glossy_gradient">Glossy Gradient</string>
-    <string name="player_background_golden_magma">Golden Magma</string>
-    <string name="player_background_gradient_flow">Gradient Flow</string>
-    <string name="player_background_ice_reflection">Ice Reflection</string>
-    <string name="player_background_ink_flow">Ink Flow</string>
     <string name="player_background_linear_gradient">Gradient liniowy</string>
-    <string name="player_background_mesh_gradient">Mesh Gradient</string>
-    <string name="player_background_mesmerizing_lens">Mesmerizing Lens</string>
-    <string name="player_background_oil_flow">Oil Flow</string>
-    <string name="player_background_purple_liquid">Purple Liquid</string>
-    <string name="player_background_stage">Stage</string>
     <string name="player_controls_style_essential">Niezbędne</string>
     <string name="player_controls_style_modern">Nowoczesne</string>
-    <string name="player_cover_style_cd">CD</string>
     <string name="player_cover_style_cd_with_cover">CD z okładką</string>
     <string name="player_cover_style_vinyl">Winyl</string>
     <string name="player_progress_mini_player">Zminimalizowany odtwarzacz</string>

@@ -67,7 +67,6 @@
     <string name="paired_title">Eşleştirildi</string>
     <string name="paired_with">%1$s ile eşleştirildi</string>
     <string name="phone_panel_title">Telefon</string>
-    <string name="proxy">Proxy</string>
     <string name="reconnect">Yeniden bağlan</string>
     <string name="revoked_description">Bu bilgisayar telefonun eşleştirilmiş cihazları listesinden kaldırıldı. Kullanmaya devam etmek için cihazı yeniden eşleştirin.</string>
     <string name="revoked_pair_again">Tekrar eşleştir</string>

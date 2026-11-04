@@ -21,7 +21,6 @@
     <string name="maintenance_no_data">Aucune donnée</string>
     <string name="maintenance_open">Ouvrir</string>
     <string name="maintenance_open_desc">Ouvrir la fiche d\'entretien complète</string>
-    <string name="maintenance_title">Maintenance</string>
     <string name="old_install_path">Installation actuelle :</string>
     <string name="recovery_center">Centre de Secours</string>
     <string name="stable_title">STABLE</string>

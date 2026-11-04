@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_loudness_boost_level">Poziom wzmocnienia głośności</string>
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
     <string name="common_translation_title">Tłumaczenia</string>
     <string name="library_sort_order_title">Kolejność sortowania</string>
     <string name="maintenance_debug_logging_title">Włącz dzienniki debugowania</string>
@@ -19,16 +16,12 @@
     <string name="settings_about_page_description">Sekcja o wyświetla informacje o aplikacji, programistach, rozwiązaniach problemów i opcjach aktualizacji</string>
     <string name="settings_app_behavior_title">Zachowanie aplikacji</string>
     <string name="settings_app_language_label">Język aplikacji</string>
-    <string name="settings_audio_bass_boost">Audio bass boost</string>
     <string name="settings_audio_crossfade_description">Włącz płynne przejście między utworami</string>
-    <string name="settings_audio_crossfade_label">Crossfade</string>
     <string name="settings_audio_equalizer_label">Korektor</string>
     <string name="settings_audio_loudness_normalization_description">Utrzymuj głośność na stałym poziomie</string>
     <string name="settings_audio_loudness_normalization_label">Normalizacja głośności</string>
-    <string name="settings_audio_reverb">Audio reverb</string>
     <string name="settings_audio_skip_silence_description">Pomiń fragmenty bez dźwięku w trakcie odtwarzania</string>
     <string name="settings_audio_skip_silence_label">Pomiń ciszę</string>
-    <string name="settings_bass_boost_level">Bass boost level</string>
     <string name="settings_cache_action_set_custom_size">Ustaw własną pamięć podreczną</string>
     <string name="settings_cache_custom_size_input_hint">Wprowadź wartość w MB</string>
     <string name="settings_cache_delete_confirmation">Czy na pewno chcesz wymazać pamięć podręczną?</string>
@@ -56,19 +49,9 @@
     <string name="settings_interface_title">Interfejs</string>
     <string name="settings_languages_title">Języki</string>
     <string name="settings_lastfm_title">Last.fm</string>
-    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
-    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
-    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
     <string name="settings_library_now_playing_indicator_label">Wskaźnik odtwarzania</string>
     <string name="settings_library_playlist_indicator_description">Oznacz utwory, które zostały dodane do twojej playlisty</string>
     <string name="settings_library_playlist_indicator_label">Wskaźnik listy odtwarzania</string>
-    <string name="settings_library_queue_playlist_swipe_left_label">Queue and Local Playlists Left Swipe</string>
-    <string name="settings_library_queue_playlist_swipe_right_label">Queue and Local Playlists Right Swipe</string>
-    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
-    <string name="settings_library_sort_options_description">Customize sort options</string>
-    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
-    <string name="settings_library_toolbar_title">Toolbar</string>
-    <string name="settings_local_playlist_title">Local Playlist</string>
     <string name="settings_logging_error_file_description">Jeśli włączone, utwórz plik dziennika, aby wyróżnić błędy</string>
     <string name="settings_loudness_base_gain">Podstawowe wzmocnienie głośności</string>
     <string name="settings_lyrics_artwork_visible_label">Pokaż miniaturę dla tekstu</string>
@@ -89,9 +72,6 @@
     <string name="settings_network_title">Sieć</string>
     <string name="settings_parental_age_restriction_description">Zapobiegaj odtwarzaniu utworów z ograniczeniem wiekowym</string>
     <string name="settings_playback_duration_limit_label">Wyklucz piosenki z limitem czasu trwania</string>
-    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
-    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
-    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
     <string name="settings_playback_pause_at_zero_volume_description">Wstrzymaj utwór gdy głośność osiągnie 0 i wznawiaj go, gdy głośność jest większa niż 0</string>
     <string name="settings_playback_pause_between_songs_label">Pauza pomiędzy utworami</string>
     <string name="settings_playback_previous_restart_threshold_label">Maksymalny czas trwania poprzedniego utworu</string>
@@ -101,14 +81,9 @@
     <string name="settings_player_action_bar_transparent_background_label">Przezroczyste tło</string>
     <string name="settings_player_actions_spaced_evenly_label">Rozmieszczenie równomiernie</string>
     <string name="settings_player_appearance_page_description">Sekcja wyglądu zawiera ustawienia wyglądu gracza</string>
-    <string name="settings_player_appearance_presets_preview_description">Previews will be in low quality</string>
-    <string name="settings_player_appearance_presets_title">Appearance Presets</string>
-    <string name="settings_player_artwork_animation_enabled_label">Show cover thumbnail animation</string>
-    <string name="settings_player_artwork_animation_style_label">Cover animation type</string>
     <string name="settings_player_artwork_corner_radius_label">Poziom zaokrąglenia krawędzi miniatury</string>
     <string name="settings_player_artwork_section_title">Okładka &amp; Miniaturka</string>
     <string name="settings_player_artwork_shrink_when_paused_label">Zmniejsz miniaturę, kiedy wstrzymano</string>
-    <string name="settings_player_artwork_style_label">Thumbnail type</string>
     <string name="settings_player_artwork_visible_label">Pokaż miniaturę</string>
     <string name="settings_player_background_colors_label">Kolory tła</string>
     <string name="settings_player_background_progress_label">Pasek postępu w tle</string>
@@ -116,17 +91,14 @@
     <string name="settings_player_bottom_black_gradient_label">Czarny gradient na dole</string>
     <string name="settings_player_button_zoom_out_animation_label">Animacja powiększenia przycisków</string>
     <string name="settings_player_controls_style_label">Styl sterowania</string>
-    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
     <string name="settings_player_disable_horizontal_swipe_label">Wyłącz poziome przewijanie</string>
     <string name="settings_player_disable_song_swipe_label">Wyłącz zmianę utworu poprzez przewijanie</string>
     <string name="settings_player_disable_text_marquee_description">Przewijanie tekstu jest używane do długich tekstów</string>
     <string name="settings_player_disable_text_marquee_label">Wyłącz przewijanie tekstu</string>
     <string name="settings_player_favorite_button_style_label">Ulubiony przycisk</string>
-    <string name="settings_player_gradient_style_label">Gradient Type</string>
     <string name="settings_player_header_album_artist_description">Nagłówek albumu i wykonawcy</string>
     <string name="settings_player_header_icons_visible_label">Pokaż info z ikonami</string>
     <string name="settings_player_header_style_label">Styl nagłówka</string>
-    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
     <string name="settings_player_next_queue_visible_label">Pokaż kolejkę kolejnych piosenek</string>
     <string name="settings_player_persistent_queue_description">Zapisuj i przywracaj odtwarzane utwory</string>
     <string name="settings_player_persistent_queue_label">Trwały odtwarzacz</string>
@@ -140,7 +112,6 @@
     <string name="settings_player_queue_swipe_up_label">Przesuń w górę, aby otworzyć kolejkę</string>
     <string name="settings_player_queue_tap_to_open_label">Dotknij, aby otworzyć kolejkę</string>
     <string name="settings_player_remaining_duration_visible_label">Pokaż pozostały czas trwania utworu</string>
-    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
     <string name="settings_player_seek_time_buttons_label">Pomiń przyciski czasu</string>
     <string name="settings_player_start_minimized_description">Po kliknięciu na piosenkę, gracz zaczyna minimalizować</string>
     <string name="settings_player_tap_artwork_toggle_lyrics_description">Dotykając miniatury</string>
@@ -154,7 +125,6 @@
     <string name="settings_preference_saved_message">Preferencje zapisane</string>
     <string name="settings_proxy_enabled_label">Włącz Proxy</string>
     <string name="settings_queue_management_title">Zarządzanie kolejkami</string>
-    <string name="settings_reset">Reset</string>
     <string name="settings_restart_required_message">Wymagany jest restart</string>
     <string name="settings_restore_default_settings">Przywróć ustawienia domyślne</string>
     <string name="settings_search_floating_button_visible_label">Pokaż pływającą ikonę wyszukiwania</string>
@@ -164,7 +134,5 @@
     <string name="settings_theme_mode_label">Wariant motywu</string>
     <string name="settings_title">Ustawienia</string>
     <string name="settings_transition_fade">Zanikanie</string>
-    <string name="settings_use_font_type">Font type</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
-    <string name="window">Window</string>
 </resources>

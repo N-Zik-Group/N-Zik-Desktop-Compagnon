@@ -2,12 +2,8 @@
 <resources>
     <string name="about_action_report_issue">Signalar un defecto</string>
     <string name="about_action_view_source">Vider le codice fonte</string>
-    <string name="about_authorship_preposition">by</string>
     <string name="about_contributors_alphabetical_order_label">In ordine alphabetic:</string>
-    <string name="about_developers">Developers / Designers</string>
-    <string name="about_github_link_description">You will be redirected to GitHub</string>
     <string name="about_title">A proposito de</string>
     <string name="about_translators_title">Traductores</string>
-    <string name="contributors">Contributors</string>
     <string name="request_a_feature">Demanda un functionalitate o suggere un idea</string>
 </resources>

@@ -2,12 +2,8 @@
 <resources>
     <string name="about_action_report_issue">Rapporteer \'n probleem</string>
     <string name="about_action_view_source">Kyk na die bronkode</string>
-    <string name="about_authorship_preposition">by</string>
     <string name="about_contributors_alphabetical_order_label">In alfabetiese volgorde:</string>
-    <string name="about_developers">Developers / Designers</string>
     <string name="about_github_link_description">Jy sal na GitHub gestuur word</string>
     <string name="about_title">Leer meer</string>
-    <string name="about_translators_title">Translators</string>
-    <string name="contributors">Contributors</string>
     <string name="request_a_feature">Versoek \'n funksie of verskaf \'n idee</string>
 </resources>

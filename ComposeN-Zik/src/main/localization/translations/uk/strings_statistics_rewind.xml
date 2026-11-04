@@ -6,10 +6,7 @@
     <string name="calendar_period_six_months">6 Місяць</string>
     <string name="calendar_period_three_months">3 місяць</string>
     <string name="calendar_today">Сьогодні</string>
-    <string name="rewind_filter_month">Month</string>
     <string name="rewind_filter_year">Рік</string>
-    <string name="rewind_title">Rewind</string>
-    <string name="rewind_top_sort">Rewind Top</string>
     <string name="statistics_items_limit_unlimited">Необмежено</string>
     <string name="statistics_title">Статистика</string>
     <string name="statistics_top_period_title">Найпопулярніший %s з …</string>

@@ -60,7 +60,6 @@
     <string name="library_sync_failed_count_suffix">Senkronizasyon başarısız oldu (%1$d)</string>
     <string name="library_sync_progress_format">%1$d / %2$d</string>
     <string name="library_tracks_failed">Parçalar okunamadı: %1$s</string>
-    <string name="library_youtube_playlists_label">YT/YTM</string>
     <string name="metadata_action_change_artists">Yazarları Değiştir</string>
     <string name="metadata_action_change_cover">Kapağı Değiştir</string>
     <string name="metadata_action_change_title">Başlığı Değiştir</string>
