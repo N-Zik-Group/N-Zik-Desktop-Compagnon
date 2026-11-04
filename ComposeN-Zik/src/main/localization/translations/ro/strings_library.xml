@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Marchează albumul</string>
     <string name="album_action_open">Accesează albumul</string>
     <string name="album_left_swipe">Glisare la stânga în album</string>
-    <string name="album_loading_song_count_format">Se încarcă melodiile %1$d…</string>
+    <string name="album_loading_song_count_format">Se încarcă albumul (piese: %1$d)…</string>
     <string name="album_right_swipe">Glisare la dreapta în playlist</string>
     <string name="artist_action_follow">Urmărește</string>
     <string name="artist_action_play_local_songs">Redă toate melodiile locale</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Fixează/Defixează playlistul</string>
     <string name="playlist_bookmark_unsupported_message">Nu se poate marca Favorite Melodii sau Episod</string>
     <string name="playlist_create_dialog_title">Creează un playlist nou</string>
-    <string name="playlist_delete_all_confirmation_count_format">Ești sigur că vrei să ștergi TOATE playlist-urile %d?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Ștergeți toate listele de redare? (Total: %d)</string>
     <string name="playlist_left_swipe">Glisare la stânga în playlist</string>
     <string name="playlist_pinned_title">Fixate</string>
     <string name="playlist_rename_dialog_title">Redenumește playlist</string>
@@ -109,4 +109,6 @@
         <item quantity="few">%1$d melodii</item>
         <item quantity="other">%1$d melodii</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Nu s-a putut solicita accesul la muzică pe acest dispozitiv.</string>
+    <string name="library_on_device_permission_settings_failed">Nu s-au putut deschide setările permisiunilor.</string>
 </resources>
