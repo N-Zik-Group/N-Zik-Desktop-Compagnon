@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Převrátit 5 vteřin</string>
     <string name="player_seek_backward_thirty_seconds">Přepnutí 30 vteřin</string>
     <string name="player_shuffle_empty_message">Žádná skladba k zamíchání</string>
-    <string name="player_shuffled_song_count_format">%d skladeb zamícháno</string>
+    <string name="player_queue_shuffled_count_format">Fronta zamíchána (skladby: %d)</string>
+    <string name="player_shuffled_song_count_format">Skladby zamíchány: %d</string>
     <string name="player_sleep_timer_title">Časovač spánku</string>
     <string name="player_statistics_volume_label">Objem</string>
     <string name="player_swap_controls_with_timeline">Prohodit ovládání s časovou osou</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Vizualizátor</string>
     <string name="visualizer_microphone_permission_message">Vizualizační efekt vyžaduje povolení mikrofonu, udělte ho, prosím.</string>
     <string name="visualizer_title">Vizualizér</string>
+    <string name="player_error_unknown">Došlo k neznámé chybě při přehrávání</string>
 </resources>
