@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="fake_audio_bar">Audio Waves</string>
+    <string name="fake_audio_bar">Falsk Waveform</string>
     <string name="message_type">Popup message style</string>
-    <string name="message_type_modern">Modern</string>
+    <string name="message_type_modern">Moderne</string>
     <string name="player_background_black_cherry_cosmos">Black Cherry Cosmos</string>
     <string name="player_background_glossy_gradient">Glossy Gradient</string>
     <string name="player_background_golden_magma">Golden Magma</string>
@@ -15,14 +15,14 @@
     <string name="player_background_oil_flow">Oil Flow</string>
     <string name="player_background_purple_liquid">Purple Liquid</string>
     <string name="player_background_stage">Stage</string>
-    <string name="player_controls_style_essential">Essential</string>
-    <string name="player_controls_style_modern">Modern</string>
+    <string name="player_controls_style_essential">Essensiell</string>
+    <string name="player_controls_style_modern">Moderne</string>
     <string name="player_cover_style_cd">CD</string>
     <string name="player_cover_style_cd_with_cover">CD with Cover</string>
     <string name="player_cover_style_vinyl">Vinyl</string>
-    <string name="player_progress_mini_player">Minimized player</string>
-    <string name="theme_palette_dynamic">Dynamic</string>
-    <string name="theme_shake_sensitivity_disabled">Disabled</string>
-    <string name="thumbnail_action_edit">Edit Thumbnail</string>
-    <string name="thumbnail_action_reset">Reset Thumbnail</string>
+    <string name="player_progress_mini_player">Minimert spiller</string>
+    <string name="theme_palette_dynamic">Dynamisk</string>
+    <string name="theme_shake_sensitivity_disabled">Deaktivert</string>
+    <string name="thumbnail_action_edit">Rediger miniatyrbilde</string>
+    <string name="thumbnail_action_reset">Nullstill miniatyrbilde</string>
 </resources>
