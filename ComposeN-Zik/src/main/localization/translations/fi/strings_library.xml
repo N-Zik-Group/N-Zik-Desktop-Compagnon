@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Merkitse albumi</string>
     <string name="album_action_open">Siirry albumiin</string>
     <string name="album_left_swipe">Albumi pyyhkäisemällä vasemmalle</string>
-    <string name="album_loading_song_count_format">Ladataan %1$d kappaletta…</string>
+    <string name="album_loading_song_count_format">Ladataan levyä (kappaletta: %1$d)…</string>
     <string name="album_right_swipe">Albumi pyyhkäisemällä oikealle</string>
     <string name="artist_action_follow">Seuraa</string>
     <string name="artist_action_play_local_songs">Soita kaikki paikalliset kappaleet</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Kiinnitä/poista soittolistan kiinnitys</string>
     <string name="playlist_bookmark_unsupported_message">Ei voi kirjanmerkitä Pidettyjä kappaleita tai jaksoja soittolistaa</string>
     <string name="playlist_create_dialog_title">Luo uusi soittolista</string>
-    <string name="playlist_delete_all_confirmation_count_format">Oletko varma, että haluat poistaa KAIKKI %d soittolistat?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Poista kaikki soittolistat? (Yhteensä: %d)</string>
     <string name="playlist_left_swipe">Soittolista pyyhkäisemällä vasemmalle</string>
     <string name="playlist_pinned_title">Kiinnitetty</string>
     <string name="playlist_rename_dialog_title">Nimeä soittolista uudelleen</string>
@@ -108,4 +108,6 @@
         <item quantity="one">%1$d kappale</item>
         <item quantity="other">%1$d kappaletta</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Musiikin käyttöä ei voitu pyytää tällä laitteella.</string>
+    <string name="library_on_device_permission_settings_failed">Käyttöoikeusasetuksia ei voitu avata.</string>
 </resources>
