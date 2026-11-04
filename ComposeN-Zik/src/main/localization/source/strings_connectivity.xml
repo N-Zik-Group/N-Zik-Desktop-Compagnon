@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">View logs</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
-    <string name="manual_description">On your phone, open PC server and select Pair a PC to see the IP address, port, and 6-character code.</string>
+    <string name="manual_description">On your phone, open PC server. If the server is stopped, tap Start. Select Pair a PC to see the IP address, port, and 6-character code.</string>
     <string name="manual_ip">Phone IP address</string>
     <string name="manual_ip_invalid">Enter an IPv4 address, for example 192.168.1.14.</string>
     <string name="manual_port">Port</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Type the address and code shown on your phone</string>
     <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
     <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_description">In N-Zik on your phone, open PC server, select Pair a PC, then tap Scan QR code and point the camera at this code.</string>
+    <string name="pair_qr_description">In N-Zik on your phone, open PC server. If the server is stopped, tap Start. Select Pair a PC, then tap Scan QR code and point the camera at this code.</string>
     <string name="pair_qr_preparing">Preparing the QR code…</string>
     <string name="pair_qr_renew_hint">The code renews itself every 2 minutes.</string>
     <string name="pair_qr_waiting">Waiting for your phone…</string>
