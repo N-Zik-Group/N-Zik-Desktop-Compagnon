@@ -9,4 +9,5 @@
     <string name="about_title">關於</string>
     <string name="about_translators_title">翻譯人員</string>
     <string name="contributors">貢獻者</string>
+    <string name="request_a_feature">Request a feature or suggest an idea</string>
 </resources>
