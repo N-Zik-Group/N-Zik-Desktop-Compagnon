@@ -42,8 +42,8 @@
     <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
     <string name="manual_submit">Pair</string>
     <string name="manual_title">Manual pairing</string>
-    <string name="network_settings_description">The network section contains settings to optimize the app\'s performance and data usage</string>
-    <string name="network_status">Quality Status</string>
+    <string name="network_settings_description">قسم الشبكة يحتوي على إعدادات لتحسين أداء التطبيق واستخدام البيانات</string>
+    <string name="network_status">حالة الجودة</string>
     <string name="pair_device_name">Name of this PC</string>
     <string name="pair_device_name_invalid">Enter a name of 1 to 64 characters.</string>
     <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
@@ -68,7 +68,7 @@
     <string name="paired_title">Paired</string>
     <string name="paired_with">Paired with %1$s</string>
     <string name="phone_panel_title">Phone</string>
-    <string name="proxy">Proxy</string>
+    <string name="proxy">الوكيل</string>
     <string name="reconnect">Reconnect</string>
     <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
     <string name="revoked_pair_again">Pair again</string>
