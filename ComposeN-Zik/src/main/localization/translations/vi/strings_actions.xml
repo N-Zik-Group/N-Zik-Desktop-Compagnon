@@ -14,12 +14,12 @@
     <string name="command_remove">Remove from the queue</string>
     <string name="command_repeat">Repeat</string>
     <string name="command_seek">Seek</string>
-    <string name="command_shuffle">Shuffle</string>
+    <string name="command_shuffle">Ngẫu nhiên</string>
     <string name="command_speed">Speed</string>
-    <string name="common_action_clear">Clear</string>
+    <string name="common_action_clear">Xóa</string>
     <string name="common_action_confirm">Confirm</string>
-    <string name="common_action_delete">Delete</string>
-    <string name="common_action_done">Done</string>
+    <string name="common_action_delete">Xóa</string>
+    <string name="common_action_done">Xong</string>
     <string name="common_action_reset">Reset</string>
     <string name="common_action_retry">Retry</string>
     <string name="common_action_select">Select</string>
