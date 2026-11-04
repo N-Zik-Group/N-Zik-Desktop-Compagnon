@@ -8,7 +8,7 @@
     <string name="calendar_period_three_months">3 luni</string>
     <string name="calendar_today">Astăzi</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_month">Lună</string>
     <string name="rewind_filter_year">An</string>
     <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Nelimitat</string>
