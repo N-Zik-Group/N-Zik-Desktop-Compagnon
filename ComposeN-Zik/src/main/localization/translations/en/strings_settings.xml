@@ -56,6 +56,7 @@
     <string name="settings_interface_title">User interface</string>
     <string name="settings_languages_title">Languages</string>
     <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
+    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
     <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
     <string name="settings_launcher_shortcuts_title">App shortcuts</string>
     <string name="settings_library_now_playing_indicator_label">Now Playing Indicator</string>
