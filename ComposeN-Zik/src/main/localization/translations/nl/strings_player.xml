@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">5 seconden terugspoelen</string>
     <string name="player_seek_backward_thirty_seconds">Terugspoelt 30 seconden</string>
     <string name="player_shuffle_empty_message">Geen nummer om te shufflen</string>
-    <string name="player_shuffled_song_count_format">%d nummers verschoven</string>
+    <string name="player_queue_shuffled_count_format">Wachtrij verschoven (nummers: %d)</string>
+    <string name="player_shuffled_song_count_format">Nummers verschoven: %d</string>
     <string name="player_sleep_timer_title">Slaaptimer</string>
     <string name="player_statistics_volume_label">Volume</string>
     <string name="player_swap_controls_with_timeline">Wissel de bediening om met de tijdlijn</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Equalizer balk</string>
     <string name="visualizer_microphone_permission_message">Visualizer-effect vereist micromicrotoestemming alstublieft. Gelieve te verlenen.</string>
     <string name="visualizer_title">Equalizer</string>
+    <string name="player_error_unknown">Er is een onbekende afspeelfout opgetreden</string>
 </resources>
