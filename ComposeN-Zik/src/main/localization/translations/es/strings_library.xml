@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Marcadores de álbum</string>
     <string name="album_action_open">Ir al álbum</string>
     <string name="album_left_swipe">Álbum deslizar a la izquierda</string>
-    <string name="album_loading_song_count_format">Cargando %1$d canciones…</string>
+    <string name="album_loading_song_count_format">Cargando álbum (pistas: %1$d)…</string>
     <string name="album_right_swipe">Álbum deslizar a la derecha</string>
     <string name="artist_action_follow">Seguir</string>
     <string name="artist_action_play_local_songs">Reproducir todas las canciones locales</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Fijar/desfijar lista de reproducción</string>
     <string name="playlist_bookmark_unsupported_message">No se puede marcar la lista de reproducción de episodios</string>
     <string name="playlist_create_dialog_title">Crear nueva lista de reproducción</string>
-    <string name="playlist_delete_all_confirmation_count_format">¿Estás seguro de que quieres eliminar TODAS LAS listas de reproducción %d?</string>
+    <string name="playlist_delete_all_confirmation_count_format">¿Eliminar todas las listas de reproducción? (Total: %d)</string>
     <string name="playlist_left_swipe">Lista de reproducción deslizar a la izquierda</string>
     <string name="playlist_pinned_title">Listas de reproducción fijadas</string>
     <string name="playlist_rename_dialog_title">Renombrar lista de reproducción</string>
@@ -108,4 +108,6 @@
         <item quantity="one">%1$d canción</item>
         <item quantity="other">%1$d canciones</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">No se pudo solicitar acceso a música en este dispositivo.</string>
+    <string name="library_on_device_permission_settings_failed">No se pudo abrir la configuración de permisos.</string>
 </resources>
