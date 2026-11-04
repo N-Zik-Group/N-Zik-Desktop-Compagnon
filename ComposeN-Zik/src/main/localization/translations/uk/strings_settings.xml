@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_loudness_boost_level">Рівень гучності</string>
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
+    <string name="close_behavior">Закрити поведінку</string>
+    <string name="close_behavior_minimize">Згорнути в трей</string>
+    <string name="close_behavior_quit">Вийти з програми</string>
     <string name="common_translation_title">Переклад</string>
     <string name="library_sort_order_title">Порядок сортування</string>
     <string name="maintenance_debug_logging_title">Увімкнути журнали зневадження</string>
-    <string name="navigation_action_picture_in_picture">PIP</string>
+    <string name="navigation_action_picture_in_picture">ПІР</string>
     <string name="navigation_position_bottom_floating_label">Нижнє плавання</string>
     <string name="navigation_position_bottom_label">Direction bottom</string>
     <string name="navigation_position_top_label">Direction Top</string>
@@ -55,20 +55,20 @@
     <string name="settings_interface_page_title">Інтерфейс</string>
     <string name="settings_interface_title">Інтерфейс користувача</string>
     <string name="settings_languages_title">Мови</string>
-    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
-    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
-    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
-    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
+    <string name="settings_launcher_shortcuts_description">Вибрати та змінити порядок запуску</string>
+    <string name="settings_launcher_shortcuts_limit_message">Досягнуто максимальної кількості ярликів %1$d</string>
+    <string name="settings_launcher_shortcuts_recovery_required_message">Залишок не може бути відключено</string>
+    <string name="settings_launcher_shortcuts_title">Ярлики додатків</string>
     <string name="settings_library_now_playing_indicator_label">Індикатор відтворення</string>
     <string name="settings_library_playlist_indicator_description">Позначати пісні, які були додані до вашого списку відтворення</string>
     <string name="settings_library_playlist_indicator_label">Індикатор списку відтворення</string>
     <string name="settings_library_queue_playlist_swipe_left_label">Черга та локальні плейлисти Свайп вліво</string>
     <string name="settings_library_queue_playlist_swipe_right_label">Черга та локальні плейлисти Свайп праворуч</string>
-    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
-    <string name="settings_library_sort_options_description">Customize sort options</string>
-    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
-    <string name="settings_library_toolbar_title">Toolbar</string>
-    <string name="settings_local_playlist_title">Local Playlist</string>
+    <string name="settings_library_sections_visibility_description">Виберіть, які розділи з\'являться у бібліотеці</string>
+    <string name="settings_library_sort_options_description">Налаштувати параметри сортування</string>
+    <string name="settings_library_toolbar_customization_description">Налаштування панелі інструментів</string>
+    <string name="settings_library_toolbar_title">Панель інструментів</string>
+    <string name="settings_local_playlist_title">Локальний список відтворення</string>
     <string name="settings_logging_error_file_description">Якщо увімкнено, створіть файл журналу щоб виділити помилки</string>
     <string name="settings_loudness_base_gain">Підвищення рівня гучності</string>
     <string name="settings_lyrics_artwork_visible_label">Показати мініатюри для тексту</string>
@@ -89,9 +89,9 @@
     <string name="settings_network_title">Мережа</string>
     <string name="settings_parental_age_restriction_description">Запобігти відтворення пісень з обмеженням віку</string>
     <string name="settings_playback_duration_limit_label">Виключити пісні з обмеженням тривалості</string>
-    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
-    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
-    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
+    <string name="settings_playback_exclude_disliked_albums_label">Виключити неулюблені альбоми</string>
+    <string name="settings_playback_exclude_disliked_artists_label">Без лайків виконавців</string>
+    <string name="settings_playback_exclude_disliked_songs_label">Виключити неулюблені пісні</string>
     <string name="settings_playback_pause_at_zero_volume_description">Призупиняти пісню, коли гучність досягне 0 і відновити її, коли гучність більше 0</string>
     <string name="settings_playback_pause_between_songs_label">Пауза між треками</string>
     <string name="settings_playback_previous_restart_threshold_label">Попередня пісня максимальна тривалість</string>
@@ -116,7 +116,7 @@
     <string name="settings_player_bottom_black_gradient_label">Чорний Градієнт Знизу</string>
     <string name="settings_player_button_zoom_out_animation_label">Анімація масштабування кнопки</string>
     <string name="settings_player_controls_style_label">Стиль управління</string>
-    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
+    <string name="settings_player_crop_video_artwork_label">Обрізати мініатюри відео</string>
     <string name="settings_player_disable_horizontal_swipe_label">Вимкнути горизонтальний свайп</string>
     <string name="settings_player_disable_song_swipe_label">Вимкнути перемикання пісень свайпом</string>
     <string name="settings_player_disable_text_marquee_description">Прокрутка тексту використовується для довгих текстів</string>
@@ -126,7 +126,7 @@
     <string name="settings_player_header_album_artist_description">Альбом і заголовок виконавця</string>
     <string name="settings_player_header_icons_visible_label">Показувати інформацію за допомогою значків</string>
     <string name="settings_player_header_style_label">Стиль заголовка</string>
-    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
+    <string name="settings_player_m3e_motion_sensitivity_label">Чутливість до струсу теми</string>
     <string name="settings_player_next_queue_visible_label">Показати чергу наступної пісні</string>
     <string name="settings_player_persistent_queue_description">Збереження та відновлення відтворення пісень</string>
     <string name="settings_player_persistent_queue_label">Постійний гравець</string>
@@ -140,7 +140,7 @@
     <string name="settings_player_queue_swipe_up_label">Проведіть пальцем угору, щоб відкрити чергу</string>
     <string name="settings_player_queue_tap_to_open_label">Торкніться, щоб відкрити чергу</string>
     <string name="settings_player_remaining_duration_visible_label">Показувати тривалість пісні</string>
-    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
+    <string name="settings_player_rotating_artwork_title">Обертання обкладинки альбому</string>
     <string name="settings_player_seek_time_buttons_label">Пропустити кнопки часу</string>
     <string name="settings_player_start_minimized_description">При натисканні на пісню, гравець згортається</string>
     <string name="settings_player_tap_artwork_toggle_lyrics_description">Натиснувши на мініатюру</string>
@@ -165,5 +165,5 @@
     <string name="settings_title">Налаштування</string>
     <string name="settings_transition_fade">Вицвітати</string>
     <string name="settings_use_font_type">Font type</string>
-    <string name="window">Window</string>
+    <string name="window">Вікно</string>
 </resources>
