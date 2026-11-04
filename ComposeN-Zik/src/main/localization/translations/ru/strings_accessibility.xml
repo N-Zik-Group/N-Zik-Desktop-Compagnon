@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="accessibility_app_icon">Значок приложения</string>
-    <string name="accessibility_app_icon_in_player">значок приложения в плеере</string>
-    <string name="accessibility_background_image">Фоновое изображение</string>
-    <string name="accessibility_blurred_background">размытый фон</string>
-    <string name="accessibility_disc_background">фон диска</string>
-    <string name="accessibility_number_of_songs_in_queue">Количество треков в очереди</string>
-    <string name="accessibility_origin_indicator">origin_индикатор</string>
-    <string name="accessibility_song_album_cover">обложка альбома</string>
+    <!-- Accessibility -->
+    <string name="accessibility_app_icon">App\'s icon</string>
+    <string name="accessibility_app_icon_in_player">app icon in player</string>
+    <string name="accessibility_background_image">Background Image</string>
+    <string name="accessibility_blurred_background">blurred_background</string>
+    <string name="accessibility_disc_background">disc background</string>
+    <string name="accessibility_number_of_songs_in_queue">Number of songs in queue</string>
+    <string name="accessibility_origin_indicator">origin_indicator</string>
+    <string name="accessibility_song_album_cover">song album cover</string>
 </resources>
