@@ -31,7 +31,7 @@
     <string name="listen_together_suggest">Suggest to host</string>
     <string name="listen_together_sync_volume">Sync host volume</string>
     <string name="listen_together_title">Listen Together</string>
-    <string name="listen_together_username">Username</string>
+    <string name="listen_together_username">Логин</string>
     <string name="listen_together_view_logs">View logs</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
@@ -42,8 +42,8 @@
     <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
     <string name="manual_submit">Pair</string>
     <string name="manual_title">Manual pairing</string>
-    <string name="network_settings_description">The network section contains settings to optimize the app\'s performance and data usage</string>
-    <string name="network_status">Quality Status</string>
+    <string name="network_settings_description">Раздел «Сеть» содержит настройки для оптимизации производительности приложения и использования данных</string>
+    <string name="network_status">Состояние качества</string>
     <string name="pair_device_name">Name of this PC</string>
     <string name="pair_device_name_invalid">Enter a name of 1 to 64 characters.</string>
     <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
@@ -68,7 +68,7 @@
     <string name="paired_title">Paired</string>
     <string name="paired_with">Paired with %1$s</string>
     <string name="phone_panel_title">Phone</string>
-    <string name="proxy">Proxy</string>
+    <string name="proxy">Прокси</string>
     <string name="reconnect">Reconnect</string>
     <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
     <string name="revoked_pair_again">Pair again</string>
