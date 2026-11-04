@@ -10,4 +10,16 @@
     <string name="about_translators_title">Tłumacze</string>
     <string name="contributors">Współtwórcy</string>
     <string name="request_a_feature">Zaproponuj funkcję lub zasugeruj pomysł</string>
+    <plurals name="about_translator_count">
+        <item quantity="one">%1$d tłumacz</item>
+        <item quantity="few">%1$d tłumaczy</item>
+        <item quantity="many">%1$d tłumaczy</item>
+        <item quantity="other">%1$d tłumaczy</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="one">%1$d programista / projektant</item>
+        <item quantity="few">%1$d deweloperów / projektantów</item>
+        <item quantity="many">%1$d deweloperów / projektantów</item>
+        <item quantity="other">%1$d deweloperów / projektantów</item>
+    </plurals>
 </resources>
