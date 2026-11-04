@@ -11,6 +11,7 @@
     <string name="backup_auto_title">Automatic Backup</string>
     <string name="backup_export_description">Export database or settings to a file</string>
     <string name="backup_import_description">Import database or settings from a file</string>
+    <string name="backup_import_failed">Import failed</string>
     <string name="backup_legacy_migration_description">Per i vecchi utenti prima della conversione.\nUsa la vecchia app per fare un backup per la migrazione.</string>
     <string name="backup_target_database_label">Database</string>
     <string name="cached_pc">Cached PC</string>
@@ -27,5 +28,6 @@
     <string name="export_cached_song_action">Esporta brano memorizzato nella cache o scaricato</string>
     <string name="export_cached_songs_action">Esportazione memorizzata nella cache</string>
     <string name="import_backup">Import backup</string>
-    <string name="path_copied">Path copied</string>
+    <string name="library_cleanup_title">Smart cestino</string>
+    <string name="title_backup_and_restore">Backup e ripristino</string>
 </resources>
