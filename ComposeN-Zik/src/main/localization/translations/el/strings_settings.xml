@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">Η ενότητα σχετικά με την ενότητα δείχνει πληροφορίες σχετικά με την εφαρμογή, τους προγραμματιστές, την αντιμετώπιση προβλημάτων και την ενημέρωση των επιλογών</string>
     <string name="settings_app_behavior_title">Συμπεριφορά Εφαρμογής</string>
     <string name="settings_app_language_label">Γλώσσα εφαρμογής</string>
+    <string name="settings_app_language_system">Σύστημα</string>
     <string name="settings_audio_bass_boost">Ενίσχυση μπάσων ήχου</string>
     <string name="settings_audio_crossfade_description">Ενεργοποίηση ομαλής μετάβασης μεταξύ τραγουδιών</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
