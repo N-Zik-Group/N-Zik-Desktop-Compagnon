@@ -11,6 +11,7 @@
     <string name="backup_auto_title">Automatic Backup</string>
     <string name="backup_export_description">Export database or settings to a file</string>
     <string name="backup_import_description">Import database or settings from a file</string>
+    <string name="backup_import_failed">Import failed</string>
     <string name="backup_legacy_migration_description">変換前の古いユーザーの場合。\n古いアプリを使用して移行用のバックアップを作成します。</string>
     <string name="backup_target_database_label">データベース</string>
     <string name="cached_pc">Cached PC</string>
@@ -27,5 +28,6 @@
     <string name="export_cached_song_action">Export cached or downloaded song</string>
     <string name="export_cached_songs_action">Export cached</string>
     <string name="import_backup">Import backup</string>
-    <string name="path_copied">Path copied</string>
+    <string name="library_cleanup_title">スマートなゴミ箱の数</string>
+    <string name="title_backup_and_restore">バックアップと復元</string>
 </resources>
