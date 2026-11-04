@@ -10,4 +10,12 @@
     <string name="about_translators_title">Kääntäjät</string>
     <string name="contributors">Avustajat</string>
     <string name="request_a_feature">Pyydä ominaisuutta tai ehdota ideaa</string>
+    <plurals name="about_translator_count">
+        <item quantity="one">%1$d kääntäjä</item>
+        <item quantity="other">%1$d kääntäjät</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="one">%1$d kehittäjä / suunnittelija</item>
+        <item quantity="other">%1$d kehittäjää / suunnittelijaa</item>
+    </plurals>
 </resources>
