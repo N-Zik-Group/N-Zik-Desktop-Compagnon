@@ -25,46 +25,46 @@
     <string name="album_loading_song_count_format">Loading %1$d songs…</string>
     <string name="album_right_swipe">アルバム 右スワイプ</string>
     <!-- App -->
-    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="app_subtitle">コンパニオン（N-Zik）</string>
     <!-- Artist -->
     <string name="artist_action_follow">フォロー</string>
     <string name="artist_action_play_local_songs">すべてのローカル曲を再生</string>
     <string name="artist_following_status">フォロー中</string>
     <string name="artist_more_from">表示</string>
-    <string name="artist_roundness">Artist roundness</string>
+    <string name="artist_roundness">アーティストの丸み</string>
     <string name="artist_songs_count_duration">%1$d 曲 • %2$s</string>
     <string name="artist_songs_unavailable_message">利用可能な曲がありません</string>
     <!-- Audio -->
-    <string name="audio_devices">Audio devices</string>
+    <string name="audio_devices">オーディオデバイス</string>
     <string name="audio_effects">オーディオエフェクト</string>
     <string name="audio_loudness_boost_level">ラウドネスブースト</string>
-    <string name="audio_output_title">Audio output</string>
+    <string name="audio_output_title">音声出力</string>
     <string name="audio_quality_automatic">自動</string>
     <string name="audio_quality_format">オーディオ品質</string>
     <string name="audio_quality_format_high">高</string>
     <string name="audio_quality_format_low">低</string>
     <string name="audio_reverb_none">なし</string>
-    <string name="audio_waveform_action_refresh">Update waveform</string>
+    <string name="audio_waveform_action_refresh">波形を更新</string>
     <!-- Backup -->
-    <string name="backup_action_export">Export backup</string>
+    <string name="backup_action_export">バックアップをエクスポート</string>
     <string name="backup_action_import_legacy_migration">移行ファイルをインポート</string>
-    <string name="backup_auto_interval">Auto Backup Interval</string>
+    <string name="backup_auto_interval">自動バックアップ間隔</string>
     <string name="backup_auto_interval_none">無効</string>
-    <string name="backup_auto_location">Auto Backup Location</string>
-    <string name="backup_auto_location_not_set">Not set</string>
-    <string name="backup_auto_max_backups">Max Backups to Keep</string>
-    <string name="backup_auto_target">Backup Target</string>
-    <string name="backup_auto_title">Automatic Backup</string>
-    <string name="backup_export_description">Export database or settings to a file</string>
-    <string name="backup_import_description">Import database or settings from a file</string>
+    <string name="backup_auto_location">自動バックアップの場所</string>
+    <string name="backup_auto_location_not_set">未設定</string>
+    <string name="backup_auto_max_backups">保持する最大バックアップ数</string>
+    <string name="backup_auto_target">バックアップターゲット</string>
+    <string name="backup_auto_title">自動バックアップ</string>
+    <string name="backup_export_description">データベースまたは設定をファイルにエクスポート</string>
+    <string name="backup_import_description">ファイルからデータベースまたは設定をインポート</string>
     <string name="backup_legacy_migration_description">変換前の古いユーザーの場合。\n古いアプリを使用して移行用のバックアップを作成します。</string>
     <string name="backup_target_database_label">データベース</string>
     <!-- Bridge -->
-    <string name="bridge_audio_output_pc_subtitle">Sound on the PC (N-Zik Desktop Compagnon)</string>
-    <string name="bridge_server">PC server</string>
-    <string name="bridge_server_description">Let N-Zik Desktop Compagnon control your library from a PC on the same Wi-Fi network</string>
+    <string name="bridge_audio_output_pc_subtitle">PC でのサウンド (N-Zik Desktop Compagnon)</string>
+    <string name="bridge_server">PCサーバー</string>
+    <string name="bridge_server_description">N-Zik Desktop Compagnon に同じWi-Fiネットワーク上のPCからライブラリを制御させる</string>
     <!-- Cached -->
-    <string name="cached_pc">Cached PC</string>
+    <string name="cached_pc">キャッシュされたPC</string>
     <!-- Calendar -->
     <string name="calendar_period_one_month">1か月</string>
     <string name="calendar_period_one_week">1週間</string>
@@ -75,27 +75,27 @@
     <!-- Cancel -->
     <string name="cancel">キャンセル</string>
     <!-- Close -->
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
+    <string name="close_behavior">動作を閉じる</string>
+    <string name="close_behavior_minimize">トレイに最小化</string>
+    <string name="close_behavior_quit">アプリを終了する</string>
     <!-- Command -->
-    <string name="command_clear">Clear the queue</string>
-    <string name="command_copied">Command copied</string>
-    <string name="command_jump">Play from the queue</string>
-    <string name="command_move">Move in the queue</string>
-    <string name="command_next">Next</string>
-    <string name="command_output">Audio output</string>
+    <string name="command_clear">キューをクリア</string>
+    <string name="command_copied">コマンドをコピーしました</string>
+    <string name="command_jump">キューからプレイ</string>
+    <string name="command_move">キューに移動</string>
+    <string name="command_next">次へ</string>
+    <string name="command_output">音声出力</string>
     <string name="command_pause">一時停止</string>
     <string name="command_play">再生</string>
-    <string name="command_previous">Previous</string>
-    <string name="command_queue_add">Add to queue</string>
+    <string name="command_previous">前</string>
+    <string name="command_queue_add">キューに追加</string>
     <string name="command_queue_play">再生</string>
-    <string name="command_remove">Remove from the queue</string>
+    <string name="command_remove">キューから削除</string>
     <string name="command_repeat">繰り返す</string>
     <string name="command_seek">Seek</string>
     <string name="command_shuffle">シャッフル</string>
-    <string name="command_speed">Speed</string>
-    <string name="command_unknown">A command</string>
+    <string name="command_speed">速度</string>
+    <string name="command_unknown">コマンド</string>
     <!-- Common -->
     <string name="common_action_clear">消去</string>
     <string name="common_action_confirm">確認</string>
@@ -107,7 +107,7 @@
     <string name="common_action_translate">翻訳</string>
     <string name="common_action_turn_off">オフにする</string>
     <string name="common_action_update">更新</string>
-    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_artist_conjunction_and">と</string>
     <string name="common_brand_github">GitHub</string>
     <string name="common_clipboard_copy_success">コピーしました</string>
     <string name="common_color_source_theme">テーマ</string>
@@ -134,79 +134,79 @@
     <string name="common_size_small">小</string>
     <string name="common_state_off">オフ</string>
     <string name="common_state_on">オン</string>
-    <string name="common_storage_used_suffix">used</string>
+    <string name="common_storage_used_suffix">使用中</string>
     <string name="common_translation_title">翻訳</string>
     <string name="common_validation_empty_value">値を空にすることはできません。</string>
-    <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="common_validation_minimum_value">値は以下より大きくなければなりません</string>
     <!-- Connection -->
     <string name="connection_connecting">Connecting…</string>
-    <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
-    <string name="connection_live">Connected</string>
-    <string name="connection_offline">Disconnected</string>
-    <string name="connection_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
+    <string name="connection_kicked">端末から切断されました。ペアリングは保持されます。</string>
+    <string name="connection_live">接続しました</string>
+    <string name="connection_offline">切断されました</string>
+    <string name="connection_other_active">別のPC（%1$s）が端末に接続されています。端末から接続を解除してから、もう一度お試しください。</string>
     <string name="connection_reconnecting">Reconnecting…</string>
-    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
-    <string name="connection_replaced">Another window of this PC took over the session.</string>
-    <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
+    <string name="connection_reconnecting_in">端末への接続が失われました。 %1$d s…</string>
+    <string name="connection_replaced">このPCの別のウィンドウがセッションを引き継いだ。</string>
+    <string name="connection_server_stopped">サーバーが停止しました。携帯電話のN-Zikアプリから再起動し、再接続してください。</string>
     <!-- Contributors -->
     <string name="contributors">貢献者</string>
     <!-- Dismiss -->
-    <string name="dismiss">Dismiss</string>
+    <string name="dismiss">却下する</string>
     <!-- Download -->
-    <string name="download_pc">Download PC</string>
+    <string name="download_pc">PCをダウンロード</string>
     <!-- Downloads -->
     <string name="downloads_action_download_all">すべての曲をダウンロード</string>
-    <string name="downloads_action_refresh_quality">Update downloads</string>
+    <string name="downloads_action_refresh_quality">ダウンロードを更新</string>
     <string name="downloads_action_remove_all">すべてのダウンロード済みの曲を削除</string>
     <string name="downloads_cancelled">ダウンロードがキャンセルされました</string>
     <string name="downloads_delete_all_confirmation">本当にダウンロードを削除しますか？</string>
     <string name="downloads_download_all_confirmation">すべてダウンロードしてもよろしいですか？</string>
-    <string name="downloads_quality_format">Download Quality</string>
-    <string name="downloads_refresh_quality_description">Re-download the songs that were downloaded with a different quality</string>
+    <string name="downloads_quality_format">ダウンロード品質</string>
+    <string name="downloads_refresh_quality_description">別の品質でダウンロードされた曲を再度ダウンロードする</string>
     <string name="downloads_title">ダウンロード</string>
     <!-- Error -->
-    <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
-    <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
-    <string name="error_listener_failed">The pairing listener could not be opened. Pair manually below.</string>
-    <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
-    <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
+    <string name="error_code_rejected">無効または期限切れのコードです。携帯電話のコードを確認して再度お試し下さい。</string>
+    <string name="error_incompatible_version">携帯電話のバージョンと互換性がありません (契約 %1$s). N-Zik Desktop Compagnon または N-Zik を更新します。</string>
+    <string name="error_listener_failed">ペアリングリスナーを開けませんでした。手動でペアリングします。</string>
+    <string name="error_phone_unreachable">携帯電話に接続できませんでした。サーバーが起動していることと、両方のデバイスが同じWi-Fiに接続されていることを確認してください。</string>
+    <string name="error_rate_limited">試行回数が多すぎます。 %1$d 秒でもう一度お試しください。</string>
     <string name="error_storage_failed">The pairing could not be saved in the Windows Credential Manager.</string>
-    <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
-    <string name="error_unknown_code">no code</string>
-    <string name="error_update_check_failed">The update check failed (%1$s)</string>
-    <string name="error_update_download_failed">The update download failed (%1$s)</string>
-    <string name="error_windows_install_helper">The Windows installer could not be started. Run the downloaded installer manually.</string>
+    <string name="error_unexpected">電話からの予期しない回答 (HTTP %1$d, %2$s)</string>
+    <string name="error_unknown_code">コードなし</string>
+    <string name="error_update_check_failed">アップデートの確認に失敗しました (%1$s)</string>
+    <string name="error_update_download_failed">アップデートのダウンロードに失敗しました (%1$s)</string>
+    <string name="error_windows_install_helper">Windowsインストーラを起動できませんでした。ダウンロードしたインストーラを手動で実行してください。</string>
     <!-- Export -->
-    <string name="export_cached_song_action">Export cached or downloaded song</string>
-    <string name="export_cached_songs_action">Export cached</string>
+    <string name="export_cached_song_action">キャッシュまたはダウンロードした曲をエクスポートする</string>
+    <string name="export_cached_songs_action">キャッシュをエクスポート</string>
     <!-- Fake -->
     <string name="fake_audio_bar">偽の波形</string>
     <!-- Forget -->
-    <string name="forget_phone">Forget this phone</string>
-    <string name="forget_phone_text">Removes the pairing from this PC</string>
+    <string name="forget_phone">この携帯電話を削除する</string>
+    <string name="forget_phone_text">この PC からペアリングを削除します</string>
     <!-- Git -->
     <string name="git_title">GIT</string>
     <!-- Home -->
-    <string name="home_tabs_settings">Home page</string>
-    <string name="home_tabs_settings_description">Reorder and show/hide tabs</string>
+    <string name="home_tabs_settings">ホームページ</string>
+    <string name="home_tabs_settings_description">タブの並び替えと表示/非表示</string>
     <string name="home_title">ホーム</string>
     <!-- Import -->
-    <string name="import_backup">Import backup</string>
+    <string name="import_backup">バックアップをインポート</string>
     <!-- Install -->
-    <string name="install_copy_command">Copy command</string>
-    <string name="install_copy_path">Copy path</string>
-    <string name="install_file_saved_at">The update file is saved at:</string>
-    <string name="install_flatpak_command">Update in place with:</string>
-    <string name="install_open_folder">Open folder</string>
-    <string name="install_pkg_command">Install the package with:</string>
-    <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_pkg_pacman_command">Upgrade the package with:</string>
+    <string name="install_copy_command">コマンドをコピー</string>
+    <string name="install_copy_path">パスをコピー</string>
+    <string name="install_file_saved_at">更新ファイルは次の場所に保存されます:</string>
+    <string name="install_flatpak_command">次の場所で更新:</string>
+    <string name="install_open_folder">フォルダを開く</string>
+    <string name="install_pkg_command">以下のパッケージをインストールします。</string>
+    <string name="install_pkg_manual">パッケージマネージャが検出されませんでした。ダウンロードしたパッケージを手動でインストールしてください。</string>
+    <string name="install_pkg_pacman_command">パッケージのアップグレード方法:</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, extract the downloaded .tar.gz in its place (the tarball opens into a new app folder - never over the current one), and relaunch.</string>
+    <string name="install_replacement_portable_linux">アプリを最初に終了します (ファイルは実行中にロックされています)。次に、appフォルダを置き換えます。現在のappフォルダを削除し、ダウンロードしたものを抽出します。 ar.gzはその場所(tarballは新しいアプリフォルダに開きますが、現在のフォルダではありません)と再起動します。</string>
     <!-- Interface -->
     <string name="interface_in_use">使用中のインターフェース</string>
     <!-- Lastfm -->
-    <string name="lastfm_love">Love on Last.fm</string>
+    <string name="lastfm_love">Last.fmでの愛</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
     <!-- Library -->
     <string name="library_action_bookmark">ブックマーク</string>
@@ -215,25 +215,25 @@
     <string name="library_artists_title">アーティスト</string>
     <string name="library_cached_title">キャッシュ済み</string>
     <string name="library_cleanup_title">スマートなゴミ箱の数</string>
-    <string name="library_disliked_title">Disliked</string>
-    <string name="library_dislikes_added">Disliked %s</string>
-    <string name="library_dislikes_removed">Removed %s from dislikes</string>
+    <string name="library_disliked_title">嫌われている</string>
+    <string name="library_dislikes_added">%sを嫌いました</string>
+    <string name="library_dislikes_removed">%s が嫌いな状態から削除されました</string>
     <string name="library_downloaded_title">ダウンロード済み</string>
-    <string name="library_empty">Nothing here.</string>
-    <string name="library_error_unreachable">The phone could not be reached.</string>
+    <string name="library_empty">ここには何もありません。</string>
+    <string name="library_error_unreachable">電話に接続できませんでした。</string>
     <string name="library_favorites_action_add">お気に入りに追加</string>
     <string name="library_favorites_added">お気に入りに追加しました</string>
     <string name="library_favorites_removed">お気に入りから削除しました</string>
     <string name="library_favorites_title">お気に入り</string>
-    <string name="library_filter_by_title">Filter By</string>
+    <string name="library_filter_by_title">フィルター</string>
     <string name="library_history_title">履歴</string>
     <string name="library_layout_list_label">リスト</string>
-    <string name="library_management_section_title">Management</string>
-    <string name="library_none">The phone shares no library with this PC.</string>
-    <string name="library_not_found">Not found on the phone. It may have been deleted.</string>
-    <string name="library_on_device_title">On device phone</string>
+    <string name="library_management_section_title">管理</string>
+    <string name="library_none">電話はこのPCとライブラリを共有していません。</string>
+    <string name="library_not_found">携帯電話に見つかりません。削除された可能性があります。</string>
+    <string name="library_on_device_title">端末の携帯電話で</string>
     <string name="library_playlists_title">プレイリスト</string>
-    <string name="library_refresh">Refresh</string>
+    <string name="library_refresh">更新</string>
     <string name="library_songs_title">曲</string>
     <string name="library_sort_album">アルバム</string>
     <string name="library_sort_album_year">アルバムの年</string>
@@ -245,97 +245,97 @@
     <string name="library_sort_downloaded">ダウンロード済み</string>
     <string name="library_sort_duration">長さ</string>
     <string name="library_sort_listening_time">視聴時間</string>
-    <string name="library_sort_menu">Sort Menu</string>
+    <string name="library_sort_menu">ソートメニュー</string>
     <string name="library_sort_name">名前</string>
     <string name="library_sort_order_title">並べ替えの順序</string>
-    <string name="library_sort_play_count">Play Count</string>
+    <string name="library_sort_play_count">再生回数</string>
     <string name="library_sort_relative_listening_time">聴取時間</string>
     <string name="library_sort_songs_number">曲数</string>
     <string name="library_sort_title">題名</string>
-    <string name="library_sync_current_item_format">Syncing: %1$s</string>
-    <string name="library_sync_failed_count_suffix">Sync failed</string>
+    <string name="library_sync_current_item_format">同期中: %1$s</string>
+    <string name="library_sync_failed_count_suffix">同期に失敗しました</string>
     <string name="library_sync_progress_format">%1$d / %2$d</string>
-    <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
+    <string name="library_tracks_failed">トラックを読み取ることができませんでした: %1$s</string>
     <string name="library_youtube_playlists_label">YT/YTM</string>
     <!-- Listen -->
-    <string name="listen_together_auto_approval_joins">Auto-approve join requests</string>
-    <string name="listen_together_auto_approval_joins_description">Automatically approve join requests without reviewing them manually</string>
-    <string name="listen_together_auto_approval_suggestions">Auto-approve song suggestions</string>
-    <string name="listen_together_auto_approval_suggestions_description">Automatically approve and queue song suggestions from guests</string>
-    <string name="listen_together_blocked_users">Blocked users</string>
-    <string name="listen_together_connect">Connect</string>
-    <string name="listen_together_connection">Connection</string>
-    <string name="listen_together_create_room">Create room</string>
-    <string name="listen_together_create_room_description">Create a room and share the code with your friends</string>
-    <string name="listen_together_disconnected">Disconnected</string>
-    <string name="listen_together_enter_room_code">Enter a room code</string>
-    <string name="listen_together_history">Local history</string>
-    <string name="listen_together_history_description">Record Listen Together tracks in your local history</string>
-    <string name="listen_together_join_room">Join room</string>
-    <string name="listen_together_no_blocked_users">No blocked users</string>
-    <string name="listen_together_not_set">Not set</string>
-    <string name="listen_together_room">Room</string>
-    <string name="listen_together_server_url">Server URL</string>
-    <string name="listen_together_suggest">Suggest to host</string>
-    <string name="listen_together_sync_volume">Sync host volume</string>
-    <string name="listen_together_sync_volume_description">Guests will match the host\'s volume level</string>
-    <string name="listen_together_title">Listen Together</string>
+    <string name="listen_together_auto_approval_joins">参加リクエストを自動承認する</string>
+    <string name="listen_together_auto_approval_joins_description">手動で確認せずに参加リクエストを自動的に承認する</string>
+    <string name="listen_together_auto_approval_suggestions">曲の候補を自動承認する</string>
+    <string name="listen_together_auto_approval_suggestions_description">ゲストからの曲の候補を自動的に承認してキューに入れる</string>
+    <string name="listen_together_blocked_users">ブロックされたユーザー</string>
+    <string name="listen_together_connect">接続する</string>
+    <string name="listen_together_connection">接続</string>
+    <string name="listen_together_create_room">教室を作成</string>
+    <string name="listen_together_create_room_description">ルームを作成し、コードを友達と共有する</string>
+    <string name="listen_together_disconnected">切断されました</string>
+    <string name="listen_together_enter_room_code">ルームコードを入力してください</string>
+    <string name="listen_together_history">ローカル履歴</string>
+    <string name="listen_together_history_description">録音する 一緒に録音する あなたのローカル履歴のトラック</string>
+    <string name="listen_together_join_room">部屋に参加</string>
+    <string name="listen_together_no_blocked_users">ブロックされたユーザーはいません</string>
+    <string name="listen_together_not_set">未設定</string>
+    <string name="listen_together_room">部屋</string>
+    <string name="listen_together_server_url">サーバー URL</string>
+    <string name="listen_together_suggest">ホストへの提案</string>
+    <string name="listen_together_sync_volume">ホスト音量を同期</string>
+    <string name="listen_together_sync_volume_description">ゲストはホストの音量レベルに一致します</string>
+    <string name="listen_together_title">一緒に聴く</string>
     <string name="listen_together_username">ユーザー名</string>
-    <string name="listen_together_view_logs">View logs</string>
-    <string name="listen_together_view_logs_description">Debug connection events and messages</string>
+    <string name="listen_together_view_logs">ログを表示</string>
+    <string name="listen_together_view_logs_description">接続イベントとメッセージのデバッグ</string>
     <!-- Local -->
-    <string name="local_playback_failed">This song could not be played on this PC.</string>
-    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
-    <string name="local_playback_not_found">This song is no longer on your phone.</string>
-    <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
-    <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
-    <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
-    <string name="local_playback_unreachable">Your phone did not answer.</string>
-    <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
+    <string name="local_playback_failed">この曲はこのPCで再生できませんでした。</string>
+    <string name="local_playback_invalid_url">この曲はこのPCで再生できませんでした。</string>
+    <string name="local_playback_not_found">この曲はもう携帯電話に登録されていません。</string>
+    <string name="local_playback_other_active">このPC上のサウンド：別のPC（%1$s）が携帯電話に接続されています。</string>
+    <string name="local_playback_unavailable">このPC上のサウンドは使用できません:埋め込まれたVLCをロードできませんでした。</string>
+    <string name="local_playback_unavailable_linux">このPCのサウンドは利用できません。 %1$s でVLCをインストールし、アプリを再起動してください。</string>
+    <string name="local_playback_unreachable">電話が応答しませんでした。</string>
+    <string name="local_playback_upstream_failed">電話でこの曲を取得できませんでした。</string>
     <!-- Logs -->
-    <string name="logs_action_export">Export logs</string>
-    <string name="logs_export_debug_description">Export debug log to a file</string>
+    <string name="logs_action_export">ログをエクスポート</string>
+    <string name="logs_export_debug_description">デバッグログをファイルにエクスポート</string>
     <!-- Lyrics -->
     <string name="lyrics_alignment_left_label">左</string>
     <string name="lyrics_alignment_right_label">右</string>
     <string name="lyrics_color">歌詞の色</string>
     <string name="lyrics_title">歌詞</string>
     <!-- Maintenance -->
-    <string name="maintenance_card_desc">App state at a glance: last boot passes and live subsystems</string>
-    <string name="maintenance_convergence">Name convergence</string>
-    <string name="maintenance_db_cleanup">Artist link cleanup</string>
+    <string name="maintenance_card_desc">アプリの状態を一目で確認できます：最後のブートパスとライブサブシステム</string>
+    <string name="maintenance_convergence">名前の統合</string>
+    <string name="maintenance_db_cleanup">アーティストリンクのクリーンアップ</string>
     <string name="maintenance_debug_logging_title">デバッグログを有効にする</string>
-    <string name="maintenance_dedup">Same-name artist dedup</string>
-    <string name="maintenance_live_subsystems">Live subsystems</string>
-    <string name="maintenance_no_data">No data</string>
-    <string name="maintenance_open">Open</string>
-    <string name="maintenance_open_desc">Open the full maintenance sheet</string>
-    <string name="maintenance_title">Maintenance</string>
+    <string name="maintenance_dedup">同じ名前のアーティストはdedup</string>
+    <string name="maintenance_live_subsystems">ライブ・サブシステム</string>
+    <string name="maintenance_no_data">データがありません</string>
+    <string name="maintenance_open">開く</string>
+    <string name="maintenance_open_desc">完全なメンテナンスシートを開く</string>
+    <string name="maintenance_title">メンテナンス</string>
     <!-- Manual -->
     <string name="manual_code">Pairing code</string>
-    <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
-    <string name="manual_description">On your phone, Manage server shows the IP address, the port and a 6-character code.</string>
-    <string name="manual_ip">Phone IP address</string>
-    <string name="manual_ip_invalid">Enter an IPv4 address, for example 192.168.1.14.</string>
-    <string name="manual_port">Port</string>
-    <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
-    <string name="manual_submit">Pair</string>
-    <string name="manual_title">Manual pairing</string>
+    <string name="manual_code_invalid">コードには6文字、例えばABC-DEFがあります。</string>
+    <string name="manual_description">お使いの携帯電話では、管理サーバーは、IPアドレス、ポート、および6文字コードを表示します。</string>
+    <string name="manual_ip">電話番号 IP アドレス</string>
+    <string name="manual_ip_invalid">IPv4アドレスを入力します。 例えば192.168.1.14。</string>
+    <string name="manual_port">ポート</string>
+    <string name="manual_port_invalid">1から65535までのポートを入力します。</string>
+    <string name="manual_submit">ペア</string>
+    <string name="manual_title">手動ペア</string>
     <!-- Message -->
     <string name="message_type">Popup message style</string>
     <string name="message_type_modern">多機能</string>
     <!-- Metadata -->
-    <string name="metadata_action_change_artists">Change Authors</string>
+    <string name="metadata_action_change_artists">投稿者を変更</string>
     <string name="metadata_action_change_cover">カバーを変更</string>
     <string name="metadata_action_change_title">タイトルを変更</string>
-    <string name="metadata_action_edit">Edit Metadata</string>
-    <string name="metadata_album_action_change_browse_id">Change Album Browse ID</string>
-    <string name="metadata_artist_action_change_browse_id">Change Artist Browse ID</string>
-    <string name="metadata_playlist_action_change_browse_id">Change Playlist Browse ID</string>
+    <string name="metadata_action_edit">メタデータを編集</string>
+    <string name="metadata_album_action_change_browse_id">アルバム閲覧IDを変更</string>
+    <string name="metadata_artist_action_change_browse_id">アーティスト参照IDを変更</string>
+    <string name="metadata_playlist_action_change_browse_id">プレイリスト参照IDの変更</string>
     <string name="metadata_unknown_artist">不明なアーティスト</string>
     <string name="metadata_unknown_title">不明なタイトル</string>
     <!-- Miniplayer -->
-    <string name="miniplayer_button_like">Like</string>
+    <string name="miniplayer_button_like">いいね！</string>
     <!-- Navigation -->
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">下部のフローティング</string>
@@ -349,61 +349,61 @@
     <!-- Not -->
     <string name="not_selectable">選択不可</string>
     <!-- Notice -->
-    <string name="notice_failed">%1$s failed (HTTP %2$d, %3$s).</string>
-    <string name="notice_late_error">%1$s failed on the phone (%2$s, command %3$s).</string>
+    <string name="notice_failed">%1$s に失敗しました (HTTP %2$d, %3$s).</string>
+    <string name="notice_late_error">%1$s が電話で失敗しました (%2$s, コマンド %3$s).</string>
     <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
-    <string name="notice_not_found">%1$s: not found on the phone.</string>
-    <string name="notice_other_active">%1$s: another PC (%2$s) is connected to the phone.</string>
-    <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
-    <string name="notice_rejected">%1$s: refused by the phone.</string>
-    <string name="notice_server_stopping">%1$s: the phone’s server is stopping.</string>
+    <string name="notice_not_found">%1$s: 電話で見つかりません。</string>
+    <string name="notice_other_active">%1$s: 別のPC(%2$s)が携帯電話に接続されています。</string>
+    <string name="notice_queue_mismatch">%1$s: キューが変更されました。更新されました。もう一度やり直してください。</string>
+    <string name="notice_rejected">%1$s: 電話で拒否。</string>
+    <string name="notice_server_stopping">%1$s：携帯のサーバーが停止しています。</string>
     <string name="notice_truncated">%1$s: only %2$d of %3$d tracks were sent.</string>
-    <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
-    <string name="notice_unreachable">%1$s: the phone did not answer.</string>
+    <string name="notice_unavailable">%1$s: 電話のプレイヤーが利用できません。後でもう一度お試しください。</string>
+    <string name="notice_unreachable">%1$s: 電話が応答しませんでした。</string>
     <!-- Old -->
-    <string name="old_install_path">Current install:</string>
+    <string name="old_install_path">現在のインストール:</string>
     <!-- Pair -->
-    <string name="pair_device_name">Name of this PC</string>
-    <string name="pair_device_name_invalid">Enter a name of 1 to 64 characters.</string>
-    <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
-    <string name="pair_manual_entry">Manual entry</string>
-    <string name="pair_manual_entry_text">Type the address and code shown on your phone</string>
-    <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
+    <string name="pair_device_name">この PC の名前</string>
+    <string name="pair_device_name_invalid">1 から 64 文字の名前を入力します。</string>
+    <string name="pair_listener_unreachable">お使いの携帯電話がこのPCに届きませんでした。 Windowsファイアウォール、またはネットワークがパブリックに設定されていますか? プライベートネットワークでN-Zikデスクトップコンパグノンを許可するか、以下の手動でペアリングしてください。</string>
+    <string name="pair_manual_entry">手動入力</string>
+    <string name="pair_manual_entry_text">電話番号と住所を入力してください</string>
+    <string name="pair_no_address">このPCにはローカルネットワークアドレスが見つからないため、QRコードは表示されません。以下を手動でペアリングしてください。</string>
     <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_description">In N-Zik on your phone, open Manage server, start pairing, then tap Scan and point the camera at this code.</string>
+    <string name="pair_qr_description">携帯電話のN-Zikで、サーバーの管理を開き、ペアリングを開始し、スキャンをタップしてカメラをこのコードに向けます。</string>
     <string name="pair_qr_preparing">Preparing the QR code…</string>
-    <string name="pair_qr_renew_hint">The code renews itself every 2 minutes.</string>
+    <string name="pair_qr_renew_hint">コードは2分ごとに更新されます。</string>
     <string name="pair_qr_waiting">Waiting for your phone…</string>
-    <string name="pair_show_qr">Show the QR code</string>
-    <string name="pair_title">Pair with your phone</string>
+    <string name="pair_show_qr">QRコードを表示</string>
+    <string name="pair_title">携帯電話とペアリングする</string>
     <!-- Paired -->
-    <string name="paired_as">This PC appears as %1$s on the phone.</string>
+    <string name="paired_as">このPCは電話に %1$s として表示されます。</string>
     <string name="paired_checking">Checking the connection…</string>
-    <string name="paired_error">The phone answered with an error (HTTP %1$d, %2$s).</string>
-    <string name="paired_incompatible">Phone version incompatible (contract %1$s).</string>
-    <string name="paired_ok">The phone is reachable.</string>
-    <string name="paired_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
-    <string name="paired_other_active_unknown">another device</string>
-    <string name="paired_session_only">No keyring is available on this PC, so the pairing is kept only in memory for this session: pair again after a restart.</string>
+    <string name="paired_error">電話はエラーで応答しました (HTTP %1$d, %2$s).</string>
+    <string name="paired_incompatible">携帯電話のバージョンが互換性がありません (コントラクト %1$s)。</string>
+    <string name="paired_ok">電話は接続可能です。</string>
+    <string name="paired_other_active">別のPC（%1$s）が端末に接続されています。端末から接続を解除してから、もう一度お試しください。</string>
+    <string name="paired_other_active_unknown">別のデバイス</string>
+    <string name="paired_session_only">このPCではキーリングは使用できませんので、ペアリングはこのセッションのメモリにのみ保存されます:再起動後に再びペア。</string>
     <string name="paired_title">Paired</string>
-    <string name="paired_with">Paired with %1$s</string>
+    <string name="paired_with">%1$s とペアリングしました</string>
     <!-- Parental -->
     <string name="parental_control">保護者による管理</string>
     <!-- Path -->
-    <string name="path_copied">Path copied</string>
+    <string name="path_copied">パスがコピーされました</string>
     <!-- Phone -->
-    <string name="phone_panel_title">Phone</string>
+    <string name="phone_panel_title">電話番号</string>
     <!-- Player -->
     <string name="player_action_bar">プレイヤーアクションバー</string>
-    <string name="player_action_bar_buttons">Button visibility</string>
-    <string name="player_action_bar_buttons_description">Configure which buttons appear in the player action bar</string>
+    <string name="player_action_bar_buttons">ボタンの表示</string>
+    <string name="player_action_bar_buttons_description">プレイヤーアクションバーに表示するボタンを設定</string>
     <string name="player_action_enqueue">キューへ追加</string>
     <string name="player_action_enqueue_songs">曲をキューに挿入</string>
     <string name="player_action_listen_on_youtube">YouTubeで再生</string>
     <string name="player_action_locate_current_song">再生中の曲を表示</string>
-    <string name="player_action_next">Next</string>
+    <string name="player_action_next">次へ</string>
     <string name="player_action_play_next">次に再生</string>
-    <string name="player_action_previous">Previous</string>
+    <string name="player_action_previous">前</string>
     <string name="player_action_repeat">繰り返す</string>
     <string name="player_action_seek_forward">転送</string>
     <string name="player_action_seek_forward_30_seconds">30秒前に進む</string>
@@ -418,7 +418,7 @@
     <string name="player_background_artwork_fluid_gradient_label">曲の表紙からの流体グラデーション。</string>
     <string name="player_background_artwork_gradient_label">曲の表紙からグラデーションを作成</string>
     <string name="player_background_artwork_label">曲のカバーを一致させる</string>
-    <string name="player_background_artwork_m3e_morphing_label">Morphing shapes from cover</string>
+    <string name="player_background_artwork_m3e_morphing_label">カバーからのモーフィング形状</string>
     <string name="player_background_black_cherry_cosmos">ブラックチェリーコスモス</string>
     <string name="player_background_glossy_gradient">光沢グラデーション</string>
     <string name="player_background_golden_magma">黄金のマグマ</string>
@@ -435,7 +435,7 @@
     <string name="player_background_theme_fluid_gradient_label">テーマからの流体グラデーション（グラデーション）</string>
     <string name="player_background_theme_gradient_label">テーマからグラデーションする</string>
     <string name="player_background_theme_label">テーマに一致</string>
-    <string name="player_background_theme_m3e_morphing_label">Morphing shapes from theme</string>
+    <string name="player_background_theme_m3e_morphing_label">テーマからのモーフィング形状</string>
     <string name="player_behavior_and_visuals">プレイヤーの行動 &amp; ビジュアルについて</string>
     <string name="player_collapsed_disable_swiping_down">下スワイプを無効化</string>
     <string name="player_controls">プレイヤーコントロール</string>
@@ -453,8 +453,8 @@
     <string name="player_cover_style_cd">CD</string>
     <string name="player_cover_style_cd_with_cover">カバー付きのCD</string>
     <string name="player_cover_style_vinyl">レコード</string>
-    <string name="player_current_song_not_in_list">Could not find playing song on current list</string>
-    <string name="player_effects">Player Effects</string>
+    <string name="player_current_song_not_in_list">現在のリストで再生中の曲が見つかりませんでした</string>
+    <string name="player_effects">プレイヤーの効果</string>
     <string name="player_enable_lyrics_popup_message">歌詞のポップアップを有効にする</string>
     <string name="player_enable_rotation_buttons">クリック時にボタンの回転を有効にする</string>
     <string name="player_keep_minimized">最小化し続ける</string>
@@ -462,21 +462,21 @@
     <string name="player_matching_required_message">再生がブロックされています。最初に一致してください</string>
     <string name="player_mini_action_add_to_playlist">プレイリストに追加</string>
     <string name="player_mini_action_shuffle">シャッフル</string>
-    <string name="player_mini_button_audio_output">Audio output</string>
+    <string name="player_mini_button_audio_output">音声出力</string>
     <string name="player_mini_button_discover">発見</string>
     <string name="player_mini_button_download">ダウンロード</string>
     <string name="player_mini_button_lyrics">歌詞</string>
-    <string name="player_mini_button_play_pause">Play/Pause</string>
-    <string name="player_mini_button_queue">Queue</string>
-    <string name="player_mini_button_radio">Radio</string>
+    <string name="player_mini_button_play_pause">再生/一時停止</string>
+    <string name="player_mini_button_queue">キュー</string>
+    <string name="player_mini_button_radio">ラジオ</string>
     <string name="player_mini_button_repeat">繰り返す</string>
-    <string name="player_mini_button_share">Share</string>
+    <string name="player_mini_button_share">共有</string>
     <string name="player_mini_button_sleep_timer">スリープタイマー</string>
-    <string name="player_mini_button_video">Video</string>
+    <string name="player_mini_button_video">ビデオ</string>
     <string name="player_mini_button_visualizer">ビジュアライザー</string>
-    <string name="player_mini_buttons_config">MiniPlayer buttons</string>
-    <string name="player_mini_buttons_config_description">Configure the 4 buttons in the miniplayer</string>
-    <string name="player_no_current_song">No song is playing at the moment</string>
+    <string name="player_mini_buttons_config">MiniPlayer ボタン</string>
+    <string name="player_mini_buttons_config_description">ミニプレーヤーの4つのボタンを設定する</string>
+    <string name="player_no_current_song">現在再生されている曲はありません</string>
     <string name="player_no_song_found">曲が見つかりません</string>
     <string name="player_pause_listen_history">再生履歴を一時停止</string>
     <string name="player_pause_listen_history_info">統計、履歴、提案に使用される再生イベントを保存しない</string>
@@ -492,10 +492,10 @@
     <string name="player_rotating_buttons">回転ボタン</string>
     <string name="player_seek_backward_five_seconds">5秒巻き戻す</string>
     <string name="player_seek_backward_thirty_seconds">30秒巻き戻し</string>
-    <string name="player_shuffle_empty_message">No song to shuffle</string>
-    <string name="player_shuffled_song_count_format">%d songs shuffled</string>
+    <string name="player_shuffle_empty_message">シャッフルする曲がありません</string>
+    <string name="player_shuffled_song_count_format">%d 曲がシャッフルされました</string>
     <string name="player_sleep_timer_title">スリープタイマー</string>
-    <string name="player_statistics_volume_label">Volume</string>
+    <string name="player_statistics_volume_label">音量</string>
     <string name="player_swap_controls_with_timeline">タイムラインにコントロールを入れ替えます</string>
     <string name="player_swipe_sensitivity">プレイヤーのスワイプ感度</string>
     <string name="player_swipe_sensitivity_high_label">高</string>
@@ -512,24 +512,24 @@
     <!-- Playlist -->
     <string name="playlist_action_add">プレイリストに追加</string>
     <string name="playlist_action_create">新規プレイリスト</string>
-    <string name="playlist_action_delete_selected">Delete playlists</string>
+    <string name="playlist_action_delete_selected">プレイリストを削除</string>
     <string name="playlist_action_export">プレイリストのエクスポート</string>
     <string name="playlist_action_import">プレイリストをインポート</string>
     <string name="playlist_action_shuffle_positions">曲の位置をシャッフル</string>
     <string name="playlist_action_toggle_pinned">プレイリストのピン留め/ピン留め解除</string>
-    <string name="playlist_bookmark_unsupported_message">Cannot bookmark Liked Songs or Episodes playlist</string>
+    <string name="playlist_bookmark_unsupported_message">お気に入りの曲やエピソードのプレイリストをブックマークできません</string>
     <string name="playlist_create_dialog_title">新規プレイリストを作成</string>
-    <string name="playlist_delete_all_confirmation_count_format">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="playlist_delete_all_confirmation_count_format">すべての %d プレイリストを削除してもよろしいですか？</string>
     <string name="playlist_left_swipe">プレイリスト 左スワイプ</string>
     <string name="playlist_pinned_title">ピン留めしました</string>
-    <string name="playlist_rename_dialog_title">Rename playlist</string>
+    <string name="playlist_rename_dialog_title">プレイリストの名前を変更</string>
     <string name="playlist_reorder_ascending_sort_required_message">並べ替えは昇順のソートでのみ可能です</string>
     <string name="playlist_reorder_lock_toggle_label">曲の並び順をロック/ロック解除</string>
     <string name="playlist_right_swipe">プレイリスト 右スワイプ</string>
     <string name="playlist_selection_action_deselect">選択を解除</string>
     <string name="playlist_top">トッププレイリスト</string>
     <!-- Profile -->
-    <string name="profile_base_name">N-Zik Fan</string>
+    <string name="profile_base_name">N-Zik ファン</string>
     <string name="profile_title">Profiles</string>
     <!-- Proxy -->
     <string name="proxy">プロキシ</string>
@@ -543,20 +543,20 @@
     <string name="recommendations_minimum_playback_duration_label">再生時間の最小値</string>
     <string name="recommendations_title">クイックピック</string>
     <!-- Reconnect -->
-    <string name="reconnect">Reconnect</string>
+    <string name="reconnect">再接続</string>
     <!-- Recovery -->
-    <string name="recovery_center">Rescue Center</string>
+    <string name="recovery_center">Centro de Resgate</string>
     <!-- Request -->
     <string name="request_a_feature">機能要望またはアイデアを提案</string>
     <!-- Revoked -->
-    <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
-    <string name="revoked_pair_again">Pair again</string>
+    <string name="revoked_description">このPCはペアリングされている端末から削除されました。再度ペアリングして使用してください。</string>
+    <string name="revoked_pair_again">もう一度ペアリングする</string>
     <string name="revoked_title">Pairing revoked</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_month">月</string>
     <string name="rewind_filter_year">年</string>
     <string name="rewind_title">Rewind</string>
-    <string name="rewind_top_sort">Rewind Top</string>
+    <string name="rewind_top_sort">トップに巻き戻す</string>
     <!-- Search -->
     <string name="search_display_order">オンライン検索表示順</string>
     <string name="search_display_order_suggestions_first">最初に提案する</string>
@@ -569,16 +569,16 @@
     <string name="settings_about_page_description">概要セクションには、アプリ、開発者、トラブルシューティング、更新オプションに関する情報が表示されます。</string>
     <string name="settings_app_behavior_title">アプリの動作</string>
     <string name="settings_app_language_label">アプリ言語</string>
-    <string name="settings_audio_bass_boost">Audio bass boost</string>
+    <string name="settings_audio_bass_boost">オーディオベースブースト</string>
     <string name="settings_audio_crossfade_description">曲間のスムーズな切り替えを有効にする</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
     <string name="settings_audio_equalizer_label">イコライザ</string>
     <string name="settings_audio_loudness_normalization_description">音量を均一化します</string>
     <string name="settings_audio_loudness_normalization_label">ラウドネスの正規化</string>
-    <string name="settings_audio_reverb">Audio reverb</string>
+    <string name="settings_audio_reverb">オーディオのリバーブ</string>
     <string name="settings_audio_skip_silence_description">再生中に無音部分をスキップ</string>
     <string name="settings_audio_skip_silence_label">無音をスキップ</string>
-    <string name="settings_bass_boost_level">Bass boost level</string>
+    <string name="settings_bass_boost_level">バスブーストレベル</string>
     <string name="settings_cache_action_set_custom_size">カスタムキャッシュを設定</string>
     <string name="settings_cache_custom_size_input_hint">MB単位で値を入力</string>
     <string name="settings_cache_delete_confirmation">本当にキャッシュを削除しますか？</string>
@@ -606,19 +606,19 @@
     <string name="settings_interface_title">ユーザーインターフェイス</string>
     <string name="settings_languages_title">言語</string>
     <string name="settings_lastfm_title">Last.fm</string>
-    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
-    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
-    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
+    <string name="settings_launcher_shortcuts_description">ランチャーショートカットを選択して並べ替えます</string>
+    <string name="settings_launcher_shortcuts_recovery_required_message">救助を無効にすることはできません</string>
+    <string name="settings_launcher_shortcuts_title">アプリのショートカット</string>
     <string name="settings_library_now_playing_indicator_label">再生中のインジケーター</string>
     <string name="settings_library_playlist_indicator_description">プレイリストに追加された曲をマークする</string>
     <string name="settings_library_playlist_indicator_label">プレイリスト表示</string>
     <string name="settings_library_queue_playlist_swipe_left_label">キューとローカルプレイリスト 左スワイプ</string>
     <string name="settings_library_queue_playlist_swipe_right_label">キューとローカルプレイリスト 右スワイプ</string>
-    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
-    <string name="settings_library_sort_options_description">Customize sort options</string>
-    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
-    <string name="settings_library_toolbar_title">Toolbar</string>
-    <string name="settings_local_playlist_title">Local Playlist</string>
+    <string name="settings_library_sections_visibility_description">ライブラリに表示するセクションを選択します</string>
+    <string name="settings_library_sort_options_description">並べ替えオプションのカスタマイズ</string>
+    <string name="settings_library_toolbar_customization_description">ツールバーをカスタマイズ</string>
+    <string name="settings_library_toolbar_title">ツールバー</string>
+    <string name="settings_local_playlist_title">ローカルプレイリスト</string>
     <string name="settings_logging_error_file_description">有効なら、エラーに焦点を当てたログファイルを作成します</string>
     <string name="settings_loudness_base_gain">ラウドネスのゲイン</string>
     <string name="settings_lyrics_artwork_visible_label">歌詞のサムネイルを表示</string>
@@ -639,9 +639,9 @@
     <string name="settings_network_title">ネットワーク</string>
     <string name="settings_parental_age_restriction_description">年齢制限のある曲を再生しない</string>
     <string name="settings_playback_duration_limit_label">時間制限のある曲を除外</string>
-    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
-    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
-    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
+    <string name="settings_playback_exclude_disliked_albums_label">嫌われたアルバムを除外</string>
+    <string name="settings_playback_exclude_disliked_artists_label">嫌われたアーティストを除外</string>
+    <string name="settings_playback_exclude_disliked_songs_label">嫌われた曲を除外</string>
     <string name="settings_playback_pause_at_zero_volume_description">ボリュームが0に達したときに曲を一時停止し、ボリュームが0より大きいときに再開します</string>
     <string name="settings_playback_pause_between_songs_label">曲間で一時停止</string>
     <string name="settings_playback_previous_restart_threshold_label">前の曲の最大経過時間</string>
@@ -666,7 +666,7 @@
     <string name="settings_player_bottom_black_gradient_label">下部に黒いグラデーションを表示</string>
     <string name="settings_player_button_zoom_out_animation_label">ボタンズームアウト時のアニメーション</string>
     <string name="settings_player_controls_style_label">コントロールスタイル</string>
-    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
+    <string name="settings_player_crop_video_artwork_label">サムネイルをトリミングする</string>
     <string name="settings_player_disable_horizontal_swipe_label">水平スワイプを無効化</string>
     <string name="settings_player_disable_song_swipe_label">スワイプでの曲の切り替えを無効にする</string>
     <string name="settings_player_disable_text_marquee_description">長いテキストがスクロールされます</string>
@@ -676,7 +676,7 @@
     <string name="settings_player_header_album_artist_description">アルバムとアーティストのヘッダー</string>
     <string name="settings_player_header_icons_visible_label">アイコン付きの情報を表示</string>
     <string name="settings_player_header_style_label">ヘッダーのスタイル</string>
-    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
+    <string name="settings_player_m3e_motion_sensitivity_label">テーマの振動感度</string>
     <string name="settings_player_next_queue_visible_label">次の曲のキューを表示</string>
     <string name="settings_player_persistent_queue_description">再生中の曲を保存・復元</string>
     <string name="settings_player_persistent_queue_label">永続的なプレイヤー</string>
@@ -690,7 +690,7 @@
     <string name="settings_player_queue_swipe_up_label">上にスワイプしてキューを開く</string>
     <string name="settings_player_queue_tap_to_open_label">タップしてキューを開く</string>
     <string name="settings_player_remaining_duration_visible_label">曲の残り時間を表示</string>
-    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
+    <string name="settings_player_rotating_artwork_title">アルバムカバーを回転中</string>
     <string name="settings_player_seek_time_buttons_label">時間ボタンをスキップ</string>
     <string name="settings_player_start_minimized_description">曲をクリックすると、プレイヤーが最小化されます</string>
     <string name="settings_player_tap_artwork_toggle_lyrics_description">サムネイルをタップすると</string>
@@ -718,9 +718,9 @@
     <!-- Song -->
     <string name="song_matching_action_open">アルバム/オーディオバージョンに一致</string>
     <string name="song_matching_unmatched_label">比類のない曲</string>
-    <string name="song_metadata_update_action_open">Open update dialog</string>
+    <string name="song_metadata_update_action_open">更新ダイアログを開く</string>
     <!-- Sort -->
-    <string name="sort_artist_and_album">Artist, Album</string>
+    <string name="sort_artist_and_album">アーティスト、アルバム</string>
     <!-- Stable -->
     <string name="stable_title">安定版</string>
     <!-- Statistics -->
@@ -729,35 +729,35 @@
     <string name="statistics_top_period_title">上位 %s / …</string>
     <!-- Sync -->
     <string name="sync_action_sync">同期</string>
-    <string name="sync_likes">Auto Sync Liked Songs</string>
+    <string name="sync_likes">お気に入りの曲を自動同期</string>
     <!-- Theme -->
     <string name="theme_palette_dynamic">動的</string>
     <string name="theme_shake_sensitivity_disabled">無効</string>
     <!-- This -->
-    <string name="this_pc">This PC</string>
+    <string name="this_pc">この PC</string>
     <!-- Thumbnail -->
     <string name="thumbnail_action_edit">サムネイルを編集</string>
     <string name="thumbnail_action_reset">サムネイルをリセット</string>
     <!-- Title -->
     <string name="title_backup_and_restore">バックアップと復元</string>
     <!-- Tray -->
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
+    <string name="tray_open">開く</string>
+    <string name="tray_quit">終了</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <!-- Troubleshooting -->
     <string name="troubleshooting">トラブルシューティング</string>
     <!-- Unreachable -->
-    <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
-    <string name="unreachable_edit_ip">Edit IP</string>
-    <string name="unreachable_edit_ip_text">Keep the pairing, change the phone’s IP address only</string>
-    <string name="unreachable_port_kept">Port %1$d (kept)</string>
-    <string name="unreachable_save_ip">Save and retry</string>
-    <string name="unreachable_title">Phone unreachable</string>
+    <string name="unreachable_description">%1$s は %2$sで応答しませんでした。サーバーを停止するか、IPアドレスが変更された可能性があります。ペアリングは保持されます。</string>
+    <string name="unreachable_edit_ip">IPアドレスを編集</string>
+    <string name="unreachable_edit_ip_text">ペアリングを維持し、電話のIPアドレスのみを変更してください</string>
+    <string name="unreachable_port_kept">ポート番号 %1$d (保持)</string>
+    <string name="unreachable_save_ip">保存して再試行する</string>
+    <string name="unreachable_title">電話に接続できません</string>
     <!-- Update -->
-    <string name="update_check_off_aur">This app was installed from the AUR: the in-app updater is disabled for this install. Update the AUR entry (n-zik-desktop-compagnon) with your AUR helper.</string>
+    <string name="update_check_off_aur">このアプリはAURからインストールされました：アプリ内アップデータはこのインストールでは無効になっています。AUR エントリ（n-zik-desktop-compagnon）を AUR ヘルパーで更新してください。</string>
     <string name="update_check_off_build">このメッセージが表示された場合、ビルドに自動更新が有効になっていないことを意味します。plsはgithubからアプリを手動で更新します。</string>
-    <string name="update_download_indeterminate">Downloaded %1$s (unknown size)</string>
-    <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
+    <string name="update_download_indeterminate">ダウンロードした %1$s (不明なサイズ)</string>
+    <string name="update_download_truncated">アップデートのダウンロードが切断されました。部分的なファイルが保存されました。もう一度ダウンロードしてください。</string>
     <string name="update_unknown">不明</string>
     <!-- Updates -->
     <string name="updates_action_check">アップデートを確認</string>
@@ -802,5 +802,5 @@
     <string name="visualizer_microphone_permission_message">ビジュアライザーの効果にはマイクの許可が必要です。許可してください。</string>
     <string name="visualizer_title">ビジュアライザー</string>
     <!-- Window -->
-    <string name="window">Window</string>
+    <string name="window">ウィンドウ</string>
 </resources>
