@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Calendar -->
-    <string name="calendar_period_one_month">1 Month</string>
-    <string name="calendar_period_one_week">1 Week</string>
-    <string name="calendar_period_one_year">1 Year</string>
-    <string name="calendar_period_six_months">6 Month</string>
-    <string name="calendar_period_three_months">3 month</string>
-    <string name="calendar_today">Today</string>
+    <string name="calendar_period_one_month">1 månad</string>
+    <string name="calendar_period_one_week">1 vecka</string>
+    <string name="calendar_period_one_year">1 år</string>
+    <string name="calendar_period_six_months">6 månader</string>
+    <string name="calendar_period_three_months">3 månader</string>
+    <string name="calendar_today">Idag</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
-    <string name="rewind_filter_year">Year</string>
+    <string name="rewind_filter_month">Månad</string>
+    <string name="rewind_filter_year">År</string>
     <!-- Statistics -->
-    <string name="statistics_items_limit_unlimited">Unlimited</string>
-    <string name="statistics_title">Statistics</string>
-    <string name="statistics_top_period_title">Top %s of …</string>
+    <string name="statistics_items_limit_unlimited">Obegränsad</string>
+    <string name="statistics_title">Statistik</string>
+    <string name="statistics_top_period_title">Topp %s av …</string>
 </resources>
