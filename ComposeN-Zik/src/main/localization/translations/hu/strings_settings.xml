@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">The about section shows information about the app, the developers, troubleshooting and update options</string>
     <string name="settings_app_behavior_title">App Behavior</string>
     <string name="settings_app_language_label">Alkalmazás nyelve</string>
+    <string name="settings_app_language_system">Rendszer</string>
     <string name="settings_audio_bass_boost">Audio bass boost</string>
     <string name="settings_audio_crossfade_description">Enable smooth transition between songs</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
