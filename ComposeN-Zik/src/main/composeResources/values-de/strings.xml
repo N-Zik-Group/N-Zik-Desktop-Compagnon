@@ -25,17 +25,17 @@
     <string name="album_loading_song_count_format">Lade %1$d Lieder…</string>
     <string name="album_right_swipe">Album rechts wischen</string>
     <!-- App -->
-    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="app_subtitle">Begleiter für N-Zik</string>
     <!-- Artist -->
     <string name="artist_action_follow">Folgen</string>
     <string name="artist_action_play_local_songs">Alle lokalen Titel abspielen</string>
     <string name="artist_following_status">Gefolgt</string>
     <string name="artist_more_from">Mehr von</string>
-    <string name="artist_roundness">Artist roundness</string>
+    <string name="artist_roundness">Künstlerrundung</string>
     <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
     <string name="artist_songs_unavailable_message">Bisher keine Titel</string>
     <!-- Audio -->
-    <string name="audio_devices">Audio devices</string>
+    <string name="audio_devices">Audio-Geräte</string>
     <string name="audio_effects">Audio-Effekte</string>
     <string name="audio_loudness_boost_level">Lautstärke-Bootlevel</string>
     <string name="audio_output_title">Audioausgabe</string>
@@ -60,11 +60,11 @@
     <string name="backup_legacy_migration_description">Für alte Benutzer vor der Konvertierung.\nalte App verwenden, um eine Sicherung für die Migration zu erstellen.</string>
     <string name="backup_target_database_label">Datenbank</string>
     <!-- Bridge -->
-    <string name="bridge_audio_output_pc_subtitle">Sound on the PC (N-Zik Desktop Compagnon)</string>
-    <string name="bridge_server">PC server</string>
-    <string name="bridge_server_description">Let N-Zik Desktop Compagnon control your library from a PC on the same Wi-Fi network</string>
+    <string name="bridge_audio_output_pc_subtitle">Sound auf dem PC (N-Zik Desktop Compagnon)</string>
+    <string name="bridge_server">PC-Server</string>
+    <string name="bridge_server_description">Lassen Sie N-Zik Desktop Compagnon Ihre Bibliothek von einem PC aus im selben Wi-Fi-Netzwerk steuern</string>
     <!-- Cached -->
-    <string name="cached_pc">Cached PC</string>
+    <string name="cached_pc">Cache-PC</string>
     <!-- Calendar -->
     <string name="calendar_period_one_month">1 Monat</string>
     <string name="calendar_period_one_week">1 Woche</string>
@@ -75,27 +75,27 @@
     <!-- Cancel -->
     <string name="cancel">Abbrechen</string>
     <!-- Close -->
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
+    <string name="close_behavior">Schließen</string>
+    <string name="close_behavior_minimize">In Tray minimieren</string>
+    <string name="close_behavior_quit">App beenden</string>
     <!-- Command -->
-    <string name="command_clear">Clear the queue</string>
-    <string name="command_copied">Command copied</string>
-    <string name="command_jump">Play from the queue</string>
-    <string name="command_move">Move in the queue</string>
+    <string name="command_clear">Warteschlange leeren</string>
+    <string name="command_copied">Befehl kopiert</string>
+    <string name="command_jump">In der Warteschlange abspielen</string>
+    <string name="command_move">In die Warteschlange verschieben</string>
     <string name="command_next">Weiter</string>
     <string name="command_output">Audioausgabe</string>
     <string name="command_pause">Pause</string>
     <string name="command_play">Abspielen</string>
     <string name="command_previous">Zurück</string>
-    <string name="command_queue_add">Add to queue</string>
+    <string name="command_queue_add">Zur Warteschlange hinzufügen</string>
     <string name="command_queue_play">Abspielen</string>
-    <string name="command_remove">Remove from the queue</string>
+    <string name="command_remove">Aus der Warteschlange entfernen</string>
     <string name="command_repeat">Wiederholen</string>
-    <string name="command_seek">Seek</string>
+    <string name="command_seek">Suche</string>
     <string name="command_shuffle">Zufallswiedergabe</string>
-    <string name="command_speed">Speed</string>
-    <string name="command_unknown">A command</string>
+    <string name="command_speed">Geschwindigkeit</string>
+    <string name="command_unknown">Ein Befehl</string>
     <!-- Common -->
     <string name="common_action_clear">Leeren</string>
     <string name="common_action_confirm">Bestätigen</string>
@@ -107,7 +107,7 @@
     <string name="common_action_translate">Übersetzen</string>
     <string name="common_action_turn_off">Ausschalten</string>
     <string name="common_action_update">Aktualisieren</string>
-    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_artist_conjunction_and">und</string>
     <string name="common_brand_github">GitHub</string>
     <string name="common_clipboard_copy_success">Kopiert</string>
     <string name="common_color_source_theme">Farbschema</string>
@@ -115,7 +115,7 @@
     <string name="common_delete_success">Gelöscht</string>
     <string name="common_empty_items">Keine Elemente</string>
     <string name="common_error_no_internet">Keine Internetverbindung</string>
-    <string name="common_information_title">Information</string>
+    <string name="common_information_title">Informationen</string>
     <string name="common_limit_unlimited_label">Unbegrenzt</string>
     <string name="common_menu_label">Menü</string>
     <string name="common_navigation_section_title">Navigation</string>
@@ -134,56 +134,56 @@
     <string name="common_size_small">Klein</string>
     <string name="common_state_off">Aus</string>
     <string name="common_state_on">An</string>
-    <string name="common_storage_used_suffix">used</string>
+    <string name="common_storage_used_suffix">verwendet</string>
     <string name="common_translation_title">Übersetzung</string>
     <string name="common_validation_empty_value">Wert darf nicht leer sein</string>
-    <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="common_validation_minimum_value">Wert muss größer sein als</string>
     <!-- Connection -->
-    <string name="connection_connecting">Connecting…</string>
-    <string name="connection_kicked">Disconnected from the phone. The pairing is kept.</string>
-    <string name="connection_live">Connected</string>
-    <string name="connection_offline">Disconnected</string>
-    <string name="connection_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
-    <string name="connection_reconnecting">Reconnecting…</string>
-    <string name="connection_reconnecting_in">Connection to the phone lost. Reconnecting in %1$d s…</string>
-    <string name="connection_replaced">Another window of this PC took over the session.</string>
-    <string name="connection_server_stopped">Server stopped. Restart it from the N-Zik app on your phone, then reconnect.</string>
+    <string name="connection_connecting">Verbinde…</string>
+    <string name="connection_kicked">Verbindung vom Telefon getrennt. Das Paar wird beibehalten.</string>
+    <string name="connection_live">Verbunden</string>
+    <string name="connection_offline">Verbindung getrennt</string>
+    <string name="connection_other_active">Ein anderer PC (%1$s) ist mit dem Telefon verbunden. Trennen Sie ihn vom Telefon und versuchen Sie es erneut.</string>
+    <string name="connection_reconnecting">Wiederverbinden…</string>
+    <string name="connection_reconnecting_in">Verbindung zum Telefon verloren. Wiederverbinden in %1$d s…</string>
+    <string name="connection_replaced">Ein weiteres Fenster dieses PCs übernahm die Sitzung.</string>
+    <string name="connection_server_stopped">Server gestoppt. Starten Sie ihn von der N-Zik App auf Ihrem Telefon neu und verbinden Sie ihn erneut.</string>
     <!-- Contributors -->
     <string name="contributors">Mitwirkende</string>
     <!-- Dismiss -->
-    <string name="dismiss">Dismiss</string>
+    <string name="dismiss">Verwerfen</string>
     <!-- Download -->
-    <string name="download_pc">Download PC</string>
+    <string name="download_pc">PC herunterladen</string>
     <!-- Downloads -->
     <string name="downloads_action_download_all">Alle Titel herunterladen</string>
-    <string name="downloads_action_refresh_quality">Update downloads</string>
+    <string name="downloads_action_refresh_quality">Downloads aktualisieren</string>
     <string name="downloads_action_remove_all">Alle heruntergeladenen Titel entfernen</string>
     <string name="downloads_cancelled">Download abgebrochen</string>
     <string name="downloads_delete_all_confirmation">Möchtest Du den Download wirklich löschen?</string>
     <string name="downloads_download_all_confirmation">Willst du wirklich alle herunterladen?</string>
-    <string name="downloads_quality_format">Download Quality</string>
-    <string name="downloads_refresh_quality_description">Re-download the songs that were downloaded with a different quality</string>
+    <string name="downloads_quality_format">Downloadqualität</string>
+    <string name="downloads_refresh_quality_description">Lade die Lieder erneut herunter, die mit einer anderen Qualität heruntergeladen wurden</string>
     <string name="downloads_title">Herunterladen</string>
     <!-- Error -->
-    <string name="error_code_rejected">Invalid or expired code. Check the code on your phone and try again.</string>
-    <string name="error_incompatible_version">Phone version incompatible (contract %1$s). Update N-Zik Desktop Compagnon or N-Zik.</string>
-    <string name="error_listener_failed">The pairing listener could not be opened. Pair manually below.</string>
-    <string name="error_phone_unreachable">The phone could not be reached. Check that its server is running and that both devices are on the same Wi-Fi.</string>
-    <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
+    <string name="error_code_rejected">Ungültiger oder abgelaufener Code. Überprüfen Sie den Code auf Ihrem Telefon und versuchen Sie es erneut.</string>
+    <string name="error_incompatible_version">Telefon-Version inkompatibel (Vertrag %1$s). Update N-Zik Desktop Compagnon oder N-Zik.</string>
+    <string name="error_listener_failed">Der Paarhörer konnte nicht geöffnet werden. Paar manuell unten.</string>
+    <string name="error_phone_unreachable">Das Telefon konnte nicht erreicht werden. Überprüfen Sie, ob der Server läuft und beide Geräte auf demselben WLAN sind.</string>
+    <string name="error_rate_limited">Zu viele Versuche. Versuche es in %1$d s erneut.</string>
     <string name="error_storage_failed">The pairing could not be saved in the Windows Credential Manager.</string>
-    <string name="error_unexpected">Unexpected answer from the phone (HTTP %1$d, %2$s).</string>
-    <string name="error_unknown_code">no code</string>
-    <string name="error_update_check_failed">The update check failed (%1$s)</string>
-    <string name="error_update_download_failed">The update download failed (%1$s)</string>
-    <string name="error_windows_install_helper">The Windows installer could not be started. Run the downloaded installer manually.</string>
+    <string name="error_unexpected">Unerwartete Antwort vom Telefon (HTTP %1$d, %2$s).</string>
+    <string name="error_unknown_code">kein Code</string>
+    <string name="error_update_check_failed">Update-Prüfung fehlgeschlagen (%1$s)</string>
+    <string name="error_update_download_failed">Update-Download fehlgeschlagen (%1$s)</string>
+    <string name="error_windows_install_helper">Der Windows-Installer konnte nicht gestartet werden. Führen Sie den heruntergeladenen Installer manuell aus.</string>
     <!-- Export -->
     <string name="export_cached_song_action">Zwischengespeicherte oder Heruntergeladene Titel exportieren</string>
     <string name="export_cached_songs_action">Zwischenspeicher exportieren</string>
     <!-- Fake -->
     <string name="fake_audio_bar">Falsche Wellenform</string>
     <!-- Forget -->
-    <string name="forget_phone">Forget this phone</string>
-    <string name="forget_phone_text">Removes the pairing from this PC</string>
+    <string name="forget_phone">Telefon vergessen</string>
+    <string name="forget_phone_text">Entfernt die Paarung von diesem PC</string>
     <!-- Git -->
     <string name="git_title">GIT</string>
     <!-- Home -->
@@ -193,20 +193,20 @@
     <!-- Import -->
     <string name="import_backup">Backup importieren</string>
     <!-- Install -->
-    <string name="install_copy_command">Copy command</string>
-    <string name="install_copy_path">Copy path</string>
-    <string name="install_file_saved_at">The update file is saved at:</string>
-    <string name="install_flatpak_command">Update in place with:</string>
-    <string name="install_open_folder">Open folder</string>
-    <string name="install_pkg_command">Install the package with:</string>
-    <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
-    <string name="install_pkg_pacman_command">Upgrade the package with:</string>
+    <string name="install_copy_command">Befehl kopieren</string>
+    <string name="install_copy_path">Pfad kopieren</string>
+    <string name="install_file_saved_at">Die Update-Datei wird gespeichert unter:</string>
+    <string name="install_flatpak_command">Aktualisiere an Ort mit:</string>
+    <string name="install_open_folder">Ordner öffnen</string>
+    <string name="install_pkg_command">Installiere das Paket mit:</string>
+    <string name="install_pkg_manual">Es wurde kein Paketmanager erkannt. Installieren Sie das heruntergeladene Paket manuell.</string>
+    <string name="install_pkg_pacman_command">Aktualisieren Sie das Paket mit:</string>
     <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Quit the app first (its files are locked while it runs), then replace the app folder: delete the current app folder, extract the downloaded .tar.gz in its place (the tarball opens into a new app folder - never over the current one), and relaunch.</string>
+    <string name="install_replacement_portable_linux">Beenden Sie die App zuerst (ihre Dateien werden gesperrt, während sie ausgeführt wird), und ersetzen Sie den App-Ordner: Löschen Sie den aktuellen App-Ordner, entpacken Sie den Download . ar.gz an seiner Stelle (das Tarball öffnet sich in einen neuen App-Ordner - nie über den aktuellen Ordner) und relaunch.</string>
     <!-- Interface -->
     <string name="interface_in_use">Schnittstelle in Verwendung</string>
     <!-- Lastfm -->
-    <string name="lastfm_love">Love on Last.fm</string>
+    <string name="lastfm_love">Liebe auf Last.fm</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
     <!-- Library -->
     <string name="library_action_bookmark">Lesezeichen</string>
@@ -215,12 +215,12 @@
     <string name="library_artists_title">Künstler</string>
     <string name="library_cached_title">Zwischengespeichert</string>
     <string name="library_cleanup_title">Intelligenter Papierkorb</string>
-    <string name="library_disliked_title">Disliked</string>
+    <string name="library_disliked_title">Ungefällt</string>
     <string name="library_dislikes_added">%s gefällt mir nicht</string>
     <string name="library_dislikes_removed">%s von \"Gefällt mir nicht\" entfernt</string>
     <string name="library_downloaded_title">Offline-Songs</string>
-    <string name="library_empty">Nothing here.</string>
-    <string name="library_error_unreachable">The phone could not be reached.</string>
+    <string name="library_empty">Nichts hier.</string>
+    <string name="library_error_unreachable">Das Telefon konnte nicht erreicht werden.</string>
     <string name="library_favorites_action_add">Den Favoriten hinzufügen</string>
     <string name="library_favorites_added">Zu Favoriten hinzugefügt</string>
     <string name="library_favorites_removed">Von Favoriten entfernt</string>
@@ -229,12 +229,12 @@
     <string name="library_history_title">Verlauf</string>
     <string name="library_layout_list_label">Liste</string>
     <string name="library_management_section_title">Management</string>
-    <string name="library_none">The phone shares no library with this PC.</string>
-    <string name="library_not_found">Not found on the phone. It may have been deleted.</string>
-    <string name="library_on_device_title">On device phone</string>
+    <string name="library_none">Das Telefon teilt keine Bibliothek mit diesem PC.</string>
+    <string name="library_not_found">Auf dem Telefon nicht gefunden. Möglicherweise wurde es gelöscht.</string>
+    <string name="library_on_device_title">Auf Gerät Telefon</string>
     <string name="library_playlists_title">Playlisten</string>
-    <string name="library_refresh">Refresh</string>
-    <string name="library_songs_title">Songs</string>
+    <string name="library_refresh">Aktualisieren</string>
+    <string name="library_songs_title">Titel</string>
     <string name="library_sort_album">Album</string>
     <string name="library_sort_album_year">Album-Jahr</string>
     <string name="library_sort_artist">Künstler</string>
@@ -255,72 +255,72 @@
     <string name="library_sync_current_item_format">Synchronisierung: %1$s</string>
     <string name="library_sync_failed_count_suffix">Synchronisation fehlgeschlagen</string>
     <string name="library_sync_progress_format">%1$d / %2$d</string>
-    <string name="library_tracks_failed">The tracks could not be read: %1$s</string>
+    <string name="library_tracks_failed">Die Titel konnten nicht gelesen werden: %1$s</string>
     <string name="library_youtube_playlists_label">YT/YTM</string>
     <!-- Listen -->
-    <string name="listen_together_auto_approval_joins">Auto-approve join requests</string>
-    <string name="listen_together_auto_approval_joins_description">Automatically approve join requests without reviewing them manually</string>
-    <string name="listen_together_auto_approval_suggestions">Auto-approve song suggestions</string>
-    <string name="listen_together_auto_approval_suggestions_description">Automatically approve and queue song suggestions from guests</string>
-    <string name="listen_together_blocked_users">Blocked users</string>
-    <string name="listen_together_connect">Connect</string>
-    <string name="listen_together_connection">Connection</string>
-    <string name="listen_together_create_room">Create room</string>
-    <string name="listen_together_create_room_description">Create a room and share the code with your friends</string>
-    <string name="listen_together_disconnected">Disconnected</string>
-    <string name="listen_together_enter_room_code">Enter a room code</string>
-    <string name="listen_together_history">Local history</string>
-    <string name="listen_together_history_description">Record Listen Together tracks in your local history</string>
-    <string name="listen_together_join_room">Join room</string>
-    <string name="listen_together_no_blocked_users">No blocked users</string>
+    <string name="listen_together_auto_approval_joins">Beitrittsanfragen automatisch genehmigen</string>
+    <string name="listen_together_auto_approval_joins_description">Anfragen ohne manuelle Überprüfung automatisch freigeben</string>
+    <string name="listen_together_auto_approval_suggestions">Songvorschläge automatisch genehmigen</string>
+    <string name="listen_together_auto_approval_suggestions_description">Songvorschläge von Gästen automatisch genehmigen und in die Warteschlange setzen</string>
+    <string name="listen_together_blocked_users">Gesperrte Benutzer</string>
+    <string name="listen_together_connect">Verbinden</string>
+    <string name="listen_together_connection">Verbindung</string>
+    <string name="listen_together_create_room">Raum erstellen</string>
+    <string name="listen_together_create_room_description">Erstelle einen Raum und teile den Code mit deinen Freunden</string>
+    <string name="listen_together_disconnected">Verbindung getrennt</string>
+    <string name="listen_together_enter_room_code">Zimmercode eingeben</string>
+    <string name="listen_together_history">Lokale Historie</string>
+    <string name="listen_together_history_description">Hören Sie Tracks in Ihrem lokalen Verlauf auf</string>
+    <string name="listen_together_join_room">Raum betreten</string>
+    <string name="listen_together_no_blocked_users">Keine blockierten Benutzer</string>
     <string name="listen_together_not_set">Nicht festgelegt</string>
-    <string name="listen_together_room">Room</string>
-    <string name="listen_together_server_url">Server URL</string>
-    <string name="listen_together_suggest">Suggest to host</string>
-    <string name="listen_together_sync_volume">Sync host volume</string>
-    <string name="listen_together_sync_volume_description">Guests will match the host\'s volume level</string>
-    <string name="listen_together_title">Listen Together</string>
+    <string name="listen_together_room">Raum</string>
+    <string name="listen_together_server_url">Server-URL</string>
+    <string name="listen_together_suggest">Dem Host vorschlagen</string>
+    <string name="listen_together_sync_volume">Hostlautstärke synchronisieren</string>
+    <string name="listen_together_sync_volume_description">Gäste werden dem Volumenlevel des Gastgebers entsprechen</string>
+    <string name="listen_together_title">Höre zusammen</string>
     <string name="listen_together_username">Benutzername</string>
-    <string name="listen_together_view_logs">View logs</string>
-    <string name="listen_together_view_logs_description">Debug connection events and messages</string>
+    <string name="listen_together_view_logs">Logs anzeigen</string>
+    <string name="listen_together_view_logs_description">Verbindungs-Ereignisse und -nachrichten debuggen</string>
     <!-- Local -->
-    <string name="local_playback_failed">This song could not be played on this PC.</string>
-    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
-    <string name="local_playback_not_found">This song is no longer on your phone.</string>
-    <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
-    <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
-    <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
-    <string name="local_playback_unreachable">Your phone did not answer.</string>
-    <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
+    <string name="local_playback_failed">Dieser Song konnte nicht auf diesem PC abgespielt werden.</string>
+    <string name="local_playback_invalid_url">Dieser Song konnte nicht auf diesem PC abgespielt werden.</string>
+    <string name="local_playback_not_found">Dieser Song ist nicht mehr auf Ihrem Telefon.</string>
+    <string name="local_playback_other_active">Ton auf diesem PC: Ein anderer PC (%1$s) ist mit dem Telefon verbunden.</string>
+    <string name="local_playback_unavailable">Sound auf diesem PC ist nicht verfügbar: der eingebettete VLC konnte nicht geladen werden.</string>
+    <string name="local_playback_unavailable_linux">Sound auf diesem PC ist nicht verfügbar. Installieren Sie VLC mit %1$s und starten Sie die App neu.</string>
+    <string name="local_playback_unreachable">Ihr Telefon hat nicht geantwortet.</string>
+    <string name="local_playback_upstream_failed">Dein Telefon konnte diesen Song nicht erhalten.</string>
     <!-- Logs -->
-    <string name="logs_action_export">Export logs</string>
-    <string name="logs_export_debug_description">Export debug log to a file</string>
+    <string name="logs_action_export">Logs exportieren</string>
+    <string name="logs_export_debug_description">Debug-Log in eine Datei exportieren</string>
     <!-- Lyrics -->
     <string name="lyrics_alignment_left_label">Links</string>
     <string name="lyrics_alignment_right_label">Rechts</string>
     <string name="lyrics_color">Liedtext-Farbe</string>
     <string name="lyrics_title">Songtext</string>
     <!-- Maintenance -->
-    <string name="maintenance_card_desc">App state at a glance: last boot passes and live subsystems</string>
-    <string name="maintenance_convergence">Name convergence</string>
-    <string name="maintenance_db_cleanup">Artist link cleanup</string>
+    <string name="maintenance_card_desc">App-Status auf einen Blick: Letzter Boot-Durchgang und Live-Subsysteme</string>
+    <string name="maintenance_convergence">Namenskonvergenz</string>
+    <string name="maintenance_db_cleanup">Artist Link bereinigen</string>
     <string name="maintenance_debug_logging_title">Fehlerprotokoll aktivieren</string>
-    <string name="maintenance_dedup">Same-name artist dedup</string>
-    <string name="maintenance_live_subsystems">Live subsystems</string>
-    <string name="maintenance_no_data">No data</string>
-    <string name="maintenance_open">Open</string>
-    <string name="maintenance_open_desc">Open the full maintenance sheet</string>
-    <string name="maintenance_title">Maintenance</string>
+    <string name="maintenance_dedup">Entdup mit gleichnamigen Interpreten</string>
+    <string name="maintenance_live_subsystems">Live-Subsysteme</string>
+    <string name="maintenance_no_data">Keine Daten</string>
+    <string name="maintenance_open">Öffnen</string>
+    <string name="maintenance_open_desc">Öffne das komplette Wartungsblatt</string>
+    <string name="maintenance_title">Wartung</string>
     <!-- Manual -->
     <string name="manual_code">Pairing code</string>
-    <string name="manual_code_invalid">The code has 6 characters, for example ABC-DEF.</string>
-    <string name="manual_description">On your phone, Manage server shows the IP address, the port and a 6-character code.</string>
-    <string name="manual_ip">Phone IP address</string>
-    <string name="manual_ip_invalid">Enter an IPv4 address, for example 192.168.1.14.</string>
+    <string name="manual_code_invalid">Der Code hat 6 Zeichen, zum Beispiel ABC-DEF.</string>
+    <string name="manual_description">Auf Ihrem Telefon zeigt Verwalten Server die IP-Adresse, den Port und einen 6-Zeichen-Code.</string>
+    <string name="manual_ip">Telefon-IP-Adresse</string>
+    <string name="manual_ip_invalid">Geben Sie eine IPv4-Adresse ein, zum Beispiel 192.168.1.14.</string>
     <string name="manual_port">Port</string>
-    <string name="manual_port_invalid">Enter a port between 1 and 65535.</string>
-    <string name="manual_submit">Pair</string>
-    <string name="manual_title">Manual pairing</string>
+    <string name="manual_port_invalid">Geben Sie einen Port zwischen 1 und 65535 ein.</string>
+    <string name="manual_submit">Paar</string>
+    <string name="manual_title">Manuelle Paarung</string>
     <!-- Message -->
     <string name="message_type">Nachrichtentyp</string>
     <string name="message_type_modern">Modern</string>
@@ -335,7 +335,7 @@
     <string name="metadata_unknown_artist">Unbekannter Künstler</string>
     <string name="metadata_unknown_title">Unbekannter Titel</string>
     <!-- Miniplayer -->
-    <string name="miniplayer_button_like">Like</string>
+    <string name="miniplayer_button_like">Möge</string>
     <!-- Navigation -->
     <string name="navigation_action_picture_in_picture">PIP</string>
     <string name="navigation_position_bottom_floating_label">Untere Schwebende</string>
@@ -351,48 +351,48 @@
     <!-- Notice -->
     <string name="notice_failed">%1$s failed (HTTP %2$d, %3$s).</string>
     <string name="notice_late_error">%1$s failed on the phone (%2$s, command %3$s).</string>
-    <string name="notice_no_delta">%1$s: the phone did not confirm the change. Refreshing…</string>
-    <string name="notice_not_found">%1$s: not found on the phone.</string>
-    <string name="notice_other_active">%1$s: another PC (%2$s) is connected to the phone.</string>
-    <string name="notice_queue_mismatch">%1$s: the queue changed meanwhile. It was refreshed, try again.</string>
-    <string name="notice_rejected">%1$s: refused by the phone.</string>
-    <string name="notice_server_stopping">%1$s: the phone’s server is stopping.</string>
-    <string name="notice_truncated">%1$s: only %2$d of %3$d tracks were sent.</string>
-    <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
-    <string name="notice_unreachable">%1$s: the phone did not answer.</string>
+    <string name="notice_no_delta">%1$s: Das Telefon hat die Änderung nicht bestätigt. Aktualisiere…</string>
+    <string name="notice_not_found">%1$s: nicht auf dem Telefon gefunden.</string>
+    <string name="notice_other_active">%1$s: Ein anderer PC (%2$s) ist mit dem Telefon verbunden.</string>
+    <string name="notice_queue_mismatch">%1$s: Die Warteschlange wurde inzwischen geändert. Es wurde aktualisiert, versuche es erneut.</string>
+    <string name="notice_rejected">%1$s: vom Telefon abgelehnt.</string>
+    <string name="notice_server_stopping">%1$s: Der Server des Telefons wird gestoppt.</string>
+    <string name="notice_truncated">%1$s: Nur %2$d von %3$d Tracks wurden gesendet.</string>
+    <string name="notice_unavailable">%1$s: Der Handy-Player ist nicht verfügbar. Versuchen Sie es später erneut.</string>
+    <string name="notice_unreachable">%1$s: Das Telefon hat nicht geantwortet.</string>
     <!-- Old -->
-    <string name="old_install_path">Current install:</string>
+    <string name="old_install_path">Aktuelle Installation:</string>
     <!-- Pair -->
-    <string name="pair_device_name">Name of this PC</string>
-    <string name="pair_device_name_invalid">Enter a name of 1 to 64 characters.</string>
-    <string name="pair_listener_unreachable">Your phone could not reach this PC. Windows Firewall, or a network set to Public? Allow N-Zik Desktop Compagnon on private networks, or pair manually below.</string>
-    <string name="pair_manual_entry">Manual entry</string>
-    <string name="pair_manual_entry_text">Type the address and code shown on your phone</string>
-    <string name="pair_no_address">No local network address was found on this PC, so no QR code can be shown. Pair manually below.</string>
-    <string name="pair_qr_addresses">This PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_description">In N-Zik on your phone, open Manage server, start pairing, then tap Scan and point the camera at this code.</string>
-    <string name="pair_qr_preparing">Preparing the QR code…</string>
-    <string name="pair_qr_renew_hint">The code renews itself every 2 minutes.</string>
-    <string name="pair_qr_waiting">Waiting for your phone…</string>
-    <string name="pair_show_qr">Show the QR code</string>
-    <string name="pair_title">Pair with your phone</string>
+    <string name="pair_device_name">Name dieses PCs</string>
+    <string name="pair_device_name_invalid">Geben Sie einen Namen von 1 bis 64 Zeichen ein.</string>
+    <string name="pair_listener_unreachable">Ihr Telefon konnte diesen PC nicht erreichen. Windows Firewall oder ein Netzwerk auf Public? Erlaube N-Zik Desktop Compagnon in privaten Netzwerken oder Paar manuell unten.</string>
+    <string name="pair_manual_entry">Manueller Eintrag</string>
+    <string name="pair_manual_entry_text">Geben Sie die Adresse und den Code ein, der auf Ihrem Telefon angezeigt wird</string>
+    <string name="pair_no_address">Es wurde keine lokale Netzwerkadresse auf diesem PC gefunden, so dass kein QR-Code angezeigt werden kann. Manuell unten koppeln.</string>
+    <string name="pair_qr_addresses">Dieser PC: %1$s (Port %2$d)</string>
+    <string name="pair_qr_description">In N-Zik auf Ihrem Telefon öffnen Sie Server verwalten, starten Sie das Paaren, dann tippen Sie auf Scan und zeigen Sie die Kamera auf diesen Code.</string>
+    <string name="pair_qr_preparing">Vorbereitung des QR-Codes…</string>
+    <string name="pair_qr_renew_hint">Der Code erneuert sich alle 2 Minuten.</string>
+    <string name="pair_qr_waiting">Warten auf Ihr Telefon…</string>
+    <string name="pair_show_qr">QR-Code anzeigen</string>
+    <string name="pair_title">Mit Ihrem Telefon verbinden</string>
     <!-- Paired -->
-    <string name="paired_as">This PC appears as %1$s on the phone.</string>
-    <string name="paired_checking">Checking the connection…</string>
-    <string name="paired_error">The phone answered with an error (HTTP %1$d, %2$s).</string>
-    <string name="paired_incompatible">Phone version incompatible (contract %1$s).</string>
-    <string name="paired_ok">The phone is reachable.</string>
-    <string name="paired_other_active">Another PC (%1$s) is connected to the phone. Disconnect it from the phone, then retry.</string>
-    <string name="paired_other_active_unknown">another device</string>
-    <string name="paired_session_only">No keyring is available on this PC, so the pairing is kept only in memory for this session: pair again after a restart.</string>
+    <string name="paired_as">Dieser PC erscheint als %1$s auf dem Telefon.</string>
+    <string name="paired_checking">Verbindung wird überprüft…</string>
+    <string name="paired_error">Das Telefon antwortete mit einem Fehler (HTTP %1$d, %2$s).</string>
+    <string name="paired_incompatible">Telefonversion inkompatibel (Vertrag %1$s).</string>
+    <string name="paired_ok">Das Telefon ist erreichbar.</string>
+    <string name="paired_other_active">Ein anderer PC (%1$s) ist mit dem Telefon verbunden. Trennen Sie ihn vom Telefon und versuchen Sie es erneut.</string>
+    <string name="paired_other_active_unknown">ein anderes Gerät</string>
+    <string name="paired_session_only">Auf diesem PC ist kein Schlüsselring vorhanden, so dass das Paar nur für diese Sitzung im Speicher bleibt: Paar nach einem Neustart.</string>
     <string name="paired_title">Paired</string>
-    <string name="paired_with">Paired with %1$s</string>
+    <string name="paired_with">Gepaart mit %1$s</string>
     <!-- Parental -->
     <string name="parental_control">Jugendschutz</string>
     <!-- Path -->
-    <string name="path_copied">Path copied</string>
+    <string name="path_copied">Pfad kopiert</string>
     <!-- Phone -->
-    <string name="phone_panel_title">Phone</string>
+    <string name="phone_panel_title">Telefon</string>
     <!-- Player -->
     <string name="player_action_bar">Player-Aktionsleiste</string>
     <string name="player_action_bar_buttons">Sichtbarkeit der Schaltflächen</string>
@@ -418,7 +418,7 @@
     <string name="player_background_artwork_fluid_gradient_label">Fluid Farbverlauf aus Cover</string>
     <string name="player_background_artwork_gradient_label">Farbverlauf aus Cover</string>
     <string name="player_background_artwork_label">Hintergrundfarbe aus Cover</string>
-    <string name="player_background_artwork_m3e_morphing_label">Morphing shapes from cover</string>
+    <string name="player_background_artwork_m3e_morphing_label">Morphing Formen vom Cover</string>
     <string name="player_background_black_cherry_cosmos">Schwarzer Kirschkosmos</string>
     <string name="player_background_glossy_gradient">Glänzender Farbverlauf</string>
     <string name="player_background_golden_magma">Goldene Magma</string>
@@ -435,7 +435,7 @@
     <string name="player_background_theme_fluid_gradient_label">Fluid Farbverlauf vom Design</string>
     <string name="player_background_theme_gradient_label">Farbverlauf vom Design</string>
     <string name="player_background_theme_label">Hintergrundfarbe vom Design</string>
-    <string name="player_background_theme_m3e_morphing_label">Morphing shapes from theme</string>
+    <string name="player_background_theme_m3e_morphing_label">Morphing Formen vom Thema</string>
     <string name="player_behavior_and_visuals">Spielerverhalten &amp; Visuals</string>
     <string name="player_collapsed_disable_swiping_down">Wischen nach unten deaktivieren</string>
     <string name="player_controls">Spielersteuerung</string>
@@ -512,14 +512,14 @@
     <!-- Playlist -->
     <string name="playlist_action_add">Zu Playlist hinzufügen</string>
     <string name="playlist_action_create">Neue Playlist</string>
-    <string name="playlist_action_delete_selected">Delete playlists</string>
+    <string name="playlist_action_delete_selected">Wiedergabelisten löschen</string>
     <string name="playlist_action_export">Playlist exportieren</string>
     <string name="playlist_action_import">Playlist importieren</string>
     <string name="playlist_action_shuffle_positions">Positionen neu nummerieren</string>
     <string name="playlist_action_toggle_pinned">Wiedergabeliste anpinnen/lösen</string>
-    <string name="playlist_bookmark_unsupported_message">Cannot bookmark Liked Songs or Episodes playlist</string>
+    <string name="playlist_bookmark_unsupported_message">Kann Liked Songs oder Episoden Wiedergabeliste nicht speichern</string>
     <string name="playlist_create_dialog_title">Neue Wiedergabeliste erstellen</string>
-    <string name="playlist_delete_all_confirmation_count_format">Are you sure you want to delete ALL %d playlists?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Bist du sicher, dass du ALLE %d Wiedergabelisten löschen möchtest?</string>
     <string name="playlist_left_swipe">Wiedergabeliste links wischen</string>
     <string name="playlist_pinned_title">Angeheftete Playlisten</string>
     <string name="playlist_rename_dialog_title">Wiedergabeliste umbenennen</string>
@@ -529,7 +529,7 @@
     <string name="playlist_selection_action_deselect">Auswahl aufheben</string>
     <string name="playlist_top">Top-Playlist</string>
     <!-- Profile -->
-    <string name="profile_base_name">N-Zik Fan</string>
+    <string name="profile_base_name">N-Zik-Fächer</string>
     <string name="profile_title">Profiles</string>
     <!-- Proxy -->
     <string name="proxy">Proxy</string>
@@ -543,20 +543,20 @@
     <string name="recommendations_minimum_playback_duration_label">Minimale Wiedergabedauer</string>
     <string name="recommendations_title">Startseite</string>
     <!-- Reconnect -->
-    <string name="reconnect">Reconnect</string>
+    <string name="reconnect">Neu verbinden</string>
     <!-- Recovery -->
-    <string name="recovery_center">Rescue Center</string>
+    <string name="recovery_center">Rettungszentrum</string>
     <!-- Request -->
     <string name="request_a_feature">Fordere eine Funktion an oder schlage eine Idee vor</string>
     <!-- Revoked -->
-    <string name="revoked_description">This PC was removed from the phone’s paired devices. Pair it again to keep using it.</string>
-    <string name="revoked_pair_again">Pair again</string>
+    <string name="revoked_description">Dieser PC wurde von den gekoppelten Geräten des Telefons entfernt.</string>
+    <string name="revoked_pair_again">Erneut verbinden</string>
     <string name="revoked_title">Pairing revoked</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_month">Monat</string>
     <string name="rewind_filter_year">Jahr</string>
     <string name="rewind_title">Rewind</string>
-    <string name="rewind_top_sort">Rewind Top</string>
+    <string name="rewind_top_sort">Oben zurückziehen</string>
     <!-- Search -->
     <string name="search_display_order">Anzeigereihenfolge online</string>
     <string name="search_display_order_suggestions_first">Vorschläge zuerst</string>
@@ -606,9 +606,9 @@
     <string name="settings_interface_title">Benutzeroberfläche</string>
     <string name="settings_languages_title">Sprachen</string>
     <string name="settings_lastfm_title">Last.fm</string>
-    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
-    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
-    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
+    <string name="settings_launcher_shortcuts_description">Verknüpfungen für Launcher auswählen und neu sortieren</string>
+    <string name="settings_launcher_shortcuts_recovery_required_message">Rettung kann nicht deaktiviert werden</string>
+    <string name="settings_launcher_shortcuts_title">App-Verknüpfungen</string>
     <string name="settings_library_now_playing_indicator_label">Aktuell-Gespielt-Indikator</string>
     <string name="settings_library_playlist_indicator_description">Zeigt an, ob der Titel bereits zur Playliste hinzugefügt wurde</string>
     <string name="settings_library_playlist_indicator_label">Playlisten-Indikator</string>
@@ -639,9 +639,9 @@
     <string name="settings_network_title">Netzwerk</string>
     <string name="settings_parental_age_restriction_description">Verhindere die Wiedergabe von Songs mit Altersbegrenzung</string>
     <string name="settings_playback_duration_limit_label">Schließe Songs mit Zeitlimit aus</string>
-    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
-    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
-    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
+    <string name="settings_playback_exclude_disliked_albums_label">Nicht gemochte Alben ausschließen</string>
+    <string name="settings_playback_exclude_disliked_artists_label">Nicht gemochte Künstler ausschließen</string>
+    <string name="settings_playback_exclude_disliked_songs_label">Ungemochte Lieder ausschließen</string>
     <string name="settings_playback_pause_at_zero_volume_description">Die Wiedergabe wird angehalten, wenn die Lautstärke 0 erreicht und bei einem Wert über 0 wieder gestartet</string>
     <string name="settings_playback_pause_between_songs_label">Pause zwischen Songs</string>
     <string name="settings_playback_previous_restart_threshold_label">Rückwärts-Button wird den aktuellen Song zurücksetzen, nach dem die folgende Anzahl Sekunden verstrichen ist</string>
@@ -676,7 +676,7 @@
     <string name="settings_player_header_album_artist_description">Album und Interpreten Header</string>
     <string name="settings_player_header_icons_visible_label">Zeige Information mit Symbolen</string>
     <string name="settings_player_header_style_label">Kopfzeilen-Stil</string>
-    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
+    <string name="settings_player_m3e_motion_sensitivity_label">Theme-Shake-Empfindlichkeit</string>
     <string name="settings_player_next_queue_visible_label">Nächsten Song im Player anzeigen</string>
     <string name="settings_player_persistent_queue_description">Speichern und Wiederherstellen der wiederzugebenden Songs</string>
     <string name="settings_player_persistent_queue_label">Dauerhafter Spieler</string>
@@ -718,9 +718,9 @@
     <!-- Song -->
     <string name="song_matching_action_open">Album/Audio-Version anpassen</string>
     <string name="song_matching_unmatched_label">Unübertroffener Titel</string>
-    <string name="song_metadata_update_action_open">Open update dialog</string>
+    <string name="song_metadata_update_action_open">Update-Dialog öffnen</string>
     <!-- Sort -->
-    <string name="sort_artist_and_album">Artist, Album</string>
+    <string name="sort_artist_and_album">Interpret, Album</string>
     <!-- Stable -->
     <string name="stable_title">STABLE</string>
     <!-- Statistics -->
@@ -734,30 +734,30 @@
     <string name="theme_palette_dynamic">Dynamisch</string>
     <string name="theme_shake_sensitivity_disabled">Aus</string>
     <!-- This -->
-    <string name="this_pc">This PC</string>
+    <string name="this_pc">Dieser PC</string>
     <!-- Thumbnail -->
     <string name="thumbnail_action_edit">Thumbnail bearbeiten</string>
     <string name="thumbnail_action_reset">Thumbnail zurücksetzen</string>
     <!-- Title -->
     <string name="title_backup_and_restore">Backup und Wiederherstellen</string>
     <!-- Tray -->
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
+    <string name="tray_open">Öffnen</string>
+    <string name="tray_quit">Beenden</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <!-- Troubleshooting -->
     <string name="troubleshooting">Fehlerbehebung</string>
     <!-- Unreachable -->
-    <string name="unreachable_description">%1$s did not answer at %2$s. Its server may be stopped, or its IP address may have changed. The pairing is kept.</string>
-    <string name="unreachable_edit_ip">Edit IP</string>
-    <string name="unreachable_edit_ip_text">Keep the pairing, change the phone’s IP address only</string>
-    <string name="unreachable_port_kept">Port %1$d (kept)</string>
-    <string name="unreachable_save_ip">Save and retry</string>
-    <string name="unreachable_title">Phone unreachable</string>
+    <string name="unreachable_description">%1$s hat auf %2$snicht geantwortet. Sein Server kann gestoppt werden oder seine IP-Adresse hat sich geändert. Das Paar wird beibehalten.</string>
+    <string name="unreachable_edit_ip">IP bearbeiten</string>
+    <string name="unreachable_edit_ip_text">Behalte das Paaren, ändere nur die IP-Adresse des Telefons</string>
+    <string name="unreachable_port_kept">Port %1$d (gehalten)</string>
+    <string name="unreachable_save_ip">Speichern und wiederholen</string>
+    <string name="unreachable_title">Telefon nicht erreichbar</string>
     <!-- Update -->
-    <string name="update_check_off_aur">This app was installed from the AUR: the in-app updater is disabled for this install. Update the AUR entry (n-zik-desktop-compagnon) with your AUR helper.</string>
+    <string name="update_check_off_aur">Diese App wurde im AUR installiert: Der In-App-Updater ist für diese Installation deaktiviert. Aktualisieren Sie den AUR-Eintrag (n-zik-desktop-compagnon) mit Ihrem AUR-Helfer.</string>
     <string name="update_check_off_build">Wenn du diese Nachricht siehst, bedeutet dies, dass bei deinem Build keine automatische Aktualisierung aktiviert ist, pls die App manuell von github aktualisieren</string>
-    <string name="update_download_indeterminate">Downloaded %1$s (unknown size)</string>
-    <string name="update_download_truncated">The update download was truncated. The partial file was kept — try downloading again.</string>
+    <string name="update_download_indeterminate">Heruntergeladen %1$s (unbekannte Größe)</string>
+    <string name="update_download_truncated">Der Update-Download wurde gekürzt. Die partielle Datei wurde beibehalten — versuchen Sie es erneut.</string>
     <string name="update_unknown">Unbekannt</string>
     <!-- Updates -->
     <string name="updates_action_check">Nach Update suchen</string>
@@ -795,12 +795,12 @@
     <string name="updates_starting_status">Starte…</string>
     <string name="updates_up_to_date">Aktuell</string>
     <!-- Validating -->
-    <string name="validating">Pairing with your phone…</string>
+    <string name="validating">Kopplung mit Ihrem Telefon…</string>
     <!-- Visualizer -->
     <string name="visualizer_animation_bubbles">Blasen</string>
     <string name="visualizer_bar">Visualisierungsleiste</string>
     <string name="visualizer_microphone_permission_message">Visualizer benötigt Mikrofonberechtigung, gewähre bitte die Berechtigung.</string>
     <string name="visualizer_title">Visualisierer</string>
     <!-- Window -->
-    <string name="window">Window</string>
+    <string name="window">Fenster</string>
 </resources>
