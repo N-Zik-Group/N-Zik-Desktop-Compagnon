@@ -56,7 +56,7 @@
 ; lexicographic.
 ;
 ; SHORTCUTS PAGE (after the directory page, before the install - the user
-; decision): ONE checkbox "Create shortcuts (Start Menu and Desktop)" -
+; decision): ONE checkbox "$(InstallerShortcutsCheck)" -
 ; CHECKED BY DEFAULT (a user who never touches the page keeps today's
 ; behavior). Checked -> the install section creates the Start Menu group
 ; "N-Zik" + the Desktop shortcut; unchecked -> no shortcuts are created AND
@@ -99,8 +99,7 @@
 ; supercircle window icon (MUI_ICON / MUI_UNICON). This script is strictly
 ; ASCII: makensis reads it in the system codepage (cp1252 on this host), so
 ; any non-ASCII byte mojibakes (or can corrupt a string literal).
-; Language: English (built-in MUI). Additional OS languages can be added later
-; by extending MUI_LANGUAGE + LangString - a future option, not implemented.
+; Language: English and French, selected from the Windows UI language.
 ;
 ; EXIT CODES (pinned by `InstallerContractTest` - the in-app updater helper
 ; consumes them):
@@ -492,7 +491,7 @@ Function ScopeElevate
       SetErrorLevel 1223
       Quit
     ${Else}
-      MessageBox MB_ICONSTOP "Could not start the elevated installer (ShellExecuteW error $2, GetLastError $7)."
+      MessageBox MB_ICONSTOP "$(InstallerElevateInstall)"
       SetErrorLevel 1
       Quit
     ${EndIf}
@@ -674,7 +673,7 @@ Function un.UnScopeElevate
       SetErrorLevel 1223
       Quit
     ${Else}
-      MessageBox MB_ICONSTOP "Could not start the elevated uninstaller (ShellExecuteW error $2, GetLastError $7)."
+      MessageBox MB_ICONSTOP "$(InstallerElevateUninstall)"
       SetErrorLevel 1
       Quit
     ${EndIf}
@@ -868,7 +867,7 @@ Function un.onInit
       FileWrite $R1 "1"
       FileClose $R1
     ${EndIf}
-    MessageBox MB_ICONSTOP "N-Zik Desktop Compagnon is running. Close it and click OK to retry."
+    MessageBox MB_ICONSTOP "$(InstallerAppRunning)"
     SetErrorLevel 1
     Quit
   ${Else}
@@ -917,7 +916,7 @@ Function un.UnWelcomePre
       FileWrite $R1 "1"
       FileClose $R1
     ${EndIf}
-    MessageBox MB_ICONSTOP "N-Zik Desktop Compagnon is running. Close it and click OK to retry."
+    MessageBox MB_ICONSTOP "$(InstallerAppRunning)"
     SetErrorLevel 1
     Quit
   ${EndIf}
@@ -965,7 +964,7 @@ Function RRUShow
       ${If} $R2 != "-1"
         ; mode flags pipe-joined (this distro's MessageBox parser rejects the
         ; space-separated two-flag form - compile-proven 2026-10-08)
-        MessageBox MB_YESNO|MB_ICONQUESTION "Version $INST_VER_OLD of ${PRODUCT_NAME} is already installed. Reinstall version ${APP_VERSION} anyway?"
+        MessageBox MB_YESNO|MB_ICONQUESTION "$(InstallerReinstall)"
         ; $R1 = the clicked ID (this distro has no IDYES/IDNO constants -
         ; compile-proven: makensis warning 6000 on ${IDYES}); the Win32 IDs
         ; are IDYES = 6, IDNO = 7
@@ -990,21 +989,21 @@ Function RRUShow
   ${If} $R0 == error
     Abort
   ${EndIf}
-  ${NSD_CreateLabel} 5 5 250 16 "A previous installation was found"
+  ${NSD_CreateLabel} 5 5 250 16 "$(InstallerPreviousFound)"
   Pop $R1
   ; The version + product name are long: two single-line labels (multiline
   ; EDIT/MLText controls render empty in this NSIS distro - proven)
-  ${NSD_CreateLabel} 5 23 260 14 "Version $INST_VER_OLD of"
+  ${NSD_CreateLabel} 5 23 260 14 "$(InstallerPreviousVersion)"
   Pop $R2
-  ${NSD_CreateLabel} 5 39 260 14 "${PRODUCT_NAME} is installed."
+  ${NSD_CreateLabel} 5 39 260 14 "$(InstallerPreviousProduct)"
   Pop $R6
-  ${NSD_CreateLabel} 5 61 260 16 "Choose what to do:"
+  ${NSD_CreateLabel} 5 61 260 16 "$(InstallerChooseAction)"
   Pop $R6
-  ${NSD_CreateFirstRadioButton} 15 79 240 16 "Upgrade to the new version"
+  ${NSD_CreateFirstRadioButton} 15 79 240 16 "$(InstallerUpgrade)"
   Pop $R3
-  ${NSD_CreateAdditionalRadioButton} 15 97 240 16 "Repair (reinstall the same version)"
+  ${NSD_CreateAdditionalRadioButton} 15 97 240 16 "$(InstallerRepair)"
   Pop $R4
-  ${NSD_CreateAdditionalRadioButton} 15 115 240 16 "Remove the existing installation"
+  ${NSD_CreateAdditionalRadioButton} 15 115 240 16 "$(InstallerRemoveExisting)"
   Pop $R5
   ${NSD_SetState} $R3 ${BST_CHECKED}
   nsDialogs::Show
@@ -1049,29 +1048,29 @@ Function ScopeShow
   ${If} $ELEVATED == "1"
     ; Elevated child: scope is global, already elevated - informational only
     ; (single-line labels: multiline EDIT controls render empty here)
-    ${NSD_CreateLabel} 5 5 250 16 "Installing for all users"
+    ${NSD_CreateLabel} 5 5 250 16 "$(InstallerGlobalTitle)"
     Pop $R1
-    ${NSD_CreateLabel} 5 23 260 14 "This installation is for all users (global scope),"
+    ${NSD_CreateLabel} 5 23 260 14 "$(InstallerGlobalDetail)"
     Pop $R2
-    ${NSD_CreateLabel} 5 39 260 14 "running with administrator rights."
+    ${NSD_CreateLabel} 5 39 260 14 "$(InstallerGlobalAdmin)"
     Pop $R6
     StrCpy $CHOSEN_SCOPE "global"
   ${Else}
-    ${NSD_CreateLabel} 5 5 250 16 "Choose who can use this installation"
+    ${NSD_CreateLabel} 5 5 250 16 "$(InstallerChooseScope)"
     Pop $R1
-    ${NSD_CreateFirstRadioButton} 15 25 240 16 "Only me (default - no UAC prompt)"
+    ${NSD_CreateFirstRadioButton} 15 25 240 16 "$(InstallerOnlyMe)"
     Pop $R2
     ; The long descriptions as two single-line labels each (auto-wrap, never
     ; clip - the multiline boxes rendered empty with stray scrollbars)
-    ${NSD_CreateLabel} 27 43 235 14 "Installed in your user folder"
+    ${NSD_CreateLabel} 27 43 235 14 "$(InstallerUserFolder)"
     Pop $R6
-    ${NSD_CreateLabel} 27 59 235 14 "(%LOCALAPPDATA%). No admin rights needed."
+    ${NSD_CreateLabel} 27 59 235 14 "$(InstallerUserNoAdmin)"
     Pop $R6
-    ${NSD_CreateAdditionalRadioButton} 15 77 240 16 "All users of this computer (global)"
+    ${NSD_CreateAdditionalRadioButton} 15 77 240 16 "$(InstallerAllUsers)"
     Pop $R4
-    ${NSD_CreateLabel} 27 95 235 14 "Installed in Program Files, for all users."
+    ${NSD_CreateLabel} 27 95 235 14 "$(InstallerProgramFiles)"
     Pop $R5
-    ${NSD_CreateLabel} 27 111 235 14 "A UAC prompt asks for admin rights."
+    ${NSD_CreateLabel} 27 111 235 14 "$(InstallerUacPrompt)"
     Pop $R6
     ; Preselect the existing scope when present, else per-user (the default)
     ${If} $INST_SCOPE_OLD == "global"
@@ -1105,7 +1104,7 @@ Function ScopeLeave
   ; Cross-scope migration notice (the removal itself happens in the install section)
   ${If} $INST_SCOPE_OLD != ""
     ${If} $INST_SCOPE_OLD != $CHOSEN_SCOPE
-      MessageBox MB_ICONINFORMATION "A $INST_SCOPE_OLD installation is already present. It will be removed first. Your user data (pairing, settings, audio cache) are kept."
+      MessageBox MB_ICONINFORMATION "$(InstallerScopeReplacement)"
     ${EndIf}
   ${EndIf}
   ; Elevation: global scope from a non-elevated process -> relaunch elevated
@@ -1135,17 +1134,17 @@ Function ShortcutsShow
   ${If} $R0 == error
     Abort
   ${EndIf}
-  ${NSD_CreateLabel} 5 5 250 16 "Create shortcuts"
+  ${NSD_CreateLabel} 5 5 250 16 "$(InstallerShortcutsTitle)"
   Pop $R1
   ; The explanation as two single-line labels (multiline EDIT/MLText
   ; controls render empty in this NSIS distro - proven)
-  ${NSD_CreateLabel} 5 23 260 14 "The installer can create a Start Menu entry"
+  ${NSD_CreateLabel} 5 23 260 14 "$(InstallerShortcutsDetail)"
   Pop $R2
-  ${NSD_CreateLabel} 5 39 260 14 "(group N-Zik) and a Desktop shortcut."
+  ${NSD_CreateLabel} 5 39 260 14 "$(InstallerShortcutsGroup)"
   Pop $R6
   ; ONE checkbox controls both shortcuts (the request is binary) -
   ; CHECKED BY DEFAULT (today's behavior)
-  ${NSD_CreateCheckBox} 5 57 260 16 "Create shortcuts (Start Menu and Desktop)"
+  ${NSD_CreateCheckBox} 5 57 260 16 "$(InstallerShortcutsCheck)"
   Pop $R4
   ${NSD_SetState} $R4 ${BST_CHECKED}
   nsDialogs::Show
@@ -1184,22 +1183,22 @@ Function FinishShow
     ; (its own running-guard); a visible checkbox would add a redundant
     ; relaunch race. The page still shows (it is the finish - the wizard
     ; frame shows the Finish button on the last page automatically)
-    ${NSD_CreateLabel} 5 5 250 16 "Installation complete"
+    ${NSD_CreateLabel} 5 5 250 16 "$(InstallerComplete)"
     Pop $R1
-    ${NSD_CreateLabel} 5 23 260 14 "${PRODUCT_NAME} has been updated."
+    ${NSD_CreateLabel} 5 23 260 14 "$(InstallerUpdated)"
     Pop $R2
-    ${NSD_CreateLabel} 5 39 260 14 "The application will be restarted"
+    ${NSD_CreateLabel} 5 39 260 14 "$(InstallerRestartDetail)"
     Pop $R6
-    ${NSD_CreateLabel} 5 55 260 14 "automatically - click Finish to close."
+    ${NSD_CreateLabel} 5 55 260 14 "$(InstallerRestartFinish)"
     Pop $R7
     StrCpy $LAUNCH_APP "0"
   ${Else}
-    ${NSD_CreateLabel} 5 5 250 16 "Installation complete"
+    ${NSD_CreateLabel} 5 5 250 16 "$(InstallerComplete)"
     Pop $R1
-    ${NSD_CreateLabel} 5 23 260 14 "${PRODUCT_NAME} has been installed."
+    ${NSD_CreateLabel} 5 23 260 14 "$(InstallerInstalled)"
     Pop $R2
     ; CHECKED BY DEFAULT - read in the leave callback (distro quirk)
-    ${NSD_CreateCheckBox} 5 41 260 16 "Launch ${PRODUCT_NAME}"
+    ${NSD_CreateCheckBox} 5 41 260 16 "$(InstallerLaunch)"
     Pop $R4
     ${NSD_SetState} $R4 ${BST_CHECKED}
   ${EndIf}
@@ -1282,14 +1281,14 @@ MigNoDir:
         ReadRegStr $R4 HKLM "${PRODUCT_KEY}" "InstallDir"
       ${EndIf}
       ${If} $R4 != ""
-        MessageBox MB_ICONSTOP "The previous installation (scope: $INST_SCOPE_OLD) could not be fully removed - its registry entry is still present. Re-run the installer."
+        MessageBox MB_ICONSTOP "$(InstallerPreviousRegistry)"
         SetErrorLevel 1
         Quit
       ${EndIf}
       IfFileExists "$INST_DIR_OLD" E1DirStill
       Goto E1Ok
 E1DirStill:
-      MessageBox MB_ICONSTOP "The previous installation (scope: $INST_SCOPE_OLD) could not be fully removed - its directory is still present. Re-run the installer."
+      MessageBox MB_ICONSTOP "$(InstallerPreviousDirectory)"
       SetErrorLevel 1
       Quit
 E1Ok:
@@ -1304,7 +1303,7 @@ E1Ok:
   Goto InstallGuardDone
   FileOpen $9 "$INSTDIR\${LAUNCHER_NAME}" w
   ${If} $9 = -1
-    MessageBox MB_ICONSTOP "N-Zik Desktop Compagnon is running. Close it and click OK to retry."
+    MessageBox MB_ICONSTOP "$(InstallerAppRunning)"
     SetErrorLevel 1
     Quit
   ${Else}
@@ -1439,12 +1438,11 @@ PageExEnd
 ; The uninstall section runs when the uninstaller reaches this (final) page.
 UninstPage instfiles
 
-; --- Language: English (built-in MUI) - inserted after ALL the page macros
-;     (install + uninstall). The per-language MUI chrome strings are supplied by
-;     MUI itself; the custom page texts are English. Additional OS languages can
-;     be added later by extending MUI_LANGUAGE + LangString - a future option,
-;     not implemented. ---
+; Load the standard MUI labels and the custom installer catalogs.
 !insertmacro MUI_LANGUAGE English
+!insertmacro MUI_LANGUAGE French
+!include "${__FILEDIR__}\localization\source\installer.nsh"
+!include "${__FILEDIR__}\localization\translations\fr\installer.nsh"
 
 ; ============================================================================
 ; Uninstall wipe-checkbox page (UNCHECKED BY DEFAULT)
@@ -1460,25 +1458,25 @@ Function un.UnWipeShow
     Abort
   ${EndIf}
   StrCpy $WipeData "0"
-  ${NSD_CreateLabel} 5 5 250 16 "Uninstall ${PRODUCT_NAME}"
+  ${NSD_CreateLabel} 5 5 250 16 "$(InstallerUninstallTitle)"
   Pop $R1
   ; The long description as two single-line labels (multiline EDIT/MLText
   ; controls render empty in this NSIS distro - proven)
-  ${NSD_CreateLabel} 5 23 260 14 "Your user data (pairing, settings, audio cache)"
+  ${NSD_CreateLabel} 5 23 260 14 "$(InstallerKeepData)"
   Pop $R2
-  ${NSD_CreateLabel} 5 39 260 14 "are kept by default."
+  ${NSD_CreateLabel} 5 39 260 14 "$(InstallerKeepDefault)"
   Pop $R6
-  ${NSD_CreateLabel} 5 57 260 14 "Data folder:"
+  ${NSD_CreateLabel} 5 57 260 14 "$(InstallerDataFolder)"
   Pop $R6
   ; The full data path as a single-line EDIT (auto-hscrolls, renders fine)
   ${NSD_CreateText} 5 73 260 16 "$APPDATA\${DATA_DIR_NAME}"
   Pop $R3
   ; UNCHECKED by default (the NSD default state)
-  ${NSD_CreateCheckBox} 5 95 260 16 "Also delete user data"
+  ${NSD_CreateCheckBox} 5 95 260 16 "$(InstallerDeleteData)"
   Pop $R4
-  ${NSD_CreateLabel} 5 113 260 14 "(pairing, settings, audio cache - never touched"
+  ${NSD_CreateLabel} 5 113 260 14 "$(InstallerDeleteDataDetail)"
   Pop $R5
-  ${NSD_CreateLabel} 5 129 260 14 "by a normal uninstall)"
+  ${NSD_CreateLabel} 5 129 260 14 "$(InstallerDeleteDataNormal)"
   Pop $R6
   nsDialogs::Show
   Pop $R0
@@ -1513,7 +1511,7 @@ Section "Uninstall"
     ReadRegStr $R4 HKCU "${PRODUCT_KEY}" "InstallDir"
   ${EndIf}
   ${If} $R4 != ""
-    MessageBox MB_ICONSTOP "Another installation of ${PRODUCT_NAME} (the other scope) is still present. Remove it first, then retry."
+    MessageBox MB_ICONSTOP "$(InstallerOtherScope)"
     Abort
   ${EndIf}
 

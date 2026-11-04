@@ -332,7 +332,7 @@ class InstallerContractTest {
         // The non-/UPDATE branch: the launch checkbox, ON by default
         val offUpdateBranch = show.substringAfter("\${Else}")
         assertTrue(
-            offUpdateBranch.contains("Launch \${PRODUCT_NAME}"),
+            offUpdateBranch.contains("\$(InstallerLaunch)"),
             "outside /UPDATE the finish page offers the \"Launch <product>\" checkbox"
         )
         assertTrue(

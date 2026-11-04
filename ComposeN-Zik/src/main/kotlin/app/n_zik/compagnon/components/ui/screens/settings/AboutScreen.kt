@@ -83,6 +83,7 @@ import java.util.Date
 import java.util.Locale
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -621,7 +622,7 @@ fun AboutScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         BasicText(
-                            text = "${Contributors.countTranslators()} " + stringResource(Res.string.about_translators_title),
+                            text = pluralStringResource(Res.plurals.about_translator_count, Contributors.countTranslators(), Contributors.countTranslators()),
                             style = typography().xs.semiBold.copy(color = colorPalette().textSecondary),
                         )
                     }
@@ -671,7 +672,7 @@ fun AboutScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         BasicText(
-                            text = "${Contributors.countDevelopers()} " + stringResource(Res.string.about_developers),
+                            text = pluralStringResource(Res.plurals.about_developer_designer_count, Contributors.countDevelopers(), Contributors.countDevelopers()),
                             style = typography().xs.semiBold.copy(color = colorPalette().textSecondary),
                         )
                     }

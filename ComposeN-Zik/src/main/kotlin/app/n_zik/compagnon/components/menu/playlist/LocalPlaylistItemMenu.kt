@@ -60,6 +60,7 @@ import app.n_zik.compagnon.utils.secondary
 import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -317,7 +318,7 @@ class LocalPlaylistItemMenu(
                         modifier = marquee,
                     )
                     BasicText(
-                        text = "${playlist.trackCount} ${stringResource(Res.string.library_songs_title)}",
+                        text = pluralStringResource(Res.plurals.library_song_count, playlist.trackCount, playlist.trackCount),
                         style = typography().xs.semiBold.secondary.copy(color = colorPalette().textSecondary),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

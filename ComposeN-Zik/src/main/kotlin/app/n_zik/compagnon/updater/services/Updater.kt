@@ -560,8 +560,8 @@ object Updater {
                 is NoSuchFileException -> getString(Res.string.updates_no_update_available)
                 // Loop 2: a 200 with a non-JSON body (GitHub rate-limit HTML, a proxy error
                 // page) must map to the clean check-failed error, not a raw decode dump.
-                is SerializationException -> getString(Res.string.error_update_check_failed, "invalid response")
-                else -> e.message ?: getString(Res.string.error_update_check_failed, "unknown")
+                is SerializationException -> getString(Res.string.updates_check_invalid_response)
+                else -> getString(Res.string.updates_check_failed)
             }
 
             // Use appropriate toast type based on exception — forced checks only: the

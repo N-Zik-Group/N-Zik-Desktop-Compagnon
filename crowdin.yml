@@ -8,3 +8,6 @@ files:
         sr-CS: sr-rCS
         zh-CN: zh-rCN
         zh-TW: zh-rTW
+
+  - source: /ComposeN-Zik/packaging/windows/localization/source/installer.nsh
+    translation: /ComposeN-Zik/packaging/windows/localization/translations/%two_letters_code%/installer.nsh

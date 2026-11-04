@@ -151,7 +151,7 @@ object UpdateDownloadManager {
             downloadJob = NzikDispatchers.fireAndForget(NzikDispatchers.DATA).launch {
                 if (downloadToken === token) {
                     _downloadState.value = DownloadState.Failed(
-                        getString(Res.string.error_update_download_failed, "invalid file name"),
+                        getString(Res.string.updates_download_invalid_filename),
                     )
                 }
             }
@@ -289,7 +289,7 @@ object UpdateDownloadManager {
                 val error = if (e.message?.contains("Content-Length mismatch") == true) {
                     getString(Res.string.update_download_truncated)
                 } else {
-                    e.message ?: getString(Res.string.error_update_download_failed, "unknown")
+                    getString(Res.string.updates_download_generic_error)
                 }
                 if (downloadToken === token && !cancelRequested) {
                     _downloadState.value = DownloadState.Failed(error)

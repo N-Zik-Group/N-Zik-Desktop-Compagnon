@@ -381,6 +381,7 @@ tasks.register<Exec>("packageInstaller") {
     val versionBuild = if (channel == "dev") channelSuffix.removePrefix("-dev-") else "0"
     val nsisScript = layout.projectDirectory.file("packaging/windows/installer.nsi")
     inputs.file(nsisScript)
+    inputs.dir(layout.projectDirectory.dir("packaging/windows/localization"))
     inputs.dir(appDir)
     outputs.file(outFile)
     doFirst {
