@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Προβολή αρχείων καταγραφής</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">Ο κώδικας έχει 6 χαρακτήρες, για παράδειγμα ABC-DEF.</string>
-    <string name="manual_description">Στο τηλέφωνό σας, η Διαχείριση διακομιστή εμφανίζει τη διεύθυνση IP, τη θύρα και έναν κωδικό 6 χαρακτήρων.</string>
+    <string name="manual_description">Στο τηλέφωνό σας, ανοίξτε το διακομιστή PC. Εάν ο διακομιστής σταματήσει, πατήστε Έναρξη. Επιλέξτε Σύζευξη ενός PC για να δείτε τη διεύθυνση IP, τη θύρα και τον κώδικα 6 χαρακτήρων.</string>
     <string name="manual_ip">Διεύθυνση IP τηλεφώνου</string>
     <string name="manual_ip_invalid">Εισάγετε διεύθυνση IPv4, για παράδειγμα 192.168.1.14.</string>
     <string name="manual_port">Θύρα</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Πληκτρολογήστε τη διεύθυνση και τον κωδικό που εμφανίζεται στο τηλέφωνό σας</string>
     <string name="pair_no_address">Δεν βρέθηκε διεύθυνση τοπικού δικτύου σε αυτόν τον υπολογιστή, έτσι δεν μπορεί να εμφανιστεί κανένας κωδικός QR.</string>
     <string name="pair_qr_addresses">Αυτό Το PC: %1$s (θύρα %2$d)</string>
-    <string name="pair_qr_description">Στο N-Zik στο τηλέφωνό σας, ανοίξτε Διαχείριση διακομιστή, ξεκινήστε τη σύζευξη και, στη συνέχεια, πατήστε Σάρωση και δείξτε την κάμερα σε αυτόν τον κώδικα.</string>
+    <string name="pair_qr_description">Στο N-Zik στο τηλέφωνό σας, ανοίξτε το διακομιστή PC. Αν ο διακομιστής σταματήσει, πατήστε Έναρξη. Επιλέξτε Σύζευξη ενός PC και μετά πατήστε Σάρωση QR code και δείξτε την κάμερα σε αυτόν τον κώδικα.</string>
     <string name="pair_qr_preparing">Προετοιμασία του κωδικού QR…</string>
     <string name="pair_qr_renew_hint">Ο κώδικας ανανεώνεται κάθε 2 λεπτά.</string>
     <string name="pair_qr_waiting">Waiting for your phone…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Θύρα %1$d (διατηρείται)</string>
     <string name="unreachable_save_ip">Αποθήκευση και επανάληψη</string>
     <string name="unreachable_title">Μη προσπελάσιμο τηλέφωνο</string>
+    <string name="network_stream_retrying_playback">Γίνεται προσπάθεια συνέχισης της αναπαραγωγής…</string>
 </resources>
