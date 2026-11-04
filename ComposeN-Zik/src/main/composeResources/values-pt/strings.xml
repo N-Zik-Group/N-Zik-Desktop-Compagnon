@@ -124,7 +124,7 @@
     <string name="common_option_default">Predefinição</string>
     <string name="common_option_disabled">Desativado</string>
     <string name="common_option_none">Nenhum</string>
-    <string name="common_option_random">Músicas tocadas casualmente</string>
+    <string name="common_option_random">Aleatório</string>
     <string name="common_other_section_title">Outros</string>
     <string name="common_playback_section_title">Reprodução</string>
     <string name="common_size_big">Grande</string>
@@ -149,7 +149,7 @@
     <string name="connection_replaced">Outra janela desse PC pegou a sessão.</string>
     <string name="connection_server_stopped">O servidor parou. Reinicie-o a partir do aplicativo N-Zik no seu telefone, e então reconecte-o.</string>
     <!-- Contributors -->
-    <string name="contributors">CONTRIBUIDORES</string>
+    <string name="contributors">Contribuidores</string>
     <!-- Dismiss -->
     <string name="dismiss">Descartar</string>
     <!-- Download -->
@@ -170,7 +170,7 @@
     <string name="error_listener_failed">O emparelhamento não pode ser aberto. Pareie manualmente abaixo.</string>
     <string name="error_phone_unreachable">O telefone não pôde ser alcançado. Verifique se seu servidor está sendo executado e se ambos os dispositivos estão no mesmo Wi-Fi.</string>
     <string name="error_rate_limited">Too many attempts. Try again in %1$d s.</string>
-    <string name="error_storage_failed">The pairing could not be saved in the Windows Credential Manager.</string>
+    <string name="error_storage_failed">O pareamento não pôde ser salvo neste PC.</string>
     <string name="error_unexpected">Resposta inesperada do telefone (HTTP %1$d, %2$s).</string>
     <string name="error_unknown_code">sem código</string>
     <string name="error_update_check_failed">A verificação de atualização falhou (%1$s)</string>
@@ -180,7 +180,7 @@
     <string name="export_cached_song_action">Exportar música em cache ou baixada</string>
     <string name="export_cached_songs_action">Exportar em cache</string>
     <!-- Fake -->
-    <string name="fake_audio_bar">Barra de áudio falsa</string>
+    <string name="fake_audio_bar">Ondas de Áudio</string>
     <!-- Forget -->
     <string name="forget_phone">Esquecer este telefone</string>
     <string name="forget_phone_text">Remove o emparelhamento deste PC</string>
@@ -201,10 +201,10 @@
     <string name="install_pkg_command">Instale o pacote com:</string>
     <string name="install_pkg_manual">Nenhum gerenciador de pacotes foi detectado. Instale o pacote baixado manualmente.</string>
     <string name="install_pkg_pacman_command">Atualize o pacote com:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
+    <string name="install_replacement_portable">Saia do aplicativo primeiro (seus arquivos serão bloqueados enquanto ele for executado), depois substitua a pasta do aplicativo: exclua a pasta de aplicativos atual, descompacte o arquivo baixado em seu local (o zip abre em uma nova pasta de aplicativos - nunca mais o atual) e reinicia.</string>
     <string name="install_replacement_portable_linux">Saia primeiro do aplicativo (seus arquivos serão bloqueados enquanto ele for executado), depois substitua a pasta do aplicativo: exclua a pasta do aplicativo atual, extraia o baixado. ar.gz em seu lugar (o tarball abre em uma nova pasta de aplicativos - nunca sobre a atual) e reinicia.</string>
     <!-- Interface -->
-    <string name="interface_in_use">‘Interface’ em utilização</string>
+    <string name="interface_in_use">Interface em uso</string>
     <!-- Lastfm -->
     <string name="lastfm_love">Amor no Last.fm</string>
     <string name="lastfm_unlove">Unlove on Last.fm</string>
@@ -322,10 +322,10 @@
     <string name="manual_submit">Emparelhar</string>
     <string name="manual_title">Pareamento manual</string>
     <!-- Message -->
-    <string name="message_type">Tipo de mensagem</string>
+    <string name="message_type">Popup message style</string>
     <string name="message_type_modern">Moderno</string>
     <!-- Metadata -->
-    <string name="metadata_action_change_artists">Alterar Autores</string>
+    <string name="metadata_action_change_artists">Atualizar Autores</string>
     <string name="metadata_action_change_cover">Atualizar a Capa</string>
     <string name="metadata_action_change_title">Atualizar o Título</string>
     <string name="metadata_action_edit">Editar Metadados</string>
@@ -394,7 +394,7 @@
     <!-- Phone -->
     <string name="phone_panel_title">Smartphone</string>
     <!-- Player -->
-    <string name="player_action_bar">BARRA DE AÇÃO DO REPRODUTOR</string>
+    <string name="player_action_bar">Barra de ação do reprodutor</string>
     <string name="player_action_bar_buttons">Visibilidade dos botões</string>
     <string name="player_action_bar_buttons_description">Configurar quais botões aparecem na barra de ação do jogador</string>
     <string name="player_action_enqueue">Em fila</string>
@@ -409,14 +409,14 @@
     <string name="player_action_seek_forward_30_seconds">Avançar 30 segundos</string>
     <string name="player_action_seek_forward_5_seconds">Avançar 5 segundos</string>
     <string name="player_action_shuffle">Aleatorizar</string>
-    <string name="player_action_shuffle_hint">Aleatorizar</string>
+    <string name="player_action_shuffle_hint">Embaralhar</string>
     <string name="player_appearance">Aparência do Player</string>
     <string name="player_auto_load_songs_in_queue">Carregar músicas automaticamente na fila</string>
     <string name="player_auto_load_songs_in_queue_description">Adicionar músicas quando a fila está prestes a terminar</string>
     <string name="player_background_animated_gradient_label">Gradiente Animado</string>
-    <string name="player_background_artwork_blurred_label">Fundo da capa desfocada</string>
-    <string name="player_background_artwork_fluid_gradient_label">Fundo gradiente a partir da capa</string>
-    <string name="player_background_artwork_gradient_label">Plano de fundo gradiente a partir da capa</string>
+    <string name="player_background_artwork_blurred_label">Capa de música desfocada</string>
+    <string name="player_background_artwork_fluid_gradient_label">Gradiente fluido da capa da música</string>
+    <string name="player_background_artwork_gradient_label">Gradiente da capa da música</string>
     <string name="player_background_artwork_label">Plano de fundo da capa</string>
     <string name="player_background_artwork_m3e_morphing_label">Transformação de formas da capa</string>
     <string name="player_background_black_cherry_cosmos">Cosmos de Cerejeira Preta</string>
@@ -432,8 +432,8 @@
     <string name="player_background_palette_label">Paleta de cor</string>
     <string name="player_background_purple_liquid">Líquido Roxo</string>
     <string name="player_background_stage">Estágio</string>
-    <string name="player_background_theme_fluid_gradient_label">Fundo gradiente a partir do tema</string>
-    <string name="player_background_theme_gradient_label">Plano de fundo gradiente a partir da capa</string>
+    <string name="player_background_theme_fluid_gradient_label">Gradiente fluido do tema</string>
+    <string name="player_background_theme_gradient_label">Gradiente do tema</string>
     <string name="player_background_theme_label">Plano de fundo do tema</string>
     <string name="player_background_theme_m3e_morphing_label">Transformação de formas do tema</string>
     <string name="player_behavior_and_visuals">Comportamento do Player &amp; Visuais</string>
@@ -460,10 +460,10 @@
     <string name="player_keep_minimized">Manter minimizado</string>
     <string name="player_listen_on_title">Escutar no</string>
     <string name="player_matching_required_message">Reprodução bloqueada, faça o jogo primeiro</string>
-    <string name="player_mini_action_add_to_playlist">Adicionar à lista de reprodução</string>
+    <string name="player_mini_action_add_to_playlist">Adicionar à playlist</string>
     <string name="player_mini_action_shuffle">Aleatorizar</string>
     <string name="player_mini_button_audio_output">Saída de áudio</string>
-    <string name="player_mini_button_discover">Descubra</string>
+    <string name="player_mini_button_discover">Descobrir</string>
     <string name="player_mini_button_download">Baixar</string>
     <string name="player_mini_button_lyrics">Letras</string>
     <string name="player_mini_button_play_pause">Reproduzir/Pausar</string>
@@ -483,7 +483,7 @@
     <string name="player_pause_on_volume_zero">Pausar no volume zero</string>
     <string name="player_play_button_wavy_circle_label">Cama circular</string>
     <string name="player_position">Posição do Reprodutor</string>
-    <string name="player_position_bottom_label">Direction bottom</string>
+    <string name="player_position_bottom_label">Em baixo</string>
     <string name="player_presets_and_layout">Layout de predefinições &amp;</string>
     <string name="player_progress_mini_player">Player minimizado</string>
     <string name="player_queue_action_remove">Remover da fila</string>
@@ -532,14 +532,14 @@
     <string name="profile_base_name">Fã N-Zik</string>
     <string name="profile_title">Profiles</string>
     <!-- Proxy -->
-    <string name="proxy">PROXY</string>
+    <string name="proxy">Proxy</string>
     <!-- Queue -->
     <string name="queue_discover_description">Remove músicas curtidas e da playlist da fila</string>
     <string name="queue_discover_title">Descubra</string>
     <!-- Radio -->
     <string name="radio_action_start">Começar rádio</string>
     <!-- Recommendations -->
-    <string name="recommendations_action_smart_shuffle">RECOMENDAÇÕES INTELIGENTES</string>
+    <string name="recommendations_action_smart_shuffle">Recomendação inteligente</string>
     <string name="recommendations_minimum_playback_duration_label">Tempo mínimo de escuta</string>
     <string name="recommendations_title">Escolhas rápidas</string>
     <!-- Reconnect -->
@@ -739,13 +739,13 @@
     <string name="thumbnail_action_edit">Editar Miniatura</string>
     <string name="thumbnail_action_reset">Resetar Miniatura</string>
     <!-- Title -->
-    <string name="title_backup_and_restore">BACKUP E RESTAURAR</string>
+    <string name="title_backup_and_restore">Backup e restaurar</string>
     <!-- Tray -->
     <string name="tray_open">Abertas</string>
     <string name="tray_quit">Encerrar</string>
     <string name="tray_tooltip">N-Zik Desktop Compagnon</string>
     <!-- Troubleshooting -->
-    <string name="troubleshooting">TROUBBLESHOOTING</string>
+    <string name="troubleshooting">Troubbleshooting</string>
     <!-- Unreachable -->
     <string name="unreachable_description">%1$s não respondeu a %2$s. Seu servidor pode ser interrompido ou seu endereço IP pode ter sido alterado. O pareamento foi mantido.</string>
     <string name="unreachable_edit_ip">Editar IP</string>
