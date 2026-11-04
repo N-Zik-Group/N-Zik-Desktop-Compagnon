@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Visa loggar</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">Koden har 6 tecken, till exempel ABC-DEF.</string>
-    <string name="manual_description">På din telefon visar Hantera server IP-adressen, porten och en 6-teckenkod.</string>
+    <string name="manual_description">På telefonen öppnar du PC-servern. Om servern stoppas trycker du på Start. Välj Para ihop en dator för att se IP-adressen, porten och 6-teckenkoden.</string>
     <string name="manual_ip">Telefon IP-adress</string>
     <string name="manual_ip_invalid">Ange en IPv4-adress, till exempel 192.168.1.14.</string>
     <string name="manual_port">Port</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Skriv in adressen och koden som visas på din telefon</string>
     <string name="pair_no_address">Ingen lokal nätverksadress hittades på denna dator, så ingen QR-kod kan visas. Para manuellt nedan.</string>
     <string name="pair_qr_addresses">Denna PC: %1$s (port %2$d)</string>
-    <string name="pair_qr_description">I N-Zik på din telefon, öppna Hantera servern, börja para ihop och tryck sedan på Skanna och peka kameran mot denna kod.</string>
+    <string name="pair_qr_description">I N-Zik på telefonen öppnar du PC-servern. Om servern stoppas trycker du på Start. Välj Para ihop en dator och tryck sedan på Skanna QR-koden och peka kameran mot den här koden.</string>
     <string name="pair_qr_preparing">Förbereder QR-koden…</string>
     <string name="pair_qr_renew_hint">Koden förnyas varannan minut.</string>
     <string name="pair_qr_waiting">Väntar på din telefon…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Port %1$d (kvar)</string>
     <string name="unreachable_save_ip">Spara och försök igen</string>
     <string name="unreachable_title">Telefonen kan inte nås</string>
+    <string name="network_stream_retrying_playback">Återställer uppspelning…</string>
 </resources>
