@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="app_subtitle">Kameraad voor N-Zik</string>
     <string name="cancel">Annuleer</string>
-    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_artist_conjunction_and">en</string>
     <string name="common_clipboard_copy_success">Gekopieerd</string>
     <string name="common_color_source_theme">Thema</string>
-    <string name="common_color_white">White</string>
-    <string name="common_delete_success">Deleted</string>
+    <string name="common_color_white">wit</string>
+    <string name="common_delete_success">Verwijderd</string>
     <string name="common_empty_items">Geen artikelen</string>
     <string name="common_option_all">Alles</string>
     <string name="common_option_custom">Aangepast</string>
     <string name="common_option_default">Standaard</string>
     <string name="common_option_disabled">Uitgeschakeld</string>
     <string name="common_option_none">Geen</string>
-    <string name="common_option_random">Random</string>
+    <string name="common_option_random">Willekeurig</string>
     <string name="common_size_big">Groot</string>
     <string name="common_size_biggest">Grootste</string>
     <string name="common_size_medium">Normaal</string>
     <string name="common_size_small">Klein</string>
     <string name="common_state_off">UIT</string>
     <string name="common_state_on">op</string>
-    <string name="common_storage_used_suffix">used</string>
+    <string name="common_storage_used_suffix">gebruikt</string>
     <string name="common_validation_empty_value">Waarde kan niet leeg zijn</string>
-    <string name="common_validation_minimum_value">Value must be greater than</string>
-    <string name="dismiss">Dismiss</string>
+    <string name="common_validation_minimum_value">Waarde moet groter zijn dan</string>
+    <string name="dismiss">Uitschakelen</string>
 </resources>
