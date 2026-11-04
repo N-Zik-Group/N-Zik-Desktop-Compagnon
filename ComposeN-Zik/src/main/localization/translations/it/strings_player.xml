@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Riavvolgi 5 secondi</string>
     <string name="player_seek_backward_thirty_seconds">Riavvolge 30 secondi</string>
     <string name="player_shuffle_empty_message">Nessuna canzone da riprodurre in modalità casuale</string>
-    <string name="player_shuffled_song_count_format">%d canzoni mescolate</string>
+    <string name="player_queue_shuffled_count_format">Coda mischiata (tracce: %d)</string>
+    <string name="player_shuffled_song_count_format">Tracce mescolate: %d</string>
     <string name="player_sleep_timer_title">Timer spegnimento</string>
     <string name="player_statistics_volume_label">Volume</string>
     <string name="player_swap_controls_with_timeline">Scambia i controlli con la timeline</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Barra visualizzatore</string>
     <string name="visualizer_microphone_permission_message">L\'effetto Visualizer richiede i permessi del microfono, concedili per favore.</string>
     <string name="visualizer_title">Visualizzazione</string>
+    <string name="player_error_unknown">Si è verificato un errore di riproduzione sconosciuto</string>
 </resources>
