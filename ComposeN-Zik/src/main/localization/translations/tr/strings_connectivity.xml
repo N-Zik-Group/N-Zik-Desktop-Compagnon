@@ -26,7 +26,7 @@
     <string name="listen_together_no_blocked_users">Engellenmiş kullanıcı yok</string>
     <string name="listen_together_not_set">Ayarlanmamış</string>
     <string name="listen_together_room">Oda</string>
-    <string name="listen_together_server_request_failed">The Listen Together server could not complete the request.</string>
+    <string name="listen_together_server_request_failed">Birlikte Dinle sunucusu isteği tamamlayamadı.</string>
     <string name="listen_together_server_url">Sunucu URL\'si</string>
     <string name="listen_together_suggest">Oda sahibine öner</string>
     <string name="listen_together_sync_volume">Oda sahibinin ses seviyesine eşitle</string>
@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Günlükleri görüntüle</string>
     <string name="manual_code">Eşleştirme kodu</string>
     <string name="manual_code_invalid">Kod 6 karakterden oluşur, örneğin ABC-DEF.</string>
-    <string name="manual_description">Telefonunuzda, Sunucuyu yönet seçeneği altında IP adresi, bağlantı noktası ve 6 karakterlik bir kod görüntülenir.</string>
+    <string name="manual_description">Telefonunuzda « Bilgisayar sunucusu » bölümünü açın. Sunucu durmuşsa « Başlat » düğmesine dokunun. IP adresini, bağlantı noktasını ve 6 karakterli kodu görmek için « Bir bilgisayarı eşleştirin » seçeneğine dokunun.</string>
     <string name="manual_ip">Telefonun IP adresi</string>
     <string name="manual_ip_invalid">Bir IPv4 adresi girin, örneğin 192.168.1.14.</string>
     <string name="manual_port">Bağlantı noktası</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Telefonunuzda görünen adresi ve kodu girin</string>
     <string name="pair_no_address">Bu bilgisayarda herhangi bir yerel ağ adresi bulunamadığı için QR kodu gösterilemiyor. Aşağıdaki adımları izleyerek manuel olarak eşleştirin.</string>
     <string name="pair_qr_addresses">Bu bilgisayar: %1$s (bağlantı noktası %2$d)</string>
-    <string name="pair_qr_description">Telefonunuzdaki N-Zik uygulamasında Sunucuyu yönet seçeneğini açın, eşleştirme işlemini başlatın, ardından Tara seçeneğine dokunun ve kamerayı bu koda doğrultun.</string>
+    <string name="pair_qr_description">Telefonunuzda N-Zik uygulamasında « Bilgisayar sunucusu » bölümünü açın. Sunucu durmuşsa « Başlat » düğmesine dokunun. « Bir bilgisayarı eşleştirin » seçeneğine, ardından « QR kodu tarayın » seçeneğine dokunun ve kamerayı bu koda doğrultun.</string>
     <string name="pair_qr_preparing">QR kodu hazırlanıyor…</string>
     <string name="pair_qr_renew_hint">Kod her 2 dakikada bir yenilenir.</string>
     <string name="pair_qr_waiting">Telefonunuzu bekliyoruz…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Bağlantı noktası %1$d (korunur)</string>
     <string name="unreachable_save_ip">Kaydet ve yeniden dene</string>
     <string name="unreachable_title">Telefona ulaşılamıyor</string>
+    <string name="network_stream_retrying_playback">Oynatmayı yeniden deniyorum…</string>
 </resources>
