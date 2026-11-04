@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">La section « À propos » contient des informations sur l\'application, ses développeurs, le dépannage et les options de mise à jour.</string>
     <string name="settings_app_behavior_title">Comportement de l\'application</string>
     <string name="settings_app_language_label">Langue de l\'application</string>
+    <string name="settings_app_language_system">Système</string>
     <string name="settings_audio_bass_boost">Amplification des basses audio</string>
     <string name="settings_audio_crossfade_description">Activer la transition en douceur entre les morceaux</string>
     <string name="settings_audio_crossfade_label">Fondu enchaîné</string>
