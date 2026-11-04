@@ -105,8 +105,8 @@
     <string name="song_metadata_update_action_open">Ouvrir la boîte de dialogue de mise à jour</string>
     <string name="sort_artist_and_album">Artiste, Album</string>
     <plurals name="library_song_count">
-        <item quantity="one">%1$d song</item>
-        <item quantity="other">%1$d songs</item>
+        <item quantity="one">%1$d titre</item>
+        <item quantity="other">%1$d titres</item>
     </plurals>
     <string name="library_on_device_permission_request_failed">Impossible de demander l\'accès à la musique sur cet appareil.</string>
     <string name="library_on_device_permission_settings_failed">Impossible d\'ouvrir les paramètres d\'autorisation.</string>
