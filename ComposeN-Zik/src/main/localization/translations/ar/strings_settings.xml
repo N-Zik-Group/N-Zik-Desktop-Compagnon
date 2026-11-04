@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">يعرض القسم حول معلومات حول التطبيق، المطورين، استكشاف الأخطاء وتحديثها</string>
     <string name="settings_app_behavior_title">سلوك التطبيق</string>
     <string name="settings_app_language_label">لغة التطبيق</string>
+    <string name="settings_app_language_system">النظام</string>
     <string name="settings_audio_bass_boost">تعزيز قس الصوت</string>
     <string name="settings_audio_crossfade_description">تمكين الانتقال السلس بين الأغاني</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
