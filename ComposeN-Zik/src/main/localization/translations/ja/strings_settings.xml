@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">概要セクションには、アプリ、開発者、トラブルシューティング、更新オプションに関する情報が表示されます。</string>
     <string name="settings_app_behavior_title">アプリの動作</string>
     <string name="settings_app_language_label">アプリ言語</string>
+    <string name="settings_app_language_system">システム</string>
     <string name="settings_audio_bass_boost">オーディオベースブースト</string>
     <string name="settings_audio_crossfade_description">曲間のスムーズな切り替えを有効にする</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
