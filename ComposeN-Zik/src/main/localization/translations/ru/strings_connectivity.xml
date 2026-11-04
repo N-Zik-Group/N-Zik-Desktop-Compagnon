@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">Просмотр журналов</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">Код имеет 6 символов, например ABC-DEF.</string>
-    <string name="manual_description">На вашем телефоне управляющий сервер показывает IP-адрес, порт и 6-значный код.</string>
+    <string name="manual_description">На вашем телефоне откройте ПК сервер. Если сервер остановлен, нажмите Запустить. Выберите Pair ПК, чтобы увидеть IP адрес, порт и 6-значный код.</string>
     <string name="manual_ip">IP-адрес телефона</string>
     <string name="manual_ip_invalid">Введите IPv4 адрес, например 192.168.1.14.</string>
     <string name="manual_port">Порт</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">Введите адрес и код на вашем телефоне</string>
     <string name="pair_no_address">Не найден локальный сетевой адрес на этом ПК, поэтому QR-код не может быть показан. Пара вручную ниже.</string>
     <string name="pair_qr_addresses">Этот ПК: %1$s (порт %2$d)</string>
-    <string name="pair_qr_description">В N-Zik на вашем телефоне откройте Управление сервером, начните пару и нажмите Сканировать и наведите камеру на этот код.</string>
+    <string name="pair_qr_description">В N-Zik на вашем телефоне откройте ПК сервер. Если сервер остановлен, нажмите Запустить. Выберите PC, затем нажмите Scan QR-код и наведите камеру на этот код.</string>
     <string name="pair_qr_preparing">Подготовка QR-кода…</string>
     <string name="pair_qr_renew_hint">Код обновляется каждые 2 минуты.</string>
     <string name="pair_qr_waiting">Ожидание вашего телефона…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">Порт %1$d (сохранен)</string>
     <string name="unreachable_save_ip">Сохранить и повторить</string>
     <string name="unreachable_title">Телефон недоступен</string>
+    <string name="network_stream_retrying_playback">Попытка возобновить воспроизведение…</string>
 </resources>
