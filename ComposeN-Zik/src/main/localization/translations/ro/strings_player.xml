@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Repetă 5 secunde</string>
     <string name="player_seek_backward_thirty_seconds">Reîncarcă 30 de secunde</string>
     <string name="player_shuffle_empty_message">Nicio melodie de amestecat</string>
-    <string name="player_shuffled_song_count_format">%d melodii amestecate</string>
+    <string name="player_queue_shuffled_count_format">Coada de amestecare (piese: %d)</string>
+    <string name="player_shuffled_song_count_format">Șenile amestecate: %d</string>
     <string name="player_sleep_timer_title">Temporizator de somn</string>
     <string name="player_statistics_volume_label">Volum</string>
     <string name="player_swap_controls_with_timeline">Comutați comenzile cu cronologia</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Bară de vizualizare</string>
     <string name="visualizer_microphone_permission_message">Vizualizatorul necesită permisiunea microfonului, acordă te rog.</string>
     <string name="visualizer_title">Vizualizator</string>
+    <string name="player_error_unknown">A apărut o eroare necunoscută de redare</string>
 </resources>
