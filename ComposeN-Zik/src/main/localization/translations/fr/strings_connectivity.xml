@@ -26,7 +26,7 @@
     <string name="listen_together_no_blocked_users">Aucun utilisateur bloqué</string>
     <string name="listen_together_not_set">Non défini</string>
     <string name="listen_together_room">Salle</string>
-    <string name="listen_together_server_request_failed">The Listen Together server could not complete the request.</string>
+    <string name="listen_together_server_request_failed">Le serveur Listen Together n\'a pas pu compléter la requête.</string>
     <string name="listen_together_server_url">URL du serveur</string>
     <string name="listen_together_suggest">Proposer d\'accueillir</string>
     <string name="listen_together_sync_volume">Synchroniser le volume hôte</string>
