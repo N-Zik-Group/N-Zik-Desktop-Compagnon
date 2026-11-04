@@ -13,5 +13,5 @@
     <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Unlimited</string>
     <string name="statistics_title">Statistics</string>
-    <string name="statistics_top_period_title">Top %s of …</string>
+    <string name="statistics_top_period_title">View top %s of …</string>
 </resources>
