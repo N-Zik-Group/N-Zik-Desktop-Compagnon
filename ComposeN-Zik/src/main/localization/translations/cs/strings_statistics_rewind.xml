@@ -8,7 +8,7 @@
     <string name="calendar_period_three_months">3 měsíce</string>
     <string name="calendar_today">Dnes</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_month">Měsíc</string>
     <string name="rewind_filter_year">Rok</string>
     <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Neomezený</string>
