@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Перемотати 5 секунд</string>
     <string name="player_seek_backward_thirty_seconds">Розморозити 30 секунд</string>
     <string name="player_shuffle_empty_message">Немає пісні для перемішування</string>
-    <string name="player_shuffled_song_count_format">Перетасовані пісні %d suffled</string>
+    <string name="player_queue_shuffled_count_format">Змішана черга (треки: %d)</string>
+    <string name="player_shuffled_song_count_format">Переташується трек: %d</string>
     <string name="player_sleep_timer_title">Таймер сну</string>
     <string name="player_statistics_volume_label">Об\'єм</string>
     <string name="player_swap_controls_with_timeline">Поміняти елементи керування на часову шкалу</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Панель візуалізатора</string>
     <string name="visualizer_microphone_permission_message">Ефект візуалізатора вимагає дозволу на мікрофон, надайте його, будь ласка.</string>
     <string name="visualizer_title">Візуалізатор</string>
+    <string name="player_error_unknown">Виникла невідома помилка відтворення</string>
 </resources>
