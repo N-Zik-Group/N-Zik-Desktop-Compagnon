@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Ajouter l\'album à vos favoris</string>
     <string name="album_action_open">Aller à l\'album</string>
     <string name="album_left_swipe">Balayage vers la gauche de l\'album</string>
-    <string name="album_loading_song_count_format">Chargement de %1$d titres…</string>
+    <string name="album_loading_song_count_format">Chargement de l’album (nombre de titres : %1$d)…</string>
     <string name="album_right_swipe">Balayage vers la droite de l\'album</string>
     <string name="artist_action_follow">Suivre</string>
     <string name="artist_action_play_local_songs">Écouter tous les titres stockés localement</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Épingler/Désépingler la playlist</string>
     <string name="playlist_bookmark_unsupported_message">Impossible d\'ajouter à ses favoris les titres ou les playlists d\'épisodes qu\'on a aimés</string>
     <string name="playlist_create_dialog_title">Créer une nouvelle playlist</string>
-    <string name="playlist_delete_all_confirmation_count_format">Êtes-vous sûr de vouloir supprimer TOUTES les %d playlists ?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Supprimer toutes les playlists ? (Total : %d)</string>
     <string name="playlist_left_swipe">Balayage vers la gauche de la playlist</string>
     <string name="playlist_pinned_title">Playlists Épinglées</string>
     <string name="playlist_rename_dialog_title">Renommer la playlist</string>
@@ -108,4 +108,6 @@
         <item quantity="one">%1$d song</item>
         <item quantity="other">%1$d songs</item>
     </plurals>
+    <string name="library_on_device_permission_request_failed">Impossible de demander l\'accès à la musique sur cet appareil.</string>
+    <string name="library_on_device_permission_settings_failed">Impossible d\'ouvrir les paramètres d\'autorisation.</string>
 </resources>
