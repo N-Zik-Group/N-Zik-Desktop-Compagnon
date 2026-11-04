@@ -35,7 +35,7 @@
     <string name="listen_together_view_logs">عرض السجلات</string>
     <string name="manual_code">Pairing code</string>
     <string name="manual_code_invalid">الكود يحتوي على 6 أحرف، على سبيل المثال ABC-DEF.</string>
-    <string name="manual_description">على الهاتف الخاص بك، إدارة الخادم تظهر عنوان IP ، المنفذ ورمز 6 أحرف.</string>
+    <string name="manual_description">على هاتفك، افتح خادم الكمبيوتر. إذا تم إيقاف الخادم، انقر على Start. حدد جهاز كمبيوتر لمشاهدة عنوان IP والميناء ورمز 6 حروف.</string>
     <string name="manual_ip">عنوان IP للهاتف</string>
     <string name="manual_ip_invalid">أدخل عنوان IPv4 ، على سبيل المثال 192.168.1.14.</string>
     <string name="manual_port">المنفذ</string>
@@ -51,7 +51,7 @@
     <string name="pair_manual_entry_text">اكتب العنوان والكود الظاهر على هاتفك</string>
     <string name="pair_no_address">لم يتم العثور على عنوان شبكة محلي على هذا الكمبيوتر ، لذلك لا يمكن إظهار رمز QR. إقران يدويًا أدناه.</string>
     <string name="pair_qr_addresses">جهاز الكمبيوتر هذا: %1$s (منفذ %2$d)</string>
-    <string name="pair_qr_description">في N-Zik على هاتفك، افتح خادم الإدارة، ابدأ الإقران، ثم اضغط على مسح وتوجيه الكاميرا على هذا الكود البرمجي.</string>
+    <string name="pair_qr_description">في N-Zik على هاتفك، قم بفتح خادم الكمبيوتر. إذا تم إيقاف الخادم، انقر على البدء. حدد اقتران جهاز كمبيوتر، ثم اضغط على مسح رمز QR و حدد الكاميرا على هذا الكود.</string>
     <string name="pair_qr_preparing">جارٍ إعداد رمز QR…</string>
     <string name="pair_qr_renew_hint">التعليمات البرمجية تجدد نفسها كل دقيقتين.</string>
     <string name="pair_qr_waiting">في انتظار هاتفك…</string>
@@ -80,4 +80,5 @@
     <string name="unreachable_port_kept">منفذ %1$d (محفظ)</string>
     <string name="unreachable_save_ip">حفظ وإعادة المحاولة</string>
     <string name="unreachable_title">لا يمكن الوصول إلى الهاتف</string>
+    <string name="network_stream_retrying_playback">جارٍ إعادة محاولة التشغيل…</string>
 </resources>
