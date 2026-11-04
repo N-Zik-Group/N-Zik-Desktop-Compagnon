@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Accessibility -->
     <string name="accessibility_app_icon">App pictogram</string>
     <string name="accessibility_app_icon_in_player">app-pictogram in de speler</string>
     <string name="accessibility_background_image">Achtergrond afbeelding</string>
