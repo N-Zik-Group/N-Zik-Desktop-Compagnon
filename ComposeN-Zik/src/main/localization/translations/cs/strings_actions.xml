@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="command_clear">Clear the queue</string>
-    <string name="command_copied">Command copied</string>
-    <string name="command_jump">Play from the queue</string>
-    <string name="command_move">Move in the queue</string>
-    <string name="command_next">Next</string>
+    <string name="command_clear">Vymazat frontu</string>
+    <string name="command_copied">Příkaz zkopírován</string>
+    <string name="command_jump">Přehrát z fronty</string>
+    <string name="command_move">Přesunout do fronty</string>
+    <string name="command_next">Další</string>
     <string name="command_pause">Pozastavit</string>
     <string name="command_play">Hrát</string>
-    <string name="command_previous">Previous</string>
-    <string name="command_queue_add">Add to queue</string>
-    <string name="command_queue_list">Queue from list</string>
+    <string name="command_previous">Předchozí</string>
+    <string name="command_queue_add">Přidat do fronty</string>
+    <string name="command_queue_list">Fronta ze seznamu</string>
     <string name="command_queue_play">Hrát</string>
-    <string name="command_remove">Remove from the queue</string>
+    <string name="command_remove">Odebrat z fronty</string>
     <string name="command_repeat">Opakovat</string>
-    <string name="command_seek">Seek</string>
+    <string name="command_seek">Hledat</string>
     <string name="command_shuffle">Náhodně</string>
-    <string name="command_speed">Speed</string>
+    <string name="command_speed">Rychlost</string>
     <string name="common_action_clear">Vymazat</string>
     <string name="common_action_confirm">Potvrdit</string>
     <string name="common_action_delete">Smazat</string>
@@ -27,6 +27,6 @@
     <string name="common_action_turn_off">Vypnout</string>
     <string name="common_action_update">Aktualizace</string>
     <string name="common_menu_label">Menu</string>
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
+    <string name="tray_open">Otevřít</string>
+    <string name="tray_quit">Ukončit</string>
 </resources>
