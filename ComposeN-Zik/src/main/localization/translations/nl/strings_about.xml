@@ -4,10 +4,18 @@
     <string name="about_action_view_source">Bekijk de broncode</string>
     <string name="about_authorship_preposition">door</string>
     <string name="about_contributors_alphabetical_order_label">In alfabetische volgorde:</string>
-    <string name="about_developers">Developers / Designers</string>
+    <string name="about_developers">Ontwikkelaars / ontwerpers</string>
     <string name="about_github_link_description">U wordt doorgestuurd naar GitHub</string>
     <string name="about_title">Over</string>
-    <string name="about_translators_title">Translators</string>
+    <string name="about_translators_title">Vertalers</string>
     <string name="contributors">Bijdragers</string>
     <string name="request_a_feature">Vraag een functie aan of stel een idee voor</string>
+    <plurals name="about_translator_count">
+        <item quantity="one">%1$d vertaler</item>
+        <item quantity="other">%1$d vertalers</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="one">%1$d ontwikkelaar / ontwerper</item>
+        <item quantity="other">%1$d ontwikkelaars / ontwerpers</item>
+    </plurals>
 </resources>
