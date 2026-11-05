@@ -4,10 +4,10 @@
     <string name="command_unknown">Une commande</string>
     <string name="common_error_no_internet">Aucune connexion réseau</string>
     <string name="error_code_rejected">Code invalide ou périmé. Vérifiez le code sur votre téléphone et réessayez.</string>
-    <string name="error_copy_failed">Copy failed</string>
+    <string name="error_copy_failed">Échec de la copie</string>
     <string name="error_incompatible_version">Version mobile incompatible (contrat Bridge %1$s). Mettez à jour N-Zik Desktop Compagnon ou N-Zik.</string>
     <string name="error_listener_failed">Impossible d\'ouvrir le récepteur d\'appairage. Effectuez l\'appairage manuellement ci-dessous.</string>
-    <string name="error_open_browser">Could not open the browser</string>
+    <string name="error_open_browser">Impossible d\'ouvrir le navigateur</string>
     <string name="error_phone_unreachable">Impossible de joindre le téléphone. Vérifiez que son serveur fonctionne et que les deux appareils sont connectés au même réseau Wi-Fi.</string>
     <string name="error_rate_limited">Trop de tentatives. Veuillez réessayer dans %1$d s.</string>
     <string name="error_storage_failed">L\'appairage n\'a pas pu être enregistré sur cet ordinateur.</string>
@@ -38,4 +38,8 @@
     <string name="notice_unavailable">%1$s : le lecteur du téléphone n\'est pas disponible. Veuillez réessayer plus tard.</string>
     <string name="notice_unreachable">%1$s : le téléphone n\'a pas répondu.</string>
     <string name="path_copied">Chemin d\'accès copié</string>
+    <string name="updates_check_failed">Impossible de vérifier les mises à jour.</string>
+    <string name="updates_check_invalid_response">Le serveur de mise à jour a renvoyé une réponse non valide.</string>
+    <string name="updates_download_generic_error">Impossible de télécharger la mise à jour.</string>
+    <string name="updates_download_invalid_filename">Le nom du fichier de mise à jour est invalide.</string>
 </resources>
