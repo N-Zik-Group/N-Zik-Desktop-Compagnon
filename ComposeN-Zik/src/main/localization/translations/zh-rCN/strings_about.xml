@@ -2,7 +2,7 @@
 <resources>
     <string name="about_action_report_issue">报告问题</string>
     <string name="about_action_view_source">查看源代码</string>
-    <string name="about_authorship_preposition">by</string>
+    <string name="about_authorship_preposition">由</string>
     <string name="about_contributors_alphabetical_order_label">按字母顺序：</string>
     <string name="about_developers">开发者 / 设计师</string>
     <string name="about_github_link_description">您将被重定向到GitHub</string>
@@ -10,4 +10,10 @@
     <string name="about_translators_title">翻译人员</string>
     <string name="contributors">贡献者</string>
     <string name="request_a_feature">请求一个功能或提出一个想法</string>
+    <plurals name="about_translator_count">
+        <item quantity="other">%1$d 翻译者</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="other">%1$d 开发者/设计者</item>
+    </plurals>
 </resources>
