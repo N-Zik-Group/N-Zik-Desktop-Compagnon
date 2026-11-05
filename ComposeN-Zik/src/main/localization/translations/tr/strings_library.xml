@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Albümü yer imlerine ekle</string>
     <string name="album_action_open">Albüme git</string>
     <string name="album_left_swipe">Albüm Sola Kaydırma</string>
-    <string name="album_loading_song_count_format">%1$d şarkı yükleniyor…</string>
+    <string name="album_loading_song_count_format">Loading album (tracks: %1$d)…</string>
     <string name="album_right_swipe">Albüm Sağa Kaydırma</string>
     <string name="artist_action_follow">Takip et</string>
     <string name="artist_action_play_local_songs">Tüm yerel şarkıları çal</string>
@@ -67,9 +67,9 @@
     <string name="metadata_action_edit">Meta Verilerini Düzenle</string>
     <string name="metadata_album_action_change_browse_id">Albüm Gözatma Kimliğini Değiştir</string>
     <string name="metadata_artist_action_change_browse_id">Sanatçı Gözatma Kimliğini Değiştir</string>
-    <string name="metadata_file_path_unavailable">Cannot resolve file path</string>
+    <string name="metadata_file_path_unavailable">Dosya yolu çözümlenemiyor</string>
     <string name="metadata_playlist_action_change_browse_id">Çalma Listesi Gözatma Kimliğini Değiştir</string>
-    <string name="metadata_save_failed">Failed to save metadata</string>
+    <string name="metadata_save_failed">Meta veri kaydedilemedi</string>
     <string name="metadata_unknown_artist">Bilinmeyen Sanatçı</string>
     <string name="metadata_unknown_title">Bilinmeyen Başlık</string>
     <string name="playlist_action_add">Çalma listesine ekle</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Çalma listesini sabitle/kaldır</string>
     <string name="playlist_bookmark_unsupported_message">Beğenilen Şarkılar veya Bölümler çalma listesine yer imi eklenemiyor</string>
     <string name="playlist_create_dialog_title">Yeni çalma listesi oluştur</string>
-    <string name="playlist_delete_all_confirmation_count_format">%d adet çalma listesinin TÜMÜNÜ silmek istediğinizden emin misiniz?</string>
+    <string name="playlist_delete_all_confirmation_count_format">Delete all playlists? (Total: %d)</string>
     <string name="playlist_left_swipe">Çalma Listesi Sola Kaydırma</string>
     <string name="playlist_pinned_title">Sabitlenmiş</string>
     <string name="playlist_rename_dialog_title">Çalma listesini yeniden adlandır</string>
@@ -104,4 +104,10 @@
     <string name="song_matching_unmatched_label">Eşleşmeyen şarkılar</string>
     <string name="song_metadata_update_action_open">Güncelleme iletişim kutusunu aç</string>
     <string name="sort_artist_and_album">Sanatçı, Albüm</string>
+    <plurals name="library_song_count">
+        <item quantity="one">%1$d şarkı</item>
+        <item quantity="other">%1$d şarkılar</item>
+    </plurals>
+    <string name="library_on_device_permission_request_failed">Bu cihazdaki müziklere erişim talebi gönderilemedi.</string>
+    <string name="library_on_device_permission_settings_failed">İzin ayarları açılamadı.</string>
 </resources>
