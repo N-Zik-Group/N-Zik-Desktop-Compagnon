@@ -10,4 +10,16 @@
     <string name="about_translators_title">Překladatelé</string>
     <string name="contributors">Přispěvatelé</string>
     <string name="request_a_feature">Žádost o funkci nebo návrh nápadu</string>
+    <plurals name="about_translator_count">
+        <item quantity="one">%1$d překladatel</item>
+        <item quantity="few">%1$d překladatelů</item>
+        <item quantity="many">%1$d překladatelů</item>
+        <item quantity="other">%1$d překladatelů</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="one">%1$d vývojář/designér</item>
+        <item quantity="few">%1$d vývojářů/designérů</item>
+        <item quantity="many">%1$d vývojářů/designérů</item>
+        <item quantity="other">%1$d vývojářů/designérů</item>
+    </plurals>
 </resources>
