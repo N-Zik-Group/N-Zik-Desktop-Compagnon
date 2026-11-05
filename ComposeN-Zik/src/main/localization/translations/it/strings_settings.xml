@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_loudness_boost_level">Livello di aumento della Loudness</string>
-    <string name="close_behavior">Close behavior</string>
-    <string name="close_behavior_minimize">Minimize to tray</string>
-    <string name="close_behavior_quit">Quit the app</string>
+    <string name="close_behavior">Comportamento di chiusura</string>
+    <string name="close_behavior_minimize">Minimizza nel vassoio</string>
+    <string name="close_behavior_quit">Esci dall\'app</string>
     <string name="common_translation_title">Traduzione</string>
     <string name="library_sort_order_title">Ordinamento</string>
     <string name="maintenance_debug_logging_title">Abilita log di debug</string>
@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">La sezione Informazioni mostra informazioni sull\'app, gli sviluppatori, le opzioni di risoluzione dei problemi e di aggiornamento</string>
     <string name="settings_app_behavior_title">Comportamento App</string>
     <string name="settings_app_language_label">Lingua principale</string>
+    <string name="settings_app_language_system">Sistema</string>
     <string name="settings_audio_bass_boost">Potenziamento dei bassi audio</string>
     <string name="settings_audio_crossfade_description">Abilita transizione liscia tra brani</string>
     <string name="settings_audio_crossfade_label">Crossfade</string>
@@ -55,20 +56,20 @@
     <string name="settings_interface_page_title">Interfaccia</string>
     <string name="settings_interface_title">Interfaccia</string>
     <string name="settings_languages_title">Lingue</string>
-    <string name="settings_launcher_shortcuts_description">Choose and reorder launcher shortcuts</string>
-    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
-    <string name="settings_launcher_shortcuts_recovery_required_message">Rescue cannot be disabled</string>
-    <string name="settings_launcher_shortcuts_title">App shortcuts</string>
+    <string name="settings_launcher_shortcuts_description">Scegli e riordina le scorciatoie del launcher</string>
+    <string name="settings_launcher_shortcuts_limit_message">Raggiunto il massimo di collegamenti attivi di %1$d</string>
+    <string name="settings_launcher_shortcuts_recovery_required_message">Il salvataggio non può essere disabilitato</string>
+    <string name="settings_launcher_shortcuts_title">Scorciatoie app</string>
     <string name="settings_library_now_playing_indicator_label">Indicatore Ora In Riproduzione</string>
     <string name="settings_library_playlist_indicator_description">Segna i brani che sono stati aggiunti alla tua Playlist</string>
     <string name="settings_library_playlist_indicator_label">Indicatore playlist</string>
     <string name="settings_library_queue_playlist_swipe_left_label">Scorrimento a sinistra nella coda e nelle playlist locali</string>
     <string name="settings_library_queue_playlist_swipe_right_label">Scorrimento a destra nella coda e nelle playlist locali</string>
-    <string name="settings_library_sections_visibility_description">Choose which sections appear in the library</string>
-    <string name="settings_library_sort_options_description">Customize sort options</string>
-    <string name="settings_library_toolbar_customization_description">Customize the toolbar</string>
-    <string name="settings_library_toolbar_title">Toolbar</string>
-    <string name="settings_local_playlist_title">Local Playlist</string>
+    <string name="settings_library_sections_visibility_description">Scegli quali sezioni appaiono nella libreria</string>
+    <string name="settings_library_sort_options_description">Personalizza le opzioni di ordinamento</string>
+    <string name="settings_library_toolbar_customization_description">Personalizza la barra degli strumenti</string>
+    <string name="settings_library_toolbar_title">Barra Strumenti</string>
+    <string name="settings_local_playlist_title">Scaletta Locale</string>
     <string name="settings_logging_error_file_description">Se abilitato, crea un file di registro per evidenziare gli errori</string>
     <string name="settings_loudness_base_gain">Volume di riferimento</string>
     <string name="settings_lyrics_artwork_visible_label">Mostra miniatura per le lyrics</string>
@@ -89,9 +90,9 @@
     <string name="settings_network_title">Rete</string>
     <string name="settings_parental_age_restriction_description">Impedisci di riprodurre brani con limiti di età</string>
     <string name="settings_playback_duration_limit_label">Escludi brani con limite di durata</string>
-    <string name="settings_playback_exclude_disliked_albums_label">Exclude disliked albums</string>
-    <string name="settings_playback_exclude_disliked_artists_label">Exclude disliked artists</string>
-    <string name="settings_playback_exclude_disliked_songs_label">Exclude disliked songs</string>
+    <string name="settings_playback_exclude_disliked_albums_label">Escludi album non piaciuti</string>
+    <string name="settings_playback_exclude_disliked_artists_label">Escludi artisti dispiaciuti</string>
+    <string name="settings_playback_exclude_disliked_songs_label">Escludi brani non piaciuti</string>
     <string name="settings_playback_pause_at_zero_volume_description">Metti in pausa il brano quando il volume raggiunge 0 e riprendi quando il volume è maggiore di 0</string>
     <string name="settings_playback_pause_between_songs_label">Pausa tra i brani</string>
     <string name="settings_playback_previous_restart_threshold_label">Durata massima del brano precedente</string>
@@ -116,7 +117,7 @@
     <string name="settings_player_bottom_black_gradient_label">Gradiente nero in basso</string>
     <string name="settings_player_button_zoom_out_animation_label">Animazione zoom pulsanti</string>
     <string name="settings_player_controls_style_label">Stile di controllo</string>
-    <string name="settings_player_crop_video_artwork_label">Crop video thumbnails</string>
+    <string name="settings_player_crop_video_artwork_label">Ritaglia miniature video</string>
     <string name="settings_player_disable_horizontal_swipe_label">Disattiva swipe orizzontale</string>
     <string name="settings_player_disable_song_swipe_label">Disabilita il cambio brano tramite swipe</string>
     <string name="settings_player_disable_text_marquee_description">Il testo scorrevole è usato per testi lunghi</string>
@@ -126,7 +127,7 @@
     <string name="settings_player_header_album_artist_description">Intestazione album e artista</string>
     <string name="settings_player_header_icons_visible_label">Mostra informazioni con le icone</string>
     <string name="settings_player_header_style_label">Stile intestazione</string>
-    <string name="settings_player_m3e_motion_sensitivity_label">Theme Shake Sensitivity</string>
+    <string name="settings_player_m3e_motion_sensitivity_label">Sensibilità Al Tema Shake</string>
     <string name="settings_player_next_queue_visible_label">Mostra la prossima coda del brano</string>
     <string name="settings_player_persistent_queue_description">Salva e ripristina la riproduzione di brani</string>
     <string name="settings_player_persistent_queue_label">Giocatore persistente</string>
@@ -140,7 +141,7 @@
     <string name="settings_player_queue_swipe_up_label">Scorri verso l\'alto per aprire la coda</string>
     <string name="settings_player_queue_tap_to_open_label">Tocca per aprire la coda</string>
     <string name="settings_player_remaining_duration_visible_label">Mostra la durata rimanente del brano</string>
-    <string name="settings_player_rotating_artwork_title">Rotating album cover</string>
+    <string name="settings_player_rotating_artwork_title">Rotazione copertina album</string>
     <string name="settings_player_seek_time_buttons_label">Salta pulsanti orario</string>
     <string name="settings_player_start_minimized_description">Quando si fa clic su una canzone, il giocatore inizia a minimizzare</string>
     <string name="settings_player_tap_artwork_toggle_lyrics_description">Toccando l\'anteprima</string>
@@ -165,5 +166,5 @@
     <string name="settings_title">Impostazioni</string>
     <string name="settings_transition_fade">Dissolvenza</string>
     <string name="settings_use_font_type">Font type</string>
-    <string name="window">Window</string>
+    <string name="window">Finestra</string>
 </resources>
