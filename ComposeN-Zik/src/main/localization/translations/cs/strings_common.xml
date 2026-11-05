@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="app_subtitle">Společnost pro N-Zik</string>
     <string name="cancel">Zrušit</string>
-    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_artist_conjunction_and">a</string>
     <string name="common_clipboard_copy_success">Zkopírováno</string>
     <string name="common_color_source_theme">Motiv</string>
     <string name="common_color_white">Bílá</string>
@@ -20,8 +20,16 @@
     <string name="common_size_small">Malý</string>
     <string name="common_state_off">Vypnuto</string>
     <string name="common_state_on">Zapnuto</string>
-    <string name="common_storage_used_suffix">used</string>
+    <string name="common_storage_used_suffix">použito</string>
     <string name="common_validation_empty_value">Hodnota nemůže být prázdná</string>
-    <string name="common_validation_minimum_value">Value must be greater than</string>
-    <string name="dismiss">Dismiss</string>
+    <string name="common_validation_minimum_value">Hodnota musí být větší než</string>
+    <string name="dismiss">Odmítnout</string>
+    <string name="common_duration_seconds_format">%1$d s</string>
+    <string name="common_file_size_bytes_format">%1$s B</string>
+    <string name="common_file_size_gigabytes_format">%1$s GB</string>
+    <string name="common_file_size_kilobytes_format">%1$s kB</string>
+    <string name="common_file_size_megabytes_format">%1$s MB</string>
+    <string name="common_file_size_terabytes_format">%1$s TB</string>
+    <string name="common_size_megabytes_format">%1$d MB</string>
+    <string name="common_size_gigabytes_format">%1$d GB</string>
 </resources>
