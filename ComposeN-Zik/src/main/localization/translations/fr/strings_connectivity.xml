@@ -26,7 +26,7 @@
     <string name="listen_together_no_blocked_users">Aucun utilisateur bloqué</string>
     <string name="listen_together_not_set">Non défini</string>
     <string name="listen_together_room">Salle</string>
-    <string name="listen_together_server_request_failed">The Listen Together server could not complete the request.</string>
+    <string name="listen_together_server_request_failed">Le serveur Listen Together n\'a pas pu compléter la requête.</string>
     <string name="listen_together_server_url">URL du serveur</string>
     <string name="listen_together_suggest">Proposer d\'accueillir</string>
     <string name="listen_together_sync_volume">Synchroniser le volume hôte</string>
@@ -44,7 +44,6 @@
     <string name="manual_title">Appairage manuel</string>
     <string name="network_settings_description">La section « Réseau » contient des paramètres permettant d\'optimiser les performances de l\'application et l\'utilisation des données</string>
     <string name="network_status">État de la qualité</string>
-    <string name="network_stream_retrying_playback">Tentative de reprise de la lecture…</string>
     <string name="pair_device_name">Nom de cet ordinateur</string>
     <string name="pair_device_name_invalid">Saisissez un nom comportant entre 1 et 64 caractères.</string>
     <string name="pair_listener_unreachable">Votre téléphone n\'a pas pu se connecter à cet ordinateur. Est-ce dû au pare-feu Windows ou à un réseau configuré en mode « Public » ? Autorisez N-Zik Desktop Compagnon sur les réseaux privés ou effectuez l\'appairage manuellement ci-dessous.</string>
@@ -81,4 +80,5 @@
     <string name="unreachable_port_kept">Port %1$d (conservé)</string>
     <string name="unreachable_save_ip">Enregistrer et réessayer</string>
     <string name="unreachable_title">Téléphone injoignable</string>
+    <string name="network_stream_retrying_playback">Tentative de reprise de la lecture…</string>
 </resources>
