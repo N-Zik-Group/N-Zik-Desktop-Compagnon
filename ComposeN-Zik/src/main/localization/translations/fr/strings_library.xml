@@ -37,7 +37,7 @@
     <string name="library_none">Le téléphone ne partage aucune bibliothèque avec cet ordinateur.</string>
     <string name="library_not_found">Introuvable sur le téléphone. Il a peut-être été supprimé.</string>
     <string name="library_on_device_title">Sur le téléphone</string>
-    <string name="library_playlists_title">Listes de lecture</string>
+    <string name="library_playlists_title">Playlists</string>
     <string name="library_refresh">Actualiser</string>
     <string name="library_songs_title">Titres</string>
     <string name="library_sort_album">Album</string>
