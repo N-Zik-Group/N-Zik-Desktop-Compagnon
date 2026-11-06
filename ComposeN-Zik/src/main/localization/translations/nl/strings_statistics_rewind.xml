@@ -8,7 +8,7 @@
     <string name="calendar_period_three_months">3 maanden</string>
     <string name="calendar_today">Vandaag</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_month">maand</string>
     <string name="rewind_filter_year">Jaar</string>
     <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Onbeperkt</string>
