@@ -8,7 +8,7 @@
     <string name="calendar_period_three_months">3 mês</string>
     <string name="calendar_today">Hoje</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_month">Mês</string>
     <string name="rewind_filter_year">Ano</string>
     <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Ilimitado</string>
