@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Rewind 5 seconds</string>
     <string name="player_seek_backward_thirty_seconds">Rewinds 30 seconds</string>
     <string name="player_shuffle_empty_message">No song to shuffle</string>
-    <string name="player_shuffled_song_count_format">%d songs shuffled</string>
+    <string name="player_queue_shuffled_count_format">Queue shuffled (tracks: %d)</string>
+    <string name="player_shuffled_song_count_format">Tracks shuffled: %d</string>
     <string name="player_sleep_timer_title">수면 타이머</string>
     <string name="player_statistics_volume_label">Volume</string>
     <string name="player_swap_controls_with_timeline">Swap the controls with the timeline</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Visualizer bar</string>
     <string name="visualizer_microphone_permission_message">시각적 효과는 마이크 권한이 필요합니다, 승인해주세요.</string>
     <string name="visualizer_title">시각적 효과</string>
+    <string name="player_error_unknown">알 수 없는 재생 오류가 발생했습니다</string>
 </resources>

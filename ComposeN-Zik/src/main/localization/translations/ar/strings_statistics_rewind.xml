@@ -8,10 +8,10 @@
     <string name="calendar_period_three_months">ثلاثة أشهر</string>
     <string name="calendar_today">اليوم</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
-    <string name="rewind_filter_year">Year</string>
+    <string name="rewind_filter_month">شهر</string>
+    <string name="rewind_filter_year">السنة</string>
     <!-- Statistics -->
-    <string name="statistics_items_limit_unlimited">Unlimited</string>
+    <string name="statistics_items_limit_unlimited">غير محدود</string>
     <string name="statistics_title">الإحصاءات</string>
     <string name="statistics_top_period_title">View top %s of …</string>
 </resources>

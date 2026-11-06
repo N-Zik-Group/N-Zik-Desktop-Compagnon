@@ -8,7 +8,7 @@
     <string name="calendar_period_three_months">3か月</string>
     <string name="calendar_today">今日</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_month">月</string>
     <string name="rewind_filter_year">年</string>
     <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">無制限</string>

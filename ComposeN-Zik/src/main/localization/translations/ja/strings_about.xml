@@ -10,4 +10,10 @@
     <string name="about_translators_title">翻訳者</string>
     <string name="contributors">貢献者</string>
     <string name="request_a_feature">機能要望またはアイデアを提案</string>
+    <plurals name="about_translator_count">
+        <item quantity="other">%1$d 翻訳</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="other">%1$d 開発者/デザイナー</item>
+    </plurals>
 </resources>

@@ -9,7 +9,7 @@
     <string name="command_play">Lire</string>
     <string name="command_previous">Précédent</string>
     <string name="command_queue_add">Ajouter à la file d\'attente</string>
-    <string name="command_queue_list">Queue from list</string>
+    <string name="command_queue_list">File d\'attente de la liste</string>
     <string name="command_queue_play">Lire</string>
     <string name="command_remove">Retirer de la file d\'attente</string>
     <string name="command_repeat">Répéter</string>

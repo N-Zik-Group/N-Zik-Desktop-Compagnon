@@ -93,11 +93,11 @@
     <string name="player_queue_action_remove">Supprimer de la file d\'attente</string>
     <string name="player_queue_clear_confirmation">Voulez-vous vraiment vider la file d\'attente ?</string>
     <string name="player_queue_deleted_item_format">%1$s supprimé</string>
-    <string name="player_queue_shuffled_count_format">File mélangée (nombre de titres : %d)</string>
     <string name="player_rotating_buttons">Boutons rotatifs</string>
     <string name="player_seek_backward_five_seconds">Reculer de 5 secondes</string>
     <string name="player_seek_backward_thirty_seconds">Reculer de 30 secondes</string>
     <string name="player_shuffle_empty_message">Aucun titre en lecture aléatoire</string>
+    <string name="player_queue_shuffled_count_format">File mélangée (nombre de titres : %d)</string>
     <string name="player_shuffled_song_count_format">Titres mélangés : %d</string>
     <string name="player_sleep_timer_title">Minuteur de veille</string>
     <string name="player_statistics_volume_label">Volume</string>
@@ -120,4 +120,5 @@
     <string name="visualizer_bar">Barre de visualisation</string>
     <string name="visualizer_microphone_permission_message">L\'effet « Visualizer » nécessite l\'autorisation d\'accès au micro ; veuillez l\'accorder.</string>
     <string name="visualizer_title">Visualiseur</string>
+    <string name="player_error_unknown">Une erreur de lecture inconnue s\'est produite, si le problème persiste signalez le problème</string>
 </resources>

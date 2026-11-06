@@ -37,7 +37,7 @@
     <string name="library_none">Le téléphone ne partage aucune bibliothèque avec cet ordinateur.</string>
     <string name="library_not_found">Introuvable sur le téléphone. Il a peut-être été supprimé.</string>
     <string name="library_on_device_title">Sur le téléphone</string>
-    <string name="library_playlists_title">Playlists</string>
+    <string name="library_playlists_title">Listes de lecture</string>
     <string name="library_refresh">Actualiser</string>
     <string name="library_songs_title">Titres</string>
     <string name="library_sort_album">Album</string>
@@ -67,9 +67,9 @@
     <string name="metadata_action_edit">Modifier les métadonnées</string>
     <string name="metadata_album_action_change_browse_id">Modifier l\'identifiant de navigation de l\'album</string>
     <string name="metadata_artist_action_change_browse_id">Modifier l\'identifiant de navigation de l\'artiste</string>
-    <string name="metadata_file_path_unavailable">Cannot resolve file path</string>
+    <string name="metadata_file_path_unavailable">Impossible de résoudre le chemin d\'accès au fichier</string>
     <string name="metadata_playlist_action_change_browse_id">Modifier l\'identifiant de navigation de la playlist</string>
-    <string name="metadata_save_failed">Failed to save metadata</string>
+    <string name="metadata_save_failed">Échec de l\'enregistrement des métadonnées</string>
     <string name="metadata_unknown_artist">Artiste inconnu</string>
     <string name="metadata_unknown_title">Titre inconnu</string>
     <string name="playlist_action_add">Ajouter à la playlist</string>
@@ -104,4 +104,10 @@
     <string name="song_matching_unmatched_label">Titre sans correspondance</string>
     <string name="song_metadata_update_action_open">Ouvrir la boîte de dialogue de mise à jour</string>
     <string name="sort_artist_and_album">Artiste, Album</string>
+    <plurals name="library_song_count">
+        <item quantity="one">%1$d titre</item>
+        <item quantity="other">%1$d titres</item>
+    </plurals>
+    <string name="library_on_device_permission_request_failed">Impossible de demander l\'accès à la musique sur cet appareil.</string>
+    <string name="library_on_device_permission_settings_failed">Impossible d\'ouvrir les paramètres d\'autorisation.</string>
 </resources>

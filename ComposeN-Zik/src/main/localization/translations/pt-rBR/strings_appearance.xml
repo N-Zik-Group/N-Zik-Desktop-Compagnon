@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="fake_audio_bar">Audio Waves</string>
+    <string name="fake_audio_bar">Ondas de Áudio</string>
     <string name="message_type">Popup message style</string>
     <string name="message_type_modern">Moderno</string>
     <string name="player_background_black_cherry_cosmos">Cosmos de Cerejeira Preta</string>
@@ -17,12 +17,12 @@
     <string name="player_background_stage">Estágio</string>
     <string name="player_controls_style_essential">Essencial</string>
     <string name="player_controls_style_modern">Moderno</string>
-    <string name="player_cover_style_cd">CD</string>
+    <string name="player_cover_style_cd">Esfriar</string>
     <string name="player_cover_style_cd_with_cover">CD com Capa</string>
     <string name="player_cover_style_vinyl">Vinil</string>
     <string name="player_progress_mini_player">Player minimizado</string>
     <string name="theme_palette_dynamic">Dinâmico</string>
-    <string name="theme_shake_sensitivity_disabled">Disabled</string>
+    <string name="theme_shake_sensitivity_disabled">Desabilitado</string>
     <string name="thumbnail_action_edit">Editar Miniatura</string>
     <string name="thumbnail_action_reset">Resetar Miniatura</string>
 </resources>

@@ -9,7 +9,7 @@
     <string name="command_play">Oynat</string>
     <string name="command_previous">Önceki</string>
     <string name="command_queue_add">Kuyruğa ekle</string>
-    <string name="command_queue_list">Queue from list</string>
+    <string name="command_queue_list">Listeden kuyruğa ekle</string>
     <string name="command_queue_play">Oynat</string>
     <string name="command_remove">Kuyruktan çıkar</string>
     <string name="command_repeat">Tekrarla</string>

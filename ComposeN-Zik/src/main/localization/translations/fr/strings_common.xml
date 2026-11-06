@@ -8,13 +8,6 @@
     <string name="common_color_white">Blanc</string>
     <string name="common_delete_success">Supprimé</string>
     <string name="common_empty_items">Aucun élément</string>
-    <string name="common_file_size_bytes_format">%1$s o</string>
-    <string name="common_file_size_gigabytes_format">%1$s Go</string>
-    <string name="common_file_size_kilobytes_format">%1$s ko</string>
-    <string name="common_file_size_megabytes_format">%1$s Mo</string>
-    <string name="common_file_size_terabytes_format">%1$s To</string>
-    <string name="common_size_megabytes_format">%1$d Mo</string>
-    <string name="common_size_gigabytes_format">%1$d Go</string>
     <string name="common_option_all">Tout</string>
     <string name="common_option_custom">Personnalisé</string>
     <string name="common_option_default">Par défaut</string>
@@ -31,4 +24,12 @@
     <string name="common_validation_empty_value">La valeur ne peut pas être vide</string>
     <string name="common_validation_minimum_value">La valeur doit être supérieure à</string>
     <string name="dismiss">Ignorer</string>
+    <string name="common_duration_seconds_format">%1$d s</string>
+    <string name="common_file_size_bytes_format">%1$s o</string>
+    <string name="common_file_size_gigabytes_format">%1$s Go</string>
+    <string name="common_file_size_kilobytes_format">%1$s ko</string>
+    <string name="common_file_size_megabytes_format">%1$s Mo</string>
+    <string name="common_file_size_terabytes_format">%1$s To</string>
+    <string name="common_size_megabytes_format">%1$d Mo</string>
+    <string name="common_size_gigabytes_format">%1$d Go</string>
 </resources>

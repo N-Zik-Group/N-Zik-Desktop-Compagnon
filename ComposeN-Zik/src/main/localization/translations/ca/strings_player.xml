@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Rewind 5 seconds</string>
     <string name="player_seek_backward_thirty_seconds">Rewinds 30 seconds</string>
     <string name="player_shuffle_empty_message">No song to shuffle</string>
-    <string name="player_shuffled_song_count_format">%d songs shuffled</string>
+    <string name="player_queue_shuffled_count_format">Queue shuffled (tracks: %d)</string>
+    <string name="player_shuffled_song_count_format">Tracks shuffled: %d</string>
     <string name="player_sleep_timer_title">Temporitzador d\'aturada</string>
     <string name="player_statistics_volume_label">Volume</string>
     <string name="player_swap_controls_with_timeline">Canvia els controls amb la línia de temps</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Visualizer bar</string>
     <string name="visualizer_microphone_permission_message">L\'efecte visualitzador requereix permís de micròfon, si us plau.</string>
     <string name="visualizer_title">Visualitzador</string>
+    <string name="player_error_unknown">S\'ha produït un error de reproducció desconegut</string>
 </resources>

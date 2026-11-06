@@ -38,4 +38,8 @@
     <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
     <string name="notice_unreachable">%1$s: the phone did not answer.</string>
     <string name="path_copied">Path copied</string>
+    <string name="updates_check_failed">Could not check for updates.</string>
+    <string name="updates_check_invalid_response">The update server returned an invalid response.</string>
+    <string name="updates_download_generic_error">Could not download the update.</string>
+    <string name="updates_download_invalid_filename">The update file name is invalid.</string>
 </resources>

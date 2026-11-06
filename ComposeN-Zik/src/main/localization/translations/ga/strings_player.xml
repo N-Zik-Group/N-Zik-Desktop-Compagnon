@@ -97,7 +97,8 @@
     <string name="player_seek_backward_five_seconds">Rewind 5 seconds</string>
     <string name="player_seek_backward_thirty_seconds">Rewinds 30 seconds</string>
     <string name="player_shuffle_empty_message">No song to shuffle</string>
-    <string name="player_shuffled_song_count_format">%d songs shuffled</string>
+    <string name="player_queue_shuffled_count_format">Queue shuffled (tracks: %d)</string>
+    <string name="player_shuffled_song_count_format">Tracks shuffled: %d</string>
     <string name="player_sleep_timer_title">Sleep timer</string>
     <string name="player_statistics_volume_label">Volume</string>
     <string name="player_swap_controls_with_timeline">Swap controls with timeline</string>
@@ -119,4 +120,5 @@
     <string name="visualizer_bar">Visualizer bar</string>
     <string name="visualizer_microphone_permission_message">Visualizer effect require mic permission, grant please.</string>
     <string name="visualizer_title">Visualizer</string>
+    <string name="player_error_unknown">An unknown playback error has occurred</string>
 </resources>

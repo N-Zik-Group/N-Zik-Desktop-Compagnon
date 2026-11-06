@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_subtitle">Companion for N-Zik</string>
+    <string name="app_subtitle">Kompanjong til N-Zik</string>
     <string name="cancel">Avbryt</string>
-    <string name="common_artist_conjunction_and">and</string>
+    <string name="common_artist_conjunction_and">og</string>
     <string name="common_clipboard_copy_success">Kopiert</string>
     <string name="common_color_source_theme">Tema</string>
     <string name="common_color_white">Hvit</string>
@@ -13,15 +13,23 @@
     <string name="common_option_default">Standard</string>
     <string name="common_option_disabled">Deaktivert</string>
     <string name="common_option_none">Ingen</string>
-    <string name="common_option_random">Random</string>
+    <string name="common_option_random">Tilfeldig</string>
     <string name="common_size_big">Stor</string>
     <string name="common_size_biggest">Størst</string>
-    <string name="common_size_medium">Medium</string>
+    <string name="common_size_medium">Middels</string>
     <string name="common_size_small">Liten</string>
     <string name="common_state_off">Av</string>
     <string name="common_state_on">På</string>
-    <string name="common_storage_used_suffix">used</string>
+    <string name="common_storage_used_suffix">brukt</string>
     <string name="common_validation_empty_value">Verdien kan ikke være tom</string>
-    <string name="common_validation_minimum_value">Value must be greater than</string>
-    <string name="dismiss">Dismiss</string>
+    <string name="common_validation_minimum_value">Verdien må være større enn</string>
+    <string name="dismiss">Avvis</string>
+    <string name="common_duration_seconds_format">%1$d s</string>
+    <string name="common_file_size_bytes_format">%1$s B</string>
+    <string name="common_file_size_gigabytes_format">%1$s GB</string>
+    <string name="common_file_size_kilobytes_format">%1$s kB</string>
+    <string name="common_file_size_megabytes_format">%1$s MB</string>
+    <string name="common_file_size_terabytes_format">%1$s TB</string>
+    <string name="common_size_megabytes_format">%1$d MB</string>
+    <string name="common_size_gigabytes_format">%1$d GB</string>
 </resources>

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="command_clear">Clear the queue</string>
-    <string name="command_copied">Command copied</string>
-    <string name="command_jump">Play from the queue</string>
-    <string name="command_move">Move in the queue</string>
-    <string name="command_next">Next</string>
+    <string name="command_clear">Очистити чергу</string>
+    <string name="command_copied">Команда скопійована</string>
+    <string name="command_jump">Відтворити з черги</string>
+    <string name="command_move">Рух у чергу</string>
+    <string name="command_next">Уперед</string>
     <string name="command_pause">Пауза</string>
     <string name="command_play">Відтворити</string>
-    <string name="command_previous">Previous</string>
-    <string name="command_queue_add">Add to queue</string>
-    <string name="command_queue_list">Queue from list</string>
+    <string name="command_previous">Попереднє</string>
+    <string name="command_queue_add">Додати до черги</string>
+    <string name="command_queue_list">Черга зі списку</string>
     <string name="command_queue_play">Відтворити</string>
-    <string name="command_remove">Remove from the queue</string>
+    <string name="command_remove">Видалити з черги</string>
     <string name="command_repeat">Повторити</string>
-    <string name="command_seek">Seek</string>
+    <string name="command_seek">Провирок</string>
     <string name="command_shuffle">Перемішати</string>
-    <string name="command_speed">Speed</string>
+    <string name="command_speed">Швидкість</string>
     <string name="common_action_clear">Очистити</string>
     <string name="common_action_confirm">Підтвердити</string>
     <string name="common_action_delete">Видалити</string>
@@ -27,6 +27,6 @@
     <string name="common_action_turn_off">Вимкнути</string>
     <string name="common_action_update">Оновити</string>
     <string name="common_menu_label">Меню</string>
-    <string name="tray_open">Open</string>
-    <string name="tray_quit">Quit</string>
+    <string name="tray_open">Відкриті</string>
+    <string name="tray_quit">Вийти</string>
 </resources>

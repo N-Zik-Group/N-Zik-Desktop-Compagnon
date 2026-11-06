@@ -19,6 +19,7 @@
     <string name="settings_about_page_description">Hakkında bölümünde uygulama, geliştiriciler, sorun giderme ve güncelleme seçenekleri hakkında bilgiler yer almaktadır</string>
     <string name="settings_app_behavior_title">Uygulama Davranışı</string>
     <string name="settings_app_language_label">Uygulama dili</string>
+    <string name="settings_app_language_system">Sistem</string>
     <string name="settings_audio_bass_boost">Ses bas güçlendirme</string>
     <string name="settings_audio_crossfade_description">Şarkılar arasında yumuşak geçişi etkinleştir</string>
     <string name="settings_audio_crossfade_label">Çapraz geçiş</string>
@@ -56,7 +57,7 @@
     <string name="settings_interface_title">Kullanıcı arayüzü</string>
     <string name="settings_languages_title">Diller</string>
     <string name="settings_launcher_shortcuts_description">Başlatıcı kısayollarını seçin ve sırasını değiştirin</string>
-    <string name="settings_launcher_shortcuts_limit_message">Maximum of %1$d active shortcuts reached</string>
+    <string name="settings_launcher_shortcuts_limit_message">Aktif kısayolların sayısı %1$d sınırına ulaştı</string>
     <string name="settings_launcher_shortcuts_recovery_required_message">Kurtarma işlevi devre dışı bırakılamaz</string>
     <string name="settings_launcher_shortcuts_title">Uygulama kısayolları</string>
     <string name="settings_library_now_playing_indicator_label">Şu Anda Çalıyor Göstergesi</string>

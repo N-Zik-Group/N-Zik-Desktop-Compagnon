@@ -2,7 +2,7 @@
 <resources>
     <string name="about_action_report_issue">Reportar um problema</string>
     <string name="about_action_view_source">Veja o código-fonte</string>
-    <string name="about_authorship_preposition">by</string>
+    <string name="about_authorship_preposition">Por</string>
     <string name="about_contributors_alphabetical_order_label">Em ordem alfabética:</string>
     <string name="about_developers">Desenvolvedores / Designers</string>
     <string name="about_github_link_description">Você vai ser redirecionado para o GitHub</string>
@@ -10,4 +10,12 @@
     <string name="about_translators_title">Tradutores</string>
     <string name="contributors">Contribuidores</string>
     <string name="request_a_feature">Solicitar um recurso ou sugerir uma ideia</string>
+    <plurals name="about_translator_count">
+        <item quantity="one">Tradutor %1$d</item>
+        <item quantity="other">Tradutores %1$d</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="one">Desenvolvedor / designer %1$d</item>
+        <item quantity="other">Desenvolvedores %1$d / designers</item>
+    </plurals>
 </resources>

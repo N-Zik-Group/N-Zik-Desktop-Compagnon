@@ -10,4 +10,10 @@
     <string name="about_translators_title">번역가들</string>
     <string name="contributors">Contributors</string>
     <string name="request_a_feature">기능 요청이나 아이디어 제안</string>
+    <plurals name="about_translator_count">
+        <item quantity="other">%1$d translators</item>
+    </plurals>
+    <plurals name="about_developer_designer_count">
+        <item quantity="other">%1$d developers / designers</item>
+    </plurals>
 </resources>
