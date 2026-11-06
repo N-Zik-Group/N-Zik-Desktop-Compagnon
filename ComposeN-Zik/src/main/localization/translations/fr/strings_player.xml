@@ -12,7 +12,7 @@
     <string name="listen_together_auto_approval_joins_description">Approuver automatiquement les demandes d\'adhésion sans les examiner manuellement</string>
     <string name="listen_together_auto_approval_suggestions_description">Approuver et mettre en file d\'attente automatiquement les suggestions de titres des invités</string>
     <string name="listen_together_create_room_description">Créez une salle et partagez le code avec vos amis</string>
-    <string name="listen_together_history_description">Enregistrez des morceaux de « Écoutons Ensemble » dans votre historique local</string>
+    <string name="listen_together_history_description">Enregistrez des morceaux de « Écouter Ensemble » dans votre historique local</string>
     <string name="listen_together_sync_volume_description">Les invités adapteront le volume de leur voix à celui de l\'hôte</string>
     <string name="listen_together_view_logs_description">Déboguer les événements et les messages liés à la connexion</string>
     <string name="lyrics_alignment_left_label">À gauche</string>
@@ -120,5 +120,5 @@
     <string name="visualizer_bar">Barre de visualisation</string>
     <string name="visualizer_microphone_permission_message">L\'effet « Visualizer » nécessite l\'autorisation d\'accès au micro ; veuillez l\'accorder.</string>
     <string name="visualizer_title">Visualiseur</string>
-    <string name="player_error_unknown">Une erreur de lecture inconnue s\'est produite, si le problème persiste signalez le problème</string>
+    <string name="player_error_unknown">Une erreur de lecture inconnue s\'est produite</string>
 </resources>
