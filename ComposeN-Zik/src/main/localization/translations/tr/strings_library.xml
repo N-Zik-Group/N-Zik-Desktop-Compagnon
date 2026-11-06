@@ -3,7 +3,7 @@
     <string name="album_action_bookmark">Albümü yer imlerine ekle</string>
     <string name="album_action_open">Albüme git</string>
     <string name="album_left_swipe">Albüm Sola Kaydırma</string>
-    <string name="album_loading_song_count_format">Loading album (tracks: %1$d)…</string>
+    <string name="album_loading_song_count_format">Albüm yükleniyor (parçalar: %1$d)…</string>
     <string name="album_right_swipe">Albüm Sağa Kaydırma</string>
     <string name="artist_action_follow">Takip et</string>
     <string name="artist_action_play_local_songs">Tüm yerel şarkıları çal</string>
@@ -81,7 +81,7 @@
     <string name="playlist_action_toggle_pinned">Çalma listesini sabitle/kaldır</string>
     <string name="playlist_bookmark_unsupported_message">Beğenilen Şarkılar veya Bölümler çalma listesine yer imi eklenemiyor</string>
     <string name="playlist_create_dialog_title">Yeni çalma listesi oluştur</string>
-    <string name="playlist_delete_all_confirmation_count_format">Delete all playlists? (Total: %d)</string>
+    <string name="playlist_delete_all_confirmation_count_format">Tüm çalma listelerini silmek istiyor musunuz? (Toplam: %d)</string>
     <string name="playlist_left_swipe">Çalma Listesi Sola Kaydırma</string>
     <string name="playlist_pinned_title">Sabitlenmiş</string>
     <string name="playlist_rename_dialog_title">Çalma listesini yeniden adlandır</string>
