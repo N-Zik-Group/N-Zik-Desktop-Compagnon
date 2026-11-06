@@ -8,7 +8,7 @@
     <string name="calendar_period_three_months">3 Måneder</string>
     <string name="calendar_today">I dag</string>
     <!-- Rewind -->
-    <string name="rewind_filter_month">Month</string>
+    <string name="rewind_filter_month">Måned</string>
     <string name="rewind_filter_year">År</string>
     <!-- Statistics -->
     <string name="statistics_items_limit_unlimited">Ubegrenset</string>
