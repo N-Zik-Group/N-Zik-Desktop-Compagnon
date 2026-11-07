@@ -97,8 +97,8 @@
     <string name="player_seek_backward_five_seconds">5 saniye geri sar</string>
     <string name="player_seek_backward_thirty_seconds">30 saniye geri sar</string>
     <string name="player_shuffle_empty_message">Karıştırılacak şarkı yok</string>
-    <string name="player_queue_shuffled_count_format">Queue shuffled (tracks: %d)</string>
-    <string name="player_shuffled_song_count_format">Tracks shuffled: %d</string>
+    <string name="player_queue_shuffled_count_format">Kuyruk karıştırıldı (parçalar: %d)</string>
+    <string name="player_shuffled_song_count_format">Karıştırılan parçalar: %d</string>
     <string name="player_sleep_timer_title">Uyku zamanlayıcısı</string>
     <string name="player_statistics_volume_label">Ses</string>
     <string name="player_swap_controls_with_timeline">Kontrolleri zaman çizelgesiyle değiştir</string>
