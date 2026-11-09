@@ -51,7 +51,7 @@
     <string name="updates_check_mode_disabled_status">Update disabled</string>
     <string name="updates_check_mode_enabled_status">Update enabled</string>
     <string name="updates_check_permission_description">When an update is available, you will be asked if you want to install it. There won\'t be automated installs, behind your back.</string>
-    <string name="updates_check_permission_message">Check at Github for updates?</string>
+    <string name="updates_check_permission_message">Check GitHub for updates?</string>
     <string name="updates_check_permission_screening_note">But these updates would not go through the additional screening performed at e.g. IzzyOnDroid or F-Droid.</string>
     <string name="updates_check_permission_settings_note">You can still turn it ON/OFF from the settings.</string>
     <string name="updates_checking_status">Checking for updates…</string>

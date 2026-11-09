@@ -145,6 +145,27 @@ class AppLanguageTest {
     }
 
     @Test
+    fun `Serbian script and Norwegian Bokmal select their shipped catalogs`() = runTest {
+        AppLanguage.applyTag("sr-Latn-RS")
+        assertEquals("CS", Locale.getDefault().country)
+        assertEquals("Saradnici", getString(Res.string.contributors))
+
+        AppLanguage.applyTag("sr-Cyrl-CS")
+        assertEquals("RS", Locale.getDefault().country)
+        assertEquals("SARADNICI", getString(Res.string.contributors))
+
+        AppLanguage.applyTag("nb-NO")
+        assertEquals("no", Locale.getDefault().language)
+        assertEquals("Om", getString(Res.string.about_title))
+    }
+
+    @Test
+    fun `English update prompt uses the canonical wording`() = runTest {
+        AppLanguage.applyTag("en-US")
+        assertEquals("Check GitHub for updates?", getString(Res.string.updates_check_permission_message))
+    }
+
+    @Test
     fun `English pairing instructions include the server startup step`() = runTest {
         AppLanguage.applyTag("en-US")
         assertTrue(getString(Res.string.manual_description).contains("If the server is stopped, tap Start."))

@@ -43,7 +43,7 @@ object AppLanguage {
     /**
      * Applies [tag] as the JVM default locale and bumps [appliedTag]. An undetermined tag (any
      * case variant of `und`/`und-…`, read from the normalized tag), a blank or unparseable tag
-     * falls back to the OS locale. Chinese regions are normalized to match the shipped catalogs.
+     * falls back to the OS locale. Locale variants are normalized to match the shipped catalogs.
      * Applying the same tag twice is a no-op (the [StateFlow] dedups).
      */
     fun applyTag(tag: String?) {
@@ -64,16 +64,26 @@ object AppLanguage {
         _appliedTag.value = effectiveLocale.toLanguageTag().takeIf { locale != null }
     }
 
-    /** Compose only has Chinese catalogs qualified by CN or TW. */
+    /** Match the qualifiers shipped by Compose for variants without a directly matching catalog. */
     internal fun catalogLocale(locale: Locale): Locale {
-        if (locale.language != "zh") return locale
-        val region = when (locale.script) {
-            "Hans" -> "CN"
-            "Hant" -> "TW"
-            else -> when (locale.country) {
-                "HK", "MO", "TW" -> "TW"
-                else -> "CN"
+        if (locale.language == "nb") {
+            return Locale.Builder().setLocale(locale).setLanguage("no").build()
+        }
+        val region = when (locale.language) {
+            "zh" -> when (locale.script) {
+                "Hans" -> "CN"
+                "Hant" -> "TW"
+                else -> when (locale.country) {
+                    "HK", "MO", "TW" -> "TW"
+                    else -> "CN"
+                }
             }
+            "sr" -> when {
+                locale.script == "Latn" -> "CS"
+                locale.script == "Cyrl" && locale.country == "CS" -> "RS"
+                else -> locale.country
+            }
+            else -> locale.country
         }
         if (locale.country == region) return locale
         return Locale.Builder().setLocale(locale).setRegion(region).build()
