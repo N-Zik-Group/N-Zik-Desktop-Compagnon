@@ -10,7 +10,6 @@
     <string name="artist_following_status">Suivant</string>
     <string name="artist_more_from">Plus de</string>
     <string name="artist_roundness">Polyvalence de l\'artiste</string>
-    <string name="artist_songs_count_duration">%1$d titres • %2$s</string>
     <string name="artist_songs_unavailable_message">Aucun titre disponible</string>
     <string name="home_tabs_settings">Page d\'accueil</string>
     <string name="home_tabs_settings_description">Réorganiser et afficher/masquer les onglets</string>
@@ -104,9 +103,9 @@
     <string name="song_matching_unmatched_label">Titre sans correspondance</string>
     <string name="song_metadata_update_action_open">Ouvrir la boîte de dialogue de mise à jour</string>
     <string name="sort_artist_and_album">Artiste, Album</string>
-    <plurals name="artist_song_count_with_duration">
-        <item quantity="one">%1$d song • %2$s</item>
-        <item quantity="other">%1$d songs • %2$s</item>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">%1$d titre • %2$s</item>
+        <item quantity="other">%1$d titres • %2$s</item>
     </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d titre</item>
