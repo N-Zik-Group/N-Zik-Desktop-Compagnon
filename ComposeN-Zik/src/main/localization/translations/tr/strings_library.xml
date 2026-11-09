@@ -104,8 +104,8 @@
     <string name="song_metadata_update_action_open">Güncelleme iletişim kutusunu aç</string>
     <string name="sort_artist_and_album">Sanatçı, Albüm</string>
     <plurals name="library_song_count_with_duration">
-        <item quantity="one">%1$d song • %2$s</item>
-        <item quantity="other">%1$d songs • %2$s</item>
+        <item quantity="one">%1$d şarkı • %2$s</item>
+        <item quantity="other">%1$d şarkılar • %2$s</item>
     </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d şarkı</item>
