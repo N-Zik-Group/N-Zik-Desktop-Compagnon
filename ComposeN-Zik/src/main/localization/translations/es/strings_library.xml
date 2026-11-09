@@ -103,6 +103,10 @@
     <string name="song_matching_unmatched_label">Canción inigualable</string>
     <string name="song_metadata_update_action_open">Abrir diálogo de actualización</string>
     <string name="sort_artist_and_album">Artista, álbum</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">%1$d canción • %2$s</item>
+        <item quantity="other">%1$d canciones • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d canción</item>
         <item quantity="other">%1$d canciones</item>
