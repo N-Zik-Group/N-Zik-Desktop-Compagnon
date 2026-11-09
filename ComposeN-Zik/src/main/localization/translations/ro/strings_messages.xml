@@ -18,11 +18,11 @@
     <string name="error_windows_install_helper">Instalatorul Windows nu a putut fi pornit. Executaţi instalatorul descărcat manual.</string>
     <string name="interface_in_use">Interfața utilizată</string>
     <string name="local_playback_failed">Acest cântec nu a putut fi redat pe acest PC.</string>
-    <string name="local_playback_invalid_url">Acest cântec nu a putut fi redat pe acest PC.</string>
     <string name="local_playback_not_found">Această melodie nu mai este pe telefon.</string>
     <string name="local_playback_other_active">Sunet pe acest calculator: un alt PC (%1$s) este conectat la telefon.</string>
     <string name="local_playback_unavailable">Sunetul pe acest calculator nu este disponibil: VLC încorporat nu a putut fi încărcat.</string>
     <string name="local_playback_unavailable_linux">Sunetul pe acest PC nu este disponibil. Instalați VLC cu %1$s și reporniți aplicația.</string>
+    <string name="local_playback_unavailable_linux_generic">Sunetul pe acest calculator nu este disponibil. Utilizați pachetele de pachete de distribuție pentru a instala VLC, apoi reporniți aplicația.</string>
     <string name="local_playback_unreachable">Telefonul dvs. nu a răspuns.</string>
     <string name="local_playback_upstream_failed">Telefonul dvs. nu a putut primi această melodie.</string>
     <string name="not_selectable">Nu este selectabil</string>
@@ -38,7 +38,6 @@
     <string name="notice_unavailable">%1$s: jucătorul telefonului nu este disponibil. Încearcă din nou mai târziu.</string>
     <string name="notice_unreachable">%1$s: telefonul nu a răspuns.</string>
     <string name="path_copied">Cale copiată</string>
-    <string name="updates_check_failed">Nu s-au putut verifica actualizările.</string>
     <string name="updates_check_invalid_response">Serverul de actualizare a returnat un răspuns nevalid.</string>
     <string name="updates_download_generic_error">Actualizarea nu a putut fi descărcată.</string>
     <string name="updates_download_invalid_filename">Numele fișierului de actualizare nu este valid.</string>
