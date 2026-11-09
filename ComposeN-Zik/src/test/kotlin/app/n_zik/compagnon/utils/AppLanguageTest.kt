@@ -129,6 +129,29 @@ class AppLanguageTest {
     }
 
     @Test
+    fun `Chinese OS locales select the available catalog with explicit script first`() = runTest {
+        val expectedRegions = mapOf(
+            "zh-HK" to "TW", "zh-MO" to "TW", "zh-SG" to "CN",
+            "zh-Hant" to "TW", "zh-Hans" to "CN",
+            "zh-Hans-TW" to "CN", "zh-Hant-CN" to "TW",
+        )
+        for ((tag, region) in expectedRegions) {
+            assertEquals(region, AppLanguage.catalogLocale(Locale.forLanguageTag(tag)).country, tag)
+            AppLanguage.applyTag(tag)
+            assertEquals(if (region == "TW") "\u95dc\u65bc" else "\u5173\u4e8e", getString(Res.string.about_title), tag)
+        }
+        val french = Locale.forLanguageTag("fr-CA")
+        assertEquals(french, AppLanguage.catalogLocale(french))
+    }
+
+    @Test
+    fun `English pairing instructions include the server startup step`() = runTest {
+        AppLanguage.applyTag("en-US")
+        assertTrue(getString(Res.string.manual_description).contains("If the server is stopped, tap Start."))
+        assertTrue(getString(Res.string.pair_qr_description).contains("If the server is stopped, tap Start."))
+    }
+
+    @Test
     fun `the spec-pinned endonyms use the standard forms`() {
         assertEquals("Suomi", AppLanguage.labelOf("fi"))
         assertEquals("Srpski", AppLanguage.labelOf("sr-CS"))

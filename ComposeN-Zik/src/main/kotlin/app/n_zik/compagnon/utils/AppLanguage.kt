@@ -34,7 +34,7 @@ object AppLanguage {
      */
     val appliedTag: StateFlow<String?> = _appliedTag.asStateFlow()
 
-    /** Pure resolution of the setting: [SYSTEM] → `null` (the OS locale); anything else is a manual BCP-47 code used as is (an unknown code falls back to the PC's `values/`, the English one). */
+    /** [SYSTEM] uses the OS locale; other settings are passed to [applyTag] as language tags. */
     fun resolveLanguageTag(setting: String): String? = when (setting) {
         SYSTEM -> null
         else -> setting
@@ -43,7 +43,7 @@ object AppLanguage {
     /**
      * Applies [tag] as the JVM default locale and bumps [appliedTag]. An undetermined tag (any
      * case variant of `und`/`und-…`, read from the normalized tag), a blank or unparseable tag
-     * never overrides the resolver: the OS locale is restored (an `und` locale is never applied).
+     * falls back to the OS locale. Chinese regions are normalized to match the shipped catalogs.
      * Applying the same tag twice is a no-op (the [StateFlow] dedups).
      */
     fun applyTag(tag: String?) {
@@ -58,9 +58,25 @@ object AppLanguage {
                 val t = normalized.toLanguageTag()
                 !t.equals("und", ignoreCase = true) && !t.startsWith("und-", ignoreCase = true)
             }
-        // A `null` locale resolves back to the OS locale (the tag is never applied in that case).
-        Locale.setDefault(locale ?: osLocale)
-        _appliedTag.value = locale?.toLanguageTag()
+        // Keep the System sentinel while applying its nearest shipped catalog.
+        val effectiveLocale = catalogLocale(locale ?: osLocale)
+        Locale.setDefault(effectiveLocale)
+        _appliedTag.value = effectiveLocale.toLanguageTag().takeIf { locale != null }
+    }
+
+    /** Compose only has Chinese catalogs qualified by CN or TW. */
+    internal fun catalogLocale(locale: Locale): Locale {
+        if (locale.language != "zh") return locale
+        val region = when (locale.script) {
+            "Hans" -> "CN"
+            "Hant" -> "TW"
+            else -> when (locale.country) {
+                "HK", "MO", "TW" -> "TW"
+                else -> "CN"
+            }
+        }
+        if (locale.country == region) return locale
+        return Locale.Builder().setLocale(locale).setRegion(region).build()
     }
 
     /**
