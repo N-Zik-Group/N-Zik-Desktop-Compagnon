@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">Usuń z kolejki</string>
     <string name="player_queue_clear_confirmation">Czy na pewno chcesz wyczyścić kolejkę?</string>
     <string name="player_queue_deleted_item_format">%1$s deleted</string>
+    <string name="player_queue_removed_item_format">Usunięto z kolejki: %1$s</string>
     <string name="player_rotating_buttons">Obracanie przycisków</string>
     <string name="player_seek_backward_five_seconds">Przewiń 5 sekund</string>
     <string name="player_seek_backward_thirty_seconds">Przewijanie 30 sekund</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">Odkryj</string>
     <string name="visualizer_animation_bubbles">Bąbelki</string>
     <string name="visualizer_bar">Pasek wizualizacji</string>
+    <string name="visualizer_desktop_preview_message">Wizualizacja na pulpicie pokazuje podgląd statyczny.</string>
     <string name="visualizer_microphone_permission_message">Efekty wizualizatora wymagają uprawnienia do mikrofonu, włącz je w ustawieniach.</string>
     <string name="visualizer_title">Wizualizator</string>
     <string name="player_error_unknown">Wystąpił nieznany błąd odtwarzania</string>
