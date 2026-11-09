@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Аудіопристрої</string>
+    <string name="audio_device_battery_format">Акумулятор: %1$d%%</string>
     <string name="audio_effects">Аудіоефекти</string>
     <string name="audio_output_title">Вивід звуку</string>
     <string name="audio_quality_automatic">Автоматично</string>
