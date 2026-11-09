@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Audio-Geräte</string>
+    <string name="audio_device_battery_format">Akku: %1$d%%</string>
     <string name="audio_effects">Audio-Effekte</string>
     <string name="audio_output_title">Audioausgabe</string>
     <string name="audio_quality_automatic">Automatisch</string>
@@ -93,6 +94,7 @@
     <string name="player_queue_action_remove">Aus der Warteschlange entfernen</string>
     <string name="player_queue_clear_confirmation">Wollen Sie die Warteschlange wirklich bereinigen?</string>
     <string name="player_queue_deleted_item_format">%1$s gelöscht</string>
+    <string name="player_queue_removed_item_format">Aus der Warteschlange entfernt: %1$s</string>
     <string name="player_rotating_buttons">Rotierende Buttons</string>
     <string name="player_seek_backward_five_seconds">5 Sekunden zurückziehen</string>
     <string name="player_seek_backward_thirty_seconds">30 Sekunden zurück</string>
@@ -118,6 +120,7 @@
     <string name="queue_discover_title">Entdecken</string>
     <string name="visualizer_animation_bubbles">Blasen</string>
     <string name="visualizer_bar">Visualisierungsleiste</string>
+    <string name="visualizer_desktop_preview_message">Der Desktop-Visualizer zeigt eine statische Vorschau an.</string>
     <string name="visualizer_microphone_permission_message">Visualizer benötigt Mikrofonberechtigung, gewähre bitte die Berechtigung.</string>
     <string name="visualizer_title">Visualisierer</string>
     <string name="player_error_unknown">Ein unbekannter Wiedergabefehler ist aufgetreten</string>
