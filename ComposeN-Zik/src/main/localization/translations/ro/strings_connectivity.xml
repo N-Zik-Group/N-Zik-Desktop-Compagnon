@@ -47,6 +47,7 @@
     <string name="pair_device_name">Numele acestui PC</string>
     <string name="pair_device_name_invalid">Introduceți un nume de 1 până la 64 de caractere.</string>
     <string name="pair_listener_unreachable">Telefonul dvs. nu a putut ajunge la acest calculator. Windows Firewall, sau o rețea setată la public? Permiteți N-Zik Desktop Compagnon pe rețelele private sau pereche manuală de mai jos.</string>
+    <string name="pair_listener_unreachable_linux">Telefonul dvs. nu a putut ajunge la acest calculator. Verificați-vă firewall-ul și asigurați-vă că ambele dispozitive sunt în aceeași rețea, sau perechi de mai jos.</string>
     <string name="pair_manual_entry">Intrare manuală</string>
     <string name="pair_manual_entry_text">Tastați adresa și codul afișat pe telefonul dvs.</string>
     <string name="pair_no_address">Nu a fost găsită nicio adresă de rețea locală pe acest calculator, astfel încât să nu poată fi afișat codul QR. Asociați manual mai jos.</string>
