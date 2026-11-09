@@ -13,7 +13,9 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -27,6 +29,7 @@ import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.updater.models.CheckUpdateState
 import app.n_zik.compagnon.updater.services.Updater
+import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.bold
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -69,6 +72,7 @@ object CheckForUpdateDialog {
     fun Render() {
         if (isCanceled || !isActive) return
 
+        val appliedLanguage by AppLanguage.appliedTag.collectAsState()
         DialogFrame(onDismiss = { onDismiss() }, maxWidth = 420.dp) {
             val colorPalette = colorPalette()
 
@@ -99,20 +103,20 @@ object CheckForUpdateDialog {
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         BasicText(
-                            text = stringResource(Res.string.updates_check_permission_message),
+                            text = key(appliedLanguage) { stringResource(Res.string.updates_check_permission_message) },
                             style = typography().l.bold.copy(color = colorPalette.text),
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         BasicText(
-                            text = stringResource(Res.string.updates_check_permission_description),
+                            text = key(appliedLanguage) { stringResource(Res.string.updates_check_permission_description) },
                             style = typography().xs.copy(color = colorPalette.textSecondary),
                         )
                         BasicText(
-                            text = stringResource(Res.string.updates_download_origin_note),
+                            text = key(appliedLanguage) { stringResource(Res.string.updates_download_origin_note) },
                             style = typography().xs.copy(color = colorPalette.textSecondary),
                         )
                         BasicText(
-                            text = stringResource(Res.string.updates_check_permission_settings_note),
+                            text = key(appliedLanguage) { stringResource(Res.string.updates_check_permission_settings_note) },
                             style = typography().xs.copy(color = colorPalette.textSecondary),
                         )
                     }
@@ -132,7 +136,7 @@ object CheckForUpdateDialog {
                     ButtonRow(
                         buttons = listOf(
                             DialogButton(
-                                text = stringResource(Res.string.updates_action_check),
+                                text = key(appliedLanguage) { stringResource(Res.string.updates_action_check) },
                                 icon = Res.drawable.update,
                                 onClick = {
                                     onDismiss()
@@ -157,7 +161,7 @@ object CheckForUpdateDialog {
                     ButtonRow(
                         buttons = listOf(
                             DialogButton(
-                                text = stringResource(Res.string.cancel),
+                                text = key(appliedLanguage) { stringResource(Res.string.cancel) },
                                 icon = Res.drawable.arrow_left,
                                 onClick = { onDismiss() },
                                 danger = true,
@@ -180,7 +184,7 @@ object CheckForUpdateDialog {
                     ButtonRow(
                         buttons = listOf(
                             DialogButton(
-                                text = stringResource(Res.string.common_action_turn_off),
+                                text = key(appliedLanguage) { stringResource(Res.string.common_action_turn_off) },
                                 icon = Res.drawable.close,
                                 onClick = {
                                     Updater.setCheckUpdateState(CheckUpdateState.Off)

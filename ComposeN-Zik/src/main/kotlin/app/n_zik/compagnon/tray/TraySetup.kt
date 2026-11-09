@@ -10,6 +10,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,6 +35,7 @@ import javax.swing.SwingUtilities
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import app.n_zik.compagnon.utils.AppLanguage
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -125,20 +127,24 @@ fun ApplicationScope.TraySetup(
 
     val settings by preferences.settings.collectAsState()
     val shortcuts = resolveActiveShortcuts(settings.appShortcutsOrder, settings.appShortcutsEnabled)
-    val model = TrayMenuModel(
-        title = title,
-        // Stable ids (the native DBusMenu's host recycles its items by id — TrayMenuEntry)
-        top = listOf(TrayMenuEntry(TRAY_MENU_ID_OPEN, stringResource(Res.string.tray_open), Res.drawable.ic_launcher_monochrome, onClick = windowController::showAndFocus)) +
-            TrayActions.mapIndexed { index, action -> TrayMenuEntry(TRAY_MENU_ID_TOP_ACTION_BASE + index, stringResource(action.titleId), null, onClick = action::onClick) },
-        shortcuts = shortcuts.map { shortcut ->
-            TrayMenuEntry(shortcut.trayMenuId, stringResource(shortcut.labelId), shortcut.iconId) {
-                // Every shortcut opens the window; the ones with a PC destination then switch to it
-                windowController.showAndFocus()
-                AppShortcutRequests.pending.value = shortcut
-            }
-        },
-        bottom = listOf(TrayMenuEntry(TRAY_MENU_ID_QUIT, stringResource(Res.string.tray_quit), Res.drawable.close, onClick = onQuit)),
-    )
+    val appliedLanguage by AppLanguage.appliedTag.collectAsState()
+    // Refresh the labels while keeping the native tray registration and open menu.
+    val model = key(appliedLanguage) {
+        TrayMenuModel(
+            title = title,
+            // Stable ids (the native DBusMenu's host recycles its items by id — TrayMenuEntry)
+            top = listOf(TrayMenuEntry(TRAY_MENU_ID_OPEN, stringResource(Res.string.tray_open), Res.drawable.ic_launcher_monochrome, onClick = windowController::showAndFocus)) +
+                TrayActions.mapIndexed { index, action -> TrayMenuEntry(TRAY_MENU_ID_TOP_ACTION_BASE + index, stringResource(action.titleId), null, onClick = action::onClick) },
+            shortcuts = shortcuts.map { shortcut ->
+                TrayMenuEntry(shortcut.trayMenuId, stringResource(shortcut.labelId), shortcut.iconId) {
+                    // Every shortcut opens the window; the ones with a PC destination then switch to it
+                    windowController.showAndFocus()
+                    AppShortcutRequests.pending.value = shortcut
+                }
+            },
+            bottom = listOf(TrayMenuEntry(TRAY_MENU_ID_QUIT, stringResource(Res.string.tray_quit), Res.drawable.close, onClick = onQuit)),
+        )
+    }
 
     // The session's monochrome tint ([menuIconTint]): resolved once before the UI exists
     // ([primeMenuTint] from `main()`) — the composition itself never touches the disk. Linux-only

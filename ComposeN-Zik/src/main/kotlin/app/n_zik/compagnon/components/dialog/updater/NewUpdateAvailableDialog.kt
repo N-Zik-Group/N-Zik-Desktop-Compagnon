@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -23,6 +25,7 @@ import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.updater.services.Updater
 import app.n_zik.compagnon.updater.ui.channelLabel
+import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.bold
 import app.n_zik.compagnon.utils.formatShortFileSize
 import app.n_zik.compagnon.utils.formatText
@@ -78,6 +81,7 @@ object NewUpdateAvailableDialog {
     @Composable
     fun Render() {
         if (isCancelled || !isActive) return
+        val appliedLanguage by AppLanguage.appliedTag.collectAsState()
         DialogFrame(onDismiss = ::onDismiss, maxWidth = 420.dp) {
             val colorPalette = colorPalette()
             Column(
@@ -93,7 +97,7 @@ object NewUpdateAvailableDialog {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 BasicText(
-                    text = channelLabel() + stringResource(Res.string.updates_available),
+                    text = key(appliedLanguage) { channelLabel() + stringResource(Res.string.updates_available) },
                     style = typography().l.bold.copy(color = colorPalette.text),
                 )
                 Spacer(modifier = Modifier.height(4.dp))
@@ -101,7 +105,7 @@ object NewUpdateAvailableDialog {
                 // the tag's "v", appends the channel suffix when absent)
                 BasicText(
                     text = formatText(
-                        stringResource(Res.string.updates_available_version_message),
+                        key(appliedLanguage) { stringResource(Res.string.updates_available_version_message) },
                         Updater.getDisplayVersion(),
                     ),
                     style = typography().xs.copy(color = colorPalette.textSecondary),
@@ -110,7 +114,7 @@ object NewUpdateAvailableDialog {
                 // when no asset is selected (the desktop's no-asset phase)
                 BasicText(
                     text = formatText(
-                        stringResource(Res.string.updates_available_download_size),
+                        key(appliedLanguage) { stringResource(Res.string.updates_available_download_size) },
                         Updater.build?.let { formatShortFileSize(it.size.toLong()) } ?: "?",
                     ),
                     style = typography().xs.copy(color = colorPalette.textSecondary),
@@ -126,13 +130,13 @@ object NewUpdateAvailableDialog {
                 ButtonRow(
                     buttons = listOf(
                         DialogButton(
-                            text = stringResource(Res.string.cancel),
+                            text = key(appliedLanguage) { stringResource(Res.string.cancel) },
                             icon = Res.drawable.close,
                             onClick = ::onDismiss,
                             danger = true,
                         ),
                         DialogButton(
-                            text = stringResource(Res.string.updates_action_open_download),
+                            text = key(appliedLanguage) { stringResource(Res.string.updates_action_open_download) },
                             icon = Res.drawable.chevron_forward,
                             onClick = {
                                 onDismiss()
