@@ -18,11 +18,11 @@
     <string name="error_windows_install_helper">Impossibile avviare l\'installatore di Windows. Eseguire l\'installatore scaricato manualmente.</string>
     <string name="interface_in_use">Interfaccia in uso</string>
     <string name="local_playback_failed">Questa canzone non può essere riprodotta su questo PC.</string>
-    <string name="local_playback_invalid_url">Questa canzone non può essere riprodotta su questo PC.</string>
     <string name="local_playback_not_found">Questa canzone non è più sul tuo telefono.</string>
     <string name="local_playback_other_active">Suono su questo PC: un altro PC (%1$s) è collegato al telefono.</string>
     <string name="local_playback_unavailable">Il suono su questo PC non è disponibile: il VLC incorporato non può essere caricato.</string>
     <string name="local_playback_unavailable_linux">Il suono su questo PC non è disponibile. Installa VLC con %1$s e riavvia l\'app.</string>
+    <string name="local_playback_unavailable_linux_generic">Il suono su questo PC non è disponibile. Usa il gestore pacchetti della tua distribuzione per installare VLC, quindi riavvia l\'app.</string>
     <string name="local_playback_unreachable">Il tuo telefono non ha risposto.</string>
     <string name="local_playback_upstream_failed">Il telefono non ha potuto ottenere questa canzone.</string>
     <string name="not_selectable">Non selezionabile</string>
@@ -38,7 +38,6 @@
     <string name="notice_unavailable">%1$s: il giocatore del telefono non è disponibile. Riprova più tardi.</string>
     <string name="notice_unreachable">%1$s: il telefono non ha risposto.</string>
     <string name="path_copied">Percorso copiato</string>
-    <string name="updates_check_failed">Impossibile controllare gli aggiornamenti.</string>
     <string name="updates_check_invalid_response">Il server di aggiornamento ha restituito una risposta non valida.</string>
     <string name="updates_download_generic_error">Impossibile scaricare l\'aggiornamento.</string>
     <string name="updates_download_invalid_filename">Il nome del file di aggiornamento non è valido.</string>
