@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Bass boost level</string>
     <string name="settings_cache_action_set_custom_size">Aangepaste cache instellen</string>
     <string name="settings_cache_custom_size_input_hint">Waarde in MB invoeren</string>
+    <string name="settings_cache_custom_size_format">Aangepast: %1$s</string>
     <string name="settings_cache_delete_confirmation">Weet je zeker dat je de cache wilt wissen?</string>
     <string name="settings_cache_eviction_description">Wanneer de cache bijna leeg is, worden de bronnen die niet meer geopend zijn voor de langste tijd gewist</string>
     <string name="settings_cache_image_size_limit_label">Afbeeldingscache max grootte</string>
     <string name="settings_cache_song_size_limit_label">Nummercache max grootte</string>
     <string name="settings_cache_title">Cachegeheugen</string>
+    <string name="settings_cache_usage_percent_format">%1$s gebruikt (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s gebruikt (ongelimiteerd)</string>
     <string name="settings_data_page_description">De gegevenssectie bevat instellingen die aanpassen hoe de app gegevens lokaal en op afstand behandelt</string>
     <string name="settings_data_title">Gegevens</string>
     <string name="settings_debug_title">Instellingen</string>
