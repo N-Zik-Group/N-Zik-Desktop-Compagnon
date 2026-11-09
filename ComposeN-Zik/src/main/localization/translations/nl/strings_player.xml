@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Audio apparaten</string>
+    <string name="audio_device_battery_format">Batterij: %1$d%%</string>
     <string name="audio_effects">Audio Effecten</string>
     <string name="audio_output_title">Audio uitvoer</string>
     <string name="audio_quality_automatic">Automatisch</string>
