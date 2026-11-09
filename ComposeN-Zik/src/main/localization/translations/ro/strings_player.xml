@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">Elimină din coadă</string>
     <string name="player_queue_clear_confirmation">Sigur doriți să curățați coada?</string>
     <string name="player_queue_deleted_item_format">%1$s șters</string>
+    <string name="player_queue_removed_item_format">Eliminat din coadă: %1$s</string>
     <string name="player_rotating_buttons">Butoane rotative</string>
     <string name="player_seek_backward_five_seconds">Repetă 5 secunde</string>
     <string name="player_seek_backward_thirty_seconds">Reîncarcă 30 de secunde</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">Descoperă</string>
     <string name="visualizer_animation_bubbles">Bule</string>
     <string name="visualizer_bar">Bară de vizualizare</string>
+    <string name="visualizer_desktop_preview_message">Vizualizatorul Desktop afișează o previzualizare statică.</string>
     <string name="visualizer_microphone_permission_message">Vizualizatorul necesită permisiunea microfonului, acordă te rog.</string>
     <string name="visualizer_title">Vizualizator</string>
     <string name="player_error_unknown">A apărut o eroare necunoscută de redare</string>
