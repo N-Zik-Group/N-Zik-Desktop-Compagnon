@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">Αφαίρεση από τη λίστα αναπαραγωγής</string>
     <string name="player_queue_clear_confirmation">Θέλετε πραγματικά να καθαρίσετε την ουρά?</string>
     <string name="player_queue_deleted_item_format">%1$s deleted</string>
+    <string name="player_queue_removed_item_format">Αφαιρέθηκε από την ουρά: %1$s</string>
     <string name="player_rotating_buttons">Περιστρεφόμενα κουμπιά</string>
     <string name="player_seek_backward_five_seconds">Επαναφορά 5 δευτερολέπτων</string>
     <string name="player_seek_backward_thirty_seconds">Επαναλάβετε τα 30 δευτερόλεπτα</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">Ανακαλύψτε</string>
     <string name="visualizer_animation_bubbles">Φυσαλίδες</string>
     <string name="visualizer_bar">Γραμμή απεικόνισης</string>
+    <string name="visualizer_desktop_preview_message">Η απεικόνιση επιφάνειας εργασίας εμφανίζει μια στατική προεπισκόπηση.</string>
     <string name="visualizer_microphone_permission_message">Οι απεικονίσεις απαιτούν πρόσβασή στο μικρόφωνο.</string>
     <string name="visualizer_title">Απεικονίσεις</string>
     <string name="player_error_unknown">Προέκυψε ένα άγνωστο σφάλμα αναπαραγωγής</string>
