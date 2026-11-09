@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">إزالة من قائمة الانتظار</string>
     <string name="player_queue_clear_confirmation">هل تريد حقاً تنظيف قائمة الانتظار؟</string>
     <string name="player_queue_deleted_item_format">تم حذف %1$s</string>
+    <string name="player_queue_removed_item_format">تمت الإزالة من قائمة الانتظار: %1$s</string>
     <string name="player_rotating_buttons">أزرار الدوران</string>
     <string name="player_seek_backward_five_seconds">إرجاع 5 ثوان</string>
     <string name="player_seek_backward_thirty_seconds">إعادة الرياح 30 ثانية</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">اكتشف</string>
     <string name="visualizer_animation_bubbles">فقاعات</string>
     <string name="visualizer_bar">شريط المرئيات</string>
+    <string name="visualizer_desktop_preview_message">يعرض منظر سطح المكتب معاينة ثابتة.</string>
     <string name="visualizer_microphone_permission_message">التأثير المرئي يتطلب إذنًا من الميكروفون، امنح من فضلك.</string>
     <string name="visualizer_title">المؤثرات المرئية</string>
     <string name="player_error_unknown">حدث خطأ غير معروف في التشغيل</string>
