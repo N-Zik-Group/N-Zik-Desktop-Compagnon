@@ -32,4 +32,6 @@
     <string name="common_file_size_terabytes_format">%1$s TB</string>
     <string name="common_size_megabytes_format">%1$d MB</string>
     <string name="common_size_gigabytes_format">%1$d GB</string>
+    <string name="common_range_maximum">Max.</string>
+    <string name="common_range_minimum">Min</string>
 </resources>
