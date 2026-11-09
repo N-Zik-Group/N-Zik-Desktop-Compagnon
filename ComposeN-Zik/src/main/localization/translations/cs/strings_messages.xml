@@ -22,6 +22,7 @@
     <string name="local_playback_other_active">Zvuk na tomto PC: jiný PC (%1$s) je připojen k telefonu.</string>
     <string name="local_playback_unavailable">Zvuk na tomto PC není k dispozici: vložený VLC nemohl být načten.</string>
     <string name="local_playback_unavailable_linux">Zvuk na tomto PC je nedostupný. Nainstalujte VLC s %1$s a restartujte aplikaci.</string>
+    <string name="local_playback_unavailable_linux_generic">Zvuk na tomto PC není dostupný. Použijte správce balíčků vaší distribuce k instalaci VLC a poté restartujte aplikaci.</string>
     <string name="local_playback_unreachable">Váš telefon neodpovídal.</string>
     <string name="local_playback_upstream_failed">Váš telefon nemohl získat tuto skladbu.</string>
     <string name="not_selectable">Nevybratelné</string>
