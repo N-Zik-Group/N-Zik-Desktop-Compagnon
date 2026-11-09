@@ -18,11 +18,11 @@
     <string name="error_windows_install_helper">Не вдалося запустити інсталятор для Windows. Запустіть завантажений інсталятор вручну.</string>
     <string name="interface_in_use">Використовуваний інтерфейс</string>
     <string name="local_playback_failed">Ця пісня не може бути відтворена на цьому ПК.</string>
-    <string name="local_playback_invalid_url">Ця пісня не може бути відтворена на цьому ПК.</string>
     <string name="local_playback_not_found">Ця пісня вже не на вашому телефоні.</string>
     <string name="local_playback_other_active">Звук на цьому ПК: інший ПК (%1$s) підключений до телефону.</string>
     <string name="local_playback_unavailable">Звук на цьому комп\'ютері недоступний: вбудований VLC не може бути завантажений.</string>
     <string name="local_playback_unavailable_linux">Звук на цьому комп\'ютері недоступний. Встановіть VLC з %1$s і перезапустіть програму.</string>
+    <string name="local_playback_unavailable_linux_generic">Звук на цьому комп\'ютері недоступний. Використовуйте менеджер пакетів дистрибуції, щоб встановити VLC, а потім перезапустіть додаток.</string>
     <string name="local_playback_unreachable">Твій телефон не відповів.</string>
     <string name="local_playback_upstream_failed">Ваш телефон не зміг отримати цю пісню.</string>
     <string name="not_selectable">Не вибране</string>
@@ -38,7 +38,6 @@
     <string name="notice_unavailable">%1$s: програвач телефону недоступний. Спробуйте ще раз пізніше.</string>
     <string name="notice_unreachable">%1$s: телефон не відповів.</string>
     <string name="path_copied">Шлях скопійовано</string>
-    <string name="updates_check_failed">Не вдається перевірити наявність оновлень.</string>
     <string name="updates_check_invalid_response">Сервер оновлень повернув неправильну відповідь.</string>
     <string name="updates_download_generic_error">Не вдалося завантажити оновлення.</string>
     <string name="updates_download_invalid_filename">Неприпустиме ім\'я файлу оновлення.</string>
