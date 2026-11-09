@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Рівень посилення</string>
     <string name="settings_cache_action_set_custom_size">Встановіть власний кеш</string>
     <string name="settings_cache_custom_size_input_hint">Введіть значення в МБ</string>
+    <string name="settings_cache_custom_size_format">Індивідуальний: %1$s</string>
     <string name="settings_cache_delete_confirmation">Ви дійсно хочете очистити кеш?</string>
     <string name="settings_cache_eviction_description">Коли в кеші закінчується місце, ресурси, до яких не зверталися найдовше, очищаються</string>
     <string name="settings_cache_image_size_limit_label">Максимальний розмір кешу зображень</string>
     <string name="settings_cache_song_size_limit_label">Максимальний розмір кешу пісень</string>
     <string name="settings_cache_title">Кеш</string>
+    <string name="settings_cache_usage_percent_format">Використовується %1$s (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s використовується (необмежено)</string>
     <string name="settings_data_page_description">Розділ даних містить налаштування, що визначають як додаток обробляє дані локально та віддалено</string>
     <string name="settings_data_title">Дані</string>
     <string name="settings_debug_title">Налаштування</string>
