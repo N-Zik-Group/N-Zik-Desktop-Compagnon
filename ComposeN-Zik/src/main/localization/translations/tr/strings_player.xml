@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">Sıradan kaldır</string>
     <string name="player_queue_clear_confirmation">Önbelleği gerçekten silmek istiyor musunuz?</string>
     <string name="player_queue_deleted_item_format">%1$s silindi</string>
+    <string name="player_queue_removed_item_format">Removed from queue: %1$s</string>
     <string name="player_rotating_buttons">Döner düğmeler</string>
     <string name="player_seek_backward_five_seconds">5 saniye geri sar</string>
     <string name="player_seek_backward_thirty_seconds">30 saniye geri sar</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">Keşfet</string>
     <string name="visualizer_animation_bubbles">Kabarcıklar</string>
     <string name="visualizer_bar">Görselleştirme çubuğu</string>
+    <string name="visualizer_desktop_preview_message">The Desktop visualizer shows a static preview.</string>
     <string name="visualizer_microphone_permission_message">Görselleştirici efekti mikrofon izni gerektirir, lütfen izin ver.</string>
     <string name="visualizer_title">Görselleştirme</string>
     <string name="player_error_unknown">Bilinmeyen bir çalma hatası oluştu</string>
