@@ -47,6 +47,7 @@
     <string name="pair_device_name">اسم هذا الكمبيوتر</string>
     <string name="pair_device_name_invalid">أدخل اسم من 1 إلى 64 حرفاً.</string>
     <string name="pair_listener_unreachable">لم يتمكن هاتفك من الوصول إلى جهاز الكمبيوتر هذا. Windows Firewall، أو شبكة معدة للعموم؟ السماح لـ N-Zik Office Compagnon على شبكات خاصة، أو زوج يدويا أدناه.</string>
+    <string name="pair_listener_unreachable_linux">لم يتمكن هاتفك من الوصول إلى جهاز الكمبيوتر الشخصي. تحقق من جدار الحماية الخاص بك وتأكد من أن كلا الجهازين على نفس الشبكة، أو زوج يدوياً أدناه.</string>
     <string name="pair_manual_entry">الإدخال اليدوي</string>
     <string name="pair_manual_entry_text">اكتب العنوان والكود الظاهر على هاتفك</string>
     <string name="pair_no_address">لم يتم العثور على عنوان شبكة محلي على هذا الكمبيوتر ، لذلك لا يمكن إظهار رمز QR. إقران يدويًا أدناه.</string>
