@@ -182,7 +182,7 @@ class ParityPassThreeTest {
 
     @Test
     fun `untranslated desktop toasts preserve safe phone copy but never legacy retry diagnostics`() = runTest {
-        AppLanguage.applyTag("de")
+        AppLanguage.applyTag("qaa") // Reserved for local use, with no app catalog.
         assertEquals("File mélangée (12 titres)", phoneToastText("queue_shuffled", listOf("12"), "File mélangée (12 titres)"))
         assertEquals("Reprise de la lecture…", phoneToastText("network_stream_retrying_playback", emptyList(), "Reprise de la lecture…"))
         assertEquals("Retrying playback…", phoneToastText("stream_error_retrying", listOf("diagnostic"), "Retrying: diagnostic"))

@@ -4,6 +4,9 @@ import app.n_zik.compagnon.updater.ui.UpdateLanguage
 import java.util.Locale
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class UpdateLanguageTest {
     @Test
@@ -20,6 +23,18 @@ class UpdateLanguageTest {
         assertLanguage("sr-CS", UpdateLanguage.SerbianLatin)
         assertLanguage("id-ID", UpdateLanguage.Indonesian)
         assertLanguage("he-IL", UpdateLanguage.Hebrew)
+    }
+
+    @Test
+    fun `unsupported destinations remain resolvable but are not offered for changelog translation`() {
+        assertLanguage("ba-RU", UpdateLanguage.Bashkir)
+        assertLanguage("ia", UpdateLanguage.Interlingua)
+        for (language in listOf(UpdateLanguage.Bashkir, UpdateLanguage.Interlingua)) {
+            assertNull(language.translator)
+            assertFalse(language in UpdateLanguage.selectable)
+        }
+        assertTrue(UpdateLanguage.System in UpdateLanguage.selectable)
+        assertTrue(UpdateLanguage.Tamil in UpdateLanguage.selectable)
     }
 
     private fun assertLanguage(tag: String, expected: UpdateLanguage) {

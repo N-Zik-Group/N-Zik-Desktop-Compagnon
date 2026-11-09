@@ -350,7 +350,7 @@ fun UpdateScreen(
                                         }
                                     },
                                     valueText = { if (it == UpdateLanguage.System) systemLanguageLabel else it.label },
-                                    values = UpdateLanguage.entries.toList(),
+                                    values = UpdateLanguage.selectable,
                                     onDismiss = { showLanguageDialog = false },
                                 )
                             }
@@ -508,20 +508,16 @@ fun UpdateScreen(
                     ?: Updater.currentChangelog?.takeIf { it.isNotBlank() }
             }
 
-            var translatedText by remember { mutableStateOf<String?>(null) }
+            var translatedText by remember(changelogTextToDisplay, isTranslationActive, activeTranslateLang) {
+                mutableStateOf<String?>(null)
+            }
 
             LaunchedEffect(changelogTextToDisplay, isTranslationActive, activeTranslateLang) {
-                if (isTranslationActive && changelogTextToDisplay.isNullOrBlank().not()) {
-                    val destLanguage = activeTranslateLang.translator
-                    if (destLanguage != Language.ENGLISH) {
-                        translatedText = ChangelogTranslator.translate(
-                            changelogTextToDisplay,
-                            destLanguage,
-                            Language.ENGLISH,
-                        )
-                    } else {
-                        translatedText = changelogTextToDisplay
-                    }
+                val destination = activeTranslateLang.translator
+                if (isTranslationActive && !changelogTextToDisplay.isNullOrBlank() &&
+                    destination != null && destination != Language.ENGLISH && destination != Language.AUTO
+                ) {
+                    translatedText = ChangelogTranslator.translate(changelogTextToDisplay, destination, Language.ENGLISH)
                 }
             }
 

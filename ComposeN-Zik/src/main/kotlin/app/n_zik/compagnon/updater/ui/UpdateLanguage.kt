@@ -3,26 +3,22 @@ package app.n_zik.compagnon.updater.ui
 import dev.rebelonion.translator.Language
 
 /**
- * The changelog-translation language picker (spec `spec-updater`, AD-9, loop 2 — port of the
- * phone's `Languages` enum, `app/it/fast4x/rimusic/enums/Locales.kt`): the SAME entries, the SAME
- * BCP-47 codes and the SAME `dev.rebelonion.translator.Language` mapping as the phone, with the
- * localized string resources de-Androided to hardcoded endonyms (the desktop's only strings file
- * is English — a language's own name is universal, it needs no translation). [System] means
- * "auto-detect the source language" (the phone's `R.string.system_language`).
+ * Changelog languages and their persisted preference codes. [System] uses the app locale.
+ * Languages absent from the translation library retain their codes for existing preferences.
  */
 enum class UpdateLanguage(
     /** The endonym shown in the picker (the language's own name). */
     val label: String,
     /** The BCP-47 code (the phone's `code` — kept verbatim, quirk included: Hebrew is "iw"). */
     val code: String,
-    /** The translator library's language (the phone's `translatorLanguage` — kept verbatim). */
-    val translator: Language,
+    /** The translator library’s destination, or null for an unsupported language. */
+    val translator: Language?,
 ) {
     System("System", "system", Language.AUTO),
     Afrikaans("Afrikaans", "af", Language.AFRIKAANS),
     Arabic("العربية", "ar", Language.ARABIC),
     Azerbaijani("Azərbaycan", "az", Language.AZERBAIJANI),
-    Bashkir("Башҡортса", "ba", Language.BASQUE),
+    Bashkir("Башҡортса", "ba", null),
     Bengali("বাংলা", "bn", Language.BENGALI),
     Catalan("Català", "ca", Language.CATALAN),
     ChineseSimplified("简体中文", "zh-CN", Language.CHINESE_SIMPLIFIED),
@@ -44,7 +40,7 @@ enum class UpdateLanguage(
     Hungarian("Magyar", "hu", Language.HUNGARIAN),
     Italian("Italiano", "it", Language.ITALIAN),
     Indonesian("Bahasa Indonesia", "in", Language.INDONESIAN),
-    Interlingua("Interlingua", "ia", Language.LATIN),
+    Interlingua("Interlingua", "ia", null),
     Irish("Gaeilge", "ga", Language.IRISH),
     Japanese("日本語", "ja", Language.JAPANESE),
     Korean("한국어", "ko", Language.KOREAN),
@@ -69,6 +65,8 @@ enum class UpdateLanguage(
     Vietnamese("Tiếng Việt", "vi", Language.VIETNAMESE);
 
     companion object {
+        val selectable = entries.filter { it.translator != null }
+
         fun fromLocale(locale: java.util.Locale): UpdateLanguage = when (locale.language) {
             "he", "iw" -> Hebrew
             "id", "in" -> Indonesian

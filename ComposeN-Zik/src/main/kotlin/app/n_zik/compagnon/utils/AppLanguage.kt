@@ -114,7 +114,7 @@ object AppLanguage {
         "sr-CS" to "Srpski",
         "si" to "සිංහල",
         "sv" to "Svenska",
-        "ta" to "கமி஻்",
+        "ta" to "தமிழ்",
         "te" to "తెలుగు",
         "tr" to "Türkçe",
         "uk" to "Українська",

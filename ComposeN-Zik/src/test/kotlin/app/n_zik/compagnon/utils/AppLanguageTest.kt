@@ -110,7 +110,7 @@ class AppLanguageTest {
     }
 
     @Test
-    fun `regional languages load mobile translations and fall back for desktop text`() = runTest {
+    fun `regional languages load their translations and an unknown language falls back`() = runTest {
         val expectedTitles = mapOf(
             "pt-BR" to "Sobre",
             "sr-CS" to "O aplikaciji",
@@ -121,10 +121,11 @@ class AppLanguageTest {
             assertTrue(code in AppLanguage.dialogValues(), "Language unavailable in picker: $code")
             AppLanguage.applyTag(code)
             assertEquals(title, getString(Res.string.about_title), code)
-            assertEquals("Pair with your phone", getString(Res.string.pair_title), code)
         }
         AppLanguage.applyTag("pt-BR")
         assertEquals("Embaralhar", getString(Res.string.player_action_shuffle_hint))
+        AppLanguage.applyTag("qaa") // Reserved for local use, with no app catalog.
+        assertEquals("Pair with your phone", getString(Res.string.pair_title))
     }
 
     @Test
@@ -140,9 +141,9 @@ class AppLanguageTest {
     }
 
     @Test
-    fun `tamil, telugu, bengali and hindi use the phone's standard endonyms`() {
+    fun `tamil, telugu, bengali and hindi use their standard endonyms`() {
         // Built from code points: the non-Latin glyphs must not be retyped by hand.
-        val tamil = String(intArrayOf(0x0B95, 0x0BAE, 0x0BBF, 0x0BBB, 0x0BCD), 0, 5)
+        val tamil = String(intArrayOf(0x0BA4, 0x0BAE, 0x0BBF, 0x0BB4, 0x0BCD), 0, 5)
         val telugu = String(intArrayOf(0x0C24, 0x0C46, 0x0C32, 0x0C41, 0x0C17, 0x0C41), 0, 6)
         val bengali = String(intArrayOf(0x09AC, 0x09BE, 0x0982, 0x09B2, 0x09BE), 0, 5)
         val hindi = String(intArrayOf(0x0939, 0x093F, 0x0928, 0x094D, 0x0926, 0x0940), 0, 6)
