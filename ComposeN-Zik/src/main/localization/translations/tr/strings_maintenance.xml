@@ -10,6 +10,7 @@
     <string name="install_pkg_command">Paketi şu komutla yükleyin:</string>
     <string name="install_pkg_manual">Herhangi bir paket yöneticisi algılanmadı. İndirdiğiniz paketi manuel olarak yükleyin.</string>
     <string name="install_pkg_pacman_command">Paketi şu komutla güncelleyin:</string>
+    <string name="install_replacement_portable_preserve_data">Uygulamayı kapatın ve indirilen arşivi mevcut klasörün yanındaki yeni bir klasöre açın. Yeni sürümü başlatmadan önce, mevcut uygulama klasöründeki data/ klasörünü (varsa) yeni klasöre kopyalayın. Yeni sürümde ayarlarınızı ve eşleştirmenizi doğrulayana kadar eski klasörü saklayın.</string>
     <string name="logs_action_export">Günlükleri dışa aktar</string>
     <string name="logs_export_debug_description">Hata ayıklama günlüğünü bir dosyaya aktar</string>
     <string name="maintenance_card_desc">Uygulama durumuna genel bakış: son önyükleme testleri ve çalışan alt sistemler</string>
@@ -34,6 +35,9 @@
     <string name="updates_action_check_now">Şimdi kontrol et</string>
     <string name="updates_action_download_current_version">Son güncellemeyi tekrar indir</string>
     <string name="updates_action_install">Yükle</string>
+    <string name="updates_install_failure_exit_timeout">The update was canceled because the app did not close within %1$d seconds.</string>
+    <string name="updates_install_failure_exit_code">Update installation failed with exit code %1$d.</string>
+    <string name="updates_install_failure_generic">The update could not be installed.</string>
     <string name="updates_action_open_download">İndirmeye git</string>
     <string name="updates_automatic_check_title">Otomatik güncelleme kontrolünü etkinleştir</string>
     <string name="updates_available">Güncelleme mevcut</string>
@@ -43,7 +47,9 @@
     <string name="updates_build_debug_label">HATA AYIKLAMA</string>
     <string name="updates_build_dev_label">GELİŞTİRİCİ</string>
     <string name="updates_cache_cleared">Önbellek temizlendi</string>
+    <string name="updates_clear_cache_action">Önbelleği temizle</string>
     <string name="updates_changelog_title">%s sürümündeki yenilikler</string>
+    <string name="updates_channel_available_format">%1$s güncelleme mevcut</string>
     <string name="updates_check_failed">Güncellemeler kontrol edilemedi.</string>
     <string name="updates_check_mode_ask">Sor</string>
     <string name="updates_check_mode_ask_status">Sor</string>
@@ -51,8 +57,9 @@
     <string name="updates_check_mode_enabled_status">Etkin</string>
     <string name="updates_check_permission_description">Bir güncelleme mevcut olduğunda, yüklemek isteyip istemediğiniz sorulacak. Arka planda otomatik kurulumlar olmayacak.</string>
     <string name="updates_check_permission_message">GitHub\'da güncellemeleri kontrol et?</string>
-    <string name="updates_check_permission_screening_note">Ancak bu güncellemeler, örneğin IzzyOnDroid veya F-Droid\'de gerçekleştirilen ek taramadan geçmez.</string>
+    <string name="updates_check_permission_screening_note">Güncellemeler doğrudan GitHub\'da yayınlananlardan gelir.</string>
     <string name="updates_check_permission_settings_note">Ayarlardan hala açabilir veya kapatabilirsiniz.</string>
+    <string name="updates_download_origin_note">Güncellemeler doğrudan GitHub\'da yayınlananlardan gelir.</string>
     <string name="updates_checking_status">Güncellemeler kontrol ediliyor...</string>
     <string name="updates_download_completed">Güncelleme indirildi</string>
     <string name="updates_downloading_status">Güncelleme indiriliyor</string>
