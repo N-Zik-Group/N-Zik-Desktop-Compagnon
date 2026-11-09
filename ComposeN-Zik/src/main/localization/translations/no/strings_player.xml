@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Lydenheter</string>
+    <string name="audio_device_battery_format">Batteri: %1$d%%</string>
     <string name="audio_effects">Lyd Effekter</string>
     <string name="audio_output_title">Lyd utgang</string>
     <string name="audio_quality_automatic">Automatisk</string>
