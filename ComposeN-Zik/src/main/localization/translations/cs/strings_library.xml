@@ -103,6 +103,12 @@
     <string name="song_matching_unmatched_label">Neporovnaná skladba</string>
     <string name="song_metadata_update_action_open">Otevřít dialog aktualizace</string>
     <string name="sort_artist_and_album">Interpret, album</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">%1$d píseň • %2$s</item>
+        <item quantity="few">%1$d skladeb • %2$s</item>
+        <item quantity="many">%1$d skladeb • %2$s</item>
+        <item quantity="other">%1$d skladeb • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d skladba</item>
         <item quantity="few">%1$d skladeb</item>
