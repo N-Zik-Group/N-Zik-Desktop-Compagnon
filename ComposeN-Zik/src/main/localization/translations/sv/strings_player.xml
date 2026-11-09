@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">Ta bort från kön</string>
     <string name="player_queue_clear_confirmation">Vill du verkligen rensa kön?</string>
     <string name="player_queue_deleted_item_format">%1$s raderad</string>
+    <string name="player_queue_removed_item_format">Borttagen från kö: %1$s</string>
     <string name="player_rotating_buttons">Roterande knappar</string>
     <string name="player_seek_backward_five_seconds">Spola tillbaka 5 sekunder</string>
     <string name="player_seek_backward_thirty_seconds">Spolar tillbaka 30 sekunder</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">Upptäck</string>
     <string name="visualizer_animation_bubbles">Bubblor</string>
     <string name="visualizer_bar">Visualizer bar</string>
+    <string name="visualizer_desktop_preview_message">Desktop visualizer visar en statisk förhandsgranskning.</string>
     <string name="visualizer_microphone_permission_message">Visualizer effekt kräver mikrofontillstånd, bevilja tack.</string>
     <string name="visualizer_title">Visualizer</string>
     <string name="player_error_unknown">Ett okänt uppspelningsfel har inträffat</string>
