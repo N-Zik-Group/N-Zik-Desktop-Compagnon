@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">Verwijderen uit wachtrij</string>
     <string name="player_queue_clear_confirmation">Weet u zeker dat u de wachtrij wilt wissen?</string>
     <string name="player_queue_deleted_item_format">%1$s verwijderd</string>
+    <string name="player_queue_removed_item_format">Verwijderd uit wachtrij: %1$s</string>
     <string name="player_rotating_buttons">Draaiknoppen</string>
     <string name="player_seek_backward_five_seconds">5 seconden terugspoelen</string>
     <string name="player_seek_backward_thirty_seconds">Terugspoelt 30 seconden</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">Ontdek</string>
     <string name="visualizer_animation_bubbles">Bubbels</string>
     <string name="visualizer_bar">Equalizer balk</string>
+    <string name="visualizer_desktop_preview_message">De bureaublad visualizer toont een statisch voorbeeld.</string>
     <string name="visualizer_microphone_permission_message">Visualizer-effect vereist micromicrotoestemming alstublieft. Gelieve te verlenen.</string>
     <string name="visualizer_title">Equalizer</string>
     <string name="player_error_unknown">Er is een onbekende afspeelfout opgetreden</string>
