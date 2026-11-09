@@ -22,6 +22,7 @@
     <string name="local_playback_other_active">Lyd på denne PCen: en annen PC (%1$s) er tilkoblet telefonen.</string>
     <string name="local_playback_unavailable">Lyd på denne PCen er utilgjengelig: den innebygde VLC kunne ikke lastes.</string>
     <string name="local_playback_unavailable_linux">Lyd på denne PCen er ikke tilgjengelig. Installer VLC med %1$s og start appen på nytt.</string>
+    <string name="local_playback_unavailable_linux_generic">Lyd på denne PCen er utilgjengelig. Bruk distribusjonens pakkehåndtereren for å installere VLC og start deretter programmet på nytt.</string>
     <string name="local_playback_unreachable">Telefonen svarte ikke.</string>
     <string name="local_playback_upstream_failed">Telefonen din kunne ikke få denne sangen.</string>
     <string name="not_selectable">Ikke valgbar</string>
