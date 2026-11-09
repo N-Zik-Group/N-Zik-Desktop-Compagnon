@@ -23,8 +23,12 @@
     <string name="common_storage_used_suffix">使用中</string>
     <string name="common_validation_empty_value">値を空にすることはできません。</string>
     <string name="common_validation_minimum_value">値は以下より大きくなければなりません</string>
+    <string name="common_validation_minimum_value_format">値は少なくとも %1$dでなければなりません</string>
     <string name="dismiss">却下する</string>
     <string name="common_duration_seconds_format">%1$d s</string>
+    <string name="common_duration_minutes_format">%1$d 分</string>
+    <string name="common_duration_hours_format">%1$d h</string>
+    <string name="common_duration_days_format">%1$d 日</string>
     <string name="common_file_size_bytes_format">%1$s B</string>
     <string name="common_file_size_gigabytes_format">%1$s GB</string>
     <string name="common_file_size_kilobytes_format">%1$s kB</string>
@@ -32,6 +36,6 @@
     <string name="common_file_size_terabytes_format">%1$s TB</string>
     <string name="common_size_megabytes_format">%1$d MB</string>
     <string name="common_size_gigabytes_format">%1$d GB</string>
-    <string name="common_range_maximum">Max</string>
-    <string name="common_range_minimum">Min</string>
+    <string name="common_range_maximum">最大値</string>
+    <string name="common_range_minimum">最小</string>
 </resources>
