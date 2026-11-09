@@ -18,11 +18,11 @@
     <string name="error_windows_install_helper">Installasjonsprogrammet for Windows kunne ikke startes. Kjør den nedlastede installasjonsprogrammet manuelt.</string>
     <string name="interface_in_use">Grensesnitt i bruk</string>
     <string name="local_playback_failed">Denne sangen kunne ikke spilles av på denne PC-en.</string>
-    <string name="local_playback_invalid_url">Denne sangen kunne ikke spilles av på denne PC-en.</string>
     <string name="local_playback_not_found">Denne sangen er ikke lenger på telefonen din.</string>
     <string name="local_playback_other_active">Lyd på denne PCen: en annen PC (%1$s) er tilkoblet telefonen.</string>
     <string name="local_playback_unavailable">Lyd på denne PCen er utilgjengelig: den innebygde VLC kunne ikke lastes.</string>
     <string name="local_playback_unavailable_linux">Lyd på denne PCen er ikke tilgjengelig. Installer VLC med %1$s og start appen på nytt.</string>
+    <string name="local_playback_unavailable_linux_generic">Lyd på denne PCen er utilgjengelig. Bruk distribusjonens pakkehåndtereren for å installere VLC og start deretter programmet på nytt.</string>
     <string name="local_playback_unreachable">Telefonen svarte ikke.</string>
     <string name="local_playback_upstream_failed">Telefonen din kunne ikke få denne sangen.</string>
     <string name="not_selectable">Ikke valgbar</string>
@@ -38,7 +38,6 @@
     <string name="notice_unavailable">%1$s: Spilleren på telefonen er ikke tilgjengelig. Prøv igjen senere.</string>
     <string name="notice_unreachable">%1$s: telefonen svarte ikke.</string>
     <string name="path_copied">Sti kopiert</string>
-    <string name="updates_check_failed">Kan ikke se etter oppdateringer.</string>
     <string name="updates_check_invalid_response">Oppdateringsserveren returnerte et ugyldig svar.</string>
     <string name="updates_download_generic_error">Kunne ikke laste ned oppdateringen.</string>
     <string name="updates_download_invalid_filename">Oppdateringsnavnet er ugyldig.</string>
