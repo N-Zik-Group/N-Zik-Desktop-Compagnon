@@ -47,6 +47,7 @@
     <string name="pair_device_name">Nome deste PC</string>
     <string name="pair_device_name_invalid">Digite um nome de 1 a 64 caracteres</string>
     <string name="pair_listener_unreachable">Seu telefone não pôde chegar a este PC. Windows Firewall, ou uma rede definida como pública? Permitir o Compagnon de desktop N-Zik em redes privadas, ou o par manualmente abaixo.</string>
+    <string name="pair_listener_unreachable_linux">Seu telefone não conseguiu alcançar este PC. Verifique seu firewall e certifique-se de que ambos os dispositivos estão na mesma rede ou pareie manualmente abaixo.</string>
     <string name="pair_manual_entry">Entrada manual</string>
     <string name="pair_manual_entry_text">Digite o endereço e o código mostrado no seu telefone</string>
     <string name="pair_no_address">Nenhum endereço de rede local foi encontrado neste PC, então nenhum código QR pode ser mostrado. Parear manualmente abaixo.</string>
