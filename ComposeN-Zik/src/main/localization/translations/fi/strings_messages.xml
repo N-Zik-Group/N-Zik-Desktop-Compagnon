@@ -18,11 +18,11 @@
     <string name="error_windows_install_helper">Windows-asentajaa ei voitu käynnistää. Suorita ladattu asentaja manuaalisesti.</string>
     <string name="interface_in_use">Käyttöliittymä käytössä</string>
     <string name="local_playback_failed">Tätä kappaletta ei voitu toistaa tällä tietokoneella.</string>
-    <string name="local_playback_invalid_url">Tätä kappaletta ei voitu toistaa tällä tietokoneella.</string>
     <string name="local_playback_not_found">Tämä kappale ei ole enää puhelimessasi.</string>
     <string name="local_playback_other_active">Ääni tässä PC:ssä: toinen PC (%1$s) on yhdistetty puhelimeen.</string>
     <string name="local_playback_unavailable">Ääni tällä tietokoneella ei ole käytettävissä: upotettua VLC:tä ei voitu ladata.</string>
     <string name="local_playback_unavailable_linux">Ääni tällä tietokoneella ei ole käytettävissä. Asenna VLC %1$s ja käynnistä sovellus uudelleen.</string>
+    <string name="local_playback_unavailable_linux_generic">Ääni tällä tietokoneella ei ole käytettävissä. Käytä jakelusi pakettinhallintaohjelmaa asentaaksesi VLC: n, ja käynnistä sovellus uudelleen.</string>
     <string name="local_playback_unreachable">Puhelimesi ei vastannut.</string>
     <string name="local_playback_upstream_failed">Puhelimesi ei saanut tätä kappaletta.</string>
     <string name="not_selectable">Ei valittavissa</string>
@@ -38,7 +38,6 @@
     <string name="notice_unavailable">%1$s: puhelimen pelaaja ei ole käytettävissä. Yritä myöhemmin uudelleen.</string>
     <string name="notice_unreachable">%1$s: puhelin ei vastannut.</string>
     <string name="path_copied">Polku kopioitu</string>
-    <string name="updates_check_failed">Päivityksiä ei voitu tarkistaa.</string>
     <string name="updates_check_invalid_response">Päivityspalvelin palautti virheellisen vastauksen.</string>
     <string name="updates_download_generic_error">Päivitystä ei voitu ladata.</string>
     <string name="updates_download_invalid_filename">Päivitystiedoston nimi on virheellinen.</string>
