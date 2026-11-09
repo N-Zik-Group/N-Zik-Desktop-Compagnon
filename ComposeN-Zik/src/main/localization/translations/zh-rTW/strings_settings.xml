@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Bass boost level</string>
     <string name="settings_cache_action_set_custom_size">自定義暫存</string>
     <string name="settings_cache_custom_size_input_hint">請輸入MB的大小</string>
+    <string name="settings_cache_custom_size_format">Custom: %1$s</string>
     <string name="settings_cache_delete_confirmation">你真的要移除快取嗎?</string>
     <string name="settings_cache_eviction_description">當暫存空间不夠時. 最久未訪問的資料將被清除.</string>
     <string name="settings_cache_image_size_limit_label">圖像暫存容量上限</string>
     <string name="settings_cache_song_size_limit_label">歌曲暫存容量上限</string>
     <string name="settings_cache_title">暫存</string>
+    <string name="settings_cache_usage_percent_format">%1$s used (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s used (Unlimited)</string>
     <string name="settings_data_page_description">The data section contains settings that modify how the app handles data locally and remotely</string>
     <string name="settings_data_title">資料</string>
     <string name="settings_debug_title">Settings</string>
