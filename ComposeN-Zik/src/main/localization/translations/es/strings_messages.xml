@@ -18,11 +18,11 @@
     <string name="error_windows_install_helper">No se pudo iniciar el instalador de Windows. Ejecute el instalador descargado manualmente.</string>
     <string name="interface_in_use">Interfaz en uso</string>
     <string name="local_playback_failed">Esta canción no se pudo reproducir en este PC.</string>
-    <string name="local_playback_invalid_url">Esta canción no se pudo reproducir en este PC.</string>
     <string name="local_playback_not_found">Esta canción ya no está en tu teléfono.</string>
     <string name="local_playback_other_active">Sonido en este PC: otro PC (%1$s) está conectado al teléfono.</string>
     <string name="local_playback_unavailable">El sonido en este PC no está disponible: el VLC embebido no pudo ser cargado.</string>
     <string name="local_playback_unavailable_linux">El sonido en este PC no está disponible. Instala VLC con %1$s y reinicia la aplicación.</string>
+    <string name="local_playback_unavailable_linux_generic">El sonido en este PC no está disponible. Utilice el gestor de paquetes de su distribución para instalar VLC, luego reinicie la aplicación.</string>
     <string name="local_playback_unreachable">Tu teléfono no respondió.</string>
     <string name="local_playback_upstream_failed">Tu teléfono no pudo conseguir esta canción.</string>
     <string name="not_selectable">No seleccionable</string>
@@ -38,7 +38,6 @@
     <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
     <string name="notice_unreachable">%1$s: the phone did not answer.</string>
     <string name="path_copied">Ruta copiada</string>
-    <string name="updates_check_failed">No se pudo comprobar si hay actualizaciones.</string>
     <string name="updates_check_invalid_response">El servidor de actualización devolvió una respuesta no válida.</string>
     <string name="updates_download_generic_error">No se pudo descargar la actualización.</string>
     <string name="updates_download_invalid_filename">El nombre del archivo de actualización no es válido.</string>
