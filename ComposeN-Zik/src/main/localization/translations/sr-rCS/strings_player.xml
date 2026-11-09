@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">Ukloni iz redosleda</string>
     <string name="player_queue_clear_confirmation">Do you really want to clean queue?</string>
     <string name="player_queue_deleted_item_format">%1$s deleted</string>
+    <string name="player_queue_removed_item_format">Removed from queue: %1$s</string>
     <string name="player_rotating_buttons">Rotirajuća dugmad</string>
     <string name="player_seek_backward_five_seconds">Rewind 5 seconds</string>
     <string name="player_seek_backward_thirty_seconds">Rewinds 30 seconds</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">Otkrij</string>
     <string name="visualizer_animation_bubbles">Bubbles</string>
     <string name="visualizer_bar">Visualizer bar</string>
+    <string name="visualizer_desktop_preview_message">The Desktop visualizer shows a static preview.</string>
     <string name="visualizer_microphone_permission_message">Za efekat vizuelizatora je potrebna dozvola mikrofona, molim vas odobrite.</string>
     <string name="visualizer_title">Vizualizator</string>
     <string name="player_error_unknown">Došlo je do nepoznate greške pri reprodukciji</string>
