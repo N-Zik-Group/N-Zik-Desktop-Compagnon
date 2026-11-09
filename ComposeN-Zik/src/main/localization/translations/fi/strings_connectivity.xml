@@ -47,6 +47,7 @@
     <string name="pair_device_name">Tämän PC:n nimi</string>
     <string name="pair_device_name_invalid">Anna 1-64 merkin pituinen nimi.</string>
     <string name="pair_listener_unreachable">Puhelimesi ei päässyt tähän tietokoneeseen. Windows Firewall, tai verkko asetettu julkiseksi? Salli N-Zik Desktop Compagnon yksityisissä verkoissa tai pari manuaalisesti alla.</string>
+    <string name="pair_listener_unreachable_linux">Puhelin ei päässyt tähän tietokoneeseen. Tarkista palomuurisi ja varmista, että molemmat laitteet ovat samassa verkossa tai pari manuaalisesti alla.</string>
     <string name="pair_manual_entry">Manuaalinen syöttö</string>
     <string name="pair_manual_entry_text">Kirjoita puhelimeesi näytetty osoite ja koodi</string>
     <string name="pair_no_address">Tässä tietokoneessa ei löytynyt paikallista verkkoosoitetta, joten QR-koodia ei voi näyttää. Pair on alla manuaalisesti.</string>
