@@ -47,6 +47,7 @@
     <string name="pair_device_name">Naam van deze PC</string>
     <string name="pair_device_name_invalid">Voer een naam in van 1 tot 64 tekens.</string>
     <string name="pair_listener_unreachable">Je telefoon kon deze PC niet bereiken. Windows Firewall, of een netwerk ingesteld op Public? Sta N-Zik Desktop Compagnon toe op privénetwerken of koppel handmatig hieronder.</string>
+    <string name="pair_listener_unreachable_linux">Je telefoon kon deze PC niet bereiken. Controleer je firewall en zorg ervoor dat beide apparaten op hetzelfde netwerk zitten, of koppel handmatig hieronder.</string>
     <string name="pair_manual_entry">Handmatige invoer</string>
     <string name="pair_manual_entry_text">Typ het adres en de code die getoond wordt op uw telefoon</string>
     <string name="pair_no_address">Er is geen lokaal netwerkadres gevonden op deze PC, dus kan er geen QR-code worden getoond. Koppel hieronder handmatig.</string>
