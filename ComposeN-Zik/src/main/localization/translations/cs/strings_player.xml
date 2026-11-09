@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">Odstranit z fronty</string>
     <string name="player_queue_clear_confirmation">Opravdu chcete vyčistit frontu?</string>
     <string name="player_queue_deleted_item_format">%1$s smazán</string>
+    <string name="player_queue_removed_item_format">Odstraněno z fronty: %1$s</string>
     <string name="player_rotating_buttons">Otáčení tlačítek</string>
     <string name="player_seek_backward_five_seconds">Převrátit 5 vteřin</string>
     <string name="player_seek_backward_thirty_seconds">Přepnutí 30 vteřin</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">Objevit</string>
     <string name="visualizer_animation_bubbles">Bubliny</string>
     <string name="visualizer_bar">Vizualizátor</string>
+    <string name="visualizer_desktop_preview_message">Vizualizér na ploše ukazuje statický náhled.</string>
     <string name="visualizer_microphone_permission_message">Vizualizační efekt vyžaduje povolení mikrofonu, udělte ho, prosím.</string>
     <string name="visualizer_title">Vizualizér</string>
     <string name="player_error_unknown">Došlo k neznámé chybě při přehrávání</string>
