@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Nivel amplificare bass</string>
     <string name="settings_cache_action_set_custom_size">Setează cache personalizat</string>
     <string name="settings_cache_custom_size_input_hint">Introdu valoarea în MB</string>
+    <string name="settings_cache_custom_size_format">Personalizat: %1$s</string>
     <string name="settings_cache_delete_confirmation">Ești sigur că vrei să ștergi cache-ul?</string>
     <string name="settings_cache_eviction_description">Când memoria cache se umple, resursele care nu au fost accesate de ceva timp sunt șterse</string>
     <string name="settings_cache_image_size_limit_label">Dimensiunea maximă a cache-ului de imagini</string>
     <string name="settings_cache_song_size_limit_label">Dimensiunea maximă a cache-ului de melodii</string>
     <string name="settings_cache_title">Geocutie</string>
+    <string name="settings_cache_usage_percent_format">%1$s folosit (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s folosit (nelimitat)</string>
     <string name="settings_data_page_description">Secțiunea de date conține setări care modifică modul în care aplicația gestionează datele local și de la distanță</string>
     <string name="settings_data_title">Date</string>
     <string name="settings_debug_title">Setări</string>
