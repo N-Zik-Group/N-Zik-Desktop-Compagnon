@@ -10,7 +10,6 @@
     <string name="artist_following_status">Segui già</string>
     <string name="artist_more_from">Altro da</string>
     <string name="artist_roundness">Morbidezza dell\'artista</string>
-    <string name="artist_songs_count_duration">Canzoni %1$d • %2$s</string>
     <string name="artist_songs_unavailable_message">Nessun brano disponibile</string>
     <string name="home_tabs_settings">Pagina iniziale</string>
     <string name="home_tabs_settings_description">Riordina e mostra / nascondi le schede</string>

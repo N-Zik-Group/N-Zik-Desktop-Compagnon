@@ -10,7 +10,6 @@
     <string name="artist_following_status">已关注</string>
     <string name="artist_more_from">更多</string>
     <string name="artist_roundness">艺术家圆角</string>
-    <string name="artist_songs_count_duration">%1$d 歌曲 • %2$s</string>
     <string name="artist_songs_unavailable_message">尚无歌曲</string>
     <string name="home_tabs_settings">主页</string>
     <string name="home_tabs_settings_description">重新排序并显示/隐藏标签</string>

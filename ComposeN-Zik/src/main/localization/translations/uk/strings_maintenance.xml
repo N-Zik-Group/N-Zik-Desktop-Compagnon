@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Встановити пакунок за допомогою:</string>
     <string name="install_pkg_manual">Не виявлено жодного менеджера пакетів. Встановіть завантажений пакет вручну.</string>
     <string name="install_pkg_pacman_command">Оновити пакет за допомогою:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Спочатку вийдіть з програми (її файли заблоковані під час запуску), потім замініть папку програми: видалити поточну папку програми, витягнути завантажену. на своєму місці запис ar.gz (tarball відкривається в нову папку додатків - ніколи не перезапущений) і не запускається.</string>
     <string name="logs_action_export">Експортувати журнали</string>
     <string name="logs_export_debug_description">Експортувати журнал налагодження у файл</string>
     <string name="maintenance_card_desc">Стан додатку під час очікування: останній boot здійснюється і живі підсистеми</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">ДЕВ</string>
     <string name="updates_cache_cleared">Кеш очищено</string>
     <string name="updates_changelog_title">Що нового в %s</string>
+    <string name="updates_check_failed">Не вдається перевірити наявність оновлень.</string>
     <string name="updates_check_mode_ask">Запитати</string>
     <string name="updates_check_mode_ask_status">Запитати</string>
     <string name="updates_check_mode_disabled_status">Відключено</string>

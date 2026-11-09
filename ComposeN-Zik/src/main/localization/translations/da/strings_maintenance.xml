@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Installér pakken med:</string>
     <string name="install_pkg_manual">Der blev ikke fundet nogen pakkehåndtering. Installér den downloadede pakke manuelt.</string>
     <string name="install_pkg_pacman_command">Opgradér pakken med:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Afslut app\'en først (dens filer er låst, mens den kører), og erstat derefter app-mappen: slette den aktuelle app-mappe, udtrække den downloadede . ar.gz på sin plads (tarball åbner ind i en ny app mappe - aldrig over den nuværende), og relancering.</string>
     <string name="logs_action_export">Eksporter logs</string>
     <string name="logs_export_debug_description">Eksporter fejlfindingslog til en fil</string>
     <string name="maintenance_card_desc">App tilstand et overblik: sidste boot passerer og levende delsystemer</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">DEV</string>
     <string name="updates_cache_cleared">Cache ryddet</string>
     <string name="updates_changelog_title">Hvad er nyt i %s</string>
+    <string name="updates_check_failed">Kunne ikke søge efter opdateringer.</string>
     <string name="updates_check_mode_ask">Spørg</string>
     <string name="updates_check_mode_ask_status">Spørg</string>
     <string name="updates_check_mode_disabled_status">Deaktiveret</string>

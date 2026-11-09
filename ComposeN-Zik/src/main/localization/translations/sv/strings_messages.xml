@@ -18,7 +18,6 @@
     <string name="error_windows_install_helper">Windows-installationsprogrammet kunde inte startas. Kör det nedladdade installationsprogrammet manuellt.</string>
     <string name="interface_in_use">Gränssnitt som används</string>
     <string name="local_playback_failed">Denna låt kunde inte spelas på den här datorn.</string>
-    <string name="local_playback_invalid_url">Denna låt kunde inte spelas på den här datorn.</string>
     <string name="local_playback_not_found">Den här låten finns inte längre på din telefon.</string>
     <string name="local_playback_other_active">Ljud på denna PC: en annan PC (%1$s) är ansluten till telefonen.</string>
     <string name="local_playback_unavailable">Ljud på denna PC är inte tillgängligt: den inbyggda VLC kunde inte laddas.</string>
@@ -38,7 +37,6 @@
     <string name="notice_unavailable">%1$s: telefonens spelare är inte tillgänglig. Försök igen senare.</string>
     <string name="notice_unreachable">%1$s: telefonen svarade inte.</string>
     <string name="path_copied">Sökväg kopierad</string>
-    <string name="updates_check_failed">Kunde inte söka efter uppdateringar.</string>
     <string name="updates_check_invalid_response">Uppdateringsservern returnerade ett ogiltigt svar.</string>
     <string name="updates_download_generic_error">Kunde inte ladda ner uppdateringen.</string>
     <string name="updates_download_invalid_filename">Namnet på uppdateringen är ogiltigt.</string>

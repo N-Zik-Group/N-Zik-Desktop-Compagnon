@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Bass boost level</string>
     <string name="settings_cache_action_set_custom_size">Set custom cache</string>
     <string name="settings_cache_custom_size_input_hint">Enter value in MB</string>
+    <string name="settings_cache_custom_size_format">Custom: %1$s</string>
     <string name="settings_cache_delete_confirmation">Do you really want to delete cache?</string>
     <string name="settings_cache_eviction_description">When the cache runs out of space, the resources that haven\'t been accessed for the longest time are cleared</string>
     <string name="settings_cache_image_size_limit_label">Image cache max size</string>
     <string name="settings_cache_song_size_limit_label">Song cache max size</string>
     <string name="settings_cache_title">Cache</string>
+    <string name="settings_cache_usage_percent_format">%1$s used (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s used (Unlimited)</string>
     <string name="settings_data_page_description">The data section contains settings that modify how the app handles data locally and remotely</string>
     <string name="settings_data_title">Data</string>
     <string name="settings_debug_title">Settings</string>

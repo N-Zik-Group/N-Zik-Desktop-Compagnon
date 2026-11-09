@@ -18,7 +18,6 @@
     <string name="error_windows_install_helper">Программа установки Windows не может быть запущена. Запустите программу установки вручную.</string>
     <string name="interface_in_use">Используемый интерфейс</string>
     <string name="local_playback_failed">Эта песня не может быть воспроизведена на этом ПК.</string>
-    <string name="local_playback_invalid_url">Эта песня не может быть воспроизведена на этом ПК.</string>
     <string name="local_playback_not_found">Эта песня больше не на вашем телефоне.</string>
     <string name="local_playback_other_active">Звук на этом ПК: другой ПК (%1$s) подключен к телефону.</string>
     <string name="local_playback_unavailable">Звук на этом компьютере недоступен: встроенный VLC не может быть загружен.</string>
@@ -38,7 +37,6 @@
     <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
     <string name="notice_unreachable">%1$s: телефон не ответил.</string>
     <string name="path_copied">Путь скопирован</string>
-    <string name="updates_check_failed">Не удалось проверить обновления.</string>
     <string name="updates_check_invalid_response">Сервер обновления вернул неверный ответ.</string>
     <string name="updates_download_generic_error">Не удалось загрузить обновление.</string>
     <string name="updates_download_invalid_filename">Недопустимое имя файла обновления.</string>

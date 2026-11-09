@@ -18,7 +18,6 @@
     <string name="error_windows_install_helper">Windowsインストーラを起動できませんでした。ダウンロードしたインストーラを手動で実行してください。</string>
     <string name="interface_in_use">使用中のインターフェース</string>
     <string name="local_playback_failed">この曲はこのPCで再生できませんでした。</string>
-    <string name="local_playback_invalid_url">この曲はこのPCで再生できませんでした。</string>
     <string name="local_playback_not_found">この曲はもう携帯電話に登録されていません。</string>
     <string name="local_playback_other_active">このPC上のサウンド：別のPC（%1$s）が携帯電話に接続されています。</string>
     <string name="local_playback_unavailable">このPC上のサウンドは使用できません:埋め込まれたVLCをロードできませんでした。</string>
@@ -38,7 +37,6 @@
     <string name="notice_unavailable">%1$s: 電話のプレイヤーが利用できません。後でもう一度お試しください。</string>
     <string name="notice_unreachable">%1$s: 電話が応答しませんでした。</string>
     <string name="path_copied">パスがコピーされました</string>
-    <string name="updates_check_failed">更新を確認できませんでした。</string>
     <string name="updates_check_invalid_response">更新サーバーが無効な応答を返しました。</string>
     <string name="updates_download_generic_error">アップデートをダウンロードできませんでした。</string>
     <string name="updates_download_invalid_filename">更新ファイル名が無効です。</string>

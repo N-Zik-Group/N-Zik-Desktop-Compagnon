@@ -18,7 +18,6 @@
     <string name="error_windows_install_helper">Windows installationsprogrammet kunne ikke startes. Kør den downloadede installatør manuelt.</string>
     <string name="interface_in_use">Grænseflade i brug</string>
     <string name="local_playback_failed">Denne sang kunne ikke afspilles på denne pc.</string>
-    <string name="local_playback_invalid_url">Denne sang kunne ikke afspilles på denne pc.</string>
     <string name="local_playback_not_found">Denne sang er ikke længere på din telefon.</string>
     <string name="local_playback_other_active">Lyd på denne pc: En anden pc (%1$s) er forbundet til telefonen.</string>
     <string name="local_playback_unavailable">Lyd på denne PC er utilgængelig: den indlejrede VLC kunne ikke indlæses.</string>
@@ -38,7 +37,6 @@
     <string name="notice_unavailable">%1$s: telefonens spiller er ikke tilgængelig. Prøv igen senere.</string>
     <string name="notice_unreachable">%1$s: telefonen svarede ikke.</string>
     <string name="path_copied">Sti kopieret</string>
-    <string name="updates_check_failed">Kunne ikke søge efter opdateringer.</string>
     <string name="updates_check_invalid_response">Opdateringsserveren returnerede et ugyldigt svar.</string>
     <string name="updates_download_generic_error">Kunne ikke downloade opdateringen.</string>
     <string name="updates_download_invalid_filename">Opdateringsfilnavnet er ugyldigt.</string>

@@ -10,7 +10,6 @@
     <string name="artist_following_status">Seuraan tätä</string>
     <string name="artist_more_from">Lisää artistilta</string>
     <string name="artist_roundness">Taiteilijan pyöreys</string>
-    <string name="artist_songs_count_duration">%1$d Kappaletta • %2$s</string>
     <string name="artist_songs_unavailable_message">Kappaleita ei ole saatavilla</string>
     <string name="home_tabs_settings">Kotisivu</string>
     <string name="home_tabs_settings_description">Järjestä ja näytä/piilota välilehdet</string>

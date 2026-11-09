@@ -10,8 +10,6 @@
     <string name="install_pkg_command">以下のパッケージをインストールします。</string>
     <string name="install_pkg_manual">パッケージマネージャが検出されませんでした。ダウンロードしたパッケージを手動でインストールしてください。</string>
     <string name="install_pkg_pacman_command">パッケージのアップグレード方法:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">アプリを最初に終了します (ファイルは実行中にロックされています)。次に、appフォルダを置き換えます。現在のappフォルダを削除し、ダウンロードしたものを抽出します。 ar.gzはその場所(tarballは新しいアプリフォルダに開きますが、現在のフォルダではありません)と再起動します。</string>
     <string name="logs_action_export">ログをエクスポート</string>
     <string name="logs_export_debug_description">デバッグログをファイルにエクスポート</string>
     <string name="maintenance_card_desc">アプリの状態を一目で確認できます：最後のブートパスとライブサブシステム</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">DEV</string>
     <string name="updates_cache_cleared">キャッシュをクリアしました</string>
     <string name="updates_changelog_title">%s の新機能</string>
+    <string name="updates_check_failed">更新を確認できませんでした。</string>
     <string name="updates_check_mode_ask">確認</string>
     <string name="updates_check_mode_ask_status">確認</string>
     <string name="updates_check_mode_disabled_status">無効</string>

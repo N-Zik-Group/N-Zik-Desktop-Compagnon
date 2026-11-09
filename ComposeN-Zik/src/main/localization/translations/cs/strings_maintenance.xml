@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Nainstalujte balíček pomocí:</string>
     <string name="install_pkg_manual">Nebyl detekován žádný správce balíčků. Nainstalujte si ručně stažený balíček.</string>
     <string name="install_pkg_pacman_command">Aktualizujte balíček pomocí:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Nejprve ukončete aplikaci (její soubory jsou uzamčeny během spuštění) a poté nahradte složku aplikace: smažte aktuální složku aplikace, extrahujte stažené . ar.gz na svém místě (tarball se otevře do nové složky aplikace - nikdy nepřekryje aktuální) a znovu spustit.</string>
     <string name="logs_action_export">Exportovat protokoly</string>
     <string name="logs_export_debug_description">Exportovat protokol ladění do souboru</string>
     <string name="maintenance_card_desc">Stav aplikace na první pohled - poslední zaváděcí kroky a živé podsystémy</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">DEX</string>
     <string name="updates_cache_cleared">Mezipaměť vymazána</string>
     <string name="updates_changelog_title">Co je nového v %s</string>
+    <string name="updates_check_failed">Nelze zkontrolovat aktualizace.</string>
     <string name="updates_check_mode_ask">Zeptat se</string>
     <string name="updates_check_mode_ask_status">Zeptat se</string>
     <string name="updates_check_mode_disabled_status">Zakázaný</string>

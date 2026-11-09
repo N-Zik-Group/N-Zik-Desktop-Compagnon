@@ -18,7 +18,6 @@
     <string name="error_windows_install_helper">Der Windows-Installer konnte nicht gestartet werden. Führen Sie den heruntergeladenen Installer manuell aus.</string>
     <string name="interface_in_use">Schnittstelle in Verwendung</string>
     <string name="local_playback_failed">Dieser Song konnte nicht auf diesem PC abgespielt werden.</string>
-    <string name="local_playback_invalid_url">Dieser Song konnte nicht auf diesem PC abgespielt werden.</string>
     <string name="local_playback_not_found">Dieser Song ist nicht mehr auf Ihrem Telefon.</string>
     <string name="local_playback_other_active">Ton auf diesem PC: Ein anderer PC (%1$s) ist mit dem Telefon verbunden.</string>
     <string name="local_playback_unavailable">Sound auf diesem PC ist nicht verfügbar: der eingebettete VLC konnte nicht geladen werden.</string>
@@ -38,7 +37,6 @@
     <string name="notice_unavailable">%1$s: Der Handy-Player ist nicht verfügbar. Versuchen Sie es später erneut.</string>
     <string name="notice_unreachable">%1$s: Das Telefon hat nicht geantwortet.</string>
     <string name="path_copied">Pfad kopiert</string>
-    <string name="updates_check_failed">Konnte nicht nach Updates suchen.</string>
     <string name="updates_check_invalid_response">Der Update-Server gab eine ungültige Antwort zurück.</string>
     <string name="updates_download_generic_error">Update konnte nicht heruntergeladen werden.</string>
     <string name="updates_download_invalid_filename">Der Update-Dateiname ist ungültig.</string>

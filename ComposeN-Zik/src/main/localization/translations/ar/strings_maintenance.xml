@@ -10,8 +10,6 @@
     <string name="install_pkg_command">تثبيت الحزمة مع:</string>
     <string name="install_pkg_manual">لم يتم اكتشاف مدير الحزمة. تثبيت الحزمة التي تم تنزيلها يدوياً.</string>
     <string name="install_pkg_pacman_command">ترقية الحزمة مع:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">قم بإنهاء التطبيق أولاً (يتم قفل ملفاته أثناء تشغيله)، ثم قم باستبدال مجلد التطبيق: حذف مجلد التطبيق الحالي، واستخراج ملف التحميل. ar.gz في مكانه (القطران يفتح في مجلد تطبيق جديد - لا فوق المجلد الحالي) وإعادة الإطلاق.</string>
     <string name="logs_action_export">تصدير السجلات</string>
     <string name="logs_export_debug_description">تصدير سجل التصحيح إلى ملف</string>
     <string name="maintenance_card_desc">حالة التطبيق لنظرة: آخر تمرير للتشغيل والنظم الفرعية الحية</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">ديف</string>
     <string name="updates_cache_cleared">مسح ذاكرة التخزين المؤقت</string>
     <string name="updates_changelog_title">ما هو الجديد في %s</string>
+    <string name="updates_check_failed">تعذر التحقق من وجود تحديثات.</string>
     <string name="updates_check_mode_ask">اسأل</string>
     <string name="updates_check_mode_ask_status">Ask</string>
     <string name="updates_check_mode_disabled_status">Disabled</string>

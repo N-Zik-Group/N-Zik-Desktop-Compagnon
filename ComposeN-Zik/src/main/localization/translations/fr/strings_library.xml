@@ -10,7 +10,6 @@
     <string name="artist_following_status">Suivant</string>
     <string name="artist_more_from">Plus de</string>
     <string name="artist_roundness">Polyvalence de l\'artiste</string>
-    <string name="artist_songs_count_duration">%1$d titres • %2$s</string>
     <string name="artist_songs_unavailable_message">Aucun titre disponible</string>
     <string name="home_tabs_settings">Page d\'accueil</string>
     <string name="home_tabs_settings_description">Réorganiser et afficher/masquer les onglets</string>

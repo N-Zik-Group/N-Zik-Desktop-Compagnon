@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Paketi şu komutla yükleyin:</string>
     <string name="install_pkg_manual">Herhangi bir paket yöneticisi algılanmadı. İndirdiğiniz paketi manuel olarak yükleyin.</string>
     <string name="install_pkg_pacman_command">Paketi şu komutla güncelleyin:</string>
-    <string name="install_replacement_portable">Önce uygulamayı kapatın (uygulama çalışırken dosyaları kilitlidir), ardından uygulama klasörünü değiştirin: mevcut uygulama klasörünü silin, indirilen dosyayı onun yerine açın (zip dosyası yeni bir uygulama klasörü olarak açılır – asla mevcut klasörün üzerine yazmayın) ve uygulamayı yeniden başlatın.</string>
-    <string name="install_replacement_portable_linux">Önce uygulamayı kapatın (uygulama çalışırken dosyaları kilitlidir), ardından uygulama klasörünü değiştirin: mevcut uygulama klasörünü silin, indirilen .tar.gz dosyasını onun yerine açın (tar dosyası yeni bir uygulama klasörü olarak açılır - asla mevcut klasörün üzerine yazmaz) ve uygulamayı yeniden başlatın.</string>
     <string name="logs_action_export">Günlükleri dışa aktar</string>
     <string name="logs_export_debug_description">Hata ayıklama günlüğünü bir dosyaya aktar</string>
     <string name="maintenance_card_desc">Uygulama durumuna genel bakış: son önyükleme testleri ve çalışan alt sistemler</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">GELİŞTİRİCİ</string>
     <string name="updates_cache_cleared">Önbellek temizlendi</string>
     <string name="updates_changelog_title">%s sürümündeki yenilikler</string>
+    <string name="updates_check_failed">Güncellemeler kontrol edilemedi.</string>
     <string name="updates_check_mode_ask">Sor</string>
     <string name="updates_check_mode_ask_status">Sor</string>
     <string name="updates_check_mode_disabled_status">Devre dışı</string>

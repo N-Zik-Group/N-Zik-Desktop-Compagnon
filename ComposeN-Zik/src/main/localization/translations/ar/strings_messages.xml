@@ -18,7 +18,6 @@
     <string name="error_windows_install_helper">تعذر بدء تثبيت ويندوز. تشغيل المثبت الذي تم تنزيله يدويا.</string>
     <string name="interface_in_use">الواجهة قيد الإستخدام</string>
     <string name="local_playback_failed">لا يمكن تشغيل هذه الأغنية على جهاز الكمبيوتر هذا.</string>
-    <string name="local_playback_invalid_url">لا يمكن تشغيل هذه الأغنية على جهاز الكمبيوتر هذا.</string>
     <string name="local_playback_not_found">لم تعد هذه الأغنية على هاتفك.</string>
     <string name="local_playback_other_active">صوت على هذا الكمبيوتر الشخصي: كمبيوتر آخر (%1$s) متصل بالهاتف.</string>
     <string name="local_playback_unavailable">الصوت على هذا الكمبيوتر غير متوفر: لا يمكن تحميل VLC المضمنة.</string>
@@ -38,7 +37,6 @@
     <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
     <string name="notice_unreachable">%1$s: the phone did not answer.</string>
     <string name="path_copied">تم نسخ المسار</string>
-    <string name="updates_check_failed">تعذر التحقق من وجود تحديثات.</string>
     <string name="updates_check_invalid_response">ارجع خادم التحديث استجابة غير صالحة.</string>
     <string name="updates_download_generic_error">تعذر تحميل التحديث.</string>
     <string name="updates_download_invalid_filename">اسم ملف التحديث غير صالح.</string>

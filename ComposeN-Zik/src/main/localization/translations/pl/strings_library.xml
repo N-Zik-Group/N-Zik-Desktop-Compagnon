@@ -10,7 +10,6 @@
     <string name="artist_following_status">Subskrybujesz</string>
     <string name="artist_more_from">Więcej od</string>
     <string name="artist_roundness">Runda Artysty</string>
-    <string name="artist_songs_count_duration">%1$d Utwory • %2$s</string>
     <string name="artist_songs_unavailable_message">Brak dostępnych utworów</string>
     <string name="home_tabs_settings">Strona główna</string>
     <string name="home_tabs_settings_description">Zmień kolejność i pokaż/ukryj zakładki</string>

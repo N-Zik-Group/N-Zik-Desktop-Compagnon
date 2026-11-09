@@ -24,7 +24,7 @@
 - Verify build passes after changes (`gradlew.bat build`)
 - New features/bug fixes include at least one test (minimum bar, not a quota — volume bar + run strategy in rules/BUILD.md "Testing")
 - Show evidence (diffs, test output) — never just claim "done"
-- Use the question tool's choice mechanism ONLY for a genuine closed set of options; when waiting for a specific value or free-form input, ask an OPEN question — never a fake "répondre / personnalisé" option that just loops the same prompt (see rules/WORKFLOW.md "Question Tool — Choices vs. Open Answers")
+- Use the question tool's choice mechanism ONLY for a genuine closed set of options; when waiting for a specific value or free-form input, ask an OPEN question — never a fake "reply / custom" option that just loops the same prompt (see rules/WORKFLOW.md "Question Tool — Choices vs. Open Answers")
 - Keep AGENTS.md + `rules/` lean and current as the project evolves — see "Rules Maintenance & Evolution"
 - Use sub-agents by default for substantial, separable work; prioritize fresh, focused contexts and reuse only when useful and still light — see "Sub-agents & Context"
 - Match user's language for communication

@@ -10,7 +10,6 @@
     <string name="artist_following_status">Word Gevolg</string>
     <string name="artist_more_from">Meer van</string>
     <string name="artist_roundness">Artist roundness</string>
-    <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
     <string name="artist_songs_unavailable_message">No songs yet</string>
     <string name="home_tabs_settings">Home page</string>
     <string name="home_tabs_settings_description">Reorder and show/hide tabs</string>

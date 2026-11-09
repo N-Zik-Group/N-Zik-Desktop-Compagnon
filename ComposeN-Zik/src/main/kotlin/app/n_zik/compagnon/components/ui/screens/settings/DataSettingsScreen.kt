@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import app.n_zik.compagnon.utils.hasLocalizedFormat
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -188,7 +189,14 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                     CacheSettingsEntry(
                         title = stringResource(Res.string.settings_cache_song_size_limit_label),
                         text = when (exoPlayerDiskCacheMaxSize) {
-                            ExoPlayerDiskCacheMaxSize.Custom -> "${stringResource(Res.string.common_option_custom)}: ${formatText(stringResource(Res.string.common_size_megabytes_format), exoPlayerCustomCache)}"
+                            ExoPlayerDiskCacheMaxSize.Custom -> {
+                                val size = formatText(stringResource(Res.string.common_size_megabytes_format), exoPlayerCustomCache)
+                                if (hasLocalizedFormat(Res.string.ui_translation_available_settings_cache_custom_size_format)) {
+                                    formatText(stringResource(Res.string.settings_cache_custom_size_format), size)
+                                } else {
+                                    "${stringResource(Res.string.common_option_custom)}: $size"
+                                }
+                            }
                             ExoPlayerDiskCacheMaxSize.Disabled -> stringResource(Res.string.common_action_turn_off)
                             else -> exoPlayerDiskCacheMaxSize.text
                         },
@@ -237,12 +245,24 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                         showCacheInfo = false,
                     )
 
+                    val usedSize = formatShortFileSize(diskCacheSize)
+                    // Match the phone's usage calculation with the selected option's nominal limit.
+                    val nominalLimit = exoPlayerDiskCacheMaxSize.bytes
                     SettingsDescription(
-                        text = "${formatShortFileSize(diskCacheSize)} ${stringResource(Res.string.common_storage_used_suffix)} (${
-                            // The phone's divisor (its `DataSettings.kt` 413): the setting's own `bytes` — the Custom entry's
-                            // nominal value, not the custom size, as on the phone
-                            if (exoPlayerDiskCacheMaxSize.bytes > 0) "${diskCacheSize * 100 / exoPlayerDiskCacheMaxSize.bytes}%" else stringResource(Res.string.common_limit_unlimited_label)
-                        })",
+                        text = if (nominalLimit > 0) {
+                            val percent = diskCacheSize * 100 / nominalLimit
+                            if (hasLocalizedFormat(Res.string.ui_translation_available_settings_cache_usage_percent_format)) {
+                                formatText(stringResource(Res.string.settings_cache_usage_percent_format), usedSize, percent)
+                            } else {
+                                "$usedSize ${stringResource(Res.string.common_storage_used_suffix)} ($percent%)"
+                            }
+                        } else if (hasLocalizedFormat(Res.string.ui_translation_available_settings_cache_usage_unlimited_format)) {
+                            formatText(stringResource(Res.string.settings_cache_usage_unlimited_format), usedSize)
+                        } else {
+                            val used = stringResource(Res.string.common_storage_used_suffix)
+                            val unlimited = stringResource(Res.string.common_limit_unlimited_label)
+                            "$usedSize $used ($unlimited)"
+                        },
                     )
 
                     // "Song download max size" (DS:426-451, the phone's `exoPlayerDiskDownloadCacheMaxSizeKey`,

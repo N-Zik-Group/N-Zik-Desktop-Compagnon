@@ -464,35 +464,54 @@ val combineComposeResources = tasks.register<Sync>("combineComposeResources") {
         // Give the two safe Bridge toasts an availability marker with the same qualifiers
         // as their translation, so Compose applies its own language and region fallback.
         val toastKeys = setOf("player_queue_shuffled_count_format", "network_stream_retrying_playback")
+        val uiFormatKeys = setOf(
+            "updates_channel_available_format",
+            "library_song_count_with_duration",
+            "settings_cache_custom_size_format",
+            "settings_cache_usage_percent_format",
+            "settings_cache_usage_unlimited_format",
+        )
         val parser = javax.xml.parsers.DocumentBuilderFactory.newInstance().apply {
             setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
         }.newDocumentBuilder()
-        fun toastEntries(directory: File): Map<String, String> = buildMap {
-            for (catalog in listOf("strings_connectivity.xml", "strings_player.xml")) {
+        fun localizedEntries(directory: File, catalogs: List<String>, keys: Set<String>): Map<String, String> = buildMap {
+            for (catalog in catalogs) {
                 val file = directory.resolve(catalog)
                 if (!file.isFile) continue
-                val entries = parser.parse(file).getElementsByTagName("string")
+                val entries = parser.parse(file).documentElement.childNodes
                 for (index in 0 until entries.length) {
                     val entry = entries.item(index)
-                    val name = entry.attributes.getNamedItem("name")?.nodeValue ?: continue
-                    if (name in toastKeys) put(name, entry.textContent.trim())
+                    val name = entry.attributes?.getNamedItem("name")?.nodeValue ?: continue
+                    if (name in keys) put(name, entry.textContent.replace(Regex("\\s+"), " ").trim())
                 }
             }
         }
-        val source = toastEntries(destinationDir.resolve("values"))
-        for (directory in destinationDir.listFiles().orEmpty().filter {
-            it.isDirectory && (it.name == "values" || it.name.startsWith("values-"))
-        }) {
-            val keys = if (directory.name == "values") toastKeys else toastEntries(directory)
-                .filter { (key, text) -> text.isNotEmpty() && text != source[key] }.keys
-            if (keys.isEmpty()) continue
-            val available = if (directory.name == "values") "0" else "1"
-            directory.resolve("bridge_toast_availability.xml").writeText(
-                keys.joinToString(separator = "\n", prefix = "<resources>\n", postfix = "\n</resources>\n") { key ->
-                    "    <string name=\"bridge_translation_available_$key\">$available</string>"
-                },
-            )
+        fun writeAvailability(catalogs: List<String>, keys: Set<String>, prefix: String, fileName: String) {
+            val source = localizedEntries(destinationDir.resolve("values"), catalogs, keys)
+            for (directory in destinationDir.listFiles().orEmpty().filter {
+                it.isDirectory && (it.name == "values" || it.name.startsWith("values-"))
+            }) {
+                val isSource = directory.name == "values"
+                val availableKeys = if (isSource) keys else localizedEntries(directory, catalogs, keys)
+                    .filter { (key, text) -> text.isNotEmpty() && text != source[key] }.keys
+                if (availableKeys.isEmpty()) continue
+                val available = if (isSource) "0" else "1"
+                directory.resolve(fileName).writeText(
+                    availableKeys.joinToString(separator = "\n", prefix = "<resources>\n", postfix = "\n</resources>\n") { key ->
+                        "    <string name=\"${prefix}$key\">$available</string>"
+                    },
+                )
+            }
         }
+        writeAvailability(
+            listOf("strings_connectivity.xml", "strings_player.xml"), toastKeys,
+            "bridge_translation_available_", "bridge_toast_availability.xml",
+        )
+        // Keep the existing translated fragments until Crowdin exports the full phrases.
+        writeAvailability(
+            listOf("strings_library.xml", "strings_maintenance.xml", "strings_settings.xml"), uiFormatKeys,
+            "ui_translation_available_", "ui_format_availability.xml",
+        )
     }
 }
 

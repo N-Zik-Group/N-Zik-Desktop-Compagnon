@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Installez le pack à l\'aide de la commande suivante :</string>
     <string name="install_pkg_manual">Aucun gestionnaire de packs n\'a été détecté. Installez manuellement le pack téléchargé.</string>
     <string name="install_pkg_pacman_command">Mettez à jour le pack à l\'aide de la commande suivante :</string>
-    <string name="install_replacement_portable">Quittez d\'abord l\'application (ses fichiers sont verrouillés tant qu\'elle est en cours d\'exécution), puis remplacez le dossier de l\'application : supprimez le dossier actuel de l\'application, décompressez le fichier téléchargé à la place (le fichier zip s\'ouvre dans un nouveau dossier d\'application - ne le placez jamais par-dessus le dossier actuel), puis relancez l\'application.</string>
-    <string name="install_replacement_portable_linux">Quittez d\'abord l\'application (ses fichiers sont verrouillés tant qu\'elle est en cours d\'exécution), puis remplacez le dossier de l\'application : supprimez le dossier actuel de l\'application, décompressez le fichier .tar.gz téléchargé à la place (l\'archive se décompresse dans un nouveau dossier d\'application - elle ne remplace jamais le dossier actuel), puis relancez l\'application.</string>
     <string name="logs_action_export">Exporter les journaux</string>
     <string name="logs_export_debug_description">Exporter le journal de débogage vers un fichier</string>
     <string name="maintenance_card_desc">Aperçu de l\'état de l\'application : tests de démarrage réussis et sous-systèmes actifs</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">DÉVELOPPEMENT</string>
     <string name="updates_cache_cleared">Cache effacé</string>
     <string name="updates_changelog_title">Quelles sont les nouveautés de %s ?</string>
+    <string name="updates_check_failed">Impossible de vérifier les mises à jour.</string>
     <string name="updates_check_mode_ask">Demander</string>
     <string name="updates_check_mode_ask_status">Demander à l\'utilisateur</string>
     <string name="updates_check_mode_disabled_status">Mise à jour désactivée</string>

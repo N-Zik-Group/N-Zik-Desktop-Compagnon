@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Asenna paketti, jossa on:</string>
     <string name="install_pkg_manual">Paketin hallintaa ei havaittu. Asenna ladattu paketti manuaalisesti.</string>
     <string name="install_pkg_pacman_command">Päivitä paketti seuraavalla tavalla:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Lopeta sovellus ensin (sen tiedostot ovat lukittuja, kun se suoritetaan) ja korvaa sitten sovelluskansio: poista nykyinen sovelluskansio, pura ladattu. ar.gz paikallaan (tar-pallo avautuu uuteen sovelluskansioon - ei koskaan nykyisen sovelluksen), ja uudelleenkäynnistämiseen.</string>
     <string name="logs_action_export">Vie lokit</string>
     <string name="logs_export_debug_description">Vie virheenkorjausloki tiedostoon</string>
     <string name="maintenance_card_desc">Sovelluksen tila yhdellä silmäyksellä: viimeinen käynnistys läpäisee ja live-alijärjestelmät</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">DEV</string>
     <string name="updates_cache_cleared">Välimuisti tyhjennetty</string>
     <string name="updates_changelog_title">Mitä uutta kohteessa %s</string>
+    <string name="updates_check_failed">Päivityksiä ei voitu tarkistaa.</string>
     <string name="updates_check_mode_ask">Kysy</string>
     <string name="updates_check_mode_ask_status">Kysy</string>
     <string name="updates_check_mode_disabled_status">Pois</string>

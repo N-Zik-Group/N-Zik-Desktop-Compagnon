@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Installer pakken med:</string>
     <string name="install_pkg_manual">Ingen pakkebehandler ble oppdaget. Installer den nedlastede pakken manuelt.</string>
     <string name="install_pkg_pacman_command">Oppgrader pakken med:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Avslutt programmet først (filene er låst mens den kjører), og erstatt app-mappen: Slett gjeldende app mappe, eksporter de nedlastede . ar.gz på stedet (tarballen åpnes i en ny app mappe - aldri over denne) og starte på nytt.</string>
     <string name="logs_action_export">Eksporter logger</string>
     <string name="logs_export_debug_description">Eksporter feilsøkingslogg til en fil</string>
     <string name="maintenance_card_desc">App-tilstand på et slag: siste oppstart passerer og publiserte undersystemer</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">SLETT</string>
     <string name="updates_cache_cleared">Hurtiglager tømt</string>
     <string name="updates_changelog_title">Hva er nytt i %s</string>
+    <string name="updates_check_failed">Kan ikke se etter oppdateringer.</string>
     <string name="updates_check_mode_ask">Spør</string>
     <string name="updates_check_mode_ask_status">Spør</string>
     <string name="updates_check_mode_disabled_status">Deaktivert</string>

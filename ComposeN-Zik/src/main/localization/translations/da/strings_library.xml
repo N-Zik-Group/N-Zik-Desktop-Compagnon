@@ -10,7 +10,6 @@
     <string name="artist_following_status">Følger</string>
     <string name="artist_more_from">Mere af</string>
     <string name="artist_roundness">Kunstner rundhed</string>
-    <string name="artist_songs_count_duration">%1$d Sange • %2$s</string>
     <string name="artist_songs_unavailable_message">Ingen sange endnu</string>
     <string name="home_tabs_settings">Hjemmeside</string>
     <string name="home_tabs_settings_description">Genbestil og vise/skjul faner</string>

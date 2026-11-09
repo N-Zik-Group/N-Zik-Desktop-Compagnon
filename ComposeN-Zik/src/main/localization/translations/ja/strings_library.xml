@@ -10,7 +10,6 @@
     <string name="artist_following_status">フォロー中</string>
     <string name="artist_more_from">表示</string>
     <string name="artist_roundness">アーティストの丸み</string>
-    <string name="artist_songs_count_duration">%1$d 曲 • %2$s</string>
     <string name="artist_songs_unavailable_message">利用可能な曲がありません</string>
     <string name="home_tabs_settings">ホームページ</string>
     <string name="home_tabs_settings_description">タブの並び替えと表示/非表示</string>

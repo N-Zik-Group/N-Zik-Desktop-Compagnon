@@ -289,7 +289,7 @@ fun ArtistLocalSongs(
                 item {
                     if (songCount > 0) {
                         Text(
-                            text = pluralStringResource(Res.plurals.artist_song_count_with_duration, songCount, songCount, totalDurationText),
+                            text = pluralStringResource(Res.plurals.library_song_count_with_duration, songCount, songCount, totalDurationText),
                             style = MaterialTheme.typography.bodyLarge,
                             color = colorPalette().text,
                             modifier = Modifier

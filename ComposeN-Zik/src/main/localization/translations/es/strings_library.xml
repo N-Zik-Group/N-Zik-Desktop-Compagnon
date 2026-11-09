@@ -10,7 +10,6 @@
     <string name="artist_following_status">Siguiendo</string>
     <string name="artist_more_from">Más de</string>
     <string name="artist_roundness">Redondeo del artista</string>
-    <string name="artist_songs_count_duration">%1$d Canciones• %2$s</string>
     <string name="artist_songs_unavailable_message">Aún no hay canciones</string>
     <string name="home_tabs_settings">Página de inicio</string>
     <string name="home_tabs_settings_description">Reordenar y ocultar pestañas</string>

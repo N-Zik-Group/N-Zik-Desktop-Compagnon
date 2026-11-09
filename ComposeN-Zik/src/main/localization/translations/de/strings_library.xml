@@ -10,7 +10,6 @@
     <string name="artist_following_status">Gefolgt</string>
     <string name="artist_more_from">Mehr von</string>
     <string name="artist_roundness">Künstlerrundung</string>
-    <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
     <string name="artist_songs_unavailable_message">Bisher keine Titel</string>
     <string name="home_tabs_settings">Startseite</string>
     <string name="home_tabs_settings_description">Tabs neu anordnen und ein-/ausblenden</string>

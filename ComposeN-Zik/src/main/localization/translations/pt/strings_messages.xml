@@ -18,7 +18,6 @@
     <string name="error_windows_install_helper">Não foi possível iniciar o instalador do Windows. Execute o instalador baixado manualmente.</string>
     <string name="interface_in_use">‘Interface’ em utilização</string>
     <string name="local_playback_failed">Esta música não pôde ser tocada neste PC.</string>
-    <string name="local_playback_invalid_url">Esta música não pôde ser tocada neste PC.</string>
     <string name="local_playback_not_found">Essa música não está mais no seu telefone.</string>
     <string name="local_playback_other_active">Som neste PC: outro PC (%1$s) está conectado ao telefone.</string>
     <string name="local_playback_unavailable">Som neste PC não está disponível: o VLC incorporado não pôde ser carregado.</string>
@@ -38,7 +37,6 @@
     <string name="notice_unavailable">%1$s: o reprodutor do telefone está indisponível. Tente novamente mais tarde.</string>
     <string name="notice_unreachable">%1$s: o telefone não respondeu.</string>
     <string name="path_copied">Caminho copiado</string>
-    <string name="updates_check_failed">Não foi possível verificar se há atualizações.</string>
     <string name="updates_check_invalid_response">O servidor de atualização retornou uma resposta inválida.</string>
     <string name="updates_download_generic_error">Não foi possível baixar a atualização.</string>
     <string name="updates_download_invalid_filename">O nome do arquivo de atualização é inválido.</string>

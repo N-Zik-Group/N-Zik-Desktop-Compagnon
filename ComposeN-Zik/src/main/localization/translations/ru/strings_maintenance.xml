@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Установить пакет с:</string>
     <string name="install_pkg_manual">Менеджер пакетов не обнаружен. Установите скачанный пакет вручную.</string>
     <string name="install_pkg_pacman_command">Обновить пакет с:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Сначала выйдите из приложения (его файлы заблокированы во время запуска), затем замените папку приложения: удалите текущую папку приложения, извлеките загруженные . ar.gz на своем месте (tarball открывает в новую папку приложения - никогда не поверх текущей папки) и перезапускает.</string>
     <string name="logs_action_export">Экспорт журналов</string>
     <string name="logs_export_debug_description">Экспорт журнала отладки в файл</string>
     <string name="maintenance_card_desc">Состояние приложения на взгляд: последняя загрузка передается и работает подсистема</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">ДЕВ</string>
     <string name="updates_cache_cleared">Кэш очищен</string>
     <string name="updates_changelog_title">Что нового в %s</string>
+    <string name="updates_check_failed">Не удалось проверить обновления.</string>
     <string name="updates_check_mode_ask">Спрашивать</string>
     <string name="updates_check_mode_ask_status">Спрашивать</string>
     <string name="updates_check_mode_disabled_status">Отключено</string>

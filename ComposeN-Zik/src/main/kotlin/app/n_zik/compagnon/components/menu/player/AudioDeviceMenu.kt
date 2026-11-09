@@ -355,7 +355,9 @@ private fun PhoneDeviceEntry(dev: PhoneAudioDevice) {
         modifier = if (dev.isActive) Modifier.background(colorPalette().accent.copy(alpha = 0.1f), uiRoundnessShape()) else Modifier,
         // The phone's subtitle (its `AudioDeviceMenu.kt` 486): the battery level, carried by the
         // Bluetooth devices
-        subtitle = dev.batteryLevel?.let { "Battery: $it%" },
+        subtitle = dev.batteryLevel?.let {
+            formatText(stringResource(Res.string.audio_device_battery_format), it)
+        },
         trailingContent = {
             AnimatedVisibility(
                 visible = dev.isActive,

@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Installare il pacchetto con:</string>
     <string name="install_pkg_manual">Nessun gestore di pacchetti è stato rilevato. Installare manualmente il pacchetto scaricato.</string>
     <string name="install_pkg_pacman_command">Aggiorna il pacchetto con:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Esce prima dall\'app (i suoi file sono bloccati durante l\'esecuzione), quindi sostituisce la cartella dell\'app: elimina la cartella corrente dell\'app, estrai il file scaricato . ar.gz al suo posto (il tarball si apre in una nuova cartella app - mai sopra quella attuale) e rilanciare.</string>
     <string name="logs_action_export">Esporta log</string>
     <string name="logs_export_debug_description">Esporta log di debug in un file</string>
     <string name="maintenance_card_desc">Stato app a colpo d\'occhio: ultimo avvio passa e sottosistemi live</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">DEV</string>
     <string name="updates_cache_cleared">Cache cancellata</string>
     <string name="updates_changelog_title">Cosa c\'è di nuovo in %s</string>
+    <string name="updates_check_failed">Impossibile controllare gli aggiornamenti.</string>
     <string name="updates_check_mode_ask">Chiedi</string>
     <string name="updates_check_mode_ask_status">Chiedi</string>
     <string name="updates_check_mode_disabled_status">Disabilitato</string>

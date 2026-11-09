@@ -81,8 +81,10 @@ import app.n_zik.compagnon.utils.medium
 import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import app.n_zik.compagnon.utils.hasLocalizedFormat
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 /** The 4:3 cover of a detail screen fills the width: the largest size the contract allows. */
@@ -346,7 +348,7 @@ fun AlbumDetails(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            val songCount = "${state.total ?: items.size} ${stringResource(Res.string.library_songs_title)}"
+                            val trackCount = state.total ?: items.size
                             // Since 1.10.0 the phone serves the whole album's duration at once (`totalDurationMs`)
                             val totalDuration = when {
                                 state.totalDurationMs > 0L -> formatAsTime(state.totalDurationMs)
@@ -355,7 +357,12 @@ fun AlbumDetails(
                             }
 
                             BasicText(
-                                text = "$songCount - $totalDuration",
+                                text = if (hasLocalizedFormat(Res.string.ui_translation_available_library_song_count_with_duration)) {
+                                    pluralStringResource(Res.plurals.library_song_count_with_duration, trackCount, trackCount, totalDuration)
+                                } else {
+                                    val count = pluralStringResource(Res.plurals.library_song_count, trackCount, trackCount)
+                                    "$count - $totalDuration"
+                                },
                                 style = typography().xs.medium,
                                 maxLines = 1,
                             )

@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Instalați pachetul cu:</string>
     <string name="install_pkg_manual">Nu a fost detectat niciun manager de pachete. Instalați pachetul descărcat manual.</string>
     <string name="install_pkg_pacman_command">Actualizați ambalajul cu:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Închide mai întâi aplicația (fișierele sale sunt blocate în timp ce rulează), apoi înlocuiește folderul de aplicații: șterge directorul curent de aplicații, extrage fișierul descărcat . ar.gz în locul său (tarball se deschide într-un nou dosar de aplicații - niciodată peste cel actual) și se relansează.</string>
     <string name="logs_action_export">Exportă jurnalele</string>
     <string name="logs_export_debug_description">Exportă jurnalul de depanare într-un fișier</string>
     <string name="maintenance_card_desc">Starea aplicației în glană: ultima pornire trece și subsisteme live</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">TPA</string>
     <string name="updates_cache_cleared">Geocutie ştearsă</string>
     <string name="updates_changelog_title">Ce este nou în %s</string>
+    <string name="updates_check_failed">Nu s-au putut verifica actualizările.</string>
     <string name="updates_check_mode_ask">Întreabă</string>
     <string name="updates_check_mode_ask_status">Întreabă</string>
     <string name="updates_check_mode_disabled_status">Dezactivat</string>

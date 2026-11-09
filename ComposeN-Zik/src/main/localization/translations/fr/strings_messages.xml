@@ -18,7 +18,6 @@
     <string name="error_windows_install_helper">Le programme d\'installation Windows n\'a pas pu être lancé. Lancez manuellement le programme d\'installation que vous avez téléchargé.</string>
     <string name="interface_in_use">Interface en cours d\'utilisation</string>
     <string name="local_playback_failed">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
-    <string name="local_playback_invalid_url">Ce morceau n\'a pas pu être lu sur cet ordinateur.</string>
     <string name="local_playback_not_found">Ce titre ne se trouve plus sur votre téléphone.</string>
     <string name="local_playback_other_active">Son sur cet ordinateur : un autre ordinateur (%1$s) est connecté au téléphone.</string>
     <string name="local_playback_unavailable">Le son n\'est pas disponible sur cet ordinateur : le lecteur VLC intégré n\'a pas pu être chargé.</string>
@@ -38,7 +37,6 @@
     <string name="notice_unavailable">%1$s : le lecteur du téléphone n\'est pas disponible. Veuillez réessayer plus tard.</string>
     <string name="notice_unreachable">%1$s : le téléphone n\'a pas répondu.</string>
     <string name="path_copied">Chemin d\'accès copié</string>
-    <string name="updates_check_failed">Impossible de vérifier les mises à jour.</string>
     <string name="updates_check_invalid_response">Le serveur de mise à jour a renvoyé une réponse non valide.</string>
     <string name="updates_download_generic_error">Impossible de télécharger la mise à jour.</string>
     <string name="updates_download_invalid_filename">Le nom du fichier de mise à jour est invalide.</string>

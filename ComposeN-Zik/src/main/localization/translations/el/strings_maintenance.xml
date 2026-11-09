@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Εγκαταστήστε το πακέτο με:</string>
     <string name="install_pkg_manual">Δεν εντοπίστηκε διαχειριστής πακέτων. Εγκαταστήστε χειροκίνητα το κατεβασμένο πακέτο.</string>
     <string name="install_pkg_pacman_command">Αναβαθμίστε το πακέτο με:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Κλείστε πρώτα την εφαρμογή (τα αρχεία της είναι κλειδωμένα ενώ εκτελείται), στη συνέχεια, αντικαταστήστε το φάκελο εφαρμογών: διαγράψτε τον τρέχοντα φάκελο εφαρμογών, εξάγετε το ληφθέν . ar.gz στη θέση του (το tarball ανοίγει σε ένα νέο φάκελο app - ποτέ πάνω από το τρέχοντα), και να επανεκκινήσει.</string>
     <string name="logs_action_export">Εξαγωγή αρχείων καταγραφής</string>
     <string name="logs_export_debug_description">Εξαγωγή αρχείου καταγραφής εντοπισμού σφαλμάτων σε ένα αρχείο</string>
     <string name="maintenance_card_desc">Κατάσταση εφαρμογής με μια ματιά: τελευταία εκκίνηση περνά και ζωντανά υποσυστήματα</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">DEV</string>
     <string name="updates_cache_cleared">Η κρύπτη διαγράφηκε</string>
     <string name="updates_changelog_title">Τι νέο υπάρχει στο %s</string>
+    <string name="updates_check_failed">Αδυναμία ελέγχου για ενημερώσεις.</string>
     <string name="updates_check_mode_ask">Ερώτηση</string>
     <string name="updates_check_mode_ask_status">Ask</string>
     <string name="updates_check_mode_disabled_status">Ανενεργό</string>

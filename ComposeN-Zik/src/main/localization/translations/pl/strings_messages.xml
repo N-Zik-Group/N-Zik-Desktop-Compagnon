@@ -18,7 +18,6 @@
     <string name="error_windows_install_helper">Instalator Windows nie mógł zostać uruchomiony. Uruchom pobrany instalator ręcznie.</string>
     <string name="interface_in_use">Interfejs w użyciu</string>
     <string name="local_playback_failed">Ta piosenka nie może być odtworzona na tym komputerze.</string>
-    <string name="local_playback_invalid_url">Ta piosenka nie może być odtworzona na tym komputerze.</string>
     <string name="local_playback_not_found">Ta piosenka nie jest już na Twoim telefonie.</string>
     <string name="local_playback_other_active">Dźwięk na tym komputerze: inny komputer (%1$s) jest podłączony do telefonu.</string>
     <string name="local_playback_unavailable">Dźwięk na tym komputerze jest niedostępny: osadzony VLC nie mógł zostać załadowany.</string>
@@ -38,7 +37,6 @@
     <string name="notice_unavailable">%1$s: gracz telefonu jest niedostępny. Spróbuj ponownie później.</string>
     <string name="notice_unreachable">%1$s: telefon nie odpowiedział.</string>
     <string name="path_copied">Ścieżka skopiowana</string>
-    <string name="updates_check_failed">Nie można sprawdzić aktualizacji.</string>
     <string name="updates_check_invalid_response">Serwer aktualizacji zwrócił nieprawidłową odpowiedź.</string>
     <string name="updates_download_generic_error">Nie można pobrać aktualizacji.</string>
     <string name="updates_download_invalid_filename">Nazwa pliku aktualizacji jest nieprawidłowa.</string>

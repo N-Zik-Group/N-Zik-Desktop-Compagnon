@@ -10,8 +10,6 @@
     <string name="install_pkg_command">安装包：</string>
     <string name="install_pkg_manual">未检测到软件包管理器。手动安装下载的软件包。</string>
     <string name="install_pkg_pacman_command">升级包：</string>
-    <string name="install_replacement_portable">先退出应用程序(其文件在运行时被锁定)，然后替换应用文件夹：删除当前应用文件夹， 解压缩已下载的文件 (zip 打开到一个新的应用文件夹 - 从未打开当前的文件夹)，然后重启。</string>
-    <string name="install_replacement_portable_linux">先退出此应用(其文件在运行时被锁定)，然后替换应用文件夹：删除当前应用文件夹，提取已下载。 放置的ar.gz(tarball打开到一个新的应用文件夹 - 从不在当前的文件夹中)，然后重启。</string>
     <string name="logs_action_export">导出日志</string>
     <string name="logs_export_debug_description">导出调试日志到文件</string>
     <string name="maintenance_card_desc">应用程序状态：最后一次启动通过并运行子系统</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">赤纬度</string>
     <string name="updates_cache_cleared">缓存已清除</string>
     <string name="updates_changelog_title">%s 中的新功能</string>
+    <string name="updates_check_failed">无法检查更新。</string>
     <string name="updates_check_mode_ask">询问</string>
     <string name="updates_check_mode_ask_status">询问用户</string>
     <string name="updates_check_mode_disabled_status">更新已禁用</string>

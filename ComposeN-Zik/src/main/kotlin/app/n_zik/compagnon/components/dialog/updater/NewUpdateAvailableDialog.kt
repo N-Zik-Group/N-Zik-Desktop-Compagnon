@@ -24,7 +24,7 @@ import app.n_zik.compagnon.generated.AppVersion
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.updater.services.Updater
-import app.n_zik.compagnon.updater.ui.channelLabel
+import app.n_zik.compagnon.updater.ui.updateAvailableTitle
 import app.n_zik.compagnon.utils.AppLanguage
 import app.n_zik.compagnon.utils.bold
 import app.n_zik.compagnon.utils.formatShortFileSize
@@ -97,7 +97,7 @@ object NewUpdateAvailableDialog {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 BasicText(
-                    text = key(appliedLanguage) { channelLabel() + stringResource(Res.string.updates_available) },
+                    text = key(appliedLanguage) { updateAvailableTitle() },
                     style = typography().l.bold.copy(color = colorPalette.text),
                 )
                 Spacer(modifier = Modifier.height(4.dp))

@@ -58,6 +58,7 @@ import app.n_zik.compagnon.utils.secondary
 import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -309,7 +310,7 @@ class LocalArtistItemMenu(
         ) {
             ArtistItemDisplay(
                 title = artist.name,
-                subscribersCount = "${artist.trackCount} ${stringResource(Res.string.library_songs_title)}",
+                subscribersCount = pluralStringResource(Res.plurals.library_song_count, artist.trackCount, artist.trackCount),
             )
             ListMenu()
         }

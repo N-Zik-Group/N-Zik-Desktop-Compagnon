@@ -10,7 +10,6 @@
     <string name="artist_following_status">Följer</string>
     <string name="artist_more_from">Mer av</string>
     <string name="artist_roundness">Konstnärens rundhet</string>
-    <string name="artist_songs_count_duration">%1$d låtar • %2$s</string>
     <string name="artist_songs_unavailable_message">Inga låtar tillgängliga</string>
     <string name="home_tabs_settings">Startsida</string>
     <string name="home_tabs_settings_description">Ordna om och visa/dölj flikar</string>

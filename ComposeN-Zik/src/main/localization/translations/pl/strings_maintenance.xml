@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Zainstaluj pakiet z:</string>
     <string name="install_pkg_manual">Nie wykryto menedżera pakietów. Zainstaluj pobrany pakiet ręcznie.</string>
     <string name="install_pkg_pacman_command">Ulepsz pakiet z:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Wyjdź najpierw z aplikacji (jego pliki są zablokowane podczas uruchomienia), a następnie zastąp folder aplikacji: usuń bieżący folder aplikacji, rozpakuj pobrane . ar.gz w swoim miejscu (smoka otwiera się w nowy folder aplikacji - nigdy nie więcej niż obecny) i uruchom ponownie aplikację.</string>
     <string name="logs_action_export">Eksportuj logi</string>
     <string name="logs_export_debug_description">Eksportuj dziennik debugowania do pliku</string>
     <string name="maintenance_card_desc">Stan aplikacji w glance: ostatnie przejścia rozruchu i podsystemy na żywo</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">DEV</string>
     <string name="updates_cache_cleared">Pamięć podręczna usunięta</string>
     <string name="updates_changelog_title">Co nowego w %s</string>
+    <string name="updates_check_failed">Nie można sprawdzić aktualizacji.</string>
     <string name="updates_check_mode_ask">Zapytaj</string>
     <string name="updates_check_mode_ask_status">Zapytaj</string>
     <string name="updates_check_mode_disabled_status">Wyłączony</string>

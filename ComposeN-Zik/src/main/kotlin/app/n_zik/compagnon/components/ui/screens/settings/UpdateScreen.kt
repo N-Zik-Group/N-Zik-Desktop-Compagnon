@@ -72,6 +72,7 @@ import app.n_zik.compagnon.updater.ui.channelLabel
 import app.n_zik.compagnon.updater.ui.copyToClipboard
 import app.n_zik.compagnon.updater.ui.installCommand
 import app.n_zik.compagnon.updater.ui.openFileFolder
+import app.n_zik.compagnon.updater.ui.updateAvailableTitle
 import app.n_zik.compagnon.utils.Preferences
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.bold
@@ -199,11 +200,6 @@ fun UpdateScreen(
             }
         }
     }
-
-    // The "BETA/DEV/…" title prefix (the shared [channelLabel] — spec
-    // `spec-updater-parity-fixes`: the page and the update dialog render it from the single
-
-    // shared source)
 
     // The page structure (the phone's `updater/ui/UpdateScreen.kt` Scaffold: the fixed header, the
     // scrollable content, the bottom action fixed under it — the phone's bottomBar)
@@ -384,7 +380,7 @@ fun UpdateScreen(
                                         text = if (isReinstalling) {
                                             stringResource(Res.string.updates_reinstalling_status)
                                         } else {
-                                            "${channelLabel(channel)}${stringResource(Res.string.updates_available)}"
+                                            updateAvailableTitle(channel)
                                         },
                                         modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                                         maxLines = 1,
@@ -640,7 +636,7 @@ fun UpdateScreen(
                                         stringResource(Res.string.updates_downloading_status)
                                     } else {
                                         val extraInfo =
-                                            if (fileSize.isNotEmpty()) "${channelLabel(channel).trim()} - $fileSize" else channelLabel(channel).trim()
+                                            if (fileSize.isNotEmpty()) "${channelLabel(channel)} - $fileSize" else channelLabel(channel)
                                         formatText(
                                             stringResource(Res.string.updates_reinstalling_version_progress),
                                             currentVersion,

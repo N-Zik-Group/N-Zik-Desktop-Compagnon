@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Instale o pacote com:</string>
     <string name="install_pkg_manual">Nenhum gerenciador de pacotes foi detectado. Instale o pacote baixado manualmente.</string>
     <string name="install_pkg_pacman_command">Atualize o pacote com:</string>
-    <string name="install_replacement_portable">Saia do aplicativo primeiro (seus arquivos serão bloqueados enquanto ele for executado), depois substitua a pasta do aplicativo: exclua a pasta de aplicativos atual, descompacte o arquivo baixado em seu local (o zip abre em uma nova pasta de aplicativos - nunca mais o atual) e reinicia.</string>
-    <string name="install_replacement_portable_linux">Saia primeiro do aplicativo (seus arquivos serão bloqueados enquanto ele for executado), depois substitua a pasta do aplicativo: exclua a pasta do aplicativo atual, extraia o baixado. ar.gz em seu lugar (o tarball abre em uma nova pasta de aplicativos - nunca sobre a atual) e reinicia.</string>
     <string name="logs_action_export">Exportar logs</string>
     <string name="logs_export_debug_description">Exportar log de depuração para um arquivo</string>
     <string name="maintenance_card_desc">Estado do aplicativo rapidamente: a última inicialização passa e os subsistemas ao vivo</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">DEVES</string>
     <string name="updates_cache_cleared">Cache limpo</string>
     <string name="updates_changelog_title">Novidades em %s</string>
+    <string name="updates_check_failed">Não foi possível verificar se há atualizações.</string>
     <string name="updates_check_mode_ask">Perguntar</string>
     <string name="updates_check_mode_ask_status">Perguntar ao usuário</string>
     <string name="updates_check_mode_disabled_status">Atualização desabilitada</string>

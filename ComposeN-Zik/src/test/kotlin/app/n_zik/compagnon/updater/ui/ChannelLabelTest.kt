@@ -33,13 +33,13 @@ class ChannelLabelTest {
     }
 
     @Test
-    fun `the label is the uppercased title with a trailing space, locale-independently`() {
-        assertEquals("BETA ", channelLabelOf("beta"))
-        assertEquals("STABLE ", channelLabelOf("stable"))
-        assertEquals("DEV ", channelLabelOf("dev"))
-        assertEquals("DEBUG ", channelLabelOf("debug"))
+    fun `the label uppercases the title without adding separators`() {
+        assertEquals("BETA", channelLabelOf(" beta "))
+        assertEquals("STABLE", channelLabelOf("stable"))
+        assertEquals("DEV", channelLabelOf("dev"))
+        assertEquals("DEBUG", channelLabelOf("debug"))
         // Locale.ROOT: a default-locale uppercase() would render the dotted capital I
         // ("GİT") under a Turkish JVM default locale
-        assertEquals("GIT ", channelLabelOf("git"))
+        assertEquals("GIT", channelLabelOf("git"))
     }
 }

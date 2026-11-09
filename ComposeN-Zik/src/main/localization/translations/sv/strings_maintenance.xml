@@ -10,8 +10,6 @@
     <string name="install_pkg_command">Installera paketet med:</string>
     <string name="install_pkg_manual">Ingen pakethanterare upptäcktes. Installera det nedladdade paketet manuellt.</string>
     <string name="install_pkg_pacman_command">Uppgradera paketet med:</string>
-    <string name="install_replacement_portable">Replace the app folder: unzip the downloaded file over the current app folder, then relaunch.</string>
-    <string name="install_replacement_portable_linux">Avsluta appen först (filerna är låsta medan den körs), byt sedan ut appmappen: ta bort den aktuella appmappen, extrahera den nedladdade. ar.gz på sin plats (tarball öppnas i en ny app mapp - aldrig över den nuvarande), och nystart.</string>
     <string name="logs_action_export">Exportera loggar</string>
     <string name="logs_export_debug_description">Exportera felsökningslogg till en fil</string>
     <string name="maintenance_card_desc">Appen tillstånd i korthet: senaste boot passerar och live delsystem</string>
@@ -46,6 +44,7 @@
     <string name="updates_build_dev_label">DEV</string>
     <string name="updates_cache_cleared">Cachen rensad</string>
     <string name="updates_changelog_title">Vad är nytt i %s</string>
+    <string name="updates_check_failed">Kunde inte söka efter uppdateringar.</string>
     <string name="updates_check_mode_ask">Fråga</string>
     <string name="updates_check_mode_ask_status">Ask</string>
     <string name="updates_check_mode_disabled_status">Disabled</string>

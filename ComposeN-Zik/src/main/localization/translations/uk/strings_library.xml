@@ -10,7 +10,6 @@
     <string name="artist_following_status">Підписаний</string>
     <string name="artist_more_from">Більше</string>
     <string name="artist_roundness">Круглий художник</string>
-    <string name="artist_songs_count_duration">%1$d пісні • %2$s</string>
     <string name="artist_songs_unavailable_message">Немає доступних пісень</string>
     <string name="home_tabs_settings">Домашня сторінка</string>
     <string name="home_tabs_settings_description">Змінити порядок і показати/приховати вкладки</string>

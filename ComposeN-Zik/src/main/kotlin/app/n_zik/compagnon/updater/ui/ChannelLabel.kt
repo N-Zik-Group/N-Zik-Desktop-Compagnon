@@ -3,37 +3,32 @@ package app.n_zik.compagnon.updater.ui
 import androidx.compose.runtime.Composable
 import app.n_zik.compagnon.generated.AppVersion
 import app.n_zik.compagnon.generated.resources.*
+import app.n_zik.compagnon.utils.hasLocalizedFormat
 import java.util.Locale
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * The channel label prefix of the update flow (spec `spec-updater-parity-fixes` — the parity
- * audit centralization): the uppercase channel label + a trailing space, rendered from the
- * SINGLE shared source both the update page and the update dialog call (their two private
- * copies had drifted: the dialog's lacked the `debug` branch — behaviorally unreachable, the
- * dialog renders only under [AppVersion.updaterEnabled], false for debug / -git, so the
- * 5-branch superset changes nothing visible).
- *
- * The `*_title` strings are uppercase in the English localization catalogs, but the localized catalogs
- * stay mixed-case until the next Crowdin resync — the .uppercase() is plain
- * rendering/normalization, not a safeguard (round-4 audit MINOR-1).
- *
- * @param channel the channel to label (this build's own channel by default — the page passes
- * its `AppVersion.channel` read, the dialog uses the default)
- */
+/** The localized, uppercase build-channel label, or an empty string for an unknown channel. */
 @Composable
 fun channelLabel(channel: String = AppVersion.channel): String {
     val res = channelTitleRes(channel) ?: return ""
     return channelLabelOf(stringResource(res))
 }
 
-/**
- * The title-string → label transformation of [channelLabel] (pure, pinned by `ChannelLabelTest`):
- * uppercase + the trailing space. `Locale.ROOT` — a default-locale `uppercase()` would render
- * the git channel prefix as "GİT" under a Turkish JVM default locale (the dotted capital I).
- */
-internal fun channelLabelOf(title: String): String = title.uppercase(Locale.ROOT) + " "
+/** The localized update title shared by the settings screen and the update dialog. */
+@Composable
+internal fun updateAvailableTitle(channel: String = AppVersion.channel): String {
+    val label = channelLabel(channel)
+    return when {
+        label.isEmpty() -> stringResource(Res.string.updates_available)
+        hasLocalizedFormat(Res.string.ui_translation_available_updates_channel_available_format) ->
+            stringResource(Res.string.updates_channel_available_format, label)
+        else -> "$label ${stringResource(Res.string.updates_available)}"
+    }
+}
+
+/** Uppercases channel labels consistently across locales, including GIT under a Turkish locale. */
+internal fun channelLabelOf(title: String): String = title.trim().uppercase(Locale.ROOT)
 
 /**
  * The channel → `*_title` string mapping of [channelLabel] (pure, non-composable — pinned by

@@ -188,7 +188,7 @@ object Toaster {
 /**
  * Applies the format arguments of a desktop message, as the phone's own `Resources.getString(id, args)`
  * does. This compose version applies them in neither its non-composable `getString` nor its composable
- * `stringResource` (both return the raw message, its `%s` / `%d` staying visible), so they are applied
+ * `stringResource` without format arguments, so they are applied
  * at the call site. An argument that does not match (wrong count / type) leaves the raw message, which
  * is what the phone's own `String.format` would not do either — a visible, unformatted line is safer
  * than a crash.
