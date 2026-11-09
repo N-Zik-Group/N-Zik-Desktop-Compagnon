@@ -18,11 +18,11 @@
     <string name="error_windows_install_helper">De Windows installatie kon niet worden gestart. Voer het gedownloade installatieprogramma handmatig uit.</string>
     <string name="interface_in_use">Interface in gebruik</string>
     <string name="local_playback_failed">Dit nummer kan niet worden afgespeeld op deze PC.</string>
-    <string name="local_playback_invalid_url">Dit nummer kan niet worden afgespeeld op deze PC.</string>
     <string name="local_playback_not_found">Dit nummer staat niet meer op je telefoon.</string>
     <string name="local_playback_other_active">Geluid op deze PC: een andere PC (%1$s) is verbonden met de telefoon.</string>
     <string name="local_playback_unavailable">Geluid op deze PC is niet beschikbaar: de ingesloten VLC kon niet worden geladen.</string>
     <string name="local_playback_unavailable_linux">Geluid op deze PC is niet beschikbaar. Installeer VLC met %1$s en herstart de app.</string>
+    <string name="local_playback_unavailable_linux_generic">Geluid op deze PC is niet beschikbaar. Gebruik de pakketbeheerder van je distributiepakket om VLC te installeren en daarna de app opnieuw opstarten.</string>
     <string name="local_playback_unreachable">Uw telefoon heeft niet geantwoord.</string>
     <string name="local_playback_upstream_failed">Je telefoon kon dit nummer niet krijgen.</string>
     <string name="not_selectable">Niet selecteerbaar</string>
@@ -38,7 +38,6 @@
     <string name="notice_unavailable">%1$s: de telefoonspeler is niet beschikbaar. Probeer het later opnieuw.</string>
     <string name="notice_unreachable">%1$s: de telefoon heeft niet beantwoord.</string>
     <string name="path_copied">Pad gekopieerd</string>
-    <string name="updates_check_failed">Kon niet controleren op updates.</string>
     <string name="updates_check_invalid_response">De updateserver gaf een ongeldig antwoord.</string>
     <string name="updates_download_generic_error">Kan de update niet downloaden.</string>
     <string name="updates_download_invalid_filename">De naam van het updatebestand is ongeldig.</string>
