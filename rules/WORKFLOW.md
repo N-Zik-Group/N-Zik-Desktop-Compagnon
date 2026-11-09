@@ -39,7 +39,7 @@ Use this format every session — keep it SHORT:
 8. Ask IDE ONE at a time (path depends on IDE)
 9. The phone is the single source of truth — no business logic / streaming on the PC; no contract route → inert button with the phone's title
 10. Device token → platform secret store ONLY (Windows Credential Manager / Linux keyring / in-memory session store — never pairing.json, logs, Done.txt, code)
-11. UI strings → the matching English catalog under src/main/localization/source/ — `localization/translations/` is Crowdin-managed, never by hand; printf-style placeholders such as `%s` and `%1$d` are formatted at the call site with `formatMessage` or `formatText`
+11. UI strings → the matching English catalog under src/main/localization/source/ — `localization/translations/` is Crowdin-managed, never by hand; use Compose's indexed arguments for plurals and use `formatMessage` or `formatText` for unindexed or escaped printf patterns (see CODE.md)
 12. NEVER skip ahead to later steps — follow Step 1→2→3... in order
 13. After any interruption, re-announce current step before continuing
 14. If you lost context, re-read the current step file

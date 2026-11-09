@@ -39,7 +39,7 @@ object VlcRuntime {
         /** libvlc loaded from [directory] (the embedded runtime dir; `system` on the system-library path). */
         data class Available(val directory: String) : Availability
 
-        /** libvlc could not be loaded; [reason] is for the log only, [installHint] the user-facing install hint. */
+        /** libvlc could not be loaded; [reason] is for the log only, [installHint] the optional install command. */
         data class Unavailable(val reason: String, val installHint: String? = null) : Availability
     }
 
@@ -132,12 +132,12 @@ object VlcRuntime {
 
     /**
      * The package-manager command that installs VLC on the distribution described by [osRelease]
-     * (the raw content of `/etc/os-release`): [GENERIC_VLC_INSTALL_HINT] when the family is not
+     * (the raw content of `/etc/os-release`): null when the family is not
      * recognised or [osRelease] is null. The family tables are a curated best-effort subset — the
      * generic hint is the designed escape hatch for everything else (gentoo, nixos, …); note that on
      * RHEL-family distros `vlc` may need an extra repo (e.g. RPM Fusion on Rocky/Alma).
      */
-    internal fun vlcInstallHint(osRelease: String?): String {
+    internal fun vlcInstallHint(osRelease: String?): String? {
         val ids = (osRelease ?: "").lineSequence()
             .map { it.trim() }
             .filter { line -> OS_RELEASE_ID_KEYS.any { key -> line.startsWith("$key=") } }
@@ -155,7 +155,7 @@ object VlcRuntime {
             ids.any { it in PACMAN_FAMILIES } -> "sudo pacman -S vlc"
             ids.any { it in ZYPPER_FAMILIES } -> "sudo zypper install vlc"
             ids.any { it in APK_FAMILIES } -> "sudo apk add vlc"
-            else -> GENERIC_VLC_INSTALL_HINT
+            else -> null
         }
     }
 
@@ -170,9 +170,6 @@ object VlcRuntime {
             .getOrNull()
 
     const val RESOURCES_DIR_PROPERTY = "compose.application.resources.dir"
-
-    /** Fills the `%s` of the Linux unavailable message when no distro family is recognised. */
-    const val GENERIC_VLC_INSTALL_HINT = "your distribution's package manager"
 
     private const val RUNTIME_DIR = "vlc"
     private const val LIBVLC_WINDOWS = "libvlc.dll"

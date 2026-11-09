@@ -25,8 +25,12 @@
     <string name="common_storage_used_suffix">used</string>
     <string name="common_validation_empty_value">Value cannot be empty</string>
     <string name="common_validation_minimum_value">Value must be greater than</string>
+    <string name="common_validation_minimum_value_format">Value must be at least %1$d</string>
     <string name="dismiss">Dismiss</string>
     <string name="common_duration_seconds_format">%1$d s</string>
+    <string name="common_duration_minutes_format">%1$d min</string>
+    <string name="common_duration_hours_format">%1$d h</string>
+    <string name="common_duration_days_format">%1$d d</string>
     <string name="common_file_size_bytes_format">%1$s B</string>
     <string name="common_file_size_gigabytes_format">%1$s GB</string>
     <string name="common_file_size_kilobytes_format">%1$s kB</string>

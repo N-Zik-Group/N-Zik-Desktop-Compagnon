@@ -35,6 +35,9 @@
     <string name="updates_action_check_now">Check now</string>
     <string name="updates_action_download_current_version">Download again last update</string>
     <string name="updates_action_install">Install</string>
+    <string name="updates_install_failure_exit_timeout">The update was canceled because the app did not close within %1$d seconds.</string>
+    <string name="updates_install_failure_exit_code">Update installation failed with exit code %1$d.</string>
+    <string name="updates_install_failure_generic">The update could not be installed.</string>
     <string name="updates_action_open_download">Go to download</string>
     <string name="updates_automatic_check_title">Enable automatic update check</string>
     <string name="updates_available">Update available</string>

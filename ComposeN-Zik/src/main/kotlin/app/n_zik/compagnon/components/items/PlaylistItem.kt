@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.items
 
+import app.n_zik.compagnon.utils.formatDecimal
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -208,7 +209,7 @@ fun PlaylistItem(
                         songCount?.let {
                             if (showSongsCount) {
                                 BasicText(
-                                    text = songCount.toString(),
+                                    text = formatDecimal(songCount, 0),
                                     style = typography().xxs.medium.color(colorPalette().onOverlay),
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,

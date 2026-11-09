@@ -66,6 +66,7 @@ import app.n_zik.compagnon.utils.secondary
 import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
+import app.n_zik.compagnon.utils.formatDecimal
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -272,7 +273,8 @@ fun InputNumericDialog(
     val txtFieldError = remember { mutableStateOf("") }
     val txtField = remember { mutableStateOf(value) }
     val valueCannotEmpty = stringResource(Res.string.common_validation_empty_value)
-    val valueMustBeGreater = stringResource(Res.string.common_validation_minimum_value)
+    val minimum = valueMin.trim().toIntOrNull() ?: Int.MIN_VALUE
+    val minimumError = stringResource(Res.string.common_validation_minimum_value_format, formatDecimal(minimum, 0))
 
     DefaultDialog(onDismiss = onDismiss, modifier = modifier) {
         BasicText(
@@ -321,7 +323,7 @@ fun InputNumericDialog(
                     onClick = {
                         when (val checked = NumericInput.check(txtField.value, valueMin)) {
                             NumericInput.Empty -> txtFieldError.value = valueCannotEmpty
-                            NumericInput.BelowMin -> txtFieldError.value = "$valueMustBeGreater $valueMin"
+                            NumericInput.BelowMin -> txtFieldError.value = minimumError
                             // The phone hands the field's text as typed (`setValue(txtField.value)`), trimmed here
                             is NumericInput.Valid -> setValue(txtField.value.trim())
                         }
@@ -777,7 +779,7 @@ fun InProgressDialog(
         if (total > 0) {
             Spacer(modifier = Modifier.height(8.dp))
             BasicText(
-                text = "$done / $total",
+                text = "${formatDecimal(done, 0)} / ${formatDecimal(total, 0)}",
                 style = TextStyle(
                     textAlign = TextAlign.Center,
                     fontStyle = typography().xs.semiBold.fontStyle,

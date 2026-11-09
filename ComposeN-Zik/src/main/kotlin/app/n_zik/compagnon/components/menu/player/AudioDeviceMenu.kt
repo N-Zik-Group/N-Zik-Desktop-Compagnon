@@ -47,6 +47,7 @@ import app.n_zik.compagnon.playback.vlc.VlcRuntime
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.formatWholePercent
 import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.semiBold
 import kotlin.math.round
@@ -151,8 +152,11 @@ fun AudioDeviceMenu(onDismiss: () -> Unit, phoneName: String) {
         stringResource(Res.string.local_playback_unavailable)
     } else {
         val installHint = (VlcRuntime.availability as? VlcRuntime.Availability.Unavailable)?.installHint
-            ?: VlcRuntime.GENERIC_VLC_INSTALL_HINT
-        formatText(stringResource(Res.string.local_playback_unavailable_linux), installHint)
+        if (installHint == null) {
+            stringResource(Res.string.local_playback_unavailable_linux_generic)
+        } else {
+            formatText(stringResource(Res.string.local_playback_unavailable_linux), installHint)
+        }
     }
     val pcSubtitle = stringResource(Res.string.bridge_audio_output_pc_subtitle)
 
@@ -496,7 +500,7 @@ private fun VolumeRow(
         )
 
         BasicText(
-            text = "${if (maxVolume > 0) round(((currentVolume / maxVolume) * 100)).toInt() else 0}%",
+            text = formatWholePercent(if (maxVolume > 0) round(currentVolume / maxVolume * 100).toInt() else 0),
             style = typography().xxs.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = colorPalette().accent,

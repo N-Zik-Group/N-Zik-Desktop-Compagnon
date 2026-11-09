@@ -54,6 +54,70 @@ class MessageFormatTest {
     }
 
     @Test
+    fun `dislike toasts fill missing labels with localized metadata`() = runBlocking {
+        AppLanguage.applyTag("en")
+        try {
+            assertEquals(
+                "Disliked Unknown Title",
+                formatLabeledMessage(Res.string.library_dislikes_added, null, Res.string.metadata_unknown_title),
+            )
+            assertEquals(
+                "Removed Unknown Title from dislikes",
+                formatLabeledMessage(Res.string.library_dislikes_removed, null, Res.string.metadata_unknown_title),
+            )
+            assertEquals(
+                "Disliked Unknown Artist",
+                formatLabeledMessage(Res.string.library_dislikes_added, null, Res.string.metadata_unknown_artist),
+            )
+            assertEquals(
+                "Disliked «X»",
+                formatLabeledMessage(Res.string.library_dislikes_added, "«X»", Res.string.metadata_unknown_artist),
+            )
+        } finally {
+            AppLanguage.applyTag(null)
+        }
+    }
+
+    @Test
+    fun `whole percentages use the selected locale`() {
+        AppLanguage.applyTag("fr")
+        try {
+            val expected = java.text.NumberFormat.getPercentInstance(java.util.Locale.FRENCH).format(0.25)
+            assertEquals(expected, formatWholePercent(25))
+        } finally {
+            AppLanguage.applyTag(null)
+        }
+    }
+
+    @Test
+    fun `last check dates use the selected locale's date and time styles`() {
+        AppLanguage.applyTag("en-US")
+        try {
+            val time = 1_700_000_000_000L
+            val expected = java.text.DateFormat.getDateTimeInstance(
+                java.text.DateFormat.MEDIUM,
+                java.text.DateFormat.SHORT,
+            ).format(java.util.Date(time))
+            assertEquals(expected, formatLastUpdateCheck(time))
+        } finally {
+            AppLanguage.applyTag(null)
+        }
+    }
+
+    @Test
+    fun `playback decimals and elapsed time use the active locale without grouping`() {
+        AppLanguage.applyTag("fr")
+        try {
+            assertEquals("1,5", formatDecimal(1.5f, 1))
+            assertEquals("1,00", formatDecimal(1f, 2))
+            assertEquals("1:05", formatAsDuration(65_000))
+            assertEquals("25:01:02", formatAsDuration(90_062_000))
+        } finally {
+            AppLanguage.applyTag(null)
+        }
+    }
+
+    @Test
     fun `formatText without args returns the raw message`() {
         assertEquals("Done", formatText("Done"))
     }
@@ -73,5 +137,16 @@ class MessageFormatTest {
         val result = formatMessage(Res.string.library_dislikes_added, "«X»")
         assertTrue(result.endsWith("«X»"))
         assertFalse("%s" in result)
+    }
+
+    @Test
+    fun `Arabic plural selection keeps localized digits in the rendered count`() = runBlocking {
+        AppLanguage.applyTag("ar")
+        try {
+            val count = getPluralString(Res.plurals.library_song_count, 1, formatDecimal(1, 0))
+            assertEquals(true, count.contains('١'))
+        } finally {
+            AppLanguage.applyTag(null)
+        }
     }
 }

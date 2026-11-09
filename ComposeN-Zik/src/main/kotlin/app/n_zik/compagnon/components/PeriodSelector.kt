@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components
 
+import app.n_zik.compagnon.utils.formatDecimal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -81,7 +82,7 @@ class PeriodSelector(
     @Composable
     private fun menuTitle(): String {
         val topN = LocalUiSettings.current.topN
-        val label = topN?.toString() ?: stringResource(Res.string.statistics_items_limit_unlimited)
+        val label = topN?.let { formatDecimal(it, 0) } ?: stringResource(Res.string.statistics_items_limit_unlimited)
         return formatText(stringResource(Res.string.statistics_top_period_title), label)
     }
 

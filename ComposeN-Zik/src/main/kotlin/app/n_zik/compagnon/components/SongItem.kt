@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components
 
+import app.n_zik.compagnon.utils.formatDecimal
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -375,7 +376,7 @@ fun SongItem(
 fun songSortOverlay(text: String?, rank: Int?) {
     if (text == null && rank == null) return
     // [text] is non-null when [rank] is null (early return above); `orEmpty` only makes that explicit
-    val content: String = rank?.toString() ?: text.orEmpty()
+    val content: String = rank?.let { formatDecimal(it, 0) } ?: text.orEmpty()
     val style = if (rank != null) typography().m.semiBold.center else typography().xxs.semiBold.center
     val alignment = if (rank != null) Alignment.Center else Alignment.BottomCenter
     Box(

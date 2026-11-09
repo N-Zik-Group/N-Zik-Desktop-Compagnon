@@ -382,18 +382,37 @@ object UpdateDownloadManager {
     fun installFailureMarkerPath(): Path =
         (markerTestDirectory ?: CredentialStore.appDirectory()).resolve(INSTALL_FAILURE_MARKER)
 
+    internal sealed interface InstallFailure {
+        data class AppExitTimeout(val seconds: Int) : InstallFailure
+        data class InstallerExitCode(val code: Int) : InstallFailure
+        data object Unknown : InstallFailure
+    }
+
+    private val appExitTimeoutMarker = Regex("""app-exit-timeout:(\d+)""")
+    private val legacyAppExitTimeoutMarker = Regex(
+        """the app did not exit within (\d+) s; the install was aborted \(its files were still locked\)""",
+    )
+    private val installerExitCodeMarker = Regex("""(?:installer-exit-code:|install failed with exit code )(-?\d+)""")
+
     /**
      * Reads and DELETES the install-failure marker (loop 2) — called once at startup: if the
      * previous session's install failed, the app toasts the error instead of relaunching
      * a half-installed build forever. `null` when there is no marker.
      */
-    fun consumeInstallFailureMarker(): String? {
+    internal fun consumeInstallFailureMarker(): InstallFailure? {
         val marker = installFailureMarkerPath()
         if (!Files.exists(marker)) return null
         val content = runCatching { Files.readString(marker) }.getOrDefault("")
         runCatching { Files.delete(marker) }
             .onFailure { log.warning("Could not delete the install failure marker: ${it.message}") }
-        return content
+        val reason = content.trim().removePrefix("\uFEFF")
+        // The previous helper wrote English text. Interpret those markers after upgrading.
+        val timeout = appExitTimeoutMarker.matchEntire(reason) ?: legacyAppExitTimeoutMarker.matchEntire(reason)
+        timeout?.groupValues?.get(1)?.toIntOrNull()?.let { return InstallFailure.AppExitTimeout(it) }
+        installerExitCodeMarker.matchEntire(reason)?.groupValues?.get(1)?.toIntOrNull()?.let {
+            return InstallFailure.InstallerExitCode(it)
+        }
+        return InstallFailure.Unknown
     }
 
     /**
@@ -467,7 +486,7 @@ object UpdateDownloadManager {
             "  \$w=\$w+1",
             "}",
             "if (\$alive) {",
-            "  Set-Content -Path '$marker' -Value 'the app did not exit within ${APP_EXIT_WAIT_S} s; the install was aborted (its files were still locked)'",
+            "  Set-Content -Path '$marker' -Encoding ASCII -Value 'app-exit-timeout:${APP_EXIT_WAIT_S}'",
             "  exit 1",
             "}",
             "\$p=Start-Process -FilePath '$installer' -ArgumentList '/UPDATE' -Wait -PassThru",
@@ -481,7 +500,7 @@ object UpdateDownloadManager {
             "  \$running=Get-Process -ErrorAction SilentlyContinue | Where-Object Path -eq \$appExe",
             "  if (-not \$running -and (Test-Path '$app')) { Start-Process -FilePath '$app' }",
             "} elseif (\$code -ne 1 -and \$code -ne 2 -and \$code -ne 1223) {",
-            "  Set-Content -Path '$marker' -Value \"install failed with exit code \$code\"",
+            "  Set-Content -Path '$marker' -Encoding ASCII -Value \"installer-exit-code:\$code\"",
             "}",
         ).joinToString("; ")
     }

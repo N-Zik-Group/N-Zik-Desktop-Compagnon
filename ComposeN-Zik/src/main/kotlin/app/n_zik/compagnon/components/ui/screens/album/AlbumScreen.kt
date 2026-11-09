@@ -69,22 +69,22 @@ import app.n_zik.compagnon.core.network.ArtworkKey
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.utils.LocalPreferences
-import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.components.player.showLikeToast
 import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.align
 import app.n_zik.compagnon.utils.center
 import app.n_zik.compagnon.utils.color
 import app.n_zik.compagnon.utils.fadingEdge
-import app.n_zik.compagnon.utils.formatAsTime
+import app.n_zik.compagnon.utils.formatAsDuration
 import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.medium
 import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import app.n_zik.compagnon.utils.hasLocalizedFormat
+import app.n_zik.compagnon.utils.localizedSongCountWithDuration
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.pluralStringResource
+import app.n_zik.compagnon.utils.formatDecimal
 import org.jetbrains.compose.resources.stringResource
 
 /** The 4:3 cover of a detail screen fills the width: the largest size the contract allows. */
@@ -224,7 +224,8 @@ fun AlbumDetails(
                     AlbumLike.Disliked -> Res.string.library_dislikes_added
                     AlbumLike.Neutral -> Res.string.library_favorites_removed
                 }
-                if (album.title.isNotBlank()) Toaster.s(messageId, "\"${album.title}\"") else Toaster.s(messageId)
+                val label = album.title.takeIf(String::isNotBlank)?.let { "\"$it\"" }
+                showLikeToast(messageId, label, Res.string.metadata_unknown_title)
             }
         }
     }
@@ -351,18 +352,13 @@ fun AlbumDetails(
                             val trackCount = state.total ?: items.size
                             // Since 1.10.0 the phone serves the whole album's duration at once (`totalDurationMs`)
                             val totalDuration = when {
-                                state.totalDurationMs > 0L -> formatAsTime(state.totalDurationMs)
-                                state.endReached -> formatAsTime(items.sumOf { it.durationMs ?: 0L })
+                                state.totalDurationMs > 0L -> formatAsDuration(state.totalDurationMs)
+                                state.endReached -> formatAsDuration(items.sumOf { it.durationMs ?: 0L })
                                 else -> "…"
                             }
 
                             BasicText(
-                                text = if (hasLocalizedFormat(Res.string.ui_translation_available_library_song_count_with_duration)) {
-                                    pluralStringResource(Res.plurals.library_song_count_with_duration, trackCount, trackCount, totalDuration)
-                                } else {
-                                    val count = pluralStringResource(Res.plurals.library_song_count, trackCount, trackCount)
-                                    "$count - $totalDuration"
-                                },
+                                text = localizedSongCountWithDuration(trackCount, totalDuration),
                                 style = typography().xs.medium,
                                 maxLines = 1,
                             )
@@ -405,7 +401,7 @@ fun AlbumDetails(
                             onLongClick = menu?.let { { menuState.display { SongItemMenu(song, it).MenuComponent() } } },
                             thumbnailOverlay = {
                                 BasicText(
-                                    text = "${index + 1}",
+                                    text = formatDecimal(index + 1, 0),
                                     style = typography().s
                                         .semiBold
                                         .center

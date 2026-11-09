@@ -54,7 +54,7 @@ import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.thumbnailShape
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.utils.LocalPreferences
-import app.n_zik.compagnon.utils.Toaster
+import app.n_zik.compagnon.components.player.showLikeToast
 import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.secondary
 import app.n_zik.compagnon.utils.semiBold
@@ -299,7 +299,8 @@ class AlbumItemMenu(
                                     AlbumLike.Disliked -> Res.string.library_dislikes_added
                                     AlbumLike.Neutral -> Res.string.library_favorites_removed
                                 }
-                                if (album.title.isNotBlank()) Toaster.s(messageId, "\"${album.title}\"") else Toaster.s(messageId)
+                                val label = album.title.takeIf(String::isNotBlank)?.let { "\"$it\"" }
+                                showLikeToast(messageId, label, Res.string.metadata_unknown_title)
                             }
                         },
                         modifier = Modifier

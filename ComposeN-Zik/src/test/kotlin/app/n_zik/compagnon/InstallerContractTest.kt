@@ -137,7 +137,7 @@ class InstallerContractTest {
             "the helper's unexpected-code branch must write the failure marker"
         )
         assertTrue(
-            helperText.contains("install failed with exit code \\\$code"),
+            helperText.contains("installer-exit-code:\\\$code"),
             "the failure marker must record the code (the diagnostics)"
         )
     }

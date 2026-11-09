@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import app.n_zik.compagnon.utils.formatDecimal
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -75,7 +76,7 @@ import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.center
 import app.n_zik.compagnon.utils.color
-import app.n_zik.compagnon.utils.formatAsTime
+import app.n_zik.compagnon.utils.formatAsDuration
 import app.n_zik.compagnon.utils.onSecondaryClick
 import app.n_zik.compagnon.utils.semiBold
 import org.jetbrains.compose.resources.StringResource
@@ -417,8 +418,8 @@ fun HomeArtists(
 @Composable
 private fun artistSortOverlay(sort: ArtistSort, artist: Artist) {
     val text = when (sort) {
-        ArtistSort.PlayCount -> artist.playCount.toString()
-        ArtistSort.ListeningTime -> formatAsTime(artist.totalPlayTimeMs)
+        ArtistSort.PlayCount -> formatDecimal(artist.playCount, 0)
+        ArtistSort.ListeningTime -> formatAsDuration(artist.totalPlayTimeMs)
         else -> null
     } ?: return
     Box(

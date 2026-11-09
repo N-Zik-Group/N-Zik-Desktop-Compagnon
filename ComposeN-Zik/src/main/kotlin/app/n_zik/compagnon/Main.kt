@@ -278,7 +278,14 @@ fun App(
     // Loop 2: a failed Windows install from the previous run is toasted at startup (the
     // marker written next to the pairing data by `UpdateDownloadManager`)
     LaunchedEffect(Unit) {
-        UpdateDownloadManager.consumeInstallFailureMarker()?.let { Toaster.e(it) }
+        when (val failure = UpdateDownloadManager.consumeInstallFailureMarker()) {
+            is UpdateDownloadManager.InstallFailure.AppExitTimeout ->
+                Toaster.e(Res.string.updates_install_failure_exit_timeout, failure.seconds)
+            is UpdateDownloadManager.InstallFailure.InstallerExitCode ->
+                Toaster.e(Res.string.updates_install_failure_exit_code, failure.code)
+            UpdateDownloadManager.InstallFailure.Unknown -> Toaster.e(Res.string.updates_install_failure_generic)
+            null -> Unit
+        }
     }
     // The phone's `MainActivity.setContent` root: its appearance, faded by `AnimatedAppearance`
     val fontFamily = rubikFontFamily()

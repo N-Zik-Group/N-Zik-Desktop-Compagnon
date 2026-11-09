@@ -2,6 +2,7 @@ package app.n_zik.compagnon.playback.vlc
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -27,11 +28,10 @@ class VlcRuntimeTest {
     }
 
     @Test
-    fun `linux without any libvlc is unavailable with the system reason and an install hint`() {
+    fun `linux without any libvlc is unavailable with the system reason`() {
         val unavailable = VlcRuntime.load("Linux", resourcesDir = null) { false }
             as VlcRuntime.Availability.Unavailable
         assertEquals("no libvlc on the system", unavailable.reason)
-        assertTrue(unavailable.installHint != null)
     }
 
     @Test
@@ -92,7 +92,6 @@ class VlcRuntimeTest {
             VlcRuntime.load("Windows 11", resourcesDir = resources.absolutePath) { false }
         } as VlcRuntime.Availability.Unavailable
         assertEquals("no libvlc on the system", unavailable.reason)
-        assertTrue(unavailable.installHint != null)
     }
 
     @Test
@@ -103,7 +102,6 @@ class VlcRuntimeTest {
             VlcRuntime.load("Linux", resourcesDir = resources.absolutePath) { false }
         } as VlcRuntime.Availability.Unavailable
         assertEquals("no libvlc on the system", unavailable.reason)
-        assertTrue(unavailable.installHint != null)
     }
 
     @Test
@@ -159,9 +157,9 @@ class VlcRuntimeTest {
 
     @Test
     fun `the install hint falls back to the generic one`() {
-        assertEquals(VlcRuntime.GENERIC_VLC_INSTALL_HINT, VlcRuntime.vlcInstallHint(osRelease("ID=gentoo")))
-        assertEquals(VlcRuntime.GENERIC_VLC_INSTALL_HINT, VlcRuntime.vlcInstallHint(null))
-        assertEquals(VlcRuntime.GENERIC_VLC_INSTALL_HINT, VlcRuntime.vlcInstallHint(""))
+        assertNull(VlcRuntime.vlcInstallHint(osRelease("ID=gentoo")))
+        assertNull(VlcRuntime.vlcInstallHint(null))
+        assertNull(VlcRuntime.vlcInstallHint(""))
     }
 
     private fun osRelease(vararg lines: String): String =

@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import app.n_zik.compagnon.utils.formatDecimal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
@@ -30,7 +31,7 @@ import app.n_zik.compagnon.bridge.state.ListRef
 import app.n_zik.compagnon.bridge.state.QueuePosition
 import app.n_zik.compagnon.bridge.state.SongRecommendations
 import app.n_zik.compagnon.bridge.state.Track
-import app.n_zik.compagnon.bridge.state.formattedTotalPlayTime
+import app.n_zik.compagnon.utils.formatCompactPlayTime
 import app.n_zik.compagnon.bridge.state.unmatched
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
@@ -170,10 +171,10 @@ fun HomeSongs(
                             thumbnailOverlay = {
                                 songSortOverlay(
                                     text = when (sort) {
-                                        SongSort.PlayCount -> song.playCount.toString()
+                                        SongSort.PlayCount -> formatDecimal(song.playCount, 0)
                                         SongSort.PlayTime,
                                         SongSort.RelativePlayTime,
-                                        -> song.formattedTotalPlayTime
+                                        -> formatCompactPlayTime(song.totalPlayTimeMs)
                                         else -> null
                                     },
                                     // The phone's rank is the row's place in its display list

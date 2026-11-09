@@ -74,10 +74,12 @@ import app.n_zik.compagnon.updater.ui.installCommand
 import app.n_zik.compagnon.updater.ui.openFileFolder
 import app.n_zik.compagnon.updater.ui.updateAvailableTitle
 import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.utils.formatWholePercent
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.bold
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
 import app.n_zik.compagnon.utils.formatShortFileSize
+import app.n_zik.compagnon.utils.formatLastUpdateCheck
 import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.openInBrowser
 import app.n_zik.compagnon.utils.semiBold
@@ -86,8 +88,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -466,8 +466,7 @@ fun UpdateScreen(
                                 }
                                 val lastCheckTime = settings.lastUpdateCheck
                                 val lastCheckStr = if (lastCheckTime > 0) {
-                                    SimpleDateFormat("dd MMM HH:mm", Locale.getDefault())
-                                        .format(Date(lastCheckTime))
+                                    formatLastUpdateCheck(lastCheckTime)
                                 } else {
                                     stringResource(Res.string.updates_never_checked)
                                 }
@@ -657,7 +656,7 @@ fun UpdateScreen(
                                             )
                                         }
                                         BasicText(
-                                            text = "${(state.progress * 100).toInt()}%",
+                                            text = formatWholePercent((state.progress * 100).toInt()),
                                             modifier = Modifier.padding(start = 8.dp).width(40.dp),
                                             style = typography().s.copy(
                                                 color = colorPalette().accent,

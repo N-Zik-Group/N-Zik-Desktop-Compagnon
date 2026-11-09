@@ -60,6 +60,7 @@ import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.onSecondaryClick
+import app.n_zik.compagnon.utils.formatDecimal
 import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.painterResource
@@ -252,14 +253,13 @@ fun ControlsEssential(
             )
         }
 
-        val fmtSpeed = "%.1fx".format(playbackSpeed).replace(",", ".")
-        if (fmtSpeed != "1.0x") {
+        if (playbackSpeed != 1f) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
             ) {
                 BasicText(
-                    text = fmtSpeed,
+                    text = "${formatDecimal(playbackSpeed, 1)}×",
                     style = TextStyle(
                         color = colorPalette().text,
                         fontStyle = typography().xxxs.semiBold.fontStyle,

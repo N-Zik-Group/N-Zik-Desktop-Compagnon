@@ -31,7 +31,7 @@ fun rotateTrackLike(track: Track, writes: LibraryActions?, rotationEnabled: Bool
     val label = likeToastLabel(track.title, track.artists)
     writes.likeSong(track.id, next) { confirmed ->
         val messageId = likeToastMessage(confirmed, rotationEnabled = true)
-        if (label != null) Toaster.s(messageId, label) else Toaster.s(messageId)
+        showLikeToast(messageId, label, Res.string.metadata_unknown_title)
     }
 }
 
@@ -44,6 +44,14 @@ fun likeToastMessage(next: TrackLike, rotationEnabled: Boolean): StringResource 
     }
     next == TrackLike.Liked -> Res.string.library_favorites_added
     else -> Res.string.library_favorites_removed
+}
+
+internal fun showLikeToast(messageId: StringResource, label: String?, missingLabel: StringResource) {
+    when (messageId) {
+        Res.string.library_dislikes_added, Res.string.library_dislikes_removed ->
+            Toaster.successWithLabel(messageId, label, missingLabel)
+        else -> Toaster.s(messageId)
+    }
 }
 
 /** The phone's quoted label `"title - artists"` (prefixes cleaned), `null` without a title. */

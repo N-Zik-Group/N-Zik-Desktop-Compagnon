@@ -90,7 +90,7 @@ import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
-import app.n_zik.compagnon.utils.formatAsTime
+import app.n_zik.compagnon.utils.formatAsDuration
 import app.n_zik.compagnon.utils.hasExplicitPrefix
 import app.n_zik.compagnon.utils.positionAndDurationState
 import app.n_zik.compagnon.utils.semiBold
@@ -741,7 +741,7 @@ fun Player(
 
                             Box {
                                 BasicText(
-                                    text = " ${formatAsTime(totalPlayTimes)}",
+                                    text = " ${formatAsDuration(totalPlayTimes)}",
                                     style = typography().xxs.semiBold.merge(
                                         TextStyle(
                                             textAlign = TextAlign.Center,
@@ -753,7 +753,7 @@ fun Player(
                                 )
                                 // The phone's text outline over the queue time (`Player.kt` 2305-2321)
                                 BasicText(
-                                    text = " ${formatAsTime(totalPlayTimes)}",
+                                    text = " ${formatAsDuration(totalPlayTimes)}",
                                     style = typography().xxs.semiBold.merge(
                                         TextStyle(
                                             textAlign = TextAlign.Center,

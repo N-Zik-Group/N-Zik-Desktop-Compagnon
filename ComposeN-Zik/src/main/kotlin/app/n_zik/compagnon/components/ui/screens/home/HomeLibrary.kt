@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import app.n_zik.compagnon.utils.formatDecimal
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -95,7 +96,7 @@ import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.center
 import app.n_zik.compagnon.utils.color
-import app.n_zik.compagnon.utils.formatAsTime
+import app.n_zik.compagnon.utils.formatAsDuration
 import app.n_zik.compagnon.utils.onSecondaryClick
 import app.n_zik.compagnon.utils.semiBold
 import org.jetbrains.compose.resources.DrawableResource
@@ -351,7 +352,7 @@ fun HomeLibrary(
                             CollapsibleTitleRow(titleOffsetState, titleHeightState) {
                                 TabHeader(stringResource(Res.string.library_playlists_title)) {
                                     // The phone's `items.size` (`HomeLibrary.kt` 606): every playlist, whatever the chip
-                                    HeaderInfo((allPlaylistsCount ?: state.total ?: state.items.size).toString(), Res.drawable.playlist)
+                                    HeaderInfo(formatDecimal(allPlaylistsCount ?: state.total ?: state.items.size, 0), Res.drawable.playlist)
                                 }
                             }
                             TabToolBar.Buttons(buttons, disableAnimation = true)
@@ -574,9 +575,9 @@ fun HomeLibrary(
 @Composable
 private fun playlistSortOverlay(sort: PlaylistSort, preview: Playlist) {
     val text = when (sort) {
-        PlaylistSort.SongCount -> preview.trackCount.toString()
-        PlaylistSort.PlayCount -> preview.playCount.toString()
-        PlaylistSort.ListeningTime -> formatAsTime(preview.totalPlayTimeMs)
+        PlaylistSort.SongCount -> formatDecimal(preview.trackCount, 0)
+        PlaylistSort.PlayCount -> formatDecimal(preview.playCount, 0)
+        PlaylistSort.ListeningTime -> formatAsDuration(preview.totalPlayTimeMs)
         else -> null
     } ?: return
     Box(

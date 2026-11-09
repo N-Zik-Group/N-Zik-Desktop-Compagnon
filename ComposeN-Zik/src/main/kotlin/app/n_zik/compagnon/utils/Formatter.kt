@@ -2,8 +2,23 @@ package app.n_zik.compagnon.utils
 
 import androidx.compose.runtime.Composable
 import app.n_zik.compagnon.generated.resources.*
+import java.text.DateFormat
 import java.text.NumberFormat
+import java.util.Date
 import org.jetbrains.compose.resources.stringResource
+
+internal fun formatWholePercent(percent: Number): String =
+    NumberFormat.getPercentInstance().format(percent.toDouble() / 100)
+
+internal fun formatDecimal(value: Number, fractionDigits: Int): String =
+    NumberFormat.getNumberInstance().apply {
+        minimumFractionDigits = fractionDigits
+        maximumFractionDigits = fractionDigits
+        isGroupingUsed = false
+    }.format(value)
+
+internal fun formatLastUpdateCheck(timeMillis: Long): String =
+    DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(timeMillis))
 
 /** Formats decimal file sizes with locale-specific numbers and unit labels. */
 @Composable

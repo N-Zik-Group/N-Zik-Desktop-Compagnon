@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.home
 
+import app.n_zik.compagnon.utils.formatDecimal
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
@@ -528,7 +529,7 @@ private fun RecommendationCounter(count: Int) {
             modifier = Modifier.size(12.dp),
         )
         BasicText(
-            text = count.toString(),
+            text = formatDecimal(count, 0),
             style = typography().xxxs.semiBold.color(colorPalette().textSecondary),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

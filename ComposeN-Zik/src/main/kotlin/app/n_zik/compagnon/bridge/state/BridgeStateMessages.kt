@@ -306,18 +306,6 @@ val Track.displayedLike: TrackLike
 fun Track.unmatched(): Boolean =
     (id.length != 11 || (durationMs == 0L && totalPlayTimeMs == 1L)) && !id.startsWith("local:")
 
-/** Port of the phone's `Song.formattedTotalPlayTime` (phone's `models/Song.kt` 39-50): `« 45m »`, `« 2h »` or `« 3d »` — the format of the phone's row overlay of the play-time sorts (the phone's `formatAsTime` is not used there). */
-val Track.formattedTotalPlayTime: String
-    get() {
-        val seconds = totalPlayTimeMs / 1000
-        val hours = seconds / 3600
-        return when {
-            hours == 0L -> "${seconds / 60}m"
-            hours < 24L -> "${hours}h"
-            else -> "${hours / 24}d"
-        }
-    }
-
 /** Why the server stopped (contract §7.7); an unknown value reads as [StopUser]. */
 @Serializable(with = StopCodeSerializer::class)
 enum class StopCode(val wire: String) {
@@ -466,7 +454,7 @@ data class ErrorMessage(
 
 /**
  * §7.9 (since 1.10.0, `ui.toasts`): a toast the phone showed. [key] is the phone's string resource
- * name (the PC's `strings.xml` uses the same names), [args] its format arguments, [toastType] the
+ * name (resolved against the Desktop catalogs and historical aliases), [args] its format arguments, [toastType] the
  * phone's toast type, [message] the text the phone showed. Never affects the revision.
  */
 @Serializable

@@ -75,14 +75,13 @@ import app.n_zik.compagnon.utils.Preferences
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.bold
 import app.n_zik.compagnon.utils.coroutines.NzikDispatchers
+import app.n_zik.compagnon.utils.formatLastUpdateCheck
 import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.openInBrowser
 import app.n_zik.compagnon.utils.semiBold
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
+import app.n_zik.compagnon.utils.formatDecimal
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -432,8 +431,7 @@ fun AboutScreen(
 
                                     val lastCheckTime = settings.lastUpdateCheck
                                     val lastCheckStr =
-                                        if (lastCheckTime > 0) SimpleDateFormat("dd MMM HH:mm", Locale.getDefault())
-                                            .format(Date(lastCheckTime))
+                                        if (lastCheckTime > 0) formatLastUpdateCheck(lastCheckTime)
                                         else stringResource(Res.string.updates_never_checked)
                                     BasicText(
                                         text = if (lastCheckTime > 0) {
@@ -622,7 +620,7 @@ fun AboutScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         BasicText(
-                            text = pluralStringResource(Res.plurals.about_translator_count, Contributors.countTranslators(), Contributors.countTranslators()),
+                            text = pluralStringResource(Res.plurals.about_translator_count, Contributors.countTranslators(), formatDecimal(Contributors.countTranslators(), 0)),
                             style = typography().xs.semiBold.copy(color = colorPalette().textSecondary),
                         )
                     }
@@ -672,7 +670,7 @@ fun AboutScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         BasicText(
-                            text = pluralStringResource(Res.plurals.about_developer_designer_count, Contributors.countDevelopers(), Contributors.countDevelopers()),
+                            text = pluralStringResource(Res.plurals.about_developer_designer_count, Contributors.countDevelopers(), formatDecimal(Contributors.countDevelopers(), 0)),
                             style = typography().xs.semiBold.copy(color = colorPalette().textSecondary),
                         )
                     }

@@ -95,6 +95,12 @@ object Toaster {
     fun s(message: String, duration: Long = LENGTH_SHORT) = toast(message, Type.SUCCESS, duration)
     fun s(messageId: StringResource, vararg formatArgs: Any) = toast(messageId, Type.SUCCESS, LENGTH_SHORT, *formatArgs)
 
+    internal fun successWithLabel(messageId: StringResource, label: String?, missingLabel: StringResource) {
+        scope.launch {
+            toast(formatLabeledMessage(messageId, label, missingLabel), Type.SUCCESS, LENGTH_SHORT)
+        }
+    }
+
     fun i(message: String, duration: Long = LENGTH_SHORT) = toast(message, Type.INFO, duration)
     fun i(messageId: StringResource, vararg formatArgs: Any) = toast(messageId, Type.INFO, LENGTH_SHORT, *formatArgs)
 
@@ -195,6 +201,9 @@ object Toaster {
  */
 internal fun formatText(message: String, vararg formatArgs: Any): String =
     if (formatArgs.isEmpty()) message else runCatching { String.format(message, *formatArgs) }.getOrDefault(message)
+
+internal suspend fun formatLabeledMessage(messageId: StringResource, label: String?, missingLabel: StringResource): String =
+    formatMessage(messageId, label ?: getString(missingLabel))
 
 /** The [formatText] over the non-composable [getString] (the call sites are all suspend). */
 internal suspend fun formatMessage(messageId: StringResource, vararg formatArgs: Any): String =

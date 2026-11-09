@@ -190,7 +190,7 @@ class UpdateDownloadManagerTest {
         assertTrue(script.contains("while (\$w -lt ${UpdateDownloadManager.APP_EXIT_WAIT_S})"))
         assertTrue(script.contains("Where-Object Path -eq \$appExe"))
         // A still-alive app at the cap aborts with the failure marker (not an install over locked files)
-        assertTrue(script.contains("the app did not exit within ${UpdateDownloadManager.APP_EXIT_WAIT_S} s; the install was aborted"))
+        assertTrue(script.contains("app-exit-timeout:${UpdateDownloadManager.APP_EXIT_WAIT_S}"))
         assertTrue(script.contains("exit 1"))
     }
 
@@ -230,7 +230,7 @@ class UpdateDownloadManagerTest {
         // 1 (user cancelled any page) / 2 (remove choice — the app is gone by design) /
         // 1223 (user declined the UAC) → NOTHING: a normal decline writes no marker
         assertTrue(script.contains("} elseif (\$code -ne 1 -and \$code -ne 2 -and \$code -ne 1223) {"))
-        assertTrue(script.contains("install failed with exit code \$code"))
+        assertTrue(script.contains("installer-exit-code:\$code"))
         // A successful update deletes the downloaded installer (the setup is locked while it
         // runs, so the helper does it — user decision 2026-10-16); the same single-quoted path
 
@@ -290,16 +290,27 @@ class UpdateDownloadManagerTest {
     // it at the next startup)
 
     @Test
-    fun `consumeInstallFailureMarker returns the content, deletes the marker, null when absent`() {
+    fun `consumeInstallFailureMarker decodes current and legacy markers and removes the file`() {
         // The seam: the marker lives under the temp dir, not the real data dir
         UpdateDownloadManager.setTestMarkerDirectory(dir)
         val marker = UpdateDownloadManager.installFailureMarkerPath()
 
         assertNull(UpdateDownloadManager.consumeInstallFailureMarker(), "no marker before the helper wrote one")
 
-        Files.writeString(marker, "install failed with exit code 3")
-        assertEquals("install failed with exit code 3", UpdateDownloadManager.consumeInstallFailureMarker())
-        assertFalse(Files.exists(marker), "the marker must be deleted when consumed")
+        val cases = mapOf(
+            "installer-exit-code:3" to UpdateDownloadManager.InstallFailure.InstallerExitCode(3),
+            "install failed with exit code -1" to UpdateDownloadManager.InstallFailure.InstallerExitCode(-1),
+            "app-exit-timeout:30\r\n" to UpdateDownloadManager.InstallFailure.AppExitTimeout(30),
+            "the app did not exit within 30 s; the install was aborted (its files were still locked)" to
+                UpdateDownloadManager.InstallFailure.AppExitTimeout(30),
+            "unexpected marker" to UpdateDownloadManager.InstallFailure.Unknown,
+            "" to UpdateDownloadManager.InstallFailure.Unknown,
+        )
+        for ((content, expected) in cases) {
+            Files.writeString(marker, content)
+            assertEquals(expected, UpdateDownloadManager.consumeInstallFailureMarker(), content)
+            assertFalse(Files.exists(marker), "the marker must be deleted when consumed")
+        }
         assertNull(UpdateDownloadManager.consumeInstallFailureMarker(), "a consumed marker is gone")
     }
 }

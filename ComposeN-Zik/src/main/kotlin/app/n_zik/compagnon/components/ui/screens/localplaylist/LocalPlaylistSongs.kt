@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.localplaylist
 
+import app.n_zik.compagnon.utils.formatDecimal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,7 +42,7 @@ import app.n_zik.compagnon.bridge.library.SongsQuery
 import app.n_zik.compagnon.bridge.library.toListRef
 import app.n_zik.compagnon.bridge.state.SessionContract
 import app.n_zik.compagnon.bridge.state.Track
-import app.n_zik.compagnon.bridge.state.formattedTotalPlayTime
+import app.n_zik.compagnon.utils.formatCompactPlayTime
 import app.n_zik.compagnon.bridge.state.unmatched
 import app.n_zik.compagnon.colorPalette
 import app.n_zik.compagnon.components.LocalMenuState
@@ -84,7 +85,7 @@ import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.ChipSort
 import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.Toaster
-import app.n_zik.compagnon.utils.formatAsTime
+import app.n_zik.compagnon.utils.formatAsDuration
 import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -459,7 +460,7 @@ fun LocalPlaylistSongs(
                             ) {
                                 Spacer(modifier = Modifier.height(10.dp))
                                 IconInfo(
-                                    title = (state.total ?: playlist.trackCount).toString(),
+                                    title = formatDecimal(state.total ?: playlist.trackCount, 0),
                                     icon = painterResource(Res.drawable.musical_notes),
                                 )
                                 Spacer(modifier = Modifier.height(5.dp))
@@ -472,7 +473,7 @@ fun LocalPlaylistSongs(
                                 val totalDuration = state.totalDurationMs.takeIf { it > 0L }
                                     ?: (if (state.endReached) items.sumOf { it.durationMs ?: 0L } else null)
                                 IconInfo(
-                                    title = totalDuration?.let { formatAsTime(it) } ?: "…",
+                                    title = totalDuration?.let { formatAsDuration(it) } ?: "…",
                                     icon = painterResource(Res.drawable.time),
                                 )
                                 Spacer(modifier = Modifier.height(30.dp))
@@ -566,10 +567,10 @@ fun LocalPlaylistSongs(
                             thumbnailOverlay = {
                                 songSortOverlay(
                                     text = when (chipSort.sort) {
-                                        "playCount" -> song.playCount.toString()
+                                        "playCount" -> formatDecimal(song.playCount, 0)
                                         "playTime",
                                         "relativePlayTime",
-                                        -> song.formattedTotalPlayTime
+                                        -> formatCompactPlayTime(song.totalPlayTimeMs)
                                         else -> null
                                     },
                                     rank = null,

@@ -101,7 +101,7 @@ private val MPB_ROWS: List<MpbRow> = listOf(
     MpbRow("audio_output", Res.string.audio_output_title, Res.drawable.devices, true, false),
     MpbRow("sleep_timer", Res.string.player_mini_button_sleep_timer, Res.drawable.sleep, false, false),
     MpbRow("like", Res.string.miniplayer_button_like, Res.drawable.heart, false, false),
-    MpbRow("add_to_playlist", Res.string.player_mini_action_add_to_playlist, Res.drawable.add_in_playlist, false, false),
+    MpbRow("add_to_playlist", Res.string.playlist_action_add, Res.drawable.add_in_playlist, false, false),
     MpbRow("download", Res.string.player_mini_button_download, Res.drawable.download, false, false),
     MpbRow("share", Res.string.player_mini_button_share, Res.drawable.share_social, false, false),
     MpbRow("radio", Res.string.player_mini_button_radio, Res.drawable.radio, false, false),

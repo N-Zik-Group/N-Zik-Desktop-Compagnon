@@ -34,6 +34,7 @@ import app.n_zik.compagnon.utils.PINNED_PREFIX
 import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.painterResource
+import app.n_zik.compagnon.utils.formatDecimal
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -152,7 +153,7 @@ private fun PlaylistCard(playlist: Playlist) {
     ListMenu.Entry(
         text = playlist.name.substringAfter(PINNED_PREFIX, playlist.name),
         icon = { PlaylistSettingIcon() },
-        subtitle = pluralStringResource(Res.plurals.library_song_count, playlist.trackCount, playlist.trackCount),
+        subtitle = pluralStringResource(Res.plurals.library_song_count, playlist.trackCount, formatDecimal(playlist.trackCount, 0)),
         // Spec #47: inert — the phone adds the song in its own database (its `onAdd`, 98-107), no
         // contract route
         onClick = {},

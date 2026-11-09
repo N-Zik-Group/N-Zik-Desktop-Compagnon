@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import app.n_zik.compagnon.utils.hasLocalizedFormat
+import app.n_zik.compagnon.utils.formatWholePercent
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -254,7 +255,7 @@ fun DataSettingsScreen(preferences: Preferences, cache: AudioCache?, query: Stri
                             if (hasLocalizedFormat(Res.string.ui_translation_available_settings_cache_usage_percent_format)) {
                                 formatText(stringResource(Res.string.settings_cache_usage_percent_format), usedSize, percent)
                             } else {
-                                "$usedSize ${stringResource(Res.string.common_storage_used_suffix)} ($percent%)"
+                                "$usedSize ${stringResource(Res.string.common_storage_used_suffix)} (${formatWholePercent(percent)})"
                             }
                         } else if (hasLocalizedFormat(Res.string.ui_translation_available_settings_cache_usage_unlimited_format)) {
                             formatText(stringResource(Res.string.settings_cache_usage_unlimited_format), usedSize)

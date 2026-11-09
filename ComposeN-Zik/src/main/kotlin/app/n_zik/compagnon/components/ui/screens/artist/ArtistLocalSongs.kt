@@ -66,12 +66,14 @@ import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.components.player.showLikeToast
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.fadingEdge
 import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.jetbrains.compose.resources.pluralStringResource
+import app.n_zik.compagnon.utils.formatAsDuration
+import app.n_zik.compagnon.utils.localizedSongCountWithDuration
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -124,18 +126,11 @@ fun ArtistLocalSongs(
     val songCount = state.total ?: songs.size
     // Since 1.10.0 the phone serves the whole list's duration at once (`totalDurationMs`)
     val totalDuration = when {
-        state.totalDurationMs > 0L -> (state.totalDurationMs / 1_000).toInt()
-        state.endReached -> (songs.sumOf { it.durationMs ?: 0L } / 1_000).toInt()
-        else -> 0
+        state.totalDurationMs > 0L -> state.totalDurationMs
+        state.endReached -> songs.sumOf { it.durationMs ?: 0L }.takeIf { it > 0L }
+        else -> null
     }
-    val totalDurationText = if (totalDuration > 0) {
-        val hours = totalDuration / 3600
-        val minutes = (totalDuration % 3600) / 60
-        val seconds = totalDuration % 60
-        if (hours > 0) "%dh %02dm %02ds".format(hours, minutes, seconds) else "%dm %02ds".format(minutes, seconds)
-    } else {
-        ""
-    }
+    val totalDurationText = totalDuration?.let(::formatAsDuration)
     val collection = actions.collectionActions(header.ref, live)
     // The phone's Library-tab action row (`ArtistLocalSongs.kt` 209-273): the follow pill rotates and
     // writes its target state (since 1.7), download all / remove downloads are placeholders (their toasts
@@ -289,7 +284,7 @@ fun ArtistLocalSongs(
                 item {
                     if (songCount > 0) {
                         Text(
-                            text = pluralStringResource(Res.plurals.library_song_count_with_duration, songCount, songCount, totalDurationText),
+                            text = localizedSongCountWithDuration(songCount, totalDurationText),
                             style = MaterialTheme.typography.bodyLarge,
                             color = colorPalette().text,
                             modifier = Modifier
@@ -413,5 +408,6 @@ internal fun followToast(target: ArtistFollow, name: String) {
         ArtistFollow.Disliked -> Res.string.library_dislikes_added
         ArtistFollow.Neutral -> Res.string.library_favorites_removed
     }
-    if (name.isNotBlank()) Toaster.s(messageId, "\"$name\"") else Toaster.s(messageId)
+    val label = name.takeIf(String::isNotBlank)?.let { "\"$it\"" }
+    showLikeToast(messageId, label, Res.string.metadata_unknown_artist)
 }

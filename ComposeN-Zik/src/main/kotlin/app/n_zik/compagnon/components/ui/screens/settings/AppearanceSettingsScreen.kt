@@ -60,8 +60,10 @@ import app.n_zik.compagnon.enums.ThumbnailCoverType
 import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.Preferences
+import app.n_zik.compagnon.utils.formatWholePercent
 import app.n_zik.compagnon.utils.Toaster
 import org.jetbrains.compose.resources.DrawableResource
+import app.n_zik.compagnon.utils.formatDecimal
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -236,7 +238,7 @@ private fun InertSliderSettingsEntry(
     ) {
         OtherSettingsEntry(
             title = title,
-            text = " (${value.toInt()})",
+            text = " (${formatDecimal(value.toInt(), 0)})",
             icon = icon,
             onClick = {},
             trailingContent = trailingPreview,
@@ -689,7 +691,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                                 value = 0f,
                                 range = 0f..100f,
                                 defaultValue = 100f,
-                                quickValues = listOf(0f to stringResource(Res.string.common_range_minimum), 25f to "25%", 50f to "50%", 75f to "75%", 100f to stringResource(Res.string.common_range_maximum)),
+                                quickValues = listOf(0f to stringResource(Res.string.common_range_minimum), 25f to formatWholePercent(25), 50f to formatWholePercent(50), 75f to formatWholePercent(75), 100f to stringResource(Res.string.common_range_maximum)),
                                 buttonsPadding = PaddingValues(horizontal = 32.dp, vertical = 4.dp),
                                 trailingPreview = { InertThumbnailSizePreview(value = 0f, roundnessDp = 12f) },
                                 modifier = Modifier.padding(start = subIndent),
@@ -701,7 +703,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                                 value = 90f,
                                 range = 0f..100f,
                                 defaultValue = 90f,
-                                quickValues = listOf(0f to stringResource(Res.string.common_range_minimum), 25f to "25%", 50f to "50%", 75f to "75%", 100f to stringResource(Res.string.common_range_maximum)),
+                                quickValues = listOf(0f to stringResource(Res.string.common_range_minimum), 25f to formatWholePercent(25), 50f to formatWholePercent(50), 75f to formatWholePercent(75), 100f to stringResource(Res.string.common_range_maximum)),
                                 buttonsPadding = PaddingValues(horizontal = 32.dp, vertical = 4.dp),
                                 trailingPreview = { InertThumbnailSizePreview(value = 90f, roundnessDp = 12f) },
                                 modifier = Modifier.padding(start = subIndent),

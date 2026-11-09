@@ -34,6 +34,8 @@ import app.n_zik.compagnon.generated.resources.*
 import app.n_zik.compagnon.typography
 import app.n_zik.compagnon.uiRoundnessShape
 import app.n_zik.compagnon.utils.LocalPreferences
+import app.n_zik.compagnon.utils.formatDecimal
+import app.n_zik.compagnon.utils.formatWholePercent
 import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.semiBold
 import kotlin.math.round
@@ -106,7 +108,7 @@ class PlaybackSettingsMenu private constructor(
                     dragged = null
                 },
                 valueRange = PHONE_SPEED_MIN..PHONE_SPEED_MAX,
-                displayValue = { "%.1fx".format(it).replace(",", ".") },
+                displayValue = { "${formatDecimal(it, 1)}×" },
                 stepSize = 0f,
                 defaultValue = 1f,
                 drawValuePoints = true,
@@ -122,7 +124,7 @@ class PlaybackSettingsMenu private constructor(
                 value = pitch,
                 onValueChange = { pitch = round(it * 10f) / 10f },
                 valueRange = 0.1f..5f,
-                displayValue = { "%.1fx".format(it).replace(",", ".") },
+                displayValue = { "${formatDecimal(it, 1)}×" },
                 stepSize = 0f,
                 defaultValue = 1f,
                 drawValuePoints = true,
@@ -163,7 +165,7 @@ class PlaybackSettingsMenu private constructor(
                     draggedVolume = null
                 },
                 valueRange = 0f..1f,
-                displayValue = { "${(it * 100).toInt()}%" },
+                displayValue = { formatWholePercent((it * 100).toInt()) },
                 stepSize = 0f,
                 defaultValue = 1f,
                 drawValuePoints = true,
@@ -180,7 +182,7 @@ class PlaybackSettingsMenu private constructor(
                 value = deviceVolume,
                 onValueChange = { deviceVolume = round(it * 100f) / 100f },
                 valueRange = 0f..1f,
-                displayValue = { "${(it * 100).toInt()}%" },
+                displayValue = { formatWholePercent((it * 100).toInt()) },
                 stepSize = 0f,
                 isEnabled = false,
                 onReset = { deviceVolume = 0f },
@@ -197,7 +199,7 @@ class PlaybackSettingsMenu private constructor(
                 value = blur,
                 onValueChange = { blur = round(it) },
                 valueRange = 0f..50f,
-                displayValue = { "${it.toInt()}" },
+                displayValue = { formatDecimal(it.toInt(), 0) },
                 stepSize = 0f,
                 defaultValue = 25f,
                 drawValuePoints = true,
@@ -216,7 +218,7 @@ class PlaybackSettingsMenu private constructor(
                 value = bass,
                 onValueChange = { bass = round(it * 10000f) / 10000f },
                 valueRange = 0f..1f,
-                displayValue = { "%.2f dB".format(it * 15f).replace(",", ".") },
+                displayValue = { "${formatDecimal(it * 15f, 2)} dB" },
                 stepSize = 0f,
                 defaultValue = 0f,
                 drawValuePoints = true,

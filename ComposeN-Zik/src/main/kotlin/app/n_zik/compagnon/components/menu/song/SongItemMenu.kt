@@ -39,6 +39,7 @@ import app.n_zik.compagnon.components.menu.splitArtistNames
 import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.player.likeToastLabel
 import app.n_zik.compagnon.components.player.likeToastMessage
+import app.n_zik.compagnon.components.player.showLikeToast
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
 import app.n_zik.compagnon.components.theme.favoritesIcon
 import app.n_zik.compagnon.components.themed.AddToFavorites
@@ -365,7 +366,7 @@ class SongItemMenu(
                                         val label = likeToastLabel(song.title, song.artists)
                                         writes.likeSong(song.id, next) { confirmed ->
                                             val messageId = likeToastMessage(confirmed, rotationEnabled)
-                                            if (label != null) Toaster.s(messageId, label) else Toaster.s(messageId)
+                                            showLikeToast(messageId, label, Res.string.metadata_unknown_title)
                                         }
                                         // The heart follows the tap even when the write drops the row
                                         // from the list (a chip its new state no longer matches)

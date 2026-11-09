@@ -1,5 +1,6 @@
 package app.n_zik.compagnon.components.player
 
+import app.n_zik.compagnon.utils.formatDecimal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -99,7 +100,7 @@ fun QueueToolBar(
                     modifier = Modifier.padding(end = 2.dp),
                 )
                 BasicText(
-                    text = QueueToolBarState.mediaItemCount.toString(),
+                    text = formatDecimal(QueueToolBarState.mediaItemCount, 0),
                     style = TextStyle(
                         color = colorPalette().text,
                         fontStyle = typography().l.fontStyle,
