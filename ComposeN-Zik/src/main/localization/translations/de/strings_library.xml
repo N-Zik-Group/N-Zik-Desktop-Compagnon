@@ -10,7 +10,6 @@
     <string name="artist_following_status">Gefolgt</string>
     <string name="artist_more_from">Mehr von</string>
     <string name="artist_roundness">Künstlerrundung</string>
-    <string name="artist_songs_count_duration">%1$d Songs • %2$s</string>
     <string name="artist_songs_unavailable_message">Bisher keine Titel</string>
     <string name="home_tabs_settings">Startseite</string>
     <string name="home_tabs_settings_description">Tabs neu anordnen und ein-/ausblenden</string>
@@ -104,7 +103,7 @@
     <string name="song_matching_unmatched_label">Unübertroffener Titel</string>
     <string name="song_metadata_update_action_open">Update-Dialog öffnen</string>
     <string name="sort_artist_and_album">Interpret, Album</string>
-    <plurals name="artist_song_count_with_duration">
+    <plurals name="library_song_count_with_duration">
         <item quantity="one">%1$d Song • %2$s</item>
         <item quantity="other">%1$d Songs • %2$s</item>
     </plurals>
