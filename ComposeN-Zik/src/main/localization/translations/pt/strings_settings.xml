@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Nível de aumento de graves</string>
     <string name="settings_cache_action_set_custom_size">Definir cache personalizado</string>
     <string name="settings_cache_custom_size_input_hint">Insira o valor em MB</string>
+    <string name="settings_cache_custom_size_format">Personalizado: %1$s</string>
     <string name="settings_cache_delete_confirmation">Você realmente deseja limpar o cache?</string>
     <string name="settings_cache_eviction_description">Quando o Armazenamento ficar sem espaço, os recursos que não foram acessados por mais tempo são limpos</string>
     <string name="settings_cache_image_size_limit_label">Tamanho máximo do cache de imagens</string>
     <string name="settings_cache_song_size_limit_label">Tamanho máximo do cache de músicas</string>
     <string name="settings_cache_title">Armazenar</string>
+    <string name="settings_cache_usage_percent_format">%1$s usados (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s usado (ilimitado)</string>
     <string name="settings_data_page_description">A seção de dados contém configurações que modificam como o aplicativo lida com os dados local e remotamente</string>
     <string name="settings_data_title">Dados</string>
     <string name="settings_debug_title">Configurações</string>
