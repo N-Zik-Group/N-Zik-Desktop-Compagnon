@@ -103,6 +103,9 @@
     <string name="song_matching_unmatched_label">Unmatched song</string>
     <string name="song_metadata_update_action_open">Open update dialog</string>
     <string name="sort_artist_and_album">Artist, Album</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="other">%1$d songs • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="other">%1$d songs</item>
     </plurals>
