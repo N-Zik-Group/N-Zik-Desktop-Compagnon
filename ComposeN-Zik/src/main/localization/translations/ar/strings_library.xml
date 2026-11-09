@@ -103,6 +103,14 @@
     <string name="song_matching_unmatched_label">أغنية غير متطابقة</string>
     <string name="song_metadata_update_action_open">فتح مربع حوار التحديث</string>
     <string name="sort_artist_and_album">الفنان، الألبوم</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="zero">%1$d أغنية • %2$s</item>
+        <item quantity="one">%1$d أغنية %2$s</item>
+        <item quantity="two">%1$d أغنية • %2$s</item>
+        <item quantity="few">%1$d أغنية • %2$s</item>
+        <item quantity="many">%1$d أغنية • %2$s</item>
+        <item quantity="other">%1$d أغنية • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="zero">%1$d songs</item>
         <item quantity="one">أغنية %1$d</item>
