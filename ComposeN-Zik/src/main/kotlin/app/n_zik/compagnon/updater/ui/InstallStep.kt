@@ -119,25 +119,11 @@ fun InstallStep(filePath: String, installMode: InstallMode, packageManager: Pack
                     )
                 }
 
-                // The portable installs (the Windows zip — spec `spec-windows-portable-zip` — and
-                // the Linux tarball — spec `spec-channel-storage-portable-targz`): the same
-
-                // manual-replacement gesture, but the archive format differs per OS, so the
-                // gesture string is picked by the mode (Windows: "unzip the downloaded file",
-
-                // Linux: "extract the downloaded .tar.gz"). The archive's top level IS the
-                // product folder, so the user deletes the current folder and unzips/extracts the
-
-                // new one in its place (never over the current one)
+                // Portable data lives inside the app folder. Keep the old installation until
+                // the user has copied its data and verified the new one.
                 InstallMode.PORTABLE_WINDOWS, InstallMode.PORTABLE -> {
                     BasicText(
-                        text = stringResource(
-                            if (installMode == InstallMode.PORTABLE) {
-                                Res.string.install_replacement_portable_linux
-                            } else {
-                                Res.string.install_replacement_portable
-                            },
-                        ),
+                        text = stringResource(Res.string.install_replacement_portable_preserve_data),
                         style = typography().xs.copy(color = colorPalette().textSecondary),
                     )
                     Spacer(modifier = Modifier.height(8.dp))

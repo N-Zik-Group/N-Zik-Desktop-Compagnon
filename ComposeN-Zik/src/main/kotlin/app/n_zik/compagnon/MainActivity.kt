@@ -878,11 +878,10 @@ internal class UiSettingsHolder(private val library: LibraryRepository) {
 private suspend fun localPlaybackNoticeText(notice: LocalPlaybackNotice): String = when (notice) {
     LocalPlaybackNotice.NotFound -> getString(Res.string.local_playback_not_found)
     LocalPlaybackNotice.UpstreamFailed -> getString(Res.string.local_playback_upstream_failed)
-    LocalPlaybackNotice.InvalidUrl -> getString(Res.string.local_playback_invalid_url)
     is LocalPlaybackNotice.OtherActive ->
         formatMessage(Res.string.local_playback_other_active, notice.deviceName ?: getString(Res.string.paired_other_active_unknown))
     LocalPlaybackNotice.Unreachable -> getString(Res.string.local_playback_unreachable)
-    LocalPlaybackNotice.Failed -> getString(Res.string.local_playback_failed)
+    LocalPlaybackNotice.InvalidUrl, LocalPlaybackNotice.Failed -> getString(Res.string.local_playback_failed)
 }
 
 /** The phone's grace before "no media" is accepted (`MainActivity.kt` 2205). */

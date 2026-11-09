@@ -1,6 +1,6 @@
 ﻿LangString InstallerElevateInstall ${LANG_ENGLISH} "Could not start the elevated installer (ShellExecuteW error $2, GetLastError $7)."
 LangString InstallerElevateUninstall ${LANG_ENGLISH} "Could not start the elevated uninstaller (ShellExecuteW error $2, GetLastError $7)."
-LangString InstallerAppRunning ${LANG_ENGLISH} "N-Zik Desktop Compagnon is running. Close it and click OK to retry."
+LangString InstallerAppRunning ${LANG_ENGLISH} "N-Zik Desktop Compagnon is running. Close it, then run this installer or uninstaller again."
 LangString InstallerReinstall ${LANG_ENGLISH} "Version $INST_VER_OLD of ${PRODUCT_NAME} is already installed. Reinstall version ${APP_VERSION} anyway?"
 LangString InstallerPreviousFound ${LANG_ENGLISH} "A previous installation was found"
 LangString InstallerPreviousVersion ${LANG_ENGLISH} "Version $INST_VER_OLD of ${PRODUCT_NAME} is installed."

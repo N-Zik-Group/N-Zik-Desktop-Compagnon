@@ -70,9 +70,9 @@ import app.n_zik.compagnon.utils.LocalPreferences
 import app.n_zik.compagnon.utils.Toaster
 import app.n_zik.compagnon.utils.UserSettings
 import app.n_zik.compagnon.utils.fadingEdge
-import app.n_zik.compagnon.utils.formatText
 import app.n_zik.compagnon.utils.semiBold
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -314,7 +314,7 @@ fun ArtistLocalSongs(
                 item {
                     if (songCount > 0) {
                         Text(
-                            text = formatText(stringResource(Res.string.artist_songs_count_duration), songCount, totalDurationText),
+                            text = pluralStringResource(Res.plurals.artist_song_count_with_duration, songCount, songCount, totalDurationText),
                             style = MaterialTheme.typography.bodyLarge,
                             color = colorPalette().text,
                             modifier = Modifier

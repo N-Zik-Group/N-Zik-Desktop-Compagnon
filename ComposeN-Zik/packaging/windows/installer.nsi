@@ -1433,7 +1433,13 @@ UninstPage instfiles
 !insertmacro MUI_LANGUAGE English
 !insertmacro MUI_LANGUAGE French
 !include "${__FILEDIR__}\localization\source\installer.nsh"
+; Crowdin may retain the source language identifier in an exported catalog.
+; Interpret it as French only while loading the French catalog.
+!define InstallerEnglishLangId ${LANG_ENGLISH}
+!define /redef LANG_ENGLISH ${LANG_FRENCH}
 !include "${__FILEDIR__}\localization\translations\fr\installer.nsh"
+!define /redef LANG_ENGLISH ${InstallerEnglishLangId}
+!undef InstallerEnglishLangId
 
 ; ============================================================================
 ; Uninstall wipe-checkbox page (UNCHECKED BY DEFAULT)

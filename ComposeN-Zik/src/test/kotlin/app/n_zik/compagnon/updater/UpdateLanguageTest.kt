@@ -37,6 +37,14 @@ class UpdateLanguageTest {
         assertTrue(UpdateLanguage.Tamil in UpdateLanguage.selectable)
     }
 
+    @Test
+    fun `changelog picker exposes one choice per translator destination`() {
+        val destinations = UpdateLanguage.selectable.map { it.translator }
+        assertEquals(destinations.size, destinations.distinct().size)
+        assertEquals(UpdateLanguage.Portuguese, UpdateLanguage.PortugueseBrazilian.pickerChoice)
+        assertEquals(UpdateLanguage.SerbianCyrillic, UpdateLanguage.SerbianLatin.pickerChoice)
+    }
+
     private fun assertLanguage(tag: String, expected: UpdateLanguage) {
         assertEquals(expected, UpdateLanguage.fromLocale(Locale.forLanguageTag(tag)), tag)
     }

@@ -141,7 +141,7 @@ fun UpdateScreen(
     val systemLanguageLabel = stringResource(Res.string.settings_app_language_system)
     val appLang = appLocale.language
     var otherLanguageApp by remember {
-        mutableStateOf(UpdateLanguage.entries.firstOrNull { it.code == settings.otherLanguageAppUpdate } ?: UpdateLanguage.System)
+        mutableStateOf(UpdateLanguage.entries.firstOrNull { it.code == settings.otherLanguageAppUpdate }?.pickerChoice ?: UpdateLanguage.System)
     }
     var isTranslationActive by remember { mutableStateOf(settings.updateTranslationActive ?: appLang != "en") }
     var showLanguageDialog by remember { mutableStateOf(false) }
@@ -321,7 +321,7 @@ fun UpdateScreen(
                                 menu.add(
                                     DropdownMenu.Item(
                                         icon = Res.drawable.trash,
-                                        customText = stringResource(Res.string.updates_cache_cleared),
+                                        customText = stringResource(Res.string.updates_clear_cache_action),
                                     ) {
                                         showMenu = false
                                         NzikDispatchers.fireAndForget(NzikDispatchers.DATA).launch {

@@ -126,7 +126,12 @@ fun ManualPairingCard(
         if (state.noCandidates) {
             MessageBanner(stringResource(Res.string.pair_no_address), isError = false, modifier = BANNER_MODIFIER)
         } else if (state.listenerUnreachable) {
-            MessageBanner(stringResource(Res.string.pair_listener_unreachable), isError = false, modifier = BANNER_MODIFIER)
+            val message = if (System.getProperty("os.name").startsWith("Windows", ignoreCase = true)) {
+                Res.string.pair_listener_unreachable
+            } else {
+                Res.string.pair_listener_unreachable_linux
+            }
+            MessageBanner(stringResource(message), isError = false, modifier = BANNER_MODIFIER)
         }
         ErrorBanner(state.error, onDismiss = onDismissError, modifier = BANNER_MODIFIER)
         SettingsSectionCard(

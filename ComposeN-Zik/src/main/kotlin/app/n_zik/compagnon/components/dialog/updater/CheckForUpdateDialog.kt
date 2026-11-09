@@ -108,7 +108,7 @@ object CheckForUpdateDialog {
                             style = typography().xs.copy(color = colorPalette.textSecondary),
                         )
                         BasicText(
-                            text = stringResource(Res.string.updates_check_permission_screening_note),
+                            text = stringResource(Res.string.updates_download_origin_note),
                             style = typography().xs.copy(color = colorPalette.textSecondary),
                         )
                         BasicText(

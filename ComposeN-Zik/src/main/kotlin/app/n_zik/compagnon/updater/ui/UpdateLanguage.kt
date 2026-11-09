@@ -64,8 +64,15 @@ enum class UpdateLanguage(
     Ukrainian("Українська", "uk", Language.UKRAINIAN),
     Vietnamese("Tiếng Việt", "vi", Language.VIETNAMESE);
 
+    val pickerChoice: UpdateLanguage
+        get() = when (this) {
+            PortugueseBrazilian -> Portuguese
+            SerbianLatin -> SerbianCyrillic
+            else -> this
+        }
+
     companion object {
-        val selectable = entries.filter { it.translator != null }
+        val selectable = entries.filter { it.translator != null && it.pickerChoice == it }
 
         fun fromLocale(locale: java.util.Locale): UpdateLanguage = when (locale.language) {
             "he", "iw" -> Hebrew
