@@ -47,6 +47,7 @@
     <string name="pair_device_name">Navn på denne PC</string>
     <string name="pair_device_name_invalid">Indtast et navn på 1 til 64 tegn.</string>
     <string name="pair_listener_unreachable">Din telefon kunne ikke nå denne pc. Windows Firewall, eller et netværk indstillet til Public? Tillad N-Zik Desktop Compagnon på private netværk eller par manuelt nedenfor.</string>
+    <string name="pair_listener_unreachable_linux">Din telefon kunne ikke nå denne PC. Tjek din firewall og sørg for, at begge enheder er på det samme netværk, eller par manuelt nedenfor.</string>
     <string name="pair_manual_entry">Manuel indtastning</string>
     <string name="pair_manual_entry_text">Skriv adressen og den kode, der vises på din telefon</string>
     <string name="pair_no_address">Der blev ikke fundet nogen lokal netværksadresse på denne pc, så der kan ikke vises nogen QR-kode. Par manuelt nedenfor.</string>
