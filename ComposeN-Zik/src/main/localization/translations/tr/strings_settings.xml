@@ -32,14 +32,14 @@
     <string name="settings_bass_boost_level">Bas güçlendirme seviyesi</string>
     <string name="settings_cache_action_set_custom_size">Özel önbellek ayarla</string>
     <string name="settings_cache_custom_size_input_hint">Değeri MB cinsinden girin</string>
-    <string name="settings_cache_custom_size_format">Custom: %1$s</string>
+    <string name="settings_cache_custom_size_format">Özel: %1$s</string>
     <string name="settings_cache_delete_confirmation">Önbelleği gerçekten silmek istiyor musunuz?</string>
     <string name="settings_cache_eviction_description">Önbellek alanı dolduğunda, en uzun süredir erişilmeyen kaynaklar temizlenir</string>
     <string name="settings_cache_image_size_limit_label">Resim önbelleği maksimum boyutu</string>
     <string name="settings_cache_song_size_limit_label">Şarkı önbelleği maksimum boyutu</string>
     <string name="settings_cache_title">Önbellek</string>
-    <string name="settings_cache_usage_percent_format">%1$s used (%2$d%%)</string>
-    <string name="settings_cache_usage_unlimited_format">%1$s used (Unlimited)</string>
+    <string name="settings_cache_usage_percent_format">%1$s kullanıldı (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s kullanıldı (Sınırsız)</string>
     <string name="settings_data_page_description">Veri bölümü, uygulamanın verileri yerel ve uzaktan nasıl işlediğini değiştiren ayarları içerir</string>
     <string name="settings_data_title">Veri</string>
     <string name="settings_debug_title">Ayarlar</string>
