@@ -10,7 +10,6 @@
     <string name="artist_following_status">Siguiendo</string>
     <string name="artist_more_from">Más de</string>
     <string name="artist_roundness">Redondeo del artista</string>
-    <string name="artist_songs_count_duration">%1$d Canciones• %2$s</string>
     <string name="artist_songs_unavailable_message">Aún no hay canciones</string>
     <string name="home_tabs_settings">Página de inicio</string>
     <string name="home_tabs_settings_description">Reordenar y ocultar pestañas</string>
@@ -104,7 +103,7 @@
     <string name="song_matching_unmatched_label">Canción inigualable</string>
     <string name="song_metadata_update_action_open">Abrir diálogo de actualización</string>
     <string name="sort_artist_and_album">Artista, álbum</string>
-    <plurals name="artist_song_count_with_duration">
+    <plurals name="library_song_count_with_duration">
         <item quantity="one">%1$d canción • %2$s</item>
         <item quantity="other">%1$d canciones • %2$s</item>
     </plurals>
