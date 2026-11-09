@@ -47,7 +47,7 @@
     <string name="pair_device_name">Nom de cet ordinateur</string>
     <string name="pair_device_name_invalid">Saisissez un nom comportant entre 1 et 64 caractères.</string>
     <string name="pair_listener_unreachable">Votre téléphone n\'a pas pu se connecter à cet ordinateur. Est-ce dû au pare-feu Windows ou à un réseau configuré en mode « Public » ? Autorisez N-Zik Desktop Compagnon sur les réseaux privés ou effectuez l\'appairage manuellement ci-dessous.</string>
-    <string name="pair_listener_unreachable_linux">Votre téléphone n\'a pas pu atteindre ce PC. Vérifiez votre pare-feu et assurez-vous que les deux appareils sont sur le même réseau, ou associez manuellement ci-dessous.</string>
+    <string name="pair_listener_unreachable_linux">Votre téléphone n\'a pas pu se connecter à cet ordinateur. Vérifiez votre pare-feu et assurez-vous que les deux appareils sont connectés au même réseau, ou effectuez l\'appairage manuellement ci-dessous.</string>
     <string name="pair_manual_entry">Saisie manuelle</string>
     <string name="pair_manual_entry_text">Saisissez l\'adresse et le code affichés sur votre téléphone</string>
     <string name="pair_no_address">Aucune adresse réseau locale n\'a été détectée sur cet ordinateur ; par conséquent, aucun QR code ne peut s\'afficher. Effectuez l\'appairage manuellement ci-dessous.</string>
