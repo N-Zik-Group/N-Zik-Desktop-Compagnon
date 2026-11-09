@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Ses cihazları</string>
+    <string name="audio_device_battery_format">Pil: %1$d%%</string>
     <string name="audio_effects">Ses Efektleri</string>
     <string name="audio_output_title">Ses çıkışı</string>
     <string name="audio_quality_automatic">Otomatik</string>
@@ -93,6 +94,7 @@
     <string name="player_queue_action_remove">Sıradan kaldır</string>
     <string name="player_queue_clear_confirmation">Önbelleği gerçekten silmek istiyor musunuz?</string>
     <string name="player_queue_deleted_item_format">%1$s silindi</string>
+    <string name="player_queue_removed_item_format">Kuyruktan kaldırıldı: %1$s</string>
     <string name="player_rotating_buttons">Döner düğmeler</string>
     <string name="player_seek_backward_five_seconds">5 saniye geri sar</string>
     <string name="player_seek_backward_thirty_seconds">30 saniye geri sar</string>
@@ -118,6 +120,7 @@
     <string name="queue_discover_title">Keşfet</string>
     <string name="visualizer_animation_bubbles">Kabarcıklar</string>
     <string name="visualizer_bar">Görselleştirme çubuğu</string>
+    <string name="visualizer_desktop_preview_message">Masaüstü görselleştirici statik bir önizleme gösterir.</string>
     <string name="visualizer_microphone_permission_message">Görselleştirici efekti mikrofon izni gerektirir, lütfen izin ver.</string>
     <string name="visualizer_title">Görselleştirme</string>
     <string name="player_error_unknown">Bilinmeyen bir çalma hatası oluştu</string>
