@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Bass boost level</string>
     <string name="settings_cache_action_set_custom_size">কাস্টম ক্যাশে ঠিক করুন</string>
     <string name="settings_cache_custom_size_input_hint">মেগাবাইটে ভ্যালু দিন</string>
+    <string name="settings_cache_custom_size_format">Custom: %1$s</string>
     <string name="settings_cache_delete_confirmation">আপনি কি সত্যিই ক্যাশে মুছে ফেলতে চান?</string>
     <string name="settings_cache_eviction_description">ক্যাশে বেশি জায়গা নিলে যে রিসোর্স গুলো ব্যাবহার করা হয় না সেগুলো মুছে ফেলা হয়</string>
     <string name="settings_cache_image_size_limit_label">ইমেজ ক্যাশের সর্বোচ্চ আকার</string>
     <string name="settings_cache_song_size_limit_label">গানের ক্যাশের সর্বোচ্চ আকার</string>
     <string name="settings_cache_title">ক্যাশে</string>
+    <string name="settings_cache_usage_percent_format">%1$s used (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s used (Unlimited)</string>
     <string name="settings_data_page_description">The data section contains settings that modify how the app handles data locally and remotely</string>
     <string name="settings_data_title">ডাটা</string>
     <string name="settings_debug_title">সেটিংস</string>
