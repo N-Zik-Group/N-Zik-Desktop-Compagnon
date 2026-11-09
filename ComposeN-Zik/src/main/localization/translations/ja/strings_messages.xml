@@ -22,6 +22,7 @@
     <string name="local_playback_other_active">このPC上のサウンド：別のPC（%1$s）が携帯電話に接続されています。</string>
     <string name="local_playback_unavailable">このPC上のサウンドは使用できません:埋め込まれたVLCをロードできませんでした。</string>
     <string name="local_playback_unavailable_linux">このPCのサウンドは利用できません。 %1$s でVLCをインストールし、アプリを再起動してください。</string>
+    <string name="local_playback_unavailable_linux_generic">この PC 上のサウンドは利用できません。ディストリビューションのパッケージマネージャーを使用して VLC をインストールし、アプリを再起動してください。</string>
     <string name="local_playback_unreachable">電話が応答しませんでした。</string>
     <string name="local_playback_upstream_failed">電話でこの曲を取得できませんでした。</string>
     <string name="not_selectable">選択不可</string>
