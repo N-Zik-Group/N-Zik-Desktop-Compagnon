@@ -18,11 +18,11 @@
     <string name="error_windows_install_helper">Windows yükleyicisi başlatılamadı. İndirdiğiniz yükleyiciyi manuel olarak çalıştırın.</string>
     <string name="interface_in_use">Kullanılan arayüz</string>
     <string name="local_playback_failed">Bu şarkı bu bilgisayarda çalınamadı.</string>
-    <string name="local_playback_invalid_url">Bu şarkı bu bilgisayarda çalınamadı.</string>
     <string name="local_playback_not_found">Bu şarkı artık telefonunuzda yok.</string>
     <string name="local_playback_other_active">Bu bilgisayardaki ses: telefona başka bir bilgisayar (%1$s) bağlı.</string>
     <string name="local_playback_unavailable">Bu bilgisayarda ses özelliği kullanılamıyor: Yerleşik VLC yüklenemedi.</string>
     <string name="local_playback_unavailable_linux">Bu bilgisayarda ses özelliği kullanılamıyor. %1$s ile VLC\'yi yükleyin ve uygulamayı yeniden başlatın.</string>
+    <string name="local_playback_unavailable_linux_generic">Sound on this PC is unavailable. Use your distribution\'s package manager to install VLC, then restart the app.</string>
     <string name="local_playback_unreachable">Telefonunuza cevap verilmedi.</string>
     <string name="local_playback_upstream_failed">Telefonunuz bu şarkıyı indiremedi.</string>
     <string name="not_selectable">Seçilemez</string>
@@ -38,7 +38,6 @@
     <string name="notice_unavailable">%1$s: telefonun oynatıcısı kullanılamıyor. Daha sonra tekrar deneyin.</string>
     <string name="notice_unreachable">%1$s: telefon cevap vermedi.</string>
     <string name="path_copied">Yol kopyalandı</string>
-    <string name="updates_check_failed">Güncellemeler kontrol edilemedi.</string>
     <string name="updates_check_invalid_response">Güncelleme sunucusu geçersiz bir yanıt verdi.</string>
     <string name="updates_download_generic_error">Güncelleme indirilemedi.</string>
     <string name="updates_download_invalid_filename">Güncelleme dosyasının adı geçersiz.</string>
