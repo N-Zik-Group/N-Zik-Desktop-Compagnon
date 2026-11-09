@@ -103,6 +103,10 @@
     <string name="song_matching_unmatched_label">Oöverträffad låt</string>
     <string name="song_metadata_update_action_open">Öppna dialogrutan för uppdatering</string>
     <string name="sort_artist_and_album">Artist, Album</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">%1$d låt • %2$s</item>
+        <item quantity="other">%1$d låtar • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d låt</item>
         <item quantity="other">%1$d låtar</item>
