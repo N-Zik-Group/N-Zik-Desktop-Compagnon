@@ -10,7 +10,6 @@
     <string name="artist_following_status">Sledovaní</string>
     <string name="artist_more_from">Více o</string>
     <string name="artist_roundness">Okolnost umělce</string>
-    <string name="artist_songs_count_duration">%1$d Skladby • %2$s</string>
     <string name="artist_songs_unavailable_message">Zatím žádné skladby</string>
     <string name="home_tabs_settings">Domovská stránka</string>
     <string name="home_tabs_settings_description">Změnit pořadí a zobrazit/skrýt panely</string>
@@ -104,7 +103,7 @@
     <string name="song_matching_unmatched_label">Neporovnaná skladba</string>
     <string name="song_metadata_update_action_open">Otevřít dialog aktualizace</string>
     <string name="sort_artist_and_album">Interpret, album</string>
-    <plurals name="artist_song_count_with_duration">
+    <plurals name="library_song_count_with_duration">
         <item quantity="one">%1$d píseň • %2$s</item>
         <item quantity="few">%1$d skladeb • %2$s</item>
         <item quantity="many">%1$d skladeb • %2$s</item>
