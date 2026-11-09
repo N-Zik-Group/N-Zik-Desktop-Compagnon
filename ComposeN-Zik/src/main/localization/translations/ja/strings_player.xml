@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">キューから削除</string>
     <string name="player_queue_clear_confirmation">本当にキューをクリーンアップしますか？</string>
     <string name="player_queue_deleted_item_format">%1$s が削除されました</string>
+    <string name="player_queue_removed_item_format">キューから削除: %1$s</string>
     <string name="player_rotating_buttons">回転ボタン</string>
     <string name="player_seek_backward_five_seconds">5秒巻き戻す</string>
     <string name="player_seek_backward_thirty_seconds">30秒巻き戻し</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">発見</string>
     <string name="visualizer_animation_bubbles">バブル</string>
     <string name="visualizer_bar">ビジュアライザーバー</string>
+    <string name="visualizer_desktop_preview_message">デスクトップビジュアライザには静的なプレビューが表示されます。</string>
     <string name="visualizer_microphone_permission_message">ビジュアライザーの効果にはマイクの許可が必要です。許可してください。</string>
     <string name="visualizer_title">ビジュアライザー</string>
     <string name="player_error_unknown">不明な再生エラーが発生しました</string>
