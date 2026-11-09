@@ -18,11 +18,11 @@
     <string name="error_windows_install_helper">Δεν ήταν δυνατή η εκκίνηση του προγράμματος εγκατάστασης των Windows. Εκτελέστε χειροκίνητα το εγκατεστημένο πρόγραμμα εγκατάστασης.</string>
     <string name="interface_in_use">Χρησιμοποιούμενη διεπαφή</string>
     <string name="local_playback_failed">Αυτό το τραγούδι δεν μπόρεσε να παίξει σε αυτόν τον υπολογιστή.</string>
-    <string name="local_playback_invalid_url">Αυτό το τραγούδι δεν μπόρεσε να παίξει σε αυτόν τον υπολογιστή.</string>
     <string name="local_playback_not_found">Αυτό το τραγούδι δεν είναι πλέον στο τηλέφωνό σας.</string>
     <string name="local_playback_other_active">Ήχος σε αυτό το PC: ένας άλλος υπολογιστής (%1$s) είναι συνδεδεμένος στο τηλέφωνο.</string>
     <string name="local_playback_unavailable">Ο ήχος σε αυτόν τον υπολογιστή δεν είναι διαθέσιμος: το ενσωματωμένο VLC δεν μπορεί να φορτωθεί.</string>
     <string name="local_playback_unavailable_linux">Ο ήχος σε αυτόν τον υπολογιστή δεν είναι διαθέσιμος. Εγκαταστήστε το VLC με %1$s και επανεκκινήστε την εφαρμογή.</string>
+    <string name="local_playback_unavailable_linux_generic">Ο ήχος σε αυτόν τον υπολογιστή δεν είναι διαθέσιμος. Χρησιμοποιήστε το διαχειριστή πακέτων διανομής σας για να εγκαταστήσετε το VLC και έπειτα κάντε επανεκκίνηση της εφαρμογής.</string>
     <string name="local_playback_unreachable">Το τηλέφωνό σας δεν απάντησε.</string>
     <string name="local_playback_upstream_failed">Το τηλέφωνό σας δεν μπόρεσε να πάρει αυτό το τραγούδι.</string>
     <string name="not_selectable">Δεν είναι επιλέξιμο</string>
@@ -38,7 +38,6 @@
     <string name="notice_unavailable">%1$s: ο παίκτης του τηλεφώνου δεν είναι διαθέσιμος. Δοκιμάστε ξανά αργότερα.</string>
     <string name="notice_unreachable">%1$s: το τηλέφωνο δεν απάντησε.</string>
     <string name="path_copied">Η διαδρομή αντιγράφηκε</string>
-    <string name="updates_check_failed">Αδυναμία ελέγχου για ενημερώσεις.</string>
     <string name="updates_check_invalid_response">Ο διακομιστής ενημερώσεων επέστρεψε μια μη έγκυρη απάντηση.</string>
     <string name="updates_download_generic_error">Δεν ήταν δυνατή η λήψη της ενημέρωσης.</string>
     <string name="updates_download_invalid_filename">Το όνομα του αρχείου ενημέρωσης δεν είναι έγκυρο.</string>
