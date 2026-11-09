@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">从队列中删除</string>
     <string name="player_queue_clear_confirmation">您真的想要清理队列吗？</string>
     <string name="player_queue_deleted_item_format">%1$s 已删除</string>
+    <string name="player_queue_removed_item_format">已从队列中移除： %1$s</string>
     <string name="player_rotating_buttons">旋转按钮</string>
     <string name="player_seek_backward_five_seconds">后退 5 秒</string>
     <string name="player_seek_backward_thirty_seconds">返回 30 秒</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">探索</string>
     <string name="visualizer_animation_bubbles">气泡</string>
     <string name="visualizer_bar">可视化器栏</string>
+    <string name="visualizer_desktop_preview_message">桌面可视化器显示静态预览。</string>
     <string name="visualizer_microphone_permission_message">请授予麦克风权限以启用可视化效果。</string>
     <string name="visualizer_title">音乐可视化</string>
     <string name="player_error_unknown">出现未知播放错误</string>
