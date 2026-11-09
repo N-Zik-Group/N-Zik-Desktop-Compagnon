@@ -66,7 +66,7 @@ object AppLanguage {
 
     /** Match the qualifiers shipped by Compose for variants without a directly matching catalog. */
     internal fun catalogLocale(locale: Locale): Locale {
-        if (locale.language == "nb") {
+        if (locale.language == "nb" || locale.language == "nn") {
             return Locale.Builder().setLocale(locale).setLanguage("no").build()
         }
         val region = when (locale.language) {

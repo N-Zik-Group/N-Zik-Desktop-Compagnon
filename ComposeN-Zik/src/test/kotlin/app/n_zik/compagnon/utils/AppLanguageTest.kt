@@ -145,7 +145,7 @@ class AppLanguageTest {
     }
 
     @Test
-    fun `Serbian script and Norwegian Bokmal select their shipped catalogs`() = runTest {
+    fun `Serbian scripts and Norwegian variants select their shipped catalogs`() = runTest {
         AppLanguage.applyTag("sr-Latn-RS")
         assertEquals("CS", Locale.getDefault().country)
         assertEquals("Saradnici", getString(Res.string.contributors))
@@ -155,6 +155,10 @@ class AppLanguageTest {
         assertEquals("SARADNICI", getString(Res.string.contributors))
 
         AppLanguage.applyTag("nb-NO")
+        assertEquals("no", Locale.getDefault().language)
+        assertEquals("Om", getString(Res.string.about_title))
+
+        AppLanguage.applyTag("nn-NO")
         assertEquals("no", Locale.getDefault().language)
         assertEquals("Om", getString(Res.string.about_title))
     }
