@@ -3,7 +3,7 @@ LangString InstallerElevateUninstall ${LANG_ENGLISH} "无法启动升高的卸�
 LangString InstallerAppRunning ${LANG_ENGLISH} "N-Zik 桌面Compagnon正在运行。关闭它，然后运行安装程序或重新卸载安装程序。"
 LangString InstallerReinstall ${LANG_ENGLISH} "Version $INST_VER_OLD of ${PRODUCT_NAME} is already installed. Reinstall version ${APP_VERSION} anyway?"
 LangString InstallerPreviousFound ${LANG_ENGLISH} "发现先前的安装"
-LangString InstallerPreviousVersion ${LANG_ENGLISH} "Version $INST_VER_OLD of ${PRODUCT_NAME} is installed."
+LangString InstallerPreviousVersion ${LANG_ENGLISH} "Version $INST_VER_OLD of"
 LangString InstallerChooseAction ${LANG_ENGLISH} "选择要做的事情："
 LangString InstallerUpgrade ${LANG_ENGLISH} "升级到新版本"
 LangString InstallerRepair ${LANG_ENGLISH} "修复(重新安装同一版本)"
