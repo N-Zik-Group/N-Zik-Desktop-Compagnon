@@ -47,6 +47,7 @@
     <string name="pair_device_name">Имя этого ПК</string>
     <string name="pair_device_name_invalid">Введите имя от 1 до 64 символов.</string>
     <string name="pair_listener_unreachable">Ваш телефон не смог достичь этого компьютера. Брандмауэр Windows Firewall или сеть установлена на Общедоступную? Разрешите N-Zik Desktop Compagnon в частных сетях или подключите вручную ниже.</string>
+    <string name="pair_listener_unreachable_linux">Ваш телефон не смог подключиться к этому компьютеру. Проверьте ваш брандмауэр и убедитесь, что оба устройства находятся в одной сети, или подключите его вручную ниже.</string>
     <string name="pair_manual_entry">Ввод вручную</string>
     <string name="pair_manual_entry_text">Введите адрес и код на вашем телефоне</string>
     <string name="pair_no_address">Не найден локальный сетевой адрес на этом ПК, поэтому QR-код не может быть показан. Пара вручную ниже.</string>
