@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Dispositivi audio</string>
+    <string name="audio_device_battery_format">Battery: %1$d%%</string>
     <string name="audio_effects">Effetti Audio</string>
     <string name="audio_output_title">Uscita audio</string>
     <string name="audio_quality_automatic">Automatica</string>
