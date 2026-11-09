@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">Poista jonosta</string>
     <string name="player_queue_clear_confirmation">Haluatko todella puhdistaa jonon?</string>
     <string name="player_queue_deleted_item_format">%1$s poistettu</string>
+    <string name="player_queue_removed_item_format">Poistettu jonosta: %1$s</string>
     <string name="player_rotating_buttons">Pyörivät painikkeet</string>
     <string name="player_seek_backward_five_seconds">Rewind 5 sekuntia</string>
     <string name="player_seek_backward_thirty_seconds">Käännä 30 sekuntia</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">Löydä uutta</string>
     <string name="visualizer_animation_bubbles">Kuplat</string>
     <string name="visualizer_bar">Visualisoijan palkki</string>
+    <string name="visualizer_desktop_preview_message">Työpöydän visualisointi näyttää staattisen esikatselun.</string>
     <string name="visualizer_microphone_permission_message">Visualisointiefekti vaatii mikrofonin käyttöoikeuden, myönnä lupa.</string>
     <string name="visualizer_title">Visualisointi</string>
     <string name="player_error_unknown">Tapahtui tuntematon toistovirhe</string>
