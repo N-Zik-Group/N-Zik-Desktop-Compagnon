@@ -1315,7 +1315,10 @@ tasks.matching { it.name == "prepareAppResources" }.configureEach { dependsOn(ex
 project.afterEvaluate {
     // The jlink runtime module (see the block above "jlink runtime modules"): the task exists only
     // after the compose plugin's own afterEvaluate, so the configuration must run in this one.
-    tasks.named<AbstractJLinkTask>("createRuntimeImage") { modules.add("jdk.security.auth") }
+    tasks.named<AbstractJLinkTask>("createRuntimeImage") {
+        // Keep date and number formatting available in the app's supported locales.
+        modules.addAll("jdk.security.auth", "jdk.localedata")
+    }
 
     tasks.named<AbstractJPackageTask>("packageDeb") { freeArgs.addAll(listOf("--linux-package-deps", "vlc", "--linux-menu-group", "Audio;")) }
     tasks.named<AbstractJPackageTask>("packageRpm") { freeArgs.addAll(listOf("--linux-package-deps", "vlc", "--linux-menu-group", "Audio;")) }

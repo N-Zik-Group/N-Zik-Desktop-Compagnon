@@ -61,6 +61,7 @@ class LinuxPackagePinTest {
         // not a copy of the string.
         val modules = (System.getProperty("linux.jlinkModules")
             ?: error("linux.jlinkModules is not exposed to the tests")).split("\u001f")
+        assertTrue("jdk.localedata" in modules, "The bundled runtime must retain locale data")
         assertTrue(
             modules.contains("jdk.security.auth"),
             "the jlinked JRE must carry jdk.security.auth (dbus-java's SASL — every session-bus connection in the packaged Linux artifacts)"
