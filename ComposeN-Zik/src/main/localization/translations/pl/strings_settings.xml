@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Poziom podbicia basów</string>
     <string name="settings_cache_action_set_custom_size">Ustaw własną pamięć podreczną</string>
     <string name="settings_cache_custom_size_input_hint">Wprowadź wartość w MB</string>
+    <string name="settings_cache_custom_size_format">Własne: %1$s</string>
     <string name="settings_cache_delete_confirmation">Czy na pewno chcesz wymazać pamięć podręczną?</string>
     <string name="settings_cache_eviction_description">Kiedy skończy się miejsce w pamięci podręcznej, zasoby, które nie były wykorzystywane od najdłuższego czasu zostaną usunięte.</string>
     <string name="settings_cache_image_size_limit_label">Maksymalny rozmiar pamięci podręcznej obrazów</string>
     <string name="settings_cache_song_size_limit_label">Maksymalny rozmiar pamięci podręcznej utworów</string>
     <string name="settings_cache_title">Pamięć podręczna</string>
+    <string name="settings_cache_usage_percent_format">%1$s użyty (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s (Nieograniczone)</string>
     <string name="settings_data_page_description">Sekcja danych zawiera ustawienia, które modyfikują lokalny i zdalny sposób obsługi danych przez aplikację</string>
     <string name="settings_data_title">Dane</string>
     <string name="settings_debug_title">Ustawienia</string>
