@@ -18,11 +18,11 @@
     <string name="error_windows_install_helper">Nelze spustit instalační program Windows. Spusťte stažený instalační program ručně.</string>
     <string name="interface_in_use">Použité prostředí</string>
     <string name="local_playback_failed">Tuto skladbu nelze hrát na tomto PC.</string>
-    <string name="local_playback_invalid_url">Tuto skladbu nelze hrát na tomto PC.</string>
     <string name="local_playback_not_found">Tato skladba již není na vašem telefonu.</string>
     <string name="local_playback_other_active">Zvuk na tomto PC: jiný PC (%1$s) je připojen k telefonu.</string>
     <string name="local_playback_unavailable">Zvuk na tomto PC není k dispozici: vložený VLC nemohl být načten.</string>
     <string name="local_playback_unavailable_linux">Zvuk na tomto PC je nedostupný. Nainstalujte VLC s %1$s a restartujte aplikaci.</string>
+    <string name="local_playback_unavailable_linux_generic">Zvuk na tomto PC není dostupný. Použijte správce balíčků vaší distribuce k instalaci VLC a poté restartujte aplikaci.</string>
     <string name="local_playback_unreachable">Váš telefon neodpovídal.</string>
     <string name="local_playback_upstream_failed">Váš telefon nemohl získat tuto skladbu.</string>
     <string name="not_selectable">Nevybratelné</string>
@@ -38,7 +38,6 @@
     <string name="notice_unavailable">%1$s: Přehrávač telefonu není k dispozici. Zkuste to později.</string>
     <string name="notice_unreachable">%1$s: telefon neodpověděl.</string>
     <string name="path_copied">Cesta zkopírována</string>
-    <string name="updates_check_failed">Nelze zkontrolovat aktualizace.</string>
     <string name="updates_check_invalid_response">Aktualizační server vrátil neplatnou odpověď.</string>
     <string name="updates_download_generic_error">Nepodařilo se stáhnout aktualizaci.</string>
     <string name="updates_download_invalid_filename">Název aktualizačního souboru je neplatný.</string>
