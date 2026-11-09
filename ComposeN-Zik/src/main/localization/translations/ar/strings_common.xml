@@ -23,8 +23,12 @@
     <string name="common_storage_used_suffix">مستعمل</string>
     <string name="common_validation_empty_value">القيمة لا يمكن أن تكون فارغة</string>
     <string name="common_validation_minimum_value">القيمة يجب أن تكون أكبر من</string>
+    <string name="common_validation_minimum_value_format">يجب أن تكون القيمة على الأقل %1$d</string>
     <string name="dismiss">تجاهل</string>
     <string name="common_duration_seconds_format">%1$d ثانية</string>
+    <string name="common_duration_minutes_format">%1$d min</string>
+    <string name="common_duration_hours_format">%1$d ساعة</string>
+    <string name="common_duration_days_format">%1$d يوم</string>
     <string name="common_file_size_bytes_format">%1$s B</string>
     <string name="common_file_size_gigabytes_format">%1$s جيجابايت</string>
     <string name="common_file_size_kilobytes_format">%1$s كيلوبايت</string>
