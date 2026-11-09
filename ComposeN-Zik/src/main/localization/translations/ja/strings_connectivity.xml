@@ -47,6 +47,7 @@
     <string name="pair_device_name">この PC の名前</string>
     <string name="pair_device_name_invalid">1 から 64 文字の名前を入力します。</string>
     <string name="pair_listener_unreachable">お使いの携帯電話がこのPCに届きませんでした。 Windowsファイアウォール、またはネットワークがパブリックに設定されていますか? プライベートネットワークでN-Zikデスクトップコンパグノンを許可するか、以下の手動でペアリングしてください。</string>
+    <string name="pair_listener_unreachable_linux">お使いの携帯電話がこのPCに届きませんでした。ファイアウォールを確認し、両方のデバイスが同じネットワークに接続されているか、以下で手動でペアリングしてください。</string>
     <string name="pair_manual_entry">手動入力</string>
     <string name="pair_manual_entry_text">電話番号と住所を入力してください</string>
     <string name="pair_no_address">このPCにはローカルネットワークアドレスが見つからないため、QRコードは表示されません。以下を手動でペアリングしてください。</string>
