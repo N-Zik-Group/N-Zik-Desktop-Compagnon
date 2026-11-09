@@ -103,6 +103,10 @@
     <string name="song_matching_unmatched_label">Titre sans correspondance</string>
     <string name="song_metadata_update_action_open">Ouvrir la boîte de dialogue de mise à jour</string>
     <string name="sort_artist_and_album">Artiste, Album</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">%1$d titre • %2$s</item>
+        <item quantity="other">%1$d titres • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d titre</item>
         <item quantity="other">%1$d titres</item>
