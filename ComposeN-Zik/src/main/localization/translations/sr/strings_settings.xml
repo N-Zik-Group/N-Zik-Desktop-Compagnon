@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Bass boost level</string>
     <string name="settings_cache_action_set_custom_size">Podesite prilagođeni keš</string>
     <string name="settings_cache_custom_size_input_hint">Unesite vrednost u MB</string>
+    <string name="settings_cache_custom_size_format">Custom: %1$s</string>
     <string name="settings_cache_delete_confirmation">Da li zaista želite da izbrišete keš?</string>
     <string name="settings_cache_eviction_description">Kada u kešu ponestane prostora, resursi kojima se najduže nije pristupalo se brišu</string>
     <string name="settings_cache_image_size_limit_label">Maksimalna veličina keša slika</string>
     <string name="settings_cache_song_size_limit_label">Maksimalna veličina keša pesme</string>
     <string name="settings_cache_title">Keš</string>
+    <string name="settings_cache_usage_percent_format">%1$s used (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s used (Unlimited)</string>
     <string name="settings_data_page_description">The data section contains settings that modify how the app handles data locally and remotely</string>
     <string name="settings_data_title">Podaci</string>
     <string name="settings_debug_title">Podešavanja</string>
