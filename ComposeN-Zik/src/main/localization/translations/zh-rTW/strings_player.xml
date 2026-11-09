@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">從播放佇列中移除</string>
     <string name="player_queue_clear_confirmation">Do you really want to clean queue?</string>
     <string name="player_queue_deleted_item_format">%1$s deleted</string>
+    <string name="player_queue_removed_item_format">Removed from queue: %1$s</string>
     <string name="player_rotating_buttons">旋轉按鈕</string>
     <string name="player_seek_backward_five_seconds">Rewind 5 seconds</string>
     <string name="player_seek_backward_thirty_seconds">Rewinds 30 seconds</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">探索</string>
     <string name="visualizer_animation_bubbles">Bubbles</string>
     <string name="visualizer_bar">Visualizer bar</string>
+    <string name="visualizer_desktop_preview_message">The Desktop visualizer shows a static preview.</string>
     <string name="visualizer_microphone_permission_message">請授予麥克風權限以啟用視覺化效果.</string>
     <string name="visualizer_title">視覺化效果</string>
     <string name="player_error_unknown">出現未知播放錯誤</string>
