@@ -109,8 +109,8 @@ data class ApVisibility(
     val themeShakeSensitivity: Boolean,
     /** "Cover animation type" (AS:1423) — `showCoverThumbnailAnimation` (its parent toggle). */
     val coverAnimationType: Boolean,
-    /** The "Visualizer effect require mic permission" info row (AS:1759) — `playerTimelineType == VisualizerBar`. */
-    val micPermissionInfo: Boolean,
+    /** The Desktop preview note is shown when the timeline is set to Visualizer bar. */
+    val visualizerPreviewInfo: Boolean,
 )
 
 /**
@@ -142,7 +142,7 @@ fun apVisibleEntries(input: ApVisibilityInput): ApVisibility = ApVisibility(
     themeShakeSensitivity = input.playerBackgroundColors == PlayerBackgroundColors.AnimatedGradient &&
         input.animatedGradient.isM3E,
     coverAnimationType = input.showCoverThumbnailAnimation,
-    micPermissionInfo = input.playerTimelineType == PlayerTimelineType.VisualizerBar,
+    visualizerPreviewInfo = input.playerTimelineType == PlayerTimelineType.VisualizerBar,
 )
 
 /**
@@ -418,7 +418,7 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
             stringResource(Res.string.player_rotating_buttons),
             stringResource(Res.string.settings_player_background_progress_label),
             stringResource(Res.string.visualizer_title),
-            stringResource(Res.string.visualizer_microphone_permission_message),
+            stringResource(Res.string.visualizer_desktop_preview_message),
         )
         val lyricsCtx = settingsSearchCtx(
             search.inputValue,
@@ -819,13 +819,10 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
                             onClick = { showTimelineDialog = true },
                         )
 
-                        // (info) "Visualizer effect require mic permission" (AS:1759) — shown only
-                        // while the timeline is the visualizer bar (LIVE from the PC key), as the
-
-                        // phone's `ImportantSettingsDescription`
-                        if (vis.micPermissionInfo) {
+                        // Desktop displays a static preview in the visualizer timeline.
+                        if (vis.visualizerPreviewInfo) {
                             SettingsDescription(
-                                text = stringResource(Res.string.visualizer_microphone_permission_message),
+                                text = stringResource(Res.string.visualizer_desktop_preview_message),
                                 important = true,
                             )
                         }
@@ -1166,10 +1163,9 @@ fun AppearanceSettingsScreen(preferences: Preferences, query: String, onQuery: (
 
                         /** NOT RENDERED (static, spec §C): the phone's 7 visualizer sub-entries — "Save visualizer state" (AS:2227), "Visualizers Color" (AS:2237), "Visualizer Line Thickness" (AS:2249), "Custom Color" (AS:2268, the color picker is not ported), "Show thumbnail for visualizer" (AS:2295), "Dark background for visualizer" (AS:2306) and "Auto-hide visualizer buttons" (AS:2317) — all only shown when `visualizerEnabled`, off by default on the phone. */
 
-                        // (info) "Visualizer effect require mic permission" (AS:2328) — always
-                        // shown, end of section, as the phone's `ImportantSettingsDescription`
+                        // Explain the static Desktop preview beside the unavailable toggle.
                         SettingsDescription(
-                            text = stringResource(Res.string.visualizer_microphone_permission_message),
+                            text = stringResource(Res.string.visualizer_desktop_preview_message),
                             important = true,
                         )
                     },

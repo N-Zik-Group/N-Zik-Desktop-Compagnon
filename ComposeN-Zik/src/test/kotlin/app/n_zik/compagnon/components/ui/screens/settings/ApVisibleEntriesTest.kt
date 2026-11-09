@@ -140,9 +140,9 @@ class ApVisibleEntriesTest {
     }
 
     @Test
-    fun `the mic permission info row follows the timeline`() {
-        assertTrue(apVisibleEntries(input(timeline = PlayerTimelineType.VisualizerBar)).micPermissionInfo)
-        assertFalse(apVisibleEntries(input(timeline = PlayerTimelineType.Wavy)).micPermissionInfo)
+    fun `the Desktop visualizer preview note follows the timeline`() {
+        assertTrue(apVisibleEntries(input(timeline = PlayerTimelineType.VisualizerBar)).visualizerPreviewInfo)
+        assertFalse(apVisibleEntries(input(timeline = PlayerTimelineType.Wavy)).visualizerPreviewInfo)
     }
 
     // MiniPlayer buttons dialog logic (spec §D)

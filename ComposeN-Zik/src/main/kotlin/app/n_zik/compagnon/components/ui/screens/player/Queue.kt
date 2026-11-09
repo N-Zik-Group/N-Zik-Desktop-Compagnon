@@ -361,7 +361,7 @@ fun Queue(
                                     val actualIndex = state.queue.indexOfFirst { it.id == song.id }
                                     if (actualIndex in state.queue.indices) {
                                         onCommand { remove(actualIndex, song.id) }
-                                        Toaster.s(Res.string.player_queue_deleted_item_format, cleanPrefix(song.title))
+                                        Toaster.s(Res.string.player_queue_removed_item_format, cleanPrefix(song.title))
                                     }
                                 }
                             },

@@ -60,7 +60,6 @@ import app.n_zik.compagnon.components.tab.SongShuffler
 import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
-import app.n_zik.compagnon.components.tab.toolbar.NoRouteConfirmButton
 import app.n_zik.compagnon.components.themed.Bookmark
 import app.n_zik.compagnon.components.themed.Enqueue
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
@@ -267,16 +266,16 @@ fun LocalPlaylistSongs(
     // (contract 1.7.1: the phone's full check — `Track.unmatched`)
     val hasUnmatchedSongs = items.any { it.unmatched() }
 
-    // The phone's download / remove buttons open their confirmations (as the album's); NOT LINKED: no route
-    val downloadAll = NoRouteConfirmButton(
-        Res.drawable.downloaded, Res.string.downloads_title, Res.string.downloads_action_download_all, Res.string.downloads_download_all_confirmation,
+    // Keep the phone toolbar layout. Download management has no Desktop contract route.
+    val downloadAll = InertButton(
+        Res.drawable.downloaded, Res.string.downloads_title,
+        descriptionId = Res.string.downloads_action_download_all,
+        isEnabled = false,
     )
-    val deleteDownloads = NoRouteConfirmButton(
-        Res.drawable.download, Res.string.downloads_action_remove_all, Res.string.downloads_action_remove_all,
-        Res.string.downloads_delete_all_confirmation,
+    val deleteDownloads = InertButton(
+        Res.drawable.download, Res.string.downloads_action_remove_all,
+        isEnabled = false,
     )
-    downloadAll.Render()
-    deleteDownloads.Render()
     // The phone's `ListenOnYouTube` (its 917-923): the phone paused, the playlist's page in the browser
     val player = app.n_zik.compagnon.LocalPlayerRepository.current
     val listenOnYouTube = object : app.n_zik.compagnon.components.tab.toolbar.MenuIcon,

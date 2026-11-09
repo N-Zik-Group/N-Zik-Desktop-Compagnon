@@ -52,7 +52,6 @@ import app.n_zik.compagnon.components.navigation.header.TabToolBar
 import app.n_zik.compagnon.components.styling.Dimensions
 import app.n_zik.compagnon.components.tab.ShuffleOkFlash
 import app.n_zik.compagnon.components.themed.AutoResizeText
-import app.n_zik.compagnon.components.themed.ConfirmationDialog
 import app.n_zik.compagnon.components.themed.FontSizeRange
 import app.n_zik.compagnon.components.themed.HeaderIconButton
 import app.n_zik.compagnon.components.ui.screens.album.DETAIL_COVER_SIZE_PX
@@ -178,26 +177,6 @@ fun ArtistLocalSongs(
         .collectAsState()
     val followRotationEnabled = dislikeMode?.artists != false
 
-    var showConfirmDownloadAllDialog by remember { mutableStateOf(false) }
-    var showConfirmDeleteDownloadDialog by remember { mutableStateOf(false) }
-
-    // The phone's confirmations (`ArtistLocalSongs.kt` 275-327), outside the lazy list so they show
-    // whatever the scroll position
-    if (showConfirmDownloadAllDialog) {
-        ConfirmationDialog(
-            text = stringResource(Res.string.downloads_download_all_confirmation),
-            onDismiss = { showConfirmDownloadAllDialog = false },
-            onConfirm = { showConfirmDownloadAllDialog = false },
-        )
-    }
-    if (showConfirmDeleteDownloadDialog) {
-        ConfirmationDialog(
-            text = stringResource(Res.string.downloads_delete_all_confirmation),
-            onDismiss = { showConfirmDeleteDownloadDialog = false },
-            onConfirm = { showConfirmDeleteDownloadDialog = false },
-        )
-    }
-
     Box(Modifier.fillMaxSize()) {
         // The phone's Library tab (`ArtistLocalSongs.kt` 127-397) has no `DynamicOrientationLayout` (that
         // is its Overview tab, `ArtistScreen.kt` 498): in landscape it only hides the header picture
@@ -266,26 +245,22 @@ fun ArtistLocalSongs(
                             )
                         }
 
-                        // The phone's 216-271: a click asks the phone's confirmation, a long press (right
-                        // click) tells what the button does, the ripple is clipped to the UI roundness.
-
-                        // Contract adaptation: no download route — the confirmation's "Confirm" starts
-                        // nothing on the phone (the PC never fakes a download)
+                        // Keep the phone's action row. Desktop has no download management route.
                         HeaderIconButton(
                             icon = Res.drawable.download,
-                            color = colorPalette().text,
+                            color = colorPalette().textDisabled,
                             iconSize = 24.dp,
                             modifier = Modifier.clip(uiRoundnessShape()),
-                            onClick = { showConfirmDownloadAllDialog = true },
-                            onLongClick = { Toaster.i(Res.string.downloads_action_download_all) },
+                            enabled = false,
+                            onClick = {},
                         )
                         HeaderIconButton(
                             icon = Res.drawable.downloaded,
-                            color = colorPalette().text,
+                            color = colorPalette().textDisabled,
                             iconSize = 24.dp,
                             modifier = Modifier.clip(uiRoundnessShape()),
-                            onClick = { showConfirmDeleteDownloadDialog = true },
-                            onLongClick = { Toaster.i(Res.string.downloads_action_remove_all) },
+                            enabled = false,
+                            onClick = {},
                         )
                         HeaderIconButton(
                             icon = Res.drawable.enqueue,

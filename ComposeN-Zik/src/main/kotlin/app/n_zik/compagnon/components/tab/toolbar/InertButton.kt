@@ -27,6 +27,7 @@ class InertButton(
     /** The phone button's `Descriptive.messageId` when it differs from its title (e.g. `SongShuffler`). */
     /** `null` where the phone's button has no help on a long press. */
     private val descriptionId: StringResource? = titleId,
+    override val isEnabled: Boolean = true,
     private val onOpen: () -> Unit = {},
 ) : MenuIcon, Descriptive {
     /** The phone's own button is `Descriptive`: a right click shows the same description. */
@@ -38,7 +39,7 @@ class InertButton(
 
     override val color: Color
         @Composable
-        get() = tint ?: colorPalette().text
+        get() = tint ?: if (isEnabled) colorPalette().text else colorPalette().textDisabled
 
     override val menuIconTitle: String
         @Composable

@@ -52,7 +52,6 @@ import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
 import app.n_zik.compagnon.components.tab.toolbar.MenuIcon
-import app.n_zik.compagnon.components.tab.toolbar.NoRouteConfirmButton
 import app.n_zik.compagnon.components.themed.AutoResizeText
 import app.n_zik.compagnon.components.themed.Enqueue
 import app.n_zik.compagnon.components.themed.FontSizeRange
@@ -230,16 +229,16 @@ fun AlbumDetails(
     // The phone's toolbar order; shuffle, locator, play next and enqueue are wired to the contract,
     // the rest are placeholders without a contract route (no action)
 
-    // The phone's download / remove buttons open their confirmations (as the artist's); NOT LINKED: no route
-    val downloadAll = NoRouteConfirmButton(
-        Res.drawable.downloaded, Res.string.downloads_title, Res.string.downloads_action_download_all, Res.string.downloads_download_all_confirmation,
+    // Keep the phone toolbar layout. Download management has no Desktop contract route.
+    val downloadAll = InertButton(
+        Res.drawable.downloaded, Res.string.downloads_title,
+        descriptionId = Res.string.downloads_action_download_all,
+        isEnabled = false,
     )
-    val deleteDownloads = NoRouteConfirmButton(
-        Res.drawable.download, Res.string.downloads_action_remove_all, Res.string.downloads_action_remove_all,
-        Res.string.downloads_delete_all_confirmation,
+    val deleteDownloads = InertButton(
+        Res.drawable.download, Res.string.downloads_action_remove_all,
+        isEnabled = false,
     )
-    downloadAll.Render()
-    deleteDownloads.Render()
     // The phone's item selector (a local toggle, never persisted): the rows' selection boxes
     val itemSelector = rememberItemSelector()
     val toolbar = buildList<Button> {

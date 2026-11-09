@@ -79,7 +79,6 @@ import app.n_zik.compagnon.components.tab.rememberItemSelector
 import app.n_zik.compagnon.components.tab.toolbar.Button
 import app.n_zik.compagnon.components.tab.toolbar.InertButton
 import app.n_zik.compagnon.components.tab.toolbar.InertSort
-import app.n_zik.compagnon.components.tab.toolbar.NoRouteConfirmButton
 import app.n_zik.compagnon.components.theme.onOverlay
 import app.n_zik.compagnon.components.theme.overlay
 import app.n_zik.compagnon.components.themed.FloatingActionsContainerWithScrollToTop
@@ -253,14 +252,12 @@ fun HomeLibrary(
         InertSort(menuState, playlistSortOptions)
     }
 
-    // The phone's "delete playlists" (its `HomeLibrary.kt` 367-375, 609-631): its confirmation of the shown
-    // playlists, no help on a right click — NOT LINKED, Confirm only closes it (no contract route)
-    val deletePlaylists = NoRouteConfirmButton(
-        Res.drawable.trash, Res.string.playlist_action_delete_selected, null, Res.string.playlist_delete_all_confirmation_count_format,
-        // The phone counts its shown playlists (`itemsOnDisplay`): the list's whole total here
-        dialogTextArg = state.total ?: state.items.distinctBy { it.id }.size,
+    // The phone toolbar includes this control, but Desktop has no bulk playlist deletion route.
+    val deletePlaylists = InertButton(
+        Res.drawable.trash, Res.string.playlist_action_delete_selected,
+        descriptionId = null,
+        isEnabled = false,
     )
-    deletePlaylists.Render()
 
     // The phone's toolbar of the active tab, in the phone's order, with the phone's show conditions
     // (position lock only while the chip's sort is Custom); the Compagnon's "Refresh" is added at the
