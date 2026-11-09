@@ -47,6 +47,7 @@
     <string name="pair_device_name">Όνομα αυτού του PC</string>
     <string name="pair_device_name_invalid">Εισάγετε ένα όνομα από 1 έως 64 χαρακτήρες.</string>
     <string name="pair_listener_unreachable">Το τηλέφωνό σας δεν μπόρεσε να φτάσει σε αυτόν τον υπολογιστή. Windows Firewall, or a network set to Public? Επιτρέψτε N-Zik Desktop Compagnon σε ιδιωτικά δίκτυα, ή κάντε χειροκίνητη σύζευξη παρακάτω.</string>
+    <string name="pair_listener_unreachable_linux">Το τηλέφωνό σας δεν μπόρεσε να φτάσει σε αυτόν τον υπολογιστή. Ελέγξτε το τείχος προστασίας σας και βεβαιωθείτε ότι και οι δύο συσκευές βρίσκονται στο ίδιο δίκτυο ή κάντε μη αυτόματη σύζευξη παρακάτω.</string>
     <string name="pair_manual_entry">Χειροκίνητη εισαγωγή</string>
     <string name="pair_manual_entry_text">Πληκτρολογήστε τη διεύθυνση και τον κωδικό που εμφανίζεται στο τηλέφωνό σας</string>
     <string name="pair_no_address">Δεν βρέθηκε διεύθυνση τοπικού δικτύου σε αυτόν τον υπολογιστή, έτσι δεν μπορεί να εμφανιστεί κανένας κωδικός QR.</string>
