@@ -47,6 +47,7 @@
     <string name="pair_device_name">Název tohoto PC</string>
     <string name="pair_device_name_invalid">Zadejte název 1 až 64 znaků.</string>
     <string name="pair_listener_unreachable">Váš telefon se nemohl dostat do tohoto PC. Windows Firewall, nebo síť nastavena na Public? Povolte N-Zik Desktop Compagnon na soukromých sítích, nebo ručně níže.</string>
+    <string name="pair_listener_unreachable_linux">Váš telefon se nemohl dostat do tohoto počítače. Zkontrolujte váš firewall a ujistěte se, že jsou obě zařízení ve stejné síti, nebo ručně níže.</string>
     <string name="pair_manual_entry">Ruční zadávání</string>
     <string name="pair_manual_entry_text">Zadejte adresu a kód zobrazený na vašem telefonu</string>
     <string name="pair_no_address">Na tomto PC nebyla nalezena žádná lokální síťová adresa, takže nelze zobrazit žádný QR kód.</string>
