@@ -10,7 +10,6 @@
     <string name="artist_following_status">Ακολουθεί</string>
     <string name="artist_more_from">Περισσότερα από</string>
     <string name="artist_roundness">Στρογγυλή εμφάνιση καλλιτέχνη</string>
-    <string name="artist_songs_count_duration">%1$d Τραγούδια • %2$s</string>
     <string name="artist_songs_unavailable_message">No songs yet</string>
     <string name="home_tabs_settings">Αρχική σελίδα</string>
     <string name="home_tabs_settings_description">Αναδιάταξη και εμφάνιση/απόκρυψη καρτελών</string>
@@ -104,7 +103,7 @@
     <string name="song_matching_unmatched_label">Αντιστοιχισμένο τραγούδι</string>
     <string name="song_metadata_update_action_open">Άνοιγμα διαλόγου ενημέρωσης</string>
     <string name="sort_artist_and_album">Καλλιτέχνης, Άλμπουμ</string>
-    <plurals name="artist_song_count_with_duration">
+    <plurals name="library_song_count_with_duration">
         <item quantity="one">%1$d τραγούδι • %2$s</item>
         <item quantity="other">%1$d τραγούδια • %2$s</item>
     </plurals>
