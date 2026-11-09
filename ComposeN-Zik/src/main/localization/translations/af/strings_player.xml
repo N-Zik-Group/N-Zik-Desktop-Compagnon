@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Audio devices</string>
+    <string name="audio_device_battery_format">Battery: %1$d%%</string>
     <string name="audio_effects">Audio Effects</string>
     <string name="audio_output_title">Audio output</string>
     <string name="audio_quality_automatic">Outomaties</string>
