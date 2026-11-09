@@ -23,7 +23,7 @@
     <string name="common_storage_used_suffix">kullanıldı</string>
     <string name="common_validation_empty_value">Değer boş olamaz</string>
     <string name="common_validation_minimum_value">Değer şundan büyük olmalıdır</string>
-    <string name="common_validation_minimum_value_format">Value must be at least %1$d</string>
+    <string name="common_validation_minimum_value_format">Değer en az %1$d olmalıdır</string>
     <string name="dismiss">Kapat</string>
     <string name="common_duration_seconds_format">%1$d s</string>
     <string name="common_duration_minutes_format">%1$d dakika</string>
