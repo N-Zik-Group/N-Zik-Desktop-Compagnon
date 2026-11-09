@@ -22,6 +22,7 @@
     <string name="local_playback_other_active">Bu bilgisayardaki ses: telefona başka bir bilgisayar (%1$s) bağlı.</string>
     <string name="local_playback_unavailable">Bu bilgisayarda ses özelliği kullanılamıyor: Yerleşik VLC yüklenemedi.</string>
     <string name="local_playback_unavailable_linux">Bu bilgisayarda ses özelliği kullanılamıyor. %1$s ile VLC\'yi yükleyin ve uygulamayı yeniden başlatın.</string>
+    <string name="local_playback_unavailable_linux_generic">Bu bilgisayarda ses özelliği kullanılamıyor. Dağıtımınızın paket yöneticisini kullanarak VLC\'yi yükleyin, ardından uygulamayı yeniden başlatın.</string>
     <string name="local_playback_unreachable">Telefonunuza cevap verilmedi.</string>
     <string name="local_playback_upstream_failed">Telefonunuz bu şarkıyı indiremedi.</string>
     <string name="not_selectable">Seçilemez</string>

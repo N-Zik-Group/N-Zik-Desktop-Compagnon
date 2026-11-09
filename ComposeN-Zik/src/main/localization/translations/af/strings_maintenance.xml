@@ -10,6 +10,7 @@
     <string name="install_pkg_command">Install the package with:</string>
     <string name="install_pkg_manual">No package manager was detected. Install the downloaded package manually.</string>
     <string name="install_pkg_pacman_command">Upgrade the package with:</string>
+    <string name="install_replacement_portable_preserve_data">Quit the app and extract the downloaded archive into a new folder next to the current one. Before launching the new version, copy the data/ folder from the current app folder into the new one if it exists. Keep the old folder until you verify your settings and pairing in the new version.</string>
     <string name="logs_action_export">Export logs</string>
     <string name="logs_export_debug_description">Export debug log to a file</string>
     <string name="maintenance_card_desc">App state at a glance: last boot passes and live subsystems</string>
@@ -34,6 +35,9 @@
     <string name="updates_action_check_now">Check Now</string>
     <string name="updates_action_download_current_version">Download again last update</string>
     <string name="updates_action_install">Install</string>
+    <string name="updates_install_failure_exit_timeout">The update was canceled because the app did not close within %1$d seconds.</string>
+    <string name="updates_install_failure_exit_code">Update installation failed with exit code %1$d.</string>
+    <string name="updates_install_failure_generic">The update could not be installed.</string>
     <string name="updates_action_open_download">Go to download</string>
     <string name="updates_automatic_check_title">Enable check for update</string>
     <string name="updates_available">Opdatering beskikbaar</string>
@@ -43,7 +47,9 @@
     <string name="updates_build_debug_label">DEBUG</string>
     <string name="updates_build_dev_label">DEV</string>
     <string name="updates_cache_cleared">Cache cleared</string>
+    <string name="updates_clear_cache_action">Clear cache</string>
     <string name="updates_changelog_title">What\'s new in %s</string>
+    <string name="updates_channel_available_format">%1$s update available</string>
     <string name="updates_check_failed">Could not check for updates.</string>
     <string name="updates_check_mode_ask">Vra</string>
     <string name="updates_check_mode_ask_status">Vra</string>
@@ -53,6 +59,7 @@
     <string name="updates_check_permission_message">Check at Github for updates?</string>
     <string name="updates_check_permission_screening_note">But these updates would not go through the additional screening performed at e.g. IzzyOnDroid or F-Droid.</string>
     <string name="updates_check_permission_settings_note">You can still turn it on, or off, from the settings.</string>
+    <string name="updates_download_origin_note">But these updates would not go through the additional screening performed at e.g. IzzyOnDroid or F-Droid.</string>
     <string name="updates_checking_status">Checking for updates…</string>
     <string name="updates_download_completed">Update downloaded</string>
     <string name="updates_downloading_status">Downloading update</string>

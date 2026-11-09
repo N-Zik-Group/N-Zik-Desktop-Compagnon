@@ -103,6 +103,12 @@
     <string name="song_matching_unmatched_label">Несовпадающая песня</string>
     <string name="song_metadata_update_action_open">Открыть диалог обновления</string>
     <string name="sort_artist_and_album">Исполнитель, Альбом</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">%1$d песня • %2$s</item>
+        <item quantity="few">%1$d песен • %2$s</item>
+        <item quantity="many">%1$d песен • %2$s</item>
+        <item quantity="other">%1$d песен • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d song</item>
         <item quantity="few">%1$d songs</item>

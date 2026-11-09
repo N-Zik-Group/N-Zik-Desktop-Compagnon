@@ -10,6 +10,7 @@
     <string name="install_pkg_command">安装包：</string>
     <string name="install_pkg_manual">未检测到软件包管理器。手动安装下载的软件包。</string>
     <string name="install_pkg_pacman_command">升级包：</string>
+    <string name="install_replacement_portable_preserve_data">退出应用并提取下载的归档到当前文件夹旁边的新文件夹。 在启动新版本之前，将当前应用文件夹中的数据/文件夹复制到新版本中。 保留旧文件夹，直到您验证您的设置并在新版本中配对。</string>
     <string name="logs_action_export">导出日志</string>
     <string name="logs_export_debug_description">导出调试日志到文件</string>
     <string name="maintenance_card_desc">应用程序状态：最后一次启动通过并运行子系统</string>
@@ -34,6 +35,9 @@
     <string name="updates_action_check_now">立即检查</string>
     <string name="updates_action_download_current_version">再次下载上次更新</string>
     <string name="updates_action_install">安装</string>
+    <string name="updates_install_failure_exit_timeout">更新被取消，因为应用程序没有在 %1$d 秒内关闭。</string>
+    <string name="updates_install_failure_exit_code">更新安装失败，退出代码 %1$d。</string>
+    <string name="updates_install_failure_generic">无法安装更新。</string>
     <string name="updates_action_open_download">转到下载</string>
     <string name="updates_automatic_check_title">启用更新检查</string>
     <string name="updates_available">有可用更新</string>
@@ -43,7 +47,9 @@
     <string name="updates_build_debug_label">DEBUG</string>
     <string name="updates_build_dev_label">赤纬度</string>
     <string name="updates_cache_cleared">缓存已清除</string>
+    <string name="updates_clear_cache_action">清除缓存</string>
     <string name="updates_changelog_title">%s 中的新功能</string>
+    <string name="updates_channel_available_format">%1$s 更新可用</string>
     <string name="updates_check_failed">无法检查更新。</string>
     <string name="updates_check_mode_ask">询问</string>
     <string name="updates_check_mode_ask_status">询问用户</string>
@@ -53,6 +59,7 @@
     <string name="updates_check_permission_message">在Github查看更新?</string>
     <string name="updates_check_permission_screening_note">但这些更新不会经过额外筛查在例如IzzyOnDroid或F-Droid执行。</string>
     <string name="updates_check_permission_settings_note">你仍然可以从设置中打开或关闭它。</string>
+    <string name="updates_download_origin_note">但这些更新不会经过额外筛查在例如IzzyOnDroid或F-Droid执行。</string>
     <string name="updates_checking_status">检查更新…</string>
     <string name="updates_download_completed">更新已下载</string>
     <string name="updates_downloading_status">正在下载更新</string>

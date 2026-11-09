@@ -10,6 +10,7 @@
     <string name="install_pkg_command">Installeer het pakket met:</string>
     <string name="install_pkg_manual">Er is geen pakketbeheerder gedetecteerd. Installeer het gedownloade pakket handmatig.</string>
     <string name="install_pkg_pacman_command">Upgrade het pakket met:</string>
+    <string name="install_replacement_portable_preserve_data">Sluit de app en pak het gedownloade archief uit in een nieuwe map naast de huidige. Kopieer vóór het starten van de nieuwe versie de gegevens/map uit de huidige app map naar de nieuwe als deze bestaat. Houd de oude map totdat u uw instellingen verifieert en koppelt in de nieuwe versie.</string>
     <string name="logs_action_export">Logs exporteren</string>
     <string name="logs_export_debug_description">Exporteer debug log naar een bestand</string>
     <string name="maintenance_card_desc">App staat in een oogopslag: laatste boot passes en live subsystemen</string>
@@ -34,6 +35,9 @@
     <string name="updates_action_check_now">Nu controleren</string>
     <string name="updates_action_download_current_version">Opnieuw downloaden van de laatste update</string>
     <string name="updates_action_install">Installeren</string>
+    <string name="updates_install_failure_exit_timeout">De update is geannuleerd omdat de app niet gesloten is binnen %1$d seconden.</string>
+    <string name="updates_install_failure_exit_code">Update installatie is mislukt met afsluitcode %1$d.</string>
+    <string name="updates_install_failure_generic">De update kon niet worden geïnstalleerd.</string>
     <string name="updates_action_open_download">Ga naar download</string>
     <string name="updates_automatic_check_title">Schakel automatische update controle in</string>
     <string name="updates_available">Update beschikbaar</string>
@@ -43,7 +47,9 @@
     <string name="updates_build_debug_label">DEBUG</string>
     <string name="updates_build_dev_label">dev</string>
     <string name="updates_cache_cleared">Cache gewist</string>
+    <string name="updates_clear_cache_action">Cache legen</string>
     <string name="updates_changelog_title">Wat is er nieuw in %s</string>
+    <string name="updates_channel_available_format">%1$s update beschikbaar</string>
     <string name="updates_check_failed">Kon niet controleren op updates.</string>
     <string name="updates_check_mode_ask">Vragen</string>
     <string name="updates_check_mode_ask_status">Vragen</string>
@@ -53,6 +59,7 @@
     <string name="updates_check_permission_message">Controleer bij Github op updates?</string>
     <string name="updates_check_permission_screening_note">Maar deze updates zullen niet door de extra screening worden doorlopen op bijvoorbeeld IzzyOnDroid of F-Droid.</string>
     <string name="updates_check_permission_settings_note">Je kunt het nog steeds AAN/UIT inschakelen via de instellingen.</string>
+    <string name="updates_download_origin_note">Maar deze updates zullen niet door de extra screening worden doorlopen op bijvoorbeeld IzzyOnDroid of F-Droid.</string>
     <string name="updates_checking_status">Controleren op updates…</string>
     <string name="updates_download_completed">Update gedownload</string>
     <string name="updates_downloading_status">Update downloaden</string>

@@ -23,8 +23,12 @@
     <string name="common_storage_used_suffix">已使用</string>
     <string name="common_validation_empty_value">值不能为空</string>
     <string name="common_validation_minimum_value">值必须大于</string>
+    <string name="common_validation_minimum_value_format">值必须至少为 %1$d</string>
     <string name="dismiss">关闭</string>
     <string name="common_duration_seconds_format">%1$d 秒</string>
+    <string name="common_duration_minutes_format">%1$d 分钟</string>
+    <string name="common_duration_hours_format">%1$d 小时</string>
+    <string name="common_duration_days_format">%1$d 天</string>
     <string name="common_file_size_bytes_format">%1$s B</string>
     <string name="common_file_size_gigabytes_format">%1$s GB</string>
     <string name="common_file_size_kilobytes_format">%1$s kB</string>
@@ -32,4 +36,6 @@
     <string name="common_file_size_terabytes_format">%1$s TB</string>
     <string name="common_size_megabytes_format">%1$d MB</string>
     <string name="common_size_gigabytes_format">%1$d GB</string>
+    <string name="common_range_maximum">最大值</string>
+    <string name="common_range_minimum">最小值</string>
 </resources>

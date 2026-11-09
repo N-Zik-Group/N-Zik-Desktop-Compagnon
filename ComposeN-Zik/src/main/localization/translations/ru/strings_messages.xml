@@ -22,6 +22,7 @@
     <string name="local_playback_other_active">Звук на этом ПК: другой ПК (%1$s) подключен к телефону.</string>
     <string name="local_playback_unavailable">Звук на этом компьютере недоступен: встроенный VLC не может быть загружен.</string>
     <string name="local_playback_unavailable_linux">Звук на этом ПК недоступен. Установите VLC с %1$s и перезапустите приложение.</string>
+    <string name="local_playback_unavailable_linux_generic">Звук на этом ПК недоступен. Используйте менеджер пакетов дистрибутива для установки VLC, а затем перезапустите приложение.</string>
     <string name="local_playback_unreachable">Ваш телефон не ответил.</string>
     <string name="local_playback_upstream_failed">Ваш телефон не может получить эту песню.</string>
     <string name="not_selectable">Не выбрано</string>

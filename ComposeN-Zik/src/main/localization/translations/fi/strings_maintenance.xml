@@ -10,6 +10,7 @@
     <string name="install_pkg_command">Asenna paketti, jossa on:</string>
     <string name="install_pkg_manual">Paketin hallintaa ei havaittu. Asenna ladattu paketti manuaalisesti.</string>
     <string name="install_pkg_pacman_command">Päivitä paketti seuraavalla tavalla:</string>
+    <string name="install_replacement_portable_preserve_data">Lopeta sovellus ja pura ladattu arkisto uuteen kansioon nykyisen kansion vieressä. Ennen kuin käynnistät uuden version, kopioi tiedot / kansio nykyisestä sovelluskansiosta uuteen kansioon, jos se on olemassa. Pidä vanha kansio kunnes vahvistat asetuksesi ja parit uudessa versiossa.</string>
     <string name="logs_action_export">Vie lokit</string>
     <string name="logs_export_debug_description">Vie virheenkorjausloki tiedostoon</string>
     <string name="maintenance_card_desc">Sovelluksen tila yhdellä silmäyksellä: viimeinen käynnistys läpäisee ja live-alijärjestelmät</string>
@@ -34,6 +35,9 @@
     <string name="updates_action_check_now">Tarkista nyt</string>
     <string name="updates_action_download_current_version">Lataa uudelleen viimeisin päivitys</string>
     <string name="updates_action_install">Asenna</string>
+    <string name="updates_install_failure_exit_timeout">Päivitys peruutettiin, koska sovellus ei sulkeutunut %1$d sekunnin kuluessa.</string>
+    <string name="updates_install_failure_exit_code">Päivityksen asennus epäonnistui poistumiskoodilla %1$d.</string>
+    <string name="updates_install_failure_generic">Päivitystä ei voitu asentaa.</string>
     <string name="updates_action_open_download">Siirry lataukseen</string>
     <string name="updates_automatic_check_title">Ota automaattinen päivitysten tarkistus käyttöön</string>
     <string name="updates_available">Päivitys saatavilla</string>
@@ -43,7 +47,9 @@
     <string name="updates_build_debug_label">DEBUG</string>
     <string name="updates_build_dev_label">DEV</string>
     <string name="updates_cache_cleared">Välimuisti tyhjennetty</string>
+    <string name="updates_clear_cache_action">Tyhjennä välimuisti</string>
     <string name="updates_changelog_title">Mitä uutta kohteessa %s</string>
+    <string name="updates_channel_available_format">%1$s päivitys saatavilla</string>
     <string name="updates_check_failed">Päivityksiä ei voitu tarkistaa.</string>
     <string name="updates_check_mode_ask">Kysy</string>
     <string name="updates_check_mode_ask_status">Kysy</string>
@@ -53,6 +59,7 @@
     <string name="updates_check_permission_message">Tarkistetaanko päivitykset Githubista?</string>
     <string name="updates_check_permission_screening_note">Nämä päivitykset eivät kuitenkaan käy läpi lisätarkistusta, jonka suorittaa esimerkiksi IzzyOnDroid tai F-Droid.</string>
     <string name="updates_check_permission_settings_note">Voit silti kytkeä sen päälle/pois päältä asetuksista.</string>
+    <string name="updates_download_origin_note">Nämä päivitykset eivät kuitenkaan käy läpi lisätarkistusta, jonka suorittaa esimerkiksi IzzyOnDroid tai F-Droid.</string>
     <string name="updates_checking_status">Tarkistetaan päivityksiä…</string>
     <string name="updates_download_completed">Päivitys ladattu</string>
     <string name="updates_downloading_status">Ladataan päivitystä</string>

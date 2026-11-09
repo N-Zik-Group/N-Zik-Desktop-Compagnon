@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Périphériques audio</string>
+    <string name="audio_device_battery_format">Batterie : %1$d%%</string>
     <string name="audio_effects">Effets Audio</string>
     <string name="audio_output_title">Sortie audio</string>
     <string name="audio_quality_automatic">Automatique</string>
@@ -93,6 +94,7 @@
     <string name="player_queue_action_remove">Supprimer de la file d\'attente</string>
     <string name="player_queue_clear_confirmation">Voulez-vous vraiment vider la file d\'attente ?</string>
     <string name="player_queue_deleted_item_format">%1$s supprimé</string>
+    <string name="player_queue_removed_item_format">Supprimé de la file d\'attente : %1$s</string>
     <string name="player_rotating_buttons">Boutons rotatifs</string>
     <string name="player_seek_backward_five_seconds">Reculer de 5 secondes</string>
     <string name="player_seek_backward_thirty_seconds">Reculer de 30 secondes</string>
@@ -118,6 +120,7 @@
     <string name="queue_discover_title">Découvrir</string>
     <string name="visualizer_animation_bubbles">Bulles</string>
     <string name="visualizer_bar">Barre de visualisation</string>
+    <string name="visualizer_desktop_preview_message">Le visualiseur de bureau affiche un aperçu statique.</string>
     <string name="visualizer_microphone_permission_message">L\'effet « Visualizer » nécessite l\'autorisation d\'accès au micro ; veuillez l\'accorder.</string>
     <string name="visualizer_title">Visualiseur</string>
     <string name="player_error_unknown">Une erreur de lecture inconnue s\'est produite</string>

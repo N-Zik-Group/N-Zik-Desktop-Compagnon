@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Аудіопристрої</string>
+    <string name="audio_device_battery_format">Акумулятор: %1$d%%</string>
     <string name="audio_effects">Аудіоефекти</string>
     <string name="audio_output_title">Вивід звуку</string>
     <string name="audio_quality_automatic">Автоматично</string>
@@ -93,6 +94,7 @@
     <string name="player_queue_action_remove">Видалити з черги</string>
     <string name="player_queue_clear_confirmation">Ви дійсно хочете очистити чергу?</string>
     <string name="player_queue_deleted_item_format">%1$s видалено</string>
+    <string name="player_queue_removed_item_format">Видалено з черги: %1$s</string>
     <string name="player_rotating_buttons">Поворотні кнопки</string>
     <string name="player_seek_backward_five_seconds">Перемотати 5 секунд</string>
     <string name="player_seek_backward_thirty_seconds">Розморозити 30 секунд</string>
@@ -118,6 +120,7 @@
     <string name="queue_discover_title">Огляд</string>
     <string name="visualizer_animation_bubbles">Спливаючі чати</string>
     <string name="visualizer_bar">Панель візуалізатора</string>
+    <string name="visualizer_desktop_preview_message">Візуалізатор робочого столу показує статичний попередній перегляд.</string>
     <string name="visualizer_microphone_permission_message">Ефект візуалізатора вимагає дозволу на мікрофон, надайте його, будь ласка.</string>
     <string name="visualizer_title">Візуалізатор</string>
     <string name="player_error_unknown">Виникла невідома помилка відтворення</string>

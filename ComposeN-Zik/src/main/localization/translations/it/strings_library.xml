@@ -103,8 +103,12 @@
     <string name="song_matching_unmatched_label">Brano ineguagliato</string>
     <string name="song_metadata_update_action_open">Apri finestra di aggiornamento</string>
     <string name="sort_artist_and_album">Artista, Album</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">Brano %1$d • %2$s</item>
+        <item quantity="other">%1$d canzoni • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
-        <item quantity="one">%1$d song</item>
+        <item quantity="one">%1$d brano</item>
         <item quantity="other">Canzoni %1$d</item>
     </plurals>
     <string name="library_on_device_permission_request_failed">Impossibile richiedere l\'accesso alla musica su questo dispositivo.</string>

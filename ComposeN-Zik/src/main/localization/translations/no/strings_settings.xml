@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Bass forsterkningsnivå</string>
     <string name="settings_cache_action_set_custom_size">Angi egendefinert hurtigbuffer</string>
     <string name="settings_cache_custom_size_input_hint">Angi verdi i MB</string>
+    <string name="settings_cache_custom_size_format">Custom: %1$s</string>
     <string name="settings_cache_delete_confirmation">Vil du virkelig slette buffer?</string>
     <string name="settings_cache_eviction_description">Når mellomlager har gått tom for plass, fjernes ressursene som ikke har blitt åpnet på lengst tid</string>
     <string name="settings_cache_image_size_limit_label">Maks størrelse på bildebuffer</string>
     <string name="settings_cache_song_size_limit_label">Maks størrelse på sangbuffer</string>
     <string name="settings_cache_title">Mellomlager</string>
+    <string name="settings_cache_usage_percent_format">%1$s used (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s brukt (ubegrenset)</string>
     <string name="settings_data_page_description">Dataseksjonen inneholder innstillinger som endrer hvordan appen håndterer data lokalt og eksternt</string>
     <string name="settings_data_title">Data</string>
     <string name="settings_debug_title">Innstillinger</string>

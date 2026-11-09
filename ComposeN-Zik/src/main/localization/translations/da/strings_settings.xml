@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Basforstærkningsniveau</string>
     <string name="settings_cache_action_set_custom_size">Tilpas cache</string>
     <string name="settings_cache_custom_size_input_hint">Indtast værdi i MB</string>
+    <string name="settings_cache_custom_size_format">Brugerdefineret: %1$s</string>
     <string name="settings_cache_delete_confirmation">Vil du virkelig slette cache?</string>
     <string name="settings_cache_eviction_description">Når cachen er løber tør for plads, ryddes de ældste ubrugte ressourcer</string>
     <string name="settings_cache_image_size_limit_label">Maks. størrelse for billedcache</string>
     <string name="settings_cache_song_size_limit_label">Maks. størrelse for sangcache</string>
     <string name="settings_cache_title">Cache</string>
+    <string name="settings_cache_usage_percent_format">%1$s brugt (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s brugt (ubegrænset)</string>
     <string name="settings_data_page_description">Datafeltet indeholder indstillinger, der ændrer, hvordan appen håndterer data lokalt og eksternt</string>
     <string name="settings_data_title">Data</string>
     <string name="settings_debug_title">Indstillinger</string>

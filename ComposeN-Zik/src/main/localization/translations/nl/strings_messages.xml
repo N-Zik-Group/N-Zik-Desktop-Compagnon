@@ -22,6 +22,7 @@
     <string name="local_playback_other_active">Geluid op deze PC: een andere PC (%1$s) is verbonden met de telefoon.</string>
     <string name="local_playback_unavailable">Geluid op deze PC is niet beschikbaar: de ingesloten VLC kon niet worden geladen.</string>
     <string name="local_playback_unavailable_linux">Geluid op deze PC is niet beschikbaar. Installeer VLC met %1$s en herstart de app.</string>
+    <string name="local_playback_unavailable_linux_generic">Geluid op deze PC is niet beschikbaar. Gebruik de pakketbeheerder van je distributiepakket om VLC te installeren en daarna de app opnieuw opstarten.</string>
     <string name="local_playback_unreachable">Uw telefoon heeft niet geantwoord.</string>
     <string name="local_playback_upstream_failed">Je telefoon kon dit nummer niet krijgen.</string>
     <string name="not_selectable">Niet selecteerbaar</string>

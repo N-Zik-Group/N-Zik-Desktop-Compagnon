@@ -47,6 +47,7 @@
     <string name="pair_device_name">Ім\'я цього ПК</string>
     <string name="pair_device_name_invalid">Введіть ім\'я від 1 до 64 символів.</string>
     <string name="pair_listener_unreachable">Ваш телефон не зміг зв\'язатися з цим ПК. Windows Firewall, або мережева установка як публічна? Дозвольте N-Zik сумісну з приватними мережами або сполучені вручну нижче.</string>
+    <string name="pair_listener_unreachable_linux">Ваш телефон не зміг зв\'язатися з цим ПК. Перевірте брандмауер і переконайтеся, що обидва пристрої знаходяться в одній мережі чи парі вручну нижче.</string>
     <string name="pair_manual_entry">Ручне введення</string>
     <string name="pair_manual_entry_text">Введіть адресу та код, що відображається на вашому телефоні</string>
     <string name="pair_no_address">На цьому ПК не знайдено жодної локальної мережі, тому жоден QR-код не може бути показано. Під’єднати вручну нижче.</string>

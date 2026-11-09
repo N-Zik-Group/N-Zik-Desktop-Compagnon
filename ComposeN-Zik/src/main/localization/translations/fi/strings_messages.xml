@@ -22,6 +22,7 @@
     <string name="local_playback_other_active">Ääni tässä PC:ssä: toinen PC (%1$s) on yhdistetty puhelimeen.</string>
     <string name="local_playback_unavailable">Ääni tällä tietokoneella ei ole käytettävissä: upotettua VLC:tä ei voitu ladata.</string>
     <string name="local_playback_unavailable_linux">Ääni tällä tietokoneella ei ole käytettävissä. Asenna VLC %1$s ja käynnistä sovellus uudelleen.</string>
+    <string name="local_playback_unavailable_linux_generic">Ääni tällä tietokoneella ei ole käytettävissä. Käytä jakelusi pakettinhallintaohjelmaa asentaaksesi VLC: n, ja käynnistä sovellus uudelleen.</string>
     <string name="local_playback_unreachable">Puhelimesi ei vastannut.</string>
     <string name="local_playback_upstream_failed">Puhelimesi ei saanut tätä kappaletta.</string>
     <string name="not_selectable">Ei valittavissa</string>

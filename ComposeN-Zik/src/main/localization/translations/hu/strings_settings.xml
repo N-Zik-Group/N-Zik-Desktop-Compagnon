@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Bass boost level</string>
     <string name="settings_cache_action_set_custom_size">Egyéni gyorsítótárméret beállítása</string>
     <string name="settings_cache_custom_size_input_hint">Ad meg az értéket MB-ban</string>
+    <string name="settings_cache_custom_size_format">Custom: %1$s</string>
     <string name="settings_cache_delete_confirmation">Tényleg törölni szeretnéd a gyorsítótárat?</string>
     <string name="settings_cache_eviction_description">Ha a gyorsítótárból elfogy a hely, a leghosszabb ideig nem használt erőforrások törlődnek</string>
     <string name="settings_cache_image_size_limit_label">Kép gyorsítótár maximális mérete</string>
     <string name="settings_cache_song_size_limit_label">Dal gyorsítótár maximális mérete</string>
     <string name="settings_cache_title">Gyorsítótár</string>
+    <string name="settings_cache_usage_percent_format">%1$s used (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s used (Unlimited)</string>
     <string name="settings_data_page_description">The data section contains settings that modify how the app handles data locally and remotely</string>
     <string name="settings_data_title">Adat</string>
     <string name="settings_debug_title">Beállítások</string>

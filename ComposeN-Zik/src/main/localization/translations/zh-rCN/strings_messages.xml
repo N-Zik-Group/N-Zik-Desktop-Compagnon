@@ -22,6 +22,7 @@
     <string name="local_playback_other_active">音效在此 PC: 另一个 PC (%1$s) 已连接到手机。</string>
     <string name="local_playback_unavailable">此PC 上的声音不可用：嵌入的 VLC 无法加载。</string>
     <string name="local_playback_unavailable_linux">此PC 上的声音不可用。通过 %1$s 安装 VLC 并重启应用程序。</string>
+    <string name="local_playback_unavailable_linux_generic">此PC 上的声音不可用。使用您的发行版软件包管理器安装 VLC，然后重启应用程序。</string>
     <string name="local_playback_unreachable">您的手机没有应答。</string>
     <string name="local_playback_upstream_failed">您的手机无法获得这首歌曲。</string>
     <string name="not_selectable">不可选择</string>

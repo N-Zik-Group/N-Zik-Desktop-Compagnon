@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Dispositivos de áudio</string>
+    <string name="audio_device_battery_format">Bateria: %1$d%%</string>
     <string name="audio_effects">Efeitos de Áudio</string>
     <string name="audio_output_title">Saída de áudio</string>
     <string name="audio_quality_automatic">Automático</string>
@@ -93,6 +94,7 @@
     <string name="player_queue_action_remove">Remover da fila</string>
     <string name="player_queue_clear_confirmation">Você realmente deseja limpar a fila?</string>
     <string name="player_queue_deleted_item_format">%1$s excluído</string>
+    <string name="player_queue_removed_item_format">Removido da fila: %1$s</string>
     <string name="player_rotating_buttons">Botões rotativos</string>
     <string name="player_seek_backward_five_seconds">Retroceder 5 segundos</string>
     <string name="player_seek_backward_thirty_seconds">Retroceder 30 segundos</string>
@@ -118,6 +120,7 @@
     <string name="queue_discover_title">Descubra</string>
     <string name="visualizer_animation_bubbles">Bolhas</string>
     <string name="visualizer_bar">Barra de visualizador</string>
+    <string name="visualizer_desktop_preview_message">O visualizador de desktop mostra uma pré-visualização estática.</string>
     <string name="visualizer_microphone_permission_message">O efeito de visualizador requer permissão do microfone, por favor.</string>
     <string name="visualizer_title">Visualizador</string>
     <string name="player_error_unknown">Um erro de reprodução desconhecido ocorreu</string>

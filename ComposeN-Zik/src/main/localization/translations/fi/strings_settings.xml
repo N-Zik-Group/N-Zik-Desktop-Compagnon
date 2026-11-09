@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Basson korostustaso</string>
     <string name="settings_cache_action_set_custom_size">Aseta mukautettu välimuisti</string>
     <string name="settings_cache_custom_size_input_hint">Syötä arvo Mt:ssa</string>
+    <string name="settings_cache_custom_size_format">Oma: %1$s</string>
     <string name="settings_cache_delete_confirmation">Haluatko varmasti tyhjentää välimuistin?</string>
     <string name="settings_cache_eviction_description">Kun välimuisti loppuu, ne resurssit, joita ei ole käytetty pitkään aikaan, poistetaan</string>
     <string name="settings_cache_image_size_limit_label">Kuvien välimuistin enimmäiskoko</string>
     <string name="settings_cache_song_size_limit_label">Kappaleiden välimuistin enimmäiskoko</string>
     <string name="settings_cache_title">Välimuisti</string>
+    <string name="settings_cache_usage_percent_format">%1$s used (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s käytetty (rajoittamaton)</string>
     <string name="settings_data_page_description">Tiedot osio sisältää asetukset, jotka muokkaavat miten sovellus käsittelee tietoja paikallisesti ja etänä</string>
     <string name="settings_data_title">Tiedot</string>
     <string name="settings_debug_title">Asetukset</string>

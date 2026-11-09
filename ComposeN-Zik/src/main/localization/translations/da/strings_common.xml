@@ -23,8 +23,12 @@
     <string name="common_storage_used_suffix">brugt</string>
     <string name="common_validation_empty_value">Værdi må ikke være tom</string>
     <string name="common_validation_minimum_value">Værdien skal være større end</string>
+    <string name="common_validation_minimum_value_format">Værdi skal være mindst %1$d</string>
     <string name="dismiss">Afvis</string>
     <string name="common_duration_seconds_format">%1$d s</string>
+    <string name="common_duration_minutes_format">%1$d min</string>
+    <string name="common_duration_hours_format">%1$d h</string>
+    <string name="common_duration_days_format">%1$d d</string>
     <string name="common_file_size_bytes_format">%1$s B</string>
     <string name="common_file_size_gigabytes_format">%1$s GB</string>
     <string name="common_file_size_kilobytes_format">%1$s kB</string>
@@ -32,4 +36,6 @@
     <string name="common_file_size_terabytes_format">%1$s TB</string>
     <string name="common_size_megabytes_format">%1$d MB</string>
     <string name="common_size_gigabytes_format">%1$d GB</string>
+    <string name="common_range_maximum">Maks.</string>
+    <string name="common_range_minimum">Min.</string>
 </resources>

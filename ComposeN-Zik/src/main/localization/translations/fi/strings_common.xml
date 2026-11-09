@@ -23,8 +23,12 @@
     <string name="common_storage_used_suffix">käytetty</string>
     <string name="common_validation_empty_value">Arvo ei voi olla tyhjä</string>
     <string name="common_validation_minimum_value">Arvon on oltava suurempi kuin</string>
+    <string name="common_validation_minimum_value_format">Arvon on oltava vähintään %1$d</string>
     <string name="dismiss">Hylkää</string>
     <string name="common_duration_seconds_format">%1$d s</string>
+    <string name="common_duration_minutes_format">%1$d min</string>
+    <string name="common_duration_hours_format">%1$d h</string>
+    <string name="common_duration_days_format">%1$d pv</string>
     <string name="common_file_size_bytes_format">%1$s B</string>
     <string name="common_file_size_gigabytes_format">%1$s Gt</string>
     <string name="common_file_size_kilobytes_format">%1$s kt</string>
@@ -32,4 +36,6 @@
     <string name="common_file_size_terabytes_format">%1$s Tt</string>
     <string name="common_size_megabytes_format">%1$d Mt</string>
     <string name="common_size_gigabytes_format">%1$d Gt</string>
+    <string name="common_range_maximum">Maksimi</string>
+    <string name="common_range_minimum">Minimi</string>
 </resources>

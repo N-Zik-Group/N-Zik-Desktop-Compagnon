@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">低音提升水平</string>
     <string name="settings_cache_action_set_custom_size">设置自定义缓存</string>
     <string name="settings_cache_custom_size_input_hint">输入MB的值</string>
+    <string name="settings_cache_custom_size_format">自定义: %1$s</string>
     <string name="settings_cache_delete_confirmation">您真的要删除缓存吗？</string>
     <string name="settings_cache_eviction_description">当缓存空间不足时，最长时间未被访问的资源将被清除。</string>
     <string name="settings_cache_image_size_limit_label">图像缓存最大大小</string>
     <string name="settings_cache_song_size_limit_label">歌曲缓存最大大小</string>
     <string name="settings_cache_title">缓存</string>
+    <string name="settings_cache_usage_percent_format">%1$s used (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">已使用 %1$s (无限制)</string>
     <string name="settings_data_page_description">数据部分包含更改应用如何在本地和远程处理数据的设置</string>
     <string name="settings_data_title">数据</string>
     <string name="settings_debug_title">设置</string>

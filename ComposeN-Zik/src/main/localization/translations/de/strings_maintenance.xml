@@ -10,6 +10,7 @@
     <string name="install_pkg_command">Installiere das Paket mit:</string>
     <string name="install_pkg_manual">Es wurde kein Paketmanager erkannt. Installieren Sie das heruntergeladene Paket manuell.</string>
     <string name="install_pkg_pacman_command">Aktualisieren Sie das Paket mit:</string>
+    <string name="install_replacement_portable_preserve_data">Beenden Sie die App und extrahieren Sie das heruntergeladene Archiv in einen neuen Ordner neben dem aktuellen. Bevor Sie die neue Version starten, kopieren Sie den Daten/Ordner aus dem aktuellen App-Ordner in den neuen Ordner, falls er existiert. Behalten Sie den alten Ordner, bis Sie Ihre Einstellungen überprüfen und in der neuen Version paaren.</string>
     <string name="logs_action_export">Logs exportieren</string>
     <string name="logs_export_debug_description">Debug-Log in eine Datei exportieren</string>
     <string name="maintenance_card_desc">App-Status auf einen Blick: Letzter Boot-Durchgang und Live-Subsysteme</string>
@@ -34,6 +35,9 @@
     <string name="updates_action_check_now">Jetzt überprüfen</string>
     <string name="updates_action_download_current_version">Letzte Aktualisierung erneut herunterladen</string>
     <string name="updates_action_install">Installieren</string>
+    <string name="updates_install_failure_exit_timeout">Das Update wurde abgebrochen, da die App nicht innerhalb von %1$d Sekunden geschlossen wurde.</string>
+    <string name="updates_install_failure_exit_code">Update-Installation mit Exit-Code %1$d fehlgeschlagen.</string>
+    <string name="updates_install_failure_generic">Das Update konnte nicht installiert werden.</string>
     <string name="updates_action_open_download">Zum Download</string>
     <string name="updates_automatic_check_title">Suche nach Update aktivieren</string>
     <string name="updates_available">Neue Version verfügbar</string>
@@ -43,7 +47,9 @@
     <string name="updates_build_debug_label">DEBUG</string>
     <string name="updates_build_dev_label">Entwickler</string>
     <string name="updates_cache_cleared">Cache geleert</string>
+    <string name="updates_clear_cache_action">Cache leeren</string>
     <string name="updates_changelog_title">Was ist neu in %s</string>
+    <string name="updates_channel_available_format">%1$s Update verfügbar</string>
     <string name="updates_check_failed">Konnte nicht nach Updates suchen.</string>
     <string name="updates_check_mode_ask">Fragen</string>
     <string name="updates_check_mode_ask_status">Fragen</string>
@@ -53,6 +59,7 @@
     <string name="updates_check_permission_message">Auf Github nach Updates suchen?</string>
     <string name="updates_check_permission_screening_note">Diese Updates würden jedoch nicht die zusätzliche Prüfung durchlaufen, die z.B. bei IzzyOnDroid oder F-Droid durchgeführt wird.</string>
     <string name="updates_check_permission_settings_note">Du kannst es in den Einstellungen immer noch ein- oder ausschalten.</string>
+    <string name="updates_download_origin_note">Diese Updates würden jedoch nicht die zusätzliche Prüfung durchlaufen, die z.B. bei IzzyOnDroid oder F-Droid durchgeführt wird.</string>
     <string name="updates_checking_status">Suche nach Updates…</string>
     <string name="updates_download_completed">Update heruntergeladen</string>
     <string name="updates_downloading_status">Update wird heruntergeladen</string>

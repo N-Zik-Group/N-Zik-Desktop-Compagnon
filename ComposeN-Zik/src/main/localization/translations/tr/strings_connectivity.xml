@@ -47,6 +47,7 @@
     <string name="pair_device_name">Bu bilgisayarın adı</string>
     <string name="pair_device_name_invalid">1 ile 64 karakterden oluşan bir ad girin.</string>
     <string name="pair_listener_unreachable">Telefonunuz bu bilgisayara bağlanamadı. Windows Güvenlik Duvarı mı engelliyor, yoksa ağ Genel olarak mı ayarlanmış? Özel ağlarda N-Zik Masaüstü Yardımcısına izin verin veya aşağıdan manuel olarak eşleştirin.</string>
+    <string name="pair_listener_unreachable_linux">Telefonunuz bu bilgisayara bağlanamadı. Güvenlik duvarınızı kontrol edin ve her iki cihazın da aynı ağda olduğundan emin olun ya da aşağıdan manuel olarak eşleştirin.</string>
     <string name="pair_manual_entry">Manuel giriş</string>
     <string name="pair_manual_entry_text">Telefonunuzda görünen adresi ve kodu girin</string>
     <string name="pair_no_address">Bu bilgisayarda herhangi bir yerel ağ adresi bulunamadığı için QR kodu gösterilemiyor. Aşağıdaki adımları izleyerek manuel olarak eşleştirin.</string>

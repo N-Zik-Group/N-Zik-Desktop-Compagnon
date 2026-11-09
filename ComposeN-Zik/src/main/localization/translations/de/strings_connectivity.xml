@@ -47,6 +47,7 @@
     <string name="pair_device_name">Name dieses PCs</string>
     <string name="pair_device_name_invalid">Geben Sie einen Namen von 1 bis 64 Zeichen ein.</string>
     <string name="pair_listener_unreachable">Ihr Telefon konnte diesen PC nicht erreichen. Windows Firewall oder ein Netzwerk auf Public? Erlaube N-Zik Desktop Compagnon in privaten Netzwerken oder Paar manuell unten.</string>
+    <string name="pair_listener_unreachable_linux">Ihr Telefon konnte diesen PC nicht erreichen. Überprüfen Sie Ihre Firewall und stellen Sie sicher, dass beide Geräte im selben Netzwerk sind, oder paaren Sie manuell unten.</string>
     <string name="pair_manual_entry">Manueller Eintrag</string>
     <string name="pair_manual_entry_text">Geben Sie die Adresse und den Code ein, der auf Ihrem Telefon angezeigt wird</string>
     <string name="pair_no_address">Es wurde keine lokale Netzwerkadresse auf diesem PC gefunden, so dass kein QR-Code angezeigt werden kann. Manuell unten koppeln.</string>

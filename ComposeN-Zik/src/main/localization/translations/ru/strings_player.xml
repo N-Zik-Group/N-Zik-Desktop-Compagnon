@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Аудиоустройства</string>
+    <string name="audio_device_battery_format">Батарея: %1$d%%</string>
     <string name="audio_effects">Аудио эффекты</string>
     <string name="audio_output_title">Аудиовыход</string>
     <string name="audio_quality_automatic">Авто</string>
@@ -93,6 +94,7 @@
     <string name="player_queue_action_remove">Удалить из очереди</string>
     <string name="player_queue_clear_confirmation">Вы действительно хотите очистить очередь?</string>
     <string name="player_queue_deleted_item_format">%1$s удалено</string>
+    <string name="player_queue_removed_item_format">Удалено из очереди: %1$s</string>
     <string name="player_rotating_buttons">Поворот кнопок</string>
     <string name="player_seek_backward_five_seconds">Перемотка на 5 секунд</string>
     <string name="player_seek_backward_thirty_seconds">Перемотка 30 секунд</string>
@@ -118,6 +120,7 @@
     <string name="queue_discover_title">Открытия</string>
     <string name="visualizer_animation_bubbles">Всплывающие чаты</string>
     <string name="visualizer_bar">Панель визуализации</string>
+    <string name="visualizer_desktop_preview_message">В визуализаторе рабочего стола отображается статический предварительный просмотр.</string>
     <string name="visualizer_microphone_permission_message">Эффект визуализации требует разрешения микрофона, пожалуйста, дайте его.</string>
     <string name="visualizer_title">Визуализация</string>
     <string name="player_error_unknown">Произошла неизвестная ошибка воспроизведения</string>

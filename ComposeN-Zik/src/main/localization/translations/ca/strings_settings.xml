@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Nivell d\'augment dels baixos</string>
     <string name="settings_cache_action_set_custom_size">Estableix una memòria cau personalitzada</string>
     <string name="settings_cache_custom_size_input_hint">Introduïu el valor en MB</string>
+    <string name="settings_cache_custom_size_format">Custom: %1$s</string>
     <string name="settings_cache_delete_confirmation">Realment voleu suprimir la memòria cau?</string>
     <string name="settings_cache_eviction_description">Quan la memòria cau s\'esgota l\'espai, els recursos als quals no s\'ha accedit durant més temps s\'esborren</string>
     <string name="settings_cache_image_size_limit_label">Mida màxima de la memòria cau d\'imatges</string>
     <string name="settings_cache_song_size_limit_label">Mida màxima de la memòria cau de cançons</string>
     <string name="settings_cache_title">Memòria cau</string>
+    <string name="settings_cache_usage_percent_format">%1$s used (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s used (Unlimited)</string>
     <string name="settings_data_page_description">The data section contains settings that modify how the app handles data locally and remotely</string>
     <string name="settings_data_title">Dades</string>
     <string name="settings_debug_title">Paràmetres</string>

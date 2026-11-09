@@ -47,6 +47,7 @@
     <string name="pair_device_name">Nazwa tego komputera</string>
     <string name="pair_device_name_invalid">Wprowadź nazwę od 1 do 64 znaków.</string>
     <string name="pair_listener_unreachable">Twój telefon nie mógł dotrzeć do tego komputera. Windows Firewall, czy sieć ustawiona na Publikację? Zezwalaj na Kompaktowy Kompakt N- Zik w prywatnych sieciach lub sparować ręcznie poniżej.</string>
+    <string name="pair_listener_unreachable_linux">Twój telefon nie może dotrzeć do tego komputera. Sprawdź swoją zaporę i upewnij się, że oba urządzenia znajdują się w tej samej sieci lub parę ręcznie poniżej.</string>
     <string name="pair_manual_entry">Wpis ręczny</string>
     <string name="pair_manual_entry_text">Wpisz adres i kod wyświetlany na telefonie</string>
     <string name="pair_no_address">Nie znaleziono adresu sieci lokalnej na tym komputerze, więc kod QR nie może być wyświetlony. Paruj ręcznie poniżej.</string>

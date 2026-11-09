@@ -22,6 +22,7 @@
     <string name="local_playback_other_active">Son sur cet ordinateur : un autre ordinateur (%1$s) est connecté au téléphone.</string>
     <string name="local_playback_unavailable">Le son n\'est pas disponible sur cet ordinateur : le lecteur VLC intégré n\'a pas pu être chargé.</string>
     <string name="local_playback_unavailable_linux">Le son ne fonctionne pas sur cet ordinateur. Installez VLC à l\'aide de %1$s, puis redémarrez l\'application.</string>
+    <string name="local_playback_unavailable_linux_generic">Le son ne fonctionne pas sur cet ordinateur. Utilisez le gestionnaire de paquets de votre distribution pour installer VLC, puis redémarrez l\'application.</string>
     <string name="local_playback_unreachable">Votre téléphone n\'a pas répondu.</string>
     <string name="local_playback_upstream_failed">Votre téléphone n\'a pas pu télécharger ce morceau.</string>
     <string name="not_selectable">Non sélectionnable</string>

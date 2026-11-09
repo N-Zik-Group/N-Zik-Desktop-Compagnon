@@ -103,6 +103,10 @@
     <string name="song_matching_unmatched_label">Unübertroffener Titel</string>
     <string name="song_metadata_update_action_open">Update-Dialog öffnen</string>
     <string name="sort_artist_and_album">Interpret, Album</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">%1$d Song • %2$s</item>
+        <item quantity="other">%1$d Songs • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d Titel</item>
         <item quantity="other">%1$d Lieder</item>

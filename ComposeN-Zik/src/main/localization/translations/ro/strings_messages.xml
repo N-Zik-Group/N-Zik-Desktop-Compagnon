@@ -22,6 +22,7 @@
     <string name="local_playback_other_active">Sunet pe acest calculator: un alt PC (%1$s) este conectat la telefon.</string>
     <string name="local_playback_unavailable">Sunetul pe acest calculator nu este disponibil: VLC încorporat nu a putut fi încărcat.</string>
     <string name="local_playback_unavailable_linux">Sunetul pe acest PC nu este disponibil. Instalați VLC cu %1$s și reporniți aplicația.</string>
+    <string name="local_playback_unavailable_linux_generic">Sunetul pe acest calculator nu este disponibil. Utilizați pachetele de pachete de distribuție pentru a instala VLC, apoi reporniți aplicația.</string>
     <string name="local_playback_unreachable">Telefonul dvs. nu a răspuns.</string>
     <string name="local_playback_upstream_failed">Telefonul dvs. nu a putut primi această melodie.</string>
     <string name="not_selectable">Nu este selectabil</string>

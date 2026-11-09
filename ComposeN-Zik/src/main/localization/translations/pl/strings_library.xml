@@ -103,6 +103,12 @@
     <string name="song_matching_unmatched_label">Niedopasowana piosenka</string>
     <string name="song_metadata_update_action_open">Otwórz okno dialogowe aktualizacji</string>
     <string name="sort_artist_and_album">Artysta, Album</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">%1$d utwór • %2$s</item>
+        <item quantity="few">%1$d utworów • %2$s</item>
+        <item quantity="many">%1$d utworów • %2$s</item>
+        <item quantity="other">%1$d utworów • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d utwór</item>
         <item quantity="few">%1$d utworów</item>

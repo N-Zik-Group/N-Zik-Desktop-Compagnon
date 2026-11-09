@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Lydenheter</string>
+    <string name="audio_device_battery_format">Batteri: %1$d%%</string>
     <string name="audio_effects">Lyd Effekter</string>
     <string name="audio_output_title">Lyd utgang</string>
     <string name="audio_quality_automatic">Automatisk</string>
@@ -93,6 +94,7 @@
     <string name="player_queue_action_remove">Fjern fra kø</string>
     <string name="player_queue_clear_confirmation">Vil du virkelig rydde køen?</string>
     <string name="player_queue_deleted_item_format">%1$s slettet</string>
+    <string name="player_queue_removed_item_format">Fjernet fra køen: %1$s</string>
     <string name="player_rotating_buttons">Roterende knapper</string>
     <string name="player_seek_backward_five_seconds">Spol tilbake 5 sekunder</string>
     <string name="player_seek_backward_thirty_seconds">Spol tilbake 30 sekunder</string>
@@ -118,6 +120,7 @@
     <string name="queue_discover_title">Oppdag</string>
     <string name="visualizer_animation_bubbles">Bobler</string>
     <string name="visualizer_bar">Visualiserbar</string>
+    <string name="visualizer_desktop_preview_message">Visualisering av skrivebordet viser en statisk forhåndsvisning.</string>
     <string name="visualizer_microphone_permission_message">Visualisereffekten krever mikrofon tillatelse, vennligst gi dette.</string>
     <string name="visualizer_title">Visualisering</string>
     <string name="player_error_unknown">En ukjent avspillingsfeil har oppstått</string>

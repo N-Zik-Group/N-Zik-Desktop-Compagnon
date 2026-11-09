@@ -103,6 +103,12 @@
     <string name="song_matching_unmatched_label">Невідповідна пісня</string>
     <string name="song_metadata_update_action_open">Відкрити діалог оновлення</string>
     <string name="sort_artist_and_album">Виконавець, альбом</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">%1$d song • %2$s</item>
+        <item quantity="few">%1$d songs • %2$s</item>
+        <item quantity="many">%1$d songs • %2$s</item>
+        <item quantity="other">%1$d songs • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d пісня</item>
         <item quantity="few">%1$d пісень</item>

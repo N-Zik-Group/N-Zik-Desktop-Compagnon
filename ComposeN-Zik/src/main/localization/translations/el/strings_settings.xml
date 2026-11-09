@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Επίπεδο ενίσχυσης μπάσου</string>
     <string name="settings_cache_action_set_custom_size">Ορισμός προσαρμοσμένης κρυφής μνήμης</string>
     <string name="settings_cache_custom_size_input_hint">Εισάγετε τιμή σε MB</string>
+    <string name="settings_cache_custom_size_format">Προσαρμοσμένο: %1$s</string>
     <string name="settings_cache_delete_confirmation">Θέλετε πραγματικά να διαγράψετε την προσωρινή μνήμη?</string>
     <string name="settings_cache_eviction_description">Όταν η κρυφή μνήμη γεμίσει, τα στοιχεία τα οποία δεν έχουν χρησιμοποιηθεί για το μεγαλύτερο χρονικό διάστημα διαγράφονται</string>
     <string name="settings_cache_image_size_limit_label">Μέγιστο μέγεθος προσωρινής μνήμης εικόνας</string>
     <string name="settings_cache_song_size_limit_label">Μέγιστο μέγεθος προσωρινής μνήμης τραγουδιού</string>
     <string name="settings_cache_title">Μνήμη Cache</string>
+    <string name="settings_cache_usage_percent_format">%1$s used (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">Χρησιμοποιημένο %1$s (απεριόριστο)</string>
     <string name="settings_data_page_description">Η ενότητα δεδομένων περιέχει ρυθμίσεις που τροποποιούν τον τρόπο με τον οποίο η εφαρμογή χειρίζεται τα δεδομένα τοπικά και απομακρυσμένα</string>
     <string name="settings_data_title">Δεδομένα</string>
     <string name="settings_debug_title">Ρυθμίσεις</string>

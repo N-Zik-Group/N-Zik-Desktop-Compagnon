@@ -103,6 +103,10 @@
     <string name="song_matching_unmatched_label">Αντιστοιχισμένο τραγούδι</string>
     <string name="song_metadata_update_action_open">Άνοιγμα διαλόγου ενημέρωσης</string>
     <string name="sort_artist_and_album">Καλλιτέχνης, Άλμπουμ</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">%1$d τραγούδι • %2$s</item>
+        <item quantity="other">%1$d τραγούδια • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d τραγούδι</item>
         <item quantity="other">%1$d τραγούδια</item>
