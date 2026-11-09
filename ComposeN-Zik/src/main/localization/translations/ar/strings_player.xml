@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">أجهزة الصوت</string>
+    <string name="audio_device_battery_format">البطارية: %1$d%%</string>
     <string name="audio_effects">تأثيرات الصوت</string>
     <string name="audio_output_title">إخراج الصوت</string>
     <string name="audio_quality_automatic">تلقائي</string>
