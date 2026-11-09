@@ -47,6 +47,7 @@
     <string name="pair_device_name">Namnet på denna dator</string>
     <string name="pair_device_name_invalid">Ange ett namn på 1 till 64 tecken.</string>
     <string name="pair_listener_unreachable">Din telefon kunde inte nå den här datorn. Windows Firewall, eller ett nätverk som är inställt på offentlig? Tillåt N-Zik Desktop Compagnon på privata nätverk, eller parkoppla manuellt nedan.</string>
+    <string name="pair_listener_unreachable_linux">Din telefon kunde inte nå den här datorn. Kontrollera din brandvägg och se till att båda enheterna finns i samma nätverk eller parkoppla manuellt nedan.</string>
     <string name="pair_manual_entry">Manuell post</string>
     <string name="pair_manual_entry_text">Skriv in adressen och koden som visas på din telefon</string>
     <string name="pair_no_address">Ingen lokal nätverksadress hittades på denna dator, så ingen QR-kod kan visas. Para manuellt nedan.</string>
