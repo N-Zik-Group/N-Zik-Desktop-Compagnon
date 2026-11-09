@@ -10,6 +10,7 @@
     <string name="install_pkg_command">Installera paketet med:</string>
     <string name="install_pkg_manual">Ingen pakethanterare upptäcktes. Installera det nedladdade paketet manuellt.</string>
     <string name="install_pkg_pacman_command">Uppgradera paketet med:</string>
+    <string name="install_replacement_portable_preserve_data">Avsluta appen och extrahera det nedladdade arkivet till en ny mapp bredvid den nuvarande. Innan du startar den nya versionen, kopiera data / mapp från den aktuella app-mappen till den nya om den finns. Behåll den gamla mappen tills du verifierar dina inställningar och kopplar ihop den nya versionen.</string>
     <string name="logs_action_export">Exportera loggar</string>
     <string name="logs_export_debug_description">Exportera felsökningslogg till en fil</string>
     <string name="maintenance_card_desc">Appen tillstånd i korthet: senaste boot passerar och live delsystem</string>
@@ -34,6 +35,9 @@
     <string name="updates_action_check_now">Kontrollera nu</string>
     <string name="updates_action_download_current_version">Hämta igen senaste uppdateringen</string>
     <string name="updates_action_install">Installera</string>
+    <string name="updates_install_failure_exit_timeout">Uppdateringen avbröts eftersom appen inte stängdes inom %1$d sekunder.</string>
+    <string name="updates_install_failure_exit_code">Installationen av uppdateringen misslyckades med avslutningskoden %1$d.</string>
+    <string name="updates_install_failure_generic">Uppdateringen kunde inte installeras.</string>
     <string name="updates_action_open_download">Gå till nedladdning</string>
     <string name="updates_automatic_check_title">Aktivera automatisk uppdateringskontroll</string>
     <string name="updates_available">Uppdatering tillgänglig</string>
@@ -43,7 +47,9 @@
     <string name="updates_build_debug_label">DEBUG</string>
     <string name="updates_build_dev_label">DEV</string>
     <string name="updates_cache_cleared">Cachen rensad</string>
+    <string name="updates_clear_cache_action">Rensa cache</string>
     <string name="updates_changelog_title">Vad är nytt i %s</string>
+    <string name="updates_channel_available_format">%1$s uppdatering tillgänglig</string>
     <string name="updates_check_failed">Kunde inte söka efter uppdateringar.</string>
     <string name="updates_check_mode_ask">Fråga</string>
     <string name="updates_check_mode_ask_status">Ask</string>
@@ -53,6 +59,7 @@
     <string name="updates_check_permission_message">Kolla på Github för uppdateringar?</string>
     <string name="updates_check_permission_screening_note">Men dessa uppdateringar skulle inte gå igenom ytterligare screening som utförs på t.ex. IzzyOnDroid eller F-Droid.</string>
     <string name="updates_check_permission_settings_note">Du kan fortfarande slå på/av den från inställningarna.</string>
+    <string name="updates_download_origin_note">Men dessa uppdateringar skulle inte gå igenom ytterligare screening som utförs på t.ex. IzzyOnDroid eller F-Droid.</string>
     <string name="updates_checking_status">Söker efter uppdateringar…</string>
     <string name="updates_download_completed">Uppdatera hämtad</string>
     <string name="updates_downloading_status">Laddar ner uppdatering</string>
