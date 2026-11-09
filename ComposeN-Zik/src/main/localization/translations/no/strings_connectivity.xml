@@ -47,6 +47,7 @@
     <string name="pair_device_name">Navn på denne PC</string>
     <string name="pair_device_name_invalid">Skriv inn et navn på 1 til 64 tegn.</string>
     <string name="pair_listener_unreachable">Telefonen din kunne ikke nå denne PC-en. Windows-fyrvegg, eller et nettverk satt til Publikum? Tillat N-Zik Desktop Compagnon på private nettverk, eller par manuelt nedenfor.</string>
+    <string name="pair_listener_unreachable_linux">Telefonen din kunne ikke nå denne PC-en. Sjekk brannmuren din og sørg for at begge enhetene er på samme nettverk, eller par manuelt nedenfor.</string>
     <string name="pair_manual_entry">Manuell registrering</string>
     <string name="pair_manual_entry_text">Skriv inn adressen og koden som vises på telefonen din</string>
     <string name="pair_no_address">Ingen lokal nettverksadresse ble funnet på denne PC\'en, så ingen QR-kode kan vises. Parre manuelt nedenfor.</string>
