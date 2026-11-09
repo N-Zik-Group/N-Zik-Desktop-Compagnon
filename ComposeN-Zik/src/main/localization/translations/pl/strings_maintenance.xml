@@ -10,6 +10,7 @@
     <string name="install_pkg_command">Zainstaluj pakiet z:</string>
     <string name="install_pkg_manual">Nie wykryto menedżera pakietów. Zainstaluj pobrany pakiet ręcznie.</string>
     <string name="install_pkg_pacman_command">Ulepsz pakiet z:</string>
+    <string name="install_replacement_portable_preserve_data">Wyjdź z aplikacji i rozpakuj pobrane archiwum do nowego folderu obok bieżącego. Przed uruchomieniem nowej wersji, skopiuj dane/ folder z bieżącego folderu aplikacji do nowego, jeśli istnieje. Zachowaj stary folder do czasu zweryfikowania ustawień i parowania w nowej wersji.</string>
     <string name="logs_action_export">Eksportuj logi</string>
     <string name="logs_export_debug_description">Eksportuj dziennik debugowania do pliku</string>
     <string name="maintenance_card_desc">Stan aplikacji w glance: ostatnie przejścia rozruchu i podsystemy na żywo</string>
@@ -34,6 +35,9 @@
     <string name="updates_action_check_now">Sprawdź teraz</string>
     <string name="updates_action_download_current_version">Pobierz ponownie ostatnią aktualizację</string>
     <string name="updates_action_install">Zainstaluj</string>
+    <string name="updates_install_failure_exit_timeout">Aktualizacja została anulowana, ponieważ aplikacja nie została zamknięta w %1$d sekund.</string>
+    <string name="updates_install_failure_exit_code">Instalacja aktualizacji nie powiodła się z kodem wyjścia %1$d.</string>
+    <string name="updates_install_failure_generic">Nie można zainstalować aktualizacji.</string>
     <string name="updates_action_open_download">Przejdź do pobrania</string>
     <string name="updates_automatic_check_title">Włącz automatyczne sprawdzanie aktualizacji</string>
     <string name="updates_available">Dostępna jest aktualizacja</string>
@@ -43,7 +47,9 @@
     <string name="updates_build_debug_label">DEBUG</string>
     <string name="updates_build_dev_label">DEV</string>
     <string name="updates_cache_cleared">Pamięć podręczna usunięta</string>
+    <string name="updates_clear_cache_action">Usuń pamięć podręczną</string>
     <string name="updates_changelog_title">Co nowego w %s</string>
+    <string name="updates_channel_available_format">Dostępna aktualizacja %1$s</string>
     <string name="updates_check_failed">Nie można sprawdzić aktualizacji.</string>
     <string name="updates_check_mode_ask">Zapytaj</string>
     <string name="updates_check_mode_ask_status">Zapytaj</string>
@@ -53,6 +59,7 @@
     <string name="updates_check_permission_message">Sprawdzić aktualizacje na Github?</string>
     <string name="updates_check_permission_screening_note">Te aktualizacje nie podlegają procesowi sprawdzania tak jak na IzzyOnDroid lub F-droid.</string>
     <string name="updates_check_permission_settings_note">Nadal możesz ją włączyć lub wyłączyć na podstawie ustawień.</string>
+    <string name="updates_download_origin_note">Te aktualizacje nie podlegają procesowi sprawdzania tak jak na IzzyOnDroid lub F-droid.</string>
     <string name="updates_checking_status">Sprawdzanie aktualizacji…</string>
     <string name="updates_download_completed">Aktualizacja pobrana</string>
     <string name="updates_downloading_status">Pobieranie aktualizacji</string>
