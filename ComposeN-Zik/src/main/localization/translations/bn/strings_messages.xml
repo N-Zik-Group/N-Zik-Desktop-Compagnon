@@ -18,11 +18,11 @@
     <string name="error_windows_install_helper">The Windows installer could not be started. Run the downloaded installer manually.</string>
     <string name="interface_in_use">যে ইন্টারফেস ব্যাবহৃত হচ্ছে</string>
     <string name="local_playback_failed">This song could not be played on this PC.</string>
-    <string name="local_playback_invalid_url">This song could not be played on this PC.</string>
     <string name="local_playback_not_found">This song is no longer on your phone.</string>
     <string name="local_playback_other_active">Sound on this PC: another PC (%1$s) is connected to the phone.</string>
     <string name="local_playback_unavailable">Sound on this PC is unavailable: the embedded VLC could not be loaded.</string>
     <string name="local_playback_unavailable_linux">Sound on this PC is unavailable. Install VLC with %1$s and restart the app.</string>
+    <string name="local_playback_unavailable_linux_generic">Sound on this PC is unavailable. Use your distribution\'s package manager to install VLC, then restart the app.</string>
     <string name="local_playback_unreachable">Your phone did not answer.</string>
     <string name="local_playback_upstream_failed">Your phone could not get this song.</string>
     <string name="not_selectable">Not selectable</string>
@@ -38,7 +38,6 @@
     <string name="notice_unavailable">%1$s: the phone’s player is unavailable. Try again later.</string>
     <string name="notice_unreachable">%1$s: the phone did not answer.</string>
     <string name="path_copied">Path copied</string>
-    <string name="updates_check_failed">Could not check for updates.</string>
     <string name="updates_check_invalid_response">The update server returned an invalid response.</string>
     <string name="updates_download_generic_error">Could not download the update.</string>
     <string name="updates_download_invalid_filename">The update file name is invalid.</string>
