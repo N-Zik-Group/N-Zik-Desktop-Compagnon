@@ -47,6 +47,7 @@
     <string name="pair_device_name">此PC 的名称</string>
     <string name="pair_device_name_invalid">输入1到64个字符的名称。</string>
     <string name="pair_listener_unreachable">您的手机无法到达此 PC。 Windows 防火墙或网络设置为公共吗？允许N-Zik 桌面Compagnon 在私人网络上使用或手动配对。</string>
+    <string name="pair_listener_unreachable_linux">您的手机无法到达此 PC。请检查您的防火墙并确保两个设备都在同一个网络上，或者手动配对。</string>
     <string name="pair_manual_entry">手动记录</string>
     <string name="pair_manual_entry_text">输入您手机上显示的地址和代码</string>
     <string name="pair_no_address">此 PC 上没有找到本地网络地址，所以无法显示二维码。请手动配对。</string>
