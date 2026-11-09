@@ -108,7 +108,7 @@
         <item quantity="other">%1$d canzoni • %2$s</item>
     </plurals>
     <plurals name="library_song_count">
-        <item quantity="one">%1$d song</item>
+        <item quantity="one">%1$d brano</item>
         <item quantity="other">Canzoni %1$d</item>
     </plurals>
     <string name="library_on_device_permission_request_failed">Impossibile richiedere l\'accesso alla musica su questo dispositivo.</string>
