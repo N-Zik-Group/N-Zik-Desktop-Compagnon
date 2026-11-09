@@ -32,11 +32,14 @@
     <string name="settings_bass_boost_level">Bassverstärkungspegel</string>
     <string name="settings_cache_action_set_custom_size">Eigene Größe des Zwischenspeichers festlegen</string>
     <string name="settings_cache_custom_size_input_hint">Wert in MB eingeben</string>
+    <string name="settings_cache_custom_size_format">Benutzerdefiniert: %1$s</string>
     <string name="settings_cache_delete_confirmation">Möchtest du den Cache wirklich löschen?</string>
     <string name="settings_cache_eviction_description">Wenn der Zwischenspeicher keinen Speicherplatz mehr hat, werden die Ressourcen, auf die am längsten nicht zugegriffen wurde, gelöscht</string>
     <string name="settings_cache_image_size_limit_label">Maximale Größe des Bild-Cache</string>
     <string name="settings_cache_song_size_limit_label">Maximale Größe des Song-Cache</string>
     <string name="settings_cache_title">Zwischenspeicher</string>
+    <string name="settings_cache_usage_percent_format">%1$s verwendet (%2$d%%)</string>
+    <string name="settings_cache_usage_unlimited_format">%1$s verwendet (unbegrenzt)</string>
     <string name="settings_data_page_description">Der Daten-Abschnitt enthält Einstellungen, die ändern, wie die App mit Daten lokal und ferngesteuert umgeht</string>
     <string name="settings_data_title">Daten</string>
     <string name="settings_debug_title">Einstellungen</string>
