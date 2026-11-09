@@ -103,6 +103,10 @@
     <string name="song_matching_unmatched_label">Ongeëvenaard nummer</string>
     <string name="song_metadata_update_action_open">Open update dialoogvenster</string>
     <string name="sort_artist_and_album">Artiest, Album</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">%1$d nummer • %2$s</item>
+        <item quantity="other">%1$d nummers • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d nummer</item>
         <item quantity="other">%1$d nummers</item>
