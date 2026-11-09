@@ -103,6 +103,10 @@
     <string name="song_matching_unmatched_label">Música sem correspondência</string>
     <string name="song_metadata_update_action_open">Abrir diálogo de atualização</string>
     <string name="sort_artist_and_album">Artista, Álbum</string>
+    <plurals name="library_song_count_with_duration">
+        <item quantity="one">Música %1$d • %2$s</item>
+        <item quantity="other">%1$d músicas • %2$s</item>
+    </plurals>
     <plurals name="library_song_count">
         <item quantity="one">%1$d song</item>
         <item quantity="other">%1$d músicas</item>
