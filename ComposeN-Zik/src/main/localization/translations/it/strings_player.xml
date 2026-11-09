@@ -93,6 +93,7 @@
     <string name="player_queue_action_remove">Rimuovi dalla coda</string>
     <string name="player_queue_clear_confirmation">Vuoi davvero pulire la coda?</string>
     <string name="player_queue_deleted_item_format">%1$s eliminato</string>
+    <string name="player_queue_removed_item_format">Rimosso dalla coda: %1$s</string>
     <string name="player_rotating_buttons">Rotazione pulsanti</string>
     <string name="player_seek_backward_five_seconds">Riavvolgi 5 secondi</string>
     <string name="player_seek_backward_thirty_seconds">Riavvolge 30 secondi</string>
@@ -118,6 +119,7 @@
     <string name="queue_discover_title">Esplora</string>
     <string name="visualizer_animation_bubbles">Bolle</string>
     <string name="visualizer_bar">Barra visualizzatore</string>
+    <string name="visualizer_desktop_preview_message">Il visualizzatore desktop mostra un\'anteprima statica.</string>
     <string name="visualizer_microphone_permission_message">L\'effetto Visualizer richiede i permessi del microfono, concedili per favore.</string>
     <string name="visualizer_title">Visualizzazione</string>
     <string name="player_error_unknown">Si è verificato un errore di riproduzione sconosciuto</string>
