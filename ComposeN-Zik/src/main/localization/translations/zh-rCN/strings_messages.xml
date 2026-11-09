@@ -18,11 +18,11 @@
     <string name="error_windows_install_helper">Windows 安装程序无法启动。手动运行下载的安装程序。</string>
     <string name="interface_in_use">正在使用的接口</string>
     <string name="local_playback_failed">该歌曲无法在这个PC上播放。</string>
-    <string name="local_playback_invalid_url">该歌曲无法在这个PC上播放。</string>
     <string name="local_playback_not_found">这首歌不再在您的手机上。</string>
     <string name="local_playback_other_active">音效在此 PC: 另一个 PC (%1$s) 已连接到手机。</string>
     <string name="local_playback_unavailable">此PC 上的声音不可用：嵌入的 VLC 无法加载。</string>
     <string name="local_playback_unavailable_linux">此PC 上的声音不可用。通过 %1$s 安装 VLC 并重启应用程序。</string>
+    <string name="local_playback_unavailable_linux_generic">此PC 上的声音不可用。使用您的发行版软件包管理器安装 VLC，然后重启应用程序。</string>
     <string name="local_playback_unreachable">您的手机没有应答。</string>
     <string name="local_playback_upstream_failed">您的手机无法获得这首歌曲。</string>
     <string name="not_selectable">不可选择</string>
@@ -38,7 +38,6 @@
     <string name="notice_unavailable">%1$s：手机播放器不可用。请稍后再试。</string>
     <string name="notice_unreachable">%1$s：手机没有应答。</string>
     <string name="path_copied">路径已复制</string>
-    <string name="updates_check_failed">无法检查更新。</string>
     <string name="updates_check_invalid_response">更新服务器返回了无效的响应。</string>
     <string name="updates_download_generic_error">无法下载更新。</string>
     <string name="updates_download_invalid_filename">更新文件名无效。</string>
