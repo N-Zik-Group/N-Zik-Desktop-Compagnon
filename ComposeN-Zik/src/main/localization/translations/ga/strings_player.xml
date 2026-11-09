@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio_devices">Audio devices</string>
+    <string name="audio_device_battery_format">Battery: %1$d%%</string>
     <string name="audio_effects">Audio Effects</string>
     <string name="audio_output_title">Audio output</string>
     <string name="audio_quality_automatic">Automatic</string>
@@ -93,6 +94,7 @@
     <string name="player_queue_action_remove">Bain as scuaine</string>
     <string name="player_queue_clear_confirmation">Do you really want to clean queue?</string>
     <string name="player_queue_deleted_item_format">%1$s deleted</string>
+    <string name="player_queue_removed_item_format">Removed from queue: %1$s</string>
     <string name="player_rotating_buttons">Rotating buttons</string>
     <string name="player_seek_backward_five_seconds">Rewind 5 seconds</string>
     <string name="player_seek_backward_thirty_seconds">Rewinds 30 seconds</string>
@@ -118,6 +120,7 @@
     <string name="queue_discover_title">Discover</string>
     <string name="visualizer_animation_bubbles">Bubbles</string>
     <string name="visualizer_bar">Visualizer bar</string>
+    <string name="visualizer_desktop_preview_message">The Desktop visualizer shows a static preview.</string>
     <string name="visualizer_microphone_permission_message">Visualizer effect require mic permission, grant please.</string>
     <string name="visualizer_title">Visualizer</string>
     <string name="player_error_unknown">An unknown playback error has occurred</string>
