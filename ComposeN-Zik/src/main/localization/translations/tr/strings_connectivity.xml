@@ -29,7 +29,7 @@
     <string name="listen_together_server_request_failed">Birlikte Dinle sunucusu isteği tamamlayamadı.</string>
     <string name="listen_together_server_url">Sunucu URL\'si</string>
     <string name="listen_together_suggest">Oda sahibine öner</string>
-    <string name="listen_together_sync_volume">Oda sahibinin ses seviyesine eşitle</string>
+    <string name="listen_together_sync_volume">Ev sahibinin ses seviyesine eşitle</string>
     <string name="listen_together_title">Birlikte Dinle</string>
     <string name="listen_together_username">Kullanıcı adı</string>
     <string name="listen_together_view_logs">Günlükleri görüntüle</string>
