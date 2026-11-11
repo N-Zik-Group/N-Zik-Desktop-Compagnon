@@ -14,7 +14,7 @@
     <string name="listen_together_auto_approval_suggestions_description">Misafirlerden gelen şarkı önerilerini otomatik onayla ve sıraya al</string>
     <string name="listen_together_create_room_description">Bir oda oluşturun ve kodu arkadaşlarınızla paylaşın</string>
     <string name="listen_together_history_description">Yerel geçmişinizde Birlikte Dinle parçalarını kaydedin</string>
-    <string name="listen_together_sync_volume_description">Misafirlerin ses seviyesi oda sahibinin ses seviyesine eşitlenir</string>
+    <string name="listen_together_sync_volume_description">Misafirlerin ses seviyesi ev sahibinin ses seviyesine eşitlenir</string>
     <string name="listen_together_view_logs_description">Bağlantı olaylarını ve mesajlarını hata ayıklama</string>
     <string name="lyrics_alignment_left_label">Sol</string>
     <string name="lyrics_alignment_right_label">Sağ</string>
