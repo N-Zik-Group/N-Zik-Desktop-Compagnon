@@ -315,6 +315,15 @@ Any file derived from Cubic Music Desktop keeps its original copyright and licen
 [![Auto-assign issues](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/auto-assign-issues.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/auto-assign-issues.yml)  
 [![Update Project Stats and Chart](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/metrics.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/metrics.yml)
 
+[![Add labels](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/add-labels.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/add-labels.yaml)
+[![Build Beta](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-beta.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-beta.yml)
+[![Build Dev](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-dev.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-dev.yml)
+[![Build Stable](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-stable.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-stable.yml)
+[![Build Test (stable dry run)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-test.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-test.yaml)
+[![NSIS Update Checker](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/nsis-updater.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/nsis-updater.yml)
+[![VLC Linux Tarball Builder](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/vlc-tarball-builder.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/vlc-tarball-builder.yml)
+[![Fetch, create, and update repo's translators](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-translators.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-translators.yaml)
+
 # 👥 Contributors
 
 [![GitHub contributors](https://contrib.rocks/image?repo=N-Zik-Group/N-Zik-Desktop-Compagnon)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/graphs/contributors)
