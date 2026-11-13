@@ -309,15 +309,6 @@ jobs:
                     100% {{ r: 4; stroke-width: 2.5; }}
                   }}
                   .dot-pulse {{ animation: pulse 2s infinite; }}
-                  @keyframes draw {{
-                    from {{ stroke-dashoffset: 1; }}
-                    to {{ stroke-dashoffset: 0; }}
-                  }}
-                  .animated-line {{
-                    stroke-dasharray: 1;
-                    stroke-dashoffset: 1;
-                    animation: draw 1.5s ease-out forwards;
-                  }}
                 </style>
                 <defs>
                   <filter id="shadow2" x="-5%" y="-5%" width="110%" height="110%">
@@ -343,7 +334,7 @@ jobs:
                 </g>
 
                 <!-- Main curve -->
-                <path d="{path_d}" pathLength="1" class="chart-line animated-line" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="{path_d}" class="chart-line" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
 
                 <!-- Bright endpoint dot -->
                 <circle cx="{points[-1][0]:.1f}" cy="{points[-1][1]:.1f}" r="4" class="chart-dot dot-pulse" stroke-width="2.5" />
