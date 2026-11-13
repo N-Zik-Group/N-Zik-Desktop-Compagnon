@@ -302,7 +302,11 @@ Any file derived from Cubic Music Desktop keeps its original copyright and licen
 
 ## 🛠️ Build & Deployment
 
-[![Automatic Cache Builder](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/cache-builder.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/cache-builder.yaml)
+[![Automatic Cache Builder](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/cache-builder.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/cache-builder.yaml)  
+[![Build Beta](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-beta.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-beta.yml)  
+[![Build Dev](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-dev.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-dev.yml)  
+[![Build Stable](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-stable.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-stable.yml)  
+[![Build Test (stable dry run)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-test.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-test.yaml)
 
 ## 🔄 Automation & Maintenance
 
@@ -313,16 +317,14 @@ Any file derived from Cubic Music Desktop keeps its original copyright and licen
 [![Close stale tickets weekly](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/close-stale-tickets.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/close-stale-tickets.yaml)  
 [![Comment or close on label](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/comment-on-label.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/comment-on-label.yaml)  
 [![Auto-assign issues](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/auto-assign-issues.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/auto-assign-issues.yml)  
-[![Update Project Stats and Chart](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/metrics.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/metrics.yml)
-
-[![Add labels](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/add-labels.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/add-labels.yaml)
-[![Build Beta](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-beta.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-beta.yml)
-[![Build Dev](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-dev.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-dev.yml)
-[![Build Stable](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-stable.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-stable.yml)
-[![Build Test (stable dry run)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-test.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/build-test.yaml)
-[![NSIS Update Checker](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/nsis-updater.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/nsis-updater.yml)
-[![VLC Linux Tarball Builder](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/vlc-tarball-builder.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/vlc-tarball-builder.yml)
-[![Fetch, create, and update repo's translators](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-translators.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-translators.yaml)
+[![Update Project Stats and Chart](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/metrics.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/metrics.yml)  
+[![Add labels](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/add-labels.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/add-labels.yaml)  
+[![NSIS Update Checker](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/nsis-updater.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/nsis-updater.yml)  
+[![VLC Linux Tarball Builder](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/vlc-tarball-builder.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/vlc-tarball-builder.yml)  
+[![Fetch, create, and update repo's translators](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-translators.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-translators.yaml)  
+[![Code Coverage Agent](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/code-coverage-agent/code-coverage-agent/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/code-coverage-agent/code-coverage-agent)  
+[![CodeQL - Code Quality](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/github-code-quality/codeql/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/github-code-quality/codeql)  
+[![CodeQL](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/github-code-scanning/codeql)
 
 # 👥 Contributors
 
