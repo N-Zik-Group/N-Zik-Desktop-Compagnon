@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">Pokaż/Ukryj programistów i projektantów, którzy przyczynili się do tworzenia aplikacji.</string>
+    <string name="about_translators_description">Pokaż/Ukryj osoby, które tłumaczyły aplikację.</string>
+    <string name="about_credits_title">Kredyty</string>
+    <string name="about_credits_open">Zobacz kredyty i licencje</string>
     <string name="about_action_report_issue">Zgłoś problem</string>
     <string name="about_action_view_source">Pokaż kod źródłowy</string>
     <string name="about_authorship_preposition">przez</string>
