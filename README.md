@@ -297,7 +297,6 @@ This project may reuse code from [Cubic Music Desktop](https://github.com/cybruG
 
 Any file derived from Cubic Music Desktop keeps its original copyright and license notices.
 
-See the [N-Zik credits](https://github.com/N-Zik-Group/N-Zik/blob/main/ComposeN-Zik/src/androidMain/res/raw/credits.md) for desktop libraries, fonts and upstream projects.
 
 # 👀 Status
 
@@ -318,6 +317,10 @@ See the [N-Zik credits](https://github.com/N-Zik-Group/N-Zik/blob/main/ComposeN-
 ## 👥 Contributors
 
 [![Fetch, create, and update repo's contributors](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-contributors.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-contributors.yaml)
+
+# 🎖️ Credits
+
+See the [N-Zik credits](https://github.com/N-Zik-Group/N-Zik/blob/main/ComposeN-Zik/src/androidMain/res/raw/credits.md) for desktop libraries, fonts and upstream projects.
 
 # ⚠️ Disclaimer
 
