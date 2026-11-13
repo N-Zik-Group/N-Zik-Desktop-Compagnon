@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">Näytä tai piilota kehittäjät ja suunnittelijat, jotka ovat osallistuneet sovellukseen.</string>
+    <string name="about_translators_description">Näytä tai piilota ihmiset, jotka ovat kääntäneet sovelluksen.</string>
+    <string name="about_credits_title">Tekijät</string>
+    <string name="about_credits_open">Näytä hyvitykset ja lisenssit</string>
     <string name="about_action_report_issue">Ilmoita ongelmasta</string>
     <string name="about_action_view_source">Näytä lähdekoodi</string>
     <string name="about_authorship_preposition">mennessä</string>
