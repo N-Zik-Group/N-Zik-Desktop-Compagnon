@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">显示或隐藏为应用程序贡献力量的开发者和设计师。</string>
+    <string name="about_translators_description">是否显示翻译应用程序的人。</string>
+    <string name="about_credits_title">致谢</string>
+    <string name="about_credits_open">查看信用和许可证</string>
     <string name="about_action_report_issue">报告问题</string>
     <string name="about_action_view_source">查看源代码</string>
     <string name="about_authorship_preposition">由</string>

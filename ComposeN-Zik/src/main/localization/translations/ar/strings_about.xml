@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">إظهار أو إخفاء المطورين والمصممين الذين ساهموا في التطبيق.</string>
+    <string name="about_translators_description">إظهار أو إخفاء الأشخاص الذين ترجموا التطبيق.</string>
+    <string name="about_credits_title">الاعتمادات</string>
+    <string name="about_credits_open">عرض الاعتمادات والتراخيص</string>
     <string name="about_action_report_issue">الإبلاغ عن مشكلة</string>
     <string name="about_action_view_source">عرض كود المصدر</string>
     <string name="about_authorship_preposition">بواسطة</string>

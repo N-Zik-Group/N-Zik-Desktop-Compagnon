@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">Uygulamaya katkıda bulunan geliştiricileri ve tasarımcıları göster veya gizle.</string>
+    <string name="about_translators_description">Uygulamayı çeviren kişileri göster veya gizle.</string>
+    <string name="about_credits_title">Credits</string>
+    <string name="about_credits_open">View credits and licenses</string>
     <string name="about_action_report_issue">Sorun bildir</string>
     <string name="about_action_view_source">Kaynak kodunu görüntüle</string>
     <string name="about_authorship_preposition">tarafından</string>

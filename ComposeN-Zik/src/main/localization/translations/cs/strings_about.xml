@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">Zvolte, zda zobrazit nebo schovat vývojáře a návrháře, kteří přispěli k aplikaci.</string>
+    <string name="about_translators_description">Zvolte, zda zobrazit nebo schovat lidi, kteří aplikaci přeložili.</string>
+    <string name="about_credits_title">Kredity</string>
+    <string name="about_credits_open">Zobrazit kredity a licence</string>
     <string name="about_action_report_issue">Nahlásit problém</string>
     <string name="about_action_view_source">Zobrazit zdrojový kód</string>
     <string name="about_authorship_preposition">od</string>

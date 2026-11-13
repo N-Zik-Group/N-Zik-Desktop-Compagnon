@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">Exibir ou ocultar os desenvolvedores e designers que contribuíram para o app.</string>
+    <string name="about_translators_description">Exibir ou ocultar as pessoas que traduziram o aplicativo.</string>
+    <string name="about_credits_title">créditos</string>
+    <string name="about_credits_open">Ver créditos e licenças</string>
     <string name="about_action_report_issue">Reportar um problema</string>
     <string name="about_action_view_source">Veja o código-fonte</string>
     <string name="about_authorship_preposition">Por</string>

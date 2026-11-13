@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">アプリに貢献した開発者やデザイナーを表示または非表示にします。</string>
+    <string name="about_translators_description">アプリを翻訳した人を表示または非表示にします。</string>
+    <string name="about_credits_title">クレジット</string>
+    <string name="about_credits_open">クレジットとライセンスを表示</string>
     <string name="about_action_report_issue">問題を報告</string>
     <string name="about_action_view_source">ソースコードを見る</string>
     <string name="about_authorship_preposition">作成者:</string>

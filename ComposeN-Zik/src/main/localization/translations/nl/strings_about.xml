@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">Toon of verberg de ontwikkelaars en ontwerpers die hebben bijgedragen aan de app.</string>
+    <string name="about_translators_description">Toon of verberg de mensen die de app hebben vertaald.</string>
+    <string name="about_credits_title">Kredieten</string>
+    <string name="about_credits_open">Bekijk credits en licenties</string>
     <string name="about_action_report_issue">Meld een probleem</string>
     <string name="about_action_view_source">Bekijk de broncode</string>
     <string name="about_authorship_preposition">door</string>

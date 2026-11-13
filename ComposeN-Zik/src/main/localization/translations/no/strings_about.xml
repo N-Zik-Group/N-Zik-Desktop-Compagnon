@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">Vis eller skjul utviklere som har bidratt til appen.</string>
+    <string name="about_translators_description">Vis eller skjul folk som oversatte appen.</string>
+    <string name="about_credits_title">Medvirkende</string>
+    <string name="about_credits_open">Vis kreditt og lisenser</string>
     <string name="about_action_report_issue">Rapporter en feil</string>
     <string name="about_action_view_source">Vis kildekoden</string>
     <string name="about_authorship_preposition">av</string>

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">Arată sau ascunde dezvoltatorii și designerii care au contribuit la aplicație.</string>
+    <string name="about_translators_description">Arată sau ascunde persoanele care au tradus aplicația.</string>
+    <string name="about_credits_title">Credite</string>
+    <string name="about_credits_open">Vizualizați creditele și licențele</string>
     <string name="about_action_report_issue">Raportează o problemă</string>
     <string name="about_action_view_source">Vizualizează codul sursă</string>
     <string name="about_authorship_preposition">de</string>
