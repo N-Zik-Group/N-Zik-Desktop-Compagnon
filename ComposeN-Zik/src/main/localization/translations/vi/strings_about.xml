@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">Show or hide the developers and designers who contributed to the app.</string>
+    <string name="about_translators_description">Show or hide the people who translated the app.</string>
+    <string name="about_credits_title">Credits</string>
+    <string name="about_credits_open">View credits and licenses</string>
     <string name="about_action_report_issue">Báo lỗi</string>
     <string name="about_action_view_source">Xem mã nguồn</string>
     <string name="about_authorship_preposition">by</string>
