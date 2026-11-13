@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">Показати або приховати розробників і дизайнерів, які внесли свій застосунок.</string>
+    <string name="about_translators_description">Показати або приховати людей, які перекладали додаток.</string>
+    <string name="about_credits_title">Автори</string>
+    <string name="about_credits_open">Переглянути кредити та ліцензії</string>
     <string name="about_action_report_issue">Повідомити про проблему</string>
     <string name="about_action_view_source">Переглянути вихідний код</string>
     <string name="about_authorship_preposition">за</string>
