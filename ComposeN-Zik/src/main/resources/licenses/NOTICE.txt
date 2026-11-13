@@ -1,0 +1,55 @@
+N-Zik Desktop Compagnon third-party notices
+
+Shader ports adapted for the desktop Skia runtime from HypnoticCanvas 0.4.1:
+https://github.com/mikepenz/HypnoticCanvas/tree/v0.4.1/hypnoticcanvas-shaders
+
+BlackCherryCosmos2 — axiomcrux (Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License)
+https://editor.isf.video/u/axiomcrux
+https://editor.isf.video/shaders/612cb473f4fe08001a0a6281
+
+GlossyGradients — Giorgi Azmaipharashvili (MIT License)
+https://www.shadertoy.com/user/Peace
+https://www.shadertoy.com/view/lX2GDR
+
+Golden Magma — TAKUSAKU (Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License)
+https://www.shadertoy.com/user/TAKUSAKU
+https://www.shadertoy.com/view/tdBBRV
+
+GradientFlow — hahnzhu (Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License)
+https://www.shadertoy.com/user/hahnzhu
+https://www.shadertoy.com/view/wdyczG
+
+IceReflection — TAKUSAKU (Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License)
+https://www.shadertoy.com/user/TAKUSAKU
+https://www.shadertoy.com/view/3djfzy
+
+InkFlow — TAKUSAKU (Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License)
+https://www.shadertoy.com/user/TAKUSAKU
+https://www.shadertoy.com/view/WdjBWD
+
+Mesmerizing Lens — Mike Penz (MIT License)
+https://github.com/mikepenz/
+https://github.com/mikepenz/HypnoticCanvas
+
+OilFlow — TAKUSAKU (Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License)
+https://www.shadertoy.com/user/TAKUSAKU
+https://www.shadertoy.com/view/Wd2fDW
+
+PurpleLiquid — fouad (Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License)
+https://www.shadertoy.com/user/fouad
+https://www.shadertoy.com/view/dsXyzf
+
+Stage — TAKUSAKU (Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License)
+https://www.shadertoy.com/user/TAKUSAKU
+https://www.shadertoy.com/view/wtfcDj
+
+MeshGradient — Mike Penz (MIT License)
+https://github.com/mikepenz/HypnoticCanvas/tree/v0.4.1/hypnoticcanvas-shaders
+
+Embedded VLC (Windows and Flatpak) retains its bundled COPYING notice.
+VideoLAN VLC 3.0.24 source:
+https://download.videolan.org/pub/videolan/vlc/3.0.24/
+Linux VLC build script:
+https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/blob/main/scripts/build-vlc-linux-tarball.sh
+
+Project source: https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon

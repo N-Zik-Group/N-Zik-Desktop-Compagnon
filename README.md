@@ -314,7 +314,9 @@ Any file derived from Cubic Music Desktop keeps its original copyright and licen
 [![Auto-assign issues](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/auto-assign-issues.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/auto-assign-issues.yml)  
 [![Update Project Stats and Chart](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/metrics.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/metrics.yml)
 
-## 👥 Contributors
+# 👥 Contributors
+
+[![GitHub contributors](https://contrib.rocks/image?repo=N-Zik-Group/N-Zik-Desktop-Compagnon)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/graphs/contributors)
 
 [![Fetch, create, and update repo's contributors](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-contributors.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-contributors.yaml)
 
