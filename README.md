@@ -289,18 +289,7 @@ yay -S n-zik-desktop-compagnon-git    # always the latest of main (needs JDK 21 
 
 # 🤝 Contributing
 
-## 🛠️ Improve the App
-
-Pull requests are welcome!
-Feel free to fix bugs, enhance features, or suggest new ideas.
-
-# 📜 Clone the repo
-
-Use this command to clone the repo
-
-```
-git clone -b main --single-branch https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon.git
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, verification and pull requests.
 
 ### 🎵 Based on / Permission:
 
@@ -311,7 +300,6 @@ This project may reuse code from [Cubic Music Desktop](https://github.com/cybruG
 > Cubic Music Desktop is open source under the GNU GPL v3.0. This notice records the author's explicit acknowledgement that N-Zik Group / N-Zik and NEVARLeVrai may reuse, modify and redistribute Cubic Music code under GPL-3.0, while preserving the applicable copyright, license and third-party notices.
 
 Any file derived from Cubic Music Desktop keeps its original copyright and license notices.
-
 
 # 👀 Status
 
