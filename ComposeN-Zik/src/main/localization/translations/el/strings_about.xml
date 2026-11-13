@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_developers_description">Εμφάνιση ή απόκρυψη των προγραμματιστών και των σχεδιαστών που συνέβαλαν στην εφαρμογή.</string>
+    <string name="about_translators_description">Εμφάνιση ή απόκρυψη των ατόμων που μετέφρασαν την εφαρμογή.</string>
+    <string name="about_credits_title">Συντελεστές</string>
+    <string name="about_credits_open">Προβολή μονάδων και αδειών</string>
     <string name="about_action_report_issue">Αναφορά προβλήματος</string>
     <string name="about_action_view_source">Προβολή Πηγαίου Κώδικα</string>
     <string name="about_authorship_preposition">από</string>
