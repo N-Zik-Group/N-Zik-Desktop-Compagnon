@@ -473,7 +473,7 @@ jobs:
     steps:
       - name: 🧪 Beta Release Notification
         env:
-          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_DESKTOP }}
           CONTENT: |
             ⚠️ **||<@&1557313505432965170>|| BETA VERSION v${{ needs.versioning.outputs.downstream }}-beta AVAILABLE!**
 
