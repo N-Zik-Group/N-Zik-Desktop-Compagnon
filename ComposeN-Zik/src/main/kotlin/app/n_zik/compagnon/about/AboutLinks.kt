@@ -7,6 +7,8 @@ package app.n_zik.compagnon.about
  * (view source / report an issue / request a feature). Pure, so they are pinned by a test.
  */
 object AboutLinks {
+    const val CREDITS_URL = "https://github.com/N-Zik-Group/N-Zik/blob/main/ComposeN-Zik/src/androidMain/res/raw/credits.md"
+
 
     /** The desktop repo (the troubleshooting "view source" target). */
     const val DESKTOP_REPO_URL = "https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon"

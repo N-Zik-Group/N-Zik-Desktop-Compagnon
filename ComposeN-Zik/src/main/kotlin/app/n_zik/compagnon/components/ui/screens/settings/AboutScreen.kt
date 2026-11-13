@@ -1,7 +1,6 @@
 package app.n_zik.compagnon.components.ui.screens.settings
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -44,7 +43,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -596,34 +594,14 @@ fun AboutScreen(
                 content = {
                     // Translators Section
                     var translatorsExpanded by remember { mutableStateOf(false) }
-                    val translatorsRotation by animateFloatAsState(
-                        targetValue = if (translatorsExpanded) 90f else 0f,
-                        animationSpec = tween(300),
-                        label = "translatorsRotation",
-                    )
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(uiRoundnessShape())
-                            .clickable { translatorsExpanded = !translatorsExpanded }
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.chevron_forward),
-                            tint = colorPalette().accent,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(16.dp)
-                                .graphicsLayer(rotationZ = translatorsRotation),
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        BasicText(
-                            text = pluralStringResource(Res.plurals.about_translator_count, Contributors.countTranslators(), formatDecimal(Contributors.countTranslators(), 0)),
-                            style = typography().xs.semiBold.copy(color = colorPalette().textSecondary),
-                        )
-                    }
+                    ModernSettingsEntry(
+                        title = pluralStringResource(Res.plurals.about_translator_count, Contributors.countTranslators(), formatDecimal(Contributors.countTranslators(), 0)),
+                        text = stringResource(Res.string.about_translators_description),
+                        icon = Res.drawable.translate,
+                        expanded = translatorsExpanded,
+                        onClick = { translatorsExpanded = !translatorsExpanded },
+                    )
 
                     AnimatedVisibility(
                         visible = translatorsExpanded,
@@ -637,7 +615,7 @@ fun AboutScreen(
                         ),
                     ) {
                         Column(
-                            modifier = Modifier.padding(start = 24.dp, top = 8.dp),
+                            modifier = Modifier.padding(top = 8.dp),
                         ) {
                             SettingsDescription(text = stringResource(Res.string.about_contributors_alphabetical_order_label))
                             Contributors.ShowTranslators()
@@ -646,34 +624,14 @@ fun AboutScreen(
 
                     // Developers Section
                     var developersExpanded by remember { mutableStateOf(false) }
-                    val developersRotation by animateFloatAsState(
-                        targetValue = if (developersExpanded) 90f else 0f,
-                        animationSpec = tween(300),
-                        label = "developersRotation",
-                    )
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(uiRoundnessShape())
-                            .clickable { developersExpanded = !developersExpanded }
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.chevron_forward),
-                            tint = colorPalette().accent,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(16.dp)
-                                .graphicsLayer(rotationZ = developersRotation),
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        BasicText(
-                            text = pluralStringResource(Res.plurals.about_developer_designer_count, Contributors.countDevelopers(), formatDecimal(Contributors.countDevelopers(), 0)),
-                            style = typography().xs.semiBold.copy(color = colorPalette().textSecondary),
-                        )
-                    }
+                    ModernSettingsEntry(
+                        title = pluralStringResource(Res.plurals.about_developer_designer_count, Contributors.countDevelopers(), formatDecimal(Contributors.countDevelopers(), 0)),
+                        text = stringResource(Res.string.about_developers_description),
+                        icon = Res.drawable.git_pull_request_outline,
+                        expanded = developersExpanded,
+                        onClick = { developersExpanded = !developersExpanded },
+                    )
 
                     AnimatedVisibility(
                         visible = developersExpanded,
@@ -687,12 +645,19 @@ fun AboutScreen(
                         ),
                     ) {
                         Column(
-                            modifier = Modifier.padding(start = 24.dp, top = 8.dp),
+                            modifier = Modifier.padding(top = 8.dp),
                         ) {
                             SettingsDescription(text = stringResource(Res.string.about_contributors_alphabetical_order_label))
                             Contributors.ShowDevelopers()
                         }
                     }
+
+                    ModernSettingsEntry(
+                        title = stringResource(Res.string.about_credits_title),
+                        text = stringResource(Res.string.about_credits_open),
+                        icon = Res.drawable.star_brilliant,
+                        onClick = { openInBrowser(AboutLinks.CREDITS_URL) },
+                    )
                 },
             )
         }

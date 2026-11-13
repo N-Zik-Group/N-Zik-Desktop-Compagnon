@@ -70,7 +70,7 @@ fun DeveloperCard(developer: Developer) {
 
     Card(
         modifier = Modifier
-            .padding(start = 12.dp, end = 20.dp, bottom = 10.dp)
+            .padding(bottom = 10.dp)
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
     ) {

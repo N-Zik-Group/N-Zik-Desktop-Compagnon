@@ -287,8 +287,6 @@ Use this command to clone the repo
 git clone -b main --single-branch https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon.git
 ```
 
-# 🫂 Acknowledgements
-
 ### 🎵 Based on / Permission:
 
 This project may reuse code from [Cubic Music Desktop](https://github.com/cybruGhost/DESKTOP-CUBIC-MUSIC) by cybruGhost, under the GPL-3.0. Its author granted explicit permission, as recorded in the Cubic Music Desktop notice:
@@ -299,18 +297,7 @@ This project may reuse code from [Cubic Music Desktop](https://github.com/cybruG
 
 Any file derived from Cubic Music Desktop keeps its original copyright and license notices.
 
-### 📚 Libraries & Dependencies:
-
-- [**vlcj**](https://github.com/caprica/vlcj): JVM bindings to play audio with the embedded [**VLC**](https://www.videolan.org/).
-- [**Kotlin**](https://kotlinlang.org/) / [**JetBrains Compose Multiplatform**](https://www.jetbrains.com/compose-multiplatform/): Language and UI framework.
-- [**Ktor**](https://github.com/ktorio/ktor): HTTP client and WebSocket framework for the bridge.
-- [**Coil**](https://github.com/coil-kt/coil): Image loading for covers and artwork.
-- [**Crowdin**](https://crowdin.com/): Community translation platform.
-
-### 🔤 Bundled fonts:
-
-- **Roboto** Regular and Medium (`ComposeN-Zik/src/main/composeResources/font/roboto_w400.ttf`, `roboto_w500.ttf`), from [googlefonts/roboto](https://github.com/googlefonts/roboto) v2.138: the font Android gives the Material components, used for the same components here so they look like the phone's. Roboto is © Google and licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
-- **Rubik** (`rubik_w*.ttf`), the phone's app font.
+See the [N-Zik credits](https://github.com/N-Zik-Group/N-Zik/blob/main/ComposeN-Zik/src/androidMain/res/raw/credits.md) for desktop libraries, fonts and upstream projects.
 
 # 👀 Status
 

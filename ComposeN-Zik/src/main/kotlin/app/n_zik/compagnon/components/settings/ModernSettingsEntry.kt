@@ -1,5 +1,8 @@
 package app.n_zik.compagnon.components.settings
 
+import androidx.compose.ui.draw.rotate
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -44,7 +47,18 @@ fun ModernSettingsEntry(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     onLongClick: (() -> Unit)? = null,
+    expanded: Boolean? = null,
 ) {
+    val chevronRotation = if (expanded == null) {
+        0f
+    } else {
+        animateFloatAsState(
+            targetValue = if (expanded) 90f else 0f,
+            animationSpec = tween(300),
+            label = "settingsChevronRotation"
+        ).value
+    }
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -95,7 +109,7 @@ fun ModernSettingsEntry(
             painter = painterResource(Res.drawable.chevron_forward),
             tint = colorPalette().textSecondary,
             contentDescription = null,
-            modifier = Modifier.size(16.dp),
+            modifier = Modifier.size(16.dp).rotate(chevronRotation),
         )
     }
 }
