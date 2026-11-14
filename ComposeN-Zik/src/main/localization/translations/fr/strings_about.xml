@@ -3,7 +3,7 @@
     <string name="about_developers_description">Afficher ou masquer les noms des développeurs et des concepteurs ayant contribué à l\'application.</string>
     <string name="about_translators_description">Afficher ou masquer les noms des personnes qui ont traduit l\'application.</string>
     <string name="about_credits_title">Crédits</string>
-    <string name="about_credits_open">Voir les crédits et licences</string>
+    <string name="about_credits_open">Afficher les crédits et les licences</string>
     <string name="about_action_report_issue">Signaler un problème</string>
     <string name="about_action_view_source">Afficher le code source</string>
     <string name="about_authorship_preposition">par</string>
