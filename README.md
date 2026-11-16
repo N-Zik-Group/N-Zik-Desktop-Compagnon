@@ -324,6 +324,8 @@ Any file derived from Cubic Music Desktop keeps its original copyright and licen
 [![Close stale tickets weekly](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/close-stale-tickets.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/close-stale-tickets.yaml)  
 [![Comment or close on label](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/comment-on-label.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/comment-on-label.yaml)  
 [![N-Zik Roadmap](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/mobile-roadmap.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/mobile-roadmap.yml) [N-Zik roadmap](https://github.com/orgs/N-Zik-Group/projects/1)  
+
+[![Roadmap Reconciliation](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/roadmap-reconcile.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/roadmap-reconcile.yml)
 [![Auto-assign issues](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/auto-assign-issues.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/auto-assign-issues.yml)  
 [![Update Project Stats and Chart](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/metrics.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/metrics.yml)  
 [![Add labels](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/add-labels.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/add-labels.yaml)  
