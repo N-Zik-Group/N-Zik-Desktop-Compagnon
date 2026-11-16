@@ -331,7 +331,6 @@ Any file derived from Cubic Music Desktop keeps its original copyright and licen
 [![VLC Linux Tarball Builder](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/vlc-tarball-builder.yml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/vlc-tarball-builder.yml)  
 [![Fetch, create, and update repo's translators](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-translators.yaml/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/weekly-update-translators.yaml)  
 [![Code Coverage Agent](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/code-coverage-agent/code-coverage-agent/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/code-coverage-agent/code-coverage-agent)  
-[![CodeQL - Code Quality](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/github-code-quality/codeql/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/github-code-quality/codeql)  
 [![CodeQL](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/N-Zik-Group/N-Zik-Desktop-Compagnon/actions/workflows/github-code-scanning/codeql)
 
 # 👥 Contributors
