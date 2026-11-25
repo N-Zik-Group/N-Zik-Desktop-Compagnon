@@ -1,8 +1,5 @@
 name: Build Dev
 
-env:
-  TZ: Europe/Paris
-
 on:
   workflow_dispatch:
   schedule:
@@ -60,8 +57,8 @@ jobs:
       - name: Get date
         id: date
         run: |
-          echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
-          echo "timestamp=$(date +'%H:%M Europe/Paris')" >> $GITHUB_OUTPUT
+          echo "date=$(date -u +'%Y%m%d')" >> $GITHUB_OUTPUT
+          echo "timestamp=$(date -u +'%H:%M UTC')" >> $GITHUB_OUTPUT
 
   versioning:
     name: Extract version
@@ -94,9 +91,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Align the runner OS timezone to Europe/Paris
-        run: sudo ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
-
       - name: Install the build prerequisites (jpackage tools + Flatpak + the Linux VLC tarball's audio-dep sonames)
         # Keep the VLC producer and consumer on the same distro for matching audio-library sonames.
         # Flatpak resolves these libraries from its base runtime; retain the host packages for staging.
@@ -113,9 +107,10 @@ jobs:
         run: flatpak install --user --noninteractive flathub org.freedesktop.Platform//24.08
 
       - name: Setup Java 21
-        uses: actions/setup-java@v6.2.0
+        uses: actions/setup-java@v6.3.0
         with:
           java-version: '21'
+          problem-matcher: true
           distribution: 'corretto'
 
       - name: Restore Gradle dependencies & build cache
@@ -152,13 +147,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Align the runner OS timezone to Europe/Paris
-        run: Set-TimeZone -Id 'Romance Standard Time'
-
       - name: Setup Java 21
-        uses: actions/setup-java@v6.2.0
+        uses: actions/setup-java@v6.3.0
         with:
           java-version: '21'
+          problem-matcher: true
           distribution: 'corretto'
 
       - name: Restore Gradle dependencies & build cache

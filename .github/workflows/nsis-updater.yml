@@ -16,13 +16,12 @@ name: NSIS Update Checker
 # The bot never merges: the merge is the human verification gate (rules/BUILD.md). A
 # SourceForge fetch failure is fail-loud (curated ERROR — re-dispatch before concluding);
 # no update PR is ever opened on a fetch the pipeline could not verify. The Sunday 23:30
-# (Europe/Paris, explicit timezone:) schedule run is the periodic check.
+# (UTC) schedule run is the periodic check.
 
 on:
   workflow_dispatch:
   schedule:
     - cron: '30 23 * * 0'
-      timezone: 'Europe/Paris'
 
 concurrency:
   group: 'nsis-updater'

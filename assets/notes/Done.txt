@@ -697,3 +697,9 @@ Fixed:
 
 - refactor(localization): align Desktop catalogs with the Mobile categories
   - Move the English resources and all 48 locales together while preserving every key and translation value.
+
+Other:
+- chore(ci): refresh action dependencies and use UTC workflow dates
+  - Upgrade Setup Java to v6.3.0 while retaining compiler annotations; remove Linux, Windows and schedule timezone overrides without changing cron expressions.
+  - Normalize dev release-day checks and metric timestamps to UTC, preserve download history, and align current CI documentation.
+  - Add an explicit-policy migration utility and production-reader regression coverage; 27 targeted CI tests pass.

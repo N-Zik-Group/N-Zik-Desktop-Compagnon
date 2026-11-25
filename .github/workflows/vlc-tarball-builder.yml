@@ -10,7 +10,7 @@ name: VLC Linux Tarball Builder
 # protected by its same-channel tag filter, not by this flag. The no-op verdict includes a
 # HEAD-check of the pinned asset: same version + asset live = a green no-op; same version +
 # asset MISSING (HTTP 404) = self-heal (rebuild + republish + re-open the pin PR — the version
-# is unchanged, the SHA may move). The Sunday 23:30 (Europe/Paris, explicit timezone:)
+# is unchanged, the SHA may move). The Sunday 23:30 (UTC)
 # schedule run is the periodic no-op / self-heal check.
 
 on:
@@ -21,7 +21,6 @@ on:
       - 'scripts/build-vlc-linux-tarball.sh'
   schedule:
     - cron: '30 23 * * 0'
-      timezone: 'Europe/Paris'
   workflow_dispatch:
 
 concurrency:

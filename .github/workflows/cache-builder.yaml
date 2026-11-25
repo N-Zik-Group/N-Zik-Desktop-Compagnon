@@ -1,8 +1,5 @@
 name: Automatic Cache Builder
 
-env:
-  TZ: Europe/Paris
-
 on:
   # These files are dependencies of this project.
   # Therefore, when 1 of them changes, everything needs
@@ -94,11 +91,12 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Set up JDK
-        uses: actions/setup-java@v6.2.0
+        uses: actions/setup-java@v6.3.0
         with:
           # Do NOT add cache: 'gradle' here
           distribution: 'corretto'
           java-version: '21'
+          problem-matcher: true
 
       - name: Cache Gradle dependencies & build cache
         uses: actions/cache@v6
